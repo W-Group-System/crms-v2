@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 use App\Product;
 use App\User;
 use App\ProductApplication;
+use App\ProductRawMaterials;
 use App\ProductSubcategories;
-
+use App\RawMaterial;
 use Validator;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductController extends Controller
 {
@@ -60,26 +62,26 @@ class ProductController extends Controller
     // Draft List 
     public function draft()
     {   
-        $products = Product::with(['userById', 'userByUserId'])->where('status', '1')->orderBy('id', 'desc')->get();
+        $products = Product::with(['userById', 'userByUserId'])->where('status', '1')->orderBy('id', 'desc')->paginate(10);
         $product_applications = ProductApplication::all();
         $product_subcategories = ProductSubcategories::all();
         // dd($products);
-        if(request()->ajax())
-        {
-            return datatables()->of($products)
-                    ->addColumn('user_full_name', function (Product $product) {
-                        $user = $product->getRelatedUser();
-                        return $user ? $user->full_name : '';
-                    })
-                    ->addColumn('action', function($data){
-                        $buttons = '<a type="button" href="' . route("product.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
+        // if(request()->ajax())
+        // {
+        //     return datatables()->of($products)
+        //             ->addColumn('user_full_name', function (Product $product) {
+        //                 $user = $product->getRelatedUser();
+        //                 return $user ? $user->full_name : '';
+        //             })
+        //             ->addColumn('action', function($data){
+        //                 $buttons = '<a type="button" href="' . route("product.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
+        //                 $buttons .= '&nbsp;&nbsp;';
+        //                 $buttons .= '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
+        //                 return $buttons;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
         return view('products.draft', compact('products','product_applications', 'product_subcategories')); 
     }
 
@@ -141,7 +143,9 @@ class ProductController extends Controller
 
         Product::create($form_data);
 
-        return response()->json(['success' => 'Data Added Successfully.']);
+        // return response()->json(['success' => 'Data Added Successfully.']);
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
     }
 
     // Edit
@@ -193,14 +197,18 @@ class ProductController extends Controller
     // View
     public function view($id)
     {
-        $data = Product::find($id);
+        $data = Product::with(['product_raw_materials'])->find($id);
         $users = User::all();
-
+        
         $product_applications = ProductApplication::find($data->application_id);
         $product_subcategories = ProductSubcategories::find($data->application_subcategory_id);
         $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
         $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
-        return view('products.view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers'));
+
+        $rawMaterials = RawMaterial::where('status', 'Active')->get();
+        // $product_raw_materials = ProductRawMaterials::get();
+
+        return view('products.view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials'));
     }
 
     // Delete
@@ -208,5 +216,22 @@ class ProductController extends Controller
     {
         $data = Product::findOrFail($id);
         $data->delete();
+    }
+
+    public function updateRawMaterials(Request $request, $id)
+    {
+        $product_raw_materials = ProductRawMaterials::where('product_id', $id)->delete();
+
+        foreach($request->raw_materials as $key=>$rm)
+        {   
+            $product_raw_materials = new ProductRawMaterials;
+            $product_raw_materials->raw_material_id = $rm;
+            $product_raw_materials->percent = $request->percent[$key];
+            $product_raw_materials->product_id = $id;
+            $product_raw_materials->save();
+        }
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
     }
 }

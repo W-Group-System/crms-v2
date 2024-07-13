@@ -28,4 +28,8 @@ class Product extends Model
                    ->orWhere('user_id', $this->created_by)
                    ->first();
     }
+    public function product_raw_materials()
+    {
+        return $this->hasMany(ProductRawMaterials::class);
+    }
 }

@@ -9,4 +9,9 @@ class RawMaterial extends Model
 {
     use SoftDeletes;
     protected $table = "productmaterials";
+
+    public function product_raw_materials()
+    {
+        return $this->hasOne(ProductRawMaterials::class, 'raw_material_id');
+    }
 }

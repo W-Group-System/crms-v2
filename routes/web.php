@@ -63,6 +63,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('update_product/{id}', 'ProductController@update')->name('update_product');
     Route::get('view_product/{id}', 'ProductController@view')->name('product.view');
     Route::get('delete_product/{id}', 'ProductController@delete')->name('delete_product');
+    Route::post('update_raw_materials/{id}', 'ProductController@updateRawMaterials');
 
     // Client
     Route::get('/client', 'ClientController@index')->name('client.index');
@@ -175,6 +176,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Raw Material
     Route::get('/raw_material', 'RawMaterialController@index')->name('raw_material.index');
+    Route::post('/add_raw_material', 'RawMaterialController@add');
+    Route::post('/deactivate_raw_material', 'RawMaterialController@deactivate');
+    Route::post('/activate_raw_material', 'RawMaterialController@activate');
 
     // Base Price
     Route::get('/base_price', 'BasePriceController@index')->name('base_price.index');

@@ -1,21 +1,80 @@
 @extends('layouts.header')
+@section('css')
+    <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
+@endsection
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Raw Material List
-            <button type="button" class="btn btn-md btn-primary" name="add_raw_material" id="add_raw_material">Add Raw Material</button>
+            <button type="button" class="btn btn-sm btn-primary" name="add_raw_material" id="add_raw_material" data-toggle="modal" data-target="#formRawMaterial">Add Raw Material</button>
             </h4>
-            <table class="table table-striped table-hover" id="raw_material_table" width="100%">
-                <thead>
-                    <tr>
-                        <th width="30%">Material</th>
-                        <th width="30%">Description</th>
-                        <th width="10%">Action</th>
-                    </tr>
-                </thead>
-            </table>
+            <div class="table-responsive">
+                <form method="GET" action="" class="custom_form mb-3" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type='text' class='form-control' name='search' placeholder="Search Material" value="{{$search}}">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary btn-md btn-submit" style="width:100px;border-radius:4px" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th width="30%">Material</th>
+                            <th width="30%">Description</th>
+                            <th width="30%">Status</th>
+                            <th width="10%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($rawMaterials as $rm)
+                            <tr>
+                                <td>{{$rm->Name}}</td>
+                                <td>{{$rm->Description}}</td>
+                                <td>
+                                    @if($rm->status == "Active")
+                                        <div class="badge badge-success">Active</div>
+                                    @else
+                                        <div class="badge badge-danger">Inactive</div>
+                                    @endif
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" title="View Products" data-toggle="modal" data-target="#viewProducts-{{$rm->id}}">
+                                        <i class="ti-eye"></i>
+                                    </button>
+    
+                                    @if($rm->status == "Active")
+                                    {{-- <form action="{{url('deactivate_raw_material')}}" method="post">
+                                        {{csrf_field()}}
+    
+                                        <input type="hidden" name="id" value="{{$rm->id}}">
+    
+                                    </form> --}}
+                                    <button class="btn btn-sm btn-danger deactivate" title="Deactivate" data-id="{{$rm->id}}">
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                    @else
+                                    {{-- <form action="{{url('activate_raw_material')}}" method="post">
+                                        {{csrf_field()}}
+    
+                                        <input type="hidden" name="id" value="{{$rm->id}}">
+    
+                                    </form> --}}
+                                    <button class="btn btn-sm btn-info activate" title="Activate" data-id="{{$rm->id}}">
+                                        <i class="ti-check"></i>
+                                    </button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            {!! $rawMaterials->appends(['search' => $search])->links() !!}
         </div>
     </div>
 </div>
@@ -30,20 +89,20 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_raw_material" enctype="multipart/form-data" action="">
-                    <span id="form_result"></span>
+                <form method="POST" id="form_raw_material" action="{{url('add_raw_material')}}">
+                    {{-- <span id="form_result"></span> --}}
                     @csrf
                     <div class="form-group">
                         <label for="name">Material</label>
-                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Material">
+                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Material" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
-                        <textarea type="text" rows="3" class="form-control" id="Description" name="Description" placeholder="Enter Description"></textarea>
+                        <textarea type="text" rows="3" class="form-control" id="Description" name="Description" placeholder="Enter Description" required></textarea>
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="action" id="action" value="Save">
-                        <input type="hidden" name="hidden_id" id="hidden_id">
+                        {{-- <input type="hidden" name="action" id="action" value="Save">
+                        <input type="hidden" name="hidden_id" id="hidden_id"> --}}
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
                     </div>
@@ -53,14 +112,86 @@
     </div>
 </div>
 
+@foreach ($rawMaterials as $rm)
+    @include('raw_materials.view_raw_materials')
+@endforeach
+
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
-
+<script src="{{asset('js/sweetalert2.min.js')}}"></script>
 <script>
+    $(document).ready(function() {
+        $(".view_raw_materials_table").DataTable({
+            processing: false,
+            serverSide:false,
+            ordering: false,
+        })
+
+
+        $(".deactivate").on('click', function()
+        {
+            var id = $(this).data('id');
+
+            $.ajax
+            ({
+                type: "POST",
+                url: "{{url('deactivate_raw_material')}}",
+                data: 
+                {
+                    id: id
+                },
+                headers: 
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function()
+                {
+                    Swal.fire
+                    ({
+                        icon: 'success',
+                        title: 'Successfully Deactivate'
+                    }).then(() => {
+                        location.reload();
+                    })
+                }
+            })
+        })
+
+        $(".activate").on('click', function()
+        {
+            var id = $(this).data('id');
+
+            $.ajax
+            ({
+                type: "POST",
+                url: "{{url('activate_raw_material')}}",
+                data: 
+                {
+                    id: id
+                },
+                headers: 
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function()
+                {
+                    Swal.fire
+                    ({
+                        icon: 'success',
+                        title: 'Successfully Activate'
+                    }).then(() => {
+                        location.reload();
+                    })
+                }
+            })
+        })
+    })
+</script>
+{{-- <script>
     $(document).ready(function(){
         dataTableInstance = new DataTable('#raw_material_table', {
             destroy: true, // Destroy and re-initialize DataTable on each call
@@ -263,5 +394,6 @@
             });
         });
     });
-</script>
+</script> --}}
+
 @endsection 
