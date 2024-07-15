@@ -1060,6 +1060,7 @@
         <script src="{{ asset('js/select2.min.js') }}"></script>
         <script src="{{ asset('js/select2.js') }}"></script>
         <script src="{{ asset('js/main.js') }}"></script>
+        <script src="{{asset('js/sweetalert2.min.js')}}"></script>
 
         <script src="{{ asset('js/off-canvas.js') }}"></script>
         <script src="{{ asset('js/hoverable-collapse.js') }}"></script>

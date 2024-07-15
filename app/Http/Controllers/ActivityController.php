@@ -8,7 +8,7 @@ use App\Contact;
 use App\FileActivity;
 use App\User;
 use Auth;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
