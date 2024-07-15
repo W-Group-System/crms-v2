@@ -218,7 +218,7 @@
             destroy: true,
             pageLength: 25,
             processing: false,
-            serverSide: true,
+            // serverSide: true,
             ordering: false,
             layout: {
                 topStart: {
@@ -227,8 +227,8 @@
                         {
                             extend: 'excel',
                             text: 'Export to Excel',
-                            filename: 'Raw Material', // Set the custom file name
-                            title: 'Raw Material' // Set the custom title
+                            filename: 'Raw Material',
+                            title: 'Raw Material'
                         }
                     ]
                 }
