@@ -10,34 +10,47 @@ class RawMaterialController extends Controller
     // List
     public function index(Request $request)
     {   
-        // dd($request->all());
-        // if(request()->ajax())
-        // {
-        //     return datatables()->of(RawMaterial::orderBy('id', 'desc')->get())
-        //             ->addColumn('action', function($data){
-        //                 $buttons = '<button type="button" name="view" id="'.$data->id.'" class="view btn-table btn btn-success"><i class="ti-eye"></i></button>';
-        //                 $buttons .= '&nbsp;&nbsp;';
-        //                 $buttons .= '<button type="button" name="edit" id="'.$data->id.'" class="edit btn-table btn btn-primary"><i class="ti-pencil"></i></button>';
-        //                 $buttons .= '&nbsp;&nbsp;';
-        //                 $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn-table btn btn-danger"><i class="ti-trash"></i></button>';
-        //                 return $buttons;
-        //             })
-        //             ->rawColumns(['action'])
-        //             ->make(true);
-        // }
-        $rawMaterial = RawMaterial::with(['product_raw_materials'])
-            ->when(!empty($request->search), function($q)use($request){
-                $q->where('name', 'like', "%".$request->search."%");
-            })
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
+        if(request()->ajax())
+        {
+            $search = $request->input('search.value');
 
-        return view('raw_materials.index', 
-            array(
-                'rawMaterials' => $rawMaterial,
-                'search' => $request->search
-            )
-        ); 
+            if ($search != null)
+            {
+                RawMaterial::where('Name', 'LIKE', '%'.$search.'%')->orWhere('Description', 'LIKE', '%'.$search.'%');
+            }
+            
+            return datatables()->of(RawMaterial::orderBy('id', 'desc')->get())
+                    ->addColumn('action', function($data){
+                        $buttons = '
+                            <button type="button" name="view" class="view btn-table btn btn-success viewModal" title="View" data-id="'.$data->id.'">
+                                <i class="ti-eye"></i>
+                            </button>
+                        ';
+
+                        if ($data->status == "Active")
+                        {
+                            $buttons.= '
+                                <button type="button" class="delete btn-table btn btn-danger deactivate" title="Deactivate" data-id="'.$data->id.'">
+                                    <i class="ti-trash"></i>
+                                </button>
+                            ';
+                        }
+                        else
+                        {
+                            $buttons.= '
+                                <button type="button" class="btn btn-sm btn-info activate" title="Activate" data-id="'.$data->id.'">
+                                    <i class="ti-check"></i>
+                                </button>
+                            ';
+                        }
+
+                        return $buttons;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+        
+        return view('raw_materials.index'); 
     }
 
     public function add(Request $request)
@@ -48,8 +61,10 @@ class RawMaterialController extends Controller
         $rawMaterial->status = "Active";
         $rawMaterial->save();
 
-        Alert::success('Sucessfully Saved')->persistent('Dismiss');
-        return back();
+        return response()->json([
+            'message' => 'Successfully Saved.',
+            'status' => 1
+        ]);
     }
 
     public function deactivate(Request $request)
@@ -58,8 +73,8 @@ class RawMaterialController extends Controller
         $rawMaterial->status = "Inactive";
         $rawMaterial->save();
         
-        Alert::success('Sucessfully Deactivate')->persistent('Dismiss');
-        return back();
+        // Alert::success('Sucessfully Deactivate')->persistent('Dismiss');
+        // return back();
     }
 
     public function activate(Request $request)
@@ -68,7 +83,21 @@ class RawMaterialController extends Controller
         $rawMaterial->status = "Active";
         $rawMaterial->save();
         
-        Alert::success('Sucessfully Activate')->persistent('Dismiss');
-        return back();
+        // Alert::success('Sucessfully Activate')->persistent('Dismiss');
+        // return back();
+    }
+
+    public function getRawMaterialsProducts(Request $request)
+    {
+        $rawMaterial = RawMaterial::with('product_raw_materials.products')->findOrFail($request->id);
+        
+        if ($rawMaterial->product_raw_materials != null)
+        {
+            return response()->json([
+                'status' => 1,
+                'products' => $rawMaterial->product_raw_materials->products->product_origin,
+                'percentage' => $rawMaterial->product_raw_materials->percent
+            ]);
+        }
     }
 }
