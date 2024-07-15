@@ -28,6 +28,28 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
+
+    <style>
+        .pagination
+        {
+            margin-top: 10px;
+            float: right;
+        }
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button 
+        {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] 
+        {
+            -moz-appearance: textfield;
+        }
+    </style>
+    @yield('css')
     <body>
         <div class="container-scroller">
             <!-- partial:partials/_navbar.html -->
@@ -1029,7 +1051,7 @@
                 font-style: normal;
             }
         </style>
-
+        @include('sweetalert::alert')
         <script src="{{ asset('js/vendor.bundle.base.js') }}"></script>
         <script src="{{ asset('js/Chart.min.js') }}"></script>
         <script src="{{ asset('js/jquery.dataTables.js') }}"></script>

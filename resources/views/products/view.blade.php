@@ -1,5 +1,6 @@
 @extends('layouts.header')
 @section('content')
+
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
@@ -13,12 +14,12 @@
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
-                <div class="form-group row">
+                {{-- <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->ddw_number }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials:</b></label>
-                    <label class="col-sm-2 col-form-label"></label>
-                </div>
+                    <label class="col-sm-3 col-form-label"></label>
+                </div> --}}
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Code:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->code }}</label>
@@ -104,18 +105,40 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="materials" role="tabpanel" aria-labelledby="materials-tab">
-                    <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval" name="submit_approval" id="">Update</button>
-                    </div>
-                    <table class="table table-striped table-hover" id="material_table" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Material</th>
-                                <th>Percentage</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
+                        {{csrf_field()}}
+
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-md btn-primary submit_approval">Update</button>
+                        </div>
+    
+                        <button type="button" class="btn btn-sm btn-success mb-4" id="addBtn">
+                            <i class="ti-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger mb-4" id="removeBtn">
+                            <i class="ti-minus"></i>
+                        </button>
+    
+                        <table class="table table-striped table-bordered table-hover" id="material_table" width="100%">
+                            <tbody class="tbodyRawMaterials">
+                                @foreach ($data->product_raw_materials as $prm)
+                                    <tr>
+                                        <td>
+                                            <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
+                                                <option value="">- Raw Materials -</option>
+                                                @foreach ($rawMaterials as $rm)
+                                                    <option value="{{$rm->id}}" @if($prm->raw_material_id == $rm->id) selected @endif>{{$rm->Name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$prm->percent}}" max="100" required>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </form>
                 </div>
                 <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     <div class="col-lg-12" align="right">
@@ -172,14 +195,14 @@
     }
 </style>
 
-<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+{{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script> --}}
 
-<script>
+{{-- <script>
     $(document).ready(function(){
         $(document).on('click', '.submit_approval', function(){
             product_id = $(this).attr('id');
@@ -233,5 +256,38 @@
             ]
         });
     });   
+</script> --}}
+<script>
+    $(document).ready(function() {
+
+        $("#addBtn").on('click', function() {
+            
+            var newRow = `
+                <tr>
+                    <td>
+                        <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
+                            <option value="">- Raw Materials -</option>
+                            @foreach ($rawMaterials as $rm)
+                                <option value="{{$rm->id}}">{{$rm->Name}}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" max="100" required>
+                    </td>
+                </tr>
+            `;
+            
+            var row = $(newRow);
+            $(".tbodyRawMaterials").append(row);
+            row.find('.js-example-basic-single').select2();
+
+        });
+
+        $("#removeBtn").on('click', function()
+        {
+            $('.tbodyRawMaterials').children().last().remove();
+        })
+    });
 </script>
 @endsection

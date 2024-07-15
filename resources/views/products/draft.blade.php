@@ -5,9 +5,9 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
                 Product List (Draft)
-            <button type="button" class="btn btn-md btn-primary" name="add_product" id="add_product">Add Product</button>
+            <button type="button" class="btn btn-sm  btn-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">Add Product</button>
             </h4>
-            <table class="table table-striped table-hover" id="draft_table" width="100%">
+            <table class="table table-bordered table-striped table-hover" id="draft_table" width="100%">
                 <thead>
                     <tr>
                         <th width="25%">DDW Number</th>
@@ -17,7 +17,28 @@
                         <th width="10%">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($products as $p)
+                        <tr>
+                            <td>{{$p->ddw_number}}</td>
+                            <td>{{$p->code}}</td>
+                            <td>
+                                {{isset($p->userByUserId->full_name)? $p->userByUserId->full_name : $p->userById->full_name}}
+                            </td>
+                            <td>{{date('M d, Y', strtotime($p->created_at))}}</td>
+                            <td>
+                                <form action="{{url('view_product/'.$p->id)}}" method="get">
+
+                                    <button type="submit" class="btn btn-info btn-sm" title="View Products">
+                                        <i class="ti-eye"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
+            {!! $products->links() !!}
         </div>
     </div>
 </div>
@@ -31,24 +52,24 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_product" enctype="multipart/form-data" action="">
+                <form method="POST" id="form_product" action="{{url('new_product')}}">
                     <span id="form_result"></span>
                     @csrf
                     <div class="form-group">
                         <label for="name">DDW Number</label>
-                        <input type="text" class="form-control" id="ddw_number" name="ddw_number" placeholder="Enter DDW Number">
+                        <input type="text" class="form-control" id="ddw_number" name="ddw_number" placeholder="Enter DDW Number" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Product Code</label>
-                        <input type="text" class="form-control" id="code" name="code" placeholder="Enter Product Code">
+                        <input type="text" class="form-control" id="code" name="code" placeholder="Enter Product Code" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Reference Number</label>
-                        <input type="text" class="form-control" id="reference_no" name="reference_no" placeholder="Enter Reference Number">
+                        <input type="text" class="form-control" id="reference_no" name="reference_no" placeholder="Enter Reference Number" required>
                     </div>
                     <div class="form-group">
                         <label>Type</label>
-                        <select class="form-control js-example-basic-single" name="type" id="type" style="position: relative !important" title="Select Type">
+                        <select class="form-control js-example-basic-single" name="type" id="type" style="position: relative !important" title="Select Type" required>
                             <option value="" disabled selected>Select Type</option>
                             <option value="1">Pure</option>
                             <option value="2">Blend</option>
@@ -56,7 +77,7 @@
                     </div>
                     <div class="form-group">
                         <label>Application</label>
-                        <select class="form-control js-example-basic-single" name="application_id" id="application_id" style="position: relative !important" title="Select Application">
+                        <select class="form-control js-example-basic-single" name="application_id" id="application_id" style="position: relative !important" title="Select Application" required>
                             <option value="" disabled selected>Select Application</option>
                             @foreach($product_applications as $product_application)
                                 <option value="{{ $product_application->id }}">{{ $product_application->Name }}</option>
@@ -65,7 +86,7 @@
                     </div>
                     <div class="form-group">
                         <label>Application Subcategory</label>
-                        <select class="form-control js-example-basic-single" name="application_subcategory_id" id="application_subcategory_id" style="position: relative !important" title="Select Subcategory">
+                        <select class="form-control js-example-basic-single" name="application_subcategory_id" id="application_subcategory_id" style="position: relative !important" title="Select Subcategory" required>
                             <option value="" disabled selected>Select Subcategory</option>
                             @foreach($product_subcategories as $product_subcategory)
                                 <option value="{{ $product_subcategory->id }}">{{ $product_subcategory->Name }}</option>
@@ -74,7 +95,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Product Origin</label>
-                        <input type="text" class="form-control" id="product_origin" name="product_origin" placeholder="Enter Product Origin">
+                        <input type="text" class="form-control" id="product_origin" name="product_origin" placeholder="Enter Product Origin" required>
                     </div>
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
@@ -88,11 +109,11 @@
     </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>  --}}
 
-<script>
+{{-- <script>
     $(document).ready(function(){
         $('#draft_table').DataTable({
             processing: true,
@@ -247,5 +268,5 @@
             });
         });
     });
-</script>
+</script> --}}
 @endsection
