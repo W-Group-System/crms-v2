@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\NatureRequest;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class NatureRequestController extends Controller
@@ -14,9 +14,9 @@ class NatureRequestController extends Controller
         {
             return datatables()->of(NatureRequest::query())
                     ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
+                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-table"><i class="ti-pencil"></i></button>';
                         $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
+                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-table"><i class="ti-trash"></i></button>';
                         return $buttons;
                     })
                     ->rawColumns(['action'])
@@ -37,7 +37,19 @@ class NatureRequestController extends Controller
 
         if($error->fails())
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            $errors = $error->errors()->toArray();
+            $formattedErrors = [];
+            
+            foreach ($errors as $field => $messages) {
+                foreach ($messages as $message) {
+                    $formattedErrors[] = [
+                        'field' => $field,
+                        'message' => $message
+                    ];
+                }
+            }
+
+            return response()->json(['errors' => $formattedErrors]);
         }
 
         $form_data = array(
@@ -88,7 +100,10 @@ class NatureRequestController extends Controller
     // Delete
     public function delete($id)
     {
-        $data = NatureRequest::findOrFail($id);
-        $data->delete();
+        $natureRequest = NatureRequest::findOrFail($id);
+        $natureRequest->delete();
+
+        // Optionally, return a response
+        return response()->json(['success' => 'Nature of Request has been deleted.']);
     }
 }

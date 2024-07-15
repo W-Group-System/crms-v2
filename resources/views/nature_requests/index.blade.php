@@ -1,4 +1,7 @@
 @extends('layouts.header')
+@section('css')
+    <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
+@endsection
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
@@ -7,12 +10,12 @@
             Nature of Request List
             <button type="button" class="btn btn-md btn-primary" name="add_nature_request" id="add_nature_request">Add Nature of Request</button>
             </h4>
-            <table class="table table-striped table-hover" id="nature_request_table" width="100%">
+            <table class="table table-striped table-bordered table-hover" id="nature_request_table" width="100%">
                 <thead>
                     <tr>
                         <th width="35%">Name</th>
-                        <th width="40%">Description</th>
-                        <th width="25%">Action</th>
+                        <th width="55%">Description</th>
+                        <th width="10%">Action</th>
                     </tr>
                 </thead>
             </table>
@@ -51,7 +54,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -69,18 +72,38 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+
 
 <script>
     $(document).ready(function(){
-        $('#nature_request_table').DataTable({
-            processing: true,
+        dataTableInstance = new DataTable('#nature_request_table', {
+            destroy: true, // Destroy and re-initialize DataTable on each call
             serverSide: true,
+            pageLength: 25,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy',
+                        {
+                            extend: 'excel',
+                            text: 'Export to Excel',
+                            filename: 'NatureOfRequest', // Set the custom file name
+                            title: 'Nature of Request' // Set the custom title
+                        }
+                    ]
+                }
+            },
             ajax: {
-                url: "{{ route('nature_request.index') }}"
+                url: "{{ route('nature_request.index') }}",
             },
             columns: [
                 {
@@ -100,7 +123,7 @@
             ],
             columnDefs: [
                 {
-                    targets: 1, // Target the Description column
+                    targets: [0,1], // Target the Description column
                     render: function(data, type, row) {
                         return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
                     }
@@ -125,31 +148,39 @@
                     cache: false,
                     processData: false,
                     dataType: "json",
-                    success: function(data)
-                    {
+                    success: function(data) {
                         var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
+                        if (data.errors) {
+                            var html = '<div class="alert alert-danger">';
+                            $('input').css('border-color', ''); // Reset border color for all inputs
+
+                            data.errors.forEach(function(error) {
+                                html += '<p>' + error.message + '</p>';
+                                $('input[name="' + error.field + '"]').css('border-color', 'red'); // Apply border color
+                            });
+
                             html += '</div>';
+                            $('#form_result').html(html);
+                        } else {
+                            // Using SweetAlert for success message
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: data.success,
+                                    timer: 2000
+                                }).then(function() {
+                                    $('#formNatureRequest').modal('hide');
+                                    if (dataTableInstance) {
+                                        dataTableInstance.ajax.reload();
+                                    }
+                                    $('#form_result').empty(); 
+                                });
+
+                                $('#form_nature_request')[0].reset();
+                                $('input').css('border-color', ''); // Reset border color for all inputs
+                            }
                         }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_nature_request')[0].reset();
-                            setTimeout(function(){
-                                $('#formNatureRequest').modal('hide');
-                            }, 2000);
-                            $('#nature_request_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
-                        $('#form_result').html(html);
                     }
                 })
             }
@@ -215,28 +246,43 @@
             });
         });
                 
-        $(document).on('click', '.delete', function(){
-            nature_request_id = $(this).attr('id');
-            $('#confirmModal').modal('show');
-            $('.modal-title').text("Delete Nature of Request");
-        });    
+        $(document).on('click', '.delete', function() {
+            var nature_request_id = $(this).attr('id');
 
-        $('#delete_nature_request').click(function(){
-            $.ajax({
-                url: "{{ url('delete_nature_request') }}/" + nature_request_id, 
-                method: "GET",
-                beforeSend:function(){
-                    $('#delete_nature_request').text('Deleting...');
-                },
-                success:function(data)
-                {
-                    setTimeout(function(){
-                        $('#confirmModal').modal('hide');
-                        $('#nature_request_table').DataTable().ajax.reload();
-                    }, 2000);
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonColor: "#a3a4a5",
+                confirmButtonColor: "#FF4747",
+                confirmButtonText: "Yes, delete it!",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Proceed with deletion via AJAX
+                    $.ajax({
+                        url: "{{ url('delete_nature_request') }}/" + nature_request_id,
+                        method: "GET",
+                        success: function(data) {
+                            // Show success message with SweetAlert
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Nature of Request has been deleted.",
+                                icon: "success",
+                                timer: 2000
+                            }).then(() => {
+                                // Reload DataTable
+                                if (dataTableInstance) {
+                                    dataTableInstance.ajax.reload();
+                                }
+                            });
+                        }
+                    });
                 }
-            })
+            });
         });
+
     });
 </script>
 @endsection
