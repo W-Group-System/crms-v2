@@ -61,10 +61,12 @@ class ProductController extends Controller
 
     // Draft List 
     public function draft(Request $request)
-    {   
+    {  
+        $search = $request->search;
+
         $products = Product::with(['userById', 'userByUserId'])->where('status', '1')
             ->when($request->search, function($q)use($request) {
-                $q->where('ddw_number', $request->search)->orWhere('code', $request->search);
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
             })
             ->orWhere('code', $request->search)
             ->orderBy('id', 'desc')
@@ -89,7 +91,7 @@ class ProductController extends Controller
         //             ->rawColumns(['action'])
         //             ->make(true);
         // }
-        return view('products.draft', compact('products','product_applications', 'product_subcategories')); 
+        return view('products.draft', compact('products','product_applications', 'product_subcategories', 'search')); 
     }
 
     // Archived List

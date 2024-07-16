@@ -11,7 +11,7 @@
                 <form action="" method="get">
                     <div class="row">
                         <div class="col-lg-2">
-                            <input type="text" name="search" id="search" placeholder="Search" class="form-control form-control-sm">
+                            <input type="text" name="search" id="search" placeholder="Search" class="form-control form-control-sm" value="{{$search}}">
                         </div>
                         <div class="col-lg-2">
                             <button class="btn btn-sm btn-primary">Search</button>
