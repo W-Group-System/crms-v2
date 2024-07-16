@@ -16,11 +16,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if($rm->product_raw_materials != null)
-                            <tr>
-                                <td>{{$rm->product_raw_materials->products->product_origin}}</td>
-                                <td>{{$rm->product_raw_materials->percent}}</td>
-                            </tr>
+                        @if(count($rm->productMaterialCompositions))
+                            @foreach ($rm->productMaterialCompositions as $pmc)
+                                <tr>
+                                    <td>{{$pmc->products->code}}</td>
+                                    <td>{{$pmc->Percentage}}</td>
+                                </tr>
+                            @endforeach
                         @else
                             <tr>
                                 <td colspan="2">No data available.</td>

@@ -121,18 +121,18 @@
     
                         <table class="table table-striped table-bordered table-hover" id="material_table" width="100%">
                             <tbody class="tbodyRawMaterials">
-                                @foreach ($data->product_raw_materials as $prm)
+                                @foreach ($data->productMaterialComposition as $pmc)
                                     <tr>
                                         <td>
                                             <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
                                                 <option value="">- Raw Materials -</option>
                                                 @foreach ($rawMaterials as $rm)
-                                                    <option value="{{$rm->id}}" @if($prm->raw_material_id == $rm->id) selected @endif>{{$rm->Name}}</option>
+                                                    <option value="{{$rm->id}}" @if($pmc->MaterialId == $rm->id) selected @endif>{{$rm->Name}}</option>
                                                 @endforeach
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$prm->percent}}" max="100" required>
+                                            <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$pmc->Percentage}}" max="100" required>
                                         </td>
                                     </tr>
                                 @endforeach

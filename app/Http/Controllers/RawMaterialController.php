@@ -50,7 +50,7 @@ class RawMaterialController extends Controller
         //             ->make(true);
         // }
 
-        $rawMaterials = RawMaterial::where('Name', 'LIKE', '%'.$request->search.'%')->orWhere('Description', "LIKE", "%".$request->search."%")->orderBy('id', 'desc')->paginate(10);
+        $rawMaterials = RawMaterial::with(['productMaterialCompositions.products'])->where('Name', 'LIKE', '%'.$request->search.'%')->orWhere('Description', "LIKE", "%".$request->search."%")->orderBy('id', 'desc')->paginate(10);
         
         return view('raw_materials.index',
             array(

@@ -60,9 +60,16 @@ class ProductController extends Controller
     }
 
     // Draft List 
-    public function draft()
+    public function draft(Request $request)
     {   
-        $products = Product::with(['userById', 'userByUserId'])->where('status', '1')->orderBy('id', 'desc')->paginate(10);
+        $products = Product::with(['userById', 'userByUserId'])->where('status', '1')
+            ->when($request->search, function($q)use($request) {
+                $q->where('ddw_number', $request->search)->orWhere('code', $request->search);
+            })
+            ->orWhere('code', $request->search)
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
         $product_applications = ProductApplication::all();
         $product_subcategories = ProductSubcategories::all();
         // dd($products);
@@ -197,7 +204,7 @@ class ProductController extends Controller
     // View
     public function view($id)
     {
-        $data = Product::with(['product_raw_materials'])->find($id);
+        $data = Product::with(['productMaterialComposition'])->find($id);
         $users = User::all();
         
         $product_applications = ProductApplication::find($data->application_id);
