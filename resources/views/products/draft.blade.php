@@ -7,7 +7,17 @@
                 Product List (Draft)
             <button type="button" class="btn btn-sm  btn-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">Add Product</button>
             </h4>
-            <table class="table table-bordered table-striped table-hover" id="draft_table" width="100%">
+            <table class="table table-bordered table-striped table-hover mt-3" id="draft_table" width="100%">
+                <form action="" method="get">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <input type="text" name="search" id="search" placeholder="Search" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-lg-2">
+                            <button class="btn btn-sm btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
                 <thead>
                     <tr>
                         <th width="25%">DDW Number</th>

@@ -10,8 +10,13 @@ class RawMaterial extends Model
     use SoftDeletes;
     protected $table = "productmaterials";
 
-    public function product_raw_materials()
+    // public function product_raw_materials()
+    // {
+    //     return $this->hasOne(ProductRawMaterials::class, 'raw_material_id');
+    // }
+
+    public function productMaterialCompositions()
     {
-        return $this->hasOne(ProductRawMaterials::class, 'raw_material_id');
+        return $this->hasMany(ProductMaterialsComposition::class, 'MaterialId');
     }
 }
