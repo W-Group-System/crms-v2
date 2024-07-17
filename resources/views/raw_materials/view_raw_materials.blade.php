@@ -16,10 +16,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if(count($rm->productMaterialCompositions))
+                        @if(count($rm->productMaterialCompositions) > 0)
                             @foreach ($rm->productMaterialCompositions as $pmc)
                                 <tr>
-                                    <td>{{$pmc->products->code}}</td>
+                                    <td>{{isset($pmc->products)?$pmc->products->code:''}}</td>
                                     <td>{{$pmc->Percentage}}</td>
                                 </tr>
                             @endforeach
