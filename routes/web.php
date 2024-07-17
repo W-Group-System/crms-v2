@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home','HomeController@index');
 
     // change password
+    Route::get('my_account','HomeController@myAccount')->name('my_account');
     Route::get('change_password','HomeController@changePassword')->name('change_password');
     Route::post('change_password','HomeController@updatePassword')->name('update_password');
 
