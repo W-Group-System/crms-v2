@@ -21,14 +21,12 @@
                     <tbody>
                         @if(count($rm->productMaterialCompositions) > 0)
                             @foreach ($rm->productMaterialCompositions as $pmc)
-                                @php
-                                    if ($pmc->products)
-                                    {
-                                        $id = $pmc->products->id;
-                                    }
-                                @endphp
                                 <tr>
-                                    <td><a href="{{url('view_product/'.$id)}}">{{isset($pmc->products)?$pmc->products->code:''}}</a></td>
+                                    <td>
+                                        @if($pmc->products)
+                                            <a href="{{url('view_product/'.$pmc->products->id)}}">{{isset($pmc->products)?$pmc->products->code:''}}</a>
+                                        @endif
+                                    </td>
                                     <td>{{$pmc->Percentage}}</td>
                                 </tr>
                             @endforeach
