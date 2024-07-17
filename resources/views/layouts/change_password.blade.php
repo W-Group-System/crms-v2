@@ -34,6 +34,7 @@
                     <input name="new_password_confirmation" type="password" placeholder="Confirm New Password" class="form-control" id="confirmedPasswordInput">
                 </div>
                 <div align="right" class="mt-10">
+                    <a href="{{ url('home') }}" class="btn btn-secondary">Close</a>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
