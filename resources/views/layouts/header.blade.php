@@ -24,7 +24,6 @@
         <link href="{{ asset('css/select2-bootstrap.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link href="{{ asset('css/buttons.bootstrap4.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
@@ -155,18 +154,11 @@
                                 </ul>
                             </div>
                         </li>
-                        
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
-                                <i class="icon-columns menu-icon"></i>
-                                <span class="menu-title">Product Information</span>
-                                <i class="menu-arrow"></i>
+                            <a class="nav-link" href="{{ url('/current_products') }}">
+                            <i class="icon-paper menu-icon"></i>
+                            <span class="menu-title">Products</span>
                             </a>
-                            <div class="collapse" id="form-elements">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/current_products') }}">Products</a></li>
-                                </ul>
-                            </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">

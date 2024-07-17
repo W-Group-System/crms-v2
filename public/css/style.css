@@ -29866,6 +29866,31 @@ div.tagsinput span.tag a {
   background: #4B49AC;
 }
 
+/* search input */
+.search {
+  position: relative;
+  box-shadow: 0 0 20px rgba(51, 51, 51, .1); 
+}
+.search input {
+  text-indent: 30px;
+  border: 2px solid #d6d4d4;
+}
+.search input:focus {
+  box-shadow: none;
+  border: 2px solid #4B49AC;
+}
+.search .ti-search{ 
+  position: absolute;
+  top: 15px;
+  left: 20px;
+}
+.search button{
+  position: absolute;
+  top: 7px;
+  right: 5px;
+  width: 80px;
+}
+
 @media (max-width: 991px) {
   .navbar {
     -webkit-box-orient: horizontal;
