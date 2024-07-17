@@ -1,4 +1,7 @@
 @extends('layouts.header')
+@section('css')
+    <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
+@endsection
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
@@ -7,17 +10,47 @@
             Role List
             <button type="button" class="btn btn-md btn-primary" name="add_role" id="add_role">Add Role</button>
             </h4>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-start align-items-start">
+                    <div class="col-md-5">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
-                <table class="table table-striped table-hover" id="role_table">
+                <table class="table table-striped table-bordered table-hover" id="role_table" width="100%">
                     <thead>
                         <tr>
-                            <th width="30%">Name</th>
-                            <th width="30%">Description</th>
-                            <th width="20%">Action</th>
+                            <th width="35%">Name</th>
+                            <th width="50%">Description</th>
+                            <th width="15%">Action</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        @if($roles->count() > 0)
+                            @foreach($roles as $role)
+                            <tr>
+                                <td>{{$role->name}}</td>
+                                <td>{{$role->description}}</td>
+                                <td>
+                                    <button type="button" name="edit" class="edit btn btn-sm btn-primary"><i class="ti ti-pencil"></i></button>
+                                    <button type="button" name="delete" class="delete btn btn-sm btn-danger"><i class="ti ti-trash"></i></button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="3" class="text-center">No matching records found</td>
+                            </tr>
+                        @endif
+                    </tbody>
                 </table>
             </div>
+            {!! $roles->appends(['search' => $search])->links() !!}
         </div>
     </div>
 </div>
@@ -76,28 +109,28 @@
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
 <script>
     $(document).ready(function(){
-        $('#role_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('role.index') }}"
-            },
-            columns: [
-                {
-                    data: 'name',
-                    name: 'name'
-                },
-                {
-                    data: 'description',
-                    name: 'description'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ]
-        });
+        // $('#role_table').DataTable({
+        //     processing: true,
+        //     serverSide: true,
+        //     ajax: {
+        //         url: "{{ route('role.index') }}"
+        //     },
+        //     columns: [
+        //         {
+        //             data: 'name',
+        //             name: 'name'
+        //         },
+        //         {
+        //             data: 'description',
+        //             name: 'description'
+        //         },
+        //         {
+        //             data: 'action',
+        //             name: 'action',
+        //             orderable: false
+        //         }
+        //     ]
+        // });
 
         $('#add_role').click(function(){
             $('#formRole').modal('show');
@@ -186,6 +219,7 @@
                 });
             }
         });
+        
         $(document).on('click', '.edit', function(){
             var id = $(this).attr('id');
             console.log(id);
