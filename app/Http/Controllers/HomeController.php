@@ -32,6 +32,11 @@ class HomeController extends Controller
         return view('layouts.change_password');
     }
 
+    public function myAccount()
+    {
+        return view('layouts.my_account');
+    }
+
     public function updatePassword(Request $request)
     {   
         $request->validate([
