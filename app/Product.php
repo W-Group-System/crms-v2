@@ -37,4 +37,24 @@ class Product extends Model
     {
         return $this->hasMany(ProductMaterialsComposition::class, 'ProductId');
     }
+
+    public function productSpecification()
+    {
+        return $this->hasMany(ProductSpecification::class,'ProductId');
+    }
+
+    public function productFiles()
+    {
+        return $this->hasMany(ProductFiles::class,'ProductId');
+    }
+
+    public function productDataSheet()
+    {
+        return $this->hasMany(ProductDataSheet::class, 'ProductId');
+    }
+
+    public function productEventLogs()
+    {
+        return $this->hasMany(UserEventLogs::class, 'Value', 'code');
+    }
 }

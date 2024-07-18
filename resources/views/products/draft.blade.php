@@ -6,49 +6,57 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
                 Product List (Draft)
             <button type="button" class="btn btn-sm  btn-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">Add Product</button>
-            </h4>
-            <table class="table table-bordered table-striped table-hover mt-3" id="draft_table" width="100%">
-                <form action="" method="get">
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <input type="text" name="search" id="search" placeholder="Search" class="form-control form-control-sm" value="{{$search}}">
-                        </div>
-                        <div class="col-lg-2">
-                            <button class="btn btn-sm btn-primary">Search</button>
+        </h4>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-start align-items-start">
+                    <div class="col-md-5">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search Product" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
                         </div>
                     </div>
-                </form>
-                <thead>
-                    <tr>
-                        <th width="25%">DDW Number</th>
-                        <th width="25%">Code</th>
-                        <th width="25%">Created By</th>
-                        <th width="15%">Date Created</th>
-                        <th width="10%">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($products as $p)
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover mt-3" id="draft_table">
+                    <thead>
                         <tr>
-                            <td>{{$p->ddw_number}}</td>
-                            <td>{{$p->code}}</td>
-                            <td>
-                                {{isset($p->userByUserId->full_name)? $p->userByUserId->full_name : $p->userById->full_name}}
-                            </td>
-                            <td>{{date('M d, Y', strtotime($p->created_at))}}</td>
-                            <td>
-                                <form action="{{url('view_product/'.$p->id)}}" method="get">
-
-                                    <button type="submit" class="btn btn-info btn-sm" title="View Products">
-                                        <i class="ti-eye"></i>
-                                    </button>
-                                </form>
-                            </td>
+                            <th width="25%">DDW Number</th>
+                            <th width="25%">Code</th>
+                            <th width="25%">Created By</th>
+                            <th width="15%">Date Created</th>
+                            <th width="10%">Action</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            {!! $products->links() !!}
+                    </thead>
+                    <tbody>
+                        @foreach ($products as $p)
+                            <tr>
+                                <td>{{$p->ddw_number}}</td>
+                                <td>{{$p->code}}</td>
+                                <td>
+                                    {{isset($p->userByUserId->full_name)? $p->userByUserId->full_name : $p->userById->full_name}}
+                                </td>
+                                <td>{{date('M d, Y', strtotime($p->created_at))}}</td>
+                                <td>
+                                    <a href="{{url('view_product/'.$p->id)}}" type="submit" class="btn btn-info btn-sm" title="View Products">
+                                        <i class="ti-eye"></i>
+                                    </a>
+    
+                                    <button class="btn btn-warning btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$p->id}}">
+                                        <i class="ti-archive"></i>
+                                    </button>
+    
+                                    <button class="btn btn-success btn-sm newProducts" type="button" title="Add new products" data-id="{{$p->id}}">
+                                        <i class="ti-plus"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                {!! $products->appends(['search' => $search])->links() !!}
+            </div>
         </div>
     </div>
 </div>
@@ -279,4 +287,54 @@
         });
     });
 </script> --}}
+
+<script>
+    $(document).ready(function() {
+        $(".newProducts").on('click', function() {
+            var id = $(this).data();
+
+            $.ajax({
+                type: "POST",
+                url: "{{url('add_to_new_products')}}",
+                data: id,
+                headers: 
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res)
+                {
+                    Swal.fire({
+                        icon: 'success',
+                        title: res.message,
+                    }).then(() => {
+                        location.reload();
+                    })
+                }
+            })
+        })
+
+        $(".archiveProducts").on('click', function() {
+            var id = $(this).data();
+
+            $.ajax({
+                type: "POST",
+                url: "{{url('add_to_archive_products')}}",
+                data: id,
+                headers: 
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res)
+                {
+                    Swal.fire({
+                        icon: 'success',
+                        title: res.message,
+                    }).then(() => {
+                        location.reload();
+                    })
+                }
+            })
+        })
+    })
+</script>
 @endsection

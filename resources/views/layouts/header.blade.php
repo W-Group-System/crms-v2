@@ -24,6 +24,8 @@
         <link href="{{ asset('css/select2-bootstrap.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link href="{{ asset('css/buttons.bootstrap4.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
@@ -1067,5 +1069,6 @@
 
         <script src="{{ asset('js/dashboard.js') }}"></script>
         <script src="{{ asset('js/Chart.roundedBarCharts.js') }}"></script>
+        <script src="{{asset('js/sweetalert2.min.js')}}"></script>
     </body>
 </html>

@@ -54,17 +54,35 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('update_department/{id}', 'DepartmentController@update')->name('update_department');
     Route::get('delete_department/{id}', 'DepartmentController@delete')->name('delete_department');
 
-    // Product
+    # Product
     Route::get('/current_products', 'ProductController@current')->name('product.current');
     Route::get('/new_products', 'ProductController@new')->name('product.new');
-    Route::get('/draft_products', 'ProductController@draft')->name('product.draft');
-    Route::get('/archived_products', 'ProductController@archived')->name('product.archived');
-    Route::post('/new_product', 'ProductController@store')->name('product.store');
+    Route::get('view_product/{id}', 'ProductController@view')->name('product.view');
+    Route::post('update_raw_materials/{id}', 'ProductController@updateRawMaterials');
     Route::get('/edit_product/{id}', 'ProductController@edit')->name('edit_product');
     Route::post('update_product/{id}', 'ProductController@update')->name('update_product');
-    Route::get('view_product/{id}', 'ProductController@view')->name('product.view');
     Route::get('delete_product/{id}', 'ProductController@delete')->name('delete_product');
-    Route::post('update_raw_materials/{id}', 'ProductController@updateRawMaterials');
+    # Product Specification
+    Route::post('add_specification', 'ProductController@specification');
+    Route::post('edit_specification/{id}', 'ProductController@editSpecification');
+    # Product Files
+    Route::post('add_files', 'ProductController@addFiles');
+    Route::post('edit_files/{id}', 'ProductController@editFiles');
+
+    # Draft Products
+    Route::get('/draft_products', 'ProductController@draft')->name('product.draft');
+    Route::post('/add_to_new_products', 'ProductController@addToNewProducts');
+
+    # Current Products
+    Route::post('/new_product', 'ProductController@store')->name('product.store');
+    Route::post('/add_to_current_products', 'ProductController@addToCurrentProducts');
+
+    # Archived Products
+    Route::get('/archived_products', 'ProductController@archived')->name('product.archived');
+    Route::post('/add_to_draft_products', 'ProductController@addToDraftProducts');
+    Route::post('/add_to_archive_products', 'ProductController@addToArchiveProducts');
+
+    
 
     // Client
     Route::get('/client', 'ClientController@index')->name('client.index');

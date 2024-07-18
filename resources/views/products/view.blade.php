@@ -14,12 +14,12 @@
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
-                {{-- <div class="form-group row">
+                <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->ddw_number }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials:</b></label>
                     <label class="col-sm-3 col-form-label"></label>
-                </div> --}}
+                </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Code:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->code }}</label>
@@ -100,7 +100,7 @@
                     <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Historical Logs</a>
+                    <a class="nav-link" id="historycal-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -142,24 +142,169 @@
                 </div>
                 <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval" name="submit_approval" id="">Add</button>
+                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">Add</button>
                     </div>
-                    <table class="table table-striped table-hover" id="specification_table" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Specification</th>
-                                <th>Testing Condition</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    @include('products.add_specification')
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Specification</th>
+                                    <th>Testing Condition</th>
+                                    <th>Remarks</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($data->productSpecification)
+                                    @foreach ($data->productSpecification as $ps)
+                                        <tr>
+                                            <td>{{$ps->Parameter}}</td>
+                                            <td>{{$ps->Specification}}</td>
+                                            <td>{{$ps->TestingCondition}}</td>
+                                            <td>{{$ps->Remarks}}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#specification-{{$ps->Id}}">
+                                                    <i class="ti-pencil"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @foreach ($data->productSpecification as $ps)
+                        @include('products.edit_specification')
+                    @endforeach
                 </div>
-                <div class="tab-pane fade" id="pds" role="tabpanel" aria-labelledby="pds-tab">...</div>
-                <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab"></div>
+                <div class="tab-pane fade" id="pds" role="tabpanel" aria-labelledby="pds-tab">
+                    {{-- <div class="col-lg-12" align="right">
+                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
+                    </div>
+                    @include('products.add_pds') --}}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Control Number</th>
+                                    <th>Company</th>
+                                    <th>Date Issued</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($data->productDataSheet)
+                                    @foreach ($data->productDataSheet as $pds)
+                                        <tr>
+                                            <td>@if($pds->products){{$pds->products->code}}@endif</td>
+                                            <td>{{$pds->ControlNumber}}</td>
+                                            <td>@if($pds->clients){{$pds->clients->Name}}@endif</td>
+                                            <td></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#pdsModal-{{$pds->Id}}">
+                                                    <i class="ti-pencil"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- @foreach ($data->productFiles as $pf)
+                        @include('products.edit_file')
+                    @endforeach --}}
+                </div>
+                <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    <div class="col-lg-12" align="right">
+                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
+                    </div>
+                    @include('products.add_file')
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Client</th>
+                                    <th>File</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($data->productFiles)
+                                    @foreach ($data->productFiles as $pf)
+                                        <tr>
+                                            <td>{{$pf->Name}}</td>
+                                            <td>
+                                                @if($pf->IsConfidential == 0)
+                                                    {{$pf->Description}}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($pf->IsConfidential == 0)
+                                                    @if($pf->client)
+                                                        {{$pf->client->Name}}
+                                                    @endif
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a href="{{$pf->Path}}" class="btn btn-sm btn-info" target="_blank">
+                                                    <i class="ti-eye"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                    <i class="ti-pencil"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @foreach ($data->productFiles as $pf)
+                        @include('products.edit_file')
+                    @endforeach
+                </div>
                 <div class="tab-pane fade" id="rmc" role="tabpanel" aria-labelledby="rmc-tab">...</div>
                 <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">...</div>
                 <div class="tab-pane fade" id="identical" role="tabpanel" aria-labelledby="identical-tab">...</div>
+                <div class="tab-pane fade" id="historicalLogs" role="tabpanel" aria-labelledby="identical-tab">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(count($data->productEventLogs) > 0)
+                                    @foreach ($data->productEventLogs as $logs)
+                                        <tr>
+                                            <td>{{date('M d Y', strtotime($logs->TimeStamp))}}</td>
+                                            <td>{{$logs->userByUserId->full_name}}</td>
+                                            <td>{{$logs->Details}}</td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3">No history available.</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
