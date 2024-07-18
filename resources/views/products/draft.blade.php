@@ -8,8 +8,8 @@
             <button type="button" class="btn btn-sm  btn-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">Add Product</button>
         </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-start align-items-start">
-                    <div class="col-md-5">
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-3">
                         <div class="search">
                             <i class="ti ti-search"></i>
                             <input type="text" class="form-control" placeholder="Search Product" name="search" value="{{$search}}"> 

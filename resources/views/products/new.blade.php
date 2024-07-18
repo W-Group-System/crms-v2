@@ -5,8 +5,8 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">Product List (New)</h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-start align-items-start">
-                    <div class="col-md-5">
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-3">
                         <div class="search">
                             <i class="ti ti-search"></i>
                             <input type="text" class="form-control" placeholder="Search Product" name="search" value="{{$search}}"> 
