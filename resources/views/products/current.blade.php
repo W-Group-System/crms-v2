@@ -33,7 +33,7 @@
                 </div>
             </form>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-start align-items-start">
+                <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-3">
                         <div class="search">
                             <i class="ti ti-search"></i>

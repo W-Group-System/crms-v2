@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">Product List (Archived)</h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" >
-                <div class="row height d-flex justify-content-start align-items-start">
+                <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-3">
                         <div class="search">
                             <i class="ti ti-search"></i>
@@ -187,6 +187,29 @@ $(document).ready(function() {
         $.ajax({
             type: "POST",
             url: "{{url('add_to_draft_products')}}",
+            data: id,
+            headers: 
+            {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res)
+            {
+                Swal.fire({
+                    icon: 'success',
+                    title: res.message,
+                }).then(() => {
+                    location.reload();
+                })
+            }
+        })
+    })
+
+    $(".deleteProduct").on('click', function() {
+        var id = $(this).data();
+
+        $.ajax({
+            type: "POST",
+            url: "{{url('delete_product')}}",
             data: id,
             headers: 
             {

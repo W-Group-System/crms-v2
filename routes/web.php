@@ -61,7 +61,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('update_raw_materials/{id}', 'ProductController@updateRawMaterials');
     Route::get('/edit_product/{id}', 'ProductController@edit')->name('edit_product');
     Route::post('update_product/{id}', 'ProductController@update')->name('update_product');
-    Route::get('delete_product/{id}', 'ProductController@delete')->name('delete_product');
+    Route::post('delete_product', 'ProductController@delete')->name('delete_product');
+
     # Product Specification
     Route::post('add_specification', 'ProductController@specification');
     Route::post('edit_specification/{id}', 'ProductController@editSpecification');
