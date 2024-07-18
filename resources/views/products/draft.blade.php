@@ -39,17 +39,26 @@
                                 </td>
                                 <td>{{date('M d, Y', strtotime($p->created_at))}}</td>
                                 <td>
-                                    <a href="{{url('view_product/'.$p->id)}}" type="submit" class="btn btn-info btn-sm" title="View Products">
-                                        <i class="ti-eye"></i>
-                                    </a>
+                                    <div>
+                                        <a href="{{url('view_product/'.$p->id)}}" type="submit" class="btn btn-info btn-sm" title="View Products">
+                                            <i class="ti-eye"></i>
+                                        </a>
+        
+                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$p->id}}">
+                                            <i class="ti-archive"></i>
+                                        </button>
+                                    </div>
+
+                                    <div>
+                                        <button class="btn btn-success btn-sm newProducts" type="button" title="Add new products" data-id="{{$p->id}}">
+                                            <i class="ti-plus"></i>
+                                        </button>
+
+                                        <button class="btn btn-sm btn-warning" title="edit" type="button" data-toggle="modal" data-target="#formProduct-{{$p->id}}">
+                                            <i class="ti-pencil"></i>
+                                        </button>
+                                    </div>
     
-                                    <button class="btn btn-warning btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$p->id}}">
-                                        <i class="ti-archive"></i>
-                                    </button>
-    
-                                    <button class="btn btn-success btn-sm newProducts" type="button" title="Add new products" data-id="{{$p->id}}">
-                                        <i class="ti-plus"></i>
-                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -127,166 +136,9 @@
     </div>
 </div>
 
-{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>  --}}
-
-{{-- <script>
-    $(document).ready(function(){
-        $('#draft_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('product.draft') }}"
-            },
-            columns: [
-                {
-                    data: 'ddw_number',
-                    name: 'ddw_number'
-                },
-                {
-                    data: 'code',
-                    name: 'code'
-                },
-                {
-                    data: 'user_full_name',
-                    name: 'user_full_name'
-                },
-                {
-                    data: 'created_at',
-                    name: 'created_at',
-                    render: function(data, type, row) {
-                        return moment(data).format('YYYY-MM-DD'); // Format as desired
-                    }
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: [0, 1, 2, 3], // Target the column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
-
-        $('#add_product').click(function(){
-            $('#formProduct').modal('show');
-            $('.modal-title').text("Add New Product");
-        });
-
-        $('#form_product').on('submit', function(event){
-            event.preventDefault();
-            if($('#action').val() == 'Save')
-            {
-                $.ajax({
-                    url: "{{ route('product.store') }}",
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success: function(data)
-                    {
-                        var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
-                        }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_product')[0].reset();
-                            setTimeout(function(){
-                                $('#formProduct').modal('hide');
-                            }, 2000);
-                            $('#draft_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
-                        $('#form_result').html(html);
-                    }
-                })
-            }
-
-            if($('#action').val() == 'Edit')
-            {
-                var formData = new FormData(this);
-                formData.append('id', $('#hidden_id').val());
-                $.ajax({
-                    url: "{{ route('update_product', ':id') }}".replace(':id', $('#hidden_id').val()),
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success:function(data)
-                    {
-                        var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
-                        }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_product')[0].reset();
-                            setTimeout(function(){
-                                $('#formProduct').modal('hide');
-                            }, 2000);
-                            $('#draft_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
-                        $('#form_result').html(html);
-                    }
-                });
-            }
-        });
-
-        $(document).on('click', '.edit', function(){
-            var id = $(this).attr('id');
-            $('#form_result').html('');
-            $.ajax({
-                url: "{{ route('edit_product', ['id' => '_id_']) }}".replace('_id_', id),
-                dataType: "json",
-                success: function(html){
-                    $('#ddw_number').val(html.data.ddw_number);
-                    $('#code').val(html.data.code);
-                    $('#reference_no').val(html.data.reference_no);
-                    $('#type').val(html.data.type).trigger('change');
-                    $('#application_id').val(html.data.application_id).trigger('change');
-                    $('#application_subcategory_id').val(html.data.application_subcategory_id).trigger('change');
-                    $('#product_origin').val(html.data.product_origin);
-                    $('#hidden_id').val(html.data.id);
-                    $('.modal-title').text("Edit Product");
-                    $('#action_button').val("Update");
-                    $('#action').val("Edit");
-                    $('#formProduct').modal('show');
-                }
-            });
-        });
-    });
-</script> --}}
+@foreach ($products as $p)
+    @include('products.edit_draft')
+@endforeach
 
 <script>
     $(document).ready(function() {

@@ -42,17 +42,25 @@
                                 </td>
                                 <td>{{date('M d, Y', strtotime($product->created_at))}}</td>
                                 <td>
-                                    <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product">
-                                        <i class="ti-eye"></i>
-                                    </a>
-
-                                    <button class="btn btn-warning btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$product->id}}">
-                                        <i class="ti-archive"></i>
-                                    </button>
+                                    <div>
+                                        <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product">
+                                            <i class="ti-eye"></i>
+                                        </a>
     
-                                    <button class="btn btn-success btn-sm currentProducts" type="button" title="Add current products" data-id="{{$product->id}}">
-                                        <i class="ti-plus"></i>
-                                    </button>
+                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$product->id}}">
+                                            <i class="ti-archive"></i>
+                                        </button>
+                                    </div>
+    
+                                    <div>
+                                        <button class="btn btn-success btn-sm currentProducts" type="button" title="Add current products" data-id="{{$product->id}}">
+                                            <i class="ti-plus"></i>
+                                        </button>
+
+                                        <button class="btn btn-warning btn-sm" type="button" title="Edit" data-toggle="modal" data-target="#formProduct-{{$product->id}}">
+                                            <i class="ti-pencil"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -65,59 +73,9 @@
     </div>
 </div>
 
-
-{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
-<script>
-    $(document).ready(function(){
-        $('#product_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('product.new') }}"
-            },
-            columns: [
-                {
-                    data: 'ddw_number',
-                    name: 'ddw_number'
-                },
-                {
-                    data: 'code',
-                    name: 'code'
-                },
-                {
-                    data: 'user_full_name',
-                    name: 'user_full_name'
-                },
-                {
-                    data: 'created_at',
-                    name: 'created_at',
-                    render: function(data, type, row) {
-                        return moment(data).format('YYYY-MM-DD'); // Format as desired
-                    }
-
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    width: '10%',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: 3, // Target the Title column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
-
-    });
-</script> --}}
+@foreach ($products as $p)
+    @include('products.edit_draft')
+@endforeach
 
 <script>
     $(document).ready(function() {

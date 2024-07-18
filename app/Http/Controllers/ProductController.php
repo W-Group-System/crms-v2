@@ -62,11 +62,16 @@ class ProductController extends Controller
             ->where('status', '2')
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
+
+        $product_applications = ProductApplication::all();
+        $product_subcategories = ProductSubcategories::all();
         
         return view('products.new',
             array(
                 'products' => $products,
-                'search' => $request->search
+                'search' => $request->search,
+                'product_applications' => $product_applications,
+                'product_subcategories' => $product_subcategories
             )
         ); 
     }
@@ -162,37 +167,18 @@ class ProductController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'code'              =>  'required',
-            'type'              =>  'required',
-            'application_id'    =>  'required'
-        );
+        $product = Product::findOrFail($id);
+        $product->ddw_number = $request->ddw_number;
+        $product->code = $request->code;
+        $product->reference_no = $request->reference_no;
+        $product->type = $request->type;
+        $product->application_id = $request->application_id;
+        $product->application_subcategory_id = $request->application_subcategory_id;
+        $product->product_origin = $request->product_origin;
+        $product->save();
 
-        $customMessages = [
-            'application_id.required'   =>  'The application field is required.',
-            'code.required'             =>  'The product code field is required'            
-        ];
-
-        $error = Validator::make($request->all(), $rules, $customMessages);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'ddw_number'                    =>  $request->ddw_number,
-            'code'                          =>  $request->code,
-            'reference_no'                  =>  $request->reference_no,
-            'type'                          =>  $request->type,
-            'application_id'                =>  $request->application_id,
-            'application_subcategory_id'    =>  $request->application_subcategory_id,
-            'product_origin'                =>  $request->product_origin,
-        );
-
-        Product::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        Alert::success('Successfully Updated.')->persistent('Dismiss');
+        return back();
     }
 
     // View
@@ -227,10 +213,12 @@ class ProductController extends Controller
     }
 
     // Delete
-    public function delete($id)
+    public function delete(Request $request)
     {
-        $data = Product::findOrFail($id);
+        $data = Product::findOrFail($request->id);
         $data->delete();
+
+        return array('message' => 'Successfully Deleted.');
     }
 
     public function updateRawMaterials(Request $request, $id)

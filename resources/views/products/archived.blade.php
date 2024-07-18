@@ -203,6 +203,29 @@ $(document).ready(function() {
             }
         })
     })
+
+    $(".deleteProduct").on('click', function() {
+        var id = $(this).data();
+
+        $.ajax({
+            type: "POST",
+            url: "{{url('delete_product')}}",
+            data: id,
+            headers: 
+            {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res)
+            {
+                Swal.fire({
+                    icon: 'success',
+                    title: res.message,
+                }).then(() => {
+                    location.reload();
+                })
+            }
+        })
+    })
 })
 </script>
 @endsection
