@@ -6,110 +6,70 @@ use App\ProductApplication;
 use App\ProductSubcategories;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductSubcategoriesController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-        $subcategories = ProductSubcategories::with('application')->orderBy('id', 'desc')->get();
+        $subcategories = ProductSubcategories::with('application')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
         $productapp = ProductApplication::get();
-        if(request()->ajax())
-        // dd(request());
-        {
-            return datatables()->of($subcategories)
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('product_subcategories.index', compact('subcategories', 'productapp')); 
+
+        return view('product_subcategories.index', 
+            array(
+                'subcategories' => $subcategories,
+                'productapp' => $productapp,
+                'search' => $request->search
+            )
+        ); 
     }
 
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'ProductApplicationId'  =>  'required',
-            'Name'                  =>  'required',
-            'Description'           =>  'required'
-        );
+        $productSubCategories = new ProductSubcategories;
+        $productSubCategories->ProductApplicationId = $request->ProductApplicationId;
+        $productSubCategories->Name = $request->Name;
+        $productSubCategories->Description = $request->Description;
+        $productSubCategories->save();
 
-        $customMessages = [
-            'ProductApplicationId.required' => 'The product application field is required.',
-            'Name.required'                 => 'The subcategory field is required.',
-            'Description.required'          => 'The description field is required.',
-        ];
-    
-        $error = Validator::make($request->all(), $rules, $customMessages);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'ProductApplicationId'  =>  $request->ProductApplicationId,
-            'Name'                  =>  $request->Name,
-            'Description'           =>  $request->Description
-        );
-
-        ProductSubcategories::create($form_data);
-
-        return response()->json(['success' => 'Data Added Successfully.']);
+        Alert::success('Successfully Saved.')->persistent('Dismiss');
+        return back();
     }
 
     // Edit
-    public function edit($id)
-    {
-        if(request()->ajax())
-        {
-            $data = ProductSubcategories::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
-    }
+    // public function edit($id)
+    // {
+    //     if(request()->ajax())
+    //     {
+    //         $data = ProductSubcategories::findOrFail($id);
+    //         return response()->json(['data' => $data]);
+    //     }
+    // }
 
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'ProductApplicationId'  =>  'required',
-            'Name'                  =>  'required',
-            'Description'           =>  'required'
-        );
+        $productSubCategories = ProductSubcategories::findOrFail($id);
+        $productSubCategories->ProductApplicationId = $request->ProductApplicationId;
+        $productSubCategories->Name = $request->Name;
+        $productSubCategories->Description = $request->Description;
+        $productSubCategories->save();
 
-        $customMessages = [
-            'ProductApplicationId.required' => 'The product application field is required.',
-            'Name.required'                 => 'The subcategory field is required.',
-            'Description.required'          => 'The description field is required.',
-        ];
-    
-        $error = Validator::make($request->all(), $rules, $customMessages);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'ProductApplicationId'  =>  $request->ProductApplicationId,
-            'Name'                  =>  $request->Name,
-            'Description'           =>  $request->Description
-        );
-
-        ProductSubcategories::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        Alert::success('Successfully updated.')->persistent('Dismiss');
+        return back();
     }
 
     // Delete
-    public function delete($id)
+    public function delete(Request $request)
     {
-        $data = ProductSubcategories::findOrFail($id);
+        $data = ProductSubcategories::findOrFail($request->id);
         $data->delete();
+
+        return array('message' => 'Successfully Deleted');
     }
 }
