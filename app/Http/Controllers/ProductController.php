@@ -1,10 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Client;
 use App\Product;
 use App\User;
 use App\ProductApplication;
+use App\ProductFiles;
+use App\ProductMaterialsComposition;
 use App\ProductRawMaterials;
+use App\ProductSpecification;
 use App\ProductSubcategories;
 use App\RawMaterial;
 use Validator;
@@ -14,49 +19,56 @@ use RealRashid\SweetAlert\Facades\Alert;
 class ProductController extends Controller
 {
     // Current List
-    public function current()
+    public function current(Request $request)
     {   
-        $products = Product::with(['userById', 'userByUserId'])->where('status', '4')->orderBy('id', 'desc')->get();
-        if(request()->ajax())
-        {
-            return datatables()->of($products)
-                    ->addColumn('user_full_name', function (Product $product) {
-                        $user = $product->getRelatedUser();
-                        return $user ? $user->full_name : '';
-                    })
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('products.current'); 
+        $products = Product::with(['userById', 'userByUserId'])
+            ->when($request->search, function($q)use($request){
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+            })
+            ->when($request->application_filter, function($q)use($request) {
+                $q->where('application_id', $request->application_filter);
+            })
+            ->when($request->material_filter, function($q)use($request) {
+                $q->whereHas('productMaterialComposition', function($q)use($request) {
+                    $q->where('MaterialId', $request->material_filter);
+                });
+            }) 
+            ->where('status', '4')
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
+        
+        $application = ProductApplication::get();
+        $raw_material = RawMaterial::get();
+        
+        return view('products.current',
+            array(
+                'products' => $products,
+                'search' => $request->search,
+                'application' =>  $application,
+                'raw_material' => $raw_material,
+                'application_filter' => $request->application_filter,
+                'material_filter' => $request->material_filter
+            )
+        ); 
     }
 
     // New List
-    public function new()
+    public function new(Request $request)
     {   
-        $products = Product::with(['userById', 'userByUserId'])->where('status', '2')->orderBy('id', 'desc')->get();
-        if(request()->ajax())
-        {
-            return datatables()->of($products)
-                    ->addColumn('user_full_name', function (Product $product) {
-                        $user = $product->getRelatedUser();
-                        return $user ? $user->full_name : '';
-                    })
-                    ->addColumn('action', function($data){
-                        $buttons = '<a type="button" href="' . route("product.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('products.new'); 
+        $products = Product::with(['userById', 'userByUserId'])
+            ->when($request->search, function($q)use($request){
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+            }) 
+            ->where('status', '2')
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
+        
+        return view('products.new',
+            array(
+                'products' => $products,
+                'search' => $request->search
+            )
+        ); 
     }
 
     // Draft List 
@@ -74,47 +86,27 @@ class ProductController extends Controller
 
         $product_applications = ProductApplication::all();
         $product_subcategories = ProductSubcategories::all();
-        // dd($products);
-        // if(request()->ajax())
-        // {
-        //     return datatables()->of($products)
-        //             ->addColumn('user_full_name', function (Product $product) {
-        //                 $user = $product->getRelatedUser();
-        //                 return $user ? $user->full_name : '';
-        //             })
-        //             ->addColumn('action', function($data){
-        //                 $buttons = '<a type="button" href="' . route("product.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
-        //                 $buttons .= '&nbsp;&nbsp;';
-        //                 $buttons .= '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-        //                 return $buttons;
-        //             })
-        //             ->rawColumns(['action'])
-        //             ->make(true);
-        // }
+
         return view('products.draft', compact('products','product_applications', 'product_subcategories', 'search')); 
     }
 
     // Archived List
-    public function archived()
+    public function archived(Request $request)
     {   
-        $products = Product::with(['userById', 'userByUserId'])->where('status', '5')->orderBy('id', 'desc')->get();
-        if(request()->ajax())
-        {
-            return datatables()->of($products)
-                    ->addColumn('user_full_name', function (Product $product) {
-                        $user = $product->getRelatedUser();
-                        return $user ? $user->full_name : '';
-                    })
-                    ->addColumn('action', function($data){
-                        $buttons = '<a type="button" href="' . route("product.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn-table btn btn-success"><i class="ti-eye"></i></a>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn-table btn btn-danger"><i class="ti-trash"></i></button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('products.archived'); 
+        $products = Product::with(['userById', 'userByUserId'])
+            ->when($request->search, function($q)use($request) {
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+            })
+            ->where('status', '5')
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
+        
+        return view('products.archived', 
+            array(
+                'products' => $products,
+                'search' => $request->search
+            )
+        ); 
     }
 
     // Store
@@ -206,7 +198,21 @@ class ProductController extends Controller
     // View
     public function view($id)
     {
-        $data = Product::with(['productMaterialComposition'])->find($id);
+        $data = Product::with([
+            'productMaterialComposition', 
+            'productSpecification' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productFiles' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productDataSheet' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productEventLogs'
+            ])
+            ->find($id);
+
         $users = User::all();
         
         $product_applications = ProductApplication::find($data->application_id);
@@ -215,9 +221,9 @@ class ProductController extends Controller
         $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
 
         $rawMaterials = RawMaterial::where('status', 'Active')->get();
-        // $product_raw_materials = ProductRawMaterials::get();
+        $client = Client::get();
 
-        return view('products.view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials'));
+        return view('products.view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));
     }
 
     // Delete
@@ -229,18 +235,126 @@ class ProductController extends Controller
 
     public function updateRawMaterials(Request $request, $id)
     {
-        $product_raw_materials = ProductRawMaterials::where('product_id', $id)->delete();
+        $product_raw_materials = ProductMaterialsComposition::where('ProductId', $id)->delete();
 
         foreach($request->raw_materials as $key=>$rm)
         {   
-            $product_raw_materials = new ProductRawMaterials;
-            $product_raw_materials->raw_material_id = $rm;
-            $product_raw_materials->percent = $request->percent[$key];
-            $product_raw_materials->product_id = $id;
+            $product_raw_materials = new ProductMaterialsComposition;
+            $product_raw_materials->MaterialId = $rm;
+            $product_raw_materials->Percentage = $request->percent[$key];
+            $product_raw_materials->ProductId = $id;
             $product_raw_materials->save();
         }
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function addToNewProducts(Request $request)
+    {
+        $product = Product::findOrFail($request->id);
+        $product->status = 2;
+        $product->save();
+
+        return array('message' => 'Successfully added to new products');
+    }
+
+    public function addToCurrentProducts(Request $request)
+    {
+        $product = Product::findOrFail($request->id);
+        $product->status = 4;
+        $product->save();
+
+        return array('message' => 'Successfully added to current products');
+    }
+
+    public function addToDraftProducts(Request $request)
+    {
+        $product = Product::findOrFail($request->id);
+        $product->status = 1;
+        $product->save();
+
+        return array('message' => 'Successfully added to draft products');
+    }
+
+    public function addToArchiveProducts(Request $request)
+    {
+        $product = Product::findOrFail($request->id);
+        $product->status = 5;
+        $product->save();
+
+        return array('message' => 'Successfully added to archive products');
+    }
+
+    public function specification(Request $request)
+    {
+        $productSpecification = new ProductSpecification;
+        $productSpecification->Parameter = $request->parameter;
+        $productSpecification->Specification = $request->specification;
+        $productSpecification->TestingCondition = $request->testing_condition;
+        $productSpecification->Remarks = $request->remarks;
+        $productSpecification->ProductId = $request->product_id;
+        $productSpecification->CreatedDate = date('Y-m-d h:i:s');
+        $productSpecification->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function editSpecification(Request $request, $id)
+    {
+        $productSpecification = ProductSpecification::findOrFail($id);
+        $productSpecification->Parameter = $request->parameter;
+        $productSpecification->Specification = $request->specification;
+        $productSpecification->TestingCondition = $request->testing_condition;
+        $productSpecification->Remarks = $request->remarks;
+        $productSpecification->ModifiedDate = date('Y-m-d h:i:s');
+        $productSpecification->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function addFiles(Request $request)
+    {
+        $fileProducts = new ProductFiles;
+        $fileProducts->ProductId = $request->product_id;
+        $fileProducts->Name = $request->name;
+        $fileProducts->Description = $request->description;
+        $fileProducts->ClientId = $request->client;
+        $fileProducts->IsConfidential = isset($request->is_confidential)?1:0;
+        
+        $file = $request->file('file');
+        $fileName = time().'_'.$file->getClientOriginalName();
+        $file->move(public_path().'/attachments/', $fileName);
+        
+        $fileProducts->Path = "/attachments/" . $fileName;
+        $fileProducts->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function editFiles(Request $request, $id)
+    {
+        $fileProducts = ProductFiles::findOrFail($id);
+        $fileProducts->Name = $request->name;
+        $fileProducts->Description = $request->description;
+        $fileProducts->ClientId = $request->client;
+        $fileProducts->IsConfidential = isset($request->is_confidential)?1:0;
+        
+        if ($request->hasFile('file'))
+        {
+            $file = $request->file('file');
+            $fileName = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path().'/attachments/', $fileName);
+
+            $fileProducts->Path = "/attachments/" . $fileName;
+        }
+        
+        $fileProducts->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
     }
 }
