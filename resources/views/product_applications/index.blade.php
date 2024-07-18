@@ -5,17 +5,48 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Application List
-            <button type="button" class="btn btn-md btn-primary" name="add_product_application" id="add_product_application">Add Product Application</button>
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formProductApplication">Add Product Application</button>
             </h4>
-            <table class="table table-striped table-hover" id="product_application_table" width="100%">
-                <thead>
-                    <tr>
-                        <th width="35%">Application</th>
-                        <th width="50%">Description</th>
-                        <th width="15%">Action</th>
-                    </tr>
-                </thead>
-            </table>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-3">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search Product Application" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered" id="product_application_table" width="100%">
+                    <thead>
+                        <tr>
+                            <th width="35%">Application</th>
+                            <th width="50%">Description</th>
+                            <th width="15%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($productApplications as $pa)
+                            <tr>
+                                <td>{{$pa->Name}}</td>
+                                <td>{{$pa->Description}}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#productApplication-{{$pa->id}}" title="Edit">
+                                        <i class="ti-pencil"></i>
+                                    </button>
+
+                                    <button class="btn btn-danger btn-sm deleteProductApplication" title="Delete" data-id="{{$pa->id}}">
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                {!! $productApplications->appends(['search' => $search])->links() !!}
+            </div>
         </div>
     </div>
 </div>
@@ -29,16 +60,15 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_product_application" enctype="multipart/form-data" action="{{ route('region.store') }}">
-                    <span id="form_result"></span>
+                <form method="POST" id="form_product_application" enctype="multipart/form-data" action="{{ url('new_product_applications') }}">
                     @csrf
                     <div class="form-group">
                         <label for="name">Application</label>
-                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Application Name">
+                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Application Name" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
-                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
+                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description" required>
                     </div>
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
@@ -51,30 +81,15 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Product Application</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding: 20px">
-                <h5 style="margin: 0">Are you sure you want to delete this data?</h5>
-            </div>
-            <div class="modal-footer" style="padding: 0.6875rem">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" name="delete_product_application" id="delete_product_application" class="btn btn-danger">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
+@foreach ($productApplications as $pa)
+    @include('product_applications.edit_product_application')
+@endforeach
 
-<script>
+{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>  --}}
+
+{{-- <script>
     $(document).ready(function(){
         $('#product_application_table').DataTable({
             processing: true,
@@ -240,5 +255,35 @@
             })
         });
     });
+</script> --}}
+
+<script>
+    $(document).ready(function() {
+        $('.deleteProductApplication').on('click', function() {
+            var id = $(this).data('id')
+            console.log(id);
+            $.ajax({
+                type: "POST",
+                url: "{{url('delete_product_applications')}}",
+                data:
+                {
+                    id: id
+                },
+                headers: 
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res)
+                {
+                    Swal.fire({
+                        icon: "success",
+                        title: res.message
+                    }).then(() => {
+                        location.reload()
+                    })
+                }
+            })
+        })
+    })
 </script>
 @endsection

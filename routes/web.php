@@ -182,16 +182,16 @@ Route::group(['middleware' => 'auth'], function () {
     // Product Applications
     Route::get('/product_applications', 'ProductApplicationController@index')->name('product_applications.index');
     Route::post('/new_product_applications', 'ProductApplicationController@store')->name('product_applications.store');
-    Route::get('/edit_product_applications/{id}', 'ProductApplicationController@edit')->name('edit_product_applications');
+    // Route::get('/edit_product_applications/{id}', 'ProductApplicationController@edit')->name('edit_product_applications');
     Route::post('update_product_applications/{id}', 'ProductApplicationController@update')->name('update_product_applications');
-    Route::get('delete_product_applications/{id}', 'ProductApplicationController@delete')->name('delete_product_applications');
+    Route::post('delete_product_applications', 'ProductApplicationController@delete')->name('delete_product_applications');
 
     // Product Subcategories
     Route::get('/product_subcategories', 'ProductSubcategoriesController@index')->name('product_subcategories.index');
     Route::post('/new_product_subcategories', 'ProductSubcategoriesController@store')->name('product_subcategories.store');
     Route::get('/edit_product_subcategories/{id}', 'ProductSubcategoriesController@edit')->name('edit_product_subcategories');
     Route::post('update_product_subcategories/{id}', 'ProductSubcategoriesController@update')->name('update_product_subcategories');
-    Route::get('delete_product_subcategories/{id}', 'ProductSubcategoriesController@delete')->name('delete_product_subcategories');
+    Route::post('delete_product_subcategories', 'ProductSubcategoriesController@delete')->name('delete_product_subcategories');
 
     // Raw Material
     Route::get('/raw_material', 'RawMaterialController@index')->name('raw_material.index');
