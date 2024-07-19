@@ -6,13 +6,10 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             New Base Price List
-            <div class="buttons">
-                <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#createNewBasePrice">Add New Base Price</button>
-                <button type="button" class="btn btn-md btn-warning" data-toggle="modal" data-target="#editAllNewBasePrice">Edit New Base Price</button></div>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-start align-items-start">
-                    <div class="col-md-5">
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-3">
                         <div class="search">
                             <i class="ti ti-search"></i>
                             <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
@@ -21,41 +18,57 @@
                     </div>
                 </div>
             </form>
-            <table class="table table-striped table-hover" id="base_price_table" width="100%">
-                <thead>
-                    <tr>
-                        <th width="20%">Material</th>
-                        <th width="20%">Price</th>
-                        <th width="20%">Created By</th>
-                        <th width="20%">Date Created</th>
-                        <th width="20%">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ( $newBasePrice as $newBase)
-                    <tr>
-                        <td>{{ $newBase->productMaterial->Name }}</td>
-                        <td>{{ $newBase->Price }}</td>
-                        <td>{{ $newBase->userCreated->full_name }}</td>
-                        <td>{{ $newBase->CreatedDate }}</td>
-                        <td align="center">
-                            <button type="button" class="btn btn-sm btn-warning"
-                                data-target="#editBase{{ $newBase->Id }}" data-toggle="modal" title='Edit New Base Price'>
-                                <i class="ti-pencil"></i>
-                            </button>  
-                            <button type="button" class="btn btn-sm btn-success approve-btn"  data-id="{{ $newBase->Id }}">
-                                <i class="ti-thumb-up"></i>
-                            </button> 
-                            {{-- <a href="approveNewBasePrice/{{ $newBase->Id }}" class="btn btn-success" title="Approve New Base Price">
-                                <i class="ti-thumb-up"></i></a> --}}
-                        </td>
-                    </tr>
-                        
-                    @endforeach
-                </tbody>
-            </table>
-            {!! $newBasePrice->links() !!}
+            
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#createNewBasePrice">Add New Base Price</button>
+            <button type="button" class="btn btn-md btn-warning" data-toggle="modal" data-target="#editAllNewBasePrice">Edit New Base Price</button>
 
+            <div class="table-responsive mt-3">
+                <table class="table table-striped table-hover table-bordered" id="base_price_table" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Price</th>
+                            <th>Created By</th>
+                            <th>Date Created</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ( $newBasePrice as $newBase)
+                        <tr>
+                            <td>{{ $newBase->productMaterial->Name }}</td>
+                            <td>{{ $newBase->Price }}</td>
+                            <td>{{ $newBase->userCreated->full_name }}</td>
+                            <td>{{ date('M d, Y', strtotime($newBase->CreatedDate)) }}</td>
+                            <td>
+                                @if($newBase->Status == 1)
+                                    <span class="badge badge-warning">Pending</span>
+                                @elseif($newBase->Status == 2)
+                                    <span class="badge badge-danger">Disapproved</span>
+                                @elseif($newBase->Status == 3)
+                                    <span class="badge badge-success">Approved</span>
+                                @endif
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning"
+                                    data-target="#editBase{{ $newBase->Id }}" data-toggle="modal" title='Edit New Base Price'>
+                                    <i class="ti-pencil"></i>
+                                </button>  
+                                <button type="button" class="btn btn-sm btn-success approve-btn"  data-id="{{ $newBase->Id }}">
+                                    <i class="ti-thumb-up"></i>
+                                </button> 
+                                {{-- <a href="approveNewBasePrice/{{ $newBase->Id }}" class="btn btn-success" title="Approve New Base Price">
+                                    <i class="ti-thumb-up"></i></a> --}}
+                            </td>
+                        </tr>
+                            
+                        @endforeach
+                    </tbody>
+                </table>
+
+                {!! $newBasePrice->appends(['search' => $search])->links() !!}
+            </div>
         </div>
     </div>
 </div>
@@ -92,6 +105,7 @@
         </div>
     </div>
 </div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
@@ -112,6 +126,7 @@
                 title: "Do you want to approve this base price?",
                 showDenyButton: true,
                 showCancelButton: true,
+                icon: "info",
                 confirmButtonText: "Approve",
                 denyButtonText: `Disapprove`
             }).then((result) => {

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\BasePrice;
 use App\Client;
+use App\Helpers\Helpers;
 use App\Product;
 use App\User;
 use App\ProductApplication;

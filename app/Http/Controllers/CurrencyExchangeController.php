@@ -11,21 +11,9 @@ class CurrencyExchangeController extends Controller
     // List
     public function index()
     {   
-        $currency_exchanges = CurrencyExchange::with(['fromCurrency', 'toCurrency'])->latest()->get();
+        $currency_exchanges = CurrencyExchange::with(['fromCurrency', 'toCurrency'])->latest()->paginate(10);
         $currencies = PriceCurrency::get();
         
-        if(request()->ajax())
-        {
-            return datatables()->of($currency_exchanges)
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
         return view('currency_exchanges.index', compact('currency_exchanges', 'currencies')); 
     }
 
