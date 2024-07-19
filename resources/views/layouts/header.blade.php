@@ -12,7 +12,7 @@
 
         <link rel="dns-prefetch" href="//fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
-        
+        <link href="{{ asset('css/sweetalert2.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/feather.css') }}" rel="stylesheet">
         <link href="{{ asset('css/themify-icons.css') }}" rel="stylesheet">
         <link href="{{ asset('css/vendor.bundle.base.css') }}" rel="stylesheet">
@@ -24,6 +24,8 @@
         <link href="{{ asset('css/select2-bootstrap.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link href="{{ asset('css/buttons.bootstrap4.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
@@ -148,7 +150,7 @@
                             <div class="collapse" id="table_pricing2">
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/base_price') }}">Current Base Price</a></li>
-                                    <!-- <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/project_name') }}">New Base Price</a></li> -->
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/new_base_price') }}">New Base Price</a></li>
                                 </ul>
                             </div>
                             <div class="collapse" id="table_product2">
@@ -1048,7 +1050,7 @@
                 font-style: normal;
             }
         </style>
-        @include('sweetalert::alert')
+        {{-- @include('sweetalert::alert') --}}
         <script src="{{ asset('js/vendor.bundle.base.js') }}"></script>
         <script src="{{ asset('js/Chart.min.js') }}"></script>
         <script src="{{ asset('js/jquery.dataTables.js') }}"></script>
@@ -1067,5 +1069,6 @@
 
         <script src="{{ asset('js/dashboard.js') }}"></script>
         <script src="{{ asset('js/Chart.roundedBarCharts.js') }}"></script>
+        <script src="{{asset('js/sweetalert2.min.js')}}"></script>
     </body>
 </html>
