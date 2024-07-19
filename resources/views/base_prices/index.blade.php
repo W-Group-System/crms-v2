@@ -5,8 +5,18 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Base Price List
-            <button type="button" class="btn btn-md btn-primary" name="add_base_price" id="add_base_price">Add Base Price</button>
             </h4>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-start align-items-start">
+                    <div class="col-md-5">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <table class="table table-striped table-hover" id="base_price_table" width="100%">
                 <thead>
                     <tr>
@@ -17,7 +27,26 @@
                         <th width="20%">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ( $currentBasePrice as $currentBase)
+                    <tr>
+                        <td>{{ $currentBase->productMaterial->Name }}</td>
+                        <td>{{ $currentBase->Price }}</td>
+                        <td>{{ optional($currentBase->userApproved)->full_name }}</td>
+                        <td>{{ $currentBase->EffectiveDate }}</td>
+                        <td align="center">
+                            <button type="button" class="btn btn-sm btn-info"
+                                data-target="#viewBase{{ $currentBase->Id }}" data-toggle="modal" title='View Base Price'>
+                                <i class="ti-eye"></i>
+                            </button>    
+                        </td>
+                    </tr>
+                        
+                    @endforeach
+                </tbody>
             </table>
+            {!! $currentBasePrice->links() !!}
+
         </div>
     </div>
 </div>
@@ -74,49 +103,50 @@
     </div>
 </div>
 
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
 
 <script>
-    $(document).ready(function(){
-        $('#base_price_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('base_price.index') }}"
-            },
-            columns: [
-                {
-                    data: 'MaterialId',
-                    name: 'MaterialId'
-                },
-                {
-                    data: 'Price',
-                    name: 'Price'
-                },
-                {
-                    data: 'ApprovedBy',
-                    name: 'ApprovedBy'
-                },
-                {
-                    data: 'EffectiveDate',
-                    name: 'EffectiveDate'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: 1, // Target the Description column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
+    // $(document).ready(function(){
+    //     $('#base_price_table').DataTable({
+    //         processing: true,
+    //         serverSide: true,
+    //         ajax: {
+    //             url: "{{ route('base_price.index') }}"
+    //         },
+    //         columns: [
+    //             {
+    //                 data: 'MaterialId',
+    //                 name: 'MaterialId'
+    //             },
+    //             {
+    //                 data: 'Price',
+    //                 name: 'Price'
+    //             },
+    //             {
+    //                 data: 'ApprovedBy',
+    //                 name: 'ApprovedBy'
+    //             },
+    //             {
+    //                 data: 'EffectiveDate',
+    //                 name: 'EffectiveDate'
+    //             },
+    //             {
+    //                 data: 'action',
+    //                 name: 'action',
+    //                 orderable: false
+    //             }
+    //         ],
+    //         columnDefs: [
+    //             {
+    //                 targets: 1, // Target the Description column
+    //                 render: function(data, type, row) {
+    //                     return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+    //                 }
+    //             }
+    //         ]
+    //     });
 
         // $('#add_base_price').click(function(){
         //     $('#formBusinessType').modal('show');
@@ -247,6 +277,9 @@
         //         }
         //     })
         // });
-    });
+    // });
 </script>
+@foreach ($currentBasePrice as $currentBase)
+    @include('base_prices.view_current_base_price')
+@endforeach
 @endsection
