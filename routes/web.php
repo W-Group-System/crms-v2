@@ -75,6 +75,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('edit_client/{id}', 'ClientController@edit')->name('client.edit');
     Route::post('update_client/{id}', 'ClientController@update')->name('update_client');
     Route::get('view_client/{id}', 'ClientController@view')->name('client.view');
+    Route::get('/regions', 'ClientController@getRegions');
+    Route::get('/areas', 'ClientController@getAreas');
 
     // Customer Requirement
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 

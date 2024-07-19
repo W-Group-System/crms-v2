@@ -35,21 +35,21 @@ class UserController extends Controller
         $search = $request->input('search');
     
         $users = User::with(['role', 'company', 'department'])
-            ->where(function ($query) use ($search) {
-                $query->where('username', 'LIKE', '%' . $search . '%')
-                    ->orWhere('full_name', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('role', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('company', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('department', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    });
-            })
-            ->orderBy('id', 'desc')
-            ->paginate(10);
+                ->where(function ($query) use ($search) {
+                    $query->where('username', 'LIKE', '%' . $search . '%')
+                        ->orWhere('full_name', 'LIKE', '%' . $search . '%')
+                        ->orWhereHas('role', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', '%' . $search . '%');
+                        })
+                        ->orWhereHas('company', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', '%' . $search . '%');
+                        })
+                        ->orWhereHas('department', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', '%' . $search . '%');
+                        });
+                })
+                ->orderBy('id', 'desc')
+                ->paginate(10);
     
         return view('users.index', [
             'search' => $search,
