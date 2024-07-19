@@ -37,7 +37,7 @@
                         <td>{{ $newBase->productMaterial->Name }}</td>
                         <td>{{ $newBase->Price }}</td>
                         <td>{{ $newBase->userCreated->full_name }}</td>
-                        <td>{{ $newBase->CreatedDate }}</td>
+                        <td>{{ $newBase->CreatedDate ?? $newBase->created_at }}</td>
                         <td align="center">
                             <button type="button" class="btn btn-sm btn-warning"
                                 data-target="#editBase{{ $newBase->Id }}" data-toggle="modal" title='Edit New Base Price'>

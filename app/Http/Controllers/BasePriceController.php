@@ -140,8 +140,11 @@ class BasePriceController extends Controller
             if (request()->status === 'approved') {
                 $approveNewBasePrice->Status = 3;
                 $approveNewBasePrice->ApprovedBy = auth()->user()->user_id;
+                $approveNewBasePrice->EffectiveDate = now();
+                $approveNewBasePrice->updated_at = now();
             } elseif (request()->status === 'disapproved') {
                 $approveNewBasePrice->Status = 2;
+                $approveNewBasePrice->deleted_at = now();
             }
 
             $approveNewBasePrice->save();
