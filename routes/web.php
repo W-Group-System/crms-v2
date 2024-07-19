@@ -85,6 +85,13 @@ Route::group(['middleware' => 'auth'], function () {
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
     Route::post('/new_sample_request', 'SampleRequestController@store')->name('sample_request.store');
+    Route::get('samplerequest/view/{id}', 'SampleRequestController@view');
+    Route::post('sample_request/edit/{id}', 'SampleRequestController@update');
+
+    // Route::get('samplerequest/edit/{id}', 'SampleRequestController@edit');
+    Route::post('addSrfSupplementary', 'SampleRequestController@addSupplementary');
+
+
 
     Route::get('sample_contacts-by-client-f/{clientId}', [SampleRequestController::class, 'getSampleContactsByClientF']);
     Route::get('sample_get-last-increment-f/{year}/{clientCode}', [SampleRequestController::class, 'getSampleLastIncrementF']);
@@ -183,6 +190,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Base Price
     Route::get('/base_price', 'BasePriceController@index')->name('base_price.index');
+    Route::get('/new_base_price', 'BasePriceController@newBasePriceIndex')->name('base_price.index');
+    Route::post('/newBasePrice', 'BasePriceController@store');
+    Route::post('/editAllNewBasePrice', 'BasePriceController@updateBasePrices');
+    Route::post('editNewBase/{id}', 'BasePriceController@updateBasePrice');
+    Route::post('approveNewBasePrice/{id}', 'BasePriceController@editApproved');
 
     // Price Request Fixed Cost
     Route::get('/fixed_cost', 'PriceFixedCostController@index')->name('fixed_cost.index');
