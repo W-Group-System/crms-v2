@@ -24,7 +24,7 @@
                                 <tr>
                                     <td><a href="javascript:;" class="btn btn-danger deleteRow">-</a></td>
                                     <td>
-                                        <select class="form-control js-example-basic-single" name="Material[]"  style="position: relative !important" title="Select Material" >
+                                        <select class="form-control js-example-basic-single" name="Material[]"  style="position: relative !important" title="Select Material" required>
                                             <option value="" disabled selected>Select Material</option>
                                             @foreach ($rawMaterials as $material)
                                                 <option value="{{ $material->id }}" >{{ $material->Name }}</option>
@@ -32,7 +32,7 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control js-example-basic-single" name="Currency[]" style="position: relative !important" title="Select Currency" >
+                                        <select class="form-control js-example-basic-single" name="Currency[]" style="position: relative !important" title="Select Currency" required>
                                             <option value="" disabled selected>Select Currency</option>
                                             @foreach ($productCurrency as $currency)
                                                 <option value="{{ $currency->id }}" >{{ $currency->Name }}</option>
@@ -40,7 +40,7 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control" name="Price[]" value="0" placeholder="">
+                                        <input type="number" class="form-control" name="Price[]" value="0" placeholder="" required>
                                     </td>
                                 </tr>
                             </tbody>

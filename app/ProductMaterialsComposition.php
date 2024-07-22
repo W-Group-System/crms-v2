@@ -13,6 +13,7 @@ class ProductMaterialsComposition extends Model
     {
         return $this->belongsTo(Product::class, 'ProductId');
     }
+
     public function rawMaterials()
     {
         return $this->belongsTo(RawMaterial::class, 'MaterialId');

@@ -11,7 +11,6 @@ class BasePrice extends Model
 
     protected $primaryKey = "Id";
 
-    protected $created_at = "CreatedDate";
     protected $fillable = [
         'Id',
         'MaterialId',
