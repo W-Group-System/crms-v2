@@ -10,6 +10,8 @@
             Raw Material List
             <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#formRawMaterial">Add Raw Material</button>
             </h4>
+            @include('components.error')
+
             <div class="table-responsive">
                 <form method="GET" action="" class="custom_form mb-3" enctype="multipart/form-data">
                     <div class="row">
