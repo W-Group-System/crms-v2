@@ -27,6 +27,10 @@ class RawMaterialController extends Controller
 
     public function add(Request $request)
     {
+        $request->validate([
+            'Name' => 'unique:productmaterials,Name'
+        ]);
+
         $rawMaterial = new RawMaterial;
         $rawMaterial->Name = $request->Name;
         $rawMaterial->Description = $request->Description;
