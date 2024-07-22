@@ -19,28 +19,16 @@
                 <table class="table table-striped table-hover table-bordered" id="archived_table" width="100%">
                     <thead>
                         <tr>
+                            <th width="10%">Action</th>
                             <th width="15%">DDW Number</th>
                             <th width="30%">Code</th>
                             <th width="30%">Created By</th>
                             <th width="15%">Date Created</th>
-                            <th width="10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($products as $product)
                             <tr>
-                                <td>{{$product->ddw_number}}</td>
-                                <td>{{$product->code}}</td>
-                                <td>
-                                    @if($product->userByUserId)
-                                        {{$product->userByUserId->full_name}}
-                                    @endif
-    
-                                    @if($product->userById)
-                                        {{$product->userById->full_name}}
-                                    @endif
-                                </td>
-                                <td>{{date('M d, Y', strtotime($product->created_at))}}</td>
                                 <td>
                                     <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
                                         <i class="ti-eye"></i>
@@ -55,6 +43,18 @@
                                     </button>
                                     
                                 </td>
+                                <td>{{$product->ddw_number}}</td>
+                                <td>{{$product->code}}</td>
+                                <td>
+                                    @if($product->userByUserId)
+                                        {{$product->userByUserId->full_name}}
+                                    @endif
+    
+                                    @if($product->userById)
+                                        {{$product->userById->full_name}}
+                                    @endif
+                                </td>
+                                <td>{{date('M d, Y', strtotime($product->created_at))}}</td>
                             </tr>
                         @endforeach
                     </tbody>

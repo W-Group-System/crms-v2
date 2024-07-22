@@ -66,9 +66,17 @@ Route::group(['middleware' => 'auth'], function () {
     # Product Specification
     Route::post('add_specification', 'ProductController@specification');
     Route::post('edit_specification/{id}', 'ProductController@editSpecification');
+    Route::post('update_all_product_specification', 'ProductController@updateAllProductSpecification');
+
     # Product Files
     Route::post('add_files', 'ProductController@addFiles');
     Route::post('edit_files/{id}', 'ProductController@editFiles');
+    Route::post('update_all_files', 'ProductController@updateAllFiles');
+
+    # Product DS
+    Route::post('add_product_ds', 'ProductController@productDs');
+    Route::post('edit_product_ds/{id}', 'ProductController@updatePds');
+    Route::get('view_details/{id}', 'ProductController@viewPdsDetails');
 
     # Draft Products
     Route::get('/draft_products', 'ProductController@draft')->name('product.draft');
@@ -94,6 +102,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('edit_client/{id}', 'ClientController@edit')->name('client.edit');
     Route::post('update_client/{id}', 'ClientController@update')->name('update_client');
     Route::get('view_client/{id}', 'ClientController@view')->name('client.view');
+    Route::get('/regions', 'ClientController@getRegions');
+    Route::get('/areas', 'ClientController@getAreas');
 
     // Customer Requirement
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 
