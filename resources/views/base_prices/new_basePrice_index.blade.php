@@ -45,6 +45,8 @@
                             <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $newBase->Id }}" title='Delete Base Price'>
                                 <i class="ti-trash"></i>
                             </button>
+                            {{-- <a href="approveNewBasePrice/{{ $newBase->Id }}" class="btn btn-success" title="Approve New Base Price">
+                                <i class="ti-thumb-up"></i></a> --}}
                         </td>
                         <td>{{ $newBase->productMaterial->Name }}</td>
                         <td>{{ $newBase->Price }}</td>
