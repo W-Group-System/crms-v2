@@ -90,6 +90,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Route::get('samplerequest/edit/{id}', 'SampleRequestController@edit');
     Route::post('addSrfSupplementary', 'SampleRequestController@addSupplementary');
+    Route::post('assignSrfPersonnel', 'SampleRequestController@assignPersonnel');
+    Route::post('ApproveSrf/{id}', 'SampleRequestController@approveSrfSales');
+    Route::post('ReceiveSrf/{id}', 'SampleRequestController@receiveSrf');
+    Route::post('StartSrf/{id}', 'SampleRequestController@StartSrf');
+
 
 
 
@@ -195,6 +200,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/editAllNewBasePrice', 'BasePriceController@updateBasePrices');
     Route::post('editNewBase/{id}', 'BasePriceController@updateBasePrice');
     Route::post('approveNewBasePrice/{id}', 'BasePriceController@editApproved');
+    Route::delete('base-price/{id}', 'BasePriceController@destroy');
 
     // Price Request Fixed Cost
     Route::get('/fixed_cost', 'PriceFixedCostController@index')->name('fixed_cost.index');
