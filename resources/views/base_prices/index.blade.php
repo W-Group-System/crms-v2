@@ -7,7 +7,7 @@
             Base Price List
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-start align-items-start">
+                <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
@@ -20,26 +20,26 @@
             <table class="table table-striped table-hover" id="base_price_table" width="100%">
                 <thead>
                     <tr>
+                        <th width="20%">Action</th>
                         <th width="20%">Material</th>
                         <th width="20%">Price</th>
                         <th width="20%">Approved By</th>
                         <th width="20%">Effective</th>
-                        <th width="20%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ( $currentBasePrice as $currentBase)
                     <tr>
-                        <td>{{ $currentBase->productMaterial->Name }}</td>
-                        <td>{{ $currentBase->Price }}</td>
-                        <td>{{ optional($currentBase->userApproved)->full_name }}</td>
-                        <td>{{ $currentBase->EffectiveDate }}</td>
                         <td align="center">
                             <button type="button" class="btn btn-sm btn-info"
                                 data-target="#viewBase{{ $currentBase->Id }}" data-toggle="modal" title='View Base Price'>
                                 <i class="ti-eye"></i>
                             </button>    
                         </td>
+                        <td>{{ $currentBase->productMaterial->Name }}</td>
+                        <td>{{ $currentBase->Price }}</td>
+                        <td>{{ optional($currentBase->userApproved)->full_name }}</td>
+                        <td>{{ $currentBase->EffectiveDate }}</td>
                     </tr>
                         
                     @endforeach
