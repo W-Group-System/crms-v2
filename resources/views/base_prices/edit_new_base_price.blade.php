@@ -31,7 +31,7 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control js-example-basic-single" name="Currency" style="position: relative !important" title="Select Currency" >
+                                        <select class="form-control js-example-basic-single" name="Currency" style="position: relative !important" title="Select Currency" disabled>
                                             <option value="" disabled selected>Select Currency</option>
                                             @foreach ($productCurrency as $currency)
                                                 <option value="{{ $currency->id }}" @if ( $newBase->CurrencyId == $currency->id ) selected @endif>{{ $currency->Name }}</option>
@@ -39,7 +39,7 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control" name="Price" value="{{  $newBase->Price }}"  placeholder="" >
+                                        <input type="number" step=".01" class="form-control" name="Price" value="{{  $newBase->Price }}"  placeholder="" >
                                     </td>
                                 </tr>
                             </tbody>

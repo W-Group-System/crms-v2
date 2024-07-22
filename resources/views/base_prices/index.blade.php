@@ -45,7 +45,7 @@
                     @endforeach
                 </tbody>
             </table>
-            {!! $currentBasePrice->links() !!}
+            {!! $currentBasePrice->appends(['search' => $search])->links() !!}
 
         </div>
     </div>

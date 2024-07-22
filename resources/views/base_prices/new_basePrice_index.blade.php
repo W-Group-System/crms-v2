@@ -11,7 +11,7 @@
                 <button type="button" class="btn btn-md btn-warning" data-toggle="modal" data-target="#editAllNewBasePrice">Edit New Base Price</button></div>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-start align-items-start">
+                <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
@@ -24,20 +24,16 @@
             <table class="table table-striped table-hover" id="base_price_table" width="100%">
                 <thead>
                     <tr>
+                        <th width="20%">Action</th>
                         <th width="20%">Material</th>
                         <th width="20%">Price</th>
                         <th width="20%">Created By</th>
                         <th width="20%">Date Created</th>
-                        <th width="20%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ( $newBasePrice as $newBase)
                     <tr>
-                        <td>{{ $newBase->productMaterial->Name }}</td>
-                        <td>{{ $newBase->Price }}</td>
-                        <td>{{ $newBase->userCreated->full_name }}</td>
-                        <td>{{ $newBase->CreatedDate ?? $newBase->created_at }}</td>
                         <td align="center">
                             <button type="button" class="btn btn-sm btn-warning"
                                 data-target="#editBase{{ $newBase->Id }}" data-toggle="modal" title='Edit New Base Price'>
@@ -46,15 +42,22 @@
                             <button type="button" class="btn btn-sm btn-success approve-btn"  data-id="{{ $newBase->Id }}">
                                 <i class="ti-thumb-up"></i>
                             </button> 
+                            <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $newBase->Id }}" title='Delete Base Price'>
+                                <i class="ti-trash"></i>
+                            </button>
                             {{-- <a href="approveNewBasePrice/{{ $newBase->Id }}" class="btn btn-success" title="Approve New Base Price">
                                 <i class="ti-thumb-up"></i></a> --}}
                         </td>
+                        <td>{{ $newBase->productMaterial->Name }}</td>
+                        <td>{{ $newBase->Price }}</td>
+                        <td>{{ $newBase->userCreated->full_name }}</td>
+                        <td>{{ $newBase->CreatedDate ?? $newBase->created_at }}</td>
                     </tr>
                         
                     @endforeach
                 </tbody>
             </table>
-            {!! $newBasePrice->links() !!}
+            {!! $newBasePrice->appends(['search' => $search])->links() !!}
 
         </div>
     </div>
@@ -152,6 +155,32 @@
                 }
             });
         });
+
+        $('.delete-btn').on('click', function() {
+        var id = $(this).data('id');
+        var $row = $(this).closest('tr'); 
+
+        if (confirm('Are you sure you want to delete this base price?')) {
+            $.ajax({
+                url: 'base-price/' + id,
+                type: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}'  
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $row.remove();  
+                        alert(response.message);
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('An error occurred while deleting the base price.');
+                }
+            });
+        }
+    });
     });
 </script>
 @include('base_prices.create_new_base_price')
