@@ -3,140 +3,123 @@
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title">View Client Details</h4>
-            <form class="forms-sample" id="form_client" enctype="multipart/form-data" action="{{ url('update_client/'.$data->id) }}">
+            <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
+            <a href="{{ url('/client') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+            </h4>
+            <form class="form-horizontal" id="form_client" enctype="multipart/form-data" action="{{ url('update_client/'.$data->id) }}">
                 <span id="form_result"></span>
                 @csrf
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Buyer Code</b></label>
-                            <p>{{ $data->BuyerCode }}</p>
+                <div class="col-md-12">
+                    <div class="form-group row mb-2" style="margin-top: 2em">
+                        <label class="col-sm-3 col-form-label"><b>Buyer Code</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->BuyerCode }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Primary Account Manager</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $primaryAccountManager->full_name ?? 'No Primary Account Manager' }}</label>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Primary Account Manager</b></label>
-                            <p>{{ $primaryAccountManager->full_name ?? 'No Primary Account Manager' }}</p>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>SAP Code</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->SapCode ?? 'N/A'}}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Secondary Account Manager</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $secondaryAccountManager->full_name ?? 'No Secondary Account Manager' }}</label>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>SAP Code</b></label>
-                            <p>{{ $data->SapCode ?? 'N/A'}}</p>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>Company Name</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->Name ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Trade Name</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->TradeName ?? 'N/A' }}</label>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Secondary Account Manager</b></label>
-                            <p>{{ $secondaryAccountManager->full_name ?? 'No Secondary Account Manager' }}</p>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>TIN</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->TaxIdentificationNumber ?? 'N/A '}}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Telephone</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->TelephoneNumber ?? 'N/A' }}</label>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Company Name</b></label>
-                            <p>{{ $data->Name ?? 'N/A' }}</p>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>Payment Term</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $payment_terms->Name ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>FAX</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->FaxNumber ?? 'N/A' }}</label>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Trade Name</b></label>
-                            <p>{{ $data->TradeName ?? 'N/A' }}</p>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>Type</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->Type == '1' ? 'Local' : 'International'}}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Website</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->Website ?? 'N/A' }}</label>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>TIN</b></label>
-                            <p>{{ $data->TaxIdentificationNumber ?? 'N/A '}}</p>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>Region</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $regions->Name ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Email Address</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->Email ?? 'N/A' }}</label>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Telephone</b></label>
-                            <p>{{ $data->TelephoneNumber ?? 'N/A' }}</p>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>Country</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $countries->Name ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Source</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->Source ?? 'N/A' }}</label>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Payment Term</b></label>
-                            <p>{{ $payment_terms->Name ?? 'N/A' }}</p>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>Area</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $areas->Name ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Business Type</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $business_types->Name ?? 'N/A' }}</label>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>FAX</b></label>
-                            <p>{{ $data->FaxNumber ?? 'N/A' }}</p>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>Industry</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $industries->Name ?? 'N/A' }}</label>
                         </div>
+                        @if($addresses->isNotEmpty())
+                            @foreach($addresses as $address)
+                            <label class="col-sm-3 col-form-label"><b>{{ $address->AddressType }}</b></label>
+                            <div class="col-sm-3">
+                                <label>{{ $address->Address }}</label>
+                            </div>
+                            @endforeach
+                        @else
+                            <label class="col-sm-3 col-form-label"><b>Address</b></label>
+                            <div class="col-sm-3">
+                                <label>No Address Available</label>
+                            </div>
+                        @endif
                     </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Type</b></label>
-                            <p>{{ $data->Type == '1' ? 'Local' : 'International'}}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Website</b></label>
-                            <p>{{ $data->FaxNumber ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Region</b></label>
-                            <p>{{ $regions->Name ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Email Address</b></label>
-                            <p>{{ $data->Email ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Country</b></label>
-                            <p>{{ $countries->Name ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Source</b></label>
-                            <p>{{ $data->Source ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Area</b></label>
-                            <p>{{ $areas->Name ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Business Type</b></label>
-                            <p>{{ $business_types->Name ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Industry</b></label>
-                            <p>{{ $industries->Name ?? 'N/A' }}</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label><b>Status</b></label>
-                            <p>
-                                @if($data->Status == '2')
-                                    Current
-                                @elseif($data->Status == '1')
-                                    Prospect
-                                @else
-                                    Archived
-                                @endif
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-lg-12">
+                    {{-- <div class="col-lg-12">
                         <table class="table table-striped mb-5" id="table_address">
                             <thead>
                                 <tr>
@@ -160,7 +143,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> --}}
                 <div align="right">
                     <a href="{{ url('/client') }}" class="btn btn-light">Close</a>
                 </div>

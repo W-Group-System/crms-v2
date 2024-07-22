@@ -8,19 +8,24 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Raw Material List
-            <button type="button" class="btn btn-sm btn-primary" name="add_raw_material" id="add_raw_material">Add Raw Material</button>
+            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#formRawMaterial">Add Raw Material</button>
             </h4>
             <div class="table-responsive">
-                {{-- <form method="GET" action="" class="custom_form mb-3" enctype="multipart/form-data">
+                <form method="GET" action="" class="custom_form mb-3" enctype="multipart/form-data">
                     <div class="row">
-                        <div class="col-md-3">
-                            <input type='text' class='form-control' name='search' placeholder="Search Material" value="{{$search}}">
+                        <div class="col-md-2">
+                            <input type='text' class='form-control form-control-sm' name='search' placeholder="Search Material" value="{{$search}}">
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-primary btn-md btn-submit" style="width:100px;border-radius:4px" type="submit">Search</button>
+                            <button class="btn btn-primary btn-sm btn-submit" style="width:100px;border-radius:4px" type="submit">Search</button>
                         </div>
                     </div>
-                </form> --}}
+                </form>
+                <form action="" method="post">
+                    {{csrf_field()}}
+
+                    <button class="btn btn-success btn-sm btn-submit mb-2" style="width:100px;border-radius:4px" type="submit">Export</button>
+                </form>
                 <table class="table table-striped table-bordered table-hover" id="raw_material_table">
                     <thead>
                         <tr>
@@ -31,7 +36,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- @foreach ($rawMaterials as $rm)
+                        @foreach ($rawMaterials as $rm)
                             <tr>
                                 <td>{{$rm->Name}}</td>
                                 <td>{{$rm->Description}}</td>
@@ -58,11 +63,11 @@
                                     @endif
                                 </td>
                             </tr>
-                        @endforeach --}}
+                        @endforeach
                     </tbody>
                 </table>
             </div>
-            {{-- {!! $rawMaterials->appends(['search' => $search])->links() !!} --}}
+            {!! $rawMaterials->appends(['search' => $search])->links() !!}
         </div>
     </div>
 </div>
@@ -77,7 +82,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_raw_material">
+                <form method="POST" id="form_raw_material" action="{{url('add_raw_material')}}">
                     {{-- <span id="form_result"></span> --}}
                     @csrf
                     <div class="form-group">
@@ -100,34 +105,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="viewProducts">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">View Products</h5>
-            </div>
-            <div class="modal-body">
-                <h4><strong>Material: </strong></h4>
-                <h4><strong>Description: </strong></h4>
-
-                <table class="table-bordered table-hover table-striped table mt-5" id="view_raw_materials_table" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>Products</th>
-                            <th>Percentage (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="tbodyRow">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
+@foreach ($rawMaterials as $rm)
 @include('raw_materials.view_raw_materials')
-{{-- @foreach ($rawMaterials as $rm)
-@endforeach --}}
+@endforeach
 
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
@@ -136,13 +116,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script src="{{asset('js/sweetalert2.min.js')}}"></script>
-{{-- <script>
+<script>
     $(document).ready(function() {
-        $(".view_raw_materials_table").DataTable({
-            processing: false,
-            serverSide:false,
-            ordering: false,
-        })
+        // $(".view_raw_materials_table").DataTable({
+        //     processing: false,
+        //     serverSide:false,
+        //     ordering: false,
+        // })
 
 
         $(".deactivate").on('click', function()
@@ -203,8 +183,8 @@
             })
         })
     })
-</script> --}}
-<script>
+</script>
+{{-- <script>
     $(document).ready(function(){
         var viewRawMaterials = new DataTable('#view_raw_materials_table', {
             destroy: true,
@@ -544,6 +524,6 @@
         //     });
         // });
     });
-</script>
+</script> --}}
 
 @endsection 

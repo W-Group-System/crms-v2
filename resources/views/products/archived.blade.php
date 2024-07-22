@@ -4,17 +4,64 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">Product List (Archived)</h4>
-            <table class="table table-striped table-hover" id="archived_table" width="100%">
-                <thead>
-                    <tr>
-                        <th width="15%">DDW Number</th>
-                        <th width="30%">Code</th>
-                        <th width="30%">Created By</th>
-                        <th width="15%">Date Created</th>
-                        <th width="10%">Action</th>
-                    </tr>
-                </thead>
-            </table>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" >
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-3">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search Products" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered" id="archived_table" width="100%">
+                    <thead>
+                        <tr>
+                            <th width="10%">Action</th>
+                            <th width="15%">DDW Number</th>
+                            <th width="30%">Code</th>
+                            <th width="30%">Created By</th>
+                            <th width="15%">Date Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($products as $product)
+                            <tr>
+                                <td>
+                                    <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
+                                        <i class="ti-eye"></i>
+                                    </a>
+    
+                                    <button class="btn btn-sm btn-success draftProduct" type="button" title="Add draft products" data-id="{{$product->id}}">
+                                        <i class="ti-plus"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-danger deleteProduct" type="button" title="Delete" data-id="{{$product->id}}">
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                    
+                                </td>
+                                <td>{{$product->ddw_number}}</td>
+                                <td>{{$product->code}}</td>
+                                <td>
+                                    @if($product->userByUserId)
+                                        {{$product->userByUserId->full_name}}
+                                    @endif
+    
+                                    @if($product->userById)
+                                        {{$product->userById->full_name}}
+                                    @endif
+                                </td>
+                                <td>{{date('M d, Y', strtotime($product->created_at))}}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {!! $products->appends(['search' => $search])->links() !!}
         </div>
     </div>
 </div>
@@ -38,7 +85,7 @@
     </div>
 </div>
 
-<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+{{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
@@ -130,5 +177,55 @@
             })
         });
     });
+</script> --}}
+
+<script>
+$(document).ready(function() {
+    $(".draftProduct").on('click', function() {
+        var id = $(this).data();
+
+        $.ajax({
+            type: "POST",
+            url: "{{url('add_to_draft_products')}}",
+            data: id,
+            headers: 
+            {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res)
+            {
+                Swal.fire({
+                    icon: 'success',
+                    title: res.message,
+                }).then(() => {
+                    location.reload();
+                })
+            }
+        })
+    })
+
+    $(".deleteProduct").on('click', function() {
+        var id = $(this).data();
+
+        $.ajax({
+            type: "POST",
+            url: "{{url('delete_product')}}",
+            data: id,
+            headers: 
+            {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res)
+            {
+                Swal.fire({
+                    icon: 'success',
+                    title: res.message,
+                }).then(() => {
+                    location.reload();
+                })
+            }
+        })
+    })
+})
 </script>
 @endsection

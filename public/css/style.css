@@ -10139,7 +10139,8 @@ pre code {
 .table th, .jsgrid .jsgrid-table th,
 .table td,
 .jsgrid .jsgrid-table td {
-  padding: 1.125rem 1.375rem;
+  /* padding: 1.125rem 1.375rem; */
+  padding: 0.8rem;
   vertical-align: top;
   border-top: 1px solid #CED4DA;
 }
@@ -27640,11 +27641,11 @@ table.dataTable tbody td.select-checkbox:after {
   margin-bottom: 0;
 }
 
-.swal2-modal .swal2-icon,
+/* .swal2-modal .swal2-icon,
 .swal2-modal .swal2-success-ring {
   margin-top: 0;
   margin-bottom: 42px;
-}
+} */
 
 .swal2-modal .swal2-buttonswrapper {
   margin-top: 0;
@@ -29864,6 +29865,31 @@ div.tagsinput span.tag a {
 
 .navbar.navbar-danger .navbar-menu-wrapper .nav-item .nav-link.count-indicator .count {
   background: #4B49AC;
+}
+
+/* search input */
+.search {
+  position: relative;
+  box-shadow: 0 0 20px rgba(51, 51, 51, .1); 
+}
+.search input {
+  text-indent: 30px;
+  border: 2px solid #d6d4d4;
+}
+.search input:focus {
+  box-shadow: none;
+  border: 2px solid #4B49AC;
+}
+.search .ti-search{ 
+  position: absolute;
+  top: 15px;
+  left: 20px;
+}
+.search button{
+  position: absolute;
+  top: 7px;
+  right: 5px;
+  width: 80px;
 }
 
 @media (max-width: 991px) {

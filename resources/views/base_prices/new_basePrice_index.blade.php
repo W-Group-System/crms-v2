@@ -6,9 +6,8 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             New Base Price List
-            <div class="buttons">
-                <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#createNewBasePrice">Add New Base Price</button>
-                <button type="button" class="btn btn-md btn-warning" data-toggle="modal" data-target="#editAllNewBasePrice">Edit New Base Price</button></div>
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#createNewBasePrice">Add New Base Price</button>
+            <button type="button" class="btn btn-md btn-warning" data-toggle="modal" data-target="#editAllNewBasePrice">Edit New Base Price</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -57,8 +56,7 @@
                     @endforeach
                 </tbody>
             </table>
-            {!! $newBasePrice->appends(['search' => $search])->links() !!}
-
+            {!! $newBasePrice->appends(['search' => $search])->links() !!}            
         </div>
     </div>
 </div>
@@ -95,6 +93,7 @@
         </div>
     </div>
 </div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
@@ -115,6 +114,7 @@
                 title: "Do you want to approve this base price?",
                 showDenyButton: true,
                 showCancelButton: true,
+                icon: "info",
                 confirmButtonText: "Approve",
                 denyButtonText: `Disapprove`
             }).then((result) => {

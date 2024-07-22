@@ -3,12 +3,23 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
+            <h4 class="card-title d-flex justify-content-between">
             Users List
             <button type="button" class="btn btn-md btn-primary" name="add_user" id="add_user">Add User</button>
             </h4>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-start align-items-start">
+                    <div class="col-md-5">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
-                <table class="table table-striped table-hover" id="user_table" width="100%">
+                <table class="table table-striped table-bordered table-hover" id="user_table" width="100%">
                     <thead>
                         <tr>
                             <th width="15%">Username</th>
@@ -20,8 +31,32 @@
                             <th width="10%">Action</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        @foreach($users as $user)
+                        <tr>
+                            <td>{{$user->username}}</td>
+                            <td>{{$user->full_name}}</td>
+                            <td>{{ $user->role ? $user->role->name : 'N/A' }}</td>
+                            <td>{{ $user->company ? $user->company->name : 'N/A' }}</td>
+                            <td>{{ $user->department ? $user->department->name : 'N/A' }}</td>
+                            <td>
+                                @if($user->is_active == "1")
+                                    <div class="badge badge-success">Active</div>
+                                @else
+                                    <div class="badge badge-danger">Inactive</div>
+                                @endif
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" title="Edit Users" data-toggle="modal" data-target="#formUser-{{$user->id}}">
+                                    <i class="ti-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
+            {!! $users->appends(['search' => $search])->links() !!}
         </div>
     </div>
 </div>
@@ -122,104 +157,105 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
+
 <script>
     $(document).ready(function(){
-        $('#user_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('user.index') }}"
-            },
-            columns: [
-                {
-                    data: 'username',
-                    name: 'username'
-                },
-                {
-                    data: 'full_name',
-                    name: 'full_name'
-                    // render: function(data, type, row) {
-                    //     return row.FirstName + ' ' + (row.MiddleName ? row.MiddleName + ' ' : '') + row.LastName;
-                    // }
-                },
-                {
-                    data: 'role.name',
-                    name: 'role.name'
-                    // name: 'RoleName',
-                    // render: function(data, type, row) {
-                    //     var roleName = '';
-                    //     if (row.role) {
-                    //         roleName = row.role.Name; // Assuming each user has only one role
-                    //     }
-                    //     return roleName;
-                    // }
-                },
-                {
-                    data: 'company.name',
-                    name: 'company.name'
-                },
-                {
-                    data: 'department.name',
-                    name: 'department.name'
-                },
-                {
-                    data: 'is_active',
-                    name: 'is_active',
-                    render: function(data, type, row) {
-                        return data == 1 ? 'Active' : 'Inactive';
-                    }
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: 0, 
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                },
-                {
-                    targets: 1, 
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                },
-                {
-                    targets: 2,
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                },
-                {
-                    targets: 3,
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                },
-                {
-                    targets: 4,
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                },
-                {
-                    targets: 5,
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                },
-                {
-                    targets: 6,
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
+        // $('#user_table').DataTable({
+        //     processing: true,
+        //     serverSide: true,
+        //     ajax: {
+        //         url: "{{ route('user.index') }}"
+        //     },
+        //     columns: [
+        //         {
+        //             data: 'username',
+        //             name: 'username'
+        //         },
+        //         {
+        //             data: 'full_name',
+        //             name: 'full_name'
+        //             // render: function(data, type, row) {
+        //             //     return row.FirstName + ' ' + (row.MiddleName ? row.MiddleName + ' ' : '') + row.LastName;
+        //             // }
+        //         },
+        //         {
+        //             data: 'role.name',
+        //             name: 'role.name'
+        //             // name: 'RoleName',
+        //             // render: function(data, type, row) {
+        //             //     var roleName = '';
+        //             //     if (row.role) {
+        //             //         roleName = row.role.Name; // Assuming each user has only one role
+        //             //     }
+        //             //     return roleName;
+        //             // }
+        //         },
+        //         {
+        //             data: 'company.name',
+        //             name: 'company.name'
+        //         },
+        //         {
+        //             data: 'department.name',
+        //             name: 'department.name'
+        //         },
+        //         {
+        //             data: 'is_active',
+        //             name: 'is_active',
+        //             render: function(data, type, row) {
+        //                 return data == 1 ? 'Active' : 'Inactive';
+        //             }
+        //         },
+        //         {
+        //             data: 'action',
+        //             name: 'action',
+        //             orderable: false
+        //         }
+        //     ],
+        //     columnDefs: [
+        //         {
+        //             targets: 0, 
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         },
+        //         {
+        //             targets: 1, 
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         },
+        //         {
+        //             targets: 2,
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         },
+        //         {
+        //             targets: 3,
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         },
+        //         {
+        //             targets: 4,
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         },
+        //         {
+        //             targets: 5,
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         },
+        //         {
+        //             targets: 6,
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         }
+        //     ]
+        // });
 
         $('#add_user').click(function(){
             $('#formUser').modal('show');

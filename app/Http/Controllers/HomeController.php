@@ -32,16 +32,21 @@ class HomeController extends Controller
         return view('layouts.change_password');
     }
 
+    public function myAccount()
+    {
+        return view('layouts.my_account');
+    }
+
     public function updatePassword(Request $request)
     {   
         $request->validate([
-            'old_password' => 'required',
+            // 'old_password' => 'required',
             'new_password' => 'required|confirmed|min:8',
         ]);
 
-        if(!Hash::check($request->old_password, auth()->user()->password)){
-            return back()->with("error", "Old password doesn't match!");
-        }
+        // if(!Hash::check($request->old_password, auth()->user()->password)){
+        //     return back()->with("error", "Old password doesn't match!");
+        // }
            
         User::whereId(auth()->user()->id)->update([
             'password' => Hash::make($request->new_password)

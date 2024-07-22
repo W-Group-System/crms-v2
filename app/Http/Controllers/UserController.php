@@ -5,33 +5,59 @@ use App\User;
 use App\Role;
 use App\Company;
 use App\Department;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     // List 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with(['company', 'department', 'role'])->orderBy('id', 'desc')->get();
-        
+        // $users = User::with(['company', 'department', 'role'])->orderBy('id', 'desc')->get();
+    
+        // if(request()->ajax())
+        // {
+        //     return datatables()->of($users)
+        //             ->addColumn('action', function($data){
+        //                 $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
+        //                 $buttons .= '&nbsp;&nbsp;';
+        //                 // $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
+        //                 return $buttons;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
+        // return view('users.index', compact('users', 'companies', 'departments', 'roles'));
         $departments = Department::all();
         $companies = Company::all();
-        $roles = Role::get();
-        // dd($departments);
-        if(request()->ajax())
-        {
-            return datatables()->of($users)
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        // $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('users.index', compact('users', 'companies', 'departments', 'roles'));
+        $roles = Role::all();
+    
+        $search = $request->input('search');
+    
+        $users = User::with(['role', 'company', 'department'])
+                ->where(function ($query) use ($search) {
+                    $query->where('username', 'LIKE', '%' . $search . '%')
+                        ->orWhere('full_name', 'LIKE', '%' . $search . '%')
+                        ->orWhereHas('role', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', '%' . $search . '%');
+                        })
+                        ->orWhereHas('company', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', '%' . $search . '%');
+                        })
+                        ->orWhereHas('department', function ($q) use ($search) {
+                            $q->where('name', 'LIKE', '%' . $search . '%');
+                        });
+                })
+                ->orderBy('id', 'desc')
+                ->paginate(10);
+    
+        return view('users.index', [
+            'search' => $search,
+            'users' => $users,
+            'roles' => $roles,
+            'companies' => $companies,
+            'departments' => $departments
+        ]);
     }
     
     // Store

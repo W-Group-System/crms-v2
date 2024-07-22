@@ -13,22 +13,29 @@
                     <button type="button" class="btn btn-md btn-primary submit_approval" name="submit_approval" id="">Submit</button>
                 </div>
             </div>
+            @php
+                use App\Helpers\Helpers;
+                
+                $rmc = Helpers::rmc($data->productMaterialComposition);
+            @endphp
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
-                {{-- <div class="form-group row">
+                <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->ddw_number }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials:</b></label>
-                    <label class="col-sm-3 col-form-label"></label>
-                </div> --}}
+                    <label class="col-sm-2 col-form-label"><strong>USD</strong> {{$rmc}}</label>
+                </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Code:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->code }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"></label>
+                    <label class="col-sm-2 col-form-label"><strong>EUR</strong> {{Helpers::usdToEur($rmc)}}</label>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Type:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->type == 1 ? 'Pure' : 'Blend' }}</label>
+                    <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
+                    <label class="col-sm-2 col-form-label"><strong>PHP</strong> {{Helpers::usdToPhp($rmc)}}</label>
                 </div>
                 <div class="form-group row" style="margin-top: 20px">
                     <label class="col-sm-2 col-form-label"><b>Reference Number:</b></label>
@@ -79,7 +86,7 @@
             </form>
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
+                    <a class="nav-link" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
@@ -97,14 +104,14 @@
                     <a class="nav-link" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
+                    <a class="nav-link active" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Historical Logs</a>
+                    <a class="nav-link" id="historycal-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                <div class="tab-pane fade" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
                         {{csrf_field()}}
 
@@ -121,18 +128,18 @@
     
                         <table class="table table-striped table-bordered table-hover" id="material_table" width="100%">
                             <tbody class="tbodyRawMaterials">
-                                @foreach ($data->product_raw_materials as $prm)
+                                @foreach ($data->productMaterialComposition as $pmc)
                                     <tr>
                                         <td>
                                             <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
                                                 <option value="">- Raw Materials -</option>
                                                 @foreach ($rawMaterials as $rm)
-                                                    <option value="{{$rm->id}}" @if($prm->raw_material_id == $rm->id) selected @endif>{{$rm->Name}}</option>
+                                                    <option value="{{$rm->id}}" @if($pmc->MaterialId == $rm->id) selected @endif>{{$rm->Name}}</option>
                                                 @endforeach
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$prm->percent}}" max="100" required>
+                                            <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$pmc->Percentage}}" max="100" required>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -142,24 +149,180 @@
                 </div>
                 <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval" name="submit_approval" id="">Add</button>
+                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">Add</button>
+                        <button class="btn btn-warning btn-md mb-2" type="button" data-toggle="modal" data-target="#updateAll" title="Update All">
+                            Update All
+                        </button>
                     </div>
-                    <table class="table table-striped table-hover" id="specification_table" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Specification</th>
-                                <th>Testing Condition</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    @include('products.add_specification')
+
+                    @include('products.edit_all_product_specification')
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Specification</th>
+                                    <th>Testing Condition</th>
+                                    <th>Remarks</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($data->productSpecification)
+                                    @foreach ($data->productSpecification as $ps)
+                                        <tr>
+                                            <td>{{$ps->Parameter}}</td>
+                                            <td>{{$ps->Specification}}</td>
+                                            <td>{{$ps->TestingCondition}}</td>
+                                            <td>{{$ps->Remarks}}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#specification-{{$ps->Id}}" title="Update">
+                                                    <i class="ti-pencil"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @foreach ($data->productSpecification as $ps)
+                        @include('products.edit_specification')
+                    @endforeach
                 </div>
-                <div class="tab-pane fade" id="pds" role="tabpanel" aria-labelledby="pds-tab">...</div>
-                <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab"></div>
+                <div class="tab-pane fade" id="pds" role="tabpanel" aria-labelledby="pds-tab">
+                    <div class="col-lg-12" align="right">
+                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
+                    </div>
+                    @include('products.add_pds')
+                    
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Control Number</th>
+                                    <th>Company</th>
+                                    <th>Date Issued</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($data->productDataSheet)
+                                    <tr>
+                                        <td>{{$data->code}}</td>
+                                        <td>{{$data->productDataSheet->ControlNumber}}</td>
+                                        <td>@if($data->productDataSheet->clients){{$data->productDataSheet->clients->Name}}@endif</td>
+                                        <td>{{date('M d, Y', strtotime($data->productDataSheet->DateIssued))}}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#pdsModal-{{$data->productDataSheet->Id}}">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+                                            <a href="{{url('view_details/'.$data->productDataSheet->Id)}}" class="btn btn-info btn-sm" title="View Details" target="_blank">
+                                                <i class="ti-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                    @if($data->productDataSheet)
+                        @include('products.edit_pds')
+                    @endif
+                </div>
+                <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    <div class="col-lg-12" align="right">
+                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
+                        <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
+                    </div>
+                    @include('products.add_file')
+                    @include('products.edit_all_product_files')
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Client</th>
+                                    <th>File</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody>
+                                @if($data->productFiles)
+                                    @foreach ($data->productFiles as $pf)
+                                        <tr>
+                                            <td>{{$pf->Name}}</td>
+                                            <td>
+                                                @if($pf->IsConfidential == 0)
+                                                    {{$pf->Description}}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($pf->IsConfidential == 0)
+                                                    @if($pf->client)
+                                                        {{$pf->client->Name}}
+                                                    @endif
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a href="{{$pf->Path}}" class="btn btn-sm btn-info" target="_blank">
+                                                    <i class="ti-eye"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                    <i class="ti-pencil"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @foreach ($data->productFiles as $pf)
+                        @include('products.edit_file')
+                    @endforeach
+                </div>
                 <div class="tab-pane fade" id="rmc" role="tabpanel" aria-labelledby="rmc-tab">...</div>
                 <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">...</div>
-                <div class="tab-pane fade" id="identical" role="tabpanel" aria-labelledby="identical-tab">...</div>
+                <div class="tab-pane fade show active" id="identical" role="tabpanel" aria-labelledby="identical-tab">
+                    ...
+                </div>
+                <div class="tab-pane fade" id="historicalLogs" role="tabpanel" aria-labelledby="identical-tab">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(count($data->productEventLogs) > 0)
+                                    @foreach ($data->productEventLogs as $logs)
+                                        <tr>
+                                            <td>{{date('M d Y', strtotime($logs->TimeStamp))}}</td>
+                                            <td>{{$logs->userByUserId->full_name}}</td>
+                                            <td>{{$logs->Details}}</td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3">No history available.</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -287,6 +450,217 @@
         $("#removeBtn").on('click', function()
         {
             $('.tbodyRawMaterials').children().last().remove();
+        })
+
+        $(".addPotentialBenefit").on('click', function() {
+
+            var newRow = `
+                <input type="text" name="potentialBenefit[]" class="form-control form-control-sm mb-3" placeholder="Enter potential benefit" required>
+            `
+
+            $('.potentialBenefitContainer').append(newRow);
+        })
+
+        $(".removePotentialBenefit").on('click', function()
+        {
+            $('.potentialBenefitContainer').children().last().remove();
+        })
+
+        $(".addPca").on('click', function() {
+
+            var newRow = `
+                <div class="row">
+                    <div class="col-lg-4">
+                        <input type="text" name="pcaParameter[]" placeholder="Enter parameter" class="form-control form-control-sm mb-2" required>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" name="pcaValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" required>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" name="pcaRemark[]" placeholder="Enter remark" class="form-control form-control-sm mb-2" required>
+                    </div>
+                </div>
+            `
+
+            $('.pcaContainer').append(newRow);
+        })
+
+        $(".removePca").on('click', function()
+        {
+            $('.pcaContainer').children().last().remove();
+        })
+
+        $(".addMa").on('click', function() {
+
+            var newRow = `
+                <div class="row">
+                    <div class="col-lg-4">
+                        <input type="text" name="maParameter[]" placeholder="Enter parameter" class="form-control form-control-sm mb-2" required>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" name="maValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" required>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" name="maRemark[]" placeholder="Enter remark" class="form-control form-control-sm mb-2" required>
+                    </div>
+                </div>
+            `
+
+            $('.maContainer').append(newRow);
+        })
+
+        $(".removeMa").on('click', function()
+        {
+            $('.maContainer').children().last().remove();
+        })
+
+        $(".addHeavyMetals").on('click', function() {
+
+            var newRow = `
+                <div class="row">
+                    <div class="col-lg-4">
+                        <input type="text" name="heavyMetalsParameter[]" placeholder="Enter parameter" class="form-control form-control-sm mb-2" required>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" name="heavyMetalsValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" required>
+                    </div>
+                </div>
+            `
+
+            $('.heavyMetalsContainer').append(newRow);
+        })
+
+        $(".removeHeavyMetals").on('click', function()
+        {
+            $('.heavyMetalsContainer').children().last().remove();
+        })
+        
+        $(".addNutritionalInfo").on('click', function() {
+
+            var newRow = `
+                <div class="row">
+                    <div class="col-lg-4">
+                        <input type="text" name="nutrionalInfoParameter[]" placeholder="Enter parameter" class="form-control form-control-sm mb-2" required>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" name="nutrionalInfoValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" required>
+                    </div>
+                </div>
+            `
+
+            $('.nutrionalInfoContainer').append(newRow);
+        })
+
+        $(".removeNutritionalInfo").on('click', function()
+        {
+            $('.nutrionalInfoContainer').children().last().remove();
+        })
+
+        $(".addAllergens").on('click', function() 
+        {
+            var newRow = `
+                <div class="row">
+                    <div class="col-lg-4">
+                        <input type="text" name="allergensParameter[]" placeholder="Enter parameter" class="form-control form-control-sm mb-2" required>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="checkbox" name="isAllergen[]" class="form-control form-control-sm">
+                    </div>
+                </div>
+            `
+
+            $('.allergensContainer').append(newRow);
+        })
+
+        $(".removeAllergens").on('click', function()
+        {
+            $('.allergensContainer').children().last().remove();
+        })
+
+        $(".addBtnSpecification").on('click', function()
+        {
+            var newRow = `
+                <fieldset class="border border-primary p-3 mb-3">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label>Parameter :</label>
+                            <input type="text" name="parameter[]" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-lg-6">
+                            <label>Testing Condition :</label>
+                            <input type="text" name="testing_condition[]" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-lg-6">
+                            <label>Specification :</label>
+                            <input type="text" name="specification[]" class="form-control form-control-sm" required> 
+                        </div>
+                        <div class="col-lg-6">
+                            <label>Remarks :</label>
+                            <input type="text" name="remarks[]" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                </fieldset>
+            `
+
+            $('.specification-container').append(newRow)
+        })
+
+        $("#removeBtnSpecification").on('click', function()
+        {
+            $('.specification-container').children().last().remove();
+            
+        })
+
+        $('input[type="file"]').on('change', function(e) {
+            var filename = e.target.files[0].name;
+
+            $("#filename").val(filename);
+        })
+
+        $(".addBtnFiles").on('click', function()
+        {
+            var newRow = `
+                <fieldset class="border border-primary p-3 mb-3">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label>Name :</label>
+                            <input type="text" name="name[]" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-lg-6">
+                            <label>Client :</label>
+                            <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                <option value="">-Client-</option>
+                                @foreach ($client as $c)
+                                    <option value="{{$c->id}}">{{$c->Name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <label>Description :</label>
+                            <input type="text" name="description[]" class="form-control form-control-sm" required> 
+                        </div>
+                        <div class="col-lg-6">
+                            <label>Is Confidential :</label>
+                            <input type="checkbox" name="is_confidential[]"> 
+                        </div>
+                        <div class="col-lg-6">
+                            <label>File :</label>
+                            <input type="file" name="files[]" id="file" class="form-control form-control-sm" required>
+                            <input type="hidden" name="files[]">
+                        </div>
+                    </div>
+                </fieldset>
+            `
+
+            var row = $(newRow);
+            $('.product_files_container').append(row)
+            row.find('.js-example-basic-single').select2();
+        })
+
+        $(".removeBtnFiles").on('click', function()
+        {
+            $('.product_files_container').children().last().remove();
+            
         })
     });
 </script>

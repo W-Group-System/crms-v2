@@ -7,17 +7,30 @@
             Currency Exchange Rates List
             <button type="button" class="btn btn-md btn-primary" name="add_currency_exchange" id="add_currency_exchange">Add Currency Exchange Rates</button>
             </h4>
-            <table class="table table-striped table-hover" id="currency_exchange_table" width="100%">
-                <thead>
-                    <tr>
-                        <th width="20%">Effective Date</th>
-                        <th width="20%">From Currency</th>
-                        <th width="20%">To Currency</th>
-                        <th width="20%">Rate</th>
-                        <th width="20%">Action</th>
-                    </tr>
-                </thead>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered" id="currency_exchange_table" width="100%">
+                    <thead>
+                        <tr>
+                            <th width="20%">Action</th>
+                            <th width="20%">Effective Date</th>
+                            <th width="20%">From Currency</th>
+                            <th width="20%">To Currency</th>
+                            <th width="20%">Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($currency_exchanges as $currency)
+                            <tr>
+                                <td></td>
+                                <td>{{date('M d, Y', strtotime($currency->EffectiveDate))}}</td>
+                                <td>{{$currency->FromCurrency->Name}}</td>
+                                <td>{{$currency->ToCurrency->Name}}</td>
+                                <td>{{$currency->ExchangeRate}}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -91,7 +104,7 @@
     </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
 
 <script>
@@ -271,5 +284,5 @@
             })
         });
     });
-</script>
+</script> --}}
 @endsection
