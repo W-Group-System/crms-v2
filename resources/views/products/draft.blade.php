@@ -38,7 +38,7 @@
                                             <i class="ti-eye"></i>
                                         </a>
         
-                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$p->id}}">
+                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archived" data-id="{{$p->id}}">
                                             <i class="ti-archive"></i>
                                         </button>
                                     </div>
