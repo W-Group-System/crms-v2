@@ -86,7 +86,7 @@
             </form>
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
+                    <a class="nav-link active" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
@@ -104,14 +104,14 @@
                     <a class="nav-link" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
+                    <a class="nav-link " id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="historycal-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                <div class="tab-pane fade show active" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
                         {{csrf_field()}}
 
@@ -292,7 +292,7 @@
                 </div>
                 <div class="tab-pane fade" id="rmc" role="tabpanel" aria-labelledby="rmc-tab">...</div>
                 <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">...</div>
-                <div class="tab-pane fade show active" id="identical" role="tabpanel" aria-labelledby="identical-tab">
+                <div class="tab-pane fade " id="identical" role="tabpanel" aria-labelledby="identical-tab">
                     ...
                 </div>
                 <div class="tab-pane fade" id="historicalLogs" role="tabpanel" aria-labelledby="identical-tab">
