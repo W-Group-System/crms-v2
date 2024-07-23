@@ -56,7 +56,18 @@
                     @endforeach
                 </tbody>
             </table>
-            {!! $newBasePrice->appends(['search' => $search])->links() !!}            
+            {!! $newBasePrice->appends(['search' => $search])->links() !!}
+            @php
+                $total = $newBasePrice->total();
+                $currentPage = $newBasePrice->currentPage();
+                $perPage = $newBasePrice->perPage();
+
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+            </div>
         </div>
     </div>
 </div>
