@@ -270,9 +270,15 @@
                                                 @endif
                                             </td>
                                             <td>
+                                                @if($pf->IsConfidential == 0)
                                                 <a href="{{$pf->Path}}" class="btn btn-sm btn-info" target="_blank">
                                                     <i class="ti-eye"></i>
                                                 </a>
+                                                @elseif($pf->IsConfidential == 1)
+                                                <a href="{{$pf->Path}}" class="btn btn-sm btn-info" target="_blank">
+                                                    <i class="mdi mdi-eye-off-outline"></i>
+                                                </a>
+                                                @endif
                                             </td>
                                             <td>
                                                 <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
