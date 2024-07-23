@@ -6,8 +6,10 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             New Base Price List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#createNewBasePrice">Add New Base Price</button>
-            <button type="button" class="btn btn-md btn-warning" data-toggle="modal" data-target="#editAllNewBasePrice">Edit New Base Price</button>
+                <div align="right">
+                    <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#createNewBasePrice">Add New Base Price</button>
+                    <button type="button" class="btn btn-md btn-warning" data-toggle="modal" data-target="#editAllNewBasePrice">Edit New Base Price</button>
+                </div>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
