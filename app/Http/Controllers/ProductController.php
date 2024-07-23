@@ -318,16 +318,26 @@ class ProductController extends Controller
 
     public function specification(Request $request)
     {
-        $productSpecification = new ProductSpecification;
-        $productSpecification->Parameter = $request->parameter;
-        $productSpecification->Specification = $request->specification;
-        $productSpecification->TestingCondition = $request->testing_condition;
-        $productSpecification->Remarks = $request->remarks;
-        $productSpecification->ProductId = $request->product_id;
-        $productSpecification->CreatedDate = date('Y-m-d h:i:s');
-        $productSpecification->save();
-
-        Alert::success('Successfully Saved')->persistent('Dismiss');
+        // dd($request->all());
+        $productSpecification = ProductSpecification::where('ProductId', $request->product_id)->where('Parameter', $request->parameter)->first();
+        
+        if (!empty($productSpecification))
+        {
+            Alert::error('Error! Entry already exist')->persistent('Dismiss');
+        }
+        else
+        {
+            $productSpecification = new ProductSpecification;
+            $productSpecification->Parameter = $request->parameter;
+            $productSpecification->Specification = $request->specification;
+            $productSpecification->TestingCondition = $request->testing_condition;
+            $productSpecification->Remarks = $request->remarks;
+            $productSpecification->ProductId = $request->product_id;
+            $productSpecification->CreatedDate = date('Y-m-d h:i:s');
+            $productSpecification->save();
+    
+            Alert::success('Successfully Saved')->persistent('Dismiss');
+        }
         return back();
     }
 
