@@ -20,14 +20,14 @@
                                 </tr>
                             </thead>
                             <tbody >
-                                @foreach ( $newBasePrice as $newBasePrice)
+                                @foreach ( $newBasePrice as $BasePrice)
                                 <tr>
                                     <td>
-                                        <input type="hidden" name="BasePriceId[]" value="{{ $newBasePrice->Id }}">
+                                        <input type="hidden" name="BasePriceId[]" value="{{ $BasePrice->Id }}">
                                         <select class="form-control js-example-basic-single" name="Material[]" style="position: relative !important" title="Select Material" >
                                             <option value="" disabled selected>Select Material</option>
                                             @foreach ($rawMaterials as $material)
-                                                <option value="{{ $material->id }}" @if ( $newBasePrice->MaterialId == $material->id ) selected @endif>{{ $material->Name }}</option>
+                                                <option value="{{ $material->id }}" @if ( $BasePrice->MaterialId == $material->id ) selected @endif>{{ $material->Name }}</option>
                                             @endforeach
                                         </select>
                                     </td>
@@ -35,12 +35,12 @@
                                         <select class="form-control js-example-basic-single" name="Currency[]" style="position: relative !important" title="Select Currency" disabled>
                                             <option value="" disabled selected>Select Currency</option>
                                             @foreach ($productCurrency as $currency)
-                                                <option value="{{ $currency->id }}" @if ( $newBasePrice->CurrencyId == $currency->id ) selected @endif>{{ $currency->Name }}</option>
+                                                <option value="{{ $currency->id }}" @if ( $BasePrice->CurrencyId == $currency->id ) selected @endif>{{ $currency->Name }}</option>
                                             @endforeach
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="number" step=".01" class="form-control" name="Price[]" value="{{  $newBasePrice->Price }}"  placeholder="" >
+                                        <input type="number" step=".01" class="form-control" name="Price[]" value="{{  $BasePrice->Price }}"  placeholder="" >
                                     </td>
                                 </tr>
                                 @endforeach
@@ -48,9 +48,23 @@
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit"  class="btn btn-success" value="Save">
+                        @php
+                            $total = $newBasePrice->total();
+                            $currentPage = $newBasePrice->currentPage();
+                            $perPage = $newBasePrice->perPage();
+                            
+                            $from = ($currentPage - 1) * $perPage + 1;
+                            $to = min($currentPage * $perPage, $total);
+                        @endphp
+                        <div class="d-flex justify-content-between align-items-center w-100 mt-3">
+                            <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                            <div>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-success" value="Save">
+                            </div>
+                        </div>
                     </div>
+                    
                 </form>
             </div>
         </div>

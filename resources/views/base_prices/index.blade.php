@@ -46,7 +46,17 @@
                 </tbody>
             </table>
             {!! $currentBasePrice->appends(['search' => $search])->links() !!}
+            @php
+            $total = $currentBasePrice->total();
+            $currentPage = $currentBasePrice->currentPage();
+            $perPage = $currentBasePrice->perPage();
 
+            $from = ($currentPage - 1) * $perPage + 1;
+            $to = min($currentPage * $perPage, $total);
+        @endphp
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+        </div>
         </div>
     </div>
 </div>
