@@ -32,7 +32,14 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->when($request->search, function($q)use($request){
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+                    ->orWhere('code', "LIKE", "%".$request->search."%")
+                    ->orWhereHas('userByUserId', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    })
+                    ->orWhereHas('userById', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    });
             })
             ->when($request->application_filter, function($q)use($request) {
                 $q->where('application_id', $request->application_filter);
@@ -66,7 +73,14 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->when($request->search, function($q)use($request){
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+                    ->orWhere('code', "LIKE", "%".$request->search."%")
+                    ->orWhereHas('userByUserId', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    })
+                    ->orWhereHas('userById', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    });
             }) 
             ->where('status', '2')
             ->orderBy('updated_at', 'desc')
@@ -92,7 +106,14 @@ class ProductController extends Controller
 
         $products = Product::with(['userById', 'userByUserId'])->where('status', '1')
             ->when($request->search, function($q)use($request) {
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+                    ->orWhere('code', "LIKE", "%".$request->search."%")
+                    ->orWhereHas('userByUserId', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    })
+                    ->orWhereHas('userById', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    });
             })
             ->orWhere('code', $request->search)
             ->orderBy('id', 'desc')
