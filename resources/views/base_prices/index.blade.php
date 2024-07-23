@@ -4,7 +4,7 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
-            Base Price List
+            Current Base Price List
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -47,16 +47,16 @@
             </table>
             {!! $currentBasePrice->appends(['search' => $search])->links() !!}
             @php
-            $total = $currentBasePrice->total();
-            $currentPage = $currentBasePrice->currentPage();
-            $perPage = $currentBasePrice->perPage();
+              $total = $currentBasePrice->total();
+              $currentPage = $currentBasePrice->currentPage();
+              $perPage = $currentBasePrice->perPage();
 
-            $from = ($currentPage - 1) * $perPage + 1;
-            $to = min($currentPage * $perPage, $total);
-        @endphp
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-        </div>
+              $from = ($currentPage - 1) * $perPage + 1;
+              $to = min($currentPage * $perPage, $total);
+          @endphp
+          <div class="d-flex justify-content-between align-items-center mt-3">
+              <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+          </div>
         </div>
     </div>
 </div>

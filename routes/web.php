@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home','HomeController@index');
 
     // change password
+    Route::get('my_account','HomeController@myAccount')->name('my_account');
     Route::get('change_password','HomeController@changePassword')->name('change_password');
     Route::post('change_password','HomeController@updatePassword')->name('update_password');
 
@@ -53,17 +54,44 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('update_department/{id}', 'DepartmentController@update')->name('update_department');
     Route::get('delete_department/{id}', 'DepartmentController@delete')->name('delete_department');
 
-    // Product
+    # Product
     Route::get('/current_products', 'ProductController@current')->name('product.current');
     Route::get('/new_products', 'ProductController@new')->name('product.new');
-    Route::get('/draft_products', 'ProductController@draft')->name('product.draft');
-    Route::get('/archived_products', 'ProductController@archived')->name('product.archived');
-    Route::post('/new_product', 'ProductController@store')->name('product.store');
+    Route::get('view_product/{id}', 'ProductController@view')->name('product.view');
+    Route::post('update_raw_materials/{id}', 'ProductController@updateRawMaterials');
     Route::get('/edit_product/{id}', 'ProductController@edit')->name('edit_product');
     Route::post('update_product/{id}', 'ProductController@update')->name('update_product');
-    Route::get('view_product/{id}', 'ProductController@view')->name('product.view');
-    Route::get('delete_product/{id}', 'ProductController@delete')->name('delete_product');
-    Route::post('update_raw_materials/{id}', 'ProductController@updateRawMaterials');
+    Route::post('delete_product', 'ProductController@delete')->name('delete_product');
+
+    # Product Specification
+    Route::post('add_specification', 'ProductController@specification');
+    Route::post('edit_specification/{id}', 'ProductController@editSpecification');
+    Route::post('update_all_product_specification', 'ProductController@updateAllProductSpecification');
+
+    # Product Files
+    Route::post('add_files', 'ProductController@addFiles');
+    Route::post('edit_files/{id}', 'ProductController@editFiles');
+    Route::post('update_all_files', 'ProductController@updateAllFiles');
+
+    # Product DS
+    Route::post('add_product_ds', 'ProductController@productDs');
+    Route::post('edit_product_ds/{id}', 'ProductController@updatePds');
+    Route::get('view_details/{id}', 'ProductController@viewPdsDetails');
+
+    # Draft Products
+    Route::get('/draft_products', 'ProductController@draft')->name('product.draft');
+    Route::post('/add_to_new_products', 'ProductController@addToNewProducts');
+
+    # Current Products
+    Route::post('/new_product', 'ProductController@store')->name('product.store');
+    Route::post('/add_to_current_products', 'ProductController@addToCurrentProducts');
+
+    # Archived Products
+    Route::get('/archived_products', 'ProductController@archived')->name('product.archived');
+    Route::post('/add_to_draft_products', 'ProductController@addToDraftProducts');
+    Route::post('/add_to_archive_products', 'ProductController@addToArchiveProducts');
+
+    
 
     // Client
     Route::get('/client', 'ClientController@index')->name('client.index');
@@ -74,6 +102,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('edit_client/{id}', 'ClientController@edit')->name('client.edit');
     Route::post('update_client/{id}', 'ClientController@update')->name('update_client');
     Route::get('view_client/{id}', 'ClientController@view')->name('client.view');
+    Route::get('/regions', 'ClientController@getRegions');
+    Route::get('/areas', 'ClientController@getAreas');
 
     // Customer Requirement
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 
@@ -175,23 +205,23 @@ Route::group(['middleware' => 'auth'], function () {
     // Product Applications
     Route::get('/product_applications', 'ProductApplicationController@index')->name('product_applications.index');
     Route::post('/new_product_applications', 'ProductApplicationController@store')->name('product_applications.store');
-    Route::get('/edit_product_applications/{id}', 'ProductApplicationController@edit')->name('edit_product_applications');
+    // Route::get('/edit_product_applications/{id}', 'ProductApplicationController@edit')->name('edit_product_applications');
     Route::post('update_product_applications/{id}', 'ProductApplicationController@update')->name('update_product_applications');
-    Route::get('delete_product_applications/{id}', 'ProductApplicationController@delete')->name('delete_product_applications');
+    Route::post('delete_product_applications', 'ProductApplicationController@delete')->name('delete_product_applications');
 
     // Product Subcategories
     Route::get('/product_subcategories', 'ProductSubcategoriesController@index')->name('product_subcategories.index');
     Route::post('/new_product_subcategories', 'ProductSubcategoriesController@store')->name('product_subcategories.store');
     Route::get('/edit_product_subcategories/{id}', 'ProductSubcategoriesController@edit')->name('edit_product_subcategories');
     Route::post('update_product_subcategories/{id}', 'ProductSubcategoriesController@update')->name('update_product_subcategories');
-    Route::get('delete_product_subcategories/{id}', 'ProductSubcategoriesController@delete')->name('delete_product_subcategories');
+    Route::post('delete_product_subcategories', 'ProductSubcategoriesController@delete')->name('delete_product_subcategories');
 
     // Raw Material
     Route::get('/raw_material', 'RawMaterialController@index')->name('raw_material.index');
     Route::post('/add_raw_material', 'RawMaterialController@add');
     Route::post('/deactivate_raw_material', 'RawMaterialController@deactivate');
     Route::post('/activate_raw_material', 'RawMaterialController@activate');
-    Route::get('/get_raw_materials_products', 'RawMaterialController@getRawMaterialsProducts');
+    // Route::get('/get_raw_materials_products', 'RawMaterialController@getRawMaterialsProducts');
 
     // Base Price
     Route::get('/base_price', 'BasePriceController@index')->name('base_price.index');

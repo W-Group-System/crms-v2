@@ -8,21 +8,35 @@ use Illuminate\Http\Request;
 class RoleController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {
-        if(request()->ajax())
-        {
-            return datatables()->of(Role::latest()->get())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('roles.index');
+        // if(request()->ajax())
+        // {
+        //     return datatables()->of(Role::latest()->get())
+        //             ->addColumn('action', function($data){
+        //                 $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
+        //                 $buttons .= '&nbsp;&nbsp;';
+        //                 $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
+        //                 return $buttons;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
+        // return view('roles.index');
+    
+        $search = $request->input('search');
+    
+        $roles = Role::where(function ($query) use ($search) {
+                $query->where('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('description', 'LIKE', '%' . $search . '%');
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        
+        return view('roles.index', [
+            'search' => $search,
+            'roles' => $roles,
+        ]);
     }
 
     // Create

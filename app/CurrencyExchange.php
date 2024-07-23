@@ -21,5 +21,4 @@ class CurrencyExchange extends Model
     {
         return $this->belongsTo(PriceCurrency::class, 'ToCurrencyId', 'id');
     }
-
 }

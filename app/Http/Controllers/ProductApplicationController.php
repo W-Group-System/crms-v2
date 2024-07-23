@@ -4,91 +4,67 @@ namespace App\Http\Controllers;
 use App\ProductApplication;
 use Validator;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductApplicationController extends Controller
 {
     // List 
-    public function index()
+    public function index(Request $request)
     {   
-        if(request()->ajax())
-        {
-            return datatables()->of(ProductApplication::orderBy('id', 'desc')->get())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('product_applications.index'); 
+        $productApplications = ProductApplication::when($request->search, function($q)use($request) {
+            $q->where('Name', 'LIKE', "%".$request->search."%")->orWhere('Description', 'LIKE', "%".$request->search."%");
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(10);
+        
+        return view('product_applications.index', 
+            array(
+                'productApplications' => $productApplications,
+                'search' => $request->search
+            )
+        ); 
     }
 
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
+        $productApplication = new ProductApplication;
+        $productApplication->Name = $request->Name;
+        $productApplication->Description = $request->Description;
+        $productApplication->save();
 
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
-        );
-
-        ProductApplication::create($form_data);
-
-        return response()->json(['success' => 'Data Added Successfully.']);
+        Alert::success('Successfully Saved.')->persistent('Dismiss');
+        return back();
     }
 
     // Edit
-    public function edit($id)
-    {
-        if(request()->ajax())
-        {
-            $data = ProductApplication::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
-    }
+    // public function edit($id)
+    // {
+    //     if(request()->ajax())
+    //     {
+    //         $data = ProductApplication::findOrFail($id);
+    //         return response()->json(['data' => $data]);
+    //     }
+    // }
 
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
+        $productApplication = ProductApplication::findOrFail($id);
+        $productApplication->Name = $request->Name;
+        $productApplication->Description = $request->Description;
+        $productApplication->save();
 
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
-        );
-
-        ProductApplication::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        Alert::success('Successfully Updated.')->persistent('Dismiss');
+        return back();
     }
 
     // Delete
-    public function delete($id)
+    public function delete(Request $request)
     {
-        $data = ProductApplication::findOrFail($id);
+        $data = ProductApplication::findOrFail($request->id);
         $data->delete();
+
+        return array('message' => 'Successfully Deleted');
     }
 }

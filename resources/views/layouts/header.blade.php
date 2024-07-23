@@ -25,6 +25,7 @@
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link href="{{ asset('css/buttons.bootstrap4.css') }}" rel="stylesheet">
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
@@ -66,10 +67,15 @@
                         <li class="nav-item nav-profile dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                                 <img src="{{ asset('/images/user.png')}}" alt="profile"/>
+                                <label>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                                <a href="{{ route('my_account') }}" class="dropdown-item">
+                                    <i class="ti ti-user text-primary"></i>
+                                    My Acount
+                                </a>
                                 <a href="{{ route('change_password') }}" class="dropdown-item">
-                                    <i class="ti-settings text-primary"></i>
+                                    <i class="ti ti-unlock text-primary"></i>
                                     Change Password
                                 </a>
                                 <!-- <a class="dropdown-item">
@@ -155,18 +161,11 @@
                                 </ul>
                             </div>
                         </li>
-                        
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
-                                <i class="icon-columns menu-icon"></i>
-                                <span class="menu-title">Product Information</span>
-                                <i class="menu-arrow"></i>
+                            <a class="nav-link" href="{{ url('/current_products') }}">
+                            <i class="icon-paper menu-icon"></i>
+                            <span class="menu-title">Products</span>
                             </a>
-                            <div class="collapse" id="form-elements">
-                                <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/current_products') }}">Products</a></li>
-                                </ul>
-                            </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
@@ -1051,7 +1050,7 @@
                 font-style: normal;
             }
         </style>
-        {{-- @include('sweetalert::alert') --}}
+        @include('sweetalert::alert')
         <script src="{{ asset('js/vendor.bundle.base.js') }}"></script>
         <script src="{{ asset('js/Chart.min.js') }}"></script>
         <script src="{{ asset('js/jquery.dataTables.js') }}"></script>
@@ -1060,6 +1059,7 @@
         <script src="{{ asset('js/select2.min.js') }}"></script>
         <script src="{{ asset('js/select2.js') }}"></script>
         <script src="{{ asset('js/main.js') }}"></script>
+        <script src="{{asset('js/sweetalert2.min.js')}}"></script>
 
         <script src="{{ asset('js/off-canvas.js') }}"></script>
         <script src="{{ asset('js/hoverable-collapse.js') }}"></script>
@@ -1069,5 +1069,6 @@
 
         <script src="{{ asset('js/dashboard.js') }}"></script>
         <script src="{{ asset('js/Chart.roundedBarCharts.js') }}"></script>
+        <script src="{{asset('js/sweetalert2.min.js')}}"></script>
     </body>
 </html>

@@ -15,13 +15,13 @@
                         {{ session('error') }}
                     </div>
                 @endif
-                <div class="form-group mb-10">
+                {{-- <div class="form-group mb-10">
                     <label for="oldPasswordInput">Old Password</label> 
-                    <input name="old_password" type="password" placeholder="Enter Old Password" class="form-control @if($errors->has('old_password')) is-invalid @endif" id="oldPasswordInput">
+                    <input name="old_password" type="password" placeholder="Enter Old Password" class="form-control @if($errors->has('old_password')) is-invalid @endif" id="oldPasswordInput" value="{{}}">
                     @if($errors->has('old_password'))
                         <span class="text-danger">{{ $errors->first('old_password') }}</span>
                     @endif
-                </div>
+                </div> --}}
                 <div class="form-group mb-10">
                     <label for="newPasswordInput">New Password</label> 
                     <input name="new_password" type="password" placeholder="Enter New Password" class="form-control @if($errors->has('new_password')) is-invalid @endif" id="newPasswordInput">
@@ -34,6 +34,7 @@
                     <input name="new_password_confirmation" type="password" placeholder="Confirm New Password" class="form-control" id="confirmedPasswordInput">
                 </div>
                 <div align="right" class="mt-10">
+                    <a href="{{ url('home') }}" class="btn btn-secondary">Close</a>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
