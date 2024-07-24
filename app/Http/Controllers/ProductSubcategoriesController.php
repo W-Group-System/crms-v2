@@ -15,7 +15,11 @@ class ProductSubcategoriesController extends Controller
     {   
         $subcategories = ProductSubcategories::with('application')
             ->when($request->search, function($q)use($request){
-                $q->where('Name', "LIKE", "&".$request->search."%")->orWhere('Description', 'LIKE', '%'.$request->search.'%');
+                $q->whereHas('application', function($q)use($request) {
+                    $q->where('Name', 'LIKE', '%'.$request->search.'%');
+                })
+                ->orWhere('Name', "LIKE", "%".$request->search."%")
+                ->orWhere('Description', 'LIKE', '%'.$request->search.'%');
             })
             ->orderBy('id', 'desc')
             ->paginate(10);
