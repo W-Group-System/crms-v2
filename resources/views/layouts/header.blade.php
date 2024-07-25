@@ -205,7 +205,7 @@
                         <!-- Separate collapse for setup submenu -->
                         <div class="collapse" id="tables2">
                             <ul class="nav flex-column sub-menu">
-                                <!-- <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/setup_item1') }}">Categorization</a></li> -->
+                                <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/categorization') }}">Categorization</a></li> 
                                 <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/project_name') }}">Project Name</a></li>
                                 <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/nature_request') }}">Nature of Request</a></li>
                                 <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/crr_priority') }}">CRR Priority</a></li>
