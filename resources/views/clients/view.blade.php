@@ -4,7 +4,12 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
-            <a href="{{ url('/client') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                <div align="right">
+                    <a href="{{ url('/client') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <button type="button" class="btn btn-danger deleteFile" title="Delete File" data-id="">
+                        <i class="ti ti-archive"></i> Archive
+                    </button>
+                </div>
             </h4>
             <form class="form-horizontal" id="form_client" enctype="multipart/form-data" action="{{ url('update_client/'.$data->id) }}">
                 <span id="form_result"></span>
@@ -119,41 +124,181 @@
                             </div>
                         @endif
                     </div>
-                    {{-- <div class="col-lg-12">
-                        <table class="table table-striped mb-5" id="table_address">
-                            <thead>
-                                <tr>
-                                    <th style="vertical-align: middle" width="30%">Address Type</th>
-                                    <th style="vertical-align: middle" width="70%">Address</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            @if($addresses->isNotEmpty())
-                                @foreach($addresses as $address)
-                                    <tr>
-                                        <td><p>{{ $address->AddressType }}</p></td>
-                                        <td><p>{{ $address->Address }}</p></td>
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="2" align="center">No Address Available</td>
-                                </tr>
-                            @endif
-                            </tbody>
-                        </table>
-                    </div>
-                </div> --}}
+                </div>
                 <div align="right">
                     <a href="{{ url('/client') }}" class="btn btn-light">Close</a>
                 </div>
             </form>
+            <ul class="nav nav-tabs viewTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="contacts-tab" data-toggle="tab" href="#contacts" role="tab" aria-controls="contacts" aria-selected="true">Contacts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="transactions" aria-selected="false">Transactions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="collection-tab" data-toggle="tab" href="#collection" role="tab" aria-controls="collection" aria-selected="false">Collection</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="productFiles-tab" data-toggle="tab" href="#productFiles" role="tab" aria-controls="productFiles" aria-selected="false">Product Files</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="transactionFiles-tab" data-toggle="tab" href="#transactionFiles" role="tab" aria-controls="transactionFiles" aria-selected="false">Transaction Files</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
+                    <div class="form-group row mb-2">
+                        <div class="col-md-6">
+                            <button class="btn btn-success mb-2" type="button">Export</button>
+                        </div>
+                        <div class="col-md-6" align="right">
+                            <button class="btn btn-primary mb-2" type="button" data-toggle="modal" data-target="#contactsModal">Add Contacts</button>
+                        </div>
+                    </div>
+                    @include('clients.add_contacts')
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Name</th>
+                                    <th>Designation</th>
+                                    <th>Birthday</th>
+                                    <th>Telephone</th>
+                                    <th>Telephone 2</th>
+                                    <th>Mobile</th>
+                                    <th>Mobile 2</th>
+                                    <th>Email</th>
+                                    <th>Skype</th>
+                                    <th>Viber</th>
+                                    <th>WhatsApp</th>
+                                    <th>Facebook</th>
+                                    <th>LinkedIn</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($data->contacts->count() > 0)
+                                    @foreach ($data->contacts as $contact)
+                                    <tr>
+                                        <td>
+                                            <button type="button" class="btn btn-warning btn-sm" title="Edit Client" data-toggle="modal" data-target="#edit_contact-{{ $contact->id }}">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm deleteContact" title="Delete Client" data-id="{{ $contact->id }}">
+                                                <i class="ti-trash"></i>
+                                            </button>
+                                        </td>
+                                        <td>{{ $contact->ContactName }}</td>
+                                        <td>{{ $contact->Designation ?? 'N/A' }}</td>
+                                        <td>{{ $contact->Birthday ?? 'N/A'}}</td>
+                                        <td>{{ $contact->PrimaryTelephone ?? 'N/A' }}</td>
+                                        <td>{{ $contact->SecondaryTelephone ?? 'N/A' }}</td>
+                                        <td>{{ $contact->PrimaryMobile ?? 'N/A' }}</td>
+                                        <td>{{ $contact->SecondaryMobile ?? 'N/A'}}</td>
+                                        <td>{{ $contact->EmailAddress ?? 'N/A' }}</td>
+                                        <td>{{ $contact->Skype ?? 'N/A'}}</td>
+                                        <td>{{ $contact->Viber ?? 'N/A'}}</td>
+                                        <td>{{ $contact->WhatsApp ?? 'N/A'}}</td>
+                                        <td>{{ $contact->Facebook ?? 'N/A'}}</td>
+                                        <td>{{ $contact->LinkedIn ?? 'N/A'}}</td>
+                                    </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="14" class="text-center">No matching records found</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                    @foreach ($data->contacts as $contact)
+                        @include('clients.edit_contacts')
+                    @endforeach
+                </div>
+                <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    <div class="form-group row mb-2">
+                        <div class="col-md-6">
+                            <button class="btn btn-success mb-2" type="button">Export</button>
+                        </div>
+                        <div class="col-md-6" align="right">
+                            <button class="btn btn-primary mb-2" type="button" data-toggle="modal" data-target="#filesModal">Add Files</button>
+                        </div>
+                    </div>
+                    @include('clients.add_files')
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Name</th>
+                                    <th>File</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($data->files->count() > 0)
+                                    @foreach ($data->files as $file)
+                                    <tr>
+                                        <td>
+                                            <button type="button" class="btn btn-warning btn-sm" title="Edit File" data-toggle="modal" data-target="#edit_file-{{ $file->id }}">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm deleteFile" title="Delete File" data-id="{{ $file->id }}">
+                                                <i class="ti-trash"></i>
+                                            </button>
+                                        </td>
+                                        <td>{{ $file->FileName}}</td>
+                                        <td><a href="{{ url($file->Path) }}" target="_blank" download>{{ $file->Path }}</a></td>
+                                    </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3" class="text-center">No matching records found</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                    @foreach ($data->files as $file)
+                        @include('clients.edit_files')
+                    @endforeach
+                </div>
+                <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
+                <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Transaction Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+<style>
+    #form_product {
+        padding: 20px 20px;
+    }
+    .viewTab .nav-link {
+        padding: 15px;
+    }
+</style>
 <script>
     $(document).ready(function() {
         $('#form_client').on('submit', function(event) {
@@ -188,6 +333,94 @@
                 }
             });
         });
+
+        // Contacts Tab
+        $(".deleteContact").on('click', function() {
+            var contactId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('delete_contact') }}/" + contactId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.responseJSON.error
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // File Tab
+        $(".deleteFile").on('click', function() {
+            var fileId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('delete_file') }}/" + fileId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.responseJSON.error
+                            });
+                        }
+                    });
+                }
+            });
+        });
     });
 
     $('#table_address thead').on('click', '.addRow', function(){
@@ -203,5 +436,7 @@
     $('#table_address tbody').on('click', '.deleteRow', function(){
         $(this).parent().parent().remove();
     });
+    
+
 </script>
 @endsection
