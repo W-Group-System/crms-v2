@@ -23,7 +23,7 @@
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Current" title="Add to current">Current</button>
+                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Current" title="Submit to current products">Current</button>
                     </form>
                 </div>
             </div>

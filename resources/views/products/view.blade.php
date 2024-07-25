@@ -16,7 +16,7 @@
 
                         <input type="hidden" name="id" value="{{$data->id}}">
                         
-                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Archive" title="Add to archive">Archive</button>
+                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Archive" title="Submit to archive products">Archive</button>
                     </form>
                    
                 </div>
