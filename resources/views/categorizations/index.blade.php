@@ -4,8 +4,8 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
-            Project Name List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#CreateProjectName">Add Project Name</button>
+            Categorization List
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#AddCategorization">Add Categorization</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -28,29 +28,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($projectNames as $projectName)
+                    @foreach ($categorizations as $categorization)
                         <tr>
                             <td>
                                 <button type="button" class="btn btn-sm btn-warning btn-outline"
-                                    data-target="#editProjectName{{ $projectName->id }}" data-toggle="modal" title='Edit Project Name'>
+                                    data-target="#editCategorization{{ $categorization->id }}" data-toggle="modal" title='Edit Categorization'>
                                     <i class="ti-pencil"></i>
                                 </button>   
-                                <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $projectName->id }})" title='Delete Supplementary'>
+                                <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $categorization->id }})" title='Delete Supplementary'>
                                     <i class="ti-trash"></i>
                                 </button>  
                             </td>
-                            <td>{{ $projectName->Name }}</td>
-                            <td>{{ $projectName->Description }}</td>
+                            <td>{{ $categorization->Name }}</td>
+                            <td>{{ $categorization->Description }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
            </div>
-           {!! $projectNames->appends(['search' => $search])->links() !!}
+           {!! $categorizations->appends(['search' => $search])->links() !!}
             @php
-                $total = $projectNames->total();
-                $currentPage = $projectNames->currentPage();
-                $perPage = $projectNames->perPage();
+                $total = $categorizations->total();
+                $currentPage = $categorizations->currentPage();
+                $perPage = $categorizations->perPage();
                 
                 $from = ($currentPage - 1) * $perPage + 1;
                 $to = min($currentPage * $perPage, $total);
@@ -76,7 +76,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('/delete_project_name') }}/" + id, 
+                    url: "{{ url('/delete_categorization') }}/" + id, 
                     method: 'DELETE',
                     data: {
                         '_token': '{{ csrf_token() }}'
@@ -102,8 +102,8 @@
         });
     }      
 </script>
-@include('project_name.create')
-@foreach ($projectNames as $projectName)
-@include('project_name.edit')
+@include('categorizations.create')
+@foreach ($categorizations as $categorization)
+@include('categorizations.edit')
 @endforeach
 @endsection
