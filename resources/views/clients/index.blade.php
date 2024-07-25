@@ -50,11 +50,10 @@
                                 </td>
                                 <td>{{$client->industry->Name ?? 'N/A'}}</td>
                                 <td>{{$client->BuyerCode}}</td>
-                                <td>{{$client->Name}}</td>
+                                <td>{{$client->Name ?? 'N/A'}}</td>
                                 <td>
-                                    {{ $client->userByUserId->full_name ?? 'N/A' }} / 
-                                    {{ $client->userByUserId2->full_name ?? 'N/A' }}
-
+                                    {{ $client->userByUserId->full_name ?? $client->userById->full_name ?? 'N/A' }} / 
+                                    {{ $client->userByUserId2->full_name ?? $client->userById2->full_name ?? 'N/A' }}
                                 </td>
                             </tr>
                             @endforeach
@@ -67,6 +66,17 @@
                 </table>
             </div>
             {!! $clients->appends(['search' => $search])->links() !!}
+            @php
+                $total = $clients->total();
+                $currentPage = $clients->currentPage();
+                $perPage = $clients->perPage();
+                
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+            </div>
         </div>
     </div>
 </div>
@@ -176,9 +186,6 @@
         </div>
     </div>
 </div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
 
 <script>
     function viewClient(clientId) {
