@@ -2,18 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\BasePrice;
 use App\Client;
+use App\Helpers\Helpers;
 use App\Product;
+use App\ProductAllergens;
 use App\User;
 use App\ProductApplication;
+use App\ProductDataSheet;
 use App\ProductFiles;
+use App\ProductHeavyMetal;
 use App\ProductMaterialsComposition;
+use App\ProductMicrobiologicalAnalysis;
+use App\ProductNutrionalInformation;
+use App\ProductPhysicoChemicalAnalyses;
+use App\ProductPotentialBenefit;
 use App\ProductRawMaterials;
 use App\ProductSpecification;
 use App\ProductSubcategories;
 use App\RawMaterial;
-use Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductController extends Controller
@@ -23,7 +32,14 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->when($request->search, function($q)use($request){
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+                    ->orWhere('code', "LIKE", "%".$request->search."%")
+                    ->orWhereHas('userByUserId', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    })
+                    ->orWhereHas('userById', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    });
             })
             ->when($request->application_filter, function($q)use($request) {
                 $q->where('application_id', $request->application_filter);
@@ -57,7 +73,14 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->when($request->search, function($q)use($request){
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+                    ->orWhere('code', "LIKE", "%".$request->search."%")
+                    ->orWhereHas('userByUserId', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    })
+                    ->orWhereHas('userById', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    });
             }) 
             ->where('status', '2')
             ->orderBy('updated_at', 'desc')
@@ -83,7 +106,14 @@ class ProductController extends Controller
 
         $products = Product::with(['userById', 'userByUserId'])->where('status', '1')
             ->when($request->search, function($q)use($request) {
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+                    ->orWhere('code', "LIKE", "%".$request->search."%")
+                    ->orWhereHas('userByUserId', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    })
+                    ->orWhereHas('userById', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    });
             })
             ->orWhere('code', $request->search)
             ->orderBy('id', 'desc')
@@ -100,7 +130,14 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->when($request->search, function($q)use($request) {
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")->orWhere('code', "LIKE", "%".$request->search."%");
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+                    ->orWhere('code', "LIKE", "%".$request->search."%")
+                    ->orWhereHas('userByUserId', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    })
+                    ->orWhereHas('userById', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    });
             })
             ->where('status', '5')
             ->orderBy('updated_at', 'desc')
@@ -192,9 +229,14 @@ class ProductController extends Controller
             'productFiles' => function($q) {
                 $q->orderBy('id', 'desc');
             },
-            'productDataSheet' => function($q) {
+            'productDataSheet.productPhysicoChemicalAnalyses' => function($q) {
                 $q->orderBy('id', 'desc');
             },
+            'productDataSheet.productMicrobiologicalAnalysis',
+            'productDataSheet.productHeavyMetal',
+            'productDataSheet.productNutritionalInformation',
+            'productDataSheet.productAllergens',
+            'productDataSheet.productPotentialBenefit',
             'productEventLogs'
             ])
             ->find($id);
@@ -223,18 +265,34 @@ class ProductController extends Controller
 
     public function updateRawMaterials(Request $request, $id)
     {
-        $product_raw_materials = ProductMaterialsComposition::where('ProductId', $id)->delete();
+        $validator = Validator::make($request->all(), [
+            'raw_materials' => 'array|min:1',
+            'raw_materials.*' => 'distinct'
+        ], [
+            'raw_materials.*.distinct' => 'The raw materials should be unique.',
+        ]);
 
-        foreach($request->raw_materials as $key=>$rm)
-        {   
-            $product_raw_materials = new ProductMaterialsComposition;
-            $product_raw_materials->MaterialId = $rm;
-            $product_raw_materials->Percentage = $request->percent[$key];
-            $product_raw_materials->ProductId = $id;
-            $product_raw_materials->save();
+        if ($validator->fails())
+        {
+            $msg = $validator->errors()->first();
+            Alert::error($msg)->persistent('Dismiss');
+        }
+        else
+        {
+            $product_raw_materials = ProductMaterialsComposition::where('ProductId', $id)->delete();
+    
+            foreach($request->raw_materials as $key=>$rm)
+            {   
+                $product_raw_materials = new ProductMaterialsComposition;
+                $product_raw_materials->MaterialId = $rm;
+                $product_raw_materials->Percentage = $request->percent[$key];
+                $product_raw_materials->ProductId = $id;
+                $product_raw_materials->save();
+            }
+    
+            Alert::success('Successfully Saved')->persistent('Dismiss');
         }
 
-        Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
 
@@ -276,16 +334,26 @@ class ProductController extends Controller
 
     public function specification(Request $request)
     {
-        $productSpecification = new ProductSpecification;
-        $productSpecification->Parameter = $request->parameter;
-        $productSpecification->Specification = $request->specification;
-        $productSpecification->TestingCondition = $request->testing_condition;
-        $productSpecification->Remarks = $request->remarks;
-        $productSpecification->ProductId = $request->product_id;
-        $productSpecification->CreatedDate = date('Y-m-d h:i:s');
-        $productSpecification->save();
-
-        Alert::success('Successfully Saved')->persistent('Dismiss');
+        // dd($request->all());
+        $productSpecification = ProductSpecification::where('ProductId', $request->product_id)->where('Parameter', $request->parameter)->first();
+        
+        if (!empty($productSpecification))
+        {
+            Alert::error('Error! Entry already exist')->persistent('Dismiss');
+        }
+        else
+        {
+            $productSpecification = new ProductSpecification;
+            $productSpecification->Parameter = $request->parameter;
+            $productSpecification->Specification = $request->specification;
+            $productSpecification->TestingCondition = $request->testing_condition;
+            $productSpecification->Remarks = $request->remarks;
+            $productSpecification->ProductId = $request->product_id;
+            $productSpecification->CreatedDate = date('Y-m-d h:i:s');
+            $productSpecification->save();
+    
+            Alert::success('Successfully Saved')->persistent('Dismiss');
+        }
         return back();
     }
 
@@ -343,6 +411,287 @@ class ProductController extends Controller
         $fileProducts->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function productDs(Request $request)
+    {
+        $productDataSheet = ProductDataSheet::where('ProductId', $request->product_id)->first();
+        
+        if(!empty($productDataSheet))
+        {
+            Alert::error('Error! The product data sheet is existing')->persistent('Dismiss');
+            return back();
+        }
+        else
+        {
+            $productDataSheet = new ProductDataSheet;
+            $productDataSheet->ProductId = $request->product_id;
+            $productDataSheet->CompanyId = $request->company;
+            $productDataSheet->ControlNumber = $request->control_number;
+            $productDataSheet->DateIssued = $request->date_issued;
+            $productDataSheet->Description = $request->description;
+            $productDataSheet->Description2 = $request->description2;
+            $productDataSheet->Appearance = $request->appearance;
+            $productDataSheet->Application = $request->application;
+            $productDataSheet->DirectionForUse = $request->direction_for_use;
+            $productDataSheet->Storage = $request->storage;
+            $productDataSheet->TechnicalAssistance = $request->technical_assistance;
+            $productDataSheet->PurityAndLegalStatus = $request->purity_and_legal_status;
+            $productDataSheet->Packaging = $request->packaging;
+            $productDataSheet->Certification = $request->certifications;
+            $productDataSheet->save();
+            
+            // $productPotentialBenefits = ProductPotentialBenefit::where('ProductDataSheetId', $id)->delete();
+            if ($request->potentialBenefit)
+            {
+                foreach($request->potentialBenefit as $pb)
+                {
+                    $productPotentialBenefits = new ProductPotentialBenefit;
+                    $productPotentialBenefits->ProductDataSheetId = $productDataSheet->Id;
+                    $productPotentialBenefits->Benefit = $pb;
+                    $productPotentialBenefits->save();
+                }
+            }
+
+            if ($request->pcaParameter)
+            {
+                // $productPca = ProductPhysicoChemicalAnalyses::where('ProductDataSheetId', $id)->delete();
+                foreach($request->pcaParameter as $key => $pca)
+                {
+                    $productPca = new ProductPhysicoChemicalAnalyses;
+                    $productPca->ProductDataSheetId = $productDataSheet->Id;
+                    $productPca->Parameter = $pca;
+                    $productPca->Value = $request->pcaValue[$key];
+                    $productPca->Remarks = $request->pcaRemark[$key];
+                    $productPca->save();
+                }
+            }
+            
+            if($request->maParameter)
+            {
+                // $productMa = ProductMicrobiologicalAnalysis::where('ProductDataSheetId', $id)->delete();
+                foreach($request->maParameter as $key=>$maParameter)
+                {
+                    $productMa = new ProductMicrobiologicalAnalysis;
+                    $productMa->ProductDataSheetId = $productDataSheet->Id;
+                    $productMa->Parameter = $maParameter;
+                    $productMa->Value = $request->maValue[$key];
+                    $productMa->Remarks = $request->maRemark[$key];
+                    $productMa->save();
+                }
+            }
+
+            if ($request->heavyMetalsParameter)
+            {
+                // $productHeavyMetal = ProductHeavyMetal::where('ProductDataSheetId', $id)->delete();
+                foreach($request->heavyMetalsParameter as $key=>$parameter)
+                {
+                    $productHeavyMetal = new ProductHeavyMetal;
+                    $productHeavyMetal->ProductDataSheetId = $productDataSheet->Id;
+                    $productHeavyMetal->Parameter = $parameter;
+                    $productHeavyMetal->Value = $request->heavyMetalsValue[$key];
+                    $productHeavyMetal->save();
+                }
+            }
+
+            if ($request->nutrionalInfoValue)
+            {
+                // $productNutrionalInfo = ProductNutrionalInformation::where('ProductDataSheetId', $id)->delete();
+                foreach($request->nutrionalInfoParameter as $key=>$parameter)
+                {
+                    $productNutrionalInfo = new ProductNutrionalInformation;
+                    $productNutrionalInfo->ProductDataSheetId = $productDataSheet->Id;
+                    $productNutrionalInfo->Parameter = $parameter;
+                    $productNutrionalInfo->Value = $request->nutrionalInfoValue[$key];
+                    $productNutrionalInfo->save();
+                }
+            }
+
+            if ($request->allergensParameter)
+            {
+                // $allergens = ProductAllergens::where('ProductDataSheetId', $id)->delete();
+                foreach($request->allergensParameter as $key=>$parameter)
+                {
+                    $allergens = new ProductAllergens;
+                    $allergens->ProductDataSheetId = $productDataSheet->Id;
+                    $allergens->Parameter = $parameter;
+                    $allergens->IsAllergen = isset($request->isAllergen[$key]) ? 1 : 0;
+                    $allergens->save();
+                }
+            }
+
+            Alert::success('Successfully Saved')->persistent('Dismiss');
+            return back();
+        }
+    }
+
+    public function updatePds(Request $request, $id)
+    {
+        $productDataSheet = ProductDataSheet::findOrFail($id);
+        $productDataSheet->CompanyId = $request->company;
+        $productDataSheet->ControlNumber = $request->control_number;
+        $productDataSheet->DateIssued = $request->date_issued;
+        $productDataSheet->Description = $request->description;
+        $productDataSheet->Description2 = $request->description2;
+        $productDataSheet->Appearance = $request->appearance;
+        $productDataSheet->Application = $request->application;
+
+        $productPotentialBenefits = ProductPotentialBenefit::where('ProductDataSheetId', $id)->delete();
+        if ($request->potentialBenefit)
+        {
+            foreach($request->potentialBenefit as $pb)
+            {
+                $productPotentialBenefits = new ProductPotentialBenefit;
+                $productPotentialBenefits->ProductDataSheetId = $id;
+                $productPotentialBenefits->Benefit = $pb;
+                $productPotentialBenefits->save();
+            }
+        }
+
+        if ($request->pcaParameter)
+        {
+            $productPca = ProductPhysicoChemicalAnalyses::where('ProductDataSheetId', $id)->delete();
+            foreach($request->pcaParameter as $key => $pca)
+            {
+                $productPca = new ProductPhysicoChemicalAnalyses;
+                $productPca->ProductDataSheetId = $id;
+                $productPca->Parameter = $pca;
+                $productPca->Value = $request->pcaValue[$key];
+                $productPca->Remarks = $request->pcaRemark[$key];
+                $productPca->save();
+            }
+        }
+        
+        if($request->maParameter)
+        {
+            $productMa = ProductMicrobiologicalAnalysis::where('ProductDataSheetId', $id)->delete();
+            foreach($request->maParameter as $key=>$maParameter)
+            {
+                $productMa = new ProductMicrobiologicalAnalysis;
+                $productMa->ProductDataSheetId = $id;
+                $productMa->Parameter = $maParameter;
+                $productMa->Value = $request->maValue[$key];
+                $productMa->Remarks = $request->maRemark[$key];
+                $productMa->save();
+            }
+        }
+
+        if ($request->heavyMetalsParameter)
+        {
+            $productHeavyMetal = ProductHeavyMetal::where('ProductDataSheetId', $id)->delete();
+            foreach($request->heavyMetalsParameter as $key=>$parameter)
+            {
+                $productHeavyMetal = new ProductHeavyMetal;
+                $productHeavyMetal->ProductDataSheetId = $id;
+                $productHeavyMetal->Parameter = $parameter;
+                $productHeavyMetal->Value = $request->heavyMetalsValue[$key];
+                $productHeavyMetal->save();
+            }
+        }
+
+        if ($request->nutrionalInfoValue)
+        {
+            $productNutrionalInfo = ProductNutrionalInformation::where('ProductDataSheetId', $id)->delete();
+            foreach($request->nutrionalInfoParameter as $key=>$parameter)
+            {
+                $productNutrionalInfo = new ProductNutrionalInformation;
+                $productNutrionalInfo->ProductDataSheetId = $id;
+                $productNutrionalInfo->Parameter = $parameter;
+                $productNutrionalInfo->Value = $request->nutrionalInfoValue[$key];
+                $productNutrionalInfo->save();
+            }
+        }
+
+        if ($request->allergensParameter)
+        {
+            $allergens = ProductAllergens::where('ProductDataSheetId', $id)->delete();
+            foreach($request->allergensParameter as $key=>$parameter)
+            {
+                $allergens = new ProductAllergens;
+                $allergens->ProductDataSheetId = $id;
+                $allergens->Parameter = $parameter;
+                $allergens->IsAllergen = isset($request->isAllergen[$key]) ? 1 : 0;
+                $allergens->save();
+            }
+        }
+
+        $productDataSheet->DirectionForUse = $request->direction_for_use;
+        $productDataSheet->Storage = $request->storage;
+        $productDataSheet->TechnicalAssistance = $request->technical_assistance;
+        $productDataSheet->PurityAndLegalStatus = $request->purity_and_legal_status;
+        $productDataSheet->Packaging = $request->packaging;
+        $productDataSheet->Certification = $request->certifications;
+        $productDataSheet->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function viewPdsDetails($id)
+    {
+        $productDataSheet = ProductDataSheet::with(['products', 'productPotentialBenefit', 'productPhysicoChemicalAnalyses', 'productMicrobiologicalAnalysis', 'productHeavyMetal', 'productNutritionalInformation', 'productAllergens'])->where('id', $id)->first();
+
+        return view('products.pds_details', array('pds' => $productDataSheet));
+    }
+
+    public function updateAllProductSpecification(Request $request)
+    {
+        $ps = ProductSpecification::where('ProductId', $request->product_id)->delete();
+
+        if ($request->parameter)
+        {
+            foreach($request->parameter as $key=>$parameter)
+            {
+                $ps = new ProductSpecification;
+                $ps->Parameter = $parameter;
+                $ps->ProductId = $request->product_id;
+                $ps->TestingCondition = $request->testing_condition[$key];
+                $ps->Specification = $request->specification[$key];
+                $ps->Remarks = $request->remarks[$key];
+                $ps->save();
+            }
+        }
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function updateAllFiles(Request $request)
+    {
+        $productFiles = ProductFiles::where('ProductId', $request->product_id)->delete();
+
+        if($request->description)
+        {
+            foreach($request->description as $key=>$description)
+            {
+                $productFiles = new ProductFiles;
+                $productFiles->ProductId = $request->product_id;
+                $productFiles->Name = $request->name[$key];
+                $productFiles->ClientId = $request->client[$key];
+                $productFiles->Description = $description;
+                
+                if ($request->hasFile('files') && isset($request->file('files')[$key]))
+                {
+                    $files = $request->file('files');
+                    foreach($files as $file)
+                    {
+                        $fileName = time().'_'.$file->getClientOriginalName();
+                        $file->move(public_path().'/attachments/', $fileName);
+    
+                        $productFiles->Path = "/attachments/" . $fileName;
+                    }
+                }
+                else 
+                {
+                    $productFiles->Path = $request->product_files[$key] ?? null;
+                }
+
+                $productFiles->save();
+            }
+        }
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
 }

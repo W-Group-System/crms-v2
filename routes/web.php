@@ -66,9 +66,17 @@ Route::group(['middleware' => 'auth'], function () {
     # Product Specification
     Route::post('add_specification', 'ProductController@specification');
     Route::post('edit_specification/{id}', 'ProductController@editSpecification');
+    Route::post('update_all_product_specification', 'ProductController@updateAllProductSpecification');
+
     # Product Files
     Route::post('add_files', 'ProductController@addFiles');
     Route::post('edit_files/{id}', 'ProductController@editFiles');
+    Route::post('update_all_files', 'ProductController@updateAllFiles');
+
+    # Product DS
+    Route::post('add_product_ds', 'ProductController@productDs');
+    Route::post('edit_product_ds/{id}', 'ProductController@updatePds');
+    Route::get('view_details/{id}', 'ProductController@viewPdsDetails');
 
     # Draft Products
     Route::get('/draft_products', 'ProductController@draft')->name('product.draft');
@@ -120,6 +128,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Route::get('samplerequest/edit/{id}', 'SampleRequestController@edit');
     Route::post('addSrfSupplementary', 'SampleRequestController@addSupplementary');
+    Route::post('assignSrfPersonnel', 'SampleRequestController@assignPersonnel');
+    Route::post('ApproveSrf/{id}', 'SampleRequestController@approveSrfSales');
+    Route::post('ReceiveSrf/{id}', 'SampleRequestController@receiveSrf');
+    Route::post('StartSrf/{id}', 'SampleRequestController@StartSrf');
+
 
 
 
@@ -225,6 +238,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/editAllNewBasePrice', 'BasePriceController@updateBasePrices');
     Route::post('editNewBase/{id}', 'BasePriceController@updateBasePrice');
     Route::post('approveNewBasePrice/{id}', 'BasePriceController@editApproved');
+    Route::delete('base-price/{id}', 'BasePriceController@destroy');
 
     // Price Request Fixed Cost
     Route::get('/fixed_cost', 'PriceFixedCostController@index')->name('fixed_cost.index');

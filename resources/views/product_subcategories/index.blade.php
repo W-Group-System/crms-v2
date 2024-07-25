@@ -48,6 +48,17 @@
             </table>
 
             {!! $subcategories->appends(['search' => $search])->links() !!}
+
+            @php
+                $total = $subcategories->total();
+                $currentPage = $subcategories->currentPage();
+                $perPage = $subcategories->perPage();
+                
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+
+            <p  class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
         </div>
     </div>
 </div>

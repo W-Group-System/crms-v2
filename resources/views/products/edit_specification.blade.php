@@ -11,6 +11,7 @@
                 {{csrf_field()}}
                 
                 <input type="hidden" name="product_id" value="{{$ps->Id}}">
+                <input type="hidden" name="tab" value="">
                 <div class="modal-body" style="padding: 20px">
                     <div class="row">
                         <div class="col-lg-12">

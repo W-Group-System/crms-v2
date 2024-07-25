@@ -47,16 +47,25 @@
                 <table class="table table-striped table-hover table-bordered" id="product_table" width="100%">
                     <thead>
                         <tr>
+                            <th width="10%">Action</th>
                             <th width="30%">Code</th>
                             <th width="30%">Created By</th>
                             <th width="20%">Date Created</th>
                             <!-- <th width="10%">Price</th> -->
-                            <th width="10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($products as $product)
                             <tr>
+                                <td>
+                                    <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
+                                        <i class="ti-eye"></i>
+                                    </a>
+
+                                    <button class="btn btn-warning btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$product->id}}">
+                                        <i class="ti-archive"></i>
+                                    </button>
+                                </td>
                                 <td>{{$product->code}}</td>
                                 <td>
                                     @if($product->userByUserId)
@@ -68,21 +77,23 @@
                                     @endif
                                 </td>
                                 <td>{{date('M d, Y', strtotime($product->created_at))}}</td>
-                                <td>
-                                    <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
-                                        <i class="ti-eye"></i>
-                                    </a>
-
-                                    <button class="btn btn-warning btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$product->id}}">
-                                        <i class="ti-archive"></i>
-                                    </button>
-                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
 
-                {!! $products->appends(['search' => $search])->links() !!}
+                {!! $products->appends(['search' => $search, 'application_filter' => $application_filter, 'material_filter' => $material_filter])->links() !!}
+
+                @php
+                    $total = $products->total();
+                    $currentPage = $products->currentPage();
+                    $perPage = $products->perPage();
+                    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+
+                <p  class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
             </div>
         </div>
     </div>

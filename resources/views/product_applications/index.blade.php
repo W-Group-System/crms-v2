@@ -46,6 +46,16 @@
                     </tbody>
                 </table>
                 {!! $productApplications->appends(['search' => $search])->links() !!}
+                @php
+                    $total = $productApplications->total();
+                    $currentPage = $productApplications->currentPage();
+                    $perPage = $productApplications->perPage();
+                    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+
+                <p  class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
             </div>
         </div>
     </div>

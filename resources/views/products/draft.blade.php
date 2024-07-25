@@ -22,29 +22,23 @@
                 <table class="table table-bordered table-striped table-hover mt-3" id="draft_table">
                     <thead>
                         <tr>
+                            <th width="10%">Action</th>
                             <th width="25%">DDW Number</th>
                             <th width="25%">Code</th>
                             <th width="25%">Created By</th>
                             <th width="15%">Date Created</th>
-                            <th width="10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($products as $p)
                             <tr>
-                                <td>{{$p->ddw_number}}</td>
-                                <td>{{$p->code}}</td>
-                                <td>
-                                    {{isset($p->userByUserId->full_name)? $p->userByUserId->full_name : $p->userById->full_name}}
-                                </td>
-                                <td>{{date('M d, Y', strtotime($p->created_at))}}</td>
                                 <td>
                                     <div>
                                         <a href="{{url('view_product/'.$p->id)}}" type="submit" class="btn btn-info btn-sm" title="View Products">
                                             <i class="ti-eye"></i>
                                         </a>
         
-                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$p->id}}">
+                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archived" data-id="{{$p->id}}">
                                             <i class="ti-archive"></i>
                                         </button>
                                     </div>
@@ -58,8 +52,13 @@
                                             <i class="ti-pencil"></i>
                                         </button>
                                     </div>
-    
                                 </td>
+                                <td>{{$p->ddw_number}}</td>
+                                <td>{{$p->code}}</td>
+                                <td>
+                                    {{isset($p->userByUserId->full_name)? $p->userByUserId->full_name : $p->userById->full_name}}
+                                </td>
+                                <td>{{date('M d, Y', strtotime($p->created_at))}}</td>
                             </tr>
                         @endforeach
                     </tbody>

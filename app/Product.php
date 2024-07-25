@@ -50,7 +50,7 @@ class Product extends Model
 
     public function productDataSheet()
     {
-        return $this->hasMany(ProductDataSheet::class, 'ProductId');
+        return $this->hasOne(ProductDataSheet::class, 'ProductId');
     }
 
     public function productEventLogs()
