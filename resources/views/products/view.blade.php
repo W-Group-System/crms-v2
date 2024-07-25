@@ -16,14 +16,14 @@
             @php
                 use App\Helpers\Helpers;
                 
-                $rmc = Helpers::rmc($data->productMaterialComposition);
+                $rmc = Helpers::rmc($data->productMaterialComposition, $data->id);
             @endphp
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->ddw_number }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials:</b></label>
-                    <label class="col-sm-2 col-form-label"><strong>USD</strong> {{$rmc}}</label>
+                    <label class="col-sm-2 col-form-label"><strong>USD</strong> {{number_format($rmc, 2)}}</label>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Code:</b></label>
@@ -98,20 +98,21 @@
                     <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
+                    <a class="nav-link " id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
+                    <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="historycal-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                <div class="tab-pane fade active show" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                    @include('components.error')
                     <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
                         {{csrf_field()}}
 
@@ -122,10 +123,7 @@
                         <button type="button" class="btn btn-sm btn-success mb-4" id="addBtn">
                             <i class="ti-plus"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-danger mb-4" id="removeBtn">
-                            <i class="ti-minus"></i>
-                        </button>
-    
+
                         <table class="table table-striped table-bordered table-hover" id="material_table" width="100%">
                             <tbody class="tbodyRawMaterials">
                                 @foreach ($data->productMaterialComposition as $pmc)
@@ -141,6 +139,11 @@
                                         <td>
                                             <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$pmc->Percentage}}" max="100" required>
                                         </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger removeRawMat" type="button">
+                                                <i class="ti-minus"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -148,6 +151,7 @@
                     </form>
                 </div>
                 <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+                    @include('components.error')
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">Add</button>
                         <button class="btn btn-warning btn-md mb-2" type="button" data-toggle="modal" data-target="#updateAll" title="Update All">
@@ -296,9 +300,24 @@
                         @include('products.edit_file')
                     @endforeach
                 </div>
-                <div class="tab-pane fade" id="rmc" role="tabpanel" aria-labelledby="rmc-tab">...</div>
+                <div class="tab-pane fade " id="rmc" role="tabpanel" aria-labelledby="rmc-tab">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Effective Date</th>
+                                    <th>RMC (USD)</th>
+                                    <th>RMC (EUR)</th>
+                                    <th>RMC (PHP)</th>
+                                </tr>
+                                <tbody>
+                                </tbody>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
                 <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">...</div>
-                <div class="tab-pane fade " id="identical" role="tabpanel" aria-labelledby="identical-tab">
+                <div class="tab-pane fade" id="identical" role="tabpanel" aria-labelledby="identical-tab">
                     ...
                 </div>
                 <div class="tab-pane fade" id="historicalLogs" role="tabpanel" aria-labelledby="identical-tab">
@@ -444,6 +463,11 @@
                     <td>
                         <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" max="100" required>
                     </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm removeRawMat" type="button">
+                            <i class="ti-minus"></i>
+                        </button>
+                    </td>
                 </tr>
             `;
             
@@ -453,37 +477,53 @@
 
         });
 
-        $("#removeBtn").on('click', function()
+        $(document).on('click', '.removeRawMat', function()
         {
-            $('.tbodyRawMaterials').children().last().remove();
+            // $('.tbodyRawMaterials').children().last().remove();
+            $(this).closest('tr').remove()
         })
 
         $(".addPotentialBenefit").on('click', function() {
 
             var newRow = `
-                <input type="text" name="potentialBenefit[]" class="form-control form-control-sm mb-3" placeholder="Enter potential benefit" required>
+                <div class="row">
+                    <div class="col-lg-10">
+                        <input type="text" name="potentialBenefit[]" class="form-control form-control-sm mb-2">
+                    </div>
+                    <div class="col-lg-2">
+                        <button class="btn btn-sm btn-danger removePotentialBenefit" type="button">
+                            <i class="ti-minus"></i>
+                        </button>
+                    </div>
+                </div>
             `
 
             $('.potentialBenefitContainer').append(newRow);
         })
 
-        $(".removePotentialBenefit").on('click', function()
+        $(document).on('click', '.removePotentialBenefit', function()
         {
-            $('.potentialBenefitContainer').children().last().remove();
+            // $('.potentialBenefitContainer').children().last().remove();
+            $(this).closest('.row').remove();
         })
 
         $(".addPca").on('click', function() {
 
             var newRow = `
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <input type="text" name="pcaParameter[]" placeholder="Enter parameter" class="form-control form-control-sm mb-2" required>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <input type="text" name="pcaValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" required>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <input type="text" name="pcaRemark[]" placeholder="Enter remark" class="form-control form-control-sm mb-2" required>
+                    </div>
+                    <div class="col-lg-3">
+                        <button class="btn btn-sm btn-danger removePca" type="button">
+                            <i class="ti-minus"></i>
+                        </button>
                     </div>
                 </div>
             `
@@ -491,23 +531,29 @@
             $('.pcaContainer').append(newRow);
         })
 
-        $(".removePca").on('click', function()
+        $(document).on('click', '.removePca', function()
         {
-            $('.pcaContainer').children().last().remove();
+            // $('.pcaContainer').children().last().remove();
+            $(this).closest('.row').remove();
         })
 
         $(".addMa").on('click', function() {
 
             var newRow = `
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <input type="text" name="maParameter[]" placeholder="Enter parameter" class="form-control form-control-sm mb-2" required>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <input type="text" name="maValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" required>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <input type="text" name="maRemark[]" placeholder="Enter remark" class="form-control form-control-sm mb-2" required>
+                    </div>
+                    <div class="col-lg-3">
+                        <button class="btn btn-sm btn-danger removeMa" type="button">
+                            <i class="ti-minus"></i>
+                        </button>
                     </div>
                 </div>
             `
@@ -515,9 +561,10 @@
             $('.maContainer').append(newRow);
         })
 
-        $(".removeMa").on('click', function()
+        $(document).on('click', '.removeMa', function()
         {
-            $('.maContainer').children().last().remove();
+            // $('.maContainer').children().last().remove();
+            $(this).closest('.row').remove();
         })
 
         $(".addHeavyMetals").on('click', function() {
@@ -530,15 +577,21 @@
                     <div class="col-lg-4">
                         <input type="text" name="heavyMetalsValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" required>
                     </div>
+                    <div class="col-lg-4">
+                        <button class="btn btn-sm btn-danger removeHeavyMetals" type="button">
+                            <i class="ti-minus"></i>
+                        </button>
+                    </div>
                 </div>
             `
 
             $('.heavyMetalsContainer').append(newRow);
         })
 
-        $(".removeHeavyMetals").on('click', function()
+        $(document).on('click', '.removeHeavyMetals', function()
         {
-            $('.heavyMetalsContainer').children().last().remove();
+            // $('.heavyMetalsContainer').children().last().remove();
+            $(this).closest('.row').remove();
         })
         
         $(".addNutritionalInfo").on('click', function() {
@@ -551,15 +604,21 @@
                     <div class="col-lg-4">
                         <input type="text" name="nutrionalInfoValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" required>
                     </div>
+                    <div class="col-lg-4">
+                        <button class="btn btn-sm btn-danger removeNutritionalInfo" type="button">
+                            <i class="ti-minus"></i>
+                        </button>
+                    </div>
                 </div>
             `
 
             $('.nutrionalInfoContainer').append(newRow);
         })
 
-        $(".removeNutritionalInfo").on('click', function()
+        $(document).on('click', '.removeNutritionalInfo', function()
         {
-            $('.nutrionalInfoContainer').children().last().remove();
+            // $('.nutrionalInfoContainer').children().last().remove();
+            $(this).closest('.row').remove();
         })
 
         $(".addAllergens").on('click', function() 
@@ -572,15 +631,21 @@
                     <div class="col-lg-4">
                         <input type="checkbox" name="isAllergen[]" class="form-control form-control-sm">
                     </div>
+                    <div class="col-lg-4">
+                        <button class="btn btn-sm btn-danger removeAllergens" type="button">
+                            <i class="ti-minus"></i>
+                        </button>
+                    </div>
                 </div>
             `
 
             $('.allergensContainer').append(newRow);
         })
 
-        $(".removeAllergens").on('click', function()
+        $(document).on('click', '.removeAllergens', function()
         {
-            $('.allergensContainer').children().last().remove();
+            // $('.allergensContainer').children().last().remove();
+            $(this).closest('.row').remove()
         })
 
         $(".addBtnSpecification").on('click', function()
