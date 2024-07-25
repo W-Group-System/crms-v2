@@ -19,7 +19,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if(count($rm->productMaterialCompositions) > 0)
+                        {{-- @if(count($rm->productMaterialCompositions) > 0)
                             @foreach ($rm->productMaterialCompositions as $pmc)
                                 <tr>
                                     <td>
@@ -34,7 +34,7 @@
                             <tr>
                                 <td colspan="2">No data available.</td>
                             </tr>
-                        @endif
+                        @endif --}}
                     </tbody>
                 </table>
             </div>

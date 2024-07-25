@@ -80,14 +80,17 @@ Route::group(['middleware' => 'auth'], function () {
 
     # Draft Products
     Route::get('/draft_products', 'ProductController@draft')->name('product.draft');
+    Route::get('view_draft_product/{id}', 'ProductController@viewDraft');
     Route::post('/add_to_new_products', 'ProductController@addToNewProducts');
 
-    # Current Products
+    # New Products
+    Route::get('view_new_product/{id}', 'ProductController@viewNew');
     Route::post('/new_product', 'ProductController@store')->name('product.store');
     Route::post('/add_to_current_products', 'ProductController@addToCurrentProducts');
 
     # Archived Products
     Route::get('/archived_products', 'ProductController@archived')->name('product.archived');
+    Route::get('view_archive_products/{id}', 'ProductController@viewArchived');
     Route::post('/add_to_draft_products', 'ProductController@addToDraftProducts');
     Route::post('/add_to_archive_products', 'ProductController@addToArchiveProducts');
 
