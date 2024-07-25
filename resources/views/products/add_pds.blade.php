@@ -41,24 +41,24 @@
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label>Description 2:</label>
-                            <textarea name="description2" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter description" required></textarea>
+                            <textarea name="description2" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter description"></textarea>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label>Appearance :</label>
-                            <textarea name="appearance" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter appearance" required></textarea>
+                            <textarea name="appearance" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter appearance"></textarea>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label>Application :</label>
-                            <textarea name="application" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter application" required></textarea>
+                            <textarea name="application" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter application"></textarea>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <div class="mb-3">
                                 <button class="btn btn-sm btn-success addPotentialBenefit" type="button">
                                     <i class="ti-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger removePotentialBenefit" type="button">
+                                {{-- <button class="btn btn-sm btn-danger removePotentialBenefit" type="button">
                                     <i class="ti-minus"></i>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div class="row">
@@ -74,9 +74,9 @@
                                 <button class="btn btn-sm btn-success addPca" type="button">
                                     <i class="ti-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger removePca" type="button">
+                                {{-- <button class="btn btn-sm btn-danger removePca" type="button">
                                     <i class="ti-minus"></i>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div class="row">
@@ -106,9 +106,9 @@
                                 <button class="btn btn-sm btn-success addMa" type="button">
                                     <i class="ti-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger removeMa" type="button">
+                                {{-- <button class="btn btn-sm btn-danger removeMa" type="button">
                                     <i class="ti-minus"></i>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div class="row">
@@ -138,9 +138,9 @@
                                 <button class="btn btn-sm btn-success addHeavyMetals" type="button">
                                     <i class="ti-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger removeHeavyMetals" type="button">
+                                {{-- <button class="btn btn-sm btn-danger removeHeavyMetals" type="button">
                                     <i class="ti-minus"></i>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div class="row">
@@ -166,9 +166,9 @@
                                 <button class="btn btn-sm btn-success addNutritionalInfo" type="button">
                                     <i class="ti-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger removeNutritionalInfo" type="button">
+                                {{-- <button class="btn btn-sm btn-danger removeNutritionalInfo" type="button">
                                     <i class="ti-minus"></i>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div class="row">
@@ -194,9 +194,9 @@
                                 <button class="btn btn-sm btn-success addAllergens" type="button">
                                     <i class="ti-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger removeAllergens" type="button">
+                                {{-- <button class="btn btn-sm btn-danger removeAllergens" type="button">
                                     <i class="ti-minus"></i>
-                                </button>
+                                </button> --}}
                             </div>
 
                             <div class="row">

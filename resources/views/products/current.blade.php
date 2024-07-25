@@ -83,6 +83,17 @@
                 </table>
 
                 {!! $products->appends(['search' => $search, 'application_filter' => $application_filter, 'material_filter' => $material_filter])->links() !!}
+
+                @php
+                    $total = $products->total();
+                    $currentPage = $products->currentPage();
+                    $perPage = $products->perPage();
+                    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+
+                <p  class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
             </div>
         </div>
     </div>

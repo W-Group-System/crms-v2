@@ -4,26 +4,32 @@ namespace App\Helpers;
 
 use App\BasePrice;
 use App\CurrencyExchange;
+use App\ProductMaterialsComposition;
 use Illuminate\Support\Facades\DB;
 
 class Helpers {
-    public static function rmc($productRawMaterials)
+    public static function rmc($productRawMaterials, $id)
     {
         $getMaterialId = $productRawMaterials->pluck('MaterialId')->toArray();
-        
-        $basePrice = BasePrice::whereIn('MaterialId', $getMaterialId)
-            ->whereIn('Id', function ($query) {
-            $query->select(DB::raw('MAX(Id)'))
-                ->from('productmaterialbaseprices')
-                ->where('status', 3)
-                ->groupBy('MaterialId');
-            })
-            ->orderBy('EffectiveDate', 'desc')
-            ->pluck('Price');
 
-        $getPercent = $productRawMaterials->map(function($item, $key) 
+        $productComposition = ProductMaterialsComposition::where('ProductId', $id)
+            ->whereIn('MaterialId', $getMaterialId)
+            ->orderBy('MaterialId', 'asc')
+            ->pluck('Percentage');
+
+        $basePrice = BasePrice::whereIn('MaterialId', $getMaterialId)
+            ->orderBy('MaterialId', 'asc')
+            ->orderBy('EffectiveDate', 'desc')
+            ->get()
+            ->groupBy('MaterialId')
+            ->map(function($item) {
+                return $item->first();
+            })
+            ->pluck('Price');
+        
+        $getPercent = $productComposition->map(function($item, $key) 
         {
-            $num = $item['Percentage'] / 100;
+            $num = $item / 100;
 
             return $num;
         });
