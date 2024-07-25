@@ -91,8 +91,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/add_to_draft_products', 'ProductController@addToDraftProducts');
     Route::post('/add_to_archive_products', 'ProductController@addToArchiveProducts');
 
-    
-
     // Client
     Route::get('/client', 'ClientController@index')->name('client.index');
     Route::get('/client_prospect', 'ClientController@prospect')->name('client.prospect');
@@ -105,6 +103,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/regions', 'ClientController@getRegions');
     Route::get('/areas', 'ClientController@getAreas');
 
+    # Contact Client
+    Route::post('new_contact', 'ContactController@newContact');
+    Route::post('/edit_contact/{id}','ContactController@editContact')->name('edit_contact');
+    Route::post('delete_contact/{id}', 'ContactController@delete');
+
+    # File Client
+    Route::post('add_files', 'ClientController@addFiles');
+    Route::put('/edit_file/{id}', 'ClientController@editFile')->name('edit_file');
+    Route::post('delete_file/{id}', 'ClientController@deleteFile');
+    
     // Customer Requirement
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 
     Route::post('/new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 

@@ -10,7 +10,7 @@ class Client extends Model
     protected $table = "clientcompanies";
     protected $fillable = [
         'BuyerCode', 'PrimaryAccountManagerId', 'SapCode', 'SecondaryAccountManagerId',
-         'TradeName', 'TaxIdentificationNumber', 'TelephoneNumber', 'PaymentTermId',
+        'Name', 'TradeName', 'TaxIdentificationNumber', 'TelephoneNumber', 'PaymentTermId',
         'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'ClientCountryId',
         'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId', 'Status'
     ];
@@ -27,12 +27,32 @@ class Client extends Model
 
     public function contacts()
     {
-        return $this->hasMany(Contact::class);
+        return $this->hasMany(Contact::class, 'CompanyId');
     }
 
     public function files()
     {
-        return $this->hasMany(FileClient::class);
+        return $this->hasMany(FileClient::class, 'ClientId');
+    }
+
+    public function userById()
+    {
+        return $this->belongsTo(User::class, 'PrimaryAccountManagerId', 'id');
+    }
+
+    public function userById2()
+    {
+        return $this->belongsTo(User::class, 'SecondaryAccountManagerId', 'id');
+    }
+
+    public function userByUserId()
+    {
+        return $this->belongsTo(User::class, 'PrimaryAccountManagerId', 'user_id');
+    }
+
+    public function userByUserId2()
+    {
+        return $this->belongsTo(User::class, 'SecondaryAccountManagerId', 'user_id');
     }
 
     public function userById()

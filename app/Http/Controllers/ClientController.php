@@ -13,6 +13,7 @@ use App\Contact;
 use App\FileClient;
 use App\Industry;
 use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -41,10 +42,18 @@ class ClientController extends Controller
                             $query->where('Type', 'LIKE', '%' . $search . '%')
                                 ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')
                                 ->orWhere('Name', 'LIKE', '%' . $search . '%')
-                                ->orWhere('PrimaryAccountManagerId', 'LIKE', '%' . $search . '%')
+                                ->orWhereHas('userById', function ($q) use ($search) {
+                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('userByUserId', function ($q) use ($search) {
+                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('userByUserId2', function ($q) use ($search) {
+                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
+                                })
                                 ->orWhereHas('industry', function ($q) use ($search) {
-                                    $q->where('Type', 'LIKE', '%' . $search . '%');
-                                });
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                });        
                         })
                         ->orderBy('id', 'desc')
                         ->paginate(10);
@@ -415,8 +424,82 @@ class ClientController extends Controller
 
         $primaryAccountManager = $users->firstWhere('user_id', $data->PrimaryAccountManagerId) ?? $users->firstWhere('id', $data->PrimaryAccountManagerId);
         $secondaryAccountManager = $users->firstWhere('user_id', $data->SecondaryAccountManagerId) ?? $users->firstWhere('id', $data->SecondaryAccountManagerId);
-
+        
         return view('clients.view', compact('data', 'primaryAccountManager', 'secondaryAccountManager', 'payment_terms', 'regions', 'countries', 'areas', 'business_types', 'industries', 'addresses'));
+    }
+
+    // Add File
+    public function addFiles(Request $request)
+    {
+        $clientId = $request->ClientId;
+        $fileNames = $request->FileName;
+        $files = $request->file('Path');
+
+        // Check if file names and files are both arrays and not empty
+        if (!is_array($fileNames) || !is_array($files) || empty($fileNames) || empty($files)) {
+            return response()->json(['error' => 'No files or file names provided'], 400);
+        }
+
+        try {
+            foreach ($files as $index => $file) {
+                // Check if the file is valid
+                if ($file && $file->isValid()) {
+                    $fileClient = new FileClient;
+                    $fileClient->ClientId = $clientId;
+                    $fileClient->FileName = $fileNames[$index];
+
+                    // Generate a unique file name and move the file
+                    $fileName = time().'_'.$file->getClientOriginalName();
+                    $file->move(public_path('attachments'), $fileName);
+
+                    // Save the file path to the database
+                    $fileClient->Path = "/attachments/" . $fileName;
+                    $fileClient->save();
+                }
+            }
+
+            return response()->json(['success' => 'Files successfully uploaded']);
+        } catch (\Exception $e) {
+            // Return a JSON response with an error message
+            return response()->json(['error' => 'Error uploading files', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    // Edit File
+    public function editFile(Request $request, $id)
+    {
+        // Find the file client by ID
+        $fileClient = FileClient::findOrFail($id);
+
+        // Update the file client details
+        $fileClient->FileName = $request->FileName;
+
+        // Check if a new file is uploaded
+        if ($request->hasFile('Path')) {
+            $file = $request->file('Path');
+            if ($file && $file->isValid()) {
+                // Generate a unique file name and move the file
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('attachments'), $fileName);
+
+                // Update the file path
+                $fileClient->Path = "/attachments/" . $fileName;
+            }
+        }
+
+        // Save the updated file client
+        $fileClient->save();
+
+        return response()->json(['success' => 'File updated successfully']);
+    }
+
+    // Delete File
+    public function deleteFile($id)
+    {
+        $contact = FileClient::findOrFail($id);
+        $contact->delete();
+
+        return response()->json(['message' => 'File deleted successfully!']);
     }
 
 }
