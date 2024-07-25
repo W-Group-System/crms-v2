@@ -11,11 +11,19 @@
                 <div class="col-lg-6" align="right">
                     <a href="{{ url('new_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
+                    <form method="post" class="d-inline-block" id="rejectForm">
+                        {{csrf_field()}}
+
+                        <input type="hidden" name="id" value="{{$data->id}}">
+
+                        <button type="submit" class="btn btn-md btn-danger" title="Reject">Reject</button>
+                    </form>
+
                     <form method="POST" action="{{url('add_to_current_products')}}" class="d-inline-block">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Current">Current</button>
+                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Current" title="Add to current">Current</button>
                     </form>
                 </div>
             </div>
@@ -737,6 +745,42 @@
         $(".removeBtnFiles").on('click', function()
         {
             $('.product_files_container').children().last().remove();
+            
+        })
+
+        $("#rejectForm").on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serializeArray();
+
+            Swal.fire({
+                title: "Are you sure you want to reject?",
+                text: "You won't be able to undo this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#dc3545",
+                confirmButtonText: "Yes, reject it!"
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url('add_to_draft_products')}}",
+                        data: formData,
+                        success: function(res) 
+                        {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "The product has been moved to draft",
+                                icon: "success"
+                            }).then((result) => {
+                                window.location.href = "{{url('draft_products')}}"
+                            });
+                        }
+                    })
+                }
+            });
+
             
         })
     });
