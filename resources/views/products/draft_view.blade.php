@@ -11,6 +11,13 @@
                 <div class="col-lg-6" align="right">
                     <a href="{{ url('/draft_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
+                    <form method="POST" class="d-inline-block" id="archiveForm">
+                        {{csrf_field()}}
+
+                        <input type="hidden" name="id" value="{{$data->id}}">
+                        <button type="submit" class="btn btn-md btn-secondary submit_approval" name="action" value="New" title="Submit to archive products">Archive</button>
+                    </form>
+
                     <form method="POST" action="{{url('/add_to_new_products')}}" class="d-inline-block">
                         {{csrf_field()}}
 
@@ -738,6 +745,40 @@
         {
             $('.product_files_container').children().last().remove();
             
+        })
+
+        $("#archiveForm").on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serializeArray();
+
+            Swal.fire({
+                title: "Are you sure you want to archive?",
+                text: "You won't be able to undo this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#dc3545",
+                confirmButtonText: "Yes, archive it!"
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url('add_to_archive_products')}}",
+                        data: formData,
+                        success: function(res) 
+                        {
+                            Swal.fire({
+                                title: "Moved!",
+                                text: "The product has been moved to archived",
+                                icon: "success"
+                            }).then((result) => {
+                                window.location.href = "{{url('archived_products')}}"
+                            });
+                        }
+                    })
+                }
+            });
         })
     });
 </script>
