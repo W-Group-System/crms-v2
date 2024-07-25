@@ -54,4 +54,14 @@ class Client extends Model
     {
         return $this->belongsTo(User::class, 'SecondaryAccountManagerId', 'user_id');
     }
+  
+    public function clientregion()
+    {
+        return $this->belongsTo(ClientRegion::class, 'ClientRegionId');
+    }
+
+    public function clientcountry()
+    {
+        return $this->belongsTo(ClientCountry::class, 'ClientCountryId');
+    }
 }

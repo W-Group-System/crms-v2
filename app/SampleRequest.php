@@ -2,12 +2,17 @@
 
 namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Audit;
 
-class SampleRequest extends Model
+class SampleRequest extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
+
     protected $table = "samplerequests";
+    protected $primaryKey = "Id";
 
     protected $fillable = [
         'SrfNumber', 
@@ -19,6 +24,7 @@ class SampleRequest extends Model
         'SoNumber',
         'RefCode',
         'Status',
+        'Progress',
         'SrfType',
         'ClientId',
         'ContactId',
@@ -38,8 +44,30 @@ class SampleRequest extends Model
         return $this->belongsTo(Client::class, 'ClientId');
     }
 
-    public function applications()
+    public function productApplicationsId()
     {
-        return $this->belongsTo(ProductApplication::class, 'ApplicationId');
+        return $this->belongsTo(ProductApplication::class, 'ApplicationId', 'id');
+    }
+
+    public function primarySalesPerson()
+    {
+        return $this->belongsTo(User::class, 'PrimarySalesPersonId', 'user_id');
+    }
+    public function secondarySalesPerson()
+    {
+        return $this->belongsTo(User::class, 'SecondarySalesPersonId', 'user_id');
+    }
+    public function progressStatus()
+    {
+        return $this->belongsTo(SrfProgress::class, 'Progress', 'id');
+    }
+    public function clientContact()
+    {
+        return $this->belongsTo(Contact::class, 'ContactId');
+    }
+
+    public function requestProducts()
+    {
+        return $this->hasMany(SampleRequestProduct::class, 'SampleRequestId', 'Id');
     }
 }
