@@ -10,19 +10,21 @@ class ProjectNameController extends Controller
     // List
     public function index()
     {   
-        if(request()->ajax())
-        {
-            return datatables()->of(ProjectName::orderBy('id', 'desc')->get())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('project_name.index'); 
+
+        // if(request()->ajax())
+        // {
+        //     return datatables()->of(ProjectName::orderBy('id', 'desc')->get())
+        //             ->addColumn('action', function($data){
+        //                 $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
+        //                 $buttons .= '&nbsp;&nbsp;';
+        //                 $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
+        //                 return $buttons;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
+        $projectNames = ProjectName::orderBy('id', 'desc')->get();
+        return view('project_name.index', compact('projectNames')); 
     }
 
     // Store

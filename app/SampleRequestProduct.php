@@ -23,5 +23,22 @@ class SampleRequestProduct extends Model
         'RpeNumber',
         'CrrNumber',
         'Remarks',
+        'IsDeleted',
+        'ModifiedDate',
+        'CreatedDate',
+        'ProductIndex',
+        'Disposition',
+        'DispositionRejectionDescription',
     ];
+
+    public function sampleRequest()
+    {
+        return $this->belongsTo(SampleRequest::class, 'SampleRequestId', 'Id');
+    }
+
+    public function productApplicationsId()
+    {
+        return $this->belongsTo(ProductApplication::class, 'ApplicationId', 'id');
+    }
+
 }

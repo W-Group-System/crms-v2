@@ -15,6 +15,13 @@
                         <th width="25%">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($projectNames as $projectName)
+                        <tr>
+                            <td>{{ $projectName->Name }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </div>
@@ -76,39 +83,39 @@
 
 <script>
     $(document).ready(function(){
-        $('#project_name_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('project_name.index') }}"
-            },
-            columns: [
-                {
-                    data: 'Name',
-                    name: 'Name'
-                },
-                {
-                    data: 'Description',
-                    name: 'Description',
-                    style: {
-                        'word-wrap': 'break-word'
-                    }
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: 1, // Target the Description column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
+        // $('#project_name_table').DataTable({
+        //     processing: true,
+        //     serverSide: true,
+        //     ajax: {
+        //         url: "{{ route('project_name.index') }}"
+        //     },
+        //     columns: [
+        //         {
+        //             data: 'Name',
+        //             name: 'Name'
+        //         },
+        //         {
+        //             data: 'Description',
+        //             name: 'Description',
+        //             style: {
+        //                 'word-wrap': 'break-word'
+        //             }
+        //         },
+        //         {
+        //             data: 'action',
+        //             name: 'action',
+        //             orderable: false
+        //         }
+        //     ],
+        //     columnDefs: [
+        //         {
+        //             targets: 1, // Target the Description column
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         }
+        //     ]
+        // });
 
         $('#add_project_name').click(function(){
             $('#formProjectName').modal('show');
