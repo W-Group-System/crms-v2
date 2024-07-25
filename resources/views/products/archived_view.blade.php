@@ -15,7 +15,7 @@
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Draft" title="Move to draft">Draft</button>
+                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Draft" title="Submit to draft products">Draft</button>
                     </form>
                 </div>
             </div>
