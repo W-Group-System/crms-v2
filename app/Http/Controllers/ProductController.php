@@ -21,8 +21,8 @@ use App\ProductRawMaterials;
 use App\ProductSpecification;
 use App\ProductSubcategories;
 use App\RawMaterial;
-use Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductController extends Controller
@@ -265,18 +265,34 @@ class ProductController extends Controller
 
     public function updateRawMaterials(Request $request, $id)
     {
-        $product_raw_materials = ProductMaterialsComposition::where('ProductId', $id)->delete();
+        $validator = Validator::make($request->all(), [
+            'raw_materials' => 'array|min:1',
+            'raw_materials.*' => 'distinct'
+        ], [
+            'raw_materials.*.distinct' => 'The raw materials should be unique.',
+        ]);
 
-        foreach($request->raw_materials as $key=>$rm)
-        {   
-            $product_raw_materials = new ProductMaterialsComposition;
-            $product_raw_materials->MaterialId = $rm;
-            $product_raw_materials->Percentage = $request->percent[$key];
-            $product_raw_materials->ProductId = $id;
-            $product_raw_materials->save();
+        if ($validator->fails())
+        {
+            $msg = $validator->errors()->first();
+            Alert::error($msg)->persistent('Dismiss');
+        }
+        else
+        {
+            $product_raw_materials = ProductMaterialsComposition::where('ProductId', $id)->delete();
+    
+            foreach($request->raw_materials as $key=>$rm)
+            {   
+                $product_raw_materials = new ProductMaterialsComposition;
+                $product_raw_materials->MaterialId = $rm;
+                $product_raw_materials->Percentage = $request->percent[$key];
+                $product_raw_materials->ProductId = $id;
+                $product_raw_materials->save();
+            }
+    
+            Alert::success('Successfully Saved')->persistent('Dismiss');
         }
 
-        Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
 

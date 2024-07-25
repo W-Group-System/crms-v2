@@ -41,32 +41,38 @@
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label>Description 2:</label>
-                            <textarea name="description2" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter description" required>{!! nl2br($data->productDataSheet->Description2) !!}</textarea>
+                            <textarea name="description2" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter description">{!! nl2br($data->productDataSheet->Description2) !!}</textarea>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label>Appearance :</label>
-                            <textarea name="appearance" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter appearance" required>{!! nl2br($data->productDataSheet->Appearance) !!}</textarea>
+                            <textarea name="appearance" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter appearance">{!! nl2br($data->productDataSheet->Appearance) !!}</textarea>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label>Application :</label>
-                            <textarea name="application" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter application" required>{!! nl2br($data->productDataSheet->Application) !!}</textarea>
+                            <textarea name="application" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter application">{!! nl2br($data->productDataSheet->Application) !!}</textarea>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <div class="mb-3">
                                 <button class="btn btn-sm btn-success addPotentialBenefit" type="button">
                                     <i class="ti-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger removePotentialBenefit" type="button">
-                                    <i class="ti-minus"></i>
-                                </button>
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-12 mb-3">
+                                <div class="col-lg-6 mb-3">
                                     <label>Potential Benefits :</label>
                                     <div class="potentialBenefitContainer">
                                         @foreach ($data->productDataSheet->productPotentialBenefit as $pb)
-                                            <input type="text" name="potentialBenefit[]" class="form-control form-control-sm mb-2" value="{{$pb->Benefit}}">
+                                            <div class="row">
+                                                <div class="col-lg-10">
+                                                    <input type="text" name="potentialBenefit[]" class="form-control form-control-sm mb-2" value="{{$pb->Benefit}}">
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <button class="btn btn-sm btn-danger removePotentialBenefit" type="button">
+                                                        <i class="ti-minus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>
@@ -77,9 +83,6 @@
                                 <button class="btn btn-sm btn-success addPca" type="button">
                                     <i class="ti-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger removePca" type="button">
-                                    <i class="ti-minus"></i>
-                                </button>
                             </div>
 
                             <div class="row">
@@ -88,14 +91,19 @@
                                     <div class="pcaContainer">
                                         @foreach ($data->productDataSheet->productPhysicoChemicalAnalyses as $pca)
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <input type="text" name="pcaParameter[]" placeholder="Enter parameter" class="form-control form-control-sm mb-2" value="{{$pca->Parameter}}">
                                                 </div>
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <input type="text" name="pcaValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" value="{{$pca->Value}}">
                                                 </div>
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <input type="text" name="pcaRemark[]" placeholder="Enter remark" class="form-control form-control-sm mb-2" value="{{$pca->Remarks}}">
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <button class="btn btn-sm btn-danger removePca" type="button">
+                                                        <i class="ti-minus"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -109,9 +117,6 @@
                                 <button class="btn btn-sm btn-success addMa" type="button">
                                     <i class="ti-plus"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger removeMa" type="button">
-                                    <i class="ti-minus"></i>
-                                </button>
                             </div>
 
                             <div class="row">
@@ -120,14 +125,19 @@
                                     <div class="maContainer">
                                         @foreach ($data->productDataSheet->productMicrobiologicalAnalysis as $ma)
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <input type="text" name="maParameter[]" placeholder="Enter parameter" class="form-control form-control-sm mb-2" value="{{$ma->Parameter}}">
                                                 </div>
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <input type="text" name="maValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" value="{{$ma->Value}}">
                                                 </div>
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <input type="text" name="maRemark[]" placeholder="Enter remark" class="form-control form-control-sm mb-2" value="{{$ma->Remarks}}">
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <button class="btn btn-sm btn-danger removeMa" type="button">
+                                                        <i class="ti-minus"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -140,9 +150,6 @@
                             <div class="mb-3">
                                 <button class="btn btn-sm btn-success addHeavyMetals" type="button">
                                     <i class="ti-plus"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger removeHeavyMetals" type="button">
-                                    <i class="ti-minus"></i>
                                 </button>
                             </div>
 
@@ -158,6 +165,11 @@
                                                 <div class="col-lg-4">
                                                     <input type="text" name="heavyMetalsValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" value="{{$heavyMetals->Value}}">
                                                 </div>
+                                                <div class="col-lg-4">
+                                                    <button class="btn btn-sm btn-danger removeHeavyMetals" type="button">
+                                                        <i class="ti-minus"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         @endforeach
                                     </div>
@@ -168,9 +180,6 @@
                             <div class="mb-3">
                                 <button class="btn btn-sm btn-success addNutritionalInfo" type="button">
                                     <i class="ti-plus"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger removeNutritionalInfo" type="button">
-                                    <i class="ti-minus"></i>
                                 </button>
                             </div>
 
@@ -186,6 +195,11 @@
                                                 <div class="col-lg-4">
                                                     <input type="text" name="nutrionalInfoValue[]" placeholder="Enter value" class="form-control form-control-sm mb-2" value="{{$nutrionalInfo->Value}}">
                                                 </div>
+                                                <div class="col-lg-4">
+                                                    <button class="btn btn-sm btn-danger removeNutritionalInfo" type="button">
+                                                        <i class="ti-minus"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         @endforeach
                                     </div>
@@ -196,9 +210,6 @@
                             <div class="mb-3">
                                 <button class="btn btn-sm btn-success addAllergens" type="button">
                                     <i class="ti-plus"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger removeAllergens" type="button">
-                                    <i class="ti-minus"></i>
                                 </button>
                             </div>
 
@@ -213,6 +224,11 @@
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <input type="checkbox" name="isAllergen[]" class="form-control form-control-sm" @if($allergens->IsAllergen == 1)checked @endif>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <button class="btn btn-sm btn-danger removeAllergens" type="button">
+                                                        <i class="ti-minus"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         @endforeach
