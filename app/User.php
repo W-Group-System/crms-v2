@@ -33,6 +33,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(SalesUser::class, 'SalesUserId', 'user_id')->where('isDeleted', 0);
     }
+    public function rndUsers()
+    {
+        return $this->hasMany(RndUser::class, 'ProductRndUserId', 'user_id')->where('isDeleted', 0);
+    }
     /**
      * The attributes that are mass assignable.
      *
