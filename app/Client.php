@@ -54,27 +54,7 @@ class Client extends Model
     {
         return $this->belongsTo(User::class, 'SecondaryAccountManagerId', 'user_id');
     }
-
-    public function userById()
-    {
-        return $this->belongsTo(User::class, 'PrimaryAccountManagerId', 'id');
-    }
-
-    public function userById2()
-    {
-        return $this->belongsTo(User::class, 'SecondaryAccountManagerId', 'id');
-    }
-
-    public function userByUserId()
-    {
-        return $this->belongsTo(User::class, 'PrimaryAccountManagerId', 'user_id');
-    }
-
-    public function userByUserId2()
-    {
-        return $this->belongsTo(User::class, 'SecondaryAccountManagerId', 'user_id');
-    }
-
+  
     public function clientregion()
     {
         return $this->belongsTo(ClientRegion::class, 'ClientRegionId');
