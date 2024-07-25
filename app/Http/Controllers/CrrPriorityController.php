@@ -8,21 +8,28 @@ use Illuminate\Http\Request;
 class CrrPriorityController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-        if(request()->ajax())
-        {
-            return datatables()->of(CrrPriority::query())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('crr_priorities.index'); 
+        // if(request()->ajax())
+        // {
+        //     return datatables()->of(CrrPriority::query())
+        //             ->addColumn('action', function($data){
+        //                 $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
+        //                 $buttons .= '&nbsp;&nbsp;';
+        //                 $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
+        //                 return $buttons;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
+        $search = $request->input('search');
+        $crrPriorities = CrrPriority::where(function ($query) use ($search) {
+            $query->where('Name', 'LIKE', '%' . $search . '%')
+                ->orWhere('Description', 'LIKE', '%' . $search . '%')        
+                ->orWhere('Days', 'LIKE', '%' . $search . '%');        
+        })
+        ->orderBy('id', 'desc')->paginate(25);
+        return view('crr_priorities.index',  compact('crrPriorities', 'search')); 
     }
 
     // Store
@@ -49,7 +56,7 @@ class CrrPriorityController extends Controller
 
         CrrPriority::create($form_data);
 
-        return response()->json(['success' => 'Data Added Successfully.']);
+        return redirect()->back()->with('success', 'Data Added Successfully.');
     }
 
     // Edit
@@ -86,7 +93,7 @@ class CrrPriorityController extends Controller
 
         CrrPriority::whereId($id)->update($form_data);
 
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        return redirect()->back()->with('success', 'CRR Priority updated successfully.');
     }
 
     // Delete

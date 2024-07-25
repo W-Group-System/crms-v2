@@ -8,21 +8,27 @@ use Illuminate\Http\Request;
 class NatureRequestController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-        if(request()->ajax())
-        {
-            return datatables()->of(NatureRequest::query())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-table"><i class="ti-pencil"></i></button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-table"><i class="ti-trash"></i></button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('nature_requests.index'); 
+        // if(request()->ajax())
+        // {
+        //     return datatables()->of(NatureRequest::query())
+        //             ->addColumn('action', function($data){
+        //                 $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-table"><i class="ti-pencil"></i></button>';
+        //                 $buttons .= '&nbsp;&nbsp;';
+        //                 $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-table"><i class="ti-trash"></i></button>';
+        //                 return $buttons;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
+        $search = $request->input('search');
+        $natureRequests = NatureRequest::where(function ($query) use ($search) {
+            $query->where('Name', 'LIKE', '%' . $search . '%')
+                ->orWhere('Description', 'LIKE', '%' . $search . '%');        
+        })
+        ->orderBy('id', 'desc')->paginate(25);
+        return view('nature_requests.index',  compact('natureRequests', 'search')); 
     }
 
     // Store
@@ -59,7 +65,7 @@ class NatureRequestController extends Controller
 
         NatureRequest::create($form_data);
 
-        return response()->json(['success' => 'Data Added Successfully.']);
+        return redirect()->back()->with('success', 'Data Added Successfully.');
     }
 
     // Edit
@@ -93,8 +99,7 @@ class NatureRequestController extends Controller
         );
 
         NatureRequest::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        return redirect()->back()->with('success', 'Nature Request updated successfully.');
     }
 
     // Delete

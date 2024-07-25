@@ -166,26 +166,33 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('contacts-by-client-f/{clientId}', [CustomerFeedbackController::class, 'getContactsByClientF']);
     Route::get('get-last-increment-f/{year}/{clientCode}', [CustomerFeedbackController::class, 'getLastIncrementF']);
 
+    // Categorization
+    Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    
+    Route::post('/new_categorization', 'CategorizationController@store')->name('categorizations.store'); 
+    Route::get('/edit_project_name/{id}', 'ProjectNameController@edit')->name('edit_project_name');    
+    Route::post('/update_categorization/{id}', 'CategorizationController@update');
+    Route::delete('delete_categorization/{id}', 'CategorizationController@delete');
+
     // Nature of Request
     Route::get('/nature_request', 'NatureRequestController@index')->name('nature_request.index');
     Route::post('/new_nature_request', 'NatureRequestController@store')->name('nature_request.store');
     Route::get('/edit_nature_request/{id}', 'NatureRequestController@edit')->name('edit_nature_request');    
     Route::post('/update_nature_request/{id}', 'NatureRequestController@update')->name('update_nature_request');
-    Route::get('delete_nature_request/{id}', 'NatureRequestController@delete')->name('delete_nature_request');
+    Route::delete('delete_nature_request/{id}', 'NatureRequestController@delete')->name('delete_nature_request');
 
     // Project Name
     Route::get('/project_name', 'ProjectNameController@index')->name('project_name.index');    
     Route::post('/new_project_name', 'ProjectNameController@store')->name('project_name.store'); 
     Route::get('/edit_project_name/{id}', 'ProjectNameController@edit')->name('edit_project_name');    
     Route::post('/update_project_name/{id}', 'ProjectNameController@update')->name('update_project_name');
-    Route::get('delete_project_name/{id}', 'ProjectNameController@delete')->name('delete_project_name');
+    Route::delete('delete_project_name/{id}', 'ProjectNameController@delete')->name('delete_project_name');
 
     // CRR Priority
     Route::get('/crr_priority', 'CrrPriorityController@index')->name('crr_priority.index');
     Route::post('/new_crr_priority', 'CrrPriorityController@store')->name('crr_priority.store');
     Route::get('/edit_crr_priority/{id}', 'CrrPriorityController@edit')->name('edit_crr_priority');
     Route::post('/update_crr_priority/{id}', 'CrrPriorityController@update')->name('update_crr_priority');
-    Route::get('delete_crr_priority/{id}', 'CrrPriorityController@delete')->name('delete_crr_priority');
+    Route::delete('delete_crr_priority/{id}', 'CrrPriorityController@delete')->name('delete_crr_priority');
 
     // Issue Category
     Route::get('/issue_category', 'IssueCategoryController@index')->name('issue_category.index');
