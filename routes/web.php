@@ -94,8 +94,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('ApproveSrf/{id}', 'SampleRequestController@approveSrfSales');
     Route::post('ReceiveSrf/{id}', 'SampleRequestController@receiveSrf');
     Route::post('StartSrf/{id}', 'SampleRequestController@StartSrf');
-
-
+    Route::post('PauseSrf/{id}', 'SampleRequestController@PauseSrf');
+    Route::post('UpdateSupplementary/{id}', 'SampleRequestController@editSupplementary');
+    Route::delete('samplerequest/view/supp-delete/{id}', 'SampleRequestController@deleteSrfDetails');
+    Route::post('srfFiles', 'SampleRequestController@uploadFile');
 
 
     Route::get('sample_contacts-by-client-f/{clientId}', [SampleRequestController::class, 'getSampleContactsByClientF']);

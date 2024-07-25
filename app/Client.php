@@ -31,4 +31,14 @@ class Client extends Model
     {
         return $this->hasMany(FileClient::class);
     }
+
+    public function clientregion()
+    {
+        return $this->belongsTo(ClientRegion::class, 'ClientRegionId');
+    }
+
+    public function clientcountry()
+    {
+        return $this->belongsTo(ClientCountry::class, 'ClientCountryId');
+    }
 }
