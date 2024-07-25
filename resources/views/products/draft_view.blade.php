@@ -9,16 +9,14 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div>
                 <div class="col-lg-6" align="right">
-                    <a href="{{ url('/current_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a href="{{ url('/draft_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
-                    <form method="POST" action="{{url('add_to_archive_products')}}" class="d-inline-block">
+                    <form method="POST" action="{{url('/add_to_new_products')}}" class="d-inline-block">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        
-                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Archive">Archive</button>
+                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="New">New</button>
                     </form>
-                   
                 </div>
             </div>
             @php

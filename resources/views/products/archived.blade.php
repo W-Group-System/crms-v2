@@ -30,7 +30,7 @@
                         @foreach ($products as $product)
                             <tr>
                                 <td>
-                                    <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
+                                    <a href="{{url('view_archive_products/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
                                         <i class="ti-eye"></i>
                                     </a>
     
@@ -62,6 +62,15 @@
             </div>
 
             {!! $products->appends(['search' => $search])->links() !!}
+            @php
+                $total = $products->total();
+                $currentPage = $products->currentPage();
+                $perPage = $products->perPage();
+                
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <p class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
         </div>
     </div>
 </div>
