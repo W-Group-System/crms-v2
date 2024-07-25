@@ -770,7 +770,7 @@
                         success: function(res) 
                         {
                             Swal.fire({
-                                title: "Deleted!",
+                                title: "Moved!",
                                 text: "The product has been moved to draft",
                                 icon: "success"
                             }).then((result) => {
