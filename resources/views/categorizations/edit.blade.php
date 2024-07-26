@@ -1,8 +1,8 @@
-<div class="modal fade" id="editCategorization{{ $categorization->id }}" tabindex="-1" role="dialog" aria-labelledby="addProjectName" aria-hidden="true">
+<div class="modal fade" id="editCategorization{{ $categorization->id }}" tabindex="-1" role="dialog" aria-labelledby="editCategorization" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="">Project Name</h5>
+				<h5 class="modal-title" id="">Categorization</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -14,11 +14,11 @@
                         @csrf
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control"  name="Name" value="{{ $categorization->Name }}" >
+                            <input type="text" class="form-control"  name="Name" value="{{ $categorization->Name }}" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Description</label>
-                            <input type="text" class="form-control"  name="Description" value="{{ $categorization->Description }}">
+                            <input type="text" class="form-control"  name="Description" value="{{ $categorization->Description }}" required>
                         </div>
                 </div>    
                 <div class="modal-footer">

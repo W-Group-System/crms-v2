@@ -14,11 +14,11 @@
                         @csrf
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control"  name="Name" value="{{ $projectName->Name }}" >
+                            <input type="text" class="form-control"  name="Name" value="{{ $projectName->Name }}" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Description</label>
-                            <input type="text" class="form-control"  name="Description" value="{{ $projectName->Description }}">
+                            <input type="text" class="form-control"  name="Description" value="{{ $projectName->Description }}" required>
                         </div>
                 </div>    
                 <div class="modal-footer">
