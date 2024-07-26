@@ -123,6 +123,10 @@ Route::group(['middleware' => 'auth'], function () {
     // Product Evaluation
     Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
 
+    // Request Product Evaluation
+    Route::get('/request_product_evaluation', 'RequestProductEvaluationController@index')->name('product_evaluation.index');
+    Route::post('new_product_evaluation', 'RequestProductEvaluationController@store')->name('product_evaluation.store'); 
+
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
     Route::post('/new_sample_request', 'SampleRequestController@store')->name('sample_request.store');
