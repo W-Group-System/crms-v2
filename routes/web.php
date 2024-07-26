@@ -118,7 +118,7 @@ Route::group(['middleware' => 'auth'], function () {
     
     // Customer Requirement
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 
-    Route::post('/new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 
+    Route::post('new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 
 
     // Product Evaluation
     Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
