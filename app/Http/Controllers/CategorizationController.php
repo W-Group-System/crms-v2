@@ -24,27 +24,20 @@ class CategorizationController extends Controller
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
-
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
+        $existing = Categorization::where('Name', $request->Name)->exists();
+        if (!$existing) {
+            $form_data = array(
+                'Name'          => $request->Name,
+                'Description'   => $request->Description
+            );
+    
+            Categorization::create($form_data);
+            return redirect()->back()->with('success', 'Project Name created successfully.');
+        } else {
+            return back()->with('error', $request->Name . ' already exists.');
         }
-
-        $form_data = array(
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
-        );
-
-        Categorization::create($form_data);
-
-        return redirect()->back()->with('success', 'Project Name created successfully.');
     }
+    
 
     // Edit
     public function edit($id)
@@ -59,11 +52,17 @@ class CategorizationController extends Controller
     // Update
     public function update(Request $request, $id)
     {
+        $categorizationName = $request->Name;
+        $exists = Categorization::where('Name', $categorizationName)
+        ->where('id', '!=', $id)->first();
+        if ($exists){
+            return redirect()->back()->with('error', $request->Name . ' already exists.');
+        }
          $categorization = Categorization::findOrFail($id);
          $categorization->Name = $request->input('Name');
          $categorization->Description = $request->input('Description');
          $categorization->save();
-        return back();
+         return redirect()->back()->with('success', 'Cateegorization updated successfully');
     }
 
     // Delete

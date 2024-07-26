@@ -35,28 +35,20 @@ class CrrPriorityController extends Controller
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required',
-            'Days'          =>  'required'
-        );
-
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
+        $existing = CrrPriority::where('Name', $request->Name)->exists();
+        if (!$existing) {
+            $form_data = array(
+                'Name'          =>  $request->Name,
+                'Description'   =>  $request->Description,
+                'Days'          =>  $request->Days    
+            );
+    
+            CrrPriority::create($form_data);
+    
+            return redirect()->back()->with('success', 'Data Added Successfully.');
+        } else {
+            return back()->with('error', $request->Name . ' already exists.');
         }
-
-        $form_data = array(
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description,
-            'Days'          =>  $request->Days    
-        );
-
-        CrrPriority::create($form_data);
-
-        return redirect()->back()->with('success', 'Data Added Successfully.');
     }
 
     // Edit
@@ -72,19 +64,12 @@ class CrrPriorityController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required',
-            'Days'          =>  'required'
-        );
-
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
+        $crrPriority = $request->Name;
+        $exists = CrrPriority::where('Name', $crrPriority)
+        ->where('id', '!=', $id)->first();
+        if ($exists){
+            return redirect()->back()->with('error', $request->Name . ' already exists.');
         }
-
         $form_data = array(
             'Name'          =>  $request->Name,
             'Description'   =>  $request->Description,

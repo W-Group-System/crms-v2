@@ -1,8 +1,8 @@
-<div class="modal fade" id="AddNatureRequest" tabindex="-1" role="dialog" aria-labelledby="addProjectName" aria-hidden="true">
+<div class="modal fade" id="AddNatureRequest" tabindex="-1" role="dialog" aria-labelledby="addNatureRequest" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="addProjectNameLabel">Project Name</h5>
+				<h5 class="modal-title" id="addNatureRequestLabel">Nature of Request</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -14,11 +14,11 @@
                         @csrf
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name">
+                            <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Description</label>
-                            <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
+                            <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description" required>
                         </div>
                 </div>    
                 <div class="modal-footer">

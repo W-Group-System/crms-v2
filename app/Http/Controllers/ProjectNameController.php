@@ -22,26 +22,18 @@ class ProjectNameController extends Controller
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
-
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
+        $existing = ProjectName::where('Name', $request->Name)->exists();
+        if (!$existing){
+            $form_data = array(
+                'Name'          =>  $request->Name,
+                'Description'   =>  $request->Description
+            );
+    
+            ProjectName::create($form_data);
+            return redirect()->back()->with('success', 'Project Name created successfully.');
+        } else {
+            return back()->with('error', $request->Name . ' already exists.');
         }
-
-        $form_data = array(
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
-        );
-
-        ProjectName::create($form_data);
-
-        return redirect()->back()->with('success', 'Project Name created successfully.');
     }
 
     // Edit
@@ -57,11 +49,17 @@ class ProjectNameController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-         $projectName = ProjectName::findOrFail($id);
-            $projectName->Name = $request->input('Name');
-            $projectName->Description = $request->input('Description');
-            $projectName->save();
-        return back();
+        $projectName = $request->Name;
+        $exists = ProjectName::where('Name', $projectName)
+        ->where('id', '!=', $id)->first();
+        if ($exists){
+            return redirect()->back()->with('error', $request->Name . ' already exists.');
+        }
+        $projectName = ProjectName::findOrFail($id);
+        $projectName->Name = $request->input('Name');
+        $projectName->Description = $request->input('Description');
+        $projectName->save();
+        return redirect()->back()->with('success', 'Project Name updated successfully');
     }
 
     // Delete

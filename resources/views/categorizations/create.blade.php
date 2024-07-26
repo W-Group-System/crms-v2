@@ -14,11 +14,11 @@
                         @csrf
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name">
+                            <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Description</label>
-                            <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
+                            <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description" required>
                         </div>
                 </div>    
                 <div class="modal-footer">
