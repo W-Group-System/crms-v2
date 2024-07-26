@@ -49,7 +49,7 @@
                                 </button>
                             </td>
                             <td>{{ optional($cusomerRequirement)->CrrNumber }}</td>
-                            <td>{{ $cusomerRequirement->DateCreated }}</td>
+                            <td>{{ $cusomerRequirement->CreatedDate }}</td>
                             <td>{{ $cusomerRequirement->DueDate }}</td>
                             <td>{{ optional($cusomerRequirement->client)->Name }}</td>
                             <td>{{ optional($cusomerRequirement->product_application)->Name }}</td>
