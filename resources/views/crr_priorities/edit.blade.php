@@ -14,15 +14,15 @@
                         @csrf
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control" id="Name" name="Name" value="{{ $crrPriority->Name }}">
+                            <input type="text" class="form-control" id="Name" name="Name" value="{{ $crrPriority->Name }}" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Description</label>
-                            <input type="text" class="form-control" id="Description" name="Description" value="{{ $crrPriority->Description }}">
+                            <input type="text" class="form-control" id="Description" name="Description" value="{{ $crrPriority->Description }}" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Day(s)</label>
-                            <input type="text" class="form-control" id="Days" name="Days" value="{{ $crrPriority->Days }}">
+                            <input type="text" class="form-control" id="Days" name="Days" value="{{ $crrPriority->Days }}" required>
                         </div>
                 </div>    
                 <div class="modal-footer">

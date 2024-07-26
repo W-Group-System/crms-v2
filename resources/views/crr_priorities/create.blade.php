@@ -1,8 +1,8 @@
-<div class="modal fade" id="AddCrrPriority" tabindex="-1" role="dialog" aria-labelledby="addCategorization" aria-hidden="true">
+<div class="modal fade" id="AddCrrPriority" tabindex="-1" role="dialog" aria-labelledby="addCrrPriority" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="addCategorizationLabel">Categorization</h5>
+				<h5 class="modal-title" id="addCategorizationLabel">CRR Priority</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -14,15 +14,15 @@
                         @csrf
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name">
+                            <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Description</label>
-                            <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
+                            <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description" required>
                         </div>
                         <div class="form-group">
                             <label for="name">Day(s)</label>
-                            <input type="text" class="form-control" id="Days" name="Days" placeholder="Enter Days">
+                            <input type="number" class="form-control" id="Days" name="Days" placeholder="Enter Days">
                         </div>
                 </div>    
                 <div class="modal-footer">

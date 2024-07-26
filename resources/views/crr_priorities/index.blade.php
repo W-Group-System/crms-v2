@@ -10,10 +10,10 @@
             <table class="table table-striped table-hover" id="crr_priority_table" width="100%">
                 <thead>
                     <tr>
+                        <th width="10%">Action</th>
                         <th width="30%">Name</th>
                         <th width="30%">Description</th>
                         <th width="30%">Days</th>
-                        <th width="10%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
