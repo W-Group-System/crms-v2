@@ -5,86 +5,130 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Evaluation List
-            <button type="button" class="btn btn-md btn-primary" name="add_product_evaluation" id="add_product_evaluation">Add Product Evaluation</button>
+            <button type="button" class="btn btn-md btn-primary" name="add_product_evaluation" data-toggle="modal" data-target="#AddProductEvaluation">Add Product Evaluation</button>
             </h4>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-5">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
-                <table class="table table-striped table-hover" id="product_evaluation_table">
+                <table class="table table-striped table-bordered table-hove" id="product_evaluation_table">
                     <thead>
                         <tr>
+                            <th>Action</th>
                             <th>RPE #</th>
                             <th>Date Created</th>
                             <th>Due Date</th>
                             <th>Client Name</th>
                             <th>Application</th>
+                            <th>Recommendation</th>
                             <th>Status</th>
                             <th>Progress</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        @foreach ( $request_product_evaluations as $productEvaluation)
+                        <tr>
+                            <td align="center">
+                                <button type="button" class="btn btn-sm btn-warning"
+                                    data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE'>
+                                    <i class="ti-pencil"></i>
+                                </button>  
+                                <button type="button" class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete({{ $productEvaluation->id }})" title='Delete Request'>
+                                    <i class="ti-trash"></i>
+                                </button>
+                            </td>
+                            <td>{{ optional($productEvaluation)->RpeNumber }}</td>
+                            <td>{{ $productEvaluation->CreatedDate }}</td>
+                            <td>{{ $productEvaluation->DueDate }}</td>
+                            <td>{{ optional($productEvaluation->client)->Name }}</td>
+                            <td>{{ optional($productEvaluation->product_application)->Name }}</td>
+                            <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td>
+                            <td>
+                                @if($productEvaluation->Status == 10)
+                                        Open
+                                    @elseif($productEvaluation->Status == 30)
+                                        Closed
+                                    @else
+                                        {{ $productEvaluation->Status }}
+                                    @endif
+                            </td>
+                            <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
+                            
+                        </tr>
+                            
+                        @endforeach
+                    </tbody>
                 </table>
+                {!! $request_product_evaluations->appends(['search' => $search])->links() !!}
+                @php
+                    $total = $request_product_evaluations->total();
+                    $currentPage = $request_product_evaluations->currentPage();
+                    $perPage = $request_product_evaluations->perPage();
+    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
+<script src="{{ asset('js/sweetalert2.min.js') }}"></script>
+
 
 <script>
-    $(document).ready(function(){
-        $('#product_evaluation_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('product_evaluation.index') }}"
-            },
-            columns: [
-                {
-                    data: 'rpe_no',
-                    name: 'rpe_no'
-                },
-                {
-                    data: 'date_created',
-                    name: 'date_created'
-                },
-                {
-                    data: 'due_date',
-                    name: 'due_date'
-                },
-                {
-                    data: 'client.Name',
-                    name: 'client.Name'
-                },
-                {
-                    data: 'product_application.Name',
-                    name: 'product_application.Name'
-                },
-                {
-                    data: 'status',
-                    name: 'status',
-                    render: function(data, type, row) {
-                        return data == 10 ? 'Open' : 'Closed';
+     function confirmDelete(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('/request_evaluation') }}/" + id, 
+                    method: 'DELETE',
+                    data: {
+                        '_token': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            'Deleted!',
+                            'The record has been deleted.',
+                            'success'
+                        ).then(() => {
+                            location.reload(); 
+                        });
+                    },
+                    error: function() {
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong.',
+                            'error'
+                        );
                     }
-                },
-                {
-                    data: 'progress',
-                    name: 'progress'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: [0, 1, 2, 3,], // Target column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
+                });
+            }
         });
-    });
+    }     
 </script>
+@include('product_evaluations.create')
+@foreach ( $request_product_evaluations as $productEvaluation )
+@include('product_evaluations.edit')
+@endforeach
 @endsection

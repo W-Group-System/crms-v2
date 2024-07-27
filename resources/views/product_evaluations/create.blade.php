@@ -1,4 +1,4 @@
-<div class="modal fade" id="AddCustomerRequirement" tabindex="-1" role="dialog" aria-labelledby="addCustomerRequirement" aria-hidden="true">
+<div class="modal fade" id="AddProductEvaluation" tabindex="-1" role="dialog" aria-labelledby="addCustomerRequirement" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -8,22 +8,22 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('new_customer_requirement') }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('new_product_evaluation') }}">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Created (DD/MM/YYYY) - Hour Minute</label>
-                                <input type="datetime-local" class="form-control" id="CreatedDate" name="CreatedDate" required>
+                                <input type="datetime-local" class="form-control" name="CreatedDate" required>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label>Client</label>
-                                <select class="form-control js-example-basic-single" name="ClientId" id="ClientId" style="position: relative !important" title="Select Client" required>
-                                    <option value="" disabled selected>Select Client</option>
-                                    @foreach($clients as $client)
-                                        <option value="{{ $client->id }}">{{ $client->Name }}</option>
+                                <label>Project Name</label>
+                                <select class="form-control js-example-basic-single" name="ProjectNameId" style="position: relative !important" title="Select Client" required>
+                                    <option value="" disabled selected>Select Project Name</option>
+                                    @foreach($project_names as $projectName)
+                                        <option value="{{ $projectName->id }}">{{ $projectName->Name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -33,9 +33,9 @@
                                 <label>Priority</label>
                                 <select class="form-control js-example-basic-single" name="Priority" id="Priority" style="position: relative !important" title="Select Priority">
                                     <option value="" disabled selected>Select Priority</option>
-                                    <option value="1">Low</option>
-                                    <option value="3">Medium</option>
-                                    <option value="5">High</option>
+                                    <option value="1">IC Application</option>
+                                    <option value="3">Second Priority</option>
+                                    <option value="5">First Priority</option>
                                 </select>
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Target Price</label>
-                                        <input type="text" class="form-control" id="TargetPrice" name="TargetPrice" value="0">
+                                        <input type="text" class="form-control" id="TargetRawPrice" name="TargetRawPrice" value="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -121,48 +121,42 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="name">Competitor</label>
-                                <input type="text" class="form-control" id="Competitor" name="Competitor" placeholder="Enter Competitor">
+                                <label for="name">Sample Name</label>
+                                <input type="text" class="form-control" id="SampleName" name="SampleName" placeholder="Enter Competitor">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="name">Competitor Price</label>
-                                <input type="text" class="form-control" id="CompetitorPrice" name="CompetitorPrice" value="0">
+                                <label>Attention To:</label>
+                        <select class="form-control js-example-basic-single" name="AttentionTo" id="AttentionTo" style="position: relative !important" title="Select Ref Code">
+                            <option value="" disabled selected>Select</option>
+                            <option value="1">RND</option>
+                            <option value="2">QCD</option>
+                        </select>
                             </div>
                         </div>
+                        
                         <div class="col-lg-6">
-                            <label for="name">Nature of Request</label>
-                            <div id="natureOfRequestContainer">
-                                <div class="input-group mb-3">
-                                    <select class="form-control js-example-basic-single" name="NatureOfRequestId[]" required>
-                                        <option value="" disabled selected>Select Nature of Request</option>
-                                        @foreach($nature_requests as $nature_request)
-                                            <option value="{{ $nature_request->id }}">{{ $nature_request->Name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-primary addRow">+</button>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label for="name">Supplier</label>
+                                <input type="text" class="form-control" id="Supplier" name="Supplier" placeholder="Enter CRR Number">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="name">REF CRR Number</label>
-                                <input type="text" class="form-control" id="RefCrrNumber" name="RefCrrNumber" placeholder="Enter CRR Number">
+                                <label>Client</label>
+                                <select class="form-control js-example-basic-single" name="ClientId" id="ClientId" style="position: relative !important" title="Select Client" required>
+                                    <option value="" disabled selected>Select Client</option>
+                                    @foreach($clients as $client)
+                                        <option value="{{ $client->id }}">{{ $client->Name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="name">REF RPE Number</label>
-                                <input type="text" class="form-control" id="RefRpeNumber" name="RefRpeNumber" placeholder="Enter RPE Number">
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label for="name">Details of Requirement</label>
-                                <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" rows="7"></textarea>
+                                <label for="name">Objective for RPE Project</label>
+                                <input type="text" class="form-control" id="Objective" name="ObjectiveForRpeProject" placeholder="Enter Objective">
                             </div>
                         </div>
                     </div>
@@ -194,19 +188,7 @@
         @endif
 
         $(document).on('click', '.addRow', function() {
-            var newRow = `
-                <div class="input-group mb-3">
-                    <select class="form-control js-example-basic-single" name="NatureOfRequestId[]" required>
-                        <option value="" disabled selected>Select Nature of Request</option>
-                        @foreach($nature_requests as $nature_request)
-                            <option value="{{ $nature_request->id }}">{{ $nature_request->Name }}</option>
-                        @endforeach
-                    </select>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-danger removeRow">-</button>
-                    </div>
-                </div>`;
-            $('#natureOfRequestContainer').append(newRow);
+            
             $('.js-example-basic-single').select2(); // Reinitialize Select2 for new elements
         });
 

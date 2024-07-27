@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </form>
-            <table class="table table-striped table-hover table-bordered" id="product_subcategories_table" width="100%">
+            <table class="table table-striped table-bordered table-hove table-bordered" id="product_subcategories_table" width="100%">
                 <thead>
                     <tr>
                         <th width="25%">Application</th>

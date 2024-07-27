@@ -44,7 +44,7 @@
                 </div>
             </form>
             <div class="table-responsive">
-                <table class="table table-striped table-hover table-bordered" id="product_table" width="100%">
+                <table class="table table-striped table-bordered table-hove table-bordered" id="product_table" width="100%">
                     <thead>
                         <tr>
                             <th width="10%">Action</th>

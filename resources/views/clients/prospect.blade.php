@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">Client List (Prospect)</h4>
             <div class="table-responsive">
-                <table class="table table-striped table-hover" id="client_prospect">
+                <table class="table table-striped table-bordered table-hove" id="client_prospect">
                     <thead>
                         <tr>
                             <th>Type</th>

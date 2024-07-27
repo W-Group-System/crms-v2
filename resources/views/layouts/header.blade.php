@@ -190,7 +190,7 @@
                             <div class="collapse" id="tables">
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/customer_requirement') }}">Customer Requirement</a></li> 
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/product_evaluation') }}">Request for Product Evaluation</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/request_product_evaluation') }}">Request for Product Evaluation</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request') }}">Sample Request Form</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
                                     <li class="nav-item">
