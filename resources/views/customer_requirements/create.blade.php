@@ -1,5 +1,5 @@
 <div class="modal fade" id="AddCustomerRequirement" tabindex="-1" role="dialog" aria-labelledby="addCustomerRequirement" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
+	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="addCustomerRequirentLabel">Add New Customer Requiremnt</h5>
@@ -82,7 +82,7 @@
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->full_name }}</option>
+                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -114,7 +114,7 @@
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->full_name }}</option>
+                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>

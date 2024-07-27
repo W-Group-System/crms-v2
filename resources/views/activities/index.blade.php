@@ -16,7 +16,7 @@
                     <input data-val="true" id="IsShowClosed" name="IsShowClosed" type="checkbox" value="true"><input name="IsShowClosed" type="hidden" value="false"> Closed
                 </label>
             </div>
-            <table class="table table-striped table-hover" id="activity_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="activity_table" width="100%">
                 <thead>
                     <tr>
                         <th>#</th>

@@ -8,7 +8,7 @@
             <button type="button" class="btn btn-md btn-primary" name="add_customer_complaint" id="add_customer_complaint">Add Customer Complaint</button>
             </h4>
             <div class="table-responsive">
-                <table class="table table-striped table-hover" id="customer_complaint_table">
+                <table class="table table-striped table-bordered table-hove" id="customer_complaint_table">
                     <thead>
                         <tr>
                             <th>#</th>

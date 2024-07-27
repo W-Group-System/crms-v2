@@ -7,7 +7,7 @@
             Price Request GAE List
             <button type="button" class="btn btn-md btn-primary" name="add_request_gae" id="add_request_gae">Add Price Request GAE</button>
             </h4>
-            <table class="table table-striped table-hover" id="request_gae_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="request_gae_table" width="100%">
                 <thead>
                     <tr>
                         <th width="40%">Expense Name</th>

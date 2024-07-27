@@ -24,7 +24,7 @@ class CustomerRequirementController extends Controller
         $customer_requirements = CustomerRequirement::with(['client', 'product_application'])
         ->where(function ($query) use ($search){
             $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
-            ->orWhere('DateCreated', 'LIKE', '%' . $search . '%')
+            ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
             ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
             ->orWhereHas('client', function ($q) use ($search) {
                 $q->where('name', 'LIKE', '%' . $search . '%');

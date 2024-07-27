@@ -16,16 +16,30 @@ use Illuminate\Support\Facades\Auth;
 class RequestProductEvaluationController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-        $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application'])->orderBy('id', 'desc')->paginate(25);
+        $search = $request->input('search');
+        $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application'])
+        ->where(function ($query) use ($search){
+            $query->where('RpeNumber', 'LIKE', '%' . $search . '%')
+            ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+            ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+            ->orWhereHas('client', function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%');
+            })
+            ->orWhereHas('product_application', function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%');
+            })
+            ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
+        })
+        ->orderBy('id', 'desc')->paginate(25);
         $clients = Client::all();
         $users = User::all();
         $price_currencies = PriceCurrency::all();
         $project_names = ProjectName::all();
 
         $product_applications = ProductApplication::all();
-        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications', 'users',  'price_currencies', 'project_names')); 
+        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications', 'users',  'price_currencies', 'project_names', 'search')); 
     }
 
     public function store(Request $request)
@@ -58,10 +72,42 @@ class RequestProductEvaluationController extends Controller
             'CurrencyId' => $request->input('CurrencyId'),
             'SampleName' => $request->input('SampleName'),
             'Supplier' => $request->input('Supplier'),
-            'ObjectiveForRpeProject' => $request->input('Objective'),
+            'ObjectiveForRpeProject' => $request->input('ObjectiveForRpeProject'),
             'Status' =>'10',
             'Progress' => '10',
         ]);
                     return redirect()->back()->with('success', 'Base prices updated successfully.');
+    }
+    public function update(Request $request, $id)
+    {
+        $rpe = RequestProductEvaluation::with(['client', 'product_application'])->findOrFail($id);
+        $rpe->DueDate = $request->input('DueDate');
+        $rpe->ClientId = $request->input('ClientId');
+        $rpe->ApplicationId = $request->input('ApplicationId');
+        $rpe->PotentialVolume = $request->input('PotentialVolume');
+        $rpe->TargetRawPrice = $request->input('TargetRawPrice');
+        $rpe->ProjectNameId = $request->input('ProjectNameId');
+        $rpe->PrimarySalesPersonId = $request->input('PrimarySalesPersonId');
+        $rpe->SecondarySalesPersonId = $request->input('SecondarySalesPersonId');
+        $rpe->Priority = $request->input('Priority');
+        $rpe->AttentionTo = $request->input('AttentionTo');
+        $rpe->UnitOfMeasureId = $request->input('UnitOfMeasureId');
+        $rpe->CurrencyId = $request->input('CurrencyId');
+        $rpe->SampleName = $request->input('SampleName');
+        $rpe->Supplier = $request->input('Supplier');
+        $rpe->ObjectiveForRpeProject = $request->input('ObjectiveForRpeProject');
+        $rpe->save();
+        return redirect()->back()->with('success', 'RPE updated successfully');
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $basePrice = RequestProductEvaluation::findOrFail($id); 
+            $basePrice->delete();  
+            return response()->json(['success' => true, 'message' => 'Request deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to delete Request.'], 500);
+        }
     }
 }

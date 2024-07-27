@@ -7,7 +7,7 @@
             Fixed Cost List
             <button type="button" class="btn btn-md btn-primary" name="add_fixed_cost" id="add_fixed_cost">Add Fixed Cost</button>
             </h4>
-            <table class="table table-striped table-hover" id="fixed_cost" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="fixed_cost" width="100%">
                 <thead>
                     <tr>
                         <th width="20%">Effective Date</th>
