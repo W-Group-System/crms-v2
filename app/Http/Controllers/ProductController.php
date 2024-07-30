@@ -115,7 +115,8 @@ class ProductController extends Controller
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
             })
-            ->orWhere('code', $request->search)
+            // ->orWhere('code', $request->search)
+            ->where('status', 1)
             ->orderBy('id', 'desc')
             ->paginate(10);
 
