@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\BasePrice;
 use App\CurrencyExchange;
+use App\Product;
 use App\ProductMaterialsComposition;
 use Illuminate\Support\Facades\DB;
 
@@ -68,5 +69,37 @@ class Helpers {
         $php = $currencyExchangeRates->ExchangeRate * $cost;
 
         return round($php, 2);
+    }
+
+    public static function identicalComposition($materials, $product_id)
+    {
+        $getMaterialId = $materials->pluck('MaterialId')->toArray();
+        $getPercentage = $materials->pluck('Percentage')->toArray();
+
+        $providedComposition = array_map(null, $getMaterialId, $getPercentage);
+        
+        $matchingProductIds = ProductMaterialsComposition::select('ProductId')
+            ->where(function ($q) use ($providedComposition) {
+                foreach ($providedComposition as $composition) {
+                    $q->orWhere(function ($q) use ($composition) {
+                        $q->where('MaterialId', $composition[0])
+                        ->where('Percentage', $composition[1]);
+                    });
+                }
+            })
+            ->groupBy('ProductId')
+            ->having(DB::raw("COUNT(*)"), count($providedComposition))
+            ->pluck('ProductId');
+
+        $matchingProducts = ProductMaterialsComposition::select('ProductId')
+            ->whereIn('ProductId', $matchingProductIds)
+            ->where('ProductId', '!=', $product_id)
+            ->groupBy('ProductId')
+            // ->pluck('ProductId')
+            ->get();
+
+        // dd($matchingProducts);
+        
+        return $matchingProducts;
     }
 }

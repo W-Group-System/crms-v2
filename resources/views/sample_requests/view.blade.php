@@ -298,7 +298,7 @@
                 <div class="tab-pane fade show active" id="supplementary" role="tabpanel" aria-labelledby="supplementary-tab">
                     <button type="button" class="btn btn-md btn-primary" title="Add Supplementary Details"  data-toggle="modal" data-target="#addSrfSuplementary">+ Supplementary Details</button>
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover" id="sample_request_table">
+                        <table class="table table-striped table-bordered table-hove" id="sample_request_table">
                             <thead>
                                 <tr>
                                     <th>Actions</th>
@@ -331,7 +331,7 @@
                 <div class="tab-pane fade" id="srfPersonnel" role="tabpanel" aria-labelledby="srfPersonnel-tab">
                     <button type="button" class="btn btn-md btn-primary" title="Assign R&D"  data-toggle="modal" data-target="#addSrfPersonnel">+ R&D Personnel</button>
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover" id="sample_request_table">
+                        <table class="table table-striped table-bordered table-hove" id="sample_request_table">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -349,7 +349,7 @@
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover" id="sample_request_table">
+                        <table class="table table-striped table-bordered table-hove" id="sample_request_table">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -385,7 +385,7 @@
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <button type="button" class="btn btn-md btn-primary" title="Upload File"  data-toggle="modal" data-target="#uploadFile">Upload File</button>
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover" id="sample_request_table">
+                        <table class="table table-striped table-bordered table-hove" id="sample_request_table">
                             <thead>
                                 <tr>
                                     <th>Name</th>

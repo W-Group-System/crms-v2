@@ -115,7 +115,8 @@ class ProductController extends Controller
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
             })
-            ->orWhere('code', $request->search)
+            // ->orWhere('code', $request->search)
+            ->where('status', 1)
             ->orderBy('id', 'desc')
             ->paginate(10);
 
@@ -302,7 +303,16 @@ class ProductController extends Controller
         $product->status = 2;
         $product->save();
 
-        return array('message' => 'Successfully added to new products');
+        if($request->action)
+        {
+            Alert::success('Successfully added to new products')->persistent("Dismiss");
+            return redirect('/new_products');
+        }
+        else
+        {
+            return array('message' => 'Successfully added to new products');
+        }
+
     }
 
     public function addToCurrentProducts(Request $request)
@@ -311,7 +321,15 @@ class ProductController extends Controller
         $product->status = 4;
         $product->save();
 
-        return array('message' => 'Successfully added to current products');
+        if ($request->action == "Current")
+        {
+            Alert::success('Successfully added to current products')->persistent("Dismiss");
+            return redirect('/current_products');
+        }
+        else
+        {
+            return array('message' => 'Successfully added to current products');
+        }
     }
 
     public function addToDraftProducts(Request $request)
@@ -320,7 +338,15 @@ class ProductController extends Controller
         $product->status = 1;
         $product->save();
 
-        return array('message' => 'Successfully added to draft products');
+        if ($request->action == 'Draft')
+        {
+            Alert::success('Successfully added to draft products')->persistent("Dismiss");
+            return redirect('/draft_products');
+        }
+        else
+        {
+            return array('message' => 'Successfully added to draft products');
+        }
     }
 
     public function addToArchiveProducts(Request $request)
@@ -329,7 +355,15 @@ class ProductController extends Controller
         $product->status = 5;
         $product->save();
 
-        return array('message' => 'Successfully added to archive products');
+        if ($request->action == "Archive")
+        {
+            Alert::success('Successfully added to archive')->persistent("Dismiss");
+            return redirect('/archived_products');
+        }
+        else
+        {
+            return array('message' => 'Successfully added to archive products');
+        }
     }
 
     public function specification(Request $request)
@@ -693,5 +727,110 @@ class ProductController extends Controller
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
+    }
+
+    public function viewDraft($id)
+    {
+        $data = Product::with([
+            'productMaterialComposition', 
+            'productSpecification' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productFiles' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productDataSheet.productPhysicoChemicalAnalyses' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productDataSheet.productMicrobiologicalAnalysis',
+            'productDataSheet.productHeavyMetal',
+            'productDataSheet.productNutritionalInformation',
+            'productDataSheet.productAllergens',
+            'productDataSheet.productPotentialBenefit',
+            'productEventLogs'
+            ])
+            ->find($id);
+
+        $users = User::all();
+        
+        $product_applications = ProductApplication::find($data->application_id);
+        $product_subcategories = ProductSubcategories::find($data->application_subcategory_id);
+        $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
+        $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
+
+        $rawMaterials = RawMaterial::where('status', 'Active')->get();
+        $client = Client::get();
+
+        return view('products.draft_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));
+    }
+    
+    public function viewNew($id)
+    {
+        $data = Product::with([
+            'productMaterialComposition', 
+            'productSpecification' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productFiles' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productDataSheet.productPhysicoChemicalAnalyses' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productDataSheet.productMicrobiologicalAnalysis',
+            'productDataSheet.productHeavyMetal',
+            'productDataSheet.productNutritionalInformation',
+            'productDataSheet.productAllergens',
+            'productDataSheet.productPotentialBenefit',
+            'productEventLogs'
+            ])
+            ->find($id);
+
+        $users = User::all();
+        
+        $product_applications = ProductApplication::find($data->application_id);
+        $product_subcategories = ProductSubcategories::find($data->application_subcategory_id);
+        $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
+        $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
+
+        $rawMaterials = RawMaterial::where('status', 'Active')->get();
+        $client = Client::get();
+
+        return view('products.new_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));
+    }
+
+    public function viewArchived($id)
+    {
+        $data = Product::with([
+            'productMaterialComposition', 
+            'productSpecification' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productFiles' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productDataSheet.productPhysicoChemicalAnalyses' => function($q) {
+                $q->orderBy('id', 'desc');
+            },
+            'productDataSheet.productMicrobiologicalAnalysis',
+            'productDataSheet.productHeavyMetal',
+            'productDataSheet.productNutritionalInformation',
+            'productDataSheet.productAllergens',
+            'productDataSheet.productPotentialBenefit',
+            'productEventLogs'
+            ])
+            ->find($id);
+
+        $users = User::all();
+        
+        $product_applications = ProductApplication::find($data->application_id);
+        $product_subcategories = ProductSubcategories::find($data->application_subcategory_id);
+        $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
+        $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
+
+        $rawMaterials = RawMaterial::where('status', 'Active')->get();
+        $client = Client::get();
+
+        return view('products.archived_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));
     }
 }

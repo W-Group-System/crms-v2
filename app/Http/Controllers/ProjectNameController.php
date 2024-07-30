@@ -8,48 +8,32 @@ use Illuminate\Http\Request;
 class ProjectNameController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-
-        // if(request()->ajax())
-        // {
-        //     return datatables()->of(ProjectName::orderBy('id', 'desc')->get())
-        //             ->addColumn('action', function($data){
-        //                 $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-        //                 $buttons .= '&nbsp;&nbsp;';
-        //                 $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-        //                 return $buttons;
-        //             })
-        //             ->rawColumns(['action'])
-        //             ->make(true);
-        // }
-        $projectNames = ProjectName::orderBy('id', 'desc')->get();
-        return view('project_name.index', compact('projectNames')); 
+        $search = $request->input('search');
+        $projectNames = ProjectName::where(function ($query) use ($search) {
+            $query->where('Name', 'LIKE', '%' . $search . '%')
+                ->orWhere('Description', 'LIKE', '%' . $search . '%');        
+        })
+        ->orderBy('id', 'desc')->paginate(25);
+        return view('project_name.index', compact('projectNames', 'search')); 
     }
 
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
-
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
+        $existing = ProjectName::where('Name', $request->Name)->exists();
+        if (!$existing){
+            $form_data = array(
+                'Name'          =>  $request->Name,
+                'Description'   =>  $request->Description
+            );
+    
+            ProjectName::create($form_data);
+            return redirect()->back()->with('success', 'Project Name created successfully.');
+        } else {
+            return back()->with('error', $request->Name . ' already exists.');
         }
-
-        $form_data = array(
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
-        );
-
-        ProjectName::create($form_data);
-
-        return response()->json(['success' => 'Data Added Successfully.']);
     }
 
     // Edit
@@ -65,26 +49,17 @@ class ProjectNameController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
-
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
+        $projectName = $request->Name;
+        $exists = ProjectName::where('Name', $projectName)
+        ->where('id', '!=', $id)->first();
+        if ($exists){
+            return redirect()->back()->with('error', $request->Name . ' already exists.');
         }
-
-        $form_data = array(
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
-        );
-
-        ProjectName::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        $projectName = ProjectName::findOrFail($id);
+        $projectName->Name = $request->input('Name');
+        $projectName->Description = $request->input('Description');
+        $projectName->save();
+        return redirect()->back()->with('success', 'Project Name updated successfully');
     }
 
     // Delete
