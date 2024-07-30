@@ -19,7 +19,7 @@
                 </div>
             </form>
             <div class="table-responsive">
-                <table class="table table-striped table-hover" id="customer_requirement_table" width="100%">
+                <table class="table table-striped table-bordered table-hove" id="customer_requirement_table" width="100%">
                     <thead>
                         <tr>
                             <th>Action</th>
@@ -34,36 +34,36 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ( $customer_requirements as $cusomerRequirement)
+                        @foreach ( $customer_requirements as $customerRequirement)
                         <tr>
                             <td align="center">
                                 <button type="button" class="btn btn-sm btn-warning"
-                                    data-target="#editBase{{ $cusomerRequirement->id }}" data-toggle="modal" title='Edit New Base Price'>
+                                    data-target="#editBase{{ $customerRequirement->id }}" data-toggle="modal" title='Edit New Base Price'>
                                     <i class="ti-pencil"></i>
                                 </button>  
-                                <button type="button" class="btn btn-sm btn-success approve-btn"  data-id="{{ $cusomerRequirement->Id }}">
+                                <button type="button" class="btn btn-sm btn-success approve-btn"  data-id="{{ $customerRequirement->Id }}">
                                     <i class="ti-thumb-up"></i>
                                 </button> 
-                                <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $cusomerRequirement->Id }}" title='Delete Base Price'>
+                                <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $customerRequirement->Id }}" title='Delete Base Price'>
                                     <i class="ti-trash"></i>
                                 </button>
                             </td>
-                            <td>{{ optional($cusomerRequirement)->CrrNumber }}</td>
-                            <td>{{ $cusomerRequirement->CreatedDate }}</td>
-                            <td>{{ $cusomerRequirement->DueDate }}</td>
-                            <td>{{ optional($cusomerRequirement->client)->Name }}</td>
-                            <td>{{ optional($cusomerRequirement->product_application)->Name }}</td>
-                            <td style="white-space: break-spaces; width: 100%;">{{ $cusomerRequirement->Recommendation }}</td>
+                            <td>{{ optional($customerRequirement)->CrrNumber }}</td>
+                            <td>{{ $customerRequirement->CreatedDate }}</td>
+                            <td>{{ $customerRequirement->DueDate }}</td>
+                            <td>{{ optional($customerRequirement->client)->Name }}</td>
+                            <td>{{ optional($customerRequirement->product_application)->Name }}</td>
+                            <td style="white-space: break-spaces; width: 100%;">{{ $customerRequirement->Recommendation }}</td>
                             <td>
-                                @if($cusomerRequirement->Status == 10)
+                                @if($customerRequirement->Status == 10)
                                         Open
-                                    @elseif($cusomerRequirement->Status == 30)
+                                    @elseif($customerRequirement->Status == 30)
                                         Closed
                                     @else
-                                        {{ $cusomerRequirement->Status }}
+                                        {{ $customerRequirement->Status }}
                                     @endif
                             </td>
-                            <td>{{ optional($cusomerRequirement->progressStatus)->name }}</td>
+                            <td>{{ optional($customerRequirement->progressStatus)->name }}</td>
                             
                         </tr>
                             

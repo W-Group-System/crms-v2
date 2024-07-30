@@ -19,7 +19,7 @@
                 </div>
             </form>
            <div class="table-responsive">
-            <table class="table table-striped table-hover" id="project_name_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="project_name_table" width="100%">
                 <thead>
                     <tr>
                         <th width="25%">Action</th>
@@ -35,7 +35,7 @@
                                     data-target="#editProjectName{{ $projectName->id }}" data-toggle="modal" title='Edit Project Name'>
                                     <i class="ti-pencil"></i>
                                 </button>   
-                                <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $projectName->id }})" title='Delete Supplementary'>
+                                <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $projectName->id }})" title='Delete Project Name'>
                                     <i class="ti-trash"></i>
                                 </button>  
                             </td>

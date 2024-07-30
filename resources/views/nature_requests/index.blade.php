@@ -11,7 +11,7 @@
             <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#AddNatureRequest">Add Nature of Request</button>
             </h4>
            <div class="table-responsive">
-            <table class="table table-striped table-hover" id="nature_request_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="nature_request_table" width="100%">
                 <thead>
                     <tr>
                         <th width="10%">Action</th>

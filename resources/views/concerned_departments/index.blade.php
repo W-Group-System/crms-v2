@@ -7,7 +7,7 @@
             Concerned Department List
             <button type="button" class="btn btn-md btn-primary" name="add_concern_department" id="add_concern_department">Add Concerned Department</button>
             </h4>
-            <table class="table table-striped table-hover" id="concern_department_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="concern_department_table" width="100%">
                 <thead>
                     <tr>
                         <th width="40%">Department</th>

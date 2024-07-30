@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerComplaintController;
 use App\Http\Controllers\CustomerFeedbackController;
 use App\Http\Controllers\SampleRequestController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\PriceMonitoringController;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,10 +102,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('client/create', 'ClientController@create');    
     Route::post('/new_client', 'ClientController@store')->name('client.store');
     Route::get('edit_client/{id}', 'ClientController@edit')->name('client.edit');
-    Route::post('update_client/{id}', 'ClientController@update')->name('update_client');
+    Route::post('update_client/{id}', 'ClientController@update');
     Route::get('view_client/{id}', 'ClientController@view')->name('client.view');
     Route::get('/regions', 'ClientController@getRegions');
     Route::get('/areas', 'ClientController@getAreas');
+    Route::post('delete_client/{id}', 'ClientController@delete');
+    Route::post('prospect_client/{id}', 'ClientController@prospectClient');
 
     # Contact Client
     Route::post('new_contact', 'ContactController@newContact');
@@ -122,6 +125,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Product Evaluation
     Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
+
+    // Request Product Evaluation
+    Route::get('/request_product_evaluation', 'RequestProductEvaluationController@index')->name('product_evaluation.index');
+    Route::post('new_product_evaluation', 'RequestProductEvaluationController@store')->name('product_evaluation.store'); 
+    Route::post('product_evaluation/edit/{id}', 'RequestProductEvaluationController@update');
+    Route::delete('request_evaluation/{id}', 'RequestProductEvaluationController@destroy');
 
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
@@ -146,6 +155,7 @@ Route::group(['middleware' => 'auth'], function () {
     
     // Price Monitoring 
     Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
+    Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');
 
     // Customer Complaint 
     Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');
