@@ -34,7 +34,7 @@ class ClientController extends Controller
         //             ->make(true);
         // }
         // return view('clients.index', compact('clients'));
-        
+        $request->session()->put('last_client_page', url()->full());
         $search = $request->input('search');
         $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
                         ->where('Status', '2')
@@ -57,7 +57,7 @@ class ClientController extends Controller
                         })
                         ->orderBy('id', 'desc')
                         ->paginate(10);
-        // dd($clients);
+        
         return view('clients.index', [
             'search' => $search,
             'clients' => $clients,
@@ -65,40 +65,96 @@ class ClientController extends Controller
     }
 
     // Prospect List
-    // public function prospect()
-    // {   
-    //     $clients = Client::with(['industry'])->where('Status', '1')->orderBy('Id', 'desc')->get();
-    //     if(request()->ajax())   
-    //     {
-    //         return datatables()->of($clients)
-    //                 ->addColumn('action', function ($data) {
-    //                     $viewButton = '<a type="button" href="' . route("client.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
-    //                     $editButton = '<a type="button" href="' . route("client.edit", ["id" => $data->id]) . '" name="edit" id="' . $data->id . '" class="edit btn btn-primary">Edit</a>';
-    //                     return $viewButton . '&nbsp;&nbsp;' . $editButton;
-    //                 })
-    //                 ->rawColumns(['action'])
-    //                 ->make(true);
-    //     }
-    //     return view('clients.prospect', compact('clients')); 
-    // }
+    public function prospect(Request $request)
+    {   
+        // $clients = Client::with(['industry'])->where('Status', '1')->orderBy('Id', 'desc')->get();
+        // if(request()->ajax())   
+        // {
+        //     return datatables()->of($clients)
+        //             ->addColumn('action', function ($data) {
+        //                 $viewButton = '<a type="button" href="' . route("client.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
+        //                 $editButton = '<a type="button" href="' . route("client.edit", ["id" => $data->id]) . '" name="edit" id="' . $data->id . '" class="edit btn btn-primary">Edit</a>';
+        //                 return $viewButton . '&nbsp;&nbsp;' . $editButton;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
+        // return view('clients.prospect', compact('clients')); 
+        $request->session()->put('last_client_page', url()->full());
+        $search = $request->input('search');
+        $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
+                        ->where('Status', '1')
+                        ->where(function ($query) use ($search) {
+                            $query->where('Type', 'LIKE', '%' . $search . '%')
+                                ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')
+                                ->orWhere('Name', 'LIKE', '%' . $search . '%')
+                                ->orWhereHas('userById', function ($q) use ($search) {
+                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('userByUserId', function ($q) use ($search) {
+                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('userByUserId2', function ($q) use ($search) {
+                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('industry', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                });        
+                        })
+                        ->orderBy('id', 'desc')
+                        ->paginate(10);
+        
+        return view('clients.prospect', [
+            'search' => $search,
+            'clients' => $clients,
+        ]);
+    }
 
     // Archived List
-    // public function archived()
-    // {   
-    //     $clients = Client::with(['industry'])->where('Status', '5')->orderBy('Id', 'desc')->get();
-    //     if(request()->ajax())   
-    //     {
-    //         return datatables()->of($clients)
-    //                 ->addColumn('action', function ($data) {
-    //                     $viewButton = '<a type="button" href="' . route("client.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
-    //                     $editButton = '<a type="button" href="' . route("client.edit", ["id" => $data->id]) . '" name="edit" id="' . $data->id . '" class="edit btn btn-primary">Edit</a>';
-    //                     return $viewButton . '&nbsp;&nbsp;' . $editButton;
-    //                 })
-    //                 ->rawColumns(['action'])
-    //                 ->make(true);
-    //     }
-    //     return view('clients.archived', compact('clients')); 
-    // }
+    public function archived(Request $request)
+    {   
+        // $clients = Client::with(['industry'])->where('Status', '5')->orderBy('Id', 'desc')->get();
+        // if(request()->ajax())   
+        // {
+        //     return datatables()->of($clients)
+        //             ->addColumn('action', function ($data) {
+        //                 $viewButton = '<a type="button" href="' . route("client.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
+        //                 $editButton = '<a type="button" href="' . route("client.edit", ["id" => $data->id]) . '" name="edit" id="' . $data->id . '" class="edit btn btn-primary">Edit</a>';
+        //                 return $viewButton . '&nbsp;&nbsp;' . $editButton;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
+        // return view('clients.archived', compact('clients')); 
+        $request->session()->put('last_client_page', url()->full());
+        $search = $request->input('search');
+        $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
+                        ->where('Status', '5')
+                        ->where(function ($query) use ($search) {
+                            $query->where('Type', 'LIKE', '%' . $search . '%')
+                                ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')
+                                ->orWhere('Name', 'LIKE', '%' . $search . '%')
+                                ->orWhereHas('userById', function ($q) use ($search) {
+                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('userByUserId', function ($q) use ($search) {
+                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('userByUserId2', function ($q) use ($search) {
+                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('industry', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                });        
+                        })
+                        ->orderBy('id', 'desc')
+                        ->paginate(10);
+        
+        return view('clients.archived', [
+            'search' => $search,
+            'clients' => $clients,
+        ]);
+    }
     
     // Create
     public function create()
@@ -190,7 +246,7 @@ class ClientController extends Controller
     // Edit
     public function edit($id)
     {
-        $data = Client::find($id);
+        $data = Client::findOrFail($id);
         $addresses = Address::where('CompanyId', $id)->get();
         $contacts = Contact::where('CompanyId', $id)->get();
         $files = FileClient::where('ClientId', $id)->get();
@@ -204,8 +260,13 @@ class ClientController extends Controller
             'areas' => Area::all(),
             'industries' => Industry::all()
         ];
-
-        return view('clients.edit', array_merge(['data' => $data, 'addresses' => $addresses, 'contacts' => $contacts, 'files' => $files], $collections));
+        
+        return view('clients.edit', array_merge([
+            'data' => $data,
+            'addresses' => $addresses,
+            'contacts' => $contacts,
+            'files' => $files
+        ], $collections));
     }
 
     // Update
@@ -411,7 +472,7 @@ class ClientController extends Controller
     // View
     public function view($id) 
     {
-        $data = Client::find($id);
+        $data = Client::findOrFail($id);
         $addresses = Address::where('CompanyId', $id)->get();
 
         $users = User::all();
@@ -424,8 +485,32 @@ class ClientController extends Controller
 
         $primaryAccountManager = $users->firstWhere('user_id', $data->PrimaryAccountManagerId) ?? $users->firstWhere('id', $data->PrimaryAccountManagerId);
         $secondaryAccountManager = $users->firstWhere('user_id', $data->SecondaryAccountManagerId) ?? $users->firstWhere('id', $data->SecondaryAccountManagerId);
-        
+
+        // Ensure secondaryAccountManager is null if not found
+        if (is_null($data->SecondaryAccountManagerId)) {
+            $secondaryAccountManager = null;
+        }
         return view('clients.view', compact('data', 'primaryAccountManager', 'secondaryAccountManager', 'payment_terms', 'regions', 'countries', 'areas', 'business_types', 'industries', 'addresses'));
+    }
+    
+    // Prospect Client
+    public function prospectClient(Request $request, $id)
+    {
+        $client = Client::findOrFail($id);
+
+        $client->Status = '1';
+        $client->save();
+
+        return response()->json(['message' => 'Client status updated to prospect successfully!']);
+    }
+
+    // Delete Client
+    public function delete($id)
+    {
+        $client = Client::findOrFail($id);
+        $client->delete();
+
+        return response()->json(['message' => 'Client deleted successfully!']);
     }
 
     // Add File

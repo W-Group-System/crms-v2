@@ -5,13 +5,13 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Add New Client
-            <a href="{{ url('/client') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+            <a href="{{ url('/client_prospect') }}" class="btn btn-md btn-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
             </h4>
             <form id="form_client" method="POST" enctype="multipart/form-data">
                 @csrf
                 <span id="form_result"></span>
                 <div class="row">
-                    <input type="hidden" name="Status" id="Status" value="2">
+                    <input type="hidden" name="Status" id="Status" value="1">
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label>Buyer Code</label>

@@ -30,69 +30,69 @@ class BasePriceController extends Controller
     //     return view('base_prices.index', compact('currentBasePrice', 'search')); 
     // }
     public function index(Request $request)
-{
-    $search = $request->input('search');
+    {
+        $search = $request->input('search');
 
-    $latestEffectiveDateSubquery = BasePrice::select('MaterialId', \DB::raw('MAX(EffectiveDate) as LatestEffectiveDate'))
-        ->whereNull('deleted_at')  
-        ->groupBy('MaterialId');
+        $latestEffectiveDateSubquery = BasePrice::select('MaterialId', \DB::raw('MAX(EffectiveDate) as LatestEffectiveDate'))
+            ->whereNull('deleted_at')  
+            ->groupBy('MaterialId');
 
-    $currentBasePrice = BasePrice::with(['productMaterial', 'userApproved'])
-        ->joinSub($latestEffectiveDateSubquery, 'latest_dates', function ($join) {
-            $join->on('productmaterialbaseprices.MaterialId', '=', 'latest_dates.MaterialId')
-                 ->on('productmaterialbaseprices.EffectiveDate', '=', 'latest_dates.LatestEffectiveDate');
-        })
-        ->where(function ($query) use ($search) {
-            $query->whereHas('productMaterial', function ($q) use ($search) {
-                    $q->where('Name', 'LIKE', '%' . $search . '%');
-                })
-                ->orWhere('Price', 'LIKE', '%' . $search . '%')
-                ->orWhereHas('userApproved', function ($q) use ($search) {
-                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                })
-                ->orWhere('EffectiveDate', 'LIKE', '%' . $search . '%');
-        })
-        ->where('Status', 3)
-        ->whereNull('deleted_at') 
-        ->orderBy('productmaterialbaseprices.Id', 'desc')
-        ->paginate(25);
-        
-    return view('base_prices.index', compact('currentBasePrice', 'search')); 
-}
+        $currentBasePrice = BasePrice::with(['productMaterial', 'userApproved'])
+            ->joinSub($latestEffectiveDateSubquery, 'latest_dates', function ($join) {
+                $join->on('productmaterialbaseprices.MaterialId', '=', 'latest_dates.MaterialId')
+                    ->on('productmaterialbaseprices.EffectiveDate', '=', 'latest_dates.LatestEffectiveDate');
+            })
+            ->where(function ($query) use ($search) {
+                $query->whereHas('productMaterial', function ($q) use ($search) {
+                        $q->where('Name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhere('Price', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('userApproved', function ($q) use ($search) {
+                        $q->where('full_name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhere('EffectiveDate', 'LIKE', '%' . $search . '%');
+            })
+            ->where('Status', 3)
+            ->whereNull('deleted_at') 
+            ->orderBy('productmaterialbaseprices.Id', 'desc')
+            ->paginate(25);
+            
+        return view('base_prices.index', compact('currentBasePrice', 'search')); 
+    }
 
 
-public function newBasePriceIndex(Request $request)
-{   
-    $search = $request->input('search');
+    public function newBasePriceIndex(Request $request)
+    {   
+        $search = $request->input('search');
 
-    $latestDatesSubquery = BasePrice::select('MaterialId', \DB::raw('MAX(CreatedDate) as latest_created_date'))
-        ->where('Status', 1)
-        ->groupBy('MaterialId');
+        $latestDatesSubquery = BasePrice::select('MaterialId', \DB::raw('MAX(CreatedDate) as latest_created_date'))
+            ->where('Status', 1)
+            ->groupBy('MaterialId');
 
-    $newBasePrice = BasePrice::with(['productMaterial', 'userApproved'])
-        ->joinSub($latestDatesSubquery, 'latest_dates', function ($join) {
-            $join->on('productmaterialbaseprices.MaterialId', '=', 'latest_dates.MaterialId')
-                 ->on('productmaterialbaseprices.CreatedDate', '=', 'latest_dates.latest_created_date');
-        })
-        ->where(function ($query) use ($search) {
-            $query->whereHas('productMaterial', function ($q) use ($search) {
-                    $q->where('Name', 'LIKE', '%' . $search . '%');
-                })
-                ->orWhere('Price', 'LIKE', '%' . $search . '%')
-                ->orWhereHas('userApproved', function ($q) use ($search) {
-                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                })
-                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%');
-        })
-        ->where('Status', 1)
-        ->orderBy('CreatedDate', 'desc') 
-        ->paginate(25);
+        $newBasePrice = BasePrice::with(['productMaterial', 'userApproved'])
+            ->joinSub($latestDatesSubquery, 'latest_dates', function ($join) {
+                $join->on('productmaterialbaseprices.MaterialId', '=', 'latest_dates.MaterialId')
+                    ->on('productmaterialbaseprices.CreatedDate', '=', 'latest_dates.latest_created_date');
+            })
+            ->where(function ($query) use ($search) {
+                $query->whereHas('productMaterial', function ($q) use ($search) {
+                        $q->where('Name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhere('Price', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('userApproved', function ($q) use ($search) {
+                        $q->where('full_name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%');
+            })
+            ->where('Status', 1)
+            ->orderBy('CreatedDate', 'desc') 
+            ->paginate(25);
 
-    $rawMaterials = RawMaterial::all();
-    $productCurrency = PriceCurrency::all();
+        $rawMaterials = RawMaterial::all();
+        $productCurrency = PriceCurrency::all();
 
-    return view('base_prices.new_basePrice_index', compact('newBasePrice', 'search', 'rawMaterials', 'productCurrency')); 
-}
+        return view('base_prices.new_basePrice_index', compact('newBasePrice', 'search', 'rawMaterials', 'productCurrency')); 
+    }
 
 
     public function store(Request $request)
@@ -145,8 +145,6 @@ public function newBasePriceIndex(Request $request)
     
         return redirect()->back()->with('success', 'Base prices updated successfully.');
     }
-
-
 
     public function updateBasePrice(Request $request, $id)
     {
