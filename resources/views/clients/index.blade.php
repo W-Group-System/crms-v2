@@ -5,7 +5,6 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Client List (Current)
-            <a href="{{ url('client/create') }}"><button class="btn btn-md btn-primary">Add Client</button></a>
             <!-- <button type="button" class="btn btn-md btn-primary" name="add_client" id="add_client">Add Client</button> -->
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
@@ -49,7 +48,7 @@
                                     @endif
                                 </td>
                                 <td>{{$client->industry->Name ?? 'N/A'}}</td>
-                                <td>{{$client->BuyerCode}}</td>
+                                <td>{{$client->BuyerCode ?? 'N/A'}}</td>
                                 <td>{{$client->Name ?? 'N/A'}}</td>
                                 <td>
                                     {{ $client->userByUserId->full_name ?? $client->userById->full_name ?? 'N/A' }} / 
