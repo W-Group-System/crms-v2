@@ -34,7 +34,7 @@
                             <tr>
                                 <td>
                                     <div>
-                                        <a href="{{url('view_product/'.$p->id)}}" type="submit" class="btn btn-info btn-sm" title="View Products">
+                                        <a href="{{url('view_draft_product/'.$p->id)}}" type="submit" class="btn btn-info btn-sm" title="View Products">
                                             <i class="ti-eye"></i>
                                         </a>
         
@@ -64,6 +64,15 @@
                     </tbody>
                 </table>
                 {!! $products->appends(['search' => $search])->links() !!}
+                @php
+                    $total = $products->total();
+                    $currentPage = $products->currentPage();
+                    $perPage = $products->perPage();
+                    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+                <p class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
             </div>
         </div>
     </div>

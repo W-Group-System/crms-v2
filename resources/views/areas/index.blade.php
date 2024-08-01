@@ -7,7 +7,7 @@
             Area List
             <button type="button" class="btn btn-md btn-primary" name="add_area" id="add_area">Add Area</button>
             </h4>
-            <table class="table table-striped table-hover" id="area_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="area_table" width="100%">
                 <thead>
                     <tr>
                         <th width="20%">Type</th>

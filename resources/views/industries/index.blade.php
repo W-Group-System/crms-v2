@@ -7,7 +7,7 @@
             Industry List
             <button type="button" class="btn btn-md btn-primary" name="add_industry" id="add_industry">Add Industry</button>
             </h4>
-            <table class="table table-striped table-hover" id="industry_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="industry_table" width="100%">
                 <thead>
                     <tr>
                         <th width="35%">Name</th>

@@ -7,7 +7,7 @@
             Payment Term List
             <button type="button" class="btn btn-md btn-primary" name="add_payment_term" id="add_payment_term">Add Payment Term</button>
             </h4>
-            <table class="table table-striped table-hover" id="payment_term_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="payment_term_table" width="100%">
                 <thead>
                     <tr>
                         <th width="25%">Type</th>

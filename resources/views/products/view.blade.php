@@ -10,19 +10,28 @@
                 </div>
                 <div class="col-lg-6" align="right">
                     <a href="{{ url('/current_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
-                    <button type="button" class="btn btn-md btn-primary submit_approval" name="submit_approval" id="">Submit</button>
+
+                    <form method="POST" action="{{url('add_to_archive_products')}}" class="d-inline-block">
+                        {{csrf_field()}}
+
+                        <input type="hidden" name="id" value="{{$data->id}}">
+                        
+                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Archive" title="Submit to archive products">Archive</button>
+                    </form>
+                   
                 </div>
             </div>
             @php
                 use App\Helpers\Helpers;
                 
                 $rmc = Helpers::rmc($data->productMaterialComposition, $data->id);
+                $identicalComposition = Helpers::identicalComposition($data->productMaterialComposition, $data->id);
             @endphp
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->ddw_number }}</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials:</b></label>
+                    <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials Cost:</b></label>
                     <label class="col-sm-2 col-form-label"><strong>USD</strong> {{number_format($rmc, 2)}}</label>
                 </div>
                 <div class="form-group row">
@@ -86,7 +95,7 @@
             </form>
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
+                    <a class="nav-link" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
@@ -104,14 +113,14 @@
                     <a class="nav-link" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
+                    <a class="nav-link active" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="historycal-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade active show" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                <div class="tab-pane fade " id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @include('components.error')
                     <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
                         {{csrf_field()}}
@@ -162,7 +171,7 @@
 
                     @include('products.edit_all_product_specification')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                        <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Parameter</th>
@@ -203,7 +212,7 @@
                     @include('products.add_pds')
                     
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                        <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Product</th>
@@ -245,7 +254,7 @@
                     @include('products.add_file')
                     @include('products.edit_all_product_files')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                        <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -302,7 +311,7 @@
                 </div>
                 <div class="tab-pane fade " id="rmc" role="tabpanel" aria-labelledby="rmc-tab">
                     <div class="table-responsive">
-                        <table class="table table-hover table-bordered table-striped">
+                        <table class="table table-hover table-bordered table-striped tables" width="100%">
                             <thead>
                                 <tr>
                                     <th>Effective Date</th>
@@ -310,19 +319,56 @@
                                     <th>RMC (EUR)</th>
                                     <th>RMC (PHP)</th>
                                 </tr>
-                                <tbody>
-                                </tbody>
                             </thead>
+                            <tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">...</div>
-                <div class="tab-pane fade" id="identical" role="tabpanel" aria-labelledby="identical-tab">
-                    ...
+                <div class="tab-pane fade active show" id="identical" role="tabpanel" aria-labelledby="identical-tab">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover tables">
+                            <thead>
+                                <tr>
+                                    <th>DDW Number</th>
+                                    <th>Code</th>
+                                    <th>Created By</th>
+                                    <th>Date Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($identicalComposition as $ic)
+                                    <tr>
+                                        <td>{{$ic->products->ddw_number}}</td>
+                                        <td>
+                                            @if($ic->products->status == 1)
+                                                <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @elseif($ic->products->status == 2)
+                                                <a href="{{url('view_new_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @elseif($ic->products->status == 4)
+                                                <a href="{{url('view_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @elseif($ic->products->status == 5)
+                                                <a href="{{url('view_archive_products/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($ic->products->userByUserId)
+                                                {{$ic->products->userByUserId->full_name}}
+                                            @else
+                                                {{$ic->products->userById->full_name}}
+                                            @endif
+                                        </td>
+                                        <td>{{date('M d, Y', strtotime($ic->products->created_at))}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="tab-pane fade" id="historicalLogs" role="tabpanel" aria-labelledby="identical-tab">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped table-bordered">
+                        <table class="table table-hover table-striped table-bordered tables" width="100%">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -331,19 +377,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if(count($data->productEventLogs) > 0)
-                                    @foreach ($data->productEventLogs as $logs)
-                                        <tr>
-                                            <td>{{date('M d Y', strtotime($logs->TimeStamp))}}</td>
-                                            <td>{{$logs->userByUserId->full_name}}</td>
-                                            <td>{{$logs->Details}}</td>
-                                        </tr>
-                                    @endforeach
-                                @else
+                                @foreach ($data->productEventLogs as $logs)
                                     <tr>
-                                        <td colspan="3">No history available.</td>
+                                        <td>{{date('M d Y', strtotime($logs->TimeStamp))}}</td>
+                                        <td>{{$logs->userByUserId->full_name}}</td>
+                                        <td>{{$logs->Details}}</td>
                                     </tr>
-                                @endif
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -383,70 +423,22 @@
     }
 </style>
 
-{{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script> --}}
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 
-{{-- <script>
-    $(document).ready(function(){
-        $(document).on('click', '.submit_approval', function(){
-            product_id = $(this).attr('id');
-            $('#confirmModal').modal('show');
-            $('.modal-title').text("Submit for Approval");
-        });
-
-        dataTableInstance = new DataTable('#material_table', {
-            destroy: true, // Destroy and re-initialize DataTable on each call
-            processing: true,
-            serverSide: true, // Ensure server-side processing is enabled
-            pageLength: 25,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy',
-                        {
-                            extend: 'excel',
-                            text: 'Export to Excel',
-                            filename: 'Material', // Set the custom file name
-                            title: 'Material' // Set the custom title
-                        }
-                    ]
-                }
-            },
-            ajax: {
-                url: "{{ route('activities.index') }}"
-            },
-            columns: [
-                {
-                    data: 'ActivityNumber',
-                    name: 'ActivityNumber'
-                },
-                {
-                    data: 'ScheduleFrom',
-                    name: 'ScheduleFrom',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: [0, 1], // Target the Title column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
-    });   
-</script> --}}
 <script>
     $(document).ready(function() {
+        
+        new DataTable('.tables', {
+            destroy: true,
+            processing: true,
+            pageLength: 10,
+            ordering: false
+        });
 
         $("#addBtn").on('click', function() {
             

@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerComplaintController;
 use App\Http\Controllers\CustomerFeedbackController;
 use App\Http\Controllers\SampleRequestController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\PriceMonitoringController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,14 +81,17 @@ Route::group(['middleware' => 'auth'], function () {
 
     # Draft Products
     Route::get('/draft_products', 'ProductController@draft')->name('product.draft');
+    Route::get('view_draft_product/{id}', 'ProductController@viewDraft');
     Route::post('/add_to_new_products', 'ProductController@addToNewProducts');
 
-    # Current Products
+    # New Products
+    Route::get('view_new_product/{id}', 'ProductController@viewNew');
     Route::post('/new_product', 'ProductController@store')->name('product.store');
     Route::post('/add_to_current_products', 'ProductController@addToCurrentProducts');
 
     # Archived Products
     Route::get('/archived_products', 'ProductController@archived')->name('product.archived');
+    Route::get('view_archive_products/{id}', 'ProductController@viewArchived');
     Route::post('/add_to_draft_products', 'ProductController@addToDraftProducts');
     Route::post('/add_to_archive_products', 'ProductController@addToArchiveProducts');
 
@@ -119,10 +123,16 @@ Route::group(['middleware' => 'auth'], function () {
     
     // Customer Requirement
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 
-    Route::post('/new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 
+    Route::post('new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 
 
     // Product Evaluation
     Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
+
+    // Request Product Evaluation
+    Route::get('/request_product_evaluation', 'RequestProductEvaluationController@index')->name('product_evaluation.index');
+    Route::post('new_product_evaluation', 'RequestProductEvaluationController@store')->name('product_evaluation.store'); 
+    Route::post('product_evaluation/edit/{id}', 'RequestProductEvaluationController@update');
+    Route::delete('request_evaluation/{id}', 'RequestProductEvaluationController@destroy');
 
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
@@ -147,6 +157,7 @@ Route::group(['middleware' => 'auth'], function () {
     
     // Price Monitoring 
     Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
+    Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');
 
     // Customer Complaint 
     Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');
@@ -170,26 +181,33 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('contacts-by-client-f/{clientId}', [CustomerFeedbackController::class, 'getContactsByClientF']);
     Route::get('get-last-increment-f/{year}/{clientCode}', [CustomerFeedbackController::class, 'getLastIncrementF']);
 
+    // Categorization
+    Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    
+    Route::post('/new_categorization', 'CategorizationController@store')->name('categorizations.store'); 
+    Route::get('/edit_project_name/{id}', 'ProjectNameController@edit')->name('edit_project_name');    
+    Route::post('/update_categorization/{id}', 'CategorizationController@update');
+    Route::delete('delete_categorization/{id}', 'CategorizationController@delete');
+
     // Nature of Request
     Route::get('/nature_request', 'NatureRequestController@index')->name('nature_request.index');
     Route::post('/new_nature_request', 'NatureRequestController@store')->name('nature_request.store');
     Route::get('/edit_nature_request/{id}', 'NatureRequestController@edit')->name('edit_nature_request');    
     Route::post('/update_nature_request/{id}', 'NatureRequestController@update')->name('update_nature_request');
-    Route::get('delete_nature_request/{id}', 'NatureRequestController@delete')->name('delete_nature_request');
+    Route::delete('delete_nature_request/{id}', 'NatureRequestController@delete')->name('delete_nature_request');
 
     // Project Name
     Route::get('/project_name', 'ProjectNameController@index')->name('project_name.index');    
     Route::post('/new_project_name', 'ProjectNameController@store')->name('project_name.store'); 
     Route::get('/edit_project_name/{id}', 'ProjectNameController@edit')->name('edit_project_name');    
     Route::post('/update_project_name/{id}', 'ProjectNameController@update')->name('update_project_name');
-    Route::get('delete_project_name/{id}', 'ProjectNameController@delete')->name('delete_project_name');
+    Route::delete('delete_project_name/{id}', 'ProjectNameController@delete')->name('delete_project_name');
 
     // CRR Priority
     Route::get('/crr_priority', 'CrrPriorityController@index')->name('crr_priority.index');
     Route::post('/new_crr_priority', 'CrrPriorityController@store')->name('crr_priority.store');
     Route::get('/edit_crr_priority/{id}', 'CrrPriorityController@edit')->name('edit_crr_priority');
     Route::post('/update_crr_priority/{id}', 'CrrPriorityController@update')->name('update_crr_priority');
-    Route::get('delete_crr_priority/{id}', 'CrrPriorityController@delete')->name('delete_crr_priority');
+    Route::delete('delete_crr_priority/{id}', 'CrrPriorityController@delete')->name('delete_crr_priority');
 
     // Issue Category
     Route::get('/issue_category', 'IssueCategoryController@index')->name('issue_category.index');
