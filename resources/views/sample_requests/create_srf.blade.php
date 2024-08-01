@@ -190,10 +190,8 @@
         </div>
         <div class="col-lg-12">
             <button type="button" class="btn btn-primary" id="addProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
-            
             <button type="button" class="btn btn-info duplicateProductForm"  style="float: left; margin:5px;">Duplicate</button>
-
-            </div>
+        </div>
     </div>
     
 
@@ -435,10 +433,8 @@ $(document).ready(function() {
             $dateSampleReceived.attr('min', formattedDateRequested);
         }
 
-        // Set initial min dates
         updateMinDate();
 
-        // Update min dates when DateRequested value changes
         $dateRequested.on('change', updateMinDate);
     });
 

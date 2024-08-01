@@ -8,7 +8,7 @@
             <button type="button" class="btn btn-md btn-primary" name="add_company" id="add_company">Add Company</button>
             </h4>
             <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hove" id="company_table" width="100%">
+                <table class="table table-striped table-bordered table-hover" id="company_table" width="100%">
                     <thead>
                         <tr>
                             <th width="30%">Name</th>

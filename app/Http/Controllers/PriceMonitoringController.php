@@ -52,14 +52,18 @@ class PriceMonitoringController extends Controller
         $prfNo = "PrfNumber-{$type}-{$year}-{$newIncrement}";
 
         $priceMonitoringData = PriceMonitoring::create([
-            'RpeNumber' => $prfNo,
+            'PrfNumber' => $prfNo,
             'PrimarySalesPersonId' => $request->input('PrimarySalesPersonId'),
             'SecondarySalesPersonId' => $request->input('SecondarySalesPersonId'),
             'DateRequested' => $request->input('DateRequested'),
             'ClientId' => $request->input('ClientId'),
-            'Country' => $request->input('Country'),
-            'Region' => $request->input('Region'),
             'PriceRequestPurpose' => $request->input('PriceRequestPurpose'),
+            'ShipmentTerm' => $request->input('ShipmentTerm'),
+            'PaymentTermId' => $request->input('PaymentTerm'),
+            'OtherCostRequirements' => $request->input('OtherCostRequirement'),
+            'Commission' => $request->input('Commision'),
+            // 'Country' => $request->input('Country'),
+            // 'Region' => $request->input('Region'),
             // 'DueDate' => $request->input('DueDate'),
             // 'ApplicationId' => $request->input('ApplicationId'),
             // 'PotentialVolume' => $request->input('PotentialVolume'),
@@ -75,13 +79,24 @@ class PriceMonitoringController extends Controller
             // 'ObjectiveForRpeProject' => $request->input('ObjectiveForRpeProject'),
             // 'Status' =>'10',
             // 'Progress' => '10',
+            'Type' => $request->input('Type'),
+            'QuantityRequired' => $request->input('QuantityRequired'),
+            'ProductId' => $request->input('Product'),
+            'ProductRmc' => $request->input('Rmc'),
+            'IsalesShipmentCost' => $request->input('ShipmentCost'),
+
         ]);
                     return redirect()->back()->with('success', 'Base prices updated successfully.');
     }
     
     public function getClientDetails($id)
     {
-        $client = Client::where('id', $id);
-        return response()->json($client);
+        $client = Client::with('clientregion')->find($id);
+        return response()->json([
+            'ClientRegionId' => $client->ClientRegionId,
+            'RegionName' => $client->clientregion->Name,
+            'ClientCountryId' => $client->ClientCountryId,
+            'CountryName' => $client->clientcountry->Name
+        ]);
     }
 }

@@ -7,7 +7,7 @@
             Business Type List
             <button type="button" class="btn btn-md btn-primary" name="add_business_type" id="add_business_type">Add Business Type</button>
             </h4>
-            <table class="table table-striped table-bordered table-hove" id="business_type_table" width="100%">
+            <table class="table table-striped table-bordered table-hover" id="business_type_table" width="100%">
                 <thead>
                     <tr>
                         <th width="35%">Name</th>

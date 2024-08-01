@@ -19,7 +19,7 @@
                 </div>
             </form>
             <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hove" id="product_evaluation_table">
+                <table class="table table-striped table-bordered table-hover" id="product_evaluation_table">
                     <thead>
                         <tr>
                             <th>Action</th>

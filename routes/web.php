@@ -138,16 +138,26 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Route::get('samplerequest/edit/{id}', 'SampleRequestController@edit');
     Route::post('addSrfSupplementary', 'SampleRequestController@addSupplementary');
+    Route::post('UpdateSupplementary/{id}', 'SampleRequestController@editSupplementary');
+    Route::delete('samplerequest/view/supp-delete/{id}', 'SampleRequestController@deleteSrfDetails');
+
     Route::post('assignSrfPersonnel', 'SampleRequestController@assignPersonnel');
+    Route::post('UpdateAssignedPersonnel/{id}', 'SampleRequestController@editPersonnel');
+    Route::delete('samplerequest/view/personnel-delete/{id}', 'SampleRequestController@deleteSrfPersonnel');
+    
+    Route::post('srfFiles', 'SampleRequestController@uploadFile');
+    Route::post('updateFile/{id}', 'SampleRequestController@editFile');
+    Route::delete('samplerequest/view/file-delete/{id}', 'SampleRequestController@deleteFile');
+
+    Route::post('srfRawMaterial', 'SampleRequestController@addRawMaterial');
+    Route::post('UpdateRawMaterial/edit/{id}', 'SampleRequestController@editRawMaterial');
+    Route::delete('samplerequest/view/material-delete/{id}', 'SampleRequestController@deleteSrfMaterial');
+
     Route::post('ApproveSrf/{id}', 'SampleRequestController@approveSrfSales');
     Route::post('ReceiveSrf/{id}', 'SampleRequestController@receiveSrf');
     Route::post('StartSrf/{id}', 'SampleRequestController@StartSrf');
     Route::post('PauseSrf/{id}', 'SampleRequestController@PauseSrf');
-    Route::post('UpdateSupplementary/{id}', 'SampleRequestController@editSupplementary');
-    Route::delete('samplerequest/view/supp-delete/{id}', 'SampleRequestController@deleteSrfDetails');
-    Route::post('srfFiles', 'SampleRequestController@uploadFile');
-
-
+    
     Route::get('sample_contacts-by-client-f/{clientId}', [SampleRequestController::class, 'getSampleContactsByClientF']);
     Route::get('sample_get-last-increment-f/{year}/{clientCode}', [SampleRequestController::class, 'getSampleLastIncrementF']);
     

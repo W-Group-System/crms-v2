@@ -7,26 +7,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 
-
-class SrfDetail extends Model implements Auditable
+class SrfRawMaterial extends Model implements Auditable
 {
     use SoftDeletes;
     use AuditableTrait;
 
-    protected $table = "srfdetails";
+    protected $table = "srfrawmaterials";
+    protected $primaryKey = "Id";
+
     const UPDATED_AT = "ModifiedDate";
-    const CREATED_AT = "DateCreated";
+    const CREATED_AT = "CreatedDate";
 
     protected $fillable = [
         'SampleRequestId',
-        'DateCreated',
-        'UserId',
-        'DetailsOfRequest',
+        'MaterialId',
+        'LotNumber',
+        'Remarks',
     ];
 
-    public function userSupplementary()
+    public function productMaterial()
     {
-        return $this->belongsTo(User::class, 'UserId', 'user_id');
+        return $this->belongsTo(RawMaterial::class, 'MaterialId', 'id');
     }
 
     public function transformAudit(array $data): array
