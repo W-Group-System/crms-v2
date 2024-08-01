@@ -183,7 +183,17 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-lg-12">
+                    <div class="col-lg-6" id="addressContainer">
+                        <div class="form-group">
+                            <label>Client Address</label>
+                            <div class="input-group">                                
+                                <input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type">
+                                <button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>
+                            </div>
+                            <textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <!-- <div class="col-lg-12">
                         <table class="table table-striped mb-5" id="table_address">
                             <thead>
                                 <tr>
@@ -200,7 +210,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
+                    </div> -->
                     <div class="col-lg-12" align="right">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -220,20 +230,22 @@
     $(document).ready(function() {
         $('.js-example-basic-single').select2();
 
-        // Add new address row
-        $('#table_address thead').on('click', '.addRow', function(){
-            var tr = '<tr>' +
-                '<td><a style="padding: 10px 20px" href="javascript:;" class="btn btn-danger deleteRow">-</a></td>'+
-                '<td><input type="text" name="AddressType[]" id="AddressType" class="form-control" placeholder="Enter Address Type"></td>'+
-                '<td><input type="text" name="Address[]" id="Address" class="form-control adjust" placeholder="Enter Address"></td>'+
-            '</tr>';
+        $(document).on('click', '.addRowBtn', function() {
+            var newRow = $('<div class="form-group">' +
+                            '<label>Client Address</label>' +
+                            '<div class="input-group">' +
+                                '<input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type">' +
+                                // '<button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>' +
+                                '<button class="btn btn-sm btn-danger removeRowBtn" style="border-radius: 0px;" type="button">-</button>' +
+                            '</div>' +
+                            '<textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2"></textarea>' +
+                        '</div>');
 
-            $('tbody').append(tr);
+            // Append the new row to the container where addresses are listed
+            $('#addressContainer').append(newRow);
         });
-
-        // Delete address row
-        $('#table_address tbody').on('click', '.deleteRow', function(){
-            $(this).parent().parent().remove();
+        $(document).on('click', '.removeRowBtn', function() {
+            $(this).closest('.form-group').remove();
         });
 
         $('#Type').on('change', function() {
@@ -360,6 +372,15 @@
                             } else {
                                 // Regular input case
                                 $field.addClass('is-invalid');
+                            }
+
+                            if (index.includes('AddressType') || index.includes('Address')) {
+                                var fieldIndex = index.match(/\d+/)[0];
+                                if (index.includes('AddressType')) {
+                                    $('#form_client').find('[name="AddressType[]"]').eq(fieldIndex).addClass('is-invalid');
+                                } else if (index.includes('Address')) {
+                                    $('#form_client').find('[name="Address[]"]').eq(fieldIndex).addClass('is-invalid');
+                                }
                             }
                         });
                         errorsHtml += '</ul></div>';

@@ -64,4 +64,10 @@ class Client extends Model
     {
         return $this->belongsTo(ClientCountry::class, 'ClientCountryId');
     }
+
+    public function activities()
+    {
+        return $this->hasMany(Activity::class, 'ClientId', 'id');
+    }
+   
 }

@@ -38,7 +38,7 @@
                                     <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
                                         <i class="ti-eye"></i>
                                     </button>
-                                    <button type="button" name="delete" class="delete btn btn-sm btn-secondary"><i class="ti ti-archive"></i></button>
+                                    <button type="button" name="delete" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button>
                                 </td>
                                 <td>
                                     @if($client->Type == "1")
@@ -187,6 +187,44 @@
 </div>
 
 <script>
+    $(document).ready(function(){
+        $(".achivedClient").on('click', function() {
+            var clientId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to archive this client!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, confirmed it!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('archived_client') }}/" + clientId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+
     function viewClient(clientId) {
         window.location.href = "{{ url('view_client') }}/" + clientId;
     }

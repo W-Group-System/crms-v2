@@ -8,7 +8,7 @@
             <button type="button" class="btn btn-md btn-primary" name="add_user" id="add_user">Add User</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-start align-items-start">
+                <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
@@ -74,6 +74,7 @@
                 <form method="POST" id="form_user" enctype="multipart/form-data" action="">
                     <span id="form_result"></span>
                     @csrf
+                    <input type="hidden" name="user_id" value="N/A">
                     <div class="form-group">
                         <label for="name">Username</label>
                         <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username">
