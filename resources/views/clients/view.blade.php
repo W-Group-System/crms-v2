@@ -5,9 +5,20 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
                 <div align="right">
-                    <a href="{{ url('/client') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a href="{{ session('last_client_page', url('/client')) }}" class="btn btn-md btn-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a>
+                    <button type="button" class="btn btn-primary deleteFile" title="Delete File" data-id="">
+                        <i class="ti ti-pencil"></i>&nbsp;Update
+                    </button>
+                    <button type="button" class="btn btn-warning deleteFile" title="Delete File" data-id="">
+                        <i class="ti ti-control-record"></i>&nbsp;Prospect
+                    </button>
+                    <button type="button" class="btn btn-success deleteFile" title="Delete File" data-id="">
+                        <i class="ti ti-check-box"></i>&nbsp;Activate
+                    </button>
                     <button type="button" class="btn btn-danger deleteFile" title="Delete File" data-id="">
-                        <i class="ti ti-archive"></i> Archive
+                        <i class="ti ti-archive"></i>&nbsp;Archive
                     </button>
                 </div>
             </h4>
@@ -124,9 +135,6 @@
                             </div>
                         @endif
                     </div>
-                </div>
-                <div align="right">
-                    <a href="{{ url('/client') }}" class="btn btn-light">Close</a>
                 </div>
             </form>
             <ul class="nav nav-tabs viewTab" role="tablist">
@@ -270,7 +278,7 @@
                     @endforeach
                 </div>
                 <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
-                <div class="table-responsive">
+                    <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" width="100%">
                             <thead>
                                 <tr>
@@ -285,6 +293,9 @@
                         </table>
                     </div>
                 </div>
+            </div>
+            <div align="right" class="mt-3">
+                <a href="{{ url('/client') }}" class="btn btn-secondary">Close</a>
             </div>
         </div>
     </div>

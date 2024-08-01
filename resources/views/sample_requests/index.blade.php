@@ -25,7 +25,7 @@
 
             </h4>
             <div class="table-responsive">
-                <table class="table table-striped table-hover" id="sample_request_table">
+                <table class="table table-striped table-bordered table-hove" id="sample_request_table">
                     <thead>
                         <tr>
                             <th>Action</th>

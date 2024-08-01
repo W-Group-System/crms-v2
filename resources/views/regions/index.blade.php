@@ -7,7 +7,7 @@
             Region List
             <button type="button" class="btn btn-md btn-primary" name="add_region" id="add_region">Add Region</button>
             </h4>
-            <table class="table table-striped table-hover" id="region_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="region_table" width="100%">
                 <thead>
                     <tr>
                         <th width="30%">Type</th>

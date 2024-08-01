@@ -5,18 +5,48 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             CRR Priority List
-            <button type="button" class="btn btn-md btn-primary" name="add_crr_priority" id="add_crr_priority">Add CRR Priority</button>
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#AddCrrPriority">Add CRR Priority</button>
             </h4>
-            <table class="table table-striped table-hover" id="crr_priority_table" width="100%">
+            <table class="table table-striped table-bordered table-hove" id="crr_priority_table" width="100%">
                 <thead>
                     <tr>
+                        <th width="10%">Action</th>
                         <th width="30%">Name</th>
                         <th width="30%">Description</th>
                         <th width="30%">Days</th>
-                        <th width="10%">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($crrPriorities as $crrPriority)
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning btn-outline"
+                                    data-target="#editcrrPriority{{ $crrPriority->id }}" data-toggle="modal" title='Edit Project Name'>
+                                    <i class="ti-pencil"></i>
+                                </button>   
+                                <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $crrPriority->id }})" title='Delete Supplementary'>
+                                    <i class="ti-trash"></i>
+                                </button>  
+                            </td>
+                            <td>{{ $crrPriority->Name }}</td>
+                            <td>{{ $crrPriority->Description }}</td>
+                            <td>{{ $crrPriority->Days }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
+        </div>
+        {!! $crrPriorities->appends(['search' => $search])->links() !!}
+        @php
+            $total = $crrPriorities->total();
+            $currentPage = $crrPriorities->currentPage();
+            $perPage = $crrPriorities->perPage();
+            
+            $from = ($currentPage - 1) * $perPage + 1;
+            $to = min($currentPage * $perPage, $total);
+        @endphp
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
         </div>
     </div>
 </div>
@@ -29,30 +59,6 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
                     <span aria-hidden="true">&times;</span>
                 </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" id="form_crr_priority" enctype="multipart/form-data" action="">
-                    <span id="form_result"></span>
-                    @csrf
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="name">Description</label>
-                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
-                    </div>
-                    <div class="form-group">
-                        <label for="name">Day(s)</label>
-                        <input type="text" class="form-control" id="Days" name="Days" placeholder="Enter Days">
-                    </div>
-                    <div class="modal-footer">
-                        <input type="hidden" name="action" id="action" value="Save">
-                        <input type="hidden" name="hidden_id" id="hidden_id">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -81,173 +87,46 @@
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
 
 <script>
-    $(document).ready(function(){
-        $('#crr_priority_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('crr_priority.index') }}"
-            },
-            columns: [
-                {
-                    data: 'Name',
-                    name: 'Name'
-                },
-                {
-                    data: 'Description',
-                    name: 'Description'
-                },
-                {
-                    data: 'Days',
-                    name: 'Days'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: [0, 1], // Target the Description column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
-
-        $('#add_crr_priority').click(function(){
-            $('#formCrrPriority').modal('show');
-            $('.modal-title').text("Add CRR Priority");
-        });
-
-        $('#form_crr_priority').on('submit', function(event){
-            event.preventDefault();
-            if($('#action').val() == 'Save')
-            {
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('crr_priority.store') }}",
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success: function(data)
-                    {
-                        var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
-                        }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_crr_priority')[0].reset();
-                            setTimeout(function(){
-                                $('#formCrrPriority').modal('hide');
-                            }, 2000);
-                            $('#crr_priority_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
-                        $('#form_result').html(html);
-                    }
-                })
-            }
-
-            if($('#action').val() == 'Edit')
-            {
-                var formData = new FormData(this);
-                formData.append('id', $('#hidden_id').val());
-                $.ajax({
-                    url: "{{ route('update_crr_priority', ':id') }}".replace(':id', $('#hidden_id').val()),
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success:function(data)
-                    {
-                        var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
-                        }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_crr_priority')[0].reset();
-                            setTimeout(function(){
-                                $('#formCrrPriority').modal('hide');
-                            }, 2000);
-                            $('#crr_priority_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
-                        $('#form_result').html(html);
+                    url: "{{ url('/delete_crr_priority') }}/" + id, 
+                    method: 'DELETE',
+                    data: {
+                        '_token': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            'Deleted!',
+                            'The record has been deleted.',
+                            'success'
+                        ).then(() => {
+                            location.reload(); 
+                        });
+                    },
+                    error: function() {
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong.',
+                            'error'
+                        );
                     }
                 });
             }
         });
-
-        $(document).on('click', '.edit', function(){
-            var id = $(this).attr('id');
-            $('#form_result').html('');
-            $.ajax({
-                url: "{{ route('edit_crr_priority', ['id' => '_id_']) }}".replace('_id_', id),
-                dataType: "json",
-                success: function(html){
-                    $('#Name').val(html.data.Name);
-                    $('#Description').val(html.data.Description);
-                    $('#Days').val(html.data.Days);
-                    $('#hidden_id').val(html.data.id);
-                    $('.modal-title').text("Edit CRR Priority");
-                    $('#action_button').val("Update");
-                    $('#action').val("Edit");
-                    
-                    $('#formCrrPriority').modal('show');
-                }
-            });
-        });
-                
-        $(document).on('click', '.delete', function(){
-            crr_priority_id = $(this).attr('id');
-            $('#confirmModal').modal('show');
-            $('.modal-title').text("Delete Nature of Request");
-        });    
-
-        $('#delete_crr_priority').click(function(){
-            $.ajax({
-                url: "{{ url('delete_crr_priority') }}/" + crr_priority_id, 
-                method: "GET",
-                beforeSend:function(){
-                    $('#delete_crr_priority').text('Deleting...');
-                },
-                success:function(data)
-                {
-                    setTimeout(function(){
-                        $('#confirmModal').modal('hide');
-                        $('#crr_priority_table').DataTable().ajax.reload();
-                    }, 2000);
-                }
-            })
-        });
-        
-    });
+    }
 </script>
+@include('crr_priorities.create')
+@foreach ($crrPriorities as $crrPriority)
+@include('crr_priorities.edit')
+@endforeach
 @endsection

@@ -1,40 +1,43 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Categorization;
 use App\ProjectName;
 use Validator;
 use Illuminate\Http\Request;
 
-class ProjectNameController extends Controller
+class CategorizationController extends Controller
 {
     // List
     public function index(Request $request)
     {   
         $search = $request->input('search');
-        $projectNames = ProjectName::where(function ($query) use ($search) {
+        $categorizations = Categorization::where(function ($query) use ($search) {
             $query->where('Name', 'LIKE', '%' . $search . '%')
                 ->orWhere('Description', 'LIKE', '%' . $search . '%');        
         })
         ->orderBy('id', 'desc')->paginate(25);
-        return view('project_name.index', compact('projectNames', 'search')); 
+        return view('categorizations.index', compact('categorizations', 'search')); 
     }
 
     // Store
     public function store(Request $request) 
     {
-        $existing = ProjectName::where('Name', $request->Name)->exists();
-        if (!$existing){
+        $existing = Categorization::where('Name', $request->Name)->exists();
+        if (!$existing) {
             $form_data = array(
-                'Name'          =>  $request->Name,
-                'Description'   =>  $request->Description
+                'Name'          => $request->Name,
+                'Description'   => $request->Description
             );
     
-            ProjectName::create($form_data);
+            Categorization::create($form_data);
             return redirect()->back()->with('success', 'Project Name created successfully.');
         } else {
             return back()->with('error', $request->Name . ' already exists.');
         }
     }
+    
 
     // Edit
     public function edit($id)
@@ -49,23 +52,23 @@ class ProjectNameController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-        $projectName = $request->Name;
-        $exists = ProjectName::where('Name', $projectName)
+        $categorizationName = $request->Name;
+        $exists = Categorization::where('Name', $categorizationName)
         ->where('id', '!=', $id)->first();
         if ($exists){
             return redirect()->back()->with('error', $request->Name . ' already exists.');
         }
-        $projectName = ProjectName::findOrFail($id);
-        $projectName->Name = $request->input('Name');
-        $projectName->Description = $request->input('Description');
-        $projectName->save();
-        return redirect()->back()->with('success', 'Project Name updated successfully');
+         $categorization = Categorization::findOrFail($id);
+         $categorization->Name = $request->input('Name');
+         $categorization->Description = $request->input('Description');
+         $categorization->save();
+         return redirect()->back()->with('success', 'Cateegorization updated successfully');
     }
 
     // Delete
     public function delete($id)
     {
-        $data = ProjectName::findOrFail($id);
+        $data = Categorization::findOrFail($id);
         $data->delete();
     }
 }
