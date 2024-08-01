@@ -19,7 +19,7 @@
                 </div>
             </form>
             <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hove" id="price_monitoring_table">
+                <table class="table table-striped table-bordered table-hover" id="price_monitoring_table">
                     <thead>
                         <tr>
                             <th>Action</th>

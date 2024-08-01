@@ -19,7 +19,7 @@
                 </div>
             </form>
             <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hove" id="customer_requirement_table" width="100%">
+                <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%">
                     <thead>
                         <tr>
                             <th>Action</th>

@@ -35,7 +35,7 @@
                     </div>
                     <div class="form-group">
                         <label>Primary Sales Person:</label>
-                        <select class="form-control js-example-basic-single" name="PrimarySalesPerson" style="position: relative !important" title="Select PrimarySalesPerson" >
+                        <select class="form-control js-example-basic-single" name="PrimarySalesPerson" style="position: relative !important" title="Select PrimarySalesPerson" required>
                             <option value="" disabled selected>Primary Sales Person</option>
                             @foreach ($salesPersons as $salesPerson)
                                 <option value="{{ $salesPerson->user_id }}" >{{ $salesPerson->full_name }}</option>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="form-group">
                         <label>Secondary Sales Person:</label>
-                        <select class="form-control js-example-basic-single" name="SecondarySalesPerson"  style="position: relative !important" title="Select SecondarySalesPerson" >
+                        <select class="form-control js-example-basic-single" name="SecondarySalesPerson"  style="position: relative !important" title="Select SecondarySalesPerson" required>
                             <option value="" disabled selected>Secondary Sales Person</option>
                             @foreach ($salesPersons as $salesPerson)
                                 <option value="{{ $salesPerson->user_id }}" >{{ $salesPerson->full_name }}</option>
@@ -55,7 +55,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>REF Code:</label>
-                        <select class="form-control js-example-basic-single" name="RefCode" id="RefCode" style="position: relative !important" title="Select Ref Code">
+                        <select class="form-control js-example-basic-single" name="RefCode" id="RefCode" style="position: relative !important" title="Select Ref Code" required>
                             <option value="" disabled selected>Select REF Code</option>
                             <option value="1">RND</option>
                             <option value="2">QCD</option>
@@ -63,7 +63,7 @@
                     </div>
                     <div class="form-group">
                         <label>Type:</label>
-                        <select class="form-control js-example-basic-single" name="SrfType" id="SrfType" style="position: relative !important" title="Select Type">
+                        <select class="form-control js-example-basic-single" name="SrfType" id="SrfType" style="position: relative !important" title="Select Type" required>
                             <option value="" disabled selected>Select Type</option>
                             <option value="1">Regular</option>
                             <option value="2">PSS</option>
@@ -77,7 +77,7 @@
                    
                     <div class="form-group">
                         <label>Client:</label>
-                        <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select ClientId" onchange="generateUniqueId()">
+                        <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select ClientId" onchange="generateUniqueId()" required>
                             <option value="" disabled selected>Select Client</option>
                             @foreach ($clients as $client)
                             <option value="{{ $client->id }}" data-type="{{ $client->Type }}">{{ $client->Name }}</option>
@@ -86,7 +86,7 @@
                     </div>
                     <div class="form-group">
                         <label>Contact:</label>
-                        <select class="form-control js-example-basic-single" name="ClientContactId" id="ClientContactId" style="position: relative !important" title="Select ClientContacId">
+                        <select class="form-control js-example-basic-single" name="ClientContactId" id="ClientContactId" style="position: relative !important" title="Select ClientContacId" required>
                             <option value="" disabled selected>Select Contact</option>
                         </select>
                     </div>
@@ -122,7 +122,7 @@
                 </div>
                 <div class="form-group">
                     <label>Application:</label>
-                    <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" >
+                    <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
                         <option value="" disabled selected>Select Application</option>
                         @foreach ($productApplications as $application)
                             <option value="{{ $application->id }}" >{{ $application->Name }}</option>
@@ -135,7 +135,7 @@
             </div> --}}
             <div class="form-group">
                 <label>Product Code:</label>
-                <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" >
+                <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
                     <option value="" disabled selected>Product Code</option>
                     @foreach ($productCodes as $productCode)
                         <option value="{{ $productCode->code }}" >{{ $productCode->code }}</option>
@@ -190,10 +190,8 @@
         </div>
         <div class="col-lg-12">
             <button type="button" class="btn btn-primary" id="addProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
-            
             <button type="button" class="btn btn-info duplicateProductForm"  style="float: left; margin:5px;">Duplicate</button>
-
-            </div>
+        </div>
     </div>
     
 
@@ -435,10 +433,8 @@ $(document).ready(function() {
             $dateSampleReceived.attr('min', formattedDateRequested);
         }
 
-        // Set initial min dates
         updateMinDate();
 
-        // Update min dates when DateRequested value changes
         $dateRequested.on('change', updateMinDate);
     });
 

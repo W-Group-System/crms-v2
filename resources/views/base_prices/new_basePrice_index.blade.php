@@ -22,7 +22,7 @@
                     </div>
                 </div>
             </form>
-            <table class="table table-striped table-bordered table-hove" id="base_price_table" width="100%">
+            <table class="table table-striped table-bordered table-hover" id="base_price_table" width="100%">
                 <thead>
                     <tr>
                         <th width="20%">Action</th>

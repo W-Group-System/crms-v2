@@ -7,7 +7,7 @@
             Country List
             <button type="button" class="btn btn-md btn-primary" name="add_country" id="add_country">Add Country</button>
             </h4>
-            <table class="table table-striped table-bordered table-hove" id="country_table" width="100%">
+            <table class="table table-striped table-bordered table-hover" id="country_table" width="100%">
                 <thead>
                     <tr>
                         <th width="40%">Country</th>

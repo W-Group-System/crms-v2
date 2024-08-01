@@ -7,7 +7,7 @@
             CRR Priority List
             <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#AddCrrPriority">Add CRR Priority</button>
             </h4>
-            <table class="table table-striped table-bordered table-hove" id="crr_priority_table" width="100%">
+            <table class="table table-striped table-bordered table-hover" id="crr_priority_table" width="100%">
                 <thead>
                     <tr>
                         <th width="10%">Action</th>
