@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\BasePrice;
 use App\CurrencyExchange;
+use App\CustomerRequirement;
 use App\Product;
 use App\ProductMaterialsComposition;
 use Illuminate\Support\Facades\DB;
@@ -95,11 +96,15 @@ class Helpers {
             ->whereIn('ProductId', $matchingProductIds)
             ->where('ProductId', '!=', $product_id)
             ->groupBy('ProductId')
-            // ->pluck('ProductId')
             ->get();
 
-        // dd($matchingProducts);
-        
         return $matchingProducts;
+    }
+
+    public static function customerRequirements($product)
+    {
+        $customerRequirement = CustomerRequirement::where('Recommendation', "LIKE", "%".$product."%")->get();
+
+        return $customerRequirement;
     }
 }

@@ -26,6 +26,7 @@
                 
                 $rmc = Helpers::rmc($data->productMaterialComposition, $data->id);
                 $identicalComposition = Helpers::identicalComposition($data->productMaterialComposition, $data->id);
+                $customerRequirements = Helpers::customerRequirements($data->code);
             @endphp
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
                 <div class="form-group row">
@@ -110,7 +111,7 @@
                     <a class="nav-link " id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
+                    <a class="nav-link active" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
@@ -325,9 +326,52 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade " id="client" role="tabpanel" aria-labelledby="client-tab">
+                <div class="tab-pane fade active show" id="client" role="tabpanel" aria-labelledby="client-tab">
+
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover tables">
+                        <table class="table table-bordered table-hover table-striped tables">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Transaction</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($customerRequirements)
+                                    @foreach ($customerRequirements as $cr)
+                                        <tr>
+                                            <td>Customer Requirement</td>
+                                            <td>{{$cr->CrrNumber}}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                                @if($data->productRps)
+                                    @foreach ($data->productRps as $rps)
+                                        <tr>
+                                            <td>Request Product Evaluation</td>
+                                            <td>{{$rps->RpeNumber}}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                                @if($data->sampleRequestProduct)
+                                    @foreach ($data->sampleRequestProduct as $item)
+                                        <tr>
+                                            <td>Sample Request</td>
+                                            <td>
+                                                <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
+                                                    {{$item->sampleRequest->SrfNumber}}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade " id="identical" role="tabpanel" aria-labelledby="identical-tab">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover tables" width="100%">
                             <thead>
                                 <tr>
                                     <th>DDW Number</th>
