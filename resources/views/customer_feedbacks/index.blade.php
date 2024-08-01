@@ -8,7 +8,7 @@
             <button type="button" class="btn btn-md btn-primary" name="add_customer_feedback" id="add_customer_feedback">Add Customer Feedback</button>
             </h4>
             <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hove" id="customer_feedback_table">
+                <table class="table table-striped table-bordered table-hover" id="customer_feedback_table">
                     <thead>
                         <tr>
                             <th>#</th>

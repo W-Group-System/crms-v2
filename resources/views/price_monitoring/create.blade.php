@@ -55,14 +55,16 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Country</label>
-                                <input type="text" class="form-control Country" name="Country">
+                                <input type="text" class="form-control CountryName" name="CountryName" readonly>
+                                <input type="hidden" class="CountryId" name="CountryId">
                             </div>
                         </div>
                         <div class="col-lg-6"></div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Region</label>
-                                <input type="text" class="form-control Region" name="Region">
+                                <input type="text" class="form-control RegionName" name="RegionName" readonly>
+                                <input type="hidden" class="RegionId" name="RegionId">
                             </div>
                         </div>
                         <div class="col-lg-6"></div>
@@ -261,8 +263,10 @@
                     dataType: 'json',
                     success: function(data) {
                         if(data) {
-                            $('.Country').val(data.ClientCountryId);
-                            $('.Region').val(data.ClientRegionId);
+                            $('.CountryName').val(data.CountryName);
+                            $('.CountryId').val(data.ClientCountryId);
+                            $('.RegionName').val(data.RegionName);
+                            $('.RegionId').val(data.ClientRegionId);
                         } else {
                             $('.Country').val('');
                             $('.Region').val('');

@@ -51,7 +51,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>REF Code:</label>
-                            <select class="form-control js-example-basic-single" name="RefCode" id="editRefCode{{ $srf->id }}" style="position: relative !important" title="Select Ref Code">
+                            <select class="form-control js-example-basic-single editRefCode{{ $srf->Id }}" name="RefCode" id="" style="position: relative !important" title="Select Ref Code">
                                 <option value="" disabled selected>Select REF Code</option>
                                 <option value="1" @if ( $srf->RefCode == "1") selected @endif>RND</option>
                                 <option value="2" @if ( $srf->RefCode == "2") selected @endif>QCD</option>
@@ -59,20 +59,20 @@
                         </div>
                         <div class="form-group">
                             <label>Type:</label>
-                            <select class="form-control js-example-basic-single" name="SrfType" id="editSrfType{{ $srf->id }}" style="position: relative !important" title="Select Type">
+                            <select class="form-control js-example-basic-single editSrfType{{ $srf->Id }}" name="SrfType" id="" style="position: relative !important" title="Select Type">
                                 <option value="" disabled selected>Select Type</option>
                                 <option value="1" @if ( $srf->SrfType == "1") selected @endif>Regular</option>
                                 <option value="2" @if ( $srf->SrfType == "2") selected @endif>PSS</option>
                                 <option value="3" @if ( $srf->SrfType == "3") selected @endif>CSS</option>
                             </select>
                         </div>
-                        <div class="form-group" id="editSoNumberGroup{{ $srf->id }}" style="display: none;">
+                        <div class="form-group editSoNumberGroup{{ $srf->Id }}" id="" style="display: none;">
                             <label for="SoNumber">SO Number</label>
                             <input type="text" class="form-control" name="SoNumber" placeholder="Enter SO Number" value="{{ !empty($srf->SoNumber) ? ($srf->SoNumber) : '' }}">
                         </div>
                         <div class="form-group">
                             <label>Client:</label>
-                            <select class="form-control js-example-basic-single" name="ClientId" id="editClientId{{ $srf->id }}" style="position: relative !important" title="Select ClientId" onchange="generateUniqueId()">
+                            <select class="form-control js-example-basic-single editClientId{{ $srf->Id }}" name="ClientId" id="" style="position: relative !important" title="Select ClientId" onchange="generateUniqueId()">
                                 <option value="" disabled selected>Select Client</option>
                                 @foreach ($clients as $client)
                                 <option value="{{ $client->id }}"  @if ( $srf->ClientId == $client->id) selected @endif data-type="{{ $client->Type }}">{{ $client->Name }}</option>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="form-group">
                             <label>Contact:</label>
-                            <select class="form-control js-example-basic-single" name="ClientContactId" id="editClientContactId{{ $srf->id }}" style="position: relative !important" title="Select ClientContacId">
+                            <select class="form-control js-example-basic-single editClientContactId{{ $srf->Id }}" name="ClientContactId" id="" style="position: relative !important" title="Select ClientContacId">
                                 <option value="" disabled selected>Select Contact</option>
                             </select>
                         </div>
@@ -96,77 +96,102 @@
                     <span class="header-label">Product</span>
                     <hr class="form-divider">
                 </div>
-                <div class="row" >  
-                    @foreach ($srf->requestProducts as$product )
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="hidden" name="product_id[]" value="{{ $product->id }}">
-                            <label>Product Type:</label>
-                            <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type">
-                                <option value="" disabled selected>Select Product Type</option>
-                                <option value="1" @if ( $product->ProductType == "1") selected @endif>Pure</option>
-                                <option value="2" @if ( $product->ProductType == "2") selected @endif>Blend</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Application:</label>
-                            <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" >
-                                <option value="" disabled selected>Select Application</option>
-                                @foreach ($productApplications as $application)
-                                    <option value="{{ $application->id }}"  @if ( $product->ApplicationId == $application->id) selected @endif >{{ $application->Name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="ProductCode">Product Code:</label>
-                            <input type="text" class="form-control" name="ProductCode[]" value="{{  $product->ProductCode }}" placeholder="Enter Product Code">
-                        </div>
-                        <div class="form-group">
-                            <label for="ProductDescription">Product Description:</label>
-                            <textarea class="form-control" name="ProductDescription[]" value="{{  $product->ProductDescription }}" placeholder="Enter Product Description" rows="8"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="NumberOfPackages">Number Of Packages</label>
-                            <input type="number" class="form-control" name="NumberOfPackages[]" value="{{  $product->NumberOfPackages }}">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="form-group">
-                                    <label for="Quantity">Quantity</label>
-                                    <input type="number" class="form-control" name="Quantity[]" value="{{  $product->Quantity }}">
-                                </div>
+                <div class="row edit_srf">  
+                    <div class="col-lg-12">
+                        <button type="button" class="btn btn-danger editeditDeleteRowBtn" hidden style="float: right;">Delete Row</button>
+                    </div>  
+                    @foreach ($srf->requestProducts as $index => $product )
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label >{{ $product->id }}</label>
+                                <input type="hidden" name="product_id[]" value="{{ $product->id }}">
+                                <label>Product Type:</label>
+                                <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type">
+                                    <option value="" disabled selected>Select Product Type</option>
+                                    <option value="1" @if ( $product->ProductType == "1") selected @endif>Pure</option>
+                                    <option value="2" @if ( $product->ProductType == "2") selected @endif>Blend</option>
+                                </select>
                             </div>
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <label>Unit</label>
-                                    <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit">
-                                        <option value="1" @if ( $product->UnitOfMeasure == "1") selected @endif>Grams</option>
-                                        <option value="2" @if ( $product->UnitOfMeasure == "2") selected @endif>Kilograms</option>
-                                    </select>
-                                </div>
+                            <div class="form-group">
+                                <label>Application:</label>
+                                <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" >
+                                    <option value="" disabled selected>Select Application</option>
+                                    @foreach ($productApplications as $application)
+                                        <option value="{{ $application->id }}"  @if ( $product->ApplicationId == $application->id) selected @endif >{{ $application->Name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ProductCode">Product Code:</label>
+                                <input type="text" class="form-control" name="ProductCode[]" value="{{  $product->ProductCode }}" placeholder="Enter Product Code">
+                            </div>
+                            <div class="form-group">
+                                <label for="ProductDescription">Product Description:</label>
+                                <textarea class="form-control" name="ProductDescription[]" placeholder="Enter Product Description" rows="8">{{  $product->ProductDescription }}</textarea>
                             </div>
                         </div>
-                        <div class="form-group" >
-                            <label for="Label">Label:</label>
-                            <input type="text" class="form-control" name="Label[]" value="{{  $product->Label }}">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="NumberOfPackages">Number Of Packages</label>
+                                <input type="number" class="form-control" name="NumberOfPackages[]" value="{{  $product->NumberOfPackages }}">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <label for="Quantity">Quantity</label>
+                                        <input type="number" class="form-control" name="Quantity[]" value="{{  $product->Quantity }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Unit</label>
+                                        <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit">
+                                            <option value="1" @if ( $product->UnitOfMeasure == "1") selected @endif>Grams</option>
+                                            <option value="2" @if ( $product->UnitOfMeasure == "2") selected @endif>Kilograms</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" >
+                                <label for="Label">Label:</label>
+                                <input type="text" class="form-control" name="Label[]" value="{{  $product->Label }}">
+                            </div>
+                            <div class="form-group" >
+                                <label for="RpeNumber">RPE Number:</label>
+                                <input type="text" class="form-control" name="RpeNumber[]" value="{{  $product->RpeNumber }}">
+                            </div>
+                            <div class="form-group" >
+                                <label for="CrrNumber">CRR Number:</label>
+                                <input type="text" class="form-control" name="CrrNumber[]" value="{{  $product->CrrNumber }}">
+                            </div>
                         </div>
-                        <div class="form-group" >
-                            <label for="RpeNumber">RPE Number:</label>
-                            <input type="text" class="form-control" name="RpeNumber[]" value="{{  $product->RpeNumber }}">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="RemarksProduct">Remarks</label>
+                                <textarea class="form-control" name="RemarksProduct[]" placeholder="Enter Remarks">{{  $product->Remarks }}</textarea>
+                            </div>
                         </div>
-                        <div class="form-group" >
-                            <label for="CrrNumber">CRR Number:</label>
-                            <input type="text" class="form-control" name="CrrNumber[]" value="{{  $product->CrrNumber }}">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Disposition:</label>
+                                <select class="form-control js-example-basic-single" name="Disposition[]" style="position: relative !important" title="Select Disposition" >
+                                    <option value="0" @if ( $product->Disposition == "0") selected @endif>Select Disposition</option>
+                                    <option value="1" @if ( $product->Disposition == "1") selected @endif>No feedback</option>
+                                    <option value="10" @if ( $product->Disposition == "10") selected @endif>Accepted</option>
+                                    <option value="20" @if ( $product->Disposition == "20") selected @endif>Rejected</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="RemarksProduct">Remarks</label>
-                            <textarea class="form-control" name="RemarksProduct[]" placeholder="Enter Remarks">{{  $product->Remarks }}</textarea>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Disposition Remarks</label>
+                                <textarea class="form-control" name="DispositionRejectionDescription[]" placeholder="Enter DispositionRemarks">{{  $product->DispositionRejectionDescription }}</textarea>
+                            </div>
                         </div>
-                    </div>
+                        {{-- <div class="col-lg-12">
+                            <button type="button" class="btn btn-primary" id="editAddProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
+                            <button type="button" class="btn btn-info editDuplicateProductForm"  style="float: left; margin:5px;">Duplicate</button>
+                        </div> --}}
                     @endforeach
                 </div>
                 <div class="modal-footer product-footer"></div>
@@ -204,13 +229,10 @@
                 </div>
             </div>
             </div>
-                                <div class="modal-footer">
-            
-                                    {{-- <input type="hidden" name="action" id="action" value="Save">
-                                    <input type="hidden" name="hidden_id" id="hidden_id"> --}}
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <input type="submit"  class="btn btn-success" value="Save">
-                                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit"  class="btn btn-success" value="Save">
+                </div>
             </div>
             </form>
         </div>
@@ -219,55 +241,81 @@
   </div>
   
   <script>
-      $(document).ready(function() {
-        $('#editClientId{{ $srf->id }}').on('change', function() {
-        var editclientId = $(this).val();
-            if(editclientId) {
-                $.ajax({
-                    url: '{{ url("sample_contacts-by-client-f") }}/' + editclientId,
-                    type: "GET",
-                    dataType: "json",
-                    success:function(data) {
-                        $('#editClientContactId{{ $srf->id }}').empty();
-                        $('#editClientContactId{{ $srf->id }}').append('<option value="" disabled selected>Select Contact</option>');
+    $(document).ready(function() {
+    function loadClientContacts(clientId, selectedContactId) {
+        if (clientId) {
+            $.ajax({
+                url: '{{ url("sample_contacts-by-client-f") }}/' + clientId,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                        var $contactSelect = $('.editClientContactId{{ $srf->Id }}');
+                        $contactSelect.empty();
+                        $contactSelect.append('<option value="" disabled selected>Select Contact</option>');
                         $.each(data, function(key, value) {
-                            $('#editClientContactId{{ $srf->id }}').append('<option value="'+ key +'">'+ value +'</option>');
+                            var isSelected = (key == selectedContactId) ? ' selected' : '';
+                            $contactSelect.append('<option value="' + key + '"' + isSelected + '>' + value + '</option>');
                         });
-                    }
-                });
-            } else {
-                $('#editClientContactId{{ $srf->id }}').empty();
-            }
-        });
+                    },
+                error: function(xhr, status, error) {
+                    console.log('AJAX error:', error); 
+                }
+            });
+        } else {
+            $('.editClientContactId{{ $srf->Id }}').empty();
+        }
+    }
 
-        $('#editRefCode{{ $srf->id }}').change(function() {
-            var refCode = $(this).val();
-            $('#editSrfType{{ $srf->id }}').empty().append('<option value="" disabled selected>Select Type</option>');
+    function loadSrfTypes(refCode, selectedType) {
+        $('.editSrfType{{ $srf->Id }}').empty().append('<option value="" disabled selected>Select Type</option>');
 
-            if (refCode === '1') { 
-                $('#editSrfType{{ $srf->id }}').append('<option value="1">Regular</option>');
-            } else if (refCode === '2') { 
-                $('#editSrfType{{ $srf->id }}').append('<option value="1">Regular</option>');
-                $('#editSrfType{{ $srf->id }}').append('<option value="2">PSS</option>');
-                $('#editSrfType{{ $srf->id }}').append('<option value="3">CSS</option>');
-            }
+        if (refCode === '1') { 
+            $('.editSrfType{{ $srf->Id }}').append('<option value="1">Regular</option>');
+        } else if (refCode === '2') { 
+            $('.editSrfType{{ $srf->Id }}').append('<option value="1">Regular</option>');
+            $('.editSrfType{{ $srf->Id }}').append('<option value="2">PSS</option>');
+            $('.editSrfType{{ $srf->Id }}').append('<option value="3">CSS</option>');
+        }
 
-            checkSoNumberVisibility();
-        });
-
-        $('#editSrfType{{ $srf->id }}').change(function() {
-            checkSoNumberVisibility();
-        });
-
-        function checkSoNumberVisibility() {
-            var selectedType = $('#editSrfType{{ $srf->id }}').val();
-            if (selectedType === '2' || selectedType === '3') {
-                $('#editSoNumberGroup{{ $srf->id }}').show();
-            } else {
-                $('#editSoNumberGroup{{ $srf->id }}').hide();
-            }
+        if (selectedType) {
+            $('.editSrfType{{ $srf->Id }}').val(selectedType);
         }
 
         checkSoNumberVisibility();
+    }
+
+    function checkSoNumberVisibility() {
+        var selectedType = $('.editSrfType{{ $srf->Id }}').val();
+        if (selectedType === '2' || selectedType === '3') {
+            $('.editSoNumberGroup{{ $srf->Id }}').show();
+        } else {
+            $('.editSoNumberGroup{{ $srf->Id }}').hide();
+        }
+    }
+
+    $('.editClientId{{ $srf->Id }}').on('change', function() {
+        var editclientId = $(this).val();
+        loadClientContacts(editclientId);
     });
+
+    $('.editRefCode{{ $srf->Id }}').on('change', function() {
+        var refCode = $(this).val();
+        loadSrfTypes(refCode, '{{ $srf->SrfType }}');
+    });
+
+    $('.editSrfType{{ $srf->Id }}').on('change', function() {
+        checkSoNumberVisibility();
+    });
+
+    var initialRefCode = '{{ $srf->RefCode }}';
+    var initialSrfType = '{{ $srf->SrfType }}';
+    var initialClientId = '{{ $srf->ClientId }}';
+    var initialClientContactId = '{{ $srf->ContactId }}';
+    $('.editRefCode{{ $srf->Id }}').val(initialRefCode).trigger('change');
+    loadSrfTypes(initialRefCode, initialSrfType);
+    $('.editClientId{{ $srf->Id }}').val(initialClientId).trigger('change');
+    loadClientContacts(initialClientId, initialClientContactId);
+
+});
 </script>
+

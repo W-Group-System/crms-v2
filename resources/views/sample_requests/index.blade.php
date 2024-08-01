@@ -25,7 +25,7 @@
 
             </h4>
             <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hove" id="sample_request_table">
+                <table class="table table-striped table-bordered table-hover" id="sample_request_table">
                     <thead>
                         <tr>
                             <th>Action</th>
@@ -58,8 +58,8 @@
                         @foreach ($srf->requestProducts as $product)
                         <tr>
                             <td align="center">
-                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
-                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-warning btn-outline"
+                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
+                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-warning btn-outline"
                                     data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
                                     <i class="ti-pencil"></i>
                                 </button>    

@@ -36,10 +36,9 @@
                 <div class="col-lg-6"> 
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div>
-                <div class="col-lg-6" align="right">
-                    <a href="{{ url('/customer_feedback') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
-                    {{-- <a href="{{ url('/customer_feedback') }}" class="btn btn-sm btn-warning"><i class="icon-arrow-left"></i><br>Update</a> --}}
-                    @if ($sampleRequest->Progress == 10)
+                <div class="col-lg-12" align="right">
+                    <a href="{{ url('/sample_request') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    {{-- @if ($sampleRequest->Progress == 10)
                         <button type="button" class="btn btn-sm btn-success"
                                 data-target="#approveSrf{{ $sampleRequest->Id }}" 
                                 data-toggle="modal" 
@@ -68,7 +67,31 @@
                         title='Start SRF'>
                         <i class="ti-control-play"><br>Start</i>
                     </button>
-                    @endif
+                    @endif --}}
+                    <button type="button" class="btn btn-md btn-success"
+                        data-target="#approveSrf{{ $sampleRequest->Id }}" 
+                        data-toggle="modal" 
+                        title='Approve SRF'>
+                        <i class="ti-check">&nbsp;Approve</i>
+                    </button>
+                    <button type="button" class="btn btn-md btn-success"
+                        data-target="#receiveSrf{{ $sampleRequest->Id }}" 
+                        data-toggle="modal" 
+                        title='Receive SRF'>
+                    <i class="ti-check">&nbsp;Receive</i>
+                    </button>
+                    <button type="button" class="btn btn-md btn-warning"
+                        data-target="#startSrf{{ $sampleRequest->Id }}" 
+                        data-toggle="modal" 
+                        title='Start SRF'>
+                        <i class="ti-control-play">&nbsp;Start</i>
+                    </button>
+                    <button type="button" class="btn btn-md btn-warning"
+                        data-target="#pauseSrf{{ $sampleRequest->Id }}" 
+                        data-toggle="modal" 
+                        title='Pause SRF'>
+                        <i class="ti-control-pause">&nbsp;Pause</i>
+                    </button>
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
@@ -293,12 +316,22 @@
                 <li class="nav-item">
                     <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="raw-materials-tab" data-toggle="tab" href="#raw_materials" role="tab" aria-controls="rawMaterials" aria-selected="false">Raw Materials</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History</a>
+                </li>
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="supplementary" role="tabpanel" aria-labelledby="supplementary-tab">
-                    <button type="button" class="btn btn-md btn-primary" title="Add Supplementary Details"  data-toggle="modal" data-target="#addSrfSuplementary">+ Supplementary Details</button>
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Supplementary Details" data-toggle="modal" data-target="#addSrfSuplementary">
+                            <i class="ti-plus"></i>
+                        </button>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hove" id="sample_request_table">
+                        <table class="table table-striped table-bordered table-hover table-detailed" id="supplementary_table" style="width: 100%">
                             <thead>
                                 <tr>
                                     <th>Actions</th>
@@ -311,11 +344,11 @@
                                 @foreach ($SrfSupplementary as $supplementary)
                                     <tr>
                                         <td align="center">
-                                            <button type="button"  class="btn btn-warning btn-outline"
+                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
                                                 data-target="#editSrfSupplementary{{ $supplementary->id }}" data-toggle="modal" title='Edit Supplementary'>
                                                 <i class="ti-pencil"></i>
                                             </button>   
-                                            <button type="button" class="btn btn-danger btn-outline" onclick="confirmDelete({{ $supplementary->id }})" title='Delete Supplementary'>
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $supplementary->id }}, 'supplementary')" title='Delete Supplementary'>
                                                 <i class="ti-trash"></i>
                                             </button> 
                                         </td>
@@ -329,17 +362,31 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="srfPersonnel" role="tabpanel" aria-labelledby="srfPersonnel-tab">
-                    <button type="button" class="btn btn-md btn-primary" title="Assign R&D"  data-toggle="modal" data-target="#addSrfPersonnel">+ R&D Personnel</button>
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Assign R&D"  data-toggle="modal" data-target="#addSrfPersonnel">
+                            <i class="ti-plus"></i>
+                        </button>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hove" id="sample_request_table">
+                        <table class="table table-striped table-bordered table-hover table-detailed" id="personnel_table" style="width: 100%">
                             <thead>
                                 <tr>
+                                    <th>Actions</th>
                                     <th>Name</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($assignedPersonnel as $Personnel)
                                     <tr>
+                                        <td align="center">
+                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                data-target="#editSrfPersonnel{{ $Personnel->Id }}" data-toggle="modal" title='Edit Personnel'>
+                                                <i class="ti-pencil"></i>
+                                            </button>   
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $Personnel->Id }}, 'personnel')" title='Delete Personnel'>
+                                                <i class="ti-trash"></i>
+                                            </button> 
+                                        </td>
                                         <td>{{ optional($Personnel->assignedPersonnel)->full_name }}</td>
                                     </tr>
                                 @endforeach
@@ -349,7 +396,7 @@
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hove" id="sample_request_table">
+                        <table class="table table-striped table-bordered table-hover table-detailed" id="activities_table" style="width: 100%">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -383,11 +430,16 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
-                    <button type="button" class="btn btn-md btn-primary" title="Upload File"  data-toggle="modal" data-target="#uploadFile">Upload File</button>
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Upload File"  data-toggle="modal" data-target="#uploadFile">
+                            <i class="ti-plus"></i>
+                        </button>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hove" id="sample_request_table">
+                        <table class="table table-striped table-bordered table-hover table-detailed" id="files_table" style="width: 100%">
                             <thead>
                                 <tr>
+                                    <th>Actions</th>
                                     <th>Name</th>
                                     <th>File</th>
                                 </tr>
@@ -395,8 +447,80 @@
                             <tbody>
                                 @foreach ($srfFileUploads as $fileupload)
                                     <tr>
+                                        <td align="center">
+                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                data-target="#editSrfFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
+                                                <i class="ti-pencil"></i>
+                                            </button>   
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $fileupload->Id }}, 'fileupload')" title='Delete fileupload'>
+                                                <i class="ti-trash"></i>
+                                            </button> 
+                                        </td>
                                         <td>{{ $fileupload->Name }}</td>
-                                        {{-- <td>{{ optional($srfFile)->Path }}</td> --}}
+                                        <td>
+                                            @if ($fileupload->Path)
+                                            <a href="{{ url($fileupload->Path) }}" target="_blank">View File</a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="raw_materials" role="tabpanel" aria-labelledby="raw-materials-tab">
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Raw Material"  data-toggle="modal" data-target="#addRawMaterial">
+                            <i class="ti-plus"></i>
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-detailed" id="raw_materials_table" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>Material</th>
+                                    <th>Lot Number</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($SrfMaterials as $SrfMaterial)
+                                    <tr>
+                                        <td align="center">
+                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                data-target="#editSrfMaterial{{ $SrfMaterial->Id }}" data-toggle="modal" title='Edit SrfMaterial'>
+                                                <i class="ti-pencil"></i>
+                                            </button>   
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $SrfMaterial->Id }}, 'SrfMaterial')" title='Delete Raw Material'>
+                                                <i class="ti-trash"></i>
+                                            </button> 
+                                        </td>
+                                        <td>{{ $SrfMaterial->productMaterial->Name }}</td>
+                                        <td>{{ $SrfMaterial->LotNumber }}</td>
+                                        <td>{{ $SrfMaterial->Remarks }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-detailed" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($combinedLogs as $combinedLog)
+                                    <tr>
+                                        <td>{{ $combinedLog->CreatedDate }}</td>
+                                        <td>{{ $combinedLog->full_name }}</td>
+                                        <td>{{ $combinedLog->Details }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -412,9 +536,16 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
 
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
-    function confirmDelete(id) {
+    function confirmDelete(id, type) {
         Swal.fire({
             title: 'Are you sure?',
             text: 'This action cannot be undone.',
@@ -425,36 +556,64 @@
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.ajax({
-                    url: '{{ url('samplerequest/view/supp-delete') }}/' + id,
-                    method: 'DELETE',
-                    data: {
-                        '_token': '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        Swal.fire(
-                            'Deleted!',
-                            'The record has been deleted.',
-                            'success'
-                        ).then(() => {
-                            location.reload(); 
-                        });
-                    },
-                    error: function() {
-                        Swal.fire(
-                            'Error!',
-                            'Something went wrong.',
-                            'error'
-                        );
-                    }
-                });
+            let url;
+            if (type === 'supplementary') {
+                url = '{{ url('samplerequest/view/supp-delete') }}/' + id;
+            } else if (type === 'personnel') {
+                url = '{{ url('samplerequest/view/personnel-delete') }}/' + id;
+            } else if (type === 'fileupload') {
+                url = '{{ url('samplerequest/view/file-delete') }}/' + id;
+            } else if (type === 'SrfMaterial') {
+                url = '{{ url('samplerequest/view/material-delete') }}/' + id;
             }
+
+            $.ajax({
+                url: url,
+                method: 'DELETE',
+                data: {
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire(
+                        'Deleted!',
+                        'The record has been deleted.',
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function() {
+                    Swal.fire(
+                        'Error!',
+                        'Something went wrong.',
+                        'error'
+                    );
+                }
+            });
+        }
         });
     }
+
+    $(document).ready(function() {
+        new DataTable('.table-detailed', {
+            pageLength: 10,
+            paging: true,
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel'
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            order: []
+        });
+    });
     </script>
 @include('sample_requests.create_supplementary')
 @include('sample_requests.assign_personnel')
 @include('sample_requests.upload_srf_file')
+@include('sample_requests.create_raw_materials')
 @foreach ($sampleRequest as $srf)
     @include('sample_requests.srf_approval')
     @include('sample_requests.srf_receive')
@@ -463,5 +622,14 @@
 @endforeach
 @foreach ($SrfSupplementary as $supplementary)
 @include('sample_requests.edit_supplementary')
+@endforeach
+@foreach ($assignedPersonnel as $Personnel)
+@include('sample_requests.edit_personnel')
+@endforeach
+@foreach ($srfFileUploads as $fileupload)
+@include('sample_requests.edit_files')
+@endforeach
+@foreach ($SrfMaterials as $SrfMaterial)
+@include('sample_requests.edit_material')
 @endforeach
 @endsection

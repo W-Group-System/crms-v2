@@ -4,14 +4,27 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
 
-class SrfFile extends Model
+class SrfFile extends Model implements Auditable
 {
     use SoftDeletes;
+    use AuditableTrait;
+
     protected $table = "srffiles";
+
+    protected $primaryKey = "Id";
     const UPDATED_AT = "ModifiedDate";
     const CREATED_AT = "CreatedDate";
 
-    const DELETED_AT =  "IsDeleted";
+    public function transformAudit(array $data): array
+    {
+        if (isset($data['auditable_id'])) {
+            $data['auditable_id'] = $this->SampleRequestId;
+        }
+
+        return $data;
+    }
 }

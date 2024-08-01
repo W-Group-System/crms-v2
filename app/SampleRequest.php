@@ -13,6 +13,7 @@ class SampleRequest extends Model implements Auditable
 
     protected $table = "samplerequests";
     protected $primaryKey = "Id";
+    
 
     protected $fillable = [
         'SrfNumber', 

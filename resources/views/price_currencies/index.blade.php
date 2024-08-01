@@ -7,7 +7,7 @@
             Price Currency List
             <button type="button" class="btn btn-md btn-primary" name="add_price_currency" id="add_price_currency">Add Price Currency</button>
             </h4>
-            <table class="table table-striped table-bordered table-hove" id="price_currency_table" width="100%">
+            <table class="table table-striped table-bordered table-hover" id="price_currency_table" width="100%">
                 <thead>
                     <tr>
                         <th width="35%">Name</th>
