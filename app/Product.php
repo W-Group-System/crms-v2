@@ -57,4 +57,14 @@ class Product extends Model
     {
         return $this->hasMany(UserEventLogs::class, 'Value', 'code');
     }
+
+    public function productRps()
+    {
+        return $this->hasMany(RequestProductEvaluation::class, 'DdwNumber', 'ddw_number');
+    }
+
+    public function sampleRequestProduct()
+    {
+        return $this->hasMany(SampleRequestProduct::class, 'ProductCode', 'code');
+    }
 }
