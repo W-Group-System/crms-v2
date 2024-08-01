@@ -88,6 +88,7 @@ class UserController extends Controller
             'role_id'       =>  $request->role_id,
             'company_id'    =>  $request->company_id,
             'is_active'     =>  1,
+            'user_id'       =>  'N/A',
             'department_id' =>  $request->department_id,
         );
 

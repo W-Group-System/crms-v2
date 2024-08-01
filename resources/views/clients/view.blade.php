@@ -8,16 +8,17 @@
                     <a href="{{ session('last_client_page', url('/client')) }}" class="btn btn-md btn-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
-                    <button type="button" class="btn btn-primary deleteFile" title="Delete File" data-id="">
+                    <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-primary"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                    <!-- <button type="button" class="btn btn-primary" title="Update Client" href="{{ url('/edit_client/' . $data->id) }}">
                         <i class="ti ti-pencil"></i>&nbsp;Update
-                    </button>
-                    <button type="button" class="btn btn-warning deleteFile" title="Delete File" data-id="">
+                    </button> -->
+                    <button type="button" class="prospectClient btn btn-warning" title="Prospect File" data-id="{{ $data->id }}">
                         <i class="ti ti-control-record"></i>&nbsp;Prospect
                     </button>
-                    <button type="button" class="btn btn-success deleteFile" title="Delete File" data-id="">
+                    <button type="button" class="activateClient btn btn-success" title="Activate Client" data-id="{{ $data->id }}">
                         <i class="ti ti-check-box"></i>&nbsp;Activate
                     </button>
-                    <button type="button" class="btn btn-danger deleteFile" title="Delete File" data-id="">
+                    <button type="button" class="archivedClient btn btn-danger" title="Archived Client" data-id="{{ $data->id }}">
                         <i class="ti ti-archive"></i>&nbsp;Archive
                     </button>
                 </div>
@@ -172,7 +173,7 @@
                     </div>
                     @include('clients.add_contacts')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" width="100%">
+                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
                             <thead>
                                 <tr>
                                     <th>Action</th>
@@ -192,8 +193,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if($data->contacts->count() > 0)
-                                    @foreach ($data->contacts as $contact)
+                                @foreach ($data->contacts as $contact)
                                     <tr>
                                         <td>
                                             <button type="button" class="btn btn-warning btn-sm" title="Edit Client" data-toggle="modal" data-target="#edit_contact-{{ $contact->id }}">
@@ -217,12 +217,7 @@
                                         <td>{{ $contact->Facebook ?? 'N/A'}}</td>
                                         <td>{{ $contact->LinkedIn ?? 'N/A'}}</td>
                                     </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td colspan="14" class="text-center">No matching records found</td>
-                                    </tr>
-                                @endif
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -241,7 +236,7 @@
                     </div>
                     @include('clients.add_files')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" width="100%">
+                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
                             <thead>
                                 <tr>
                                     <th>Action</th>
@@ -250,26 +245,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if($data->files->count() > 0)
-                                    @foreach ($data->files as $file)
-                                    <tr>
-                                        <td>
-                                            <button type="button" class="btn btn-warning btn-sm" title="Edit File" data-toggle="modal" data-target="#edit_file-{{ $file->id }}">
-                                                <i class="ti-pencil"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-danger btn-sm deleteFile" title="Delete File" data-id="{{ $file->id }}">
-                                                <i class="ti-trash"></i>
-                                            </button>
-                                        </td>
-                                        <td>{{ $file->FileName}}</td>
-                                        <td><a href="{{ url($file->Path) }}" target="_blank" download>{{ $file->Path }}</a></td>
-                                    </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td colspan="3" class="text-center">No matching records found</td>
-                                    </tr>
-                                @endif
+                                @foreach ($data->files as $file)
+                                <tr>
+                                    <td>
+                                        <button type="button" class="btn btn-warning btn-sm" title="Edit File" data-toggle="modal" data-target="#edit_file-{{ $file->id }}">
+                                            <i class="ti-pencil"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm deleteFile" title="Delete File" data-id="{{ $file->id }}">
+                                            <i class="ti-trash"></i>
+                                        </button>
+                                    </td>
+                                    <td>{{ $file->FileName}}</td>
+                                    <td><a href="{{ url($file->Path) }}" target="_blank" download>{{ $file->Path }}</a></td>
+                                </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -279,7 +268,7 @@
                 </div>
                 <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" width="100%">
+                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -289,6 +278,30 @@
                             </thead>
                             <tbody>
                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Schedule Date</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data->activities as $activity)
+                                    <tr>
+                                        <td>{{ $activity->ActivityNumber ?? 'N/A' }}</td>
+                                        <td>{{ $activity->ScheduleFrom ?? 'N/A' }}</td>
+                                        <td>{{ $activity->Title ?? 'N/A' }}</td>
+                                        <td>{{ $activity->Status == 10 ? 'Open' : 'Closed' }}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -312,6 +325,8 @@
 </style>
 <script>
     $(document).ready(function() {
+        $('.dataTable').DataTable();
+        
         $('#form_client').on('submit', function(event) {
             event.preventDefault();
 
@@ -426,6 +441,124 @@
                                 icon: 'error',
                                 title: 'Error',
                                 text: response.responseJSON.error
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // Activate 
+        $(".activateClient").on('click', function() {
+            var clientId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to activate this client!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, confirmed it!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('activate_client') }}/" + clientId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // Prospect
+        $(".prospectClient").on('click', function() {
+            var clientId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to pursue this prospect client!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, confirmed it!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('prospect_client') }}/" + clientId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error: function(response) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.responseJSON.error
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // Archived
+        $(".archivedClient").on('click', function() {
+            var clientId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to archive this client!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, confirmed it!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('archived_client') }}/" + clientId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
                             });
                         }
                     });

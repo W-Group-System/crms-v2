@@ -102,12 +102,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('client/create', 'ClientController@create');    
     Route::post('/new_client', 'ClientController@store')->name('client.store');
     Route::get('edit_client/{id}', 'ClientController@edit')->name('client.edit');
-    Route::post('update_client/{id}', 'ClientController@update');
+    Route::post('client/update/{id}', 'ClientController@update');
     Route::get('view_client/{id}', 'ClientController@view')->name('client.view');
     Route::get('/regions', 'ClientController@getRegions');
     Route::get('/areas', 'ClientController@getAreas');
     Route::post('delete_client/{id}', 'ClientController@delete');
+    Route::post('activate_client/{id}', 'ClientController@activateClient');
     Route::post('prospect_client/{id}', 'ClientController@prospectClient');
+    Route::post('archived_client/{id}', 'ClientController@archivedClient');
 
     # Contact Client
     Route::post('new_contact', 'ContactController@newContact');
