@@ -62,7 +62,7 @@
                                         <i class="ti-eye"></i>
                                     </a>
 
-                                    <button class="btn btn-warning btn-sm archiveProducts" type="button" title="Archieved" data-id="{{$product->id}}">
+                                    <button class="btn btn-warning btn-sm archiveProducts" type="button" title="Archived" data-id="{{$product->id}}">
                                         <i class="ti-archive"></i>
                                     </button>
                                 </td>
