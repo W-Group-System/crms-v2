@@ -5,13 +5,13 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
                 Edit Client
-                <a href="{{ session('last_client_page', url('/client')) }}" class="btn btn-md btn-secondary">
+                <a href="{{ session('last_client_page', url('/client')) }}" class="btn btn-md btn-light">
                     <i class="icon-arrow-left"></i>&nbsp;Back
                 </a>
             </h4>
             <form id="editFormClient" enctype="multipart/form-data" method="POST" action="{{ url('client/update/'.$data->id) }}">
                 @csrf
-                @method('PUT')
+                <span id="form_result"></span>
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="form-group">
@@ -23,7 +23,7 @@
                         <div class="form-group">
                             <label>Primary Account Manager</label>
                             <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Account Manager">
-                                <option value="" disabled {{ $data->PrimaryAccountManagerId ? 'selected' : '' }}>Select Account Manager</option>
+                                <option value="" disabled {{ $data->PrimaryAccountManagerId ? '' : 'selected' }}>Select Account Manager</option>
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}" {{ $data->PrimaryAccountManagerId == $user->user_id || $data->PrimaryAccountManagerId == $user->id ? 'selected' : '' }}>
                                         {{ $user->full_name }}
@@ -42,20 +42,17 @@
                         <div class="form-group">
                             <label>Secondary Account Manager</label>
                             <select class="form-control js-example-basic-single" name="SecondaryAccountManagerId" id="SecondaryAccountManagerId" style="position: relative !important" title="Select Account Manager">
-                            <!-- Default option when SecondaryAccountManagerId is null -->
-                            <option value="" {{ is_null($data->SecondaryAccountManagerId) ? 'selected' : '' }}>Select Account Manager</option>
-
-                            @foreach($users as $user)
-                                <!-- Check if SecondaryAccountManagerId matches user.id or user.user_id -->
-                                <option value="{{ $user->id }}" {{ ($data->SecondaryAccountManagerId == $user->id || $data->SecondaryAccountManagerId == $user->user_id) ? 'selected' : '' }}>
-                                    {{ $user->full_name }}
-                                </option>
-                            @endforeach
-                        </select>
+                            <option value="" disabled {{ is_null($data->SecondaryAccountManagerId) ? 'selected' : '' }}>Select Account Manager</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" {{ $data->SecondaryAccountManagerId == $user->user_id || $data->SecondaryAccountManagerId == $user->id ? 'selected' : '' }}>
+                                        {{ $user->full_name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="form-group">    
+                        <div class="form-group">
                             <label>Company Name</label>
                             <input type="text" class="form-control" name="Name" placeholder="Enter Company Name" value="{{ $data->Name }}">
                         </div>
@@ -176,17 +173,31 @@
                         </div>
                     </div>
                     <div class="col-lg-6" id="addressContainer">
-                        @foreach($addresses as $address)
-                        <div class="form-group">
-                            <label>Client Address</label>
-                            <div class="input-group">                                
-                                <input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type" value="{{ $address->AddressType }}">
-                                <button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>
+                        @if(is_null($addresses) || $addresses->isEmpty())
+                            <div class="form-group">
+                                <label>Client Address</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type">
+                                    <button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>
+                                </div>
+                                <textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2"></textarea>
+                                <input type="hidden" name="AddressIds[]" value="">
                             </div>
-                            <textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2">{{ $address->Address }}</textarea>
-                        </div>
-                        @endforeach
+                        @else
+                            @foreach($addresses as $address)
+                                <div class="form-group">
+                                    <label>Client Address</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type" value="{{ $address->AddressType }}">
+                                        <button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>
+                                    </div>
+                                    <textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2">{{ $address->Address }}</textarea>
+                                    <input type="hidden" name="AddressIds[]" value="{{ $address->id }}">
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
+
                 </div>
                 <div class="col-lg-12" align="right">
                     <button type="submit" class="btn btn-primary">Update</button>
@@ -201,42 +212,6 @@
 <script>
     $(document).ready(function() {
         $('.js-example-basic-single').select2();
-
-        $('#table_address thead').on('click', '.addRow', function(){
-            // Remove the "No Address Available" row if it exists
-            $('#table_address tbody').find('tr.no-data').remove();
-
-            // Define the new row HTML
-            var tr = '<tr>' +
-                '<td><a style="padding: 10px 20px" href="javascript:;" class="btn btn-danger deleteRow">-</a></td>'+
-                '<td><input type="text" name="AddressType[]" id="AddressType" class="form-control" placeholder="Enter Address Type"></td>'+
-                '<td><input type="text" name="Address[]" id="Address" class="form-control adjust" placeholder="Enter Address"></td>'+
-            '</tr>';
-
-            // Append the new row to the table body
-            $('#table_address tbody').append(tr);
-        });
-
-        // Delete a row from the table
-        $('#table_address tbody').on('click', '.deleteRow', function(){
-            $(this).closest('tr').remove();
-
-            // Check if there are no more rows and add the "No Address Available" row if needed
-            if ($('#table_address tbody').find('tr').length === 0) {
-                var noDataRow = '<tr class="no-data">' +
-                    '<td colspan="3" class="text-center">No Address Available</td>' +
-                '</tr>';
-                $('#table_address tbody').append(noDataRow);
-            }
-        });
-
-        // Initial check to add "No Address Available" row if the table is empty
-        if ($('#table_address tbody').find('tr').length === 0) {
-            var noDataRow = '<tr class="no-data">' +
-                '<td colspan="3" class="text-center">No Address Available</td>' +
-            '</tr>';
-            $('#table_address tbody').append(noDataRow);
-        }
 
         // Initialize region select based on existing data
         populateRegions("{{ $data->Type }}");
@@ -327,7 +302,7 @@
         }
 
         $(document).on('click', '.addRowBtn', function() {
-        var newRow = $('<div class="form-group">' +
+            var newRow = $('<div class="form-group">' +
                             '<label>Client Address</label>' +
                             '<div class="input-group">' +
                                 '<input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type">' +
@@ -335,13 +310,88 @@
                                 '<button class="btn btn-sm btn-danger removeRowBtn" style="border-radius: 0px;" type="button">-</button>' +
                             '</div>' +
                             '<textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2"></textarea>' +
+                            '<input type="hidden" name="AddressIds[]" value="">' +
                         '</div>');
 
             // Append the new row to the container where addresses are listed
             $('#addressContainer').append(newRow);
         });
+
         $(document).on('click', '.removeRowBtn', function() {
             $(this).closest('.form-group').remove();
+        });
+
+        $('#editFormClient').on('submit', function(event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);
+            $('#editFormClient').find('.is-invalid').removeClass('is-invalid');
+
+            $.ajax({
+                url: "{{ url('client/update/'.$data->id) }}",
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response.success,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then((result) => {
+                            setTimeout(function() {
+                                window.location.href = "{{ session('last_client_page', url('/client')) }}";
+                            })
+                        });
+                    } else if (response.errors) {
+                        // Handle validation errors display
+                        var errorsHtml = '<div class="alert alert-danger" style="border-color: red;"><ul>';
+                        $.each(response.errors, function(index, error) {
+                            errorsHtml += '<li>' + error + '</li>';
+                            // Highlight the field with errors by adding a red border
+                            var fieldName = index.replace('.', '\\.');
+                            var $field = $('#editFormClient').find('[name="' + fieldName + '"]');
+                            
+                            // Check if the element is a regular input or select2 dropdown
+                            if ($field.hasClass('js-example-basic-single')) {
+                                // Select2 dropdown case
+                                $field.siblings('.select2-container').addClass('is-invalid');
+                            } else {
+                                // Regular input case
+                                $field.addClass('is-invalid');
+                            }
+
+                            if (index.includes('AddressType') || index.includes('Address')) {
+                                var fieldIndex = index.match(/\d+/)[0];
+                                if (index.includes('AddressType')) {
+                                    $('#editFormClient').find('[name="AddressType[]"]').eq(fieldIndex).addClass('is-invalid');
+                                } else if (index.includes('Address')) {
+                                    $('#editFormClient').find('[name="Address[]"]').eq(fieldIndex).addClass('is-invalid');
+                                }
+                            }
+                        });
+                        errorsHtml += '</ul></div>';
+                        $('html, body').animate({
+                            scrollTop: $('#editFormClient').offset().top
+                        }, 1000);
+                        $('#form_result').html(errorsHtml).show();
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            var input = $('[name="' + key + '"]');
+                            input.addClass('is-invalid');
+                            input.after('<div class="invalid-feedback">' + value + '</div>');
+                        });
+                    }
+                }
+            });
         });
     });
 

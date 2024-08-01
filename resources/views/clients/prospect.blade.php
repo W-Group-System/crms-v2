@@ -38,7 +38,7 @@
                                             <i class="ti-eye"></i>
                                         </button>
                                         <a href="{{ url('/edit_client/' . $client->id) }}" class="btn btn-sm btn-primary"><i class="ti ti-pencil"></i></a>
-                                        <button type="button" class="deleteClient btn btn-sm btn-secondary"><i class="ti ti-archive"></i></button>
+                                        <button type="button" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button>
                                     </td>
                                     <td>{{ $client->Type == "1" ? 'Local' : 'International' }}</td>
                                     <td>{{ $client->industry->Name ?? 'N/A' }}</td>
@@ -77,26 +77,62 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
-        $('.deleteClient').on('click', function(){
+        $(".achivedClient").on('click', function() {
             var clientId = $(this).data('id');
-            if(confirm('Are you sure you want to archive this client?')){
-                $.ajax({
-                    url: "{{ url('archive_client') }}/" + clientId,
-                    type: 'POST',
-                    data: {
-                        "_token": "{{ csrf_token() }}",
-                        "_method": "PUT"
-                    },
-                    success: function(response) {
-                        alert('Client archived successfully!');
-                        location.reload();
-                    },
-                    error: function(response) {
-                        alert('Error archiving client.');
-                    }
-                });
-            }
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to archive this client!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, confirmed it!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('archived_client') }}/" + clientId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
         });
+
+        // $('.deleteClient').on('click', function(){
+        //     var clientId = $(this).data('id');
+        //     if(confirm('Are you sure you want to archive this client?')){
+        //         $.ajax({
+        //             url: "{{ url('archive_client') }}/" + clientId,
+        //             type: 'POST',
+        //             data: {
+        //                 "_token": "{{ csrf_token() }}",
+        //                 "_method": "PUT"
+        //             },
+        //             success: function(response) {
+        //                 alert('Client archived successfully!');
+        //                 location.reload();
+        //             },
+        //             error: function(response) {
+        //                 alert('Error archiving client.');
+        //             }
+        //         });
+        //     }
+        // });
     });
 
     function viewClient(clientId) {
