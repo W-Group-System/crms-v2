@@ -355,7 +355,17 @@ class ClientController extends Controller
     // View
     public function view($id) 
     {
-        $data = Client::with('activities')->findOrFail($id);
+        $data = Client::with(['
+                activities', 
+                'srfClients', 
+                'crrClients', 
+                'rpeClients', 
+                'srfClientFiles', 
+                'sampleRequests',
+                'crrClientFiles',
+                'customerRequirements'
+        ])->findOrFail($id);
+        // dd($data);
         $addresses = Address::where('CompanyId', $id)->get();
         $users = User::all();
         $payment_terms = PaymentTerms::find($data->PaymentTermId);
@@ -372,12 +382,19 @@ class ClientController extends Controller
         if (is_null($data->SecondaryAccountManagerId)) {
             $secondaryAccountManager = null;
         }
-
+        
         $activities = $data->activities;
+        $srfClients = $data->srfClients;
+        $crrClients = $data->crrClients;
+        $rpeClients = $data->rpeClients;
+        $srfClientFiles = $data->srfClientFiles;
+        $sampleRequests = $data->sampleRequests;
+        $crrClientFiles = $data->crrClientFiles;
+        $customerRequirements = $data->customerRequirements;
 
         return view('clients.view', compact(
             'data', 'primaryAccountManager', 'secondaryAccountManager', 'payment_terms', 
-            'regions', 'countries', 'areas', 'business_types', 'industries', 'addresses', 'activities'
+            'regions', 'countries', 'areas', 'business_types', 'industries', 'addresses', 'activities', 'srfClients', 'crrClients', 'rpeClients', 'srfClientFiles', 'sampleRequests', 'crrClientFiles', 'customerRequirements'
         ));
     }
 
