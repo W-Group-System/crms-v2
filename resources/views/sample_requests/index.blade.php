@@ -22,8 +22,18 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Sample Request List
             <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formSampleRequest">Add Sample Request</button>
-
             </h4>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-5">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="sample_request_table">
                     <thead>
@@ -118,7 +128,18 @@
                 @endforeach
                     </tbody>
                 </table>
-                {!! $sampleRequests->links() !!}
+                {!! $sampleRequests->appends(['search' => $search])->links() !!}
+                @php
+                    $total = $sampleRequests->total();
+                    $currentPage = $sampleRequests->currentPage();
+                    $perPage = $sampleRequests->perPage();
+    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                </div>
             </div>
         </div>
     </div>

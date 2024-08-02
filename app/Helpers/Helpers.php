@@ -107,4 +107,11 @@ class Helpers {
 
         return $customerRequirement;
     }
+
+    public static function getProductIdByCode($code)
+    {
+        $product = Product::where('code', $code)->first();
+        
+        return $product ? $product->id : null;
+    }
 }
