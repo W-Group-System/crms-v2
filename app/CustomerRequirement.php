@@ -29,4 +29,23 @@ class CustomerRequirement extends Model
         return $this->belongsTo(SrfProgress::class, 'Progress', 'id');
     }
 
+    public function crrNature()
+    {
+        return $this->hasMany(CrrNature::class,'CustomerRequirementId');
+    }
+
+    public function primarySales()
+    {
+        return $this->belongsTo(User::class, 'PrimarySalesPersonId','user_id');
+    }
+
+    public function secondarySales()
+    {
+        return $this->belongsTo(User::class, 'SecondarySalesPersonId','user_id');
+    }
+
+    public function priority()
+    {
+        return $this->belongsTo(CrrPriority::class,'Priority','Id');
+    }
 }
