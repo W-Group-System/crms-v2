@@ -14,6 +14,7 @@ use App\CrrNature;
 use App\ProductApplication;
 use App\SalesUser;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class CustomerRequirementController extends Controller
 {
@@ -34,7 +35,7 @@ class CustomerRequirementController extends Controller
             })
             ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
         })
-        ->orderBy('id', 'desc')->paginate(25);
+        ->orderBy('id', 'desc')->paginate(10);
         $product_applications = ProductApplication::all();
         $clients = Client::all();
         $users = User::all();
@@ -86,5 +87,52 @@ class CustomerRequirementController extends Controller
                     }
         
                     return redirect()->back()->with('success', 'Base prices updated successfully.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $customerRequirements = CustomerRequirement::findOrFail($id);
+        // $customerRequirements->DateCreated = date('Y-m-d');
+        $customerRequirements->ClientId = $request->ClientId;
+        $customerRequirements->Priority = $request->Priority;
+        $customerRequirements->ApplicationId = $request->ApplicationId;
+        $customerRequirements->DueDate = $request->DueDate;
+        $customerRequirements->PotentialVolume = $request->PotentialVolume;
+        $customerRequirements->UnitOfMeasureId = $request->UnitOfMeasureId;
+        $customerRequirements->PrimarySalesPersonId = $request->PrimarySalesPersonId;
+        $customerRequirements->TargetPrice = $request->TargetPrice;
+        $customerRequirements->CurrencyId = $request->CurrencyId;
+        $customerRequirements->SecondarySalesPersonId = $request->SecondarySalesPersonId;
+        $customerRequirements->Competitor = $request->Competitor;
+        $customerRequirements->CompetitorPrice = $request->CompetitorPrice;
+        $customerRequirements->RefCrrNumber = $request->RefCrrNumber;
+        $customerRequirements->RefRpeNumber = $request->RefRpeNumber;
+        $customerRequirements->DetailsOfRequirement = $request->DetailsOfRequirement;
+        if($request->has('NatureOfRequestId'))
+        {
+            $crrNature = CrrNature::where('CustomerRequirementId', $id)->delete();
+            foreach($request->NatureOfRequestId as $key=>$natureOfRequestId)
+            {
+                $crrNature = new CrrNature;
+                $crrNature->CustomerRequirementId = $id;
+                $crrNature->NatureOfRequestId = $natureOfRequestId;
+                $crrNature->save();
+            }
+        }
+        $customerRequirements->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function view($id)
+    {
+        $customerRequirement = CustomerRequirement::findOrFail($id);
+
+        return view('customer_requirements.view_crr',
+            array(
+                'crr' => $customerRequirement
+            )
+        );
     }
 }

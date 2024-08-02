@@ -329,6 +329,7 @@
                 <div class="tab-pane fade active show" id="client" role="tabpanel" aria-labelledby="client-tab">
 
                     <div class="table-responsive">
+<<<<<<< Updated upstream
                         <table class="table table-bordered table-hover table-striped tables">
                             <thead>
                                 <tr>
@@ -371,6 +372,8 @@
                 </div>
                 <div class="tab-pane fade " id="identical" role="tabpanel" aria-labelledby="identical-tab">
                     <div class="table-responsive">
+=======
+>>>>>>> Stashed changes
                         <table class="table table-striped table-bordered table-hover tables" width="100%">
                             <thead>
                                 <tr>
