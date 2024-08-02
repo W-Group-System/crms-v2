@@ -277,7 +277,45 @@
                                 </tr>
                             </thead>
                             <tbody>
-                               
+                                @if($srfClients->isNotEmpty())
+                                    @foreach ($srfClients as $srfClient)
+                                        <tr>
+                                            <td>{{ $srfClient->DateRequested }}</td>
+                                            <td>Sample Request</td>
+                                            <td>
+                                                <a href="{{ url('samplerequest/view/'.$srfClient->Id) }}" target="_blank">
+                                                    {{ $srfClient->SrfNumber }}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+
+                                @if($crrClients->isNotEmpty())
+                                    @foreach ($crrClients as $crrClient)
+                                        <tr>
+                                            <td>{{ $crrClient->DateCreated }}</td>
+                                            <td>Customer Requirement</td>
+                                            <td>{{ $crrClient->CrrNumber }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+
+                                @if($rpeClients->isNotEmpty())
+                                    @foreach ($rpeClients as $rpeClient)
+                                        <tr>
+                                            <td>{{ $rpeClient->DateCreated }}</td>
+                                            <td>Request Product Evaluation</td>
+                                            <td>{{ $rpeClient->RpeNumber }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+
+                                @if($srfClients->isEmpty() && $crrClients->isEmpty() && $rpeClients->isEmpty())
+                                    <tr>
+                                        <td colspan="3" class="text-center">No transactions available</td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -306,6 +344,38 @@
                         </table>
                     </div>
                 </div>
+                <div class="tab-pane fade" id="transactionFiles" role="tabpanel" aria-labelledby="transactionFiles-tab">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="35">Name</th>
+                                    <th width="35">Transaction Number</th>
+                                    <th width="30">File</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($srfClientFiles->isNotEmpty())
+                                    @foreach ($srfClientFiles as $file)
+                                        @php
+                                            $sampleRequest = $sampleRequests->firstWhere('Id', $file->SampleRequestId);
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $file->Name }}</td>
+                                            <td>{{ $sampleRequest->SrfNumber ?? 'N/A' }}</td>
+                                            <td>
+                                                <a href="{{ asset($file->Path) }}" target="_blank">
+                                                    {{ $file->Path }}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div align="right" class="mt-3">
                 <a href="{{ url('/client') }}" class="btn btn-secondary">Close</a>
@@ -325,7 +395,7 @@
 </style>
 <script>
     $(document).ready(function() {
-        $('.dataTable').DataTable();
+        
         
         $('#form_client').on('submit', function(event) {
             event.preventDefault();
@@ -565,6 +635,8 @@
                 }
             });
         });
+
+        $('.dataTable').DataTable();
     });
 
     $('#table_address thead').on('click', '.addRow', function(){

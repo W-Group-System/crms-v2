@@ -68,6 +68,41 @@ class Client extends Model
     public function activities()
     {
         return $this->hasMany(Activity::class, 'ClientId', 'id');
+    }   
+
+    public function crrClients()
+    {
+        return $this->hasMany(CustomerRequirement::class, 'ClientId', 'id');
     }
-   
+
+    public function rpeClients()
+    {
+        return $this->hasMany(RequestProductEvaluation::class, 'ClientId', 'id');
+    }   
+    
+    public function srfClients() 
+    {
+        return $this->hasMany(SampleRequest::class, 'ClientId', 'id');
+    }
+
+    public function srfClientFiles()
+    {
+        return $this->hasManyThrough(SrfFile::class, SampleRequest::class, 'ClientId', 'SampleRequestId');
+    }
+
+    public function sampleRequests()
+    {
+        return $this->hasMany(SampleRequest::class, 'ClientId', 'id');
+    }
+
+    public function crrClientFiles()
+    {
+        return $this->hasManyThrough(SrfFile::class, SampleRequest::class, 'ClientId', 'SampleRequestId');
+    }
+
+    public function customerRequirements()
+    {
+        return $this->hasMany(SampleRequest::class, 'ClientId', 'id');
+    }
+
 }
