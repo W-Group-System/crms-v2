@@ -27,7 +27,7 @@ use OwenIt\Auditing\Models\Audit;
 
 class SampleRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {   
         $clients = Client::all();
         $contacts = Contact::all();
@@ -47,13 +47,21 @@ class SampleRequestController extends Controller
         // })
         // // ->get()
         // ->paginate(25);
-
+        $search = $request->input('search');
         $sampleRequests = SampleRequest::with('requestProducts') 
+        ->where(function ($query) use ($search){
+            $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+            ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+            ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+            // ->orWhereHas('client', function ($q) use ($search) {
+            //     $q->where('name', 'LIKE', '%' . $search . '%');
+            // });
+        })
         ->where('status', 10) 
         ->paginate(25);
 
        
-        return view('sample_requests.index', compact('sampleRequests','clients', 'contacts', 'categories', 'departments', 'salesPersons', 'productApplications', 'productCodes'));
+        return view('sample_requests.index', compact('sampleRequests','clients', 'contacts', 'categories', 'departments', 'salesPersons', 'productApplications', 'productCodes', 'search'));
     }
 
     public function getSampleContactsByClientF($clientId)
@@ -443,6 +451,7 @@ class SampleRequestController extends Controller
                     'RpeNumber' => $request->input('RpeNumber.' . $key),
                     'CrrNumber' => $request->input('CrrNumber.' . $key),
                     'Remarks' => $request->input('RemarksProduct.' . $key),
+                    // 'ProductIndex' => $key + 1,
                 ]
             );
         }

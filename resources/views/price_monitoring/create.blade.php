@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('new_product_evaluation') }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('price_monitoring') }}">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -157,8 +157,8 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label >With Commission</label>
-                                <input type="text" class="form-control" name="WithCommission" placeholder="Enter Commission">
+                                <label >Enter Commission</label>
+                                <input type="text" class="form-control" name="EnterCommission" placeholder="Enter Commission">
                             </div>
                         </div>
                         <div class="col-lg-6">

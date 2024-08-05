@@ -137,7 +137,7 @@
                             <i class="ti-plus"></i>
                         </button>
 
-                        <table class="table table-striped table-bordered table-hover" id="material_table" width="100%">
+                        <table class="table table-striped table-bordered table-hoverr" id="material_table" width="100%">
                             <tbody class="tbodyRawMaterials">
                                 @foreach ($data->productMaterialComposition as $pmc)
                                     <tr>
@@ -175,7 +175,7 @@
 
                     @include('products.edit_all_product_specification')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                        <table class="table table-striped table-bordered table-hoverr" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Parameter</th>
@@ -216,7 +216,7 @@
                     @include('products.add_pds')
                     
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                        <table class="table table-striped table-bordered table-hoverr" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Product</th>
@@ -258,7 +258,7 @@
                     @include('products.add_file')
                     @include('products.edit_all_product_files')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                        <table class="table table-striped table-bordered table-hoverr" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Name</th>

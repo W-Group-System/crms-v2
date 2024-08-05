@@ -27,8 +27,26 @@ class RequestProductEvaluation extends Model
     {
         return $this->belongsTo(ProductApplication::class, 'ApplicationId', 'id');
     }
+
+    public function primarySalesPerson()
+    {
+        return $this->belongsTo(User::class, 'PrimarySalesPersonId', 'user_id');
+    }
+    public function secondarySalesPerson()
+    {
+        return $this->belongsTo(User::class, 'SecondarySalesPersonId', 'user_id');
+    }
+
     public function progressStatus()
     {
         return $this->belongsTo(SrfProgress::class, 'Progress', 'id');
+    }
+    public function projectName()
+    {
+        return $this->belongsTo(ProjectName::class, 'ProjectNameId', 'id');
+    }
+    public function priceCurrency()
+    {
+        return $this->belongsTo(PriceCurrency::class, 'CurrencyId', 'id');
     }
 }

@@ -8,6 +8,7 @@ use App\ProductApplication;
 use App\ProjectName;
 use App\RequestProductEvaluation;
 use App\SalesUser;
+use App\TransactionApproval;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -109,5 +110,18 @@ class RequestProductEvaluationController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to delete Request.'], 500);
         }
+    }
+
+    public function view($id)
+    {
+        $requestEvaluation = RequestProductEvaluation::with(['client', 'product_application'])->findOrFail($id);
+        $rpeNumber = $requestEvaluation->id;
+        $clientId = $requestEvaluation->ClientId;
+        $rpeTransactionApprovals  = TransactionApproval::where('TransactionId', $id)
+        ->where('Type', '20')
+        ->get();
+        
+       
+        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals'));
     }
 }

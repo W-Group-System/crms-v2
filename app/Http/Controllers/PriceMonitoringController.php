@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Client;
 use App\PaymentTerms;
 use App\PriceMonitoring;
+use App\PriceRequestProduct;
 use App\Product;
 use App\SalesUser;
 use App\User;
@@ -62,29 +63,22 @@ class PriceMonitoringController extends Controller
             'PaymentTermId' => $request->input('PaymentTerm'),
             'OtherCostRequirements' => $request->input('OtherCostRequirement'),
             'Commission' => $request->input('Commision'),
-            // 'Country' => $request->input('Country'),
-            // 'Region' => $request->input('Region'),
-            // 'DueDate' => $request->input('DueDate'),
-            // 'ApplicationId' => $request->input('ApplicationId'),
-            // 'PotentialVolume' => $request->input('PotentialVolume'),
-            // 'TargetRawPrice' => $request->input('TargetRawPrice'),
-            // 'ProjectNameId' => $request->input('ProjectNameId'),
-            
-            // 'Priority' => $request->input('Priority'),
-            // 'AttentionTo' => $request->input('AttentionTo'),
-            // 'UnitOfMeasureId' => $request->input('UnitOfMeasureId'),
-            // 'CurrencyId' => $request->input('CurrencyId'),
-            // 'SampleName' => $request->input('SampleName'),
-            // 'Supplier' => $request->input('Supplier'),
-            // 'ObjectiveForRpeProject' => $request->input('ObjectiveForRpeProject'),
-            // 'Status' =>'10',
-            // 'Progress' => '10',
-            'Type' => $request->input('Type'),
-            'QuantityRequired' => $request->input('QuantityRequired'),
-            'ProductId' => $request->input('Product'),
-            'ProductRmc' => $request->input('Rmc'),
-            'IsalesShipmentCost' => $request->input('ShipmentCost'),
+            'Remarks' => $request->input('Remarks'),
 
+        ]);
+            PriceRequestProduct::create([
+                'Type' => $request->input('Type'),
+                'QuantityRequired' => $request->input('QuantityRequired'),
+                'ProductId' => $request->input('Product'),
+                'ProductRmc' => $request->input('Rmc'),
+                'IsalesShipmentCost' => $request->input('ShipmentCost'),
+                'IsalesFinancingCost' => $request->input('FinancingCost'),
+                'IsalesOthers' => $request->input('Others'),
+                'IsalesTotalBaseCost' => $request->input('TotalBaseCost'),
+                'IsalesBaseSellingPrice' => $request->input('BaseSellingPrice'),
+                'IsalesOfferedPrice' => $request->input('OfferedPrice'),
+                'IsalesMargin' => $request->input('Margin'),
+                'IsalesMarginPercentage' => $request->input('MarginPercent'),
         ]);
                     return redirect()->back()->with('success', 'Base prices updated successfully.');
     }

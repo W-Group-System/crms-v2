@@ -96,11 +96,13 @@
                     <span class="header-label">Product</span>
                     <hr class="form-divider">
                 </div>
-                <div class="row edit_srf">  
+                <div class="edit_srf">  
                     <div class="col-lg-12">
                         <button type="button" class="btn btn-danger editeditDeleteRowBtn" hidden style="float: right;">Delete Row</button>
                     </div>  
+                    <div id="productRows{{ $srf->Id }}">
                     @foreach ($srf->requestProducts as $index => $product )
+                    <div class="row product-row{{ $product->id }}" data-index="{{ $index }}">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label >{{ $product->id }}</label>
@@ -188,11 +190,12 @@
                                 <textarea class="form-control" name="DispositionRejectionDescription[]" placeholder="Enter DispositionRemarks">{{  $product->DispositionRejectionDescription }}</textarea>
                             </div>
                         </div>
-                        {{-- <div class="col-lg-12">
-                            <button type="button" class="btn btn-primary" id="editAddProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
-                            <button type="button" class="btn btn-info editDuplicateProductForm"  style="float: left; margin:5px;">Duplicate</button>
-                        </div> --}}
+                    </div>
                     @endforeach
+                </div>
+                <div class="col-lg-12">
+                    {{-- <button type="button" class="btn btn-primary editAddRowButton{{ $srf->Id }}">Add Row</button> --}}
+                </div>
                 </div>
                 <div class="modal-footer product-footer"></div>
                 <div class="form-header">
@@ -316,6 +319,157 @@
     $('.editClientId{{ $srf->Id }}').val(initialClientId).trigger('change');
     loadClientContacts(initialClientId, initialClientContactId);
 
+
+    // Jun
+
+// $('.editAddProductRowBtn').click(function() {
+//     let newRow = `
+//         <!-- Copy the structure of your product row here -->
+//         <div class="form-group">
+//             <label>Product Type:</label>
+//             <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type">
+//                 <option value="" disabled selected>Select Product Type</option>
+//                 <option value="1">Pure</option>
+//                 <option value="2">Blend</option>
+//             </select>
+//         </div>
+//         <!-- Add other product fields as needed -->
+//         <button type="button" class="btn btn-danger deleteRowBtn">Delete Row</button>
+//     </div>`;
+//     $('#productRows{{ $srf->Id }}').append(newRow);
+//     updateButtonsVisibility();
+// });
+
+// $('#editDuplicateProductForm').click(function() {
+//     let lastRow = $('#productRows{{ $srf->Id }} .product-row{{ $product->id }}').last();
+//     let clonedRow = lastRow.clone();
+//     rowIndex++;
+//     clonedRow.attr('data-index', rowIndex);
+//     clonedRow.find('input, select, textarea').val('');
+//     $('#productRows{{ $srf->Id }}').append(clonedRow);
+//     updateButtonsVisibility();
+// });
+
+// $(document).on('click', '.deleteRowBtn', function() {
+//     $(this).closest('.product-row{{ $product->id }}').remove();
+//     updateButtonsVisibility();
+// });
+
+// function updateButtonsVisibility() {
+//     if ($('#productRows{{ $srf->Id }} .product-row{{ $product->id }}').length > 1) {
+//         $('#editDuplicateProductForm').show();
+//     } else {
+//         $('#editDuplicateProductForm').hide();
+//     }
+//     $('.editAddProductRowBtn').show();
+// }
+
+// updateButtonsVisibility();
+
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    let rowIndex = {{ $srf->requestProducts->count() }}; // Start index after existing rows
+    console.log(rowIndex);
+
+    document.querySelector('.editAddRowButton{{ $srf->Id }}').addEventListener('click', function () {
+        rowIndex++;
+        const productRows = document.getElementById('productRows{{ $srf->Id }}');
+        
+        // Create a new product row element
+        const newRow = document.createElement('div');
+        newRow.classList.add('row', 'product-row' + rowIndex);
+        newRow.dataset.index = rowIndex;
+        newRow.innerHTML = `
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Product Type:</label>
+                    <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type">
+                        <option value="" disabled selected>Select Product Type</option>
+                        <option value="1">Pure</option>
+                        <option value="2">Blend</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Application:</label>
+                    <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application">
+                        <option value="" disabled selected>Select Application</option>
+                        @foreach ($productApplications as $application)
+                            <option value="{{ $application->id }}">{{ $application->Name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ProductCode">Product Code:</label>
+                    <input type="text" class="form-control" name="ProductCode[]" placeholder="Enter Product Code">
+                </div>
+                <div class="form-group">
+                    <label for="ProductDescription">Product Description:</label>
+                    <textarea class="form-control" name="ProductDescription[]" placeholder="Enter Product Description" rows="8"></textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="NumberOfPackages">Number Of Packages</label>
+                    <input type="number" class="form-control" name="NumberOfPackages[]">
+                </div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            <label for="Quantity">Quantity</label>
+                            <input type="number" class="form-control" name="Quantity[]">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Unit</label>
+                            <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit">
+                                <option value="1">Grams</option>
+                                <option value="2">Kilograms</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Label">Label:</label>
+                    <input type="text" class="form-control" name="Label[]">
+                </div>
+                <div class="form-group">
+                    <label for="RpeNumber">RPE Number:</label>
+                    <input type="text" class="form-control" name="RpeNumber[]">
+                </div>
+                <div class="form-group">
+                    <label for="CrrNumber">CRR Number:</label>
+                    <input type="text" class="form-control" name="CrrNumber[]">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="RemarksProduct">Remarks</label>
+                    <textarea class="form-control" name="RemarksProduct[]" placeholder="Enter Remarks"></textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Disposition:</label>
+                    <select class="form-control js-example-basic-single" name="Disposition[]" style="position: relative !important" title="Select Disposition">
+                        <option value="0">Select Disposition</option>
+                        <option value="1">No feedback</option>
+                        <option value="10">Accepted</option>
+                        <option value="20">Rejected</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Disposition Remarks</label>
+                    <textarea class="form-control" name="DispositionRejectionDescription[]" placeholder="Enter DispositionRemarks"></textarea>
+                </div>
+            </div>
+        `;
+
+        productRows.appendChild(newRow);
+    });
 });
 </script>
 

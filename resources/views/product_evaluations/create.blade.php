@@ -135,11 +135,10 @@
                         </select>
                             </div>
                         </div>
-                        
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="name">Supplier</label>
-                                <input type="text" class="form-control" id="Supplier" name="Supplier" placeholder="Enter CRR Number">
+                                <label for="name">Manufacturer</label>
+                                <input type="text" class="form-control" id="Manufacturer" name="Manufacturer" placeholder="Enter Manufacturer">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -153,6 +152,13 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">Supplier</label>
+                                <input type="text" class="form-control" id="Supplier" name="Supplier" placeholder="Enter CRR Number">
+                            </div>
+                        </div>
+                        <div class="col-lg-6"></div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Objective for RPE Project</label>

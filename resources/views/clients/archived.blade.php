@@ -9,8 +9,8 @@
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search Client" name="search" value="{{$search}}"> 
-                            <button class="btn btn-sm btn-info">Search</button>
+                            <input type="text" class="form-control" placeholder="Search Client" name="search" value="{{ $search }}"> 
+                            <button class="btn btn-sm btn-info" type="submit">Search</button>
                         </div>
                     </div>
                 </div>
@@ -30,29 +30,35 @@
                     <tbody>
                         @if($clients->count() > 0)
                             @foreach($clients as $client)
-                            <tr>
-                                <td>
-                                    <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
-                                        <i class="ti-eye"></i>
-                                    </button>
-                                    <button type="button" class="prospectClient btn btn-sm btn-warning" title="Prospect Client" data-id="{{$client->id}}"><i class="ti ti-control-record"></i></button>
-                                    <button type="button" class="deleteClient btn btn-sm btn-danger" title="Delete Client" data-id="{{$client->id}}"><i class="ti ti-trash"></i></button>
-                                </td>
-                                <td>
-                                    @if($client->Type == "1")
-                                        <label>Local</label>
-                                    @else
-                                        <label>International</label>
-                                    @endif
-                                </td>
-                                <td>{{$client->industry->Name ?? 'N/A'}}</td>
-                                <td>{{$client->BuyerCode ?? 'N/A'}}</td>
-                                <td>{{$client->Name ?? 'N/A'}}</td>
-                                <td>
-                                    {{ $client->userByUserId->full_name ?? $client->userById->full_name ?? 'N/A' }} / 
-                                    {{ $client->userByUserId2->full_name ?? $client->userById2->full_name ?? 'N/A' }}
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
+                                            <i class="ti-eye"></i>
+                                        </button>
+                                        <button type="button" class="prospectClient btn btn-sm btn-warning" title="Prospect Client" data-id="{{ $client->id }}">
+                                            <i class="ti ti-control-record"></i>
+                                        </button>
+                                        <button type="button" class="deleteClient btn btn-sm btn-danger" title="Delete Client" data-id="{{ $client->id }}">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        @if($client->Type == "1")
+                                            <label>Local</label>
+                                        @elseif($client->Type == "2")
+                                            <label>International</label>
+                                        @else
+                                            <label>N/A</label>
+                                        @endif
+                                    </td>
+                                    <td>{{ $client->industry->Name ?? 'N/A' }}</td>
+                                    <td>{{ $client->BuyerCode ?? 'N/A' }}</td>
+                                    <td>{{ $client->Name ?? 'N/A' }}</td>
+                                    <td>
+                                        {{ $client->userByUserId->full_name ?? $client->userById->full_name ?? 'N/A' }} / 
+                                        {{ $client->userByUserId2->full_name ?? $client->userById2->full_name ?? 'N/A' }}
+                                    </td>
+                                </tr>
                             @endforeach
                         @else
                             <tr>
@@ -62,15 +68,17 @@
                     </tbody>
                 </table>
             </div>
+
             {!! $clients->appends(['search' => $search])->links() !!}
+
             @php
                 $total = $clients->total();
                 $currentPage = $clients->currentPage();
                 $perPage = $clients->perPage();
-                
                 $from = ($currentPage - 1) * $perPage + 1;
                 $to = min($currentPage * $perPage, $total);
             @endphp
+
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
             </div>
