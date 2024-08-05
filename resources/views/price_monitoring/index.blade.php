@@ -34,8 +34,9 @@
                         @foreach ( $price_monitorings as $priceMonitoring)
                         <tr>
                             <td align="center">
+                                <a href="{{ url('price_monitoring/view/' . $priceMonitoring->id) }}" class="btn btn-sm btn-info btn-outline" title="View Price Request"><i class="ti-eye"></i></a>
                                 <button type="button" class="btn btn-sm btn-warning"
-                                    data-target="#editRpe{{ $priceMonitoring->id }}" data-toggle="modal" title='Edit New RPE'>
+                                    data-target="#editPriceRequest{{ $priceMonitoring->id }}" data-toggle="modal" title='Edit Price Request'>
                                     <i class="ti-pencil"></i>
                                 </button>  
                                 <button type="button" class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete({{ $priceMonitoring->id }})" title='Delete Request'>
@@ -54,7 +55,16 @@
                                         {{ $priceMonitoring->Status }}
                                     @endif
                             </td>
-                            <td>{{ optional($priceMonitoring->progressStatus)->name }}</td>
+                            <td>
+                                {{ optional($priceMonitoring->progressStatus)->name }}
+                                {{-- @if($priceMonitoring->Progress == 10)
+                                        For Approval
+                                    @elseif($priceMonitoring->Progress == 30)
+                                        Waiting For Disposition
+                                    @else
+                                        {{ $priceMonitoring->Progress }}
+                                    @endif --}}
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -79,7 +89,46 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
-   
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('/delete_price_request') }}/" + id, 
+                    method: 'DELETE',
+                    data: {
+                        '_token': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            'Deleted!',
+                            'The record has been deleted.',
+                            'success'
+                        ).then(() => {
+                            location.reload(); 
+                        });
+                    },
+                    error: function() {
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }   
 </script>
 @include('price_monitoring.create')
+@foreach ( $price_monitorings as $priceMonitoring)
+@include('price_monitoring.edit')
+@endforeach
 @endsection
