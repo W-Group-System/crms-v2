@@ -113,49 +113,42 @@ class ClientController extends Controller
     // Archived List
     public function archived(Request $request)
     {   
-        // $clients = Client::with(['industry'])->where('Status', '5')->orderBy('Id', 'desc')->get();
-        // if(request()->ajax())   
-        // {
-        //     return datatables()->of($clients)
-        //             ->addColumn('action', function ($data) {
-        //                 $viewButton = '<a type="button" href="' . route("client.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
-        //                 $editButton = '<a type="button" href="' . route("client.edit", ["id" => $data->id]) . '" name="edit" id="' . $data->id . '" class="edit btn btn-primary">Edit</a>';
-        //                 return $viewButton . '&nbsp;&nbsp;' . $editButton;
-        //             })
-        //             ->rawColumns(['action'])
-        //             ->make(true);
-        // }
-        // return view('clients.archived', compact('clients')); 
+        // Save the current URL in session (if needed for page tracking)
         $request->session()->put('last_client_page', url()->full());
+
+        // Retrieve search term from the request
         $search = $request->input('search');
+
+        // Query clients with eager loading and search functionality
         $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
-                        ->where('Status', '5')
-                        ->where(function ($query) use ($search) {
-                            $query->where('Type', 'LIKE', '%' . $search . '%')
-                                ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')
-                                ->orWhere('Name', 'LIKE', '%' . $search . '%')
-                                ->orWhereHas('userById', function ($q) use ($search) {
-                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                                })
-                                ->orWhereHas('userByUserId', function ($q) use ($search) {
-                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                                })
-                                ->orWhereHas('userByUserId2', function ($q) use ($search) {
-                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                                })
-                                ->orWhereHas('industry', function ($q) use ($search) {
-                                    $q->where('Name', 'LIKE', '%' . $search . '%');
-                                });        
-                        })
-                        ->orderBy('id', 'desc')
-                        ->paginate(10);
-        
+            ->where('Status', '5')  // Filter by status
+            ->where(function ($query) use ($search) {
+                $query->whereRaw('CAST(Type AS CHAR) LIKE ?', ['%' . $search . '%'])  // Search in Type field
+                    ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')  // Search in BuyerCode field
+                    ->orWhere('Name', 'LIKE', '%' . $search . '%')  // Search in Name field
+                    ->orWhereHas('userById', function ($q) use ($search) {
+                        $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userById
+                    })
+                    ->orWhereHas('userByUserId', function ($q) use ($search) {
+                        $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId
+                    })
+                    ->orWhereHas('userByUserId2', function ($q) use ($search) {
+                        $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId2
+                    })
+                    ->orWhereHas('industry', function ($q) use ($search) {
+                        $q->where('Name', 'LIKE', '%' . $search . '%');  // Search in related industry
+                    });
+            })
+            ->orderBy('id', 'desc')  // Sort by ID in descending order
+            ->paginate(10);  // Paginate results with 10 items per page
+
+        // Return view with search term and paginated client data
         return view('clients.archived', [
             'search' => $search,
             'clients' => $clients,
         ]);
     }
-    
+
     // Create
     public function create()
     {
@@ -355,17 +348,21 @@ class ClientController extends Controller
     // View
     public function view($id) 
     {
-        $data = Client::with(['
-                activities', 
+        $data = Client::with([
+                'activities', 
                 'srfClients', 
                 'crrClients', 
                 'rpeClients', 
                 'srfClientFiles', 
                 'sampleRequests',
                 'crrClientFiles',
-                'customerRequirements'
+                'customerRequirements',
+                'rpeClientFiles',
+                'productEvaluations',
+                'productFiles',
+                'productFiles.product' 
         ])->findOrFail($id);
-        // dd($data);
+        // dd($data)->take(10);
         $addresses = Address::where('CompanyId', $id)->get();
         $users = User::all();
         $payment_terms = PaymentTerms::find($data->PaymentTermId);
@@ -391,10 +388,13 @@ class ClientController extends Controller
         $sampleRequests = $data->sampleRequests;
         $crrClientFiles = $data->crrClientFiles;
         $customerRequirements = $data->customerRequirements;
+        $rpeClientFiles = $data->rpeClientFiles;
+        $productEvaluations = $data->productEvaluations;
+        $productFiles = $data->productFiles;
 
         return view('clients.view', compact(
             'data', 'primaryAccountManager', 'secondaryAccountManager', 'payment_terms', 
-            'regions', 'countries', 'areas', 'business_types', 'industries', 'addresses', 'activities', 'srfClients', 'crrClients', 'rpeClients', 'srfClientFiles', 'sampleRequests', 'crrClientFiles', 'customerRequirements'
+            'regions', 'countries', 'areas', 'business_types', 'industries', 'addresses', 'activities', 'srfClients', 'crrClients', 'rpeClients', 'srfClientFiles', 'sampleRequests', 'crrClientFiles', 'customerRequirements', 'rpeClientFiles', 'productEvaluations', 'productFiles'
         ));
     }
 

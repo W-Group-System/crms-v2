@@ -16,4 +16,9 @@ class ProductFiles extends Model
     {
         return $this->belongsTo(Client::class, 'ClientId');
     }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'ProductId', 'id');
+    }
 }
