@@ -135,6 +135,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/request_product_evaluation', 'RequestProductEvaluationController@index')->name('product_evaluation.index');
     Route::post('new_product_evaluation', 'RequestProductEvaluationController@store')->name('product_evaluation.store'); 
     Route::post('product_evaluation/edit/{id}', 'RequestProductEvaluationController@update');
+    Route::get('product_evaluation/view/{id}', 'RequestProductEvaluationController@view');
     Route::delete('request_evaluation/{id}', 'RequestProductEvaluationController@destroy');
 
     // Sample Request 
@@ -171,6 +172,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Price Monitoring 
     Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
     Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');
+    Route::post('/price_monitoring', 'PriceMonitoringController@store');
 
     // Customer Complaint 
     Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');

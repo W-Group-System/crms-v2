@@ -4,15 +4,18 @@ namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
-class PriceMonitoring extends Model
+class PriceRequestProduct extends Model
 {
     use SoftDeletes;
-    protected $table = "pricerequestforms";
+    protected $table = "pricerequestproducts";
+    protected $primaryKey = "Id";
 
-    
+    const UPDATED_AT = "ModifiedDate";
+    const CREATED_AT = "CreatedDate";
+
     protected $fillable = [
-        'PrfNumber', 'PrimarySalesPersonId', 'SecondarySalesPersonId', 'DateRequested', 'ClientId', 'PriceRequestPurpose', 'ShipmentTerm', 'PaymentTermId',
-        'OtherCostRequirements', 'Commission', 'Remarks'
+        'Type', 'QuantityRequired', 'ProductId', 'ProductRmc', 'IsalesShipmentCost', 'IsalesFinancingCost', 'IsalesOthers', 'IsalesTotalBaseCost',
+        'IsalesBaseSellingPrice', 'IsalesOfferedPrice', 'IsalesMargin', 'IsalesMarginPercentage'
     ];
     public function client()
     {

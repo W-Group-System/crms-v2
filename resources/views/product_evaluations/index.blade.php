@@ -37,6 +37,7 @@
                         @foreach ( $request_product_evaluations as $productEvaluation)
                         <tr>
                             <td align="center">
+                                <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
                                 <button type="button" class="btn btn-sm btn-warning"
                                     data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE'>
                                     <i class="ti-pencil"></i>

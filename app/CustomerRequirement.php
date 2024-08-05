@@ -8,6 +8,9 @@ class CustomerRequirement extends Model
 {
     use SoftDeletes;
     protected $table = "customerrequirements";
+
+    const CREATED_AT = "DateCreated";
+
     protected $fillable = [
         'CrrNumber', 'CreatedDate', 'ClientId', 'Priority', 'ApplicationId', 'DueDate', 'PotentialVolume', 'UnitOfMeasureId',
         'PrimarySalesPersonId', 'TargetPrice', 'CurrencyId', 'SecondarySalesPersonId', 'Competitor', 'CompetitorPrice',
