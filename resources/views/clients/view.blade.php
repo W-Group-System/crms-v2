@@ -118,14 +118,14 @@
                         </div>
                     </div>
                     <div class="form-group row mb-2">
-                        <label class="col-sm-3 col-form-label"><b>Industry</b></label>
-                        <div class="col-sm-3">
+                        <label class="col-sm-3 col-form-label mb-2"><b>Industry</b></label>
+                        <div class="col-sm-3 mb-2">
                             <label>{{ $industries->Name ?? 'N/A' }}</label>
                         </div>
                         @if($addresses->isNotEmpty())
                             @foreach($addresses as $address)
-                            <label class="col-sm-3 col-form-label"><b>{{ $address->AddressType }}</b></label>
-                            <div class="col-sm-3">
+                            <label class="col-sm-3 col-form-label mb-2"><b>{{ $address->AddressType }}</b></label>
+                            <div class="col-sm-3 mb-2">
                                 <label>{{ $address->Address }}</label>
                             </div>
                             @endforeach
@@ -163,17 +163,9 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
-                    <div class="form-group row mb-2">
-                        <div class="col-md-6">
-                            <button class="btn btn-success mb-2" type="button">Export</button>
-                        </div>
-                        <div class="col-md-6" align="right">
-                            <button class="btn btn-primary mb-2" type="button" data-toggle="modal" data-target="#contactsModal">Add Contacts</button>
-                        </div>
-                    </div>
                     @include('clients.add_contacts')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
+                        <table class="table table-striped table-bordered table-hover" id="contact-table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Action</th>
@@ -226,17 +218,9 @@
                     @endforeach
                 </div>
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
-                    <div class="form-group row mb-2">
-                        <div class="col-md-6">
-                            <button class="btn btn-success mb-2" type="button">Export</button>
-                        </div>
-                        <div class="col-md-6" align="right">
-                            <button class="btn btn-primary mb-2" type="button" data-toggle="modal" data-target="#filesModal">Add Files</button>
-                        </div>
-                    </div>
                     @include('clients.add_files')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
+                        <table class="table table-striped table-bordered table-hover" id="files-table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Action</th>
@@ -268,7 +252,7 @@
                 </div>
                 <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
+                        <table class="table table-striped table-bordered table-hover" id="transaction-table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -310,19 +294,13 @@
                                         </tr>
                                     @endforeach
                                 @endif
-
-                                @if($srfClients->isEmpty() && $crrClients->isEmpty() && $rpeClients->isEmpty())
-                                    <tr>
-                                        <td colspan="3" class="text-center">No transactions available</td>
-                                    </tr>
-                                @endif
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
+                        <table class="table table-striped table-bordered table-hover" id="activities-table" width="100%">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -344,9 +322,37 @@
                         </table>
                     </div>
                 </div>
+                <div class="tab-pane fade" id="productFiles" role="tabpanel" aria-labelledby="productFiles-tab">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="productFiles-table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Product</th>
+                                    <th>File</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($productFiles as $productFile)
+                                    <tr>
+                                        <td>{{ $productFile->Name ?? 'N/A' }}</td>
+                                        <td>{{ $productFile->Description ?? 'N/A' }}</td>
+                                        <td>{{ $productFile->product->code ?? 'N/A' }}</td>
+                                        <td>
+                                            <a href="{{ asset($productFile->Path) }}" target="_blank">
+                                                Download File
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="tab-pane fade" id="transactionFiles" role="tabpanel" aria-labelledby="transactionFiles-tab">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover dataTable" width="100%">
+                        <table class="table table-striped table-bordered table-hover" id="transactionFiles-table" width="100%">
                             <thead>
                                 <tr>
                                     <th width="35">Name</th>
@@ -355,23 +361,54 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if($srfClientFiles->isNotEmpty())
-                                    @foreach ($srfClientFiles as $file)
+                                @if($crrClientFiles->isNotEmpty())
+                                    @foreach ($crrClientFiles as $crrFile)
                                         @php
-                                            $sampleRequest = $sampleRequests->firstWhere('Id', $file->SampleRequestId);
+                                            $customerRequirement = $customerRequirements->firstWhere('id', $crrFile->CustomerRequirementId);
                                         @endphp
                                         <tr>
-                                            <td>{{ $file->Name }}</td>
-                                            <td>{{ $sampleRequest->SrfNumber ?? 'N/A' }}</td>
+                                            <td>{{ $crrFile->Name }}</td>
+                                            <td>{{ $customerRequirement->CrrNumber ?? 'N/A' }}</td>
                                             <td>
-                                                <a href="{{ asset($file->Path) }}" target="_blank">
-                                                    {{ $file->Path }}
+                                                <a href="{{ asset($crrFile->Path) }}" target="_blank">
+                                                   Download File
                                                 </a>
                                             </td>
                                         </tr>
                                     @endforeach
                                 @endif
-                               
+                                @if($srfClientFiles->isNotEmpty())
+                                    @foreach ($srfClientFiles as $srfFile)
+                                        @php
+                                            $sampleRequest = $sampleRequests->firstWhere('Id', $srfFile->SampleRequestId);
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $srfFile->Name }}</td>
+                                            <td>{{ $sampleRequest->SrfNumber ?? 'N/A' }}</td>
+                                            <td>
+                                                <a href="{{ asset($srfFile->Path) }}" target="_blank">
+                                                    Download File
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                                @if($rpeClientFiles->isNotEmpty())
+                                    @foreach ($rpeClientFiles as $rpeFile)
+                                        @php
+                                            $productEvaluation = $productEvaluations->firstWhere('id', $rpeFile->RequestProductEvaluationId);
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $rpeFile->Name }}</td>
+                                            <td>{{ $productEvaluation->RpeNumber ?? 'N/A' }}</td>
+                                            <td>
+                                                <a href="{{ asset($rpeFile->Path) }}" target="_blank">
+                                                   Download File
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -384,7 +421,12 @@
     </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <style>
     #form_product {
         padding: 20px 20px;
@@ -395,7 +437,6 @@
 </style>
 <script>
     $(document).ready(function() {
-        
         
         $('#form_client').on('submit', function(event) {
             event.preventDefault();
@@ -636,8 +677,36 @@
             });
         });
 
-        $('.dataTable').DataTable();
+        // $('.dataTable').DataTable();
     });
+
+    function initializeDataTable(selector, filename, title) {
+        new DataTable(selector, {
+            destroy: true, // Destroy and re-initialize DataTable on each call
+            pageLength: 25,
+            layout: {
+                topStart: {
+                    buttons: [
+                        'copy',
+                        {
+                            extend: 'excel',
+                            text: 'Export to Excel',
+                            filename: filename, // Set the custom file name
+                            title: title // Set the custom title
+                        }
+                    ]
+                }
+            }
+        });
+    }
+
+    // Initialize all DataTables with the corresponding configurations
+    initializeDataTable('#contact-table', 'Contacts', 'Contacts');
+    initializeDataTable('#files-table', 'Files', 'Files');
+    initializeDataTable('#transaction-table', 'Transactions', 'Transactions');
+    initializeDataTable('#activities-table', 'Activities', 'Activities');
+    initializeDataTable('#productFiles-table', 'Product Files', 'Product Files');
+    initializeDataTable('#transactionFiles-table', 'Transaction Files', 'Transaction Files');
 
     $('#table_address thead').on('click', '.addRow', function(){
         var tr = '<tr>' +
