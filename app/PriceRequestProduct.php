@@ -14,7 +14,7 @@ class PriceRequestProduct extends Model
     const CREATED_AT = "CreatedDate";
 
     protected $fillable = [
-        'Type', 'QuantityRequired', 'ProductId', 'ProductRmc', 'IsalesShipmentCost', 'IsalesFinancingCost', 'IsalesOthers', 'IsalesTotalBaseCost',
+        'PriceRequestFormId','Type', 'QuantityRequired', 'ProductId', 'ProductRmc', 'IsalesShipmentCost', 'IsalesFinancingCost', 'IsalesOthers', 'IsalesTotalBaseCost',
         'IsalesBaseSellingPrice', 'IsalesOfferedPrice', 'IsalesMargin', 'IsalesMarginPercentage'
     ];
     public function client()
@@ -26,8 +26,15 @@ class PriceRequestProduct extends Model
     {
         return $this->belongsTo(ProductApplication::class, 'ApplicationId', 'id');
     }
+
+    public function products() 
+    {
+        return $this->belongsTo(Product::class, 'ProductId', 'id');
+    }
+    
     public function progressStatus()
     {
         return $this->belongsTo(SrfProgress::class, 'Progress', 'id');
     }
+    
 }
