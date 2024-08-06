@@ -7,6 +7,7 @@ use App\CurrencyExchange;
 use App\CustomerRequirement;
 use App\Product;
 use App\ProductMaterialsComposition;
+use App\RequestProductEvaluation;
 use Illuminate\Support\Facades\DB;
 
 class Helpers {
@@ -113,5 +114,12 @@ class Helpers {
         $product = Product::where('code', $code)->first();
         
         return $product ? $product->id : null;
+    }
+
+    public static function productRps($code)
+    {
+        $rpe = RequestProductEvaluation::where('RpeResult', 'LIKE', '%'.$code.'%')->get();
+
+        return $rpe;
     }
 }
