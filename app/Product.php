@@ -3,9 +3,12 @@
 namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Product extends Model
+class Product extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     use SoftDeletes;
     protected $table = "products";
     protected $fillable = [
@@ -58,10 +61,10 @@ class Product extends Model
         return $this->hasMany(UserEventLogs::class, 'Value', 'code');
     }
 
-    public function productRps()
-    {
-        return $this->hasMany(RequestProductEvaluation::class, 'DdwNumber', 'ddw_number');
-    }
+    // public function productRps()
+    // {
+    //     return $this->hasMany(RequestProductEvaluation::class, 'DdwNumber', 'ddw_number');
+    // }
 
     public function sampleRequestProduct()
     {

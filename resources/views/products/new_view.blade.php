@@ -31,12 +31,15 @@
                 use App\Helpers\Helpers;
                 
                 $rmc = Helpers::rmc($data->productMaterialComposition, $data->id);
+                $identicalComposition = Helpers::identicalComposition($data->productMaterialComposition, $data->id);
+                $customerRequirements = Helpers::customerRequirements($data->code);
+                $productRps = Helpers::productRps($data->code);
             @endphp
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->ddw_number }}</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials:</b></label>
+                    <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials Cost:</b></label>
                     <label class="col-sm-2 col-form-label"><strong>USD</strong> {{number_format($rmc, 2)}}</label>
                 </div>
                 <div class="form-group row">
@@ -176,7 +179,7 @@
 
                     @include('products.edit_all_product_specification')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                        <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Parameter</th>
@@ -217,7 +220,7 @@
                     @include('products.add_pds')
                     
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                        <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Product</th>
@@ -259,7 +262,7 @@
                     @include('products.add_file')
                     @include('products.edit_all_product_files')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="specification_table" width="100%">
+                        <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -316,7 +319,7 @@
                 </div>
                 <div class="tab-pane fade " id="rmc" role="tabpanel" aria-labelledby="rmc-tab">
                     <div class="table-responsive">
-                        <table class="table table-hover table-bordered table-striped">
+                        <table class="table table-hover table-bordered table-striped tables" width="100%">
                             <thead>
                                 <tr>
                                     <th>Effective Date</th>
@@ -330,13 +333,99 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">...</div>
+                <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped tables" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Transaction</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($customerRequirements)
+                                    @foreach ($customerRequirements as $cr)
+                                        <tr>
+                                            <td>Customer Requirement</td>
+                                            <td>
+                                                <a href="{{url('view_customer_requirement/'.$cr->id)}}" target="_blank">
+                                                    {{$cr->CrrNumber}}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                                @if($productRps)
+                                    @foreach ($productRps as $rps)
+                                        <tr>
+                                            <td>Request Product Evaluation</td>
+                                            <td>
+                                                <a href="{{url('product_evaluation/view/'.$rps->id)}}" target="_blank">
+                                                    {{$rps->RpeNumber}}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                                @if($data->sampleRequestProduct)
+                                    @foreach ($data->sampleRequestProduct as $item)
+                                        <tr>
+                                            <td>Sample Request</td>
+                                            <td>
+                                                <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
+                                                    {{$item->sampleRequest->SrfNumber}}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="tab-pane fade" id="identical" role="tabpanel" aria-labelledby="identical-tab">
-                    ...
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover tables" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>DDW Number</th>
+                                    <th>Code</th>
+                                    <th>Created By</th>
+                                    <th>Date Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($identicalComposition as $ic)
+                                    <tr>
+                                        <td>{{$ic->products->ddw_number}}</td>
+                                        <td>
+                                            @if($ic->products->status == 1)
+                                                <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @elseif($ic->products->status == 2)
+                                                <a href="{{url('view_new_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @elseif($ic->products->status == 4)
+                                                <a href="{{url('view_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @elseif($ic->products->status == 5)
+                                                <a href="{{url('view_archive_products/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($ic->products->userByUserId)
+                                                {{$ic->products->userByUserId->full_name}}
+                                            @else
+                                                {{$ic->products->userById->full_name}}
+                                            @endif
+                                        </td>
+                                        <td>{{date('M d, Y', strtotime($ic->products->created_at))}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="tab-pane fade" id="historicalLogs" role="tabpanel" aria-labelledby="identical-tab">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped table-bordered">
+                        <table class="table table-hover table-striped table-bordered tables" width="100%">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -353,10 +442,6 @@
                                             <td>{{$logs->Details}}</td>
                                         </tr>
                                     @endforeach
-                                @else
-                                    <tr>
-                                        <td colspan="3">No history available.</td>
-                                    </tr>
                                 @endif
                             </tbody>
                         </table>
@@ -396,71 +481,20 @@
         padding: 15px;
     }
 </style>
-
-{{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script> --}}
-
-{{-- <script>
-    $(document).ready(function(){
-        $(document).on('click', '.submit_approval', function(){
-            product_id = $(this).attr('id');
-            $('#confirmModal').modal('show');
-            $('.modal-title').text("Submit for Approval");
-        });
-
-        dataTableInstance = new DataTable('#material_table', {
-            destroy: true, // Destroy and re-initialize DataTable on each call
-            processing: true,
-            serverSide: true, // Ensure server-side processing is enabled
-            pageLength: 25,
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy',
-                        {
-                            extend: 'excel',
-                            text: 'Export to Excel',
-                            filename: 'Material', // Set the custom file name
-                            title: 'Material' // Set the custom title
-                        }
-                    ]
-                }
-            },
-            ajax: {
-                url: "{{ route('activities.index') }}"
-            },
-            columns: [
-                {
-                    data: 'ActivityNumber',
-                    name: 'ActivityNumber'
-                },
-                {
-                    data: 'ScheduleFrom',
-                    name: 'ScheduleFrom',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: [0, 1], // Target the Title column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
-    });   
-</script> --}}
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     $(document).ready(function() {
+        new DataTable('.tables', {
+            destroy: true,
+            processing: true,
+            pageLength: 10,
+            ordering: false
+        });
 
         $("#addBtn").on('click', function() {
             

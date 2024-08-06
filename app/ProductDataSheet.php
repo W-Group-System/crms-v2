@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ProductDataSheet extends Model
+class ProductDataSheet extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+    
     protected $table = "productdatasheets";
     protected $primaryKey = "Id";
 
