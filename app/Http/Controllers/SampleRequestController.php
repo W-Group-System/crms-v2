@@ -459,8 +459,6 @@ class SampleRequestController extends Controller
         return redirect()->back()->with('success', 'Sample Request updated successfully');
     }
     
-
-
     public function approveSrfSales($id)
     {
         $approveSrfSales = SampleRequest::find($id);

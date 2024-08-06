@@ -173,6 +173,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
     Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');
     Route::post('/price_monitoring', 'PriceMonitoringController@store');
+    Route::post('price_monitoring/edit/{id}', 'PriceMonitoringController@update');
+    Route::delete('delete_price_request/{id}', 'PriceMonitoringController@delete');
+    Route::get('price_monitoring/view/{id}', 'PriceMonitoringController@view');
 
     // Customer Complaint 
     Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');

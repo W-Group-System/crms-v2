@@ -8,11 +8,11 @@ class PriceMonitoring extends Model
 {
     use SoftDeletes;
     protected $table = "pricerequestforms";
-
+    // const CREATED_AT = "CreatedDate";
     
     protected $fillable = [
         'PrfNumber', 'PrimarySalesPersonId', 'SecondarySalesPersonId', 'DateRequested', 'ClientId', 'PriceRequestPurpose', 'ShipmentTerm', 'PaymentTermId',
-        'OtherCostRequirements', 'Commission', 'Remarks'
+        'OtherCostRequirements', 'Commission', 'Remarks', 'Progress', 'Status', 'IsWithCommission'
     ];
     public function client()
     {
@@ -26,5 +26,23 @@ class PriceMonitoring extends Model
     public function progressStatus()
     {
         return $this->belongsTo(SrfProgress::class, 'Progress', 'id');
+    }
+    
+    public function requestPriceProducts()
+    {
+        return $this->hasMany(PriceRequestProduct::class, 'PriceRequestFormId', 'id');
+    }
+
+    public function primarySalesPerson()
+    {
+        return $this->belongsTo(User::class, 'PrimarySalesPersonId', 'user_id');
+    }
+    public function secondarySalesPerson()
+    {
+        return $this->belongsTo(User::class, 'SecondarySalesPersonId', 'user_id');
+    }
+    public function paymentterms() 
+    {
+        return $this->belongsTo(PaymentTerms::class, 'PaymentTermId', 'id');
     }
 }
