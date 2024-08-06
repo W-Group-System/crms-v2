@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ProductMaterialsComposition extends Model
+class ProductMaterialsComposition extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     protected $table = "productmaterialcompositions";
     public $timestamps = false;
 
