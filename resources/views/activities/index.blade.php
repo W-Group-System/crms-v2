@@ -5,190 +5,92 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Activity List
-            <button type="button" class="btn btn-md btn-primary" name="add_activity" id="add_activity">Add Activity</button>
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#addActivity">Add Activity</button>
+            @include('activities.new_activities')
             </h4>
             <div class="form-group">
-                <label>Show : </label>
-                <label class="checkbox-inline">
-                    <input checked="checked" data-val="true" id="IsShowOpen" name="IsShowOpen" type="checkbox" value="true"><input name="IsShowOpen" type="hidden" value="false"> Open
-                </label>
-                <label class="checkbox-inline">
-                    <input data-val="true" id="IsShowClosed" name="IsShowClosed" type="checkbox" value="true"><input name="IsShowClosed" type="hidden" value="false"> Closed
-                </label>
-            </div>
-            <table class="table table-striped table-bordered table-hover" id="activity_table" width="100%">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Schedule (Y-M-D)</th>
-                        <th>Client</th>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="formActivity" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Activity</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" id="form_activity" enctype="multipart/form-data" action="">
-                    <span id="form_result"></span>
-                    @csrf
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Type</label>
-                                <select class="form-control js-example-basic-single" name="Type" id="Type" style="position: relative !important" title="Select Type">
-                                    <option value="" disabled selected>Select Type</option>
-                                    <option value="10">Task</option>
-                                    <option value="20">Call</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Related To</label>
-                                <select class="form-control js-example-basic-single" name="RelatedTo" id="RelatedTo" style="position: relative !important" title="Select Type">
-                                    <option value="" disabled selected>Select Related Entry Type</option>
-                                    <option value="10">Customer Requirement</option>
-                                    <option value="20">Request Product Evaluation</option>
-                                    <option value="30">Sample Request</option>
-                                    <option value="35">Price Request</option>
-                                    <option value="40">Complaint</option>
-                                    <option value="50">Feedback</option>
-                                    <option value="60">Collection</option>
-                                    <option value="70">Account Targeting</option>
-                                    <option value="91">Follow-up Sample/Projects</option>
-                                    <option value="92">Sample Dispatch</option>
-                                    <option value="93">Technical Presentation</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Client</label>
-                                <select class="form-control js-example-basic-single" name="ClientId" id="ClientId" style="position: relative !important" title="Select Client">
-                                    <option value="" disabled selected>Select Client</option>
-                                    @foreach($clients as $client)
-                                        <option value="{{ $client->id }}">{{ $client->Name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Transaction Number</label>
-                                <input type="text" class="form-control" id="TransactionNumber" name="TransactionNumber" placeholder="Enter Transaction Number">
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Contact</label>
-                                <select class="form-control js-example-basic-single" name="ClientContactId" id="ClientContactId" style="position: relative !important" title="Select Contact">
-                                    <option value="" disabled selected>Select Contact</option>
-                                </select>
-                            </div>
-                        </div>
-                        <?php $today = date('Y-m-d'); ?>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Schedule</label>
-                                <input type="date" class="form-control" id="ScheduleFrom" name="ScheduleFrom" value="<?php echo $today; ?>">
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Primary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="PrimaryResponsibleUserId" id="PrimaryResponsibleUserId" style="position: relative !important" title="Select Contact">
-                                    <option value="" disabled selected>Select Primary Responsible</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->id }}" 
-                                            {{ $currentUser && ($currentUser->id == $user->id || $currentUser->user_id == $user->id) ? 'selected' : '' }}>
-                                            {{ $user->full_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Due Date</label>
-                                <input type="date" class="form-control" id="ScheduleTo" name="ScheduleTo">
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Secondary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="SecondaryResponsibleUserId" id="SecondaryResponsibleUserId" style="position: relative !important" title="Select Contact">
-                                    <option value="" disabled selected>Select Secondary Responsible</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->id }}">
-                                            {{ $user->full_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Title</label>
-                                <input type="text" class="form-control" id="Title" name="Title" placeholder="Enter Title">
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label>Attachments</label>
-                                <input type="file" class="form-control" name="path[]" multiple>
-                                <small><b style="color:red">Note:</b> The file must be a type of: jpg, jpeg, png, pdf, doc, docx.</small>
-                                <div class="col-sm-9">
-                                    <ul id="fileList"></ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 edit-status" style="display: none;">
-                            <div class="form-group">
-                                <label>Status</label>
-                                <select class="form-control js-example-basic-single" name="Status" id="Status" style="position: relative !important" title="Select Type">
-                                    <option value="" disabled selected>Select Status</option>
-                                    <option value="10">Open</option>
-                                    <option value="20">Closed</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 edit-status" style="display: none;">
-                            <div class="form-group">
-                                <label>Date Closed</label>
-                                <input type="date" class="form-control" id="DateClosed" name="DateClosed">
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                            <label for="Description" class="form-label">Description</label>
-                            <textarea class="form-control" id="Description" name="Description" rows="3" placeholder="Enter Description"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="hidden" name="action" id="action" value="Save">
-                        <input type="hidden" name="hidden_id" id="hidden_id">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
-                    </div>
+                <form method="GET" id="checkboxForm">
+                    <label>Show : </label>
+                    <label class="checkbox-inline">
+                        <input name="status" class="activity_status" type="checkbox" value="10" @if($status == null || $status == 10) checked @endif> Open
+                    </label>
+                    <label class="checkbox-inline">
+                        <input name="status" class="activity_status" type="checkbox" value="20" @if($status == 20) checked @endif> Closed
+                    </label>
                 </form>
             </div>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-5">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search Activity" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            @include('components.error')
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="activity_table" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Activity Number</th>
+                            <th>Schedule (Y-M-D)</th>
+                            <th>Client</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($activities as $a)
+                            <tr>
+                                <td>
+                                    <a href="{{url('view_activity/'.$a->id)}}" class="btn btn-info btn-sm" title="View Activity" target="_blank">
+                                        <i class="ti-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-warning btn-sm" title="Edit Activity" data-toggle="modal" data-target="#editActivity-{{$a->id}}">
+                                        <i class="ti-pencil"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm delete_activity" title="Delete Activity" data-id="{{$a->id}}">
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                </td>
+                                <td>{{$a->ActivityNumber}}</td>
+                                <td>{{$a->ScheduleFrom}}</td>
+                                <td>{{$a->client->Name}}</td>
+                                <td>{{$a->Title}}</td>
+                                <td>
+                                    @if($a->Status == 10)
+                                        <div class="badge badge-success">Open</div>
+                                    @else
+                                        <div class="badge badge-danger">Close</div>
+                                    @endif
+                                </td>
+                            </tr>
+
+                            @include('activities.edit_activities')
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {!! $activities->appends(['search' => $search])->links() !!}
+            @php
+                    $total = $activities->total();
+                    $currentPage = $activities->currentPage();
+                    $perPage = $activities->perPage();
+                    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+            <p class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
         </div>
     </div>
 </div>
+
 
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
@@ -198,7 +100,7 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 
 
-<script>
+{{-- <script>
     $(document).ready(function(){
         function fetchData() {
             var isShowOpen = $('#IsShowOpen').is(':checked') ? 'true' : 'false';
@@ -456,5 +358,80 @@
         });
 
     });
+</script> --}}
+<script>
+    $(document).ready(function() {
+        $("input:checkbox").on('click', function() {
+            var $box = $(this);
+
+            if ($box.is(":checked")) {
+                var group = "input:checkbox[name='" + $box.attr("name") + "']";
+
+                $(group).prop("checked", false);
+                $box.prop("checked", true);
+            } else {
+                $box.prop("checked", false);
+            }
+        });
+
+        $('.activity_status').on('change', function() {
+            $("#checkboxForm").submit();
+        })
+        
+        $(".ClientId").on('change', function() {
+            
+            var client_id = $(this).val();
+
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_client_contact')}}",
+                data: {
+                    client_id: client_id
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res)
+                {
+                    $('.ClientContactId').html(res)
+                }
+            })
+        })
+
+        $('.delete_activity').on('click', function() {
+            var id = $(this).data('id');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Delete"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url('delete_activity')}}",
+                        data: {
+                            id: id
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(res) {
+                            Swal.fire({
+                                title: res.message,
+                                icon: "success"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        }
+                    })
+                }
+            });
+        })
+    })
 </script>
 @endsection

@@ -7,10 +7,12 @@ use App\Client;
 use App\Contact;
 use App\FileActivity;
 use App\User;
-use Auth;
+
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Collective\Html\FormFacade as Form;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ActivityController extends Controller
 {
@@ -18,181 +20,143 @@ class ActivityController extends Controller
     public function index(Request $request)
     {   
         $activities = Activity::with(['client'])
-            ->when($request->isShowOpen == 'true' && $request->isShowClosed == 'true', function ($query) {
-                return $query; // No filtering needed
+            ->where('status', 10)
+            ->when($request->status, function($query)use($request) {
+                $query->where('status', $request->status)->orWhere('status', $request->status);
             })
-            ->when($request->isShowOpen == 'true' && $request->isShowClosed == 'false', function ($query) {
-                return $query->where('Status', 10); // Only Open
-            })
-            ->when($request->isShowOpen == 'false' && $request->isShowClosed == 'true', function ($query) {
-                return $query->where('Status', '!=', 10); // Only Closed
+            ->when($request->search, function($query)use($request) {
+                $query->where('ActivityNumber', $request->search)
+                    ->orWhere('ScheduleFrom', $request->search)
+                    ->orWhereHas('client', function($query)use($request) {
+                        $query->where('Name', $request->search);
+                    })
+                    ->orWhere('Title', $request->search);
             })
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(10);
 
         $clients = Client::all();
         $contacts = Contact::all();
         $users = User::where('is_active', '1')->get();
         $currentUser = Auth::user();
+        $status = $request->status;
+        $search = $request->search;
 
-        if ($request->ajax()) {
-            return datatables()->of($activities)
-                ->addColumn('action', function($data){
-                    $buttons = '<a type="button" href="' . route("activity.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="view btn-table btn btn-success"><i class="ti-eye"></i></a>';
-                    $buttons .= '&nbsp;&nbsp;';
-                    $buttons .= '<button type="button" name="edit" id="'.$data->id.'" class="edit btn-table btn btn-primary"><i class="ti-pencil"></i></button>';
-                    return $buttons;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
-        
-        return view('activities.index', compact('activities', 'clients', 'contacts', 'users', 'currentUser')); 
-    }
-
-    // Client Contact 
-    public function getContacts($clientId)
-    {
-        $contacts = Contact::where('CompanyId', $clientId)->pluck('ContactName', 'id');
-        return response()->json($contacts);
+        return view('activities.index', compact('activities', 'clients', 'contacts', 'users', 'currentUser', 'status', 'search')); 
     }
 
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'ClientId'          =>  'required',
-            'ClientContactId'   =>  'required',
-            'Title'             =>  'required',
-            'path.*'            =>  'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048'
-        );
-
-        $customMessages = array(
-            'ClientId.required'             =>      'The client field is required.',
-            'ClientContactId.required'      =>      'The contact field is required.',
-            'path.*.mimes'                  =>      'The file must be a type of: jpg, jpeg, png, pdf, doc, docx.'
-        );
-
-        $error = Validator::make($request->all(), $rules, $customMessages);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'Type'                          =>  $request->Type,
-            'ClientId'                      =>  $request->ClientId,
-            'Title'                         =>  $request->Title,
-            'ActivityNumber'                =>  $request->ActivityNumber, 
-            'ClientContactId'               =>  $request->ClientContactId,  
-            'PrimaryResponsibleUserId'      =>  $request->PrimaryResponsibleUserId,
-            'SecondaryResponsibleUserId'    =>  $request->SecondaryResponsibleUserId,
-            'RelatedTo'                     =>  $request->RelatedTo,
-            'TransactionNumber'             =>  $request->TransactionNumber,
-            'ScheduleFrom'                  =>  $request->ScheduleFrom, 
-            'ScheduleTo'                    =>  $request->ScheduleTo,
-            'Description'                   =>  $request->Description,
-            'Status'                        =>  '10',
-        );
-
-        $activity = Activity::create($form_data);
-
-        if ($request->hasFile('path')) {
-            foreach ($request->file('path') as $file) {
-                $fileName = time() . '_' . $file->getClientOriginalName();
-    
-                // Store each file and get the path
-                $path = $file->storeAs('uploads', $fileName, 'public');
-    
-                FileActivity::create([
-                    'activity_id' => $activity->id,
-                    'path' => $path
-                ]);
-            }
-        }
-
-        return response()->json(['success' => 'Data Added Successfully.']);
-    }
-
-    // Edit
-    public function edit($id)
-    {
-        $activity = Activity::find($id);
-
-        if (!$activity) {
-            return response()->json(['error' => 'Activity not found.'], 404);
-        }
-
-        $files = FileActivity::where('activity_id', $id)->pluck('path')->toArray();
-        // Assuming you have relationships defined in your Activity model
-        $primaryUser = User::where('id', $activity->PrimaryResponsibleUserId)
-                            ->orWhere('user_id', $activity->PrimaryResponsibleUserId)
-                            ->first();
-
-        $secondaryUser = User::where('id', $activity->SecondaryResponsibleUserId)
-                            ->orWhere('user_id', $activity->SecondaryResponsibleUserId)
-                            ->first();
-
-        return response()->json([
-            'data' => $activity,
-            'files' => $files,
-            'primaryUser' => $primaryUser,
-            'secondaryUser' => $secondaryUser
+        $request->validate([
+            'path.*' => 'mimes:jpg,pdf,docx'
         ]);
-    }    
 
-    // Get Value of Contact Client
-    public function getContactsByClient($clientId)
-    {
-        $contacts = Contact::where('id', $clientId)->get();
-        return response()->json($contacts);
+        $activityNumber = null;
+        if (auth()->user()->department_id == 2)
+        {
+            $checkActivity = Activity::select('ActivityNumber')->where('ActivityNumber', 'LIKE', "%ACT-LS%")->orderBy('ActivityNumber', 'desc')->first();
+            $count = substr($checkActivity->ActivityNumber, 10);
+            $totalCount = $count + 1;
+            $deptCode = 'LS';
+            
+            $activityNumber = 'ACT'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        }
+
+        if (auth()->user()->department_id == 1)
+        {
+            $checkActivity = Activity::select('ActivityNumber')->where('ActivityNumber', 'LIKE', "%ACT-IS%")->orderBy('ActivityNumber', 'desc')->first();
+            $count = substr($checkActivity->ActivityNumber, 10);
+            $totalCount = $count + 1;
+            $deptCode = 'IS';
+            
+            $activityNumber = 'ACT'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        }
+        
+        $activity = new Activity; 
+        $activity->Type = $request->Type;
+        $activity->ActivityNumber = $activityNumber;
+        $activity->RelatedTo = $request->RelatedTo;
+        $activity->ClientId = $request->ClientId;
+        $activity->TransactionNumber = $request->TransactionNumber;
+        $activity->ClientContactId = $request->ClientContactId;
+        $activity->ScheduleFrom = $request->ScheduleFrom;
+        $activity->PrimaryResponsibleUserId = $request->PrimaryResponsibleUserId;
+        $activity->ScheduleTo = $request->ScheduleTo;
+        $activity->SecondaryResponsibleUserId = $request->SecondaryResponsibleUserId;
+        $activity->Title = $request->Title;
+        $activity->DateClosed = $request->DateClosed;
+        $activity->Description = $request->Description;
+        $activity->Status = 10;
+        $activity->save();
+        
+        $attachments = $request->file('path');
+        foreach($attachments as $attachment)
+        {
+            $name = time().'_'.$attachment->getClientOriginalName();
+            $attachment->move(public_path().'/activity_attachment/', $name);
+
+            $file_name = '/activity_attachment/'.$name;
+            
+            $activityFiles = new FileActivity;
+            $activityFiles->activity_id = $activity->id;
+            $activityFiles->path = $file_name;
+            $activityFiles->save();
+        }
+        
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
     }
     
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'ClientId'  =>  'required',
-            'Title'     =>  'required'
-        );
+        $request->validate([
+            'path.*' => 'mimes:jpg,pdf,docx'
+        ]);
+
+        $activity = Activity::findOrFail($id);
+        $activity->Type = $request->Type;
+        $activity->RelatedTo = $request->RelatedTo;
+        $activity->ClientId = $request->ClientId;
+        $activity->TransactionNumber = $request->TransactionNumber;
+        $activity->ClientContactId = $request->ClientContactId;
+        $activity->ScheduleFrom = $request->ScheduleFrom;
+        $activity->PrimaryResponsibleUserId = $request->PrimaryResponsibleUserId;
+        $activity->ScheduleTo = $request->ScheduleTo;
+        $activity->SecondaryResponsibleUserId = $request->SecondaryResponsibleUserId;
+        $activity->Title = $request->Title;
+        $activity->DateClosed = $request->DateClosed;
+        $activity->Description = $request->Description;
+        $activity->Status = 10;
+        $activity->Response = $request->Response;
+        $activity->save();
         
-        $customMessages = array(
-            'ClientId.required'     =>      'The client field is required.'
-        );
-
-        $error = Validator::make($request->all(), $rules, $customMessages);
-
-        if($error->fails())
+        if ($request->has('path'))
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            $attachments = $request->file('path');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path().'/activity_attachment/', $name);
+    
+                $file_name = '/activity_attachment/'.$name;
+                
+                $activityFiles = new FileActivity;
+                $activityFiles->activity_id = $activity->id;
+                $activityFiles->path = $file_name;
+                $activityFiles->save();
+            }
         }
 
-        $form_data = array(
-            'Type'                          =>  $request->Type,
-            'ClientId'                      =>  $request->ClientId,
-            'Title'                         =>  $request->Title,
-            'ClientContactId'               =>  $request->ClientContactId,  
-            'PrimaryResponsibleUserId'      =>  $request->PrimaryResponsibleUserId,
-            'SecondaryResponsibleUserId'    =>  $request->SecondaryResponsibleUserId,
-            'RelatedTo'                     =>  $request->RelatedTo,
-            'TransactionNumber'             =>  $request->TransactionNumber,
-            'ScheduleFrom'                  =>  $request->ScheduleFrom, 
-            'ScheduleTo'                    =>  $request->ScheduleTo,
-            'Description'                   =>  $request->Description,
-            'Status'                        =>  $request->Status,
-            'DateClosed'                    =>  $request->DateClosed
-        );
-
-        Activity::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        Alert::success('Successfully Update')->persistent('Dismiss');
+        return back();
     }
 
     // View
     public function view($id)
     {
-        $data = Activity::find($id);
+        $data = Activity::findOrFail($id);
         $users = User::all();
 
         // Retrieve the contact and handle null case
@@ -214,55 +178,39 @@ class ActivityController extends Controller
         return view('activities.view', compact('data', 'primaryResponsible', 'secondaryResponsible', 'clientName', 'contactName', 'contactEmail', 'clientTelephone', 'contactMobile'));
     }
 
-    // Close
-    public function close($id)
+    public function refreshClientContact(Request $request)
     {
-        try {
-            // Find the activity by ID
-            $activity = Activity::findOrFail($id);
-            
-            // Update the status to 'Closed' (assuming 'Status' is an attribute of Activity model)
-            $activity->status = 20; // Assuming 20 represents a closed status
-            $activity->DateClosed = Carbon::now();
-            
-            // Save the updated status
-            $activity->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Activity closed successfully.'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to close activity. Error: ' . $e->getMessage()
-            ], 500);
-        }
+        $clientContact = Contact::where('CompanyId', $request->client_id)->get();
+        
+        $clientContactOptions = $clientContact->pluck('ContactName', 'id')->toArray();
+        
+        return Form::select('ClientContactId', $clientContactOptions, null, array('class' => 'form-control'));
     }
 
-    // Open
-    public function open($id)
+    public function close(Request $request)
     {
-        try {
-            // Find the activity by ID
-            $activity = Activity::findOrFail($id);
-            
-            // Update the status to 'Closed' (assuming 'Status' is an attribute of Activity model)
-            $activity->status = 10; // Assuming 10 represents a open status
-            $activity->DateClosed = null;
-            
-            // Save the updated status
-            $activity->save();
+        $activity = Activity::findOrFail($request->id);
+        $activity->status = 20;
+        $activity->DateClosed = date('Y-m-d');
+        $activity->save();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Activity opened successfully.'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to open activity. Error: ' . $e->getMessage()
-            ], 500);
-        }
+        return array('message' => 'Successfully Closed');
+    }
+
+    public function open(Request $request)
+    {
+        $activity = Activity::findOrFail($request->id);
+        $activity->status = 10;
+        $activity->save();
+
+        return array('message' => 'Successfully Open');
+    }
+
+    public function delete(Request $request)
+    {
+        $activity = Activity::findOrFail($request->id);
+        $activity->delete();
+
+        return array('message' => 'Successfully Deleted');
     }
 }
