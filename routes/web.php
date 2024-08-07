@@ -244,13 +244,15 @@ Route::group(['middleware' => 'auth'], function () {
     // Activities
     Route::get('/activities', 'ActivityController@index')->name('activities.index');
     Route::post('/new_activity', 'ActivityController@store')->name('activity.store'); 
-    Route::get('/get-contacts/{clientId}', [ActivityController::class, 'getContacts']); 
-    Route::get('/edit_activity/{id}', 'ActivityController@edit')->name('edit_activity');    
+    // Route::get('/get-contacts/{clientId}', [ActivityController::class, 'getContacts']); 
+    // Route::get('/edit_activity/{id}', 'ActivityController@edit')->name('edit_activity');    
     Route::post('/update_activity/{id}', 'ActivityController@update')->name('update_activity');
-    Route::get('get_contacts/{clientId}', [ActivityController::class, 'getContactsByClient']);
+    // Route::get('get_contacts/{clientId}', [ActivityController::class, 'getContactsByClient']);
+    Route::post('delete_activity', 'ActivityController@delete');
     Route::get('view_activity/{id}', 'ActivityController@view')->name('activity.view');
-    Route::delete('delete_activity/{id}', 'ActivityController@close')->name('delete_activity');
-    Route::post('open_activity/{id}', 'ActivityController@open')->name('open_activity');
+    Route::post('close_activity', 'ActivityController@close')->name('delete_activity');
+    Route::post('open_activity', 'ActivityController@open')->name('open_activity');
+    Route::post('refresh_client_contact', 'ActivityController@refreshClientContact');
 
     // Product Applications
     Route::get('/product_applications', 'ProductApplicationController@index')->name('product_applications.index');
