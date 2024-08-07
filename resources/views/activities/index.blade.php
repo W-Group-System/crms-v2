@@ -50,7 +50,7 @@
                                 <td>
                                     <a href="{{url('view_activity/'.$a->id)}}" class="btn btn-info btn-sm" title="View Activity" target="_blank">
                                         <i class="ti-eye"></i>
-                                    </a>
+                                    </a> 
                                     <button type="button" class="btn btn-warning btn-sm" title="Edit Activity" data-toggle="modal" data-target="#editActivity-{{$a->id}}">
                                         <i class="ti-pencil"></i>
                                     </button>
