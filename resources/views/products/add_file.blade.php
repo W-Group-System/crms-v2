@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="POST" action="{{url('add_files')}}" enctype="multipart/form-data">
+            <form method="POST" action="{{url('add_product_files')}}" enctype="multipart/form-data">
                 {{csrf_field()}}
                 
                 <input type="hidden" name="product_id" value="{{$data->id}}">
@@ -42,7 +42,7 @@
                 </div>
                 <div class="modal-footer" style="padding: 0.6875rem">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" id="yes_button" class="btn btn-success">Submit</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
                 </div>
             </form>
         </div>

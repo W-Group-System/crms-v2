@@ -111,7 +111,7 @@
                     <a class="nav-link " id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
+                    <a class="nav-link" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
@@ -194,6 +194,13 @@
                                                 <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#specification-{{$ps->Id}}" title="Update">
                                                     <i class="ti-pencil"></i>
                                                 </button>
+                                                
+                                                <form action="{{url('delete_specification/'.$ps->Id)}}" method="post" id="productSpecificationForm" class="d-inline-block productSpecificationForm" title="Delete">
+                                                    {{csrf_field()}}
+                                                    <button type="button" class="btn btn-sm btn-danger deleteProductSpecification" title="Delete">
+                                                        <i class="ti-trash"></i>
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -237,6 +244,13 @@
                                             <a href="{{url('view_details/'.$data->productDataSheet->Id)}}" class="btn btn-info btn-sm" title="View Details" target="_blank">
                                                 <i class="ti-eye"></i>
                                             </a>
+                                            <form action="{{url('delete_pds/'.$data->productDataSheet->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                                {{csrf_field()}}
+
+                                                <button type="button" class="btn btn-sm btn-danger deletePds" title="Delete">
+                                                    <i class="ti-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endif
@@ -298,6 +312,13 @@
                                                 <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
                                                     <i class="ti-pencil"></i>
                                                 </button>
+                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                                    {{csrf_field()}}
+    
+                                                    <button type="button" class="btn btn-sm btn-danger deleteProductFiles" title="Delete">
+                                                        <i class="ti-trash"></i>
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -327,9 +348,8 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">
-
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped tables">
+                        <table class="table table-bordered table-hover table-striped tables" width="100%">
                             <thead>
                                 <tr>
                                     <th>Type</th>
@@ -341,7 +361,9 @@
                                     @foreach ($customerRequirements as $cr)
                                         <tr>
                                             <td>Customer Requirement</td>
-                                            <td>{{$cr->CrrNumber}}</td>
+                                            <td>
+                                                <a href="{{url('view_customer_requirement/'.$cr->id)}}" target="_blank">{{$cr->CrrNumber}}</a>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -370,7 +392,8 @@
                     </div>
                 </div>
                 <div class="tab-pane fade " id="identical" role="tabpanel" aria-labelledby="identical-tab">
-                    <div class="table-responsive">                       <table class="table table-striped table-bordered table-hover tables" width="100%">
+                    <div class="table-responsive">                       
+                        <table class="table table-striped table-bordered table-hover tables" width="100%">
                             <thead>
                                 <tr>
                                     <th>DDW Number</th>
@@ -766,6 +789,63 @@
         {
             $('.product_files_container').children().last().remove();
             
+        })
+
+        $('.deleteProductSpecification').on('click', function() {
+
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        })
+
+        $('.deletePds').on('click', function() {
+
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        })
+
+        $('.deleteProductFiles').on('click', function() {
+
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         })
     });
 </script>
