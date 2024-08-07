@@ -3,12 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class ProductFiles extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
-
+    use SoftDeletes;
     protected $table = "productfiles";
     protected $primaryKey = "Id";
     

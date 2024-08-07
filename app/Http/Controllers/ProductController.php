@@ -405,6 +405,15 @@ class ProductController extends Controller
         return back();
     }
 
+    public function deleteSpecification($id)
+    {
+        $productSpecification = ProductSpecification::findOrFail($id);
+        $productSpecification->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
+    }
+
     public function addFiles(Request $request)
     {
         $fileProducts = new ProductFiles;
@@ -445,6 +454,15 @@ class ProductController extends Controller
         $fileProducts->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function deleteProductFiles($id)
+    {
+        $productFiles = ProductFiles::findOrFail($id);
+        $productFiles->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
         return back();
     }
 
@@ -667,6 +685,15 @@ class ProductController extends Controller
         $productDataSheet = ProductDataSheet::with(['products', 'productPotentialBenefit', 'productPhysicoChemicalAnalyses', 'productMicrobiologicalAnalysis', 'productHeavyMetal', 'productNutritionalInformation', 'productAllergens'])->where('id', $id)->first();
 
         return view('products.pds_details', array('pds' => $productDataSheet));
+    }
+
+    public function deletePds($id)
+    {
+        $productDataSheet = ProductDataSheet::findOrFail($id);
+        $productDataSheet->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
     }
 
     public function updateAllProductSpecification(Request $request)

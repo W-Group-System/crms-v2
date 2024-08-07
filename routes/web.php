@@ -67,17 +67,20 @@ Route::group(['middleware' => 'auth'], function () {
     # Product Specification
     Route::post('add_specification', 'ProductController@specification');
     Route::post('edit_specification/{id}', 'ProductController@editSpecification');
+    Route::post('delete_specification/{id}', 'ProductController@deleteSpecification');
     Route::post('update_all_product_specification', 'ProductController@updateAllProductSpecification');
 
     # Product Files
-    Route::post('add_files', 'ProductController@addFiles');
+    Route::post('add_product_files', 'ProductController@addFiles');
     Route::post('edit_files/{id}', 'ProductController@editFiles');
     Route::post('update_all_files', 'ProductController@updateAllFiles');
+    Route::post('delete_product_files/{id}', 'ProductController@deleteProductFiles');
 
     # Product DS
     Route::post('add_product_ds', 'ProductController@productDs');
     Route::post('edit_product_ds/{id}', 'ProductController@updatePds');
     Route::get('view_details/{id}', 'ProductController@viewPdsDetails');
+    Route::post('delete_pds/{id}', 'ProductController@deletePds');
 
     # Draft Products
     Route::get('/draft_products', 'ProductController@draft')->name('product.draft');
