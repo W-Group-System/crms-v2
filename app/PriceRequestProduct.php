@@ -15,7 +15,9 @@ class PriceRequestProduct extends Model
 
     protected $fillable = [
         'PriceRequestFormId','Type', 'QuantityRequired', 'ProductId', 'ProductRmc', 'IsalesShipmentCost', 'IsalesFinancingCost', 'IsalesOthers', 'IsalesTotalBaseCost',
-        'IsalesBaseSellingPrice', 'IsalesOfferedPrice', 'IsalesMargin', 'IsalesMarginPercentage'
+        'IsalesBaseSellingPrice', 'IsalesOfferedPrice', 'IsalesMargin', 'IsalesMarginPercentage', 'ApplicationId', 'LsalesDirectLabor', 'LsalesFactoryOverhead',
+        'LsalesBlendingLoss', 'LsalesDeliveryType', 'LsalesDeliveryCost', 'LsalesFinancingCost', 'PriceRequestGaeId', 'LsalesGaeValue', 'LsalesMarkupPercent',
+        'LsalesMarkupValue'
     ];
     public function client()
     {

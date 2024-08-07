@@ -119,5 +119,10 @@ class Client extends Model
     {
         return $this->hasMany(ProductFiles::class, 'ClientId', 'id');
     }
+
+    public function clientPaymentTerm()
+    {
+        return $this->belongsTo(PaymentTerms::class, 'PaymentTermId', 'id');
+    }
     
 }

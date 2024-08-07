@@ -13,7 +13,7 @@ class Helpers {
     public static function rmc($productRawMaterials, $id)
     {
         $getMaterialId = $productRawMaterials->pluck('MaterialId')->toArray();
-
+        
         $productComposition = ProductMaterialsComposition::where('ProductId', $id)
             ->whereIn('MaterialId', $getMaterialId)
             ->orderBy('MaterialId', 'asc')
@@ -42,7 +42,7 @@ class Helpers {
 
             return round($num, 2);
         });
-
+        
         return $multiply->sum();
     }
 
