@@ -4,86 +4,49 @@ namespace App\Http\Controllers;
 use App\RequestGAE;
 use Validator;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class RequestGAEController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-        if(request()->ajax())
-        {
-            $paymentTerms = RequestGAE::orderBy('id', 'desc')->get();
-            return datatables()->of($paymentTerms)
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('request_gaes.index'); 
+        $paymentTerms = RequestGAE::orderBy('id', 'desc')
+            ->when($request->search, function($query)use($request) {
+                $query->where('ExpenseName', 'LIKE', '%'.$request->search.'%')->orWhere('Cost', 'LIKE', '%'.$request->search.'%');
+            })
+            ->paginate(10);
+
+        return view('request_gaes.index',
+            array(
+                'paymentTerms' => $paymentTerms,
+                'search' => $request->search
+            )
+        ); 
     }
 
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'ExpenseName'   =>  'required',
-            'Cost'          =>  'required'
-        );
+        $priceRequestGae = new RequestGAE;
+        $priceRequestGae->ExpenseName = $request->ExpenseName;
+        $priceRequestGae->Cost = $request->Cost;
+        $priceRequestGae->save();
 
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'ExpenseName'   =>  $request->ExpenseName,
-            'Cost'          =>  $request->Cost
-        );
-
-        RequestGAE::create($form_data);
-
-        return response()->json(['success' => 'Data Added Successfully.']);
+        Alert::success('Successfully Save')->persistent('Dismiss');
+        return back();
     }  
-
-    // Edit
-    public function edit($id)
-    {
-        if(request()->ajax())
-        {
-            $data = RequestGAE::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
-    }
 
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'ExpenseName'   =>  'required',
-            'Cost'          =>  'required'
-        );
+        $priceRequestGae = RequestGAE::findOrFail($id);
+        $priceRequestGae->ExpenseName = $request->ExpenseName;
+        $priceRequestGae->Cost = $request->Cost;
+        $priceRequestGae->save();
 
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'ExpenseName'   =>  $request->ExpenseName,
-            'Cost'          =>  $request->Cost
-        );
-
-        RequestGAE::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        Alert::success('Successfully Update')->persistent('Dismiss');
+        return back();
     }
 
     // Delete
@@ -91,5 +54,8 @@ class RequestGAEController extends Controller
     {
         $paymentTerms = RequestGAE::findOrFail($id);
         $paymentTerms->delete();
+
+        Alert::success('Successfully Delete')->persistent('Dismiss');
+        return back();
     }
 }
