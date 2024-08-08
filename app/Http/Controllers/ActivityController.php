@@ -30,12 +30,12 @@ class ActivityController extends Controller
                 $query->where('Status', $request->close);
             })
             ->when($request->search, function($query)use($request) {
-                $query->where('ActivityNumber', $request->search)
-                    ->orWhere('ScheduleFrom', $request->search)
+                $query->where('ActivityNumber', 'LIKE', '%'. $request->search.'%')
+                    ->orWhere('ScheduleFrom', 'LIKE', '%'.$request->search.'%')
                     ->orWhereHas('client', function($query)use($request) {
-                        $query->where('Name', $request->search);
+                        $query->where('Name', 'LIKE', '%'. $request->search.'%');
                     })
-                    ->orWhere('Title', $request->search);
+                    ->orWhere('Title', 'LIKE', '%'.$request->search.'%');
             })
             ->orderBy('id', 'desc')
             ->paginate(10);
