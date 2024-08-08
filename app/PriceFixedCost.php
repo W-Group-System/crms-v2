@@ -16,4 +16,9 @@ class PriceFixedCost extends Model
     {
         return $this->belongsTo(User::class, 'CreatedByUserId', 'user_id', 'username');
     }
+
+    public function userById()
+    {
+        return $this->belongsTo(User::class,'CreatedByUserId','id');
+    }
 }
