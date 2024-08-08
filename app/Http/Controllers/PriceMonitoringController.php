@@ -301,7 +301,7 @@ class PriceMonitoringController extends Controller
         return view('price_monitoring_ls.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms', 'productApplications', 'pricegaes')); 
     }
 
-    public function storeLocalSaleRpe(Request $request)
+    public function storeLocalSalePre(Request $request)
     {
         $user = Auth::user(); 
         $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
@@ -337,24 +337,46 @@ class PriceMonitoringController extends Controller
             'Progress' => '10',
 
         ]);
+
+        foreach ($request->input('Product') as $key => $value) {
             PriceRequestProduct::create([
                 'PriceRequestFormId' => $priceMonitoringData->id,
-                'ProductId' => $request->input('Product'),
-                'Type' => $request->input('Type'),
-                'ApplicationId' => $request->input('ApplicationId'),
-                'QuantityRequired' => $request->input('QuantityRequired'),
-                'ProductRmc' => $request->input('Rmc'),
-                'LsalesDirectLabor' => $request->input('DirectLabor'),
-                'LsalesFactoryOverhead' => $request->input('FactoryOverhead'),
-                'LsalesBlendingLoss' => $request->input('BlendingLoss'),
-                'LsalesDeliveryType' => $request->input('DeliveryType'),
-                'LsalesDeliveryCost' => $request->input('DeliveryCost'),
-                'LsalesFinancingCost' => $request->input('FinancingCost'),
-                'PriceRequestGaeId' => $request->input('PriceGae'),
-                'LsalesGaeValue' => $request->input('GaeCost'),
-                'LsalesMarkupPercent' => $request->input('MarkupPercent'),
-                'LsalesMarkupValue' => $request->input('MarkupPhp'),
+                'ProductId' =>$request->input('Product')[$key],
+                'Type' => $request->input('Type')[$key],
+                'ApplicationId' => $request->input('ApplicationId')[$key],
+                'QuantityRequired' => $request->input('QuantityRequired')[$key],
+                'ProductRmc' => $request->input('Rmc')[$key],
+                'LsalesDirectLabor' => $request->input('DirectLabor')[$key],
+                'LsalesFactoryOverhead' => $request->input('FactoryOverhead')[$key],
+                'LsalesBlendingLoss' => $request->input('BlendingLoss')[$key],
+                'LsalesDeliveryType' => $request->input('DeliveryType')[$key],
+                'LsalesDeliveryCost' => $request->input('DeliveryCost')[$key],
+                'LsalesFinancingCost' => $request->input('FinancingCost')[$key],
+                'PriceRequestGaeId' => $request->input('PriceGae')[$key],
+                'LsalesGaeValue' => $request->input('GaeCost')[$key],
+                'LsalesMarkupPercent' => $request->input('MarkupPercent')[$key],
+                'LsalesMarkupValue' => $request->input('MarkupPhp')[$key],
+
         ]);
+    }
+        //     PriceRequestProduct::create([
+        //         'PriceRequestFormId' => $priceMonitoringData->id,
+        //         'ProductId' => $request->input('Product'),
+        //         'Type' => $request->input('Type'),
+        //         'ApplicationId' => $request->input('ApplicationId'),
+        //         'QuantityRequired' => $request->input('QuantityRequired'),
+        //         'ProductRmc' => $request->input('Rmc'),
+        //         'LsalesDirectLabor' => $request->input('DirectLabor'),
+        //         'LsalesFactoryOverhead' => $request->input('FactoryOverhead'),
+        //         'LsalesBlendingLoss' => $request->input('BlendingLoss'),
+        //         'LsalesDeliveryType' => $request->input('DeliveryType'),
+        //         'LsalesDeliveryCost' => $request->input('DeliveryCost'),
+        //         'LsalesFinancingCost' => $request->input('FinancingCost'),
+        //         'PriceRequestGaeId' => $request->input('PriceGae'),
+        //         'LsalesGaeValue' => $request->input('GaeCost'),
+        //         'LsalesMarkupPercent' => $request->input('MarkupPercent'),
+        //         'LsalesMarkupValue' => $request->input('MarkupPhp'),
+        // ]);
                     return redirect()->back()->with('success', 'Base prices updated successfully.');
     }
 
