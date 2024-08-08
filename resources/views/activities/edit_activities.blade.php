@@ -60,7 +60,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Contact</label>
-                                <select class="form-control form-control-sm js-example-basic-single EditClientContactId" name="ClientContactId" style="position: relative !important" title="Select Contact" required>
+                                <select class="form-control form-control-sm js-example-basic-single ClientContactId" name="ClientContactId" style="position: relative !important" title="Select Contact" required>
                                     <option value="" disabled selected>Select Contact</option>
                                 </select>
                             </div>
