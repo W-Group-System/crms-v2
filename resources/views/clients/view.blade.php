@@ -313,6 +313,16 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                    <div class="form-group">
+                        <label>Show : </label>
+                        <label class="checkbox-inline">
+                            <input checked="checked" id="IsShowOpen" name="IsShowOpen" type="checkbox" value="true"> Open
+                        </label>
+                        <label class="checkbox-inline">
+                            <input checked="checked" id="IsShowClosed" name="IsShowClosed" type="checkbox" value="true"> Closed
+                        </label>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="activities-table" width="100%">
                             <thead>
@@ -325,8 +335,12 @@
                             </thead>
                             <tbody>
                                 @foreach($data->activities as $activity)
-                                    <tr>
-                                        <td>{{ $activity->ActivityNumber ?? 'N/A' }}</td>
+                                    <tr class="{{ $activity->Status == 10 ? 'open' : 'closed' }}">
+                                        <td>
+                                            <a href="{{ url('view_activity/'.$activity->id) }}" target="_blank">
+                                                {{ $activity->ActivityNumber ?? 'N/A'}}
+                                            </a>
+                                        </td>
                                         <td>{{ $activity->ScheduleFrom ?? 'N/A' }}</td>
                                         <td>{{ $activity->Title ?? 'N/A' }}</td>
                                         <td>{{ $activity->Status == 10 ? 'Open' : 'Closed' }}</td>
@@ -335,6 +349,7 @@
                             </tbody>
                         </table>
                     </div>
+
                 </div>
                 <div class="tab-pane fade" id="productFiles" role="tabpanel" aria-labelledby="productFiles-tab">
                     <div class="table-responsive">
@@ -352,7 +367,11 @@
                                     <tr>
                                         <td>{{ $productFile->Name ?? 'N/A' }}</td>
                                         <td>{{ $productFile->Description ?? 'N/A' }}</td>
-                                        <td>{{ $productFile->product->code ?? 'N/A' }}</td>
+                                        <td>
+                                        <a href="{{ url('view_product/'.$productFile->product->id) }}" target="_blank">
+                                            {{ $productFile->product->code ?? 'N/A' }}
+                                        </a>
+                                        </td>
                                         <td>
                                             <a href="{{ asset($productFile->Path) }}" target="_blank">
                                                 Download File
@@ -692,6 +711,28 @@
         });
 
         // $('.dataTable').DataTable();
+        function filterActivities() {
+            var showOpen = $('#IsShowOpen').is(':checked');
+            var showClosed = $('#IsShowClosed').is(':checked');
+
+            $('#activities-table tbody tr').each(function() {
+                var row = $(this);
+                if (row.hasClass('open') && showOpen) {
+                    row.show();
+                } else if (row.hasClass('closed') && showClosed) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+
+        $('#IsShowOpen, #IsShowClosed').change(function() {
+            filterActivities();
+        });
+
+        // Initial filter on page load
+        filterActivities();
     });
 
     function initializeDataTable(selector, filename, title) {
