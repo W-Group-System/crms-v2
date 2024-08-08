@@ -17,7 +17,13 @@ class PriceFixedCostController extends Controller
             ->when($request->search, function($query)use($request){
                 $query->where('DirectLabor', 'LIKE', '%'.$request->search.'%')
                     ->orWhere('FactoryOverHead', 'LIKE', '%'.$request->search.'%')
-                    ->orWhere('DeliveryCost', "LIKE", '%'.$request->search.'%');
+                    ->orWhere('DeliveryCost', "LIKE", '%'.$request->search.'%')
+                    ->orWhereHas('user', function($query)use($request) {
+                        $query->where('full_name', 'LIKE', '%'.$request->search.'%');
+                    })
+                    ->orWhereHas('userById', function($query)use($request) {
+                        $query->where('full_name', 'LIKE', '%'.$request->search.'%');
+                    });
             })
             ->latest()
             ->paginate(10);
