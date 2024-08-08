@@ -151,9 +151,9 @@
                 <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" id="collection-tab" data-toggle="tab" href="#collection" role="tab" aria-controls="collection" aria-selected="false">Collection</a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link" id="productFiles-tab" data-toggle="tab" href="#productFiles" role="tab" aria-controls="productFiles" aria-selected="false">Product Files</a>
                 </li>
@@ -163,6 +163,9 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
+                    <div class="col-md-12" align="right">
+                        <button class="btn btn-primary mb-2" type="button" data-toggle="modal" data-target="#contactsModal">Add Contacts</button>
+                    </div>
                     @include('clients.add_contacts')
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="contact-table" width="100%">
@@ -218,6 +221,9 @@
                     @endforeach
                 </div>
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    <div class="col-md-12" align="right">
+                        <button class="btn btn-primary mb-2" type="button" data-toggle="modal" data-target="#filesModal">Add Files</button>
+                    </div>
                     @include('clients.add_files')
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover" id="files-table" width="100%">
@@ -280,7 +286,11 @@
                                         <tr>
                                             <td>{{ $crrClient->DateCreated }}</td>
                                             <td>Customer Requirement</td>
-                                            <td>{{ $crrClient->CrrNumber }}</td>
+                                            <td>
+                                                <a href="{{ url('view_customer_requirement/'.$crrClient->id) }}" target="_blank">
+                                                    {{ $crrClient->CrrNumber }}
+                                                </a>
+                                            </td>                                            
                                         </tr>
                                     @endforeach
                                 @endif
@@ -290,7 +300,11 @@
                                         <tr>
                                             <td>{{ $rpeClient->DateCreated }}</td>
                                             <td>Request Product Evaluation</td>
-                                            <td>{{ $rpeClient->RpeNumber }}</td>
+                                            <td>
+                                                <a href="{{ url('product_evaluation/view/'.$rpeClient->id) }}" target="_blank">
+                                                    {{ $rpeClient->RpeNumber }}
+                                                </a>
+                                            </td>   
                                         </tr>
                                     @endforeach
                                 @endif
