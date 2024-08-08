@@ -2,17 +2,22 @@
 
 namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Audit;
 
-class PriceMonitoring extends Model
+class PriceMonitoring extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
+
     protected $table = "pricerequestforms";
     // const CREATED_AT = "CreatedDate";
     
     protected $fillable = [
-        'PrfNumber', 'PrimarySalesPersonId', 'SecondarySalesPersonId', 'DateRequested', 'ClientId', 'PriceRequestPurpose', 'ShipmentTerm', 'PaymentTermId',
-        'OtherCostRequirements', 'Commission', 'Remarks', 'Progress', 'Status', 'IsWithCommission'
+        'PrfNumber', 'PrimarySalesPersonId', 'SecondarySalesPersonId', 'DateRequested', 'ClientId', 'ContactId', 'ValidityDate','Moq','ShelfLife', 'PriceRequestPurpose', 
+        'ShipmentTerm', 'PaymentTermId', 'OtherCostRequirements', 'Commission', 'Remarks', 'Progress', 'Status', 'IsWithCommission', 'Destination', 'PriceLockPeriod',
+        'TaxType'
     ];
     public function client()
     {
@@ -44,5 +49,10 @@ class PriceMonitoring extends Model
     public function paymentterms() 
     {
         return $this->belongsTo(PaymentTerms::class, 'PaymentTermId', 'id');
+    }
+
+    public function productMaterialComposition()
+    {
+        return $this->hasMany(ProductMaterialsComposition::class, 'ProductId');
     }
 }

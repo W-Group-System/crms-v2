@@ -19,12 +19,12 @@ class PrfFile extends Model implements Auditable
     const UPDATED_AT = "ModifiedDate";
     const CREATED_AT = "CreatedDate";
 
-    // public function transformAudit(array $data): array
-    // {
-    //     if (isset($data['auditable_id'])) {
-    //         $data['auditable_id'] = $this->SampleRequestId;
-    //     }
+    public function transformAudit(array $data): array
+    {
+        if (isset($data['auditable_id'])) {
+            $data['auditable_id'] = $this->PriceRequestFormId;
+        }
 
-    //     return $data;
-    // }
+        return $data;
+    }
 }

@@ -103,12 +103,11 @@ class SampleRequestController extends Controller
         ->where('TransactionId', $scrfNumber)
         ->get();
 
-    $audits = Audit::where('auditable_id', $scrfNumber)
+        $audits = Audit::where('auditable_id', $scrfNumber)
         ->whereIn('auditable_type', [SampleRequest::class, SrfRawMaterial::class, SrfDetail::class, SrfPersonnel::class, SrfFile::class])
         ->get();
 
-    // Map audits to desired format
-    $mappedAudits = $audits->map(function ($audit) {
+        $mappedAudits = $audits->map(function ($audit) {
         $details = '';
         if ($audit->auditable_type === 'App\SrfRawMaterial') {
             $details = $audit->event . " " . 'SRF Raw Material';
@@ -266,20 +265,20 @@ class SampleRequestController extends Controller
         
         if ($files) {
             foreach ($files as $index => $file) {
-                $name = $names[$index];
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = $file->storeAs('public/srfFiles', $fileName);
-                $fileUrl = '/storage/srfFiles/' . $fileName;       
-                $uploadedFile = new SrfFile();
-                $uploadedFile->SampleRequestId = $srfId;
-                $uploadedFile->Name = $name;
-                $uploadedFile->Path = $fileUrl;
-                $uploadedFile->save();
-                }
+            $name = $names[$index];
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('public/srfFiles', $fileName);
+            $fileUrl = '/storage/srfFiles/' . $fileName;       
+            $uploadedFile = new SrfFile();
+            $uploadedFile->SampleRequestId = $srfId;
+            $uploadedFile->Name = $name;
+            $uploadedFile->Path = $fileUrl;
+            $uploadedFile->save();
             }
-        
-            return redirect()->back()->with('success', 'File(s) Stored successfully');
         }
+        
+        return redirect()->back()->with('success', 'File(s) Stored successfully');
+    }
 
     public function editFile(Request $request, $id)
     {
