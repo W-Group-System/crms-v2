@@ -188,184 +188,128 @@
                             <p class="col-sm-3 col-form-label"></p>
                         </div>
                     </div>
-                    <hr class="form-divider">
-                    <div class="header-label"><b>Customer Details</b></div> 
                 </div>
+                <hr class="form-divider">
+                <div class="header-label"><b>Customer Details</b></div> 
+                @foreach ($price_monitorings->requestPriceProducts as  $prcieProduct)
+                <div class="border">
+                    <div class="row">
+                        <div class="col-lg-4">
+                           <div class="form-group row">
+                            <p class="col-sm-6 col-form-label"><b>Product:</b></p>
+                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->ProductId }}
+                            </p>
+                           </div>
+                           <div class="form-group row">
+                            <p class="col-sm-6 col-form-label"><b>Category:</b></p>
+                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->Type }}
+                            </p>
+                           </div>
+                           <div class="form-group row">
+                            <p class="col-sm-6 col-form-label"><b>Application:</b></p>
+                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->ApplicationId }}
+                            </p>
+                           </div>
+                           <div class="form-group row">
+                            <p class="col-sm-6 col-form-label"><b>Quantity Required:</b></p>
+                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->QuantityRequired }}
+                            </p>
+                           </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>RMC (PHP):</b></p>
+                                <p class="col-sm-6 col-form-label">{{ $prcieProduct->ProductRmc }}
+                             </p>
+                            </div>
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Direct Labor:</b></p>
+                                <p class="col-sm-6 col-form-label">{{ $prcieProduct->LsalesDirectLabor }}
+                             </p>
+                            </div>
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Factory Overhead:</b></p>
+                                <p class="col-sm-6 col-form-label">{{ $prcieProduct->LsalesFactoryOverhead }}
+                             </p>
+                            </div>
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Total Manufacturing Cost:</b></p>
+                                <p class="col-sm-6 col-form-label"></p>
+                            </div>
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Blending Loss:</b></p>
+                                <p class="col-sm-6 col-form-label">{{ $prcieProduct->LsalesBlendingLoss }}</p>
+                           </div>
+                         </div>
+                         <div class="col-lg-4">
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Delivery Cost:</b></p>
+                                <p class="col-sm-6 col-form-label">{{ $prcieProduct->LsalesDeliveryCost }}
+                             </p>
+                            </div>
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Financing Cost:</b></p>
+                                <p class="col-sm-6 col-form-label">{{ $prcieProduct->LsalesFinancingCost }}
+                             </p>
+                            </div>
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>GAE:</b></p>
+                                <p class="col-sm-6 col-form-label">{{ $prcieProduct->LsalesGaeValue }}
+                             </p>
+                            </div>
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Total Operating Cost:</b></p>
+                                <p class="col-sm-6 col-form-label"></p>
+                            </div>
+                         </div>
+                         <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209)"></div>
+                         <div class="col-lg-4">
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Total Product Cost:</b></p>
+                                <p class="col-sm-6 col-form-label"> </p>
+                            </div>
+                         </div>
+                         <div class="col-lg-4">
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Markup (%):</b></p>
+                                <p class="col-sm-6 col-form-label">{{ $prcieProduct->LsalesMarkupPercent }}</p>
+                            </div>
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Markup :</b></p>
+                                <p class="col-sm-6 col-form-label">{{ $prcieProduct->LsalesMarkupValue }}</p>
+                            </div>
+                         </div>
+                         <div class="col-lg-4">
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Selling Price :</b></p>
+                                <p class="col-sm-6 col-form-label"></p>
+                            </div>
+                            <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Selling Price + 12% VAT :</b></p>
+                                <p class="col-sm-6 col-form-label"></p>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+                @endforeach
+                <hr class="form-divider">
+                <div class="header-label"><b>DISPOSITION</b></div> 
                 <div class="group-form">
-                <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Client Name:</b></p>
-                    <p class="col-sm-3 col-form-label">
-                        <a href="{{ url('view_client/' . $price_monitorings->client->id) }}">
-                            {{ $price_monitorings->client->Name }}
-                        </a>
-                    </p>
+                    <div class="form-group row">
+                        <p class="col-sm-2 col-form-label"><b>Is Accepted:</b></p>
+                        <p class="col-sm-3 col-form-label">
+                            @if ($price_monitorings->IsAccepted == "1")
+                            YES
+                            @endif
+                        </p>
+                    </div>
+                    <div class="form-group row">
+                        <p class="col-sm-2 col-form-label"><b>Disposition Remarks :</b></p>
+                        <p class="col-sm-3 col-form-label">{{ $price_monitorings->DispositionRemarks }}</p>
+                        <p class="offset-sm-2 col-sm-2 col-form-label"></p>
+                        <p class="col-sm-3 col-form-label"></p>
+                    </div>
                 </div>
-                 <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Client Trade Name:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ $price_monitorings->client->TradeName }}</p>
-                </div>
-                <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Region:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->client->clientregion)->Name }}</p>
-                </div>
-                <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Country:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->client->clientcountry)->Name }}</p>
-                </div>
-            </div>
-            <div class="form-header">
-                <hr class="form-divider">
-                <span class="header-label"><b>Computation</b></span>
-            </div>
-          @foreach ( $price_monitorings->requestPriceProducts as $priceProduct)
-          <div class="group-form">
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Purpose of Price Request :</b></p>
-                <p class="col-sm-3 col-form-label"> 
-                        @if ($price_monitorings->PriceRequestPurpose == "10")
-                        Indication
-                        @elseif ($price_monitorings->PriceRequestPurpose == "20")
-                        Firm
-                        @elseif ($price_monitorings->PriceRequestPurpose == "30")
-                        Sample
-                        @else
-                        {{ $price_monitorings->PriceRequestPurpose }}
-                        @endif
-                </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Category :</b></p>
-                <p class="col-sm-3 col-form-label">
-                    @if ($priceProduct->Type == "1")
-                        Pure
-                        @elseif ($priceProduct->Type == "2")
-                        Blend
-                        @else
-                        {{ $priceProduct->Type }}
-                        @endif
-                </p>
-            </div>
-             <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b></b></p>
-                <p class="col-sm-3 col-form-label"></p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Quantity Required :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->QuantityRequired}}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Product Code :</b></p>
-                <p class="col-sm-3 col-form-label">{{ optional($priceProduct->products)->code }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Product RMC:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->ProductRmc}}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Shipment Term :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $price_monitorings->ShipmentTerm }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Shipment Cost :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->IsalesShipmentCost}}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Payment Term :</b></p>
-                <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->paymentterms)->Name}}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Financing Cost :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->IsalesFinancingCost }}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Other Cost Requirements :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->OtherCostRequirements }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Others :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->IsalesOthers }}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>With Commission :</b></p>
-                <p class="col-sm-3 col-form-label"> 
-                    @if ($price_monitorings->IsWithCommission == "1")
-                    YES
-                    @else
-                    NO
-                    @endif
-                </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"></b></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Commission :</b></p>
-                <p class="col-sm-3 col-form-label"> 
-                    {{ $priceProduct->IsalesCommission }}
-                </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Total Base Price</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->IsalesTotalBaseCost }}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"> </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Base Selling Price</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->IsalesBaseSellingPrice }}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"> </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Offered Price</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->IsalesOfferedPrice }}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"> </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Margin</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->IsalesMargin }}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"> </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>% Margin</b></p>
-                <p class="col-sm-3 col-form-label">{{ $priceProduct->IsalesMarginPercentage }}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"> </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>TotalMargin</b></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"> </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Remarks</b></p>
-                <p class="col-sm-3 col-form-label">{{ $price_monitorings->Remarks }}</p>
-            </div>
-            <br>
-            <div class="form-header">
-                <hr class="form-divider">
-                <span class="header-label"><b>Feedback</b></span>
-            </div>
-            <div class="group-form">
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Was Offer Accepted ? :</b></p>
-                <p class="col-sm-3 col-form-label">
-                    @if ($price_monitorings->IsAccepted == "1")
-                    YES
-                    @endif
-                </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Buyer Ref Code :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $price_monitorings->BuyerRefCode }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Price Bid :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $price_monitorings->PriceBid }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Disposition Remarks :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $price_monitorings->DispositionRemarks }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
-        </div>
-        </div>
-          @endforeach
             </form>          
             <ul class="nav nav-tabs" id="rpeTab" role="tablist">
                 <li class="nav-item">

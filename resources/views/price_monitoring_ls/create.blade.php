@@ -123,12 +123,12 @@
                            </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
-                        <div class="row col-lg-12">
+                        <div class="create_prf_form col-lg-12 row">
                             <div class="col-lg-4">
                                 <div><label>PRODUCT</label></div>
                                 <div class="form-group">
                                     <label>Product</label>
-                                    <select class="form-control js-example-basic-single" name="Product" id="product-select" style="position: relative !important" title="Select Product" required>
+                                    <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
                                         <option value="" disabled selected>Select Product</option>
                                         @foreach($products as $product)
                                             <option value="{{ $product->id }}">{{ $product->code }}</option>
@@ -137,7 +137,7 @@
                                 </div>
                                 <div class="form-group">
                                      <label>Category</label>
-                                     <select class="form-control js-example-basic-single" name="Type"  style="position: relative !important" title="Select Category">
+                                     <select class="form-control js-example-basic-single" name="Type[]"  style="position: relative !important" title="Select Category">
                                         <option value="" disabled selected>Select Category</option>
                                         <option value="1">Pure</option>
                                         <option value="2">Blend</option>
@@ -145,7 +145,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Application:</label>
-                                    <select class="form-control js-example-basic-single" name="ApplicationId" style="position: relative !important" title="Select Application" required>
+                                    <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
                                         <option value="" disabled selected>Select Application</option>
                                         @foreach ($productApplications as $application)
                                             <option value="{{ $application->id }}" >{{ $application->Name }}</option>
@@ -154,40 +154,40 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Quantity Required</label>
-                                    <input type="number" class="form-control" name="QuantityRequired" value="0">
+                                    <input type="number" class="form-control" name="QuantityRequired[]" value="0">
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div><label>MANUFACTURING COST</label></div>
                                 <div class="form-group">
                                     <label>RMC (PHP)</label>
-                                    <input type="number" class="form-control" name="Rmc" id="rmc-input" value="0" readonly>
+                                    <input type="number" class="form-control rmc-input" name="Rmc[]" value="0" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Direct Labor</label>
-                                    <input type="number" class="form-control" name="DirectLabor" id="direct-labor-input" value="2.16" readonly>
+                                    <input type="number" class="form-control direct-labor-input" name="DirectLabor[]" value="2.16" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Factory Overhead</label>
-                                    <input type="number" class="form-control" name="FactoryOverhead" id="factory-overhead-input" value="24.26" readonly>
+                                    <input type="number" class="form-control factory-overhead-input" name="FactoryOverhead[]" value="24.26" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Total Manufacturing Cost</label>
-                                    <input type="number" class="form-control" name="TotalManufacturingCost" id="total-manufacturing-cost-input" value="0" readonly>
+                                    <input type="number" class="form-control total-manufacturing-cost-input" name="TotalManufacturingCost[]" value="0" readonly>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
                                 </div>
                                 <div class="form-group">
                                     <label>Blending Loss:</label>
-                                    <input type="number" class="form-control" name="BlendingLoss" id="blending-loss" value="0" readonly>
+                                    <input type="number" class="form-control blending-loss" name="BlendingLoss[]"  value="0" readonly>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div><label>OPERATING COST</label></div>
                                 <div class="form-group">
                                     <label>Delivery Type</label>
-                                    <select class="form-control js-example-basic-single" name="DeliveryType" id="delivery-type" style="position: relative !important" title="Select Delivery Type">
+                                    <select class="form-control js-example-basic-single delivery-type" name="DeliveryType[]" style="position: relative !important" title="Select Delivery Type">
                                         <option value="10">Courier</option>
                                         <option value="20">Delivery</option>
                                         <option value="30">Pickup</option>
@@ -195,15 +195,15 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Delivery Cost</label>
-                                    <input type="number" class="form-control" name="DeliveryCost" id="delivery-cost" value="0">
+                                    <input type="number" class="form-control delivery-cost" name="DeliveryCost[]" value="0">
                                 </div>
                                 <div class="form-group">
                                     <label>Financing Cost</label>
-                                    <input type="number" class="form-control" name="FinancingCost" id="financing-cost" value="0" readonly>
+                                    <input type="number" class="form-control financing-cost" name="FinancingCost[]" value="0" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>GAE Type:</label>
-                                    <select class="form-control js-example-basic-single PriceGae" name="PriceGae" style="position: relative !important" title="Select GAE Type">
+                                    <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" style="position: relative !important" title="Select GAE Type">
                                         @foreach ($pricegaes as $gaeType)
                                             <option value="{{ $gaeType->id }}" >{{ $gaeType->ExpenseName }}</option>
                                         @endforeach
@@ -211,44 +211,45 @@
                                 </div>
                                 <div class="form-group">
                                     <label>GAE Cost</label>
-                                    <input type="number" class="form-control GaeCost" name="GaeCost" value="0" readonly>
+                                    <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Total Operating Cost</label>
-                                    <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost" value="0" readonly>
+                                    <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
                                 </div>
                             </div>
-                        </div>
                         <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
-                        <div class="row col-lg-12">
                             <div class="col-lg-4">
                                 <div><label>PRODUCT COST</label></div>
                                 <div class="form-group">
                                     <label>Total Product Cost (PHP)</label>
-                                    <input type="number" class="form-control total-product-cost" name="TotalProductCost" value="0" readonly>
+                                    <input type="number" class="form-control total-product-cost" name="TotalProductCost[]" value="0" readonly>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div><label>MARKUP COST</label></div>
                                 <div class="form-group">
                                     <label>Markup (%)</label>
-                                    <input type="number" step=".01" class="form-control markup-percent" name="MarkupPercent" value="0">
+                                    <input type="number" step=".01" class="form-control markup-percent" name="MarkupPercent[]" value="0">
                                 </div>
                                 <div class="form-group">
                                     <label>Markup (PHP)</label>
-                                    <input type="number" step=".01" class="form-control markup-php" name="MarkupPhp" value="0">
+                                    <input type="number" step=".01" class="form-control markup-php" name="MarkupPhp[]" value="0">
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div><label>SELLING PRICE</label></div>
                                 <div class="form-group">
                                     <label>Selling Price (PHP)</label>
-                                    <input type="number" step=".01" class="form-control selling-price-php" name="SellingPricePhp" value="0">
+                                    <input type="number" step=".01" class="form-control selling-price-php" name="SellingPricePhp[]" value="0">
                                 </div>
                                 <div class="form-group">
                                     <label>Selling Price + 12% VAT (PHP)</label>
-                                    <input type="number" step=".01" class="form-control selling-price-vat" name="SellingPriceVat" value="0">
+                                    <input type="number" step=".01" class="form-control selling-price-vat" name="SellingPriceVat[]" value="0">
                                 </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <button type="button" class="btn btn-primary addPrfProductRowBtn" id="addPrfProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
                             </div>
                         </div>
                     </div>
@@ -310,53 +311,58 @@
             }
         });
 
-        function fetchGaeCost(priceGae) {
-            if(priceGae) {
-                $.ajax({
-                    url: '{{ url("getGaeCost") }}/' + priceGae,
-                    type: "GET",
-                    dataType: "json",
-                    success:function(data) {
-                        $('.GaeCost').val(data.Cost);
-                        updateTotalOperationCost();
-                        updateTotalProductCost();
-                    }
-                });
-            } else {
-                $('.GaeCost').val(0);
+        function fetchGaeCost(priceGae, $row) {
+    if (priceGae) {
+        $.ajax({
+            url: '{{ url("getGaeCost") }}/' + priceGae,
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                $row.find('.GaeCost').val(data.Cost);
+                updateTotalOperationCost($row);
+                updateTotalProductCost($row);
             }
-        }
-
-        var initialGae = $('.PriceGae').val();
-        fetchGaeCost(initialGae);
-
-        $('.PriceGae').change(function() {
-            var selectedGae = $(this).val();
-            fetchGaeCost(selectedGae);
         });
+    } else {
+        $row.find('.GaeCost').val(0);
+    }
+}
 
-        $('#product-select').on('change', function() {
+$(document).ready(function() {
+    var $initialRow = $('.create_prf_form');
+    var initialGae = $initialRow.find('.PriceGae').val();
+    fetchGaeCost(initialGae, $initialRow);
+
+    $(document).on('change', '.PriceGae', function() {
+        var $row = $(this).closest('.create_prf_form');
+        var priceGae = $(this).val();
+        fetchGaeCost(priceGae, $row);
+    });
+});
+
+        $(document).on('change', '.product-select', function() {
+        var $row = $(this).closest('.create_prf_form');
         var productId = $(this).val();
+        
         if (productId) {
             $.ajax({
                 url: '{{ url("product-rmc") }}/' + productId,
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    $('#rmc-input').val(data.rmc);
-                    var directLabor = parseFloat($('#direct-labor-input').val());
-                    var factoryOverhead = parseFloat($('#factory-overhead-input').val());
+                    $row.find('.rmc-input').val(data.rmc);
+                    var directLabor = parseFloat($row.find('.direct-labor-input').val());
+                    var factoryOverhead = parseFloat($row.find('.factory-overhead-input').val());
                     var rmc = parseFloat(data.rmc);
                     var totalManufacturingCost = rmc + directLabor + factoryOverhead;
-                    $('#total-manufacturing-cost-input').val(totalManufacturingCost.toFixed(2));
+                    $row.find('.total-manufacturing-cost-input').val(totalManufacturingCost.toFixed(2));
                     var blendingLoss = 0.01 * rmc ;
-                    $('#blending-loss').val(blendingLoss.toFixed(2));
+                    $row.find('.blending-loss').val(blendingLoss.toFixed(2));
                     var financingCost = 0.15 * totalManufacturingCost ;
-                    $('#financing-cost').val(financingCost.toFixed(2));
+                    $row.find('.financing-cost').val(financingCost.toFixed(2));
 
-                    updateTotalOperationCost();
-                    updateTotalProductCost();
-
+                    updateTotalOperationCost($row);
+                    updateTotalProductCost($row);
                 },
                 error: function() {
                     alert("Failed to fetch RMC value.");
@@ -365,135 +371,291 @@
         }
     });
 
-    $('#delivery-type').on('change', function() {
-            var deliveryType = $(this).val();
-            var deliveryCostInput = $('#delivery-cost');
-            
-            if (deliveryType === '10') {
-                deliveryCostInput.val(0);
-                deliveryCostInput.prop('readonly', true);
-            } else if (deliveryType === '20') {
-                deliveryCostInput.val(1.84);
-                deliveryCostInput.prop('readonly', true);
-            } else if (deliveryType === '30') {
-                deliveryCostInput.val(0);
-                deliveryCostInput.prop('readonly', false);
-            }
-            updateTotalOperationCost();
-            updateTotalProductCost();
+    $(document).on('change', '.delivery-type', function() {
+        var $row = $(this).closest('.create_prf_form');
+        var deliveryType = $(this).val();
+        var deliveryCostInput = $row.find('.delivery-cost');
 
-        });
-
-        $('#delivery-type').trigger('change');
+        if (deliveryType === '10') {
+            deliveryCostInput.val(0);
+            deliveryCostInput.prop('readonly', true);
+        } else if (deliveryType === '20') {
+            deliveryCostInput.val(1.84);
+            deliveryCostInput.prop('readonly', true);
+        } else if (deliveryType === '30') {
+            deliveryCostInput.val(0);
+            deliveryCostInput.prop('readonly', false);
+        }
+        updateTotalOperationCost($row);
+        updateTotalProductCost($row);
     });
 
-    function updateTotalOperationCost() {
-    var deliveryCost = parseFloat($('#delivery-cost').val());
-    var financingCost = parseFloat($('#financing-cost').val());
-    var gaeCost = parseFloat($('.GaeCost').val()); 
-    
-    var totalOperationCost = deliveryCost + financingCost + gaeCost;
-    $('.total-operation-cost').val(totalOperationCost.toFixed(2)); 
+        $('.delivery-type').trigger('change');
 
-    updateTotalProductCost();
+        function updateTotalOperationCost($row) {
+        var deliveryCost = parseFloat($row.find('.delivery-cost').val());
+        var financingCost = parseFloat($row.find('.financing-cost').val());
+        var gaeCost = parseFloat($row.find('.GaeCost').val()); 
+        
+        var totalOperationCost = deliveryCost + financingCost + gaeCost;
+        $row.find('.total-operation-cost').val(totalOperationCost.toFixed(2)); 
 
-}
-
-$('#delivery-cost').on('input', function() {
-    updateTotalOperationCost();
-    updateTotalProductCost();
-});
-
-function updateTotalProductCost() {
-    var totalmanufacturing = parseFloat($('#total-manufacturing-cost-input').val());
-    var totaloperating = parseFloat($('.total-operation-cost').val());
-    var blendingloss = parseFloat($('#blending-loss').val()); 
-    
-    var totalproductcost = totalmanufacturing + totaloperating + blendingloss;
-    $('.total-product-cost').val(totalproductcost.toFixed(2)); 
-
-    updateMarkupPHP();
-    updateMarkupPercent();
-}
-function updateSellingPrice() {
-    var totalProductCost = parseFloat($('.total-product-cost').val());
-    var markupPHP = parseFloat($('.markup-php').val());
-
-    if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
-        var sellingPrice = totalProductCost + markupPHP;
-        $('.selling-price-php').val(sellingPrice.toFixed(2));
+        updateTotalProductCost($row);
     }
-}
 
-function updateSellingPriceWithVAT() {
-    var sellingPrice = parseFloat($('.selling-price-php').val());
+    $(document).on('input', '.delivery-cost', function() {
+        var $row = $(this).closest('.create_prf_form');
+        updateTotalOperationCost($row);
+        updateTotalProductCost($row);
+    });
 
-    if (!isNaN(sellingPrice)) {
-        var sellingPriceWithVAT = sellingPrice + (sellingPrice * 0.12);
-        $('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
+function updateTotalProductCost($row) {
+        var totalManufacturing = parseFloat($row.find('.total-manufacturing-cost-input').val());
+        var totalOperating = parseFloat($row.find('.total-operation-cost').val());
+        var blendingLoss = parseFloat($row.find('.blending-loss').val()); 
+        
+        var totalProductCost = totalManufacturing + totalOperating + blendingLoss;
+        $row.find('.total-product-cost').val(totalProductCost.toFixed(2)); 
+
+        updateMarkupPHP($row);
+        updateMarkupPercent($row);
     }
-}
 
-function updateMarkupPHP() {
-        var totalProductCost = parseFloat($('.total-product-cost').val());
-        var markupPercent = parseFloat($('.markup-percent').val());
+function updateSellingPrice($row) {
+        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
+        var markupPHP = parseFloat($row.find('.markup-php').val());
+
+        if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
+            var sellingPrice = totalProductCost + markupPHP;
+            $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
+        }
+    }
+
+    function updateSellingPriceWithVAT($row) {
+        var sellingPrice = parseFloat($row.find('.selling-price-php').val());
+
+        if (!isNaN(sellingPrice)) {
+            var sellingPriceWithVAT = sellingPrice + (sellingPrice * 0.12);
+            $row.find('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
+        }
+    }
+
+    function updateMarkupPHP($row) {
+        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
+        var markupPercent = parseFloat($row.find('.markup-percent').val());
 
         if (!isNaN(totalProductCost) && !isNaN(markupPercent)) {
             var markupPHP = (markupPercent / 100) * totalProductCost;
-            $('.markup-php').val(markupPHP.toFixed(2));
-            updateSellingPrice();
-            updateSellingPriceWithVAT();
+            $row.find('.markup-php').val(markupPHP.toFixed(2));
+            updateSellingPrice($row);
+            updateSellingPriceWithVAT($row);
         }
     }
 
-    function updateMarkupPercent() {
-        var totalProductCost = parseFloat($('.total-product-cost').val());
-        var markupPHP = parseFloat($('.markup-php').val());
+    function updateMarkupPercent($row) {
+        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
+        var markupPHP = parseFloat($row.find('.markup-php').val());
 
         if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
             var markupPercent = (markupPHP / totalProductCost) * 100;
-            $('.markup-percent').val(markupPercent.toFixed(2));
-            updateSellingPrice();
-            updateSellingPriceWithVAT();
+            $row.find('.markup-percent').val(markupPercent.toFixed(2));
+            updateSellingPrice($row);
+            updateSellingPriceWithVAT($row);
         }
     }
 
-    $('.markup-percent').on('input', function() {
-        updateMarkupPHP();
+    $(document).on('input', '.markup-percent', function() {
+        var $row = $(this).closest('.create_prf_form');
+        updateMarkupPHP($row);
     });
 
-    $('.markup-php').on('input', function() {
-        updateMarkupPercent();
+    $(document).on('input', '.markup-php', function() {
+        var $row = $(this).closest('.create_prf_form');
+        updateMarkupPercent($row);
     });
 
-    $('.selling-price-php').on('input', function() {
+    $(document).on('input', '.selling-price-php', function() {
+        var $row = $(this).closest('.create_prf_form');
         var sellingPrice = parseFloat($(this).val());
-        var totalProductCost = parseFloat($('.total-product-cost').val());
+        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
 
         if (!isNaN(sellingPrice) && !isNaN(totalProductCost)) {
             var markupPHP = sellingPrice - totalProductCost;
             var markupPercent = (markupPHP / totalProductCost) * 100;
             var sellingPriceWithVAT = sellingPrice + (sellingPrice * 0.12);
 
-            $('.markup-php').val(markupPHP.toFixed(2));
-            $('.markup-percent').val(markupPercent.toFixed(2));
-            $('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
+            $row.find('.markup-php').val(markupPHP.toFixed(2));
+            $row.find('.markup-percent').val(markupPercent.toFixed(2));
+            $row.find('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
         }
     });
 
-    $('.selling-price-vat').on('input', function() {
+    $(document).on('input', '.selling-price-vat', function() {
+        var $row = $(this).closest('.create_prf_form');
         var sellingPriceWithVAT = parseFloat($(this).val());
-        var totalProductCost = parseFloat($('.total-product-cost').val());
+        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
 
         if (!isNaN(sellingPriceWithVAT) && !isNaN(totalProductCost)) {
             var sellingPrice = sellingPriceWithVAT / 1.12;
             var markupPHP = sellingPrice - totalProductCost;
             var markupPercent = (markupPHP / totalProductCost) * 100;
 
-            $('.selling-price-php').val(sellingPrice.toFixed(2));
-            $('.markup-php').val(markupPHP.toFixed(2));
-            $('.markup-percent').val(markupPercent.toFixed(2));
+            $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
+            $row.find('.markup-php').val(markupPHP.toFixed(2));
+            $row.find('.markup-percent').val(markupPercent.toFixed(2));
         }
     });
     
+        function addProductRow() {
+        var newProductForm = `
+        <div class="col-lg-12"><hr style="background-color: black"></div>
+                        <div class="create_prf_form col-lg-12 row">
+                            <div class="col-lg-12">
+                                <button type="button" class="btn btn-danger deletePrfBtn" style="float: right;">Delete Row</button>
+                            </div>
+                            <div class="col-lg-4">
+                                <div><label>PRODUCT</label></div>
+                                <div class="form-group">
+                                    <label>Product</label>
+                                    <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
+                                        <option value="" disabled selected>Select Product</option>
+                                        @foreach($products as $product)
+                                            <option value="{{ $product->id }}">{{ $product->code }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                     <label>Category</label>
+                                     <select class="form-control js-example-basic-single" name="Type[]"  style="position: relative !important" title="Select Category">
+                                        <option value="" disabled selected>Select Category</option>
+                                        <option value="1">Pure</option>
+                                        <option value="2">Blend</option>
+                                     </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Application:</label>
+                                    <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
+                                        <option value="" disabled selected>Select Application</option>
+                                        @foreach ($productApplications as $application)
+                                            <option value="{{ $application->id }}" >{{ $application->Name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Quantity Required</label>
+                                    <input type="number" class="form-control" name="QuantityRequired[]" value="0">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div><label>MANUFACTURING COST</label></div>
+                                <div class="form-group">
+                                    <label>RMC (PHP)</label>
+                                    <input type="number" class="form-control rmc-input" name="Rmc[]" value="0" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Direct Labor</label>
+                                    <input type="number" class="form-control direct-labor-input" name="DirectLabor[]" value="2.16" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Factory Overhead</label>
+                                    <input type="number" class="form-control factory-overhead-input" name="FactoryOverhead[]" value="24.26" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Total Manufacturing Cost</label>
+                                    <input type="number" class="form-control total-manufacturing-cost-input" name="TotalManufacturingCost[]" value="0" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Blending Loss:</label>
+                                    <input type="number" class="form-control blending-loss" name="BlendingLoss[]"  value="0" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div><label>OPERATING COST</label></div>
+                                <div class="form-group">
+                                    <label>Delivery Type</label>
+                                    <select class="form-control js-example-basic-single delivery-type" name="DeliveryType[]" style="position: relative !important" title="Select Delivery Type">
+                                        <option value="10">Courier</option>
+                                        <option value="20">Delivery</option>
+                                        <option value="30">Pickup</option>
+                                     </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Delivery Cost</label>
+                                    <input type="number" class="form-control delivery-cost" name="DeliveryCost[]" value="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>Financing Cost</label>
+                                    <input type="number" class="form-control financing-cost" name="FinancingCost[]" value="0" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>GAE Type:</label>
+                                    <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" style="position: relative !important" title="Select GAE Type">
+                                        @foreach ($pricegaes as $gaeType)
+                                            <option value="{{ $gaeType->id }}" >{{ $gaeType->ExpenseName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>GAE Cost</label>
+                                    <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Total Operating Cost</label>
+                                    <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
+                                </div>
+                            </div>
+                        <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
+                            <div class="col-lg-4">
+                                <div><label>PRODUCT COST</label></div>
+                                <div class="form-group">
+                                    <label>Total Product Cost (PHP)</label>
+                                    <input type="number" class="form-control total-product-cost" name="TotalProductCost[]" value="0" readonly>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div><label>MARKUP COST</label></div>
+                                <div class="form-group">
+                                    <label>Markup (%)</label>
+                                    <input type="number" step=".01" class="form-control markup-percent" name="MarkupPercent[]" value="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>Markup (PHP)</label>
+                                    <input type="number" step=".01" class="form-control markup-php" name="MarkupPhp[]" value="0">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div><label>SELLING PRICE</label></div>
+                                <div class="form-group">
+                                    <label>Selling Price (PHP)</label>
+                                    <input type="number" step=".01" class="form-control selling-price-php" name="SellingPricePhp[]" value="0">
+                                </div>
+                                <div class="form-group">
+                                    <label>Selling Price + 12% VAT (PHP)</label>
+                                    <input type="number" step=".01" class="form-control selling-price-vat" name="SellingPriceVat[]" value="0">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <button type="button" class="btn btn-primary addFormPrfProductRowBtn">Add Row</button> 
+                            </div>
+                        </div>`;
+
+        $('.create_prf_form').last().find('.addPrfProductRowBtn').hide();
+        
+        $('.create_prf_form').last().after(newProductForm);
+        $('.js-example-basic-single').select2();
+        $('.create_prf_form').last().find('.deletePrfBtn').removeAttr('hidden');
+    }
+
+    $(document).on('click', '.addPrfProductRowBtn', function() {
+        addProductRow();
+        $('.addPrfProductRowBtn').hide(); 
+    });
+
+    $(document).on('click', '.addFormPrfProductRowBtn', function() {
+        addProductRow();
+    });
+    });
 </script>

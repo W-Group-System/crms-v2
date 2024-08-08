@@ -197,7 +197,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/getGaeCost/{id}', 'PriceMonitoringController@getGaeDetails');
     Route::get('product-rmc/{id}', 'PriceMonitoringController@getProductRmc');
     Route::get('/get-payment-term/{clientId}', 'PriceMonitoringController@getClientDetailsL');
-    Route::post('/local_price_monitoring', 'PriceMonitoringController@storeLocalSaleRpe');
+    Route::post('/local_price_monitoring', 'PriceMonitoringController@storeLocalSalePre');
     Route::get('price_monitoring_local/view/{id}', 'PriceMonitoringController@localview');
 
 

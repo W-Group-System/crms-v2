@@ -129,6 +129,6 @@
 </script>
 @include('price_monitoring_ls.create')
 @foreach ( $price_monitorings as $priceMonitoring)
-@include('price_monitoring.edit')
+@include('price_monitoring_ls.edit')
 @endforeach
 @endsection
