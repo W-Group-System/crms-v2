@@ -15,9 +15,9 @@ class PriceFixedCostController extends Controller
     {
         $price_fixed_cost = PriceFixedCost::with('user')
             ->when($request->search, function($query)use($request){
-                $query->where('DirectLabor', $request->search)
-                    ->orWhere('FactoryOverHead', $request->search)
-                    ->orWhere('DeliveryCost', $request->search);
+                $query->where('DirectLabor', 'LIKE', '%'.$request->search.'%')
+                    ->orWhere('FactoryOverHead', 'LIKE', '%'.$request->search.'%')
+                    ->orWhere('DeliveryCost', "LIKE", '%'.$request->search.'%');
             })
             ->latest()
             ->paginate(10);
