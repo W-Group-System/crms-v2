@@ -186,6 +186,22 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('delete_price_request/{id}', 'PriceMonitoringController@delete');
     Route::get('price_monitoring/view/{id}', 'PriceMonitoringController@view');
 
+    Route::post('prfFiles', 'PriceMonitoringController@uploadFile');
+    Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
+    Route::delete('price_monitorings/view/file-delete/{id}', 'PriceMonitoringController@deleteFile');
+    Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
+
+    // Price Monitoring Local Sales
+    Route::get('/price_monitoring_ls', 'PriceMonitoringController@indexLocal')->name('price_monitoring.index');
+    Route::get('client-contact/{clientId}', 'PriceMonitoringController@getPrfContacts');
+    Route::get('/getGaeCost/{id}', 'PriceMonitoringController@getGaeDetails');
+    Route::get('product-rmc/{id}', 'PriceMonitoringController@getProductRmc');
+    Route::get('/get-payment-term/{clientId}', 'PriceMonitoringController@getClientDetailsL');
+    Route::post('/local_price_monitoring', 'PriceMonitoringController@storeLocalSaleRpe');
+    Route::get('price_monitoring_local/view/{id}', 'PriceMonitoringController@localview');
+
+
+
     // Customer Complaint 
     Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');
     Route::post('/new_customer_complaint', 'CustomerComplaintController@store')->name('customer_complaint.store');
@@ -253,13 +269,16 @@ Route::group(['middleware' => 'auth'], function () {
     // Activities
     Route::get('/activities', 'ActivityController@index')->name('activities.index');
     Route::post('/new_activity', 'ActivityController@store')->name('activity.store'); 
-    Route::get('/get-contacts/{clientId}', [ActivityController::class, 'getContacts']); 
-    Route::get('/edit_activity/{id}', 'ActivityController@edit')->name('edit_activity');    
+    // Route::get('/get-contacts/{clientId}', [ActivityController::class, 'getContacts']); 
+    // Route::get('/edit_activity/{id}', 'ActivityController@edit')->name('edit_activity');    
     Route::post('/update_activity/{id}', 'ActivityController@update')->name('update_activity');
-    Route::get('get_contacts/{clientId}', [ActivityController::class, 'getContactsByClient']);
+    // Route::get('get_contacts/{clientId}', [ActivityController::class, 'getContactsByClient']);
+    Route::post('delete_activity', 'ActivityController@delete');
     Route::get('view_activity/{id}', 'ActivityController@view')->name('activity.view');
-    Route::delete('delete_activity/{id}', 'ActivityController@close')->name('delete_activity');
-    Route::post('open_activity/{id}', 'ActivityController@open')->name('open_activity');
+    Route::post('close_activity', 'ActivityController@close')->name('delete_activity');
+    Route::post('open_activity', 'ActivityController@open')->name('open_activity');
+    Route::post('refresh_client_contact', 'ActivityController@refreshClientContact');
+    Route::post('edit_client_contact', 'ActivityController@editClientContact');
 
     // Product Applications
     Route::get('/product_applications', 'ProductApplicationController@index')->name('product_applications.index');

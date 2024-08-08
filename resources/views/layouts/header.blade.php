@@ -193,6 +193,7 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/request_product_evaluation') }}">Request for Product Evaluation</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request') }}">Sample Request Form</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring_ls') }}">Price Monitoring</a></li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#tables2" aria-expanded="false" aria-controls="tables2" onclick="toggleSetup(event)">
                                             <span class="menu-title">Setup</span>
@@ -252,7 +253,7 @@
                             </div>
                         </li> -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/activities') }}">
+                            <a class="nav-link" href="{{ url('/activities?open=10') }}">
                             <i class="icon-paper menu-icon"></i>
                             <span class="menu-title">Activities</span>
                             </a>

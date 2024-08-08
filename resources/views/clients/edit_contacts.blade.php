@@ -79,9 +79,14 @@
                         </div>
                     </div>
                     <!-- Repeat for other fields as needed -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">Submit</button>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-danger deleteContact" title="Delete Client" data-id="{{ $contact->id }}">
+                            <i class="ti-trash"></i>
+                        </button>
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -109,11 +114,10 @@
                     title: 'Success',
                     text: response.success,
                     showConfirmButton: false,
+                    timer: 1500
                 }).then(function() {
                     $('#edit_contact-{{ $contact->id }}').modal('hide'); // Close the correct modal
-                    setTimeout(function() {
-                        location.reload();
-                    }, 2000);
+                    location.reload();
                 });
             },
             error: function(response) {

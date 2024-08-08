@@ -200,6 +200,8 @@
 
                 </div>
                 <div class="col-lg-12" align="right">
+                    <!-- <button type="button" name="delete" class="achivedClient btn btn-danger" data-id="{{$data->id}}"><i class="ti ti-archive"></i></button> -->
+                    <a href="{{ session('last_client_page', url('/client')) }}" class="btn btn-md btn-secondary">Close</a>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>
