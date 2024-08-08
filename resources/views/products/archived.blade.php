@@ -15,6 +15,8 @@
                     </div>
                 </div>
             </form>
+            <a href="{{url('export_archive_products')}}" class="btn btn-md btn-success mb-3">Export</a>
+
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover table-bordered" id="archived_table" width="100%">
                     <thead>
