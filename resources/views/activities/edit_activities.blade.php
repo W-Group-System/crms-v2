@@ -60,12 +60,11 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Contact</label>
-                                <select class="form-control form-control-sm js-example-basic-single ClientContactId" name="ClientContactId" style="position: relative !important" title="Select Contact" required>
+                                <select class="form-control form-control-sm js-example-basic-single EditClientContactId" name="ClientContactId" style="position: relative !important" title="Select Contact" required>
                                     <option value="" disabled selected>Select Contact</option>
                                 </select>
                             </div>
                         </div>
-                        <?php $today = date('Y-m-d'); ?>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Schedule</label>
@@ -152,7 +151,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                             <label for="Description" class="form-label">Date Closed</label>
-                            <input type="date" name="DateClosed" class="form-control" value="{{$a->DateClosed}}" required>
+                            <input type="date" name="DateClosed" class="form-control" value="{{$a->DateClosed}}" min="{{date('Y-m-d')}}" required>
                             </div>
                         </div>
                         <div class="col-lg-12">

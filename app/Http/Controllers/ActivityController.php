@@ -20,9 +20,14 @@ class ActivityController extends Controller
     public function index(Request $request)
     {   
         $activities = Activity::with(['client'])
-            ->where('status', 10)
-            ->when($request->status, function($query)use($request) {
-                $query->where('status', $request->status)->orWhere('status', $request->status);
+            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+                $query->whereIn('Status', [$request->open, $request->close]);
+            })
+            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+                $query->where('Status', $request->open);
+            })
+            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+                $query->where('Status', $request->close);
             })
             ->when($request->search, function($query)use($request) {
                 $query->where('ActivityNumber', $request->search)
@@ -39,10 +44,11 @@ class ActivityController extends Controller
         $contacts = Contact::all();
         $users = User::where('is_active', '1')->get();
         $currentUser = Auth::user();
-        $status = $request->status;
+        $open = $request->open;
+        $close = $request->close;
         $search = $request->search;
 
-        return view('activities.index', compact('activities', 'clients', 'contacts', 'users', 'currentUser', 'status', 'search')); 
+        return view('activities.index', compact('activities', 'clients', 'contacts', 'users', 'currentUser', 'open', 'close', 'search')); 
     }
 
     // Store
@@ -212,5 +218,15 @@ class ActivityController extends Controller
         $activity->delete();
 
         return array('message' => 'Successfully Deleted');
+    }
+
+    public function editClientContact(Request $request)
+    {
+        $client = Client::findOrFail($request->clientId);
+        $clientContacts = Contact::where('CompanyId', $client->id)->get();
+        
+        $clientContactOptions = $clientContacts->pluck('ContactName', 'id')->toArray();
+        
+        return Form::select('ClientContactId', $clientContactOptions, null, array('class' => 'form-control'));
     }
 }

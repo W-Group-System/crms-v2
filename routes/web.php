@@ -272,6 +272,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('close_activity', 'ActivityController@close')->name('delete_activity');
     Route::post('open_activity', 'ActivityController@open')->name('open_activity');
     Route::post('refresh_client_contact', 'ActivityController@refreshClientContact');
+    Route::post('edit_client_contact', 'ActivityController@editClientContact');
 
     // Product Applications
     Route::get('/product_applications', 'ProductApplicationController@index')->name('product_applications.index');
