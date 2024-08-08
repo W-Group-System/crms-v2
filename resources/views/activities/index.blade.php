@@ -142,8 +142,8 @@
                     success: function(res)
                     {
                         setTimeout(function() {
-                            $('.EditClientContactId').html(res)
-                            $('.EditClientContactId').val(clientContact);
+                            $('.ClientContactId').html(res)
+                            $('.ClientContactId').val(clientContact);
                         }, 500)
                     }
                 })
