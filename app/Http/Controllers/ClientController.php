@@ -500,7 +500,7 @@ class ClientController extends Controller
         }
 
         // Save the updated file client
-        $fileClient->save();
+        $fileClient->update();
 
         return response()->json(['success' => 'File updated successfully']);
     }
