@@ -14,9 +14,9 @@ class CurrencyExchangeController extends Controller
     {   
         $currency_exchanges = CurrencyExchange::with(['fromCurrency', 'toCurrency'])
             ->when($request->search, function($query)use($request) {
-                $query->where('ExchangeRate', $request->search)
+                $query->where('ExchangeRate', 'LIKE', '%'.$request->search.'%')
                 ->orWhereHas('fromCurrency', function($query)use($request) {
-                    $query->where('Name', $request->search);
+                    $query->where('Name', 'LIKE', '%'.$request->search.'%');
                 });
                 
             })
