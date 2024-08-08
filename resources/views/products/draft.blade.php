@@ -18,6 +18,8 @@
                     </div>
                 </div>
             </form>
+            <a href="{{url('draft_new_products')}}" class="btn btn-md btn-success mb-3">Export</a>
+
             <div class="table-responsive">
                 <table class="table table-bordered table-striped table-hover mt-3" id="draft_table">
                     <thead>

@@ -15,6 +15,7 @@
                     </div>
                 </div>
             </form>
+            <a href="{{url('export_new_products')}}" class="btn btn-md btn-success mb-3">Export</a>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="product_table" width="100%">
                     <thead>

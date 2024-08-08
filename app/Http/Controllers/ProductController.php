@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\BasePrice;
 use App\Client;
+use App\Exports\CurrentProductExport;
+use App\Exports\ArchiveExport;
+use App\Exports\DraftProductExport;
+use App\Exports\NewProductExport;
 use App\Helpers\Helpers;
 use App\Product;
 use App\ProductAllergens;
@@ -23,6 +27,7 @@ use App\ProductSubcategories;
 use App\RawMaterial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductController extends Controller
@@ -859,5 +864,25 @@ class ProductController extends Controller
         $client = Client::get();
 
         return view('products.archived_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));
+    }
+
+    public function exportCurrentProducts()
+    {
+        return Excel::download(new CurrentProductExport, 'Current Product.xlsx');
+    }
+
+    public function exportArchiveProducts()
+    {
+        return Excel::download(new ArchiveExport, 'Archived Product.xlsx');
+    }
+
+    public function exportNewProducts()
+    {
+        return Excel::download(new NewProductExport, 'New Product.xlsx');
+    }
+
+    public function exportDraftProducts()
+    {
+        return Excel::download(new DraftProductExport, 'Draft Product.xlsx');
     }
 }

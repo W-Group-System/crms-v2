@@ -64,6 +64,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('update_product/{id}', 'ProductController@update')->name('update_product');
     Route::post('delete_product', 'ProductController@delete')->name('delete_product');
 
+    # Export Products
+    Route::get('/export_current_products', 'ProductController@exportCurrentProducts');
+    Route::get('/export_archive_products', 'ProductController@exportArchiveProducts');
+    Route::get('/export_new_products', 'ProductController@exportNewProducts');
+    Route::get('/draft_new_products', 'ProductController@exportDraftProducts');
+
     # Product Specification
     Route::post('add_specification', 'ProductController@specification');
     Route::post('edit_specification/{id}', 'ProductController@editSpecification');
