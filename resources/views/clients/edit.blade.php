@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
                 Edit Client
-                <a href="{{ session('last_client_page', url('/client')) }}" class="btn btn-md btn-light">
+                <a href="{{ session('last_client_page', url('/client')) }}" class="btn btn-md btn-secondary">
                     <i class="icon-arrow-left"></i>&nbsp;Back
                 </a>
             </h4>
