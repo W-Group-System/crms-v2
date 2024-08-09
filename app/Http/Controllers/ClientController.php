@@ -500,11 +500,10 @@ class ClientController extends Controller
         }
 
         // Save the updated file client
-        $fileClient->update();
+        $fileClient->save();
 
         return response()->json(['success' => 'File updated successfully']);
     }
-
     // Delete File
     public function deleteFile($id)
     {

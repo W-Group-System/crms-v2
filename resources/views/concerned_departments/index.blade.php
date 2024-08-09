@@ -10,15 +10,45 @@
             <table class="table table-striped table-bordered table-hover" id="concern_department_table" width="100%">
                 <thead>
                     <tr>
-                        <th width="40%">Department</th>
-                        <th width="40%">Description</th>
-                        <th width="20%">Action</th>
+                        <th width="10%">Action</th>
+                        <th width="45%">Department</th>
+                        <th width="45%">Description</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach($concern_departments as $concern_department)
+                        <tr>
+                            <td>
+                            <button type="button" class="btn btn-sm btn-warning" title="Edit Department" data-toggle="modal" data-target="#edit_concern-{{ $concern_department->id }}">
+                                <i class="ti-pencil"></i>
+                            </button>
+                            <!-- <button type="button" class="btn btn-sm btn-primary" title="Edit Department" data-toggle="modal" data-target="#edit_concern-{{ $concern_department->id }}">
+                                <i class="ti-pencil"></i>
+                            </button> -->
+                            </td>
+                            <td>{{ $concern_department->Name }}</td>
+                            <td>{{ $concern_department->Description }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
+            {!! $concern_departments->appends(['search' => $search])->links() !!}
+            @php
+                $total = $concern_departments->total();
+                $currentPage = $concern_departments->currentPage();
+                $perPage = $concern_departments->perPage();
+
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Add -->
 <div class="modal fade" id="formConcernDepartment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -29,28 +59,61 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_concern_department" enctype="multipart/form-data" action="">
-                    <span id="form_result"></span>
+                <form method="POST" enctype="multipart/form-data" action="{{ url('new_concern_department') }}">
                     @csrf
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name">
+                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
-                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
+                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description" required>
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="action" id="action" value="Save">
+                        <!-- <input type="hidden" name="action" id="action" value="Save">
                         <input type="hidden" name="hidden_id" id="hidden_id">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
+                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save"> -->
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+@foreach($concern_departments as $concern_department)
+<div class="modal fade" id="edit_concern-{{ $concern_department->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Concern Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="edit_form_concern_department-{{ $concern_department->id }}" enctype="multipart/form-data" action="{{ url('update_concern_department', $concern_department->id) }}">
+                    @csrf
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" class="form-control" id="Name" name="Name" value="{{ $concern_department->Name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <input type="text" class="form-control" id="Description" name="Description" value="{{ $concern_department->Description }}" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" name="edit_action_button" id="edit_action_button-{{ $concern_department->id }}" class="btn btn-success" value="Update">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -77,36 +140,52 @@
 
 <script>
     $(document).ready(function(){
-        $('#concern_department_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('concern_department.index') }}"
-            },
-            columns: [
-                {
-                    data: 'Name',
-                    name: 'Name'
-                },
-                {
-                    data: 'Description',
-                    name: 'Description'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: 1, // Target the Description column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
+        // $('#concern_department_table').DataTable({
+        //     processing: true,
+        //     serverSide: true,
+        //     ajax: {
+        //         url: "{{ route('concern_department.index') }}"
+        //     },
+        //     columns: [
+        //         {
+        //             data: 'Name',
+        //             name: 'Name'
+        //         },
+        //         {
+        //             data: 'Description',
+        //             name: 'Description'
+        //         },
+        //         {
+        //             data: 'action',
+        //             name: 'action',
+        //             orderable: false
+        //         }
+        //     ],
+        //     columnDefs: [
+        //         {
+        //             targets: 1, // Target the Description column
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         }
+        //     ]
+        // });
+        
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'OK'
+            });
+        @elseif(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'OK'
+            });
+        @endif
 
         $('#add_concern_department').click(function(){
             $('#formConcernDepartment').modal('show');
