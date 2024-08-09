@@ -73,4 +73,16 @@ class PriceFixedCostController extends Controller
         Alert::success('Successfully Delete')->persistent('Dismiss');
         return back();
     }
+
+    public function edit(Request $request)
+    {
+        $priceFixed = PriceFixedCost::findOrFail($request->id);
+
+        return array(
+            'EffectiveDate' => $priceFixed->EffectiveDate,
+            'DirectLabor' => $priceFixed->DirectLabor,
+            'FactoryOverhead' => $priceFixed->FactoryOverhead,
+            'DeliveryCost' => $priceFixed->DeliveryCost
+        );
+    }
 }

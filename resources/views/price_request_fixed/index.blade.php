@@ -33,7 +33,7 @@
                     @foreach ($price_fixed_cost as $pfc)
                         <tr>
                             <td>
-                                <button type="button" class="btn btn-sm btn-warning" title="Edit" data-toggle="modal" data-target="#editPriceRequestFixed-{{$pfc->id}}">
+                                <button type="button" class="btn btn-sm btn-warning editBtn" title="Edit" data-toggle="modal" data-target="#editPriceRequestFixed-{{$pfc->id}}" data-id="{{$pfc->id}}">
                                     <i class="ti-pencil"></i>
                                 </button>
                                 <form method="POST" class="d-inline-block" action="{{url('delete_fixed_cost/'.$pfc->id)}}">
@@ -135,6 +135,31 @@
                     form.submit();
                 }
             });
+        })
+
+        $('#formFixedCost').on('hidden.bs.modal', function(){
+            $('[name="DirectLabor"]').val('')
+            $('[name="FactoryOverhead"]').val('')
+            $('[name="DeliveryCost"]').val('')
+        })
+
+        $('.editBtn').on('click', function() {
+            var id = $(this).data('id');
+
+            $.ajax({
+                type: "GET", 
+                url: "{{url('edit_fixed_cost')}}",
+                data: {
+                    id: id
+                },
+                success: function(res) {
+                    $('[name="EffectiveDate"]').val(res.EffectiveDate)
+                    $('[name="DirectLabor"]').val(res.DirectLabor)
+                    $('[name="FactoryOverhead"]').val(res.FactoryOverhead)
+                    $('[name="DeliveryCost"]').val(res.DeliveryCost)
+                }
+            })
+            
         })
     })
 </script>
