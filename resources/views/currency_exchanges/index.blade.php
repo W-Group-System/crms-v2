@@ -20,6 +20,7 @@
                     </div>
                 </div>
             </form>
+            @include('components.error')
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover table-bordered" id="currency_exchange_table" width="100%">
                     <thead>
