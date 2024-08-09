@@ -5,29 +5,17 @@ use App\User;
 use App\Role;
 use App\Company;
 use App\Department;
+use App\Exports\UserExport;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class UserController extends Controller
 {
     // List 
     public function index(Request $request)
     {
-        // $users = User::with(['company', 'department', 'role'])->orderBy('id', 'desc')->get();
-    
-        // if(request()->ajax())
-        // {
-        //     return datatables()->of($users)
-        //             ->addColumn('action', function($data){
-        //                 $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-        //                 $buttons .= '&nbsp;&nbsp;';
-        //                 // $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-        //                 return $buttons;
-        //             })
-        //             ->rawColumns(['action'])
-        //             ->make(true);
-        // }
-        // return view('users.index', compact('users', 'companies', 'departments', 'roles'));
         $departments = Department::all();
         $companies = Company::all();
         $roles = Role::all();
@@ -46,7 +34,8 @@ class UserController extends Controller
                         })
                         ->orWhereHas('department', function ($q) use ($search) {
                             $q->where('name', 'LIKE', '%' . $search . '%');
-                        });
+                        })
+                        ->orWhere('email', 'LIKE', '%'.$search.'%');
                 })
                 ->orderBy('id', 'desc')
                 ->paginate(10);
@@ -63,81 +52,67 @@ class UserController extends Controller
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'username'      =>  'required|string|max:255',
-            'full_name'     =>  'required|string|max:255',
-            'password'      =>  'required|string|min:8',
-            // 'role'          =>  'required',
-            // 'company'       =>  'required',
-            // 'department'    =>  'required'
-        );
+        $request->validate([
+            'password' => 'confirmed|min:6',
+            'email' => 'email|unique:users,email',
+        ]);
 
+        $user = new User;
+        $user->user_id = 'N/A';
+        $user->username = $request->username;
+        $user->full_name = $request->full_name;
+        $user->password = bcrypt($request->password);
+        $user->email = $request->email;
+        $user->role_id = $request->role_id;
+        $user->company_id = $request->company_id;
+        $user->department_id = $request->department_id;
+        $user->is_active = 1;
+        $user->save();
 
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'username'      =>  $request->username,
-            'full_name'     =>  $request->full_name,
-            'password'      =>  bcrypt($request->password),
-            'email'         =>  $request->email,
-            'role_id'       =>  $request->role_id,
-            'company_id'    =>  $request->company_id,
-            'is_active'     =>  1,
-            'user_id'       =>  'N/A',
-            'department_id' =>  $request->department_id,
-        );
-
-        User::create($form_data);
-
-        return response()->json(['success' => 'Data Added Successfully.']);
-    }
-
-    // Edit
-    public function edit($id)
-    {
-        if(request()->ajax())
-        {
-            $data = User::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
     }
 
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'username'      =>  'required|string|max:255',
-            'full_name'     =>  'required|string|max:255',
-            // 'password'      =>  'required|string|min:8',
-            // 'role'          =>  'required',
-            // 'company'       =>  'required',
-            // 'department'    =>  'required'
-        );
+        $request->validate([
+            'password' => 'confirmed|min:6',
+            'email' => 'email|unique:users,email,' . $id
+        ]);
 
-        $error = Validator::make($request->all(), $rules);
+        $user = User::findOrFail($id);
+        $user->user_id = 'N/A';
+        $user->username = $request->username;
+        $user->full_name = $request->full_name;
+        $user->password = bcrypt($request->password);
+        $user->email = $request->email;
+        $user->role_id = $request->role_id;
+        $user->company_id = $request->company_id;
+        $user->department_id = $request->department_id;
+        $user->is_active = $request->is_active;
+        $user->save();
 
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
+        Alert::success('Successfully Update')->persistent('Dismiss');
+        return back();
+    }
 
-        $form_data = array(
-            'username'      =>  $request->username,
-            'full_name'     =>  $request->full_name,
-            'email'         =>  $request->email,
-            'role_id'       =>  $request->role_id,
-            'company_id'    =>  $request->company_id,
-            'department_id' =>  $request->department_id,
-            'is_active'     =>  $request->is_active
-        );
+    public function userChangePassword(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'confirmed|min:6',
+        ]);
 
-        User::whereId($id)->update($form_data);
+        $user = User::findOrFail($id);
+        $user->password = bcrypt($request->password);
+        $user->save();
 
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        Alert::success('Successfully Change Password')->persistent('Dismiss');
+        return back();
+    }
+
+    public function exportUser()
+    {
+        return Excel::download(new UserExport, 'User.xlsx');
     }
 }
