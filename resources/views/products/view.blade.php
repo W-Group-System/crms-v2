@@ -27,6 +27,7 @@
                 $rmc = Helpers::rmc($data->productMaterialComposition, $data->id);
                 $identicalComposition = Helpers::identicalComposition($data->productMaterialComposition, $data->id);
                 $customerRequirements = Helpers::customerRequirements($data->code);
+                $productRps = Helpers::productRps($data->code);
             @endphp
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
                 <div class="form-group row">
@@ -367,11 +368,15 @@
                                         </tr>
                                     @endforeach
                                 @endif
-                                @if($data->productRps)
-                                    @foreach ($data->productRps as $rps)
+                                @if($productRps)
+                                    @foreach ($productRps as $rps)
                                         <tr>
                                             <td>Request Product Evaluation</td>
-                                            <td>{{$rps->RpeNumber}}</td>
+                                            <td>
+                                                <a href="{{url('product_evaluation/view/'.$rps->id)}}" target="_blank">
+                                                    {{$rps->RpeNumber}}
+                                                </a>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @endif
