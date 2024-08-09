@@ -32,7 +32,7 @@
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->ddw_number }}</label>
+                    <label class="col-sm-3 col-form-label">{{ isset($data->ddw_number ) ? $data->ddw_number : ''}}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials Cost:</b></label>
                     <label class="col-sm-2 col-form-label"><strong>USD</strong> {{number_format($rmc, 2)}}</label>
                 </div>
@@ -410,7 +410,11 @@
                             <tbody>
                                 @foreach ($identicalComposition as $ic)
                                     <tr>
-                                        <td>{{$ic->products->ddw_number}}</td>
+                                        <td>
+                                            @if($ic->products)
+                                                {{$ic->products->ddw_number}}
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($ic->products->status == 1)
                                                 <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
