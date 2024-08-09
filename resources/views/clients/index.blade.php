@@ -8,7 +8,8 @@
             <!-- <button type="button" class="btn btn-md btn-primary" name="add_client" id="add_client">Add Client</button> -->
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
+                <div class="height d-flex justify-content-between align-items-between">
+                    <a href="{{url('export_current_client')}}" class="btn btn-md btn-success mb-1">Export</a>
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
@@ -18,6 +19,7 @@
                     </div>
                 </div>
             </form>
+            
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="client_table" width="100%">
                     <thead>

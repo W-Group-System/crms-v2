@@ -72,6 +72,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/export_new_products', 'ProductController@exportNewProducts');
     Route::get('/draft_new_products', 'ProductController@exportDraftProducts');
 
+    # Export clients
+    Route::get('/export_current_client', 'ClientController@exportCurrentClient');
+    Route::get('/export_prospect_client', 'ClientController@exportProspectClient');
+    Route::get('/export_archived_client', 'ClientController@exportArchivedClient');
+
     # Product Specification
     Route::post('add_specification', 'ProductController@specification');
     Route::post('edit_specification/{id}', 'ProductController@editSpecification');
@@ -201,8 +206,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/get-payment-term/{clientId}', 'PriceMonitoringController@getClientDetailsL');
     Route::post('/local_price_monitoring', 'PriceMonitoringController@storeLocalSalePre');
     Route::get('price_monitoring_local/view/{id}', 'PriceMonitoringController@localview');
-
-
 
     // Customer Complaint 
     Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');
