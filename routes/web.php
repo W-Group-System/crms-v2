@@ -36,10 +36,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('delete/{id}', 'CompanyController@delete')->name('delete');
 
     // User
-    Route::get('/user', 'UserController@index')->name('user.index');
-    Route::post('/new_user', 'UserController@store')->name('user.store');
-    Route::get('/edit_user/{id}', 'UserController@edit')->name('edit_user');
-    Route::post('update_user/{id}', 'UserController@update')->name('update_user');
+    Route::get('/user', 'UserController@index');
+    Route::post('/new_user', 'UserController@store');
+    Route::get('/edit_user/{id}', 'UserController@edit');
+    Route::post('update_user/{id}', 'UserController@update');
+    Route::post('user_change_password/{id}', 'UserController@userChangePassword');
+    Route::get('export_user', 'UserController@exportUser');
 
     // Role
     Route::get('/role', 'RoleController@index')->name('role.index');
