@@ -58,4 +58,14 @@ class RequestGAEController extends Controller
         Alert::success('Successfully Delete')->persistent('Dismiss');
         return back();
     }
+
+    public function edit(Request $request)
+    {
+        $priceRequestGae = RequestGAE::findOrFail($request->id);
+
+        return array(
+            'ExpenseName' => $priceRequestGae->ExpenseName,
+            'Cost' => $priceRequestGae->Cost
+        );
+    }
 }

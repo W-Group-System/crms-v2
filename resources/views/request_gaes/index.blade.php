@@ -30,7 +30,7 @@
                     @foreach ($paymentTerms as $pt)
                         <tr>
                             <td>
-                                <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editRequestGae-{{$pt->id}}">
+                                <button type="button" class="btn btn-sm btn-warning editBtn" data-toggle="modal" data-target="#editRequestGae-{{$pt->id}}" data-id="{{$pt->id}}">
                                     <i class="ti-pencil"></i>
                                 </button>
 
@@ -114,6 +114,28 @@
                     form.submit()
                 }
             });
+        })
+
+        $('#formRequestGAE').on('hidden.bs.modal', function(){
+            $('[name="ExpenseName"]').val('')
+            $('[name="Cost"]').val('')
+        })
+
+        $('.editBtn').on('click', function() {
+            var id = $(this).data('id');
+
+            $.ajax({
+                type: "GET", 
+                url: "{{url('edit_request_gae')}}",
+                data: {
+                    id: id
+                },
+                success: function(res) {
+                    $('[name="ExpenseName"]').val(res.ExpenseName)
+                    $('[name="Cost"]').val(res.Cost)
+                }
+            })
+            
         })
     })
 </script>

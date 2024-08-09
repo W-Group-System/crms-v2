@@ -376,6 +376,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Request GAE
     Route::get('/request_gae', 'RequestGAEController@index')->name('request_gae.index');
+    Route::get('/edit_request_gae', 'RequestGAEController@edit');
     Route::post('/new_request_gae', 'RequestGAEController@store')->name('request_gae.store');
     Route::post('/update_request_gae/{id}', 'RequestGAEController@update')->name('update_request_gae');
     Route::post('delete_request_gae/{Id}', 'RequestGAEController@delete')->name('delete_request_gae');
