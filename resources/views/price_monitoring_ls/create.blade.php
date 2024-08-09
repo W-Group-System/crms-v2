@@ -34,7 +34,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Requested (DD/MM/YYYY)</label>
-                                <input type="date" class="form-control" name="DateRequested">
+                                <input type="date" class="form-control DateRequested" name="DateRequested" readonly>
                             </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
@@ -56,7 +56,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Validity Date</label>
-                                <input type="date" class="form-control" name="ValidityDate" placeholder="Enter Validity">
+                                <input type="date" class="form-control ValidityDate" name="ValidityDate" placeholder="Enter Validity">
                             </div>
                             <div class="form-group">
                                 <label>Moq</label>
@@ -123,7 +123,7 @@
                            </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
-                        <div class="create_prf_form col-lg-12 row">
+                        <div class="add_create_prf_form col-lg-12 row">
                             <div class="col-lg-4">
                                 <div><label>PRODUCT</label></div>
                                 <div class="form-group">
@@ -249,13 +249,13 @@
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <button type="button" class="btn btn-primary addPrfProductRowBtn" id="addPrfProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
+                                <button type="button" class="btn btn-primary addPrfProductRowBtn" id="addPrfProductRowBtn" style="float: left; margin:5px;"><i class="ti ti-plus"></i></button> 
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit"  class="btn btn-success" value="Save">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <input type="submit"  class="btn btn-success" value="Send Request">
                     </div>
                 </form>
             </div>
@@ -329,19 +329,19 @@
 }
 
 $(document).ready(function() {
-    var $initialRow = $('.create_prf_form');
+    var $initialRow = $('.add_create_prf_form');
     var initialGae = $initialRow.find('.PriceGae').val();
     fetchGaeCost(initialGae, $initialRow);
 
     $(document).on('change', '.PriceGae', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var priceGae = $(this).val();
         fetchGaeCost(priceGae, $row);
     });
 });
 
         $(document).on('change', '.product-select', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var productId = $(this).val();
         
         if (productId) {
@@ -372,7 +372,7 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '.delivery-type', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var deliveryType = $(this).val();
         var deliveryCostInput = $row.find('.delivery-cost');
 
@@ -404,7 +404,7 @@ $(document).ready(function() {
     }
 
     $(document).on('input', '.delivery-cost', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         updateTotalOperationCost($row);
         updateTotalProductCost($row);
     });
@@ -465,17 +465,17 @@ function updateSellingPrice($row) {
     }
 
     $(document).on('input', '.markup-percent', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         updateMarkupPHP($row);
     });
 
     $(document).on('input', '.markup-php', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         updateMarkupPercent($row);
     });
 
     $(document).on('input', '.selling-price-php', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var sellingPrice = parseFloat($(this).val());
         var totalProductCost = parseFloat($row.find('.total-product-cost').val());
 
@@ -491,7 +491,7 @@ function updateSellingPrice($row) {
     });
 
     $(document).on('input', '.selling-price-vat', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var sellingPriceWithVAT = parseFloat($(this).val());
         var totalProductCost = parseFloat($row.find('.total-product-cost').val());
 
@@ -508,8 +508,8 @@ function updateSellingPrice($row) {
     
         function addProductRow() {
         var newProductForm = `
-        <div class="col-lg-12"><hr style="background-color: black"></div>
-                        <div class="create_prf_form col-lg-12 row">
+                        <div class="add_create_prf_form col-lg-12 row">
+                            <div class="col-lg-12"><hr style="background-color: black"></div>
                             <div class="col-lg-12">
                                 <button type="button" class="btn btn-danger deletePrfBtn" style="float: right;">Delete Row</button>
                             </div>
@@ -638,15 +638,15 @@ function updateSellingPrice($row) {
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <button type="button" class="btn btn-primary addFormPrfProductRowBtn">Add Row</button> 
+                                <button type="button" class="btn btn-primary newAddFormPrfProductRowBtn"><i class="ti ti-plus"></i></button> 
                             </div>
                         </div>`;
 
-        $('.create_prf_form').last().find('.addPrfProductRowBtn').hide();
+        $('.add_create_prf_form').last().find('.newAddFormPrfProductRowBtn').hide();
         
-        $('.create_prf_form').last().after(newProductForm);
+        $('.add_create_prf_form').last().after(newProductForm);
         $('.js-example-basic-single').select2();
-        $('.create_prf_form').last().find('.deletePrfBtn').removeAttr('hidden');
+        $('.add_create_prf_form').last().find('.deletePrfBtn').removeAttr('hidden');
     }
 
     $(document).on('click', '.addPrfProductRowBtn', function() {
@@ -654,8 +654,32 @@ function updateSellingPrice($row) {
         $('.addPrfProductRowBtn').hide(); 
     });
 
-    $(document).on('click', '.addFormPrfProductRowBtn', function() {
+    $(document).on('click', '.newAddFormPrfProductRowBtn', function() {
         addProductRow();
     });
+    });
+
+    $(document).on('click', '.deletePrfBtn', function() {
+        var currentRow = $(this).closest('.add_create_prf_form');
+        
+        if ($('.add_create_prf_form').last().is(currentRow)) {
+            currentRow.prev().find('.addPrfProductRowBtn').show();
+        }
+
+        currentRow.remove();
+
+        if ($('.add_create_prf_form').length === 1) {
+            $('.addPrfProductRowBtn').show();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var validityDateInput = document.querySelector('.ValidityDate');
+        var dateRequestedInput = document.querySelector('.DateRequested');
+
+        var today = new Date().toISOString().split('T')[0];
+
+            validityDateInput.setAttribute('min', today);
+            dateRequestedInput.value = today;
     });
 </script>

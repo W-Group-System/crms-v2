@@ -113,7 +113,15 @@
                             <p class="col-sm-2 col-form-label"><b>Secondary Sales Person:</b></p>
                             <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->secondarySalesPerson)->full_name }}</p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Progress:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->Progress}}</p>
+                            <p class="col-sm-3 col-form-label">
+                                @if ($price_monitorings == '25')
+                                Reopened
+                                @elseif ($price_monitorings == '30')
+                                Closed
+                                @else
+                                Waiting For Disposition
+                                @endif
+                            </p>
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b></b></p>
@@ -131,7 +139,7 @@
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Contact:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->ContactId }}</p>
+                            <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->clientContact)->ContactName }}</p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Shipment Term:</b></p>
                             <p class="col-sm-3 col-form-label">{{ $price_monitorings->ShipmentTerm}}</p>
                         </div>
@@ -161,7 +169,16 @@
                             <p class="col-sm-2 col-form-label"><b>MOQ:</b></p>
                             <p class="col-sm-3 col-form-label">{{ $price_monitorings->Moq}}</p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Purpose of Price Request:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->PriceRequestPurpose}}</p>
+                            <p class="col-sm-3 col-form-label">
+                                @if($price_monitorings->PriceRequestPurpose == 10)
+                                    Indication
+                                    @elseif($price_monitorings->PriceRequestPurpose == 20)
+                                    Firm
+                                    @elseif($price_monitorings->PriceRequestPurpose == 30)
+                                    Sample
+                                    @else
+                                    {{ $price_monitorings->PriceRequestPurpose }}
+                                    @endif</td>
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Shelf Life:</b></p>
@@ -179,7 +196,14 @@
                                 @endif
                             </p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Tax Type:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->TaxType}}</p>
+                            <p class="col-sm-3 col-form-label">
+                                @if($price_monitorings->TaxType == 10)
+                                VAT Inclusive
+                                @elseif($price_monitorings->TaxType == 20)
+                                VAT Exclusive
+                                @else
+                                {{ $price_monitorings->TaxType }}
+                                @endif
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Commission:</b></p>

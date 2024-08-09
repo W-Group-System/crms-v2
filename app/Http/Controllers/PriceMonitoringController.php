@@ -277,7 +277,18 @@ class PriceMonitoringController extends Controller
     public function indexLocal(Request $request)
     {   
         $search = $request->input('search');
+        $open = $request->open;
+        $close = $request->close;
         $price_monitorings = PriceMonitoring::with(['client', 'product_application', 'requestPriceProducts', 'productMaterialComposition'])
+        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+            $query->whereIn('Status', [$request->open, $request->close]);
+        })
+        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+            $query->where('Status', $request->open);
+        })
+        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+            $query->where('Status', $request->close);
+        })
         ->where(function ($query) use ($search){
             $query->where('PrfNumber', 'LIKE', '%' . $search . '%')
             ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
@@ -289,16 +300,19 @@ class PriceMonitoringController extends Controller
             // })
             // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
         })
+        
         ->where('PrfNumber', 'LIKE', 'PRF-LS%')
         ->orderBy('id', 'desc')->paginate(25);
-        $clients = Client::all();
+        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        ->get();
         $productApplications = ProductApplication::all(); 
-        $users = User::all();
+        $users = User::wherehas('localsalespersons')->get();
         $products = Product::where('status', '4')->get();
         // $products = Product::get();
         $pricegaes = PriceRequestGae::get();
         $payment_terms = PaymentTerms::all();
-        return view('price_monitoring_ls.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms', 'productApplications', 'pricegaes')); 
+        return view('price_monitoring_ls.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms', 'productApplications', 'pricegaes', 'open', 'close',)); 
     }
 
     public function storeLocalSalePre(Request $request)
@@ -378,6 +392,60 @@ class PriceMonitoringController extends Controller
         //         'LsalesMarkupValue' => $request->input('MarkupPhp'),
         // ]);
                     return redirect()->back()->with('success', 'Base prices updated successfully.');
+    }
+
+    public function LocalSalesUpdate(Request $request, $id)
+    {
+        $priceMonitoringData = PriceMonitoring::with('requestPriceProducts')->findOrFail($id);
+    
+        $priceMonitoringData->PrimarySalesPersonId = $request->input('PrimarySalesPersonId');
+        $priceMonitoringData->SecondarySalesPersonId = $request->input('SecondarySalesPersonId');
+        $priceMonitoringData->DateRequested = $request->input('DateRequested');
+        $priceMonitoringData->ClientId = $request->input('ClientId');
+        $priceMonitoringData->ContactId = $request->input('ContactId');
+        $priceMonitoringData->ValidityDate = $request->input('ValidityDate');
+        $priceMonitoringData->Moq = $request->input('Moq');
+        $priceMonitoringData->ShelfLife = $request->input('ShelfLife');
+        $priceMonitoringData->IsWithCommission = $request->input('WithCommission') ? 1 : 0;
+        $priceMonitoringData->Commission = $request->input('EnterCommission');
+        $priceMonitoringData->ShipmentTerm = $request->input('ShipmentTerm');
+        $priceMonitoringData->Destination = $request->input('Destination');
+        $priceMonitoringData->PaymentTermId = $request->input('PaymentTerm');
+        $priceMonitoringData->OtherCostRequirements = $request->input('OtherCostRequirement');
+        $priceMonitoringData->PriceRequestPurpose = $request->input('PriceRequestPurpose');
+        $priceMonitoringData->PriceLockPeriod = $request->input('DeliverySchedule'); $priceMonitoringData->TaxType = $request->input('TaxType');
+        $priceMonitoringData->save();
+    
+        foreach ($request->input('Product') as $key => $value) {
+            $productId = $request->input('product_id.' . $key); 
+    
+            $priceMonitoringData->requestPriceProducts()->updateOrCreate(
+                ['id' => $productId],
+                [
+                    'PriceRequestFormId' => $id, 
+                    'ProductId' => $value,
+                    'Type' => $request->input('Type.' . $key),
+                    'ApplicationId' => $request->input('ApplicationId.' . $key),
+                    'QuantityRequired' => $request->input('QuantityRequired.' . $key),
+                    'ProductRmc' => $request->input('Rmc.' . $key),
+                    'LsalesDirectLabor' => $request->input('DirectLabor.' . $key),
+                    'LsalesFactoryOverhead' => $request->input('FactoryOverhead.' . $key),
+                    'LsalesBlendingLoss' => $request->input('BlendingLoss.' . $key),
+                    'BlendingLoss' => $request->input('RpeNumber.' . $key),
+                    'LsalesDeliveryType' => $request->input('DeliveryType.' . $key),
+                    'LsalesDeliveryCost' => $request->input('DeliveryCost.' . $key),
+                    'LsalesFinancingCost' => $request->input('FinancingCost.' . $key),
+                    'PriceRequestGaeId' => $request->input('PriceGae.' . $key),
+                    'LsalesGaeValue' => $request->input('GaeCost.' . $key),
+                    'LsalesMarkupPercent' => $request->input('MarkupPercent.' . $key),
+                    'LsalesMarkupValue' => $request->input('MarkupPhp.' . $key),
+
+                    // 'ProductIndex' => $key + 1,
+                ]
+            );
+        }
+    
+        return redirect()->back()->with('success', 'Price Request updated successfully');
     }
 
     public function localview($id)
@@ -471,5 +539,17 @@ class PriceMonitoringController extends Controller
             ]);
         }
     }
+
+    public function deleteProduct(Request $request , $id)
+{
+    $product = PriceRequestProduct::find($id); 
+    if ($product) {
+        $product->delete();
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false]);
+}
+
     
 }

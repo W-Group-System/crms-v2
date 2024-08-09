@@ -199,6 +199,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/get-payment-term/{clientId}', 'PriceMonitoringController@getClientDetailsL');
     Route::post('/local_price_monitoring', 'PriceMonitoringController@storeLocalSalePre');
     Route::get('price_monitoring_local/view/{id}', 'PriceMonitoringController@localview');
+    Route::delete('delete-product/{id}', 'PriceMonitoringController@deleteProduct');
+    Route::post('price_monitoring_local/edit/{id}', 'PriceMonitoringController@LocalSalesUpdate');
 
 
 
