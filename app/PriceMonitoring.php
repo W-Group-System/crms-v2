@@ -24,6 +24,11 @@ class PriceMonitoring extends Model implements Auditable
         return $this->belongsTo(Client::class, 'ClientId', 'id');
     }
 
+    public function clientContact()
+    {
+        return $this->belongsTo(Contact::class, 'ContactId');
+    }
+
     public function product_application() 
     {
         return $this->belongsTo(ProductApplication::class, 'ApplicationId', 'id');

@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('local_price_monitoring') }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('price_monitoring_local/edit/' . $priceMonitoring->id) }}">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -34,7 +34,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Requested (DD/MM/YYYY)</label>
-                                <input type="datetime" class="form-control" name="DateRequested" value="{{ !empty($priceMonitoring->DateRequested) ? date('m/d/y ', strtotime($priceMonitoring->DateRequested)) : '' }}">
+                                <input type="datetime" class="form-control" name="DateRequested" value="{{ !empty($priceMonitoring->DateRequested) ? date('m/d/y ', strtotime($priceMonitoring->DateRequested)) : '' }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
@@ -56,7 +56,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Validity Date</label>
-                                <input type="date" class="form-control" name="ValidityDate"  value="{{ !empty($priceMonitoring->ValidityDate) ? date('Y-m-d', strtotime($priceMonitoring->ValidityDate)) : '' }}" >
+                                <input type="date" class="form-control ValidityDate{{ $priceMonitoring->id }}" name="ValidityDate"  value="{{ !empty($priceMonitoring->ValidityDate) ? date('Y-m-d', strtotime($priceMonitoring->ValidityDate)) : '' }}" >
                             </div>
                             <div class="form-group">
                                 <label>Moq</label>
@@ -123,137 +123,144 @@
                            </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
-                        
+                        <div class="prfForm{{ $priceMonitoring->id }}">
                             @foreach ($priceMonitoring->requestPriceProducts as $index => $priceProducts)
-                            <div class="create_prf_form{{ $priceMonitoring->id }} col-lg-12 row" data-row-index="{{ $index }}">
-                            <div class="col-lg-4">
-                                <div><label>PRODUCT</label></div>
-                                <div class="form-group">
-                                    <label>Product</label>
-                                    <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
-                                        <option value="" disabled selected>Select Product</option>
-                                        @foreach($products as $product)
-                                            <option value="{{ $product->id }}" @if ($priceProducts->ProductId == $product->id) selected @endif>{{ $product->code }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                     <label>Category</label>
-                                     <select class="form-control js-example-basic-single" name="Type[]"  style="position: relative !important" title="Select Category">
-                                        <option value="" disabled @if ($priceProducts->Type == '') selected @endif>Select Category</option>
-                                        <option value="1" @if ($priceProducts->Type == '1') selected @endif>Pure</option>
-                                        <option value="2" @if ($priceProducts->Type == '2') selected @endif>Blend</option>
-                                     </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Application:</label>
-                                    <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
-                                        <option value="" disabled selected>Select Application</option>
-                                        @foreach ($productApplications as $application)
-                                            <option value="{{ $application->id }}" @if ($priceProducts->ApplicationId == $application->id) selected @endif>{{ $application->Name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Quantity Required</label>
-                                    <input type="number" class="form-control" name="QuantityRequired[]" value="{{ $priceProducts->QuantityRequired ?? 0 }}">
+                            <div class="create_prf_form{{ $priceMonitoring->id }} col-lg-12 row">
+                                <div class="create_prf_forms{{ $priceProducts->Id }} col-lg-12 row" data-row-index="{{ $index }}">
+                                    <div class="col-lg-12">
+                                        <button type="button" class="btn btn-danger delete-product" data-id="{{ $priceProducts->Id }}" style="float: right;">Delete</button>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div><label>PRODUCT</label></div>
+                                        <div class="form-group">
+                                            <label>Product</label>
+                                            <input type="hidden" class="form-control" name="product_id[]" value="{{ $priceProducts->Id }}">
+                                            <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
+                                                <option value="" disabled selected>Select Product</option>
+                                                @foreach($products as $product)
+                                                    <option value="{{ $product->id }}" @if ($priceProducts->ProductId == $product->id) selected @endif>{{ $product->code }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <select class="form-control js-example-basic-single" name="Type[]"  style="position: relative !important" title="Select Category">
+                                                <option value="" disabled @if ($priceProducts->Type == '') selected @endif>Select Category</option>
+                                                <option value="1" @if ($priceProducts->Type == '1') selected @endif>Pure</option>
+                                                <option value="2" @if ($priceProducts->Type == '2') selected @endif>Blend</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Application:</label>
+                                            <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
+                                                <option value="" disabled selected>Select Application</option>
+                                                @foreach ($productApplications as $application)
+                                                    <option value="{{ $application->id }}" @if ($priceProducts->ApplicationId == $application->id) selected @endif>{{ $application->Name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Quantity Required</label>
+                                            <input type="number" class="form-control" name="QuantityRequired[]" value="{{ $priceProducts->QuantityRequired ?? 0 }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div><label>MANUFACTURING COST</label></div>
+                                        <div class="form-group">
+                                            <label>RMC (PHP)</label>
+                                            <input type="number" class="form-control rmc-input" name="Rmc[]" value="{{ $priceProducts->ProductRmc ?? 0 }}" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Direct Labor</label>
+                                            <input type="number" class="form-control direct-labor-input" name="DirectLabor[]" value="2.16" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Factory Overhead</label>
+                                            <input type="number" class="form-control factory-overhead-input" name="FactoryOverhead[]" value="24.26" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Total Manufacturing Cost</label>
+                                            <input type="number" class="form-control total-manufacturing-cost-input" name="TotalManufacturingCost[]" value="0" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Blending Loss:</label>
+                                            <input type="number" class="form-control blending-loss" name="BlendingLoss[]"  value="0" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div><label>OPERATING COST</label></div>
+                                        <div class="form-group">
+                                            <label>Delivery Type</label>
+                                            <select class="form-control js-example-basic-single delivery-type" name="DeliveryType[]" style="position: relative !important" title="Select Delivery Type">
+                                                <option value="10">Courier</option>
+                                                <option value="20">Delivery</option>
+                                                <option value="30">Pickup</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Delivery Cost</label>
+                                            <input type="number" class="form-control delivery-cost" name="DeliveryCost[]" value="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Financing Cost</label>
+                                            <input type="number" class="form-control financing-cost" name="FinancingCost[]" value="0" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>GAE Type:</label>
+                                            <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" style="position: relative !important" title="Select GAE Type">
+                                                @foreach ($pricegaes as $gaeType)
+                                                    <option value="{{ $gaeType->id }}" >{{ $gaeType->ExpenseName }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>GAE Cost</label>
+                                            <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Total Operating Cost</label>
+                                            <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
+                                        </div>
+                                    </div>
+                                <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
+                                    <div class="col-lg-4">
+                                        <div><label>PRODUCT COST</label></div>
+                                        <div class="form-group">
+                                            <label>Total Product Cost (PHP)</label>
+                                            <input type="number" class="form-control total-product-cost" name="TotalProductCost[]" value="0" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div><label>MARKUP COST</label></div>
+                                        <div class="form-group">
+                                            <label>Markup (%)</label>
+                                            <input type="number" step=".01" class="form-control markup-percent" name="MarkupPercent[]" value="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Markup (PHP)</label>
+                                            <input type="number" step=".01" class="form-control markup-php" name="MarkupPhp[]" value="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div><label>SELLING PRICE</label></div>
+                                        <div class="form-group">
+                                            <label>Selling Price (PHP)</label>
+                                            <input type="number" step=".01" class="form-control selling-price-php" name="SellingPricePhp[]" value="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Selling Price + 12% VAT (PHP)</label>
+                                            <input type="number" step=".01" class="form-control selling-price-vat" name="SellingPriceVat[]" value="0">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4">
-                                <div><label>MANUFACTURING COST</label></div>
-                                <div class="form-group">
-                                    <label>RMC (PHP)</label>
-                                    <input type="number" class="form-control rmc-input" name="Rmc[]" value="{{ $priceProducts->ProductRmc ?? 0 }}" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Direct Labor</label>
-                                    <input type="number" class="form-control direct-labor-input" name="DirectLabor[]" value="2.16" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Factory Overhead</label>
-                                    <input type="number" class="form-control factory-overhead-input" name="FactoryOverhead[]" value="24.26" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Total Manufacturing Cost</label>
-                                    <input type="number" class="form-control total-manufacturing-cost-input" name="TotalManufacturingCost[]" value="0" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Blending Loss:</label>
-                                    <input type="number" class="form-control blending-loss" name="BlendingLoss[]"  value="0" readonly>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div><label>OPERATING COST</label></div>
-                                <div class="form-group">
-                                    <label>Delivery Type</label>
-                                    <select class="form-control js-example-basic-single delivery-type" name="DeliveryType[]" style="position: relative !important" title="Select Delivery Type">
-                                        <option value="10">Courier</option>
-                                        <option value="20">Delivery</option>
-                                        <option value="30">Pickup</option>
-                                     </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Delivery Cost</label>
-                                    <input type="number" class="form-control delivery-cost" name="DeliveryCost[]" value="0">
-                                </div>
-                                <div class="form-group">
-                                    <label>Financing Cost</label>
-                                    <input type="number" class="form-control financing-cost" name="FinancingCost[]" value="0" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>GAE Type:</label>
-                                    <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" style="position: relative !important" title="Select GAE Type">
-                                        @foreach ($pricegaes as $gaeType)
-                                            <option value="{{ $gaeType->id }}" >{{ $gaeType->ExpenseName }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>GAE Cost</label>
-                                    <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Total Operating Cost</label>
-                                    <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
-                                </div>
-                            </div>
-                        <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
-                            <div class="col-lg-4">
-                                <div><label>PRODUCT COST</label></div>
-                                <div class="form-group">
-                                    <label>Total Product Cost (PHP)</label>
-                                    <input type="number" class="form-control total-product-cost" name="TotalProductCost[]" value="0" readonly>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div><label>MARKUP COST</label></div>
-                                <div class="form-group">
-                                    <label>Markup (%)</label>
-                                    <input type="number" step=".01" class="form-control markup-percent" name="MarkupPercent[]" value="0">
-                                </div>
-                                <div class="form-group">
-                                    <label>Markup (PHP)</label>
-                                    <input type="number" step=".01" class="form-control markup-php" name="MarkupPhp[]" value="0">
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div><label>SELLING PRICE</label></div>
-                                <div class="form-group">
-                                    <label>Selling Price (PHP)</label>
-                                    <input type="number" step=".01" class="form-control selling-price-php" name="SellingPricePhp[]" value="0">
-                                </div>
-                                <div class="form-group">
-                                    <label>Selling Price + 12% VAT (PHP)</label>
-                                    <input type="number" step=".01" class="form-control selling-price-vat" name="SellingPriceVat[]" value="0">
-                                </div>
-                            </div>
-                        </div>
                             @endforeach
+                        </div>
                             <div class="col-lg-12">
-                                <button type="button" class="btn btn-primary addPrfProductRowBtn{{ $priceMonitoring->id }}" id="addPrfProductRowBtn{{ $priceMonitoring->id }}" style="float: left; margin:5px;">Add Row</button> 
+                                <button type="button" class="btn btn-primary addPrfProductRowBtn{{ $priceMonitoring->id }}" id="addPrfProductRowBtn{{ $priceMonitoring->id }}" style="float: left; margin:5px;"><i class="ti ti-plus"></i></button> 
                             </div>
                         
                     </div>
@@ -344,36 +351,53 @@ $(document).ready(function() {
    });
 });
 
-       $(document).on('change', '.product-select', function() {
-       var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
-       var productId = $(this).val();
-       
-       if (productId) {
-           $.ajax({
-               url: '{{ url("product-rmc") }}/' + productId,
-               type: 'GET',
-               dataType: 'json',
-               success: function(data) {
-                   $row.find('.rmc-input').val(data.rmc);
-                   var directLabor = parseFloat($row.find('.direct-labor-input').val());
-                   var factoryOverhead = parseFloat($row.find('.factory-overhead-input').val());
-                   var rmc = parseFloat(data.rmc);
-                   var totalManufacturingCost = rmc + directLabor + factoryOverhead;
-                   $row.find('.total-manufacturing-cost-input').val(totalManufacturingCost.toFixed(2));
-                   var blendingLoss = 0.01 * rmc ;
-                   $row.find('.blending-loss').val(blendingLoss.toFixed(2));
-                   var financingCost = 0.15 * totalManufacturingCost ;
-                   $row.find('.financing-cost').val(financingCost.toFixed(2));
+$(document).ready(function() {
+    function calculateCosts($row, rmc) {
+        var directLabor = parseFloat($row.find('.direct-labor-input').val());
+        var factoryOverhead = parseFloat($row.find('.factory-overhead-input').val());
+        var totalManufacturingCost = rmc + directLabor + factoryOverhead;
+        
+        $row.find('.total-manufacturing-cost-input').val(totalManufacturingCost.toFixed(2));
+        
+        var blendingLoss = 0.01 * rmc;
+        $row.find('.blending-loss').val(blendingLoss.toFixed(2));
+        
+        var financingCost = 0.15 * totalManufacturingCost;
+        $row.find('.financing-cost').val(financingCost.toFixed(2));
+        
+        updateTotalOperationCost($row);
+        updateTotalProductCost($row);
+    }
 
-                   updateTotalOperationCost($row);
-                   updateTotalProductCost($row);
-               },
-               error: function() {
-                   alert("Failed to fetch RMC value.");
-               }
-           });
-       }
-   });
+    $(document).on('change', '.product-select', function() {
+        var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+        var productId = $(this).val();
+        
+        if (productId) {
+            $.ajax({
+                url: '{{ url("product-rmc") }}/' + productId,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $row.find('.rmc-input').val(data.rmc);
+                    calculateCosts($row, parseFloat(data.rmc));
+                },
+                error: function() {
+                    alert("Failed to fetch RMC value.");
+                }
+            });
+        }
+    });
+
+    $('.product-select').each(function() {
+        var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+        var rmc = parseFloat($row.find('.rmc-input').val());
+        
+        if (!isNaN(rmc) && rmc > 0) {
+            calculateCosts($row, rmc);
+        }
+    });
+});
 
    $(document).on('change', '.delivery-type', function() {
        var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
@@ -512,11 +536,10 @@ function updateSellingPrice($row) {
    
        function addProductRow() {
        var newProductForm = `
-       <div class="col-lg-12"><hr style="background-color: black"></div>
                        <div class="create_prf_form{{ $priceMonitoring->id }} col-lg-12 row">
-                           <div class="col-lg-12">
-                               <button type="button" class="btn btn-danger deletePrfBtn" style="float: right;">Delete Row</button>
-                           </div>
+                          <div class="col-lg-12">
+                                <button type="button" class="btn btn-danger editDeletePrfBtn" style="float: right;">Delete Row</button>
+                            </div>
                            <div class="col-lg-4">
                                <div><label>PRODUCT</label></div>
                                <div class="form-group">
@@ -641,25 +664,56 @@ function updateSellingPrice($row) {
                                    <input type="number" step=".01" class="form-control selling-price-vat" name="SellingPriceVat[]" value="0">
                                </div>
                            </div>
-                           <div class="col-lg-12">
-                               <button type="button" class="btn btn-primary addFormPrfProductRowBtn">Add Row</button> 
-                           </div>
                        </div>`;
-
-       $('.create_prf_form{{ $priceMonitoring->id }}').last().find('.addPrfProductRowBtn{{ $priceMonitoring->id }}').hide();
-       
-       $('.create_prf_form{{ $priceMonitoring->id }}').last().after(newProductForm);
-       $('.js-example-basic-single').select2();
-       $('.create_prf_form{{ $priceMonitoring->id }}').last().find('.deletePrfBtn').removeAttr('hidden');
+                       $('.prfForm{{ $priceMonitoring->id }}').append(newProductForm);
    }
 
    $(document).on('click', '.addPrfProductRowBtn{{ $priceMonitoring->id }}', function() {
        addProductRow();
-       $('.addPrfProductRowBtn{{ $priceMonitoring->id }}').hide(); 
    });
 
-   $(document).on('click', '.addFormPrfProductRowBtn', function() {
-       addProductRow();
+   $(document).on('click', '.editDeletePrfBtn', function() {
+        $(this).closest('.create_prf_form{{ $priceMonitoring->id }}').remove();
+    });
    });
-   });
+
+   document.addEventListener('DOMContentLoaded', function() {
+        var validityDateInput = document.querySelector('.ValidityDate{{ $priceMonitoring->id }}');
+        var storedDate = '{{ !empty($priceMonitoring->ValidityDate) ? date('Y-m-d', strtotime($priceMonitoring->ValidityDate)) : '' }}';
+        var today = new Date().toISOString().split('T')[0];
+
+        if (storedDate) {
+            validityDateInput.setAttribute('min', storedDate);
+        } else {
+            validityDateInput.setAttribute('min', today);
+        }
+    });
+
+    $(document).ready(function() {
+    $(document).off('click', '.delete-product');
+    $(document).on('click', '.delete-product', function() {
+        var productId = $(this).data('id'); 
+        var row = $(this).closest('.create_prf_forms' + productId);
+        var deleteButton = $(this);
+        deleteButton.prop('disabled', true);
+
+        $.ajax({
+            url: "{{ url('delete-product') }}/" + productId,
+            type: 'DELETE',
+            data: {
+                '_token': '{{ csrf_token() }}', 
+            },
+            success: function(response) {
+                if (response.success) {
+                    row.remove();
+                } else {
+                    alert('Failed to delete the product.');
+                }
+            },
+            complete: function() {
+                deleteButton.prop('disabled', false);
+            }
+        });
+    });
+});
 </script>
