@@ -35,7 +35,7 @@
                         @foreach ($currency_exchanges as $currency)
                             <tr>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-warning" title="Edit" data-toggle="modal" data-target="#editExchangeRate-{{$currency->id}}">
+                                    <button type="button" class="btn btn-sm btn-warning editBtn" title="Edit" data-toggle="modal" data-target="#editExchangeRate-{{$currency->id}}" data-id="{{$currency->id}}">
                                         <i class="ti-pencil"></i>
                                     </button>
                                     <form method="POST" class="deleteCurrencyExchangeRateForm d-inline-block" action="{{url('delete_currency_exchange/'.$currency->id)}}">
@@ -52,6 +52,7 @@
                                 <td>{{$currency->ExchangeRate}}</td>
                             </tr>
 
+                            <input type="hidden" class="currency_id" value="{{$currency->id}}">
                             @include('currency_exchanges.edit_exchange_rate')
                         @endforeach
                     </tbody>
@@ -92,6 +93,32 @@
                     form.submit();
                 }
             });
+        })
+
+        $('#addExchangeRates').on('hidden.bs.modal', function(){
+            $('[name="from_currency"]').val(null).trigger('change')
+            $('[name="to_currency"]').val(null).trigger('change')
+            $('[name="rate"]').val('')
+        })
+        
+        $('.editBtn').on('click', function() {
+            var id = $(this).data('id');
+
+            $.ajax({
+                type: "GET", 
+                url: "{{url('edit_currency_exchange')}}",
+                data: {
+                    id: id
+                },
+                
+                success: function(res) {
+                    $('[name="effective_date"]').val(res.EffectiveDate)
+                    $('[name="from_currency"]').val(res.FromCurrency).trigger('change')
+                    $('[name="to_currency"]').val(res.ToCurrency).trigger('change')
+                    $('[name="rate"]').val(res.ExchangeRate)
+                }
+            })
+            
         })
     })
 </script>
