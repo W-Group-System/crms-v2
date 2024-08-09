@@ -312,6 +312,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Price Request Fixed Cost
     Route::get('/fixed_cost', 'PriceFixedCostController@index')->name('fixed_cost.index');
+    Route::get('/edit_fixed_cost', 'PriceFixedCostController@edit');
     Route::post('/new_fixed_cost', 'PriceFixedCostController@store')->name('fixed_cost.store');
     Route::post('update_fixed_cost/{id}', 'PriceFixedCostController@update')->name('update_fixed_cost');
     Route::post('delete_fixed_cost/{id}', 'PriceFixedCostController@delete')->name('delete_fixed_cost');
