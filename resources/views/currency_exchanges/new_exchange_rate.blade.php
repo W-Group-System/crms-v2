@@ -34,7 +34,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Rate :</label>
-                        <input type="text" name="rate" class="form-control" required>
+                        <input type="number" name="rate" class="form-control" step=".01" placeholder="0.00" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
