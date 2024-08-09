@@ -5,7 +5,8 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">Client List (Archived)</h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
+                <div class="height d-flex justify-content-between align-items-between">
+                    <a href="{{url('export_archived_client')}}" class="btn btn-md btn-success mb-1">Export</a>
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
