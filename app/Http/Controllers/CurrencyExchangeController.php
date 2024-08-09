@@ -66,4 +66,16 @@ class CurrencyExchangeController extends Controller
         Alert::success('Successfully Deleted')->persistent('Dismiss');
         return back();
     }
+
+    public function edit(Request $request)
+    {
+        $currency = CurrencyExchange::findOrFail($request->id);
+
+        return array(
+            'EffectiveDate' => $currency->EffectiveDate,
+            'FromCurrency' => $currency->FromCurrencyId,
+            'ToCurrency' => $currency->ToCurrencyId,
+            'ExchangeRate' => $currency->ExchangeRate
+        );
+    }
 }

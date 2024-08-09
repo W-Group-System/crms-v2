@@ -26,7 +26,7 @@
                     <div class="form-group">
                         <label for="name">To Currency :</label>
                         <select name="to_currency" class="form-control js-example-basic-single" required>
-                            <option value="">-From Currency-</option>
+                            <option value="">-To Currency-</option>
                             @foreach ($currencies as $c)
                                 <option value="{{$c->id}}">{{$c->Name}}</option>
                             @endforeach

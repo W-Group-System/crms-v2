@@ -362,6 +362,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Currency Exchange
     Route::get('/currency_exchange', 'CurrencyExchangeController@index')->name('currency_exchange.index');
+    Route::get('edit_currency_exchange', 'CurrencyExchangeController@edit');
     Route::post('/new_currency_exchange', 'CurrencyExchangeController@store')->name('currency_exchange.store');
     Route::post('/update_currency_exchange/{id}', 'CurrencyExchangeController@update')->name('update_currency_exchange');
     Route::post('delete_currency_exchange/{id}', 'CurrencyExchangeController@delete')->name('delete_currency_exchange');
