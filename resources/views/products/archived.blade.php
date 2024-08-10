@@ -36,13 +36,23 @@
                                         <i class="ti-eye"></i>
                                     </a>
     
-                                    <button class="btn btn-sm btn-success draftProduct" type="button" title="Add draft products" data-id="{{$product->id}}">
-                                        <i class="ti-plus"></i>
-                                    </button>
+                                    <form method="POST" action="{{url('add_to_draft_products')}}" class="d-inline-block">
+                                        {{csrf_field()}}
 
-                                    <button class="btn btn-sm btn-danger deleteProduct" type="button" title="Delete" data-id="{{$product->id}}">
-                                        <i class="ti-trash"></i>
-                                    </button>
+                                        <input type="hidden" name="id" value="{{$product->id}}">
+                                        <button class="btn btn-sm btn-success draftProduct" type="button" title="Add draft products" data-id="{{$product->id}}">
+                                            <i class="ti-plus"></i>
+                                        </button>
+                                    </form>
+
+                                    <form method="POST" class="d-inline-block" action="{{url('delete_product')}}">
+                                        {{csrf_field()}}
+
+                                        <input type="hidden" name="id" value="{{$product->id}}">
+                                        <button class="btn btn-sm btn-danger deleteProduct" type="button" title="Delete" data-id="{{$product->id}}">
+                                            <i class="ti-trash"></i>
+                                        </button>
+                                    </form>
                                     
                                 </td>
                                 <td>{{$product->ddw_number}}</td>
@@ -193,49 +203,38 @@
 <script>
 $(document).ready(function() {
     $(".draftProduct").on('click', function() {
-        var id = $(this).data();
+        var form = $(this).closest('form');
 
-        $.ajax({
-            type: "POST",
-            url: "{{url('add_to_draft_products')}}",
-            data: id,
-            headers: 
-            {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(res)
-            {
-                Swal.fire({
-                    icon: 'success',
-                    title: res.message,
-                }).then(() => {
-                    location.reload();
-                })
+        Swal.fire({
+            title: "Are you sure?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Draft"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit()
             }
-        })
+        });
     })
 
     $(".deleteProduct").on('click', function() {
-        var id = $(this).data();
+        var form = $(this).closest('form');
 
-        $.ajax({
-            type: "POST",
-            url: "{{url('delete_product')}}",
-            data: id,
-            headers: 
-            {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(res)
-            {
-                Swal.fire({
-                    icon: 'success',
-                    title: res.message,
-                }).then(() => {
-                    location.reload();
-                })
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit()
             }
-        })
+        });
     })
 })
 </script>

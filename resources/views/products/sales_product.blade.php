@@ -52,24 +52,32 @@
                         <tr>
                             <th width="10%">Action</th>
                             <th width="30%">Code</th>
-                            <th width="30%">Created By</th>
                             <th width="20%">Date Created</th>
-                            <!-- <th width="10%">Price</th> -->
+                            <th width="30%">Application</th>
+                            <th width="30%">RMC(USD)</th>
+                            <th width="30%">RMC(EUR)</th>
+                            <th width="30%">RMC(PHP)</th>
+                            {{-- <!-- <th width="10%">Price</th> --> --}}
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($products as $product)
+                            @php
+                                $usd = rmc($product->productMaterialComposition, $product->id);
+                                $eur = usdToEur($usd);
+                                $php = usdToPhp($usd);
+                            @endphp
                             <tr>
                                 <td>
                                     <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
                                         <i class="ti-eye"></i>
                                     </a>
 
-                                    <form method="POST" class="d-inline-block" action="{{url('add_to_archive_products')}}">
-                                        @csrf 
-
+                                    <form action="{{url('add_to_archive_products')}}" class="d-inline-block" method="post">
+                                        @csrf
                                         <input type="hidden" name="id" value="{{$product->id}}">
-                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archived" data-id="{{$product->id}}">
+
+                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archived">
                                             <i class="ti-archive"></i>
                                         </button>
                                     </form>
@@ -84,7 +92,10 @@
                                         {{$product->userById->full_name}}
                                     @endif
                                 </td>
-                                <td>{{date('M d, Y', strtotime($product->created_at))}}</td>
+                                <td>{{$product->application->Name}}</td>
+                                <td>{{$usd}}</td>
+                                <td>{{$eur}}</td>
+                                <td>{{$php}}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -106,55 +117,6 @@
         </div>
     </div>
 </div>
-
-{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> 
-
-<script>
-    $(document).ready(function(){
-        $('#product_table').DataTable({
-            serverSide: true,
-            ajax: {
-                url: "{{ route('product.current') }}"
-            },
-            columns: [
-                {
-                    data: 'code',
-                    name: 'code'
-                },
-                {
-                    data: 'user_full_name',
-                    name: 'user_full_name'
-                },
-                {
-                    data: 'created_at',
-                    name: 'created_at',
-                    render: function(data, type, row) {
-                        return moment(data).format('YYYY-MM-DD'); // Format as desired
-                    }
-                },
-                // {
-                //     data: '',
-                //     name: ''
-                // },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: 0, // Target the Title column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
-    });
-</script> --}}
 
 <script>
     $(document).ready(function() {
