@@ -38,60 +38,11 @@
                 </div>
                 <div class="col-lg-12" align="right">
                     <a href="{{ url('/price_monitoring') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
-                    {{-- @if ($price_monitorings->Progress == 10)
-                        <button type="button" class="btn btn-sm btn-success"
-                                data-target="#approveSrf{{ $price_monitorings->id }}" 
-                                data-toggle="modal" 
-                                title='Approve SRF'>
-                            <i class="ti-check"><br>Approve</i>
-                        </button>
-                    @elseif ($price_monitorings->Progress == 30)
-                        <button type="button" class="btn btn-sm btn-success"
-                                data-target="#receiveSrf{{ $price_monitorings->id }}" 
-                                data-toggle="modal" 
-                                title='Receive SRF'>
-                            <i class="ti-check"><br>Receive</i>
-                        </button>
-                    @endif
-                    @if ($price_monitorings->Progress == 50)
-                        <button type="button" class="btn btn-sm btn-warning"
-                        data-target="#pauseSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Pause SRF'>
-                        <i class="ti-control-pause"><br>Pause</i>
-                    </button>
-                    @else 
-                    <button type="button" class="btn btn-sm btn-warning"
-                        data-target="#startSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Start SRF'>
-                        <i class="ti-control-play"><br>Start</i>
-                    </button>
-                    @endif --}}
-                    {{-- <button type="button" class="btn btn-md btn-success"
-                        data-target="#approveSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Approve SRF'>
-                        <i class="ti-check">&nbsp;Approve</i>
-                    </button>
-                    <button type="button" class="btn btn-md btn-success"
-                        data-target="#receiveSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Receive SRF'>
-                    <i class="ti-check">&nbsp;Receive</i>
-                    </button>
                     <button type="button" class="btn btn-md btn-warning"
-                        data-target="#startSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Start SRF'>
-                        <i class="ti-control-play">&nbsp;Start</i>
+                        data-target="#closePrf{{ $price_monitorings->id }}" 
+                        data-toggle="modal">
+                        <i class="ti-folder"></i>&nbsp;Close
                     </button>
-                    <button type="button" class="btn btn-md btn-warning"
-                        data-target="#pauseSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Pause SRF'>
-                        <i class="ti-control-pause">&nbsp;Pause</i>
-                    </button> --}}
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
@@ -387,10 +338,16 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Create Activity"  data-toggle="modal" data-target="#createPrfActivity">
+                            <i class="ti-plus"></i>
+                        </button>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover prf-detailed-table" id="activities_table" style="width: 100%">
                             <thead>
                                 <tr>
+                                    <th>Actions</th>
                                     <th>#</th>
                                     <th>Schedule</th>
                                     <th>Title</th>
@@ -400,6 +357,15 @@
                             <tbody>
                                 @foreach ($activities as $activity)
                                     <tr>
+                                        <td>
+                                        <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                            data-target="#editPrfActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
+                                            <i class="ti-pencil"></i>
+                                        </button>   
+                                        <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Personnel'>
+                                            <i class="ti-trash"></i>
+                                        </button> 
+                                        </td>
                                         <td>{{ optional($activity)->ActivityNumber }}</td>
                                         <td>
                                             {{ optional($activity)->ScheduleFrom ? optional($activity)->ScheduleFrom : '' }}
@@ -475,8 +441,8 @@
             let url;
             if (type === 'fileupload') {
                 url = '{{ url('price_monitorings/view/file-delete') }}/' + id;
-            } else if (type === 'personnel') {
-                url = '{{ url('price_monitorings/view/personnel-delete') }}/' + id;
+            } else if (type === 'activity') {
+                url = '{{ url('price_monitorings/view/activity-delete') }}/' + id;
             } else if (type === 'SrfMaterial') {
                 url = '{{ url('price_monitorings/view/material-delete') }}/' + id;
             }
@@ -525,19 +491,21 @@
     });
     </script>
 @include('price_monitoring.upload_prf_file')
+@include('price_monitoring_ls.create_activity')
 @foreach ($prfFileUploads as $fileupload)
 @include('price_monitoring.edit_prfFiles')
+@endforeach
+@foreach ($activities as $activity)
+@include('price_monitoring_ls.edit_activity')
+@endforeach
+@foreach ($price_monitorings as $prf)
+    @include('price_monitoring_ls.close')
 @endforeach
 {{-- @include('sample_requests.create_supplementary')
 @include('sample_requests.assign_personnel')
 @include('sample_requests.upload_srf_file')
 @include('sample_requests.create_raw_materials')
-@foreach ($price_monitorings as $srf)
-    @include('sample_requests.srf_approval')
-    @include('sample_requests.srf_receive')
-    @include('sample_requests.srf_start')
-    @include('sample_requests.srf_pause')
-@endforeach
+
 @foreach ($SrfSupplementary as $supplementary)
 @include('sample_requests.edit_supplementary')
 @endforeach
