@@ -40,7 +40,6 @@ class ClientController extends Controller
         // return view('clients.index', compact('clients'));
         $request->session()->put('last_client_page', url()->full());
         $search = $request->input('search');
-    
         // Map search terms to type values
         $typeMap = [
             'Local' => '1',
@@ -76,13 +75,13 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->orderBy('id', 'desc')  // Sort by ID in descending order
+            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
             ->paginate(10);  // Paginate results with 10 items per page
 
         // Return view with search term and paginated client data
         return view('clients.index', [
             'search' => $search,
-            'clients' => $clients,
+            'clients' => $clients
         ]);
     }
 
@@ -141,7 +140,7 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->orderBy('id', 'desc')  // Sort by ID in descending order
+            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
             ->paginate(10);  // Paginate results with 10 items per page
 
         // Return view with search term and paginated client data
@@ -195,7 +194,7 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->orderBy('id', 'desc')  // Sort by ID in descending order
+            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
             ->paginate(10);  // Paginate results with 10 items per page
 
         // Return view with search term and paginated client data
