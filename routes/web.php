@@ -65,6 +65,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/edit_product/{id}', 'ProductController@edit')->name('edit_product');
     Route::post('update_product/{id}', 'ProductController@update')->name('update_product');
     Route::post('delete_product', 'ProductController@delete')->name('delete_product');
+    Route::get('products', 'ProductController@salesProduct');
 
     # Export Products
     Route::get('/export_current_products', 'ProductController@exportCurrentProducts');

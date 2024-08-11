@@ -70,4 +70,9 @@ class Product extends Model implements Auditable
     {
         return $this->hasMany(SampleRequestProduct::class, 'ProductCode', 'code');
     }
+
+    public function application()
+    {
+        return $this->belongsTo(ProductApplication::class);
+    }
 }

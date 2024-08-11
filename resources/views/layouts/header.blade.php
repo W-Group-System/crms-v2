@@ -162,7 +162,7 @@
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/current_products') }}">
+                            <a class="nav-link" href="{{ url('/products') }}">
                             <i class="icon-paper menu-icon"></i>
                             <span class="menu-title">Products</span>
                             </a>
