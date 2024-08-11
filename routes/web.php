@@ -209,6 +209,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('price_monitoring_local/view/{id}', 'PriceMonitoringController@localview');
     Route::delete('delete-product/{id}', 'PriceMonitoringController@deleteProduct');
     Route::post('price_monitoring_local/edit/{id}', 'PriceMonitoringController@LocalSalesUpdate');
+    Route::post('ClosePrf/{id}', 'PriceMonitoringController@ClosePrf');
+    Route::post('prf_new_activity', 'PriceMonitoringController@PrfActivityStore'); 
+    Route::post('prf_edit_activity/{id}', 'PriceMonitoringController@PrfActivityUpdate');
+    Route::delete('price_monitorings/view/activity-delete/{id}', 'PriceMonitoringController@deleteActivity');
+    
 
     // Customer Complaint 
     Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');

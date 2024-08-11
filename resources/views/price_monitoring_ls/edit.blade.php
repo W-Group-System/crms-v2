@@ -41,7 +41,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
-                                <select class="form-control js-example-basic-single PrfEditClientId" name="ClientId"  style="position: relative !important" title="Select Client" required>
+                                <select class="form-control js-example-basic-single PrfEditClientId PrfEditClient{{ $priceMonitoring->id }}" name="ClientId"  style="position: relative !important" title="Select Client" required>
                                     <option value="" disabled selected>Select Client</option>
                                     @foreach($clients as $client)
                                         <option value="{{ $client->id }}" @if ($priceMonitoring->ClientId == $client->id) selected @endif>{{ $client->Name }}</option>
@@ -50,7 +50,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Contact:</label>
-                                <select class="form-control js-example-basic-single" name="ClientContactId" id="PrfEditContactClientId" style="position: relative !important" title="Select ClientContacId" required>
+                                <select class="form-control js-example-basic-single" name="ClientContactId" id="PrfEditContactClientId{{ $priceMonitoring->id }}" style="position: relative !important" title="Select ClientContacId" required>
                                     <option value="" disabled selected>Select Contact</option>
                                 </select>
                             </div>
@@ -292,35 +292,71 @@
        @endif
 
        $(document).ready(function() {
-       $('.PrfEditClientId').change(function() {
-           var clientId = $(this).val();
-           if(clientId) {
-               $.ajax({
-                   url: '{{ url("client-contact") }}/' + clientId,
-                   type: "GET",
-                   dataType: "json",
-                   success:function(data) {
-                       $('#PrfEditContactClientId').empty();
-                       $('#PrfEditContactClientId').append('<option value="" disabled selected>Select Contact</option>');
-                       $.each(data, function(key, value) {
-                           $('#PrfEditContactClientId').append('<option value="'+ key +'">'+ value +'</option>');
-                       });
-                   }
-               });
+        var priceMonitoringId = '{{ $priceMonitoring->id }}';
+        var clientIdSelector = '.PrfEditClient' + priceMonitoringId;
+        var contactIdSelector = '#PrfEditContactClientId' + priceMonitoringId;
 
-               $.ajax({
-                   url: '{{ url("get-payment-term") }}/' + clientId,
-                   type: "GET",
-                   dataType: "json",
-                   success:function(data) {
-                       $('.payment-term').val(data.PaymentTerm);
-                   }
-               });
-           } else {
-               $('#ClientContactId').empty();
-               $('.GaeCost').val("");
-           }
-       });
+        var storedClientId = $(clientIdSelector).val();
+
+        if(storedClientId) {
+            $.ajax({
+                url: '{{ url("client-contact") }}/' + storedClientId,
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    $(contactIdSelector).empty();
+                    $(contactIdSelector).append('<option value="" disabled>Select Contact</option>');
+                    $.each(data, function(key, value) {
+                        $(contactIdSelector).append('<option value="'+ key +'">'+ value +'</option>');
+                    });
+
+                    var storedClientContactId = '{{ $priceMonitoring->ContactId }}';
+                    if(storedClientContactId) {
+                        $(contactIdSelector).val(storedClientContactId);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: '{{ url("get-payment-term") }}/' + storedClientId,
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    $('.payment-term').val(data.PaymentTerm);
+                }
+            });
+        }
+
+        $(clientIdSelector).change(function() {
+        var clientId = $(this).val();
+        if(clientId) {
+            $.ajax({
+                url: '{{ url("client-contact") }}/' + clientId,
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    $(contactIdSelector).empty();
+                    $(contactIdSelector).append('<option value="" disabled selected>Select Contact</option>');
+                    $.each(data, function(key, value) {
+                        $(contactIdSelector).append('<option value="'+ key +'">'+ value +'</option>');
+                    });
+                }
+            });
+
+            $.ajax({
+                url: '{{ url("get-payment-term") }}/' + clientId,
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    $('.payment-term').val(data.PaymentTerm);
+                }
+            });
+        } else {
+            $(contactIdSelector).empty();
+            $('.payment-term').val("");
+        }
+    });
+    
 
        function fetchGaeCost(priceGae, $row) {
    if (priceGae) {
