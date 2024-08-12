@@ -84,7 +84,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Cost</label>
-                        <input type="text" class="form-control" id="Cost" name="Cost" placeholder="Enter Cost" required>
+                        <input type="number" class="form-control" step=".01" id="Cost" name="Cost" placeholder="Enter Cost" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
