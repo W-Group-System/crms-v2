@@ -7,17 +7,45 @@
             Customer Requirement List
             <button type="button" class="btn btn-md btn-primary" name="add_customer_requirement" data-toggle="modal" data-target="#AddCustomerRequirement" class="btn btn-md btn-primary">Add Customer Requirement</button>
             </h4>
+
+            <div class="form-group">
+                <form method="GET" >
+                    <label>Show : </label>
+                    <label class="checkbox-inline">
+                        <input name="open" class="activity_status" type="checkbox" value="10" @if($open == 10) checked @endif> Open
+                    </label>
+                    <label class="checkbox-inline">
+                        <input name="close" class="activity_status" type="checkbox" value="30" @if($close == 30) checked @endif> Closed
+                    </label>
+                    <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
+                </form>
+            </div>
+            
+            <div class="mb-3">
+                <button class="btn btn-info">Copy</button>
+
+                <form method="GET" action="{{url('customer_requirement_export')}}" class="d-inline-block">
+
+                    <input type="hidden" name="open" value="{{$open}}">
+                    <input type="hidden" name="close" value="{{$close}}">
+                    
+                    <button type="submit" class="btn btn-success">Export</button>
+                </form>
+            
+            </div>
+
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
+                            <input type="text" class="form-control" placeholder="Search Customer Requirement" name="search" value="{{$search}}"> 
                             <button class="btn btn-sm btn-info">Search</button>
                         </div>
                     </div>
                 </div>
             </form>
+            
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%">
                     <thead>
@@ -36,7 +64,7 @@
                     <tbody>
                         @foreach ( $customer_requirements as $customerRequirement)
                         <tr>
-                            <td align="center">
+                            <td>
                                 <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements">
                                     <i class="ti-eye"></i>
                                 </a>
@@ -70,7 +98,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                {!! $customer_requirements->appends(['search' => $search])->links() !!}
+                {!! $customer_requirements->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
                 @php
                     $total = $customer_requirements->total();
                     $currentPage = $customer_requirements->currentPage();

@@ -26,7 +26,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Recommendation :</label>
-                                <textarea name="" cols="30" rows="10" class="form-control">{{$crr->Recommendation}}</textarea>
+                                <textarea name="recommendation" cols="30" rows="10" class="form-control">{{$crr->Recommendation}}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-12">
