@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Fixed Cost List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formFixedCost">Add Fixed Cost</button>
+            <button type="button" class="btn btn-md btn-primary addBtn" data-toggle="modal" data-target="#formFixedCost">Add Fixed Cost</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -160,6 +160,12 @@
                 }
             })
             
+        })
+
+        $('.addBtn').on('click', function() {
+            $('[name="DirectLabor"]').val('')
+            $('[name="FactoryOverhead"]').val('')
+            $('[name="DeliveryCost"]').val('')
         })
     })
 </script>
