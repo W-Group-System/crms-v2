@@ -10,7 +10,7 @@
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex ">
                     <div class="col-md-5 mt-2">
-                        <a href="#" id="copy_btn" class="btn btn-md btn-info mb-1">Copy</a>
+                        <a href="#" id="copy_issue_btn" class="btn btn-md btn-info mb-1">Copy</a>
                         <a href="#" id="excel_btn" class="btn btn-md btn-success mb-1">Excel</a>
                     </div>
                     <div class="offset-md-2 col-md-5 mt-2">
@@ -98,8 +98,8 @@
                     <span id="form_result"></span>
                     @csrf
                     <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Expense Name">
+                        <label for="name">Issue</label>
+                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Issue">
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
@@ -242,47 +242,79 @@
             $('#form_issue_category')[0].reset();
         });
 
-        $('#copy_btn').click(function() {
-            var tableData = '';
+        $('#copy_issue_btn').click(function() {
+            $.ajax({
+                url: "{{ route('issue_category.index') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
 
-            // Copy the table header
-            $('#issue_category_table thead tr').each(function(rowIndex, tr) {
-                $(tr).find('th').each(function(cellIndex, th) {
-                    tableData += $(th).text().trim() + '\t'; // Trim and add a tab space
-                });
-                tableData += '\n'; // New line after each row
-            });
+                    // Add the table header
+                    $('#issue_category_table thead tr').each(function(rowIndex, tr) {
+                        $(tr).find('th').each(function(cellIndex, th) {
+                            tableData += $(th).text().trim() + '\t'; // Add a tab space
+                        });
+                        tableData += '\n'; // New line after each row
+                    });
 
-            // Copy the table body
-            $('#issue_category_table tbody tr').each(function(rowIndex, tr) {
-                $(tr).find('td').each(function(cellIndex, td) {
-                    tableData += $(td).text().trim() + '\t'; // Trim and add a tab space
-                });
-                tableData += '\n'; // New line after each row
-            });
+                    // Add the table body from the fetched data
+                    $(data).each(function(index, item) {
+                        tableData += item.Name + '\t' + item.Description + '\n'; // Append each row's data
+                    });
 
-            // Create a temporary textarea element to hold the text
-            var tempTextArea = $('<textarea>');
-            $('body').append(tempTextArea);
-            tempTextArea.val(tableData).select();
-            document.execCommand('copy');
-            tempTextArea.remove(); // Remove the temporary element
+                    // Create a temporary textarea element to hold the text
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove(); // Remove the temporary element
 
-            // Notify the user
-            Swal.fire({
-                icon: 'success',
-                title: 'Copied!',
-                text: 'Table data has been copied to the clipboard.',
-                timer: 1500,
-                showConfirmButton: false
+                    // Notify the user
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
             });
         });
 
         // Excel export functionality
         $('#excel_btn').click(function() {
-            var table = document.getElementById('issue_category_table');
-            var wb = XLSX.utils.table_to_book(table);
-            XLSX.writeFile(wb, "Issue Category.xlsx");
+            $.ajax({
+                url: "{{ route('export_issue_category') }}", // URL for exporting all data
+                method: "GET",
+                data: {
+                    search: "{{ $search }}", // Pass current search parameters if needed
+                    sort: "{{ request('sort', 'Name') }}", // Use default 'Name' if not provided
+                    direction: "{{ request('direction', 'asc') }}" // Use default 'asc' if not provided
+                },
+                success: function(data) {
+                    // Ensure data is in array format
+                    if (Array.isArray(data)) {
+                        // Create a new workbook and worksheet
+                        var wb = XLSX.utils.book_new();
+                        var ws = XLSX.utils.json_to_sheet(data.map(item => ({
+                            Name: item.Name,
+                            Description: item.Description
+                        })));
+
+                        // Append the worksheet to the workbook
+                        XLSX.utils.book_append_sheet(wb, ws, "Issue Categories");
+
+                        // Write the workbook to a file
+                        XLSX.writeFile(wb, "Issue Category.xlsx");
+                    }
+                }
+            });
         });
     });
 

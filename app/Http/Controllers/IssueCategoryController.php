@@ -10,28 +10,43 @@ class IssueCategoryController extends Controller
 {
     // List
     public function index(Request $request)
-    {   
+    {
         $search = $request->input('search');
-        $sort = $request->get('sort', 'Name'); // Default to 'Department' if no sort is specified
+        $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
         $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
 
-        $issuesCategory = IssueCategory::where(function ($query) use ($search) {
+        // Ensure sort and direction are valid
+        $validSorts = ['Name', 'Description'];
+        if (!in_array($sort, $validSorts)) {
+            $sort = 'Name';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        $query = IssueCategory::where(function ($query) use ($search) {
                 $query->where('Name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('Description', 'LIKE', '%' . $search . '%');        
+                    ->orWhere('Description', 'LIKE', '%' . $search . '%');
             })
-            ->orderBy($sort, $direction) // Order by the specified column and direction
-            ->paginate(10);
+            ->orderBy($sort, $direction);
 
-        return view('issue_categories.index', [
-            'search' => $search,
-            'issuesCategory' => $issuesCategory,
-        ]);
+        if ($fetchAll) {
+            $issuesCategory = $query->get(); // Fetch all results
+            return response()->json($issuesCategory); // Return JSON response for copying
+        } else {
+            $issuesCategory = $query->paginate(10); // Default pagination
+            return view('issue_categories.index', [
+                'search' => $search,
+                'issuesCategory' => $issuesCategory,
+                'fetchAll' => $fetchAll
+            ]);
+        }
     }
-
+    
     // Store
     public function store(Request $request) 
     {
-
         $rules = [
             'Name' => [
                 'required',
@@ -69,10 +84,14 @@ class IssueCategoryController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
+        $rules = [
+            'Name' => [
+                'required',
+                Rule::unique('customerserviceissuecategories', 'Name')
+                    ->whereNull('deleted_at')
+            ],
+            'Description' => 'required',
+        ];
 
         $error = Validator::make($request->all(), $rules);
 
@@ -102,5 +121,32 @@ class IssueCategoryController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete issue category.'], 500);
         }
+    }
+    
+    // Export
+    public function exportIssueCategory(Request $request)
+    {
+        $search = $request->input('search');
+        $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
+        $direction = $request->get('direction', 'asc'); // Default to ascending order
+
+        // Define a list of valid columns for sorting
+        $validSortColumns = ['Name', 'Description'];
+
+        // Validate sort column
+        if (!in_array($sort, $validSortColumns)) {
+            $sort = 'Name'; // Default to 'Name' if invalid
+        }
+
+        // Fetch all records based on search, sort, and direction
+        $issuesCategory = IssueCategory::where(function ($query) use ($search) {
+                $query->where('Name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('Description', 'LIKE', '%' . $search . '%');
+            })
+            ->orderBy($sort, $direction)
+            ->get(); // Fetch all results
+
+        // Convert data to an array format that can be easily handled by JavaScript
+        return response()->json($issuesCategory);
     }
 }

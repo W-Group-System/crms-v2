@@ -44,11 +44,10 @@
                                 <i class="ti ti-arrow-{{ request('sort') == 'Description' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                             </a>
                         </th>
-
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($concern_departments as $concern_department)
+                    @foreach($concernDepartments as $concern_department)
                         <tr>
                             <td>
                             <button type="button" class="edit btn btn-sm btn-warning" data-id="{{ $concern_department->id }}" title='Edit Concerned Department'>
@@ -64,11 +63,11 @@
                     @endforeach
                 </tbody>
             </table>
-            {!! $concern_departments->appends(['search' => $search])->links() !!}
+            {!! $concernDepartments->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
             @php
-                $total = $concern_departments->total();
-                $currentPage = $concern_departments->currentPage();
-                $perPage = $concern_departments->perPage();
+                $total = $concernDepartments->total();
+                $currentPage = $concernDepartments->currentPage();
+                $perPage = $concernDepartments->perPage();
 
                 $from = ($currentPage - 1) * $perPage + 1;
                 $to = min($currentPage * $perPage, $total);
@@ -95,8 +94,8 @@
                     <span id="form_result"></span>
                     @csrf
                     <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name">
+                        <label for="name">Department</label>
+                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Department">
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
@@ -109,27 +108,6 @@
                         <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Price Request GAE</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding: 20px">
-                <h5 style="margin: 0">Are you sure you want to delete this data?</h5>
-            </div>
-            <div class="modal-footer" style="padding: 0.6875rem">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" name="delete_concerned_department" id="delete_concerned_department" class="btn btn-danger">Yes</button>
             </div>
         </div>
     </div>
@@ -288,48 +266,81 @@
             $('#form_result').html('');
             $('#form_concern_department')[0].reset();
         });
-        
+
+        // Copy functionality
         $('#copy_btn').click(function() {
-            var tableData = '';
+            $.ajax({
+                url: "{{ route('concern_department.index') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
 
-            // Copy the table header
-            $('#concern_department_table thead tr').each(function(rowIndex, tr) {
-                $(tr).find('th').each(function(cellIndex, th) {
-                    tableData += $(th).text().trim() + '\t'; // Trim and add a tab space
-                });
-                tableData += '\n'; // New line after each row
-            });
+                    // Add the table header
+                    $('#concern_department_table thead tr').each(function(rowIndex, tr) {
+                        $(tr).find('th').each(function(cellIndex, th) {
+                            tableData += $(th).text().trim() + '\t'; // Add a tab space
+                        });
+                        tableData += '\n'; // New line after each row
+                    });
 
-            // Copy the table body
-            $('#concern_department_table tbody tr').each(function(rowIndex, tr) {
-                $(tr).find('td').each(function(cellIndex, td) {
-                    tableData += $(td).text().trim() + '\t'; // Trim and add a tab space
-                });
-                tableData += '\n'; // New line after each row
-            });
+                    // Add the table body from the fetched data
+                    $(data).each(function(index, item) {
+                        tableData += item.Name + '\t' + item.Description + '\n'; // Append each row's data
+                    });
 
-            // Create a temporary textarea element to hold the text
-            var tempTextArea = $('<textarea>');
-            $('body').append(tempTextArea);
-            tempTextArea.val(tableData).select();
-            document.execCommand('copy');
-            tempTextArea.remove(); // Remove the temporary element
+                    // Create a temporary textarea element to hold the text
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove(); // Remove the temporary element
 
-            // Notify the user
-            Swal.fire({
-                icon: 'success',
-                title: 'Copied!',
-                text: 'Table data has been copied to the clipboard.',
-                timer: 1500,
-                showConfirmButton: false
+                    // Notify the user
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
             });
         });
 
-        // Excel export functionality
+        // Export functionality
         $('#excel_btn').click(function() {
-            var table = document.getElementById('concern_department_table');
-            var wb = XLSX.utils.table_to_book(table);
-            XLSX.writeFile(wb, "Issue Category.xlsx");
+            $.ajax({
+                url: "{{ route('export_concerned_department') }}", // URL for exporting all data
+                method: "GET",
+                data: {
+                    search: "{{ $search }}", // Pass current search parameters if needed
+                    sort: "{{ request('sort', 'Name') }}", // Use default 'Name' if not provided
+                    direction: "{{ request('direction', 'asc') }}" // Use default 'asc' if not provided
+                },
+                success: function(data) {
+                    // Ensure data is in array format
+                    if (Array.isArray(data)) {
+                        // Create a new workbook and worksheet
+                        var wb = XLSX.utils.book_new();
+                        var ws = XLSX.utils.json_to_sheet(data.map(item => ({
+                            Name: item.Name,
+                            Description: item.Description
+                        })));
+
+                        // Append the worksheet to the workbook
+                        XLSX.utils.book_append_sheet(wb, ws, "Concerned Department");
+
+                        // Write the workbook to a file
+                        XLSX.writeFile(wb, "Concerned Department.xlsx");
+                    }
+                }
+            });
         });
     });
 </script>

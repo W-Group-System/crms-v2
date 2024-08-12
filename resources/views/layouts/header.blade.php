@@ -347,7 +347,7 @@
                             <div class="collapse" id="reports">
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"><a class="nav-link" href="#">Price Request Summary</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">Transaction/Activity Summary</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url ('/transaction_activity') }}">Transaction/Activity Summary</a></li>
                                 </ul>
                             </div>
                         </li>
