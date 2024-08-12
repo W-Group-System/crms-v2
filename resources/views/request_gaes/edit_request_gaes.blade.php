@@ -16,7 +16,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Cost</label>
-                        <input type="text" class="form-control" id="Cost" name="Cost" placeholder="Enter Cost" value="{{$pt->Cost}}" required>
+                        <input type="number" step=".01"  class="form-control" id="Cost" name="Cost" placeholder="Enter Cost" value="{{$pt->Cost}}" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
