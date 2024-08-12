@@ -97,15 +97,15 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Direct Labor</label>
-                        <input type="text" class="form-control" id="DirectLabor" name="DirectLabor" placeholder="Enter Direct Labor" required>
+                        <input type="number" class="form-control" id="DirectLabor" name="DirectLabor" step=".01" placeholder="Enter Direct Labor" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Factory Overhead</label>
-                        <input type="text" class="form-control" id="FactoryOverhead" name="FactoryOverhead" placeholder="Enter Factory Overhead" required>
+                        <input type="number" class="form-control" id="FactoryOverhead" name="FactoryOverhead" step=".01" placeholder="Enter Factory Overhead" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Delivery Cost</label>
-                        <input type="text" class="form-control" id="DeliveryCost" name="DeliveryCost" placeholder="Enter Delivery Cost" required>
+                        <input type="number" class="form-control" id="DeliveryCost" name="DeliveryCost" step=".01" placeholder="Enter Delivery Cost" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
