@@ -263,6 +263,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/edit_issue_category/{id}', 'IssueCategoryController@edit')->name('edit_issue_category');
     Route::post('update_issue_category/{id}', 'IssueCategoryController@update')->name('update_issue_category');
     Route::get('delete_issue_category/{id}', 'IssueCategoryController@delete')->name('delete_issue_category');
+    Route::get('/export-issue-category', 'IssueCategoryController@exportIssueCategory')->name('export_issue_category');
 
     // Concerned Department
     Route::get('/concern_department', 'ConcernDepartmentController@index')->name('concern_department.index');
@@ -270,6 +271,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/edit_concern_department/{id}', 'ConcernDepartmentController@edit')->name('edit_concern_department');     
     Route::post('update_concern_department/{id}', 'ConcernDepartmentController@update')->name('update_concern_department');
     Route::get('delete_concern_department/{id}', 'ConcernDepartmentController@delete')->name('delete_concern_department');
+    Route::get('/export-concerned-department', 'ConcernDepartmentController@exportConcernedDepartment')->name('export_concerned_department');
 
     // Activities
     Route::get('/activities', 'ActivityController@index')->name('activities.index');
@@ -384,5 +386,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/new_request_gae', 'RequestGAEController@store')->name('request_gae.store');
     Route::post('/update_request_gae/{id}', 'RequestGAEController@update')->name('update_request_gae');
     Route::post('delete_request_gae/{Id}', 'RequestGAEController@delete')->name('delete_request_gae');
+
+    # Reports
+    Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
 });
 
