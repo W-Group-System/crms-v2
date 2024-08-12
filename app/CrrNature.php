@@ -9,4 +9,9 @@ class CrrNature extends Model
     protected $fillable = [
         'CustomerRequirementId', 'NatureOfRequestId'
     ];
+
+    public function natureOfRequest()
+    {
+        return $this->belongsTo(NatureRequest::class,'NatureOfRequestId');
+    }
 }

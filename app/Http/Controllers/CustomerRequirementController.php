@@ -11,9 +11,12 @@ use App\User;
 use App\PriceCurrency;
 use App\NatureRequest;
 use App\CrrNature;
+use App\Exports\CustomerRequirementExport;
+use App\FileCrr;
 use App\ProductApplication;
 use App\SalesUser;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class CustomerRequirementController extends Controller
@@ -23,6 +26,15 @@ class CustomerRequirementController extends Controller
     {   
         $search = $request->input('search');
         $customer_requirements = CustomerRequirement::with(['client', 'product_application'])
+        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+            $query->whereIn('Status', [$request->open, $request->close]);
+        })
+        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+            $query->where('Status', $request->open);
+        })
+        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+            $query->where('Status', $request->close);
+        })
         ->where(function ($query) use ($search){
             $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
             ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
@@ -41,7 +53,9 @@ class CustomerRequirementController extends Controller
         $users = User::all();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search')); 
+        $open = $request->open;
+        $close = $request->close;
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close')); 
     }
 
     // Store
@@ -127,12 +141,118 @@ class CustomerRequirementController extends Controller
 
     public function view($id)
     {
-        $customerRequirement = CustomerRequirement::findOrFail($id);
+        $customerRequirement = CustomerRequirement::with('client', 'product_application', 'progressStatus', 'crrNature', 'primarySales', 'secondarySales', 'priority', 'crrDetails')->findOrFail($id);
 
         return view('customer_requirements.view_crr',
             array(
                 'crr' => $customerRequirement
             )
         );
+    }
+
+    public function addCrrFile(Request $request)
+    {
+        $request->validate([
+            'crr_file' => 'mimes:pdf,docx,xlsx'
+        ]);
+
+        $crrFile = new FileCrr;
+        $crrFile->Name = $request->file_name;
+        $crrFile->CustomerRequirementId = $request->customer_requirements_id;
+        if($request->has('is_confidential'))
+        {
+            $crrFile->IsConfidential = 1;
+        }
+        else
+        {
+            $crrFile->IsConfidential = 0;
+        }
+
+        if($request->has('is_for_review'))
+        {
+            $crrFile->IsForReview = 1;
+        }
+        else
+        {
+            $crrFile->IsForReview = 0;
+        }
+
+        $attachment = $request->file('crr_file');
+        $name = time().'_'.$attachment->getClientOriginalName();
+        $attachment->move(public_path().'/crr_files/', $name);
+
+        $file_name = '/crr_files/'.$name;
+        $crrFile->Path = $file_name;
+        $crrFile->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function updateCrrFile(Request $request, $id)
+    {
+        $crrFile = FileCrr::findOrFail($id);
+        $crrFile->Name = $request->file_name;
+
+        if($request->has('is_confidential'))
+        {
+            $crrFile->IsConfidential = 1;
+        }
+        else
+        {
+            $crrFile->IsConfidential = 0;
+        }
+
+        if($request->has('is_for_review'))
+        {
+            $crrFile->IsForReview = 1;
+        }
+        else
+        {
+            $crrFile->IsForReview = 0;
+        }
+
+        if($request->has('crr_file'))
+        {
+            $attachment = $request->file('crr_file');
+            $name = time().'_'.$attachment->getClientOriginalName();
+            $attachment->move(public_path().'/crr_files/', $name);
+    
+            $file_name = '/crr_files/'.$name;
+            $crrFile->Path = $file_name;
+        }
+
+        $crrFile->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function deleteCrrFile($id)
+    {
+        $crrFile = FileCrr::findOrFail($id);
+        $crrFile->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
+    }
+
+    public function updateCrr(Request $request, $id)
+    {
+        $customerRequirement = CustomerRequirement::findOrFail($id);
+        $customerRequirement->DdwNumber = $request->ddw_number;
+        $customerRequirement->DateReceived = $request->date_received;
+        $customerRequirement->DueDate = $request->due_date;
+        $customerRequirement->Recommendation = $request->recommendation;
+        $customerRequirement->Progress = $request->progress;
+        $customerRequirement->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new CustomerRequirementExport($request->open, $request->close), 'Customer Requirement.xlsx');
     }
 }

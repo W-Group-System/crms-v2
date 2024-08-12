@@ -142,8 +142,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 
     Route::post('new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 
     Route::post('update_customer_requirement/{id}', 'CustomerRequirementController@update');
-    Route::post('update_crr/{id}', 'CustomerRequirementController@update');
+    Route::post('update_crr/{id}', 'CustomerRequirementController@updateCrr');
     Route::get('view_customer_requirement/{id}', 'CustomerRequirementController@view');
+    Route::get('customer_requirement_export', 'CustomerRequirementController@export');
+
+    # Crr File
+    Route::post('add_crr_file', 'CustomerRequirementController@addCrrFile');
+    Route::post('update_crr_file/{id}', 'CustomerRequirementController@updateCrrFile');
+    Route::post('delete_crr_file/{id}', 'CustomerRequirementController@deleteCrrFile');
 
     // Product Evaluation
     Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');

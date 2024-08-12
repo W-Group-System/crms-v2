@@ -4,15 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TransactionApproval extends Model
+class CrrDetail extends Model
 {
-    //
-    protected $table = 'transactionapprovals';
+    protected $primaryKey = 'Id';
+    protected $table = 'crrdetails';
 
-    public function approverRPE()
-    {
-        return $this->belongsTo(User::class, 'UserId', 'user_id');
-    }
+    CONST created_at = 'CreatedDate';
+    CONST updated_at = 'ModifiedDate';
 
     public function userByUserId()
     {
