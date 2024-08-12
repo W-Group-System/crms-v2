@@ -12,7 +12,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="name">Effective Date :</label>
-                        <input type="date" class="form-control" name="effective_date" value="{{date('Y-m-d')}}" required>
+                        <input type="date" class="form-control" name="effective_date" value="{{date('Y-m-d')}}" min="{{date('Y-m-d')}}" required>
                     </div>
                     <div class="form-group">
                         <label for="name">From Currency :</label>
