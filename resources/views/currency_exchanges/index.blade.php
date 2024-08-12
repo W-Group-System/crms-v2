@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Currency Exchange Rates List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#addExchangeRates">Add Currency Exchange Rates</button>
+            <button type="button" class="btn btn-md btn-primary addExchangeRates" data-toggle="modal" data-target="#addExchangeRates">Add Currency Exchange Rates</button>
             </h4>
             @include('currency_exchanges.new_exchange_rate')
 
@@ -97,6 +97,12 @@
         })
 
         $('#addExchangeRates').on('hidden.bs.modal', function(){
+            $('[name="from_currency"]').val(null).trigger('change')
+            $('[name="to_currency"]').val(null).trigger('change')
+            $('[name="rate"]').val('')
+        })
+
+        $('.addExchangeRates').on('click', function() {
             $('[name="from_currency"]').val(null).trigger('change')
             $('[name="to_currency"]').val(null).trigger('change')
             $('[name="rate"]').val('')
