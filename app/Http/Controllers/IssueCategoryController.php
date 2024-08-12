@@ -2,53 +2,58 @@
 
 namespace App\Http\Controllers;
 use App\IssueCategory;
-use Validator;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class IssueCategoryController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-        if(request()->ajax())
-        {
-            return datatables()->of(IssueCategory::query())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('issue_categories.index'); 
+        $search = $request->input('search');
+        $sort = $request->get('sort', 'Name'); // Default to 'Department' if no sort is specified
+        $direction = $request->get('direction', 'asc'); // Default to ascending order
+
+        $issuesCategory = IssueCategory::where(function ($query) use ($search) {
+                $query->where('Name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('Description', 'LIKE', '%' . $search . '%');        
+            })
+            ->orderBy($sort, $direction) // Order by the specified column and direction
+            ->paginate(10);
+
+        return view('issue_categories.index', [
+            'search' => $search,
+            'issuesCategory' => $issuesCategory,
+        ]);
     }
 
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
 
+        $rules = [
+            'Name' => [
+                'required',
+                Rule::unique('customerserviceissuecategories', 'Name')
+                    ->whereNull('deleted_at')
+            ],
+            'Description' => 'required',
+        ];
 
-        $error = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules);
 
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
         }
 
-        $form_data = array(
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
-        );
+        // Proceed with saving the new issue category
+        $issueCategory = new IssueCategory();
+        $issueCategory->Name = $request->Name;
+        $issueCategory->Description = $request->Description;
+        $issueCategory->save();
 
-        IssueCategory::create($form_data);
-
-        return response()->json(['success' => 'Data Added Successfully.']);
+        return response()->json(['success' => 'Issue Category added successfully.']);
     }
 
     // Edit
@@ -89,7 +94,13 @@ class IssueCategoryController extends Controller
     // Delete
     public function delete($id)
     {
-        $data = IssueCategory::findOrFail($id);
-        $data->delete();
+        try {
+            $data = IssueCategory::findOrFail($id);
+            $data->delete();
+
+            return response()->json(['success' => 'Issue category deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete issue category.'], 500);
+        }
     }
 }
