@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Price Request GAE List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formRequestGAE">Add Price Request GAE</button>
+            <button type="button" class="btn btn-md btn-primary addBtn" data-toggle="modal" data-target="#formRequestGAE">Add Price Request GAE</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -84,7 +84,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Cost</label>
-                        <input type="text" class="form-control" id="Cost" name="Cost" placeholder="Enter Cost" required>
+                        <input type="number" class="form-control" step=".01" id="Cost" name="Cost" placeholder="Enter Cost" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -136,6 +136,11 @@
                 }
             })
             
+        })
+
+        $('.addBtn').on('click', function() {
+            $('[name="ExpenseName"]').val('')
+            $('[name="Cost"]').val('')
         })
     })
 </script>

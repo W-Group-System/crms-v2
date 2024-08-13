@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Fixed Cost List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formFixedCost">Add Fixed Cost</button>
+            <button type="button" class="btn btn-md btn-primary addBtn" data-toggle="modal" data-target="#formFixedCost">Add Fixed Cost</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -97,15 +97,15 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Direct Labor</label>
-                        <input type="text" class="form-control" id="DirectLabor" name="DirectLabor" placeholder="Enter Direct Labor" required>
+                        <input type="number" class="form-control" id="DirectLabor" name="DirectLabor" step=".01" placeholder="Enter Direct Labor" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Factory Overhead</label>
-                        <input type="text" class="form-control" id="FactoryOverhead" name="FactoryOverhead" placeholder="Enter Factory Overhead" required>
+                        <input type="number" class="form-control" id="FactoryOverhead" name="FactoryOverhead" step=".01" placeholder="Enter Factory Overhead" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Delivery Cost</label>
-                        <input type="text" class="form-control" id="DeliveryCost" name="DeliveryCost" placeholder="Enter Delivery Cost" required>
+                        <input type="number" class="form-control" id="DeliveryCost" name="DeliveryCost" step=".01" placeholder="Enter Delivery Cost" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -160,6 +160,12 @@
                 }
             })
             
+        })
+
+        $('.addBtn').on('click', function() {
+            $('[name="DirectLabor"]').val('')
+            $('[name="FactoryOverhead"]').val('')
+            $('[name="DeliveryCost"]').val('')
         })
     })
 </script>

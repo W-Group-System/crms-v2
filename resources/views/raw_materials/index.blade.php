@@ -13,46 +13,37 @@
             @include('components.error')
 
             <div class="table-responsive">
-                <form method="GET" action="" class="custom_form mb-3" enctype="multipart/form-data">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <input type='text' class='form-control form-control-sm' name='search' placeholder="Search Material" value="{{$search}}">
+                <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                    <div class="row height d-flex ">
+                        <div class="col-md-5 mt-2">
+                            <a href="#" id="copy_issue_btn" class="btn btn-md btn-info mb-1">Copy</a>
+                            <a href="#" id="excel_btn" class="btn btn-md btn-success mb-1">Excel</a>
                         </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-primary btn-sm btn-submit" style="width:100px;border-radius:4px" type="submit">Search</button>
+                        <div class="offset-md-2 col-md-5 mt-2">
+                            <div class="search">
+                                <i class="ti ti-search"></i>
+                                <input type="text" class="form-control" placeholder="Search Issue Category" name="search" value="{{$search}}"> 
+                                <button class="btn btn-sm btn-info">Search</button>
+                            </div>
                         </div>
                     </div>
-                </form>
-                <form action="" method="post">
-                    {{csrf_field()}}
-
-                    <button class="btn btn-success btn-sm btn-submit mb-2" style="width:100px;border-radius:4px" type="submit">Export</button>
                 </form>
                 <table class="table table-striped table-bordered table-hover" id="raw_material_table">
                     <thead>
                         <tr>
+                            <th width="10%">Action</th>
                             <th width="30%">Material</th>
                             <th width="30%">Description</th>
                             <th width="30%">Status</th>
-                            <th width="10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($rawMaterials as $rm)
                             <tr>
-                                <td>{{$rm->Name}}</td>
-                                <td>{{$rm->Description}}</td>
                                 <td>
-                                    @if($rm->status == "Active")
-                                        <div class="badge badge-success">Active</div>
-                                    @else
-                                        <div class="badge badge-danger">Inactive</div>
-                                    @endif
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" title="View Products" data-toggle="modal" data-target="#viewProducts-{{$rm->id}}">
+                                    <a href="{{url('view_raw_materials/'.$rm->id)}}" class="btn btn-sm btn-info" title="View Raw Material Details">
                                         <i class="ti-eye"></i>
-                                    </button>
+                                    </a>
     
                                     @if($rm->status == "Active")
                                     <button class="btn btn-sm btn-danger deactivate" title="Deactivate" data-id="{{$rm->id}}">
@@ -62,6 +53,15 @@
                                     <button class="btn btn-sm btn-info activate" title="Activate" data-id="{{$rm->id}}">
                                         <i class="ti-check"></i>
                                     </button>
+                                    @endif
+                                </td>
+                                <td>{{$rm->Name}}</td>
+                                <td>{{$rm->Description}}</td>
+                                <td>
+                                    @if($rm->status == "Active")
+                                        <div class="badge badge-success">Active</div>
+                                    @else
+                                        <div class="badge badge-danger">Inactive</div>
                                     @endif
                                 </td>
                             </tr>
@@ -117,10 +117,6 @@
         </div>
     </div>
 </div>
-
-@foreach ($rawMaterials as $rm)
-@include('raw_materials.view_raw_materials')
-@endforeach
 
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>

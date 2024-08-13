@@ -19,7 +19,6 @@
                     </div>
                 </div>
             </form>
-            
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="client_table" width="100%">
                     <thead>

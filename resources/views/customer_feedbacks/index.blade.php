@@ -11,13 +11,13 @@
                 <table class="table table-striped table-bordered table-hover" id="customer_feedback_table">
                     <thead>
                         <tr>
+                            <th>Action</th>
                             <th>#</th>
                             <th>Date</th>
                             <th>Client</th>
                             <th>Contact</th>
                             <th>Title</th>
                             <th>Status</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                 </table>
@@ -258,6 +258,11 @@
             },
             columns: [
                 {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false
+                },
+                {
                     data: 'ServiceNumber',
                     name: 'ServiceNumber'
                 },
@@ -284,12 +289,8 @@
                         // Display "Local" for type 1 and "International" for type 2
                         return data == 10 ? 'Open' : 'Closed';
                     }
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
                 }
+                
             ]
         });
         $('#customer_feedback_table').on('click', '.edit', function() {

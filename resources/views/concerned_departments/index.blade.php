@@ -7,24 +7,55 @@
             Concerned Department List
             <button type="button" class="btn btn-md btn-primary" name="add_concern_department" id="add_concern_department">Add Concerned Department</button>
             </h4>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex ">
+                    <div class="col-md-5 mt-2">
+                        <a href="#" id="copy_btn" class="btn btn-md btn-info mb-1">Copy</a>
+                        <a href="#" id="excel_btn" class="btn btn-md btn-success mb-1">Excel</a>
+                    </div>
+                    <div class="offset-md-2 col-md-5 mt-2">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search Concerned Department" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <table class="table table-striped table-bordered table-hover" id="concern_department_table" width="100%">
                 <thead>
                     <tr>
                         <th width="10%">Action</th>
-                        <th width="45%">Department</th>
-                        <th width="45%">Description</th>
+                        <th width="40%">
+                            Department
+                            <a href="{{ route('concern_department.index', [
+                                'sort' => 'Name', 
+                                'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc'
+                            ]) }}">
+                                <i class="ti ti-arrow-{{ request('sort') == 'Name' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                            </a>
+                        </th>
+                        <th width="50%">
+                            Description
+                            <a href="{{ route('concern_department.index', [
+                                'sort' => 'Description', 
+                                'direction' => request('sort') == 'Description' && request('direction') == 'asc' ? 'desc' : 'asc'
+                            ]) }}">
+                                <i class="ti ti-arrow-{{ request('sort') == 'Description' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                            </a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($concern_departments as $concern_department)
+                    @foreach($concernDepartments as $concern_department)
                         <tr>
                             <td>
-                            <button type="button" class="btn btn-sm btn-warning" title="Edit Department" data-toggle="modal" data-target="#edit_concern-{{ $concern_department->id }}">
+                            <button type="button" class="edit btn btn-sm btn-warning" data-id="{{ $concern_department->id }}" title='Edit Concerned Department'>
                                 <i class="ti-pencil"></i>
                             </button>
-                            <!-- <button type="button" class="btn btn-sm btn-primary" title="Edit Department" data-toggle="modal" data-target="#edit_concern-{{ $concern_department->id }}">
-                                <i class="ti-pencil"></i>
-                            </button> -->
+                            <button type="button" class="btn btn-sm btn-danger delete" data-id="{{ $concern_department->id }}" title='Delete Concerned Department'>
+                                <i class="ti-trash"></i>
+                            </button>
                             </td>
                             <td>{{ $concern_department->Name }}</td>
                             <td>{{ $concern_department->Description }}</td>
@@ -32,11 +63,11 @@
                     @endforeach
                 </tbody>
             </table>
-            {!! $concern_departments->appends(['search' => $search])->links() !!}
+            {!! $concernDepartments->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
             @php
-                $total = $concern_departments->total();
-                $currentPage = $concern_departments->currentPage();
-                $perPage = $concern_departments->perPage();
+                $total = $concernDepartments->total();
+                $currentPage = $concernDepartments->currentPage();
+                $perPage = $concernDepartments->perPage();
 
                 $from = ($currentPage - 1) * $perPage + 1;
                 $to = min($currentPage * $perPage, $total);
@@ -59,84 +90,31 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('new_concern_department') }}">
+                <form method="POST" enctype="multipart/form-data" id="form_concern_department">
+                    <span id="form_result"></span>
                     @csrf
                     <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name" required>
+                        <label for="name">Department</label>
+                        <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Department">
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
-                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description" required>
+                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
                     </div>
                     <div class="modal-footer">
-                        <!-- <input type="hidden" name="action" id="action" value="Save">
+                        <input type="hidden" name="action" id="action" value="Save">
                         <input type="hidden" name="hidden_id" id="hidden_id">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save"> -->
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-@foreach($concern_departments as $concern_department)
-<div class="modal fade" id="edit_concern-{{ $concern_department->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Concern Department</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" id="edit_form_concern_department-{{ $concern_department->id }}" enctype="multipart/form-data" action="{{ url('update_concern_department', $concern_department->id) }}">
-                    @csrf
-                    <div class="form-group">
-                        <label for="Name">Name</label>
-                        <input type="text" class="form-control" id="Name" name="Name" value="{{ $concern_department->Name }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="Description">Description</label>
-                        <input type="text" class="form-control" id="Description" name="Description" value="{{ $concern_department->Description }}" required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="edit_action_button" id="edit_action_button-{{ $concern_department->id }}" class="btn btn-success" value="Update">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endforeach
-
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Price Request GAE</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding: 20px">
-                <h5 style="margin: 0">Are you sure you want to delete this data?</h5>
-            </div>
-            <div class="modal-footer" style="padding: 0.6875rem">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" name="delete_concerned_department" id="delete_concerned_department" class="btn btn-danger">Yes</button>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 
 <script>
     $(document).ready(function(){
@@ -170,120 +148,73 @@
         //         }
         //     ]
         // });
-        
-        @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: "{{ session('error') }}",
-                confirmButtonText: 'OK'
-            });
-        @elseif(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: "{{ session('success') }}",
-                confirmButtonText: 'OK'
-            });
-        @endif
 
         $('#add_concern_department').click(function(){
             $('#formConcernDepartment').modal('show');
-            $('.modal-title').text("Add Concerned Department");
+            $('.modal-title').text("Add Concerned Category");
+            $('#form_result').html(''); // Clear previous validation errors
+            $('#form_concern_department')[0].reset(); // Clear form fields
         });
 
         $('#form_concern_department').on('submit', function(event){
             event.preventDefault();
-            if($('#action').val() == 'Save')
-            {
-                $.ajax({
-                    url: "{{ route('concern_department.store') }}",
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success: function(data)
-                    {
-                        var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
+            var action_url = '';
+
+            if($('#action').val() == 'Save') {
+                action_url = "{{ route('concern_department.store') }}";
+            }
+
+            if($('#action').val() == 'Edit') {
+                action_url = "{{ route('update_concern_department', ':id') }}".replace(':id', $('#hidden_id').val());
+            }
+
+            $.ajax({
+                url: action_url,
+                method: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                dataType: "json",
+                success: function(data) {
+                    var html = '';
+                    if(data.errors) {
+                        html = '<div class="alert alert-danger">';
+                        for(var count = 0; count < data.errors.length; count++) {
+                            html += '<p>' + data.errors[count] + '</p>';
                         }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_concern_department')[0].reset();
-                            setTimeout(function(){
-                                $('#formConcernDepartment').modal('hide');
-                            }, 2000);
-                            $('#concern_department_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
+                        html += '</div>';
                         $('#form_result').html(html);
                     }
-                })
-            }
-            if($('#action').val() == 'Edit')
-            {
-                var formData = new FormData(this);
-                formData.append('id', $('#hidden_id').val());
-                $.ajax({
-                    url: "{{ route('update_concern_department', ':id') }}".replace(':id', $('#hidden_id').val()),
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success:function(data)
-                    {
-                        var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
-                        }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
+                    if (data.success) {
+                        // Use SweetAlert2 for the success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.success,
+                            timer: 1500, // Auto-close after 1.5 seconds
+                            showConfirmButton: false
+                        }).then(() => {
                             $('#form_concern_department')[0].reset();
-                            setTimeout(function(){
-                                $('#formConcernDepartment').modal('hide');
-                            }, 1000);
-                            $('#concern_department_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 1000); 
-                        }
-                        $('#form_result').html(html);
+                            $('#formConcernDepartment').modal('hide');
+                            location.reload();
+                            $('#form_result').empty(); 
+                        });
                     }
-                });
-            }
+                }
+            });
         });
 
-        $(document).on('click', '.edit', function(){
-            var id = $(this).attr('id');
-            $('#form_result').html('');
+        // Edit button click
+        $(document).on('click', '.edit', function() {
+            var id = $(this).data('id');
             $.ajax({
                 url: "{{ route('edit_concern_department', ['id' => '_id_']) }}".replace('_id_', id),
                 dataType: "json",
-                success: function(html){
-                    $('#Name').val(html.data.Name);
-                    $('#Description').val(html.data.Description);
-                    $('#hidden_id').val(html.data.id);
+                success: function(data) {
+                    $('#Name').val(data.data.Name);
+                    $('#Description').val(data.data.Description);
+                    $('#hidden_id').val(data.data.id);
                     $('.modal-title').text("Edit Concerned Department");
                     $('#action_button').val("Update");
                     $('#action').val("Edit");
@@ -292,29 +223,124 @@
             });
         });
 
-        var concerned_department_id;
-        $(document).on('click', '.delete', function(){
-            concerned_department_id = $(this).attr('id');
-            console.log(concerned_department_id);
-            $('#confirmModal').modal('show');
-            $('.modal-title').text("Delete Concerned Department");
-        }); 
+        // Delete
+        $(document).on('click', '.delete', function() {
+            var id = $(this).data('id');
 
-        $('#delete_concerned_department').click(function(){
-            $.ajax({
-                url: "{{ url('delete_concern_department') }}/" + concerned_department_id, 
-                method: "GET",
-                beforeSend:function(){
-                    $('#delete_concerned_department').text('Deleting...');
-                },
-                success:function(data)
-                {
-                    setTimeout(function(){
-                        $('#confirmModal').modal('hide');
-                        $('#concern_department_table').DataTable().ajax.reload();
-                    }, 2000);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('delete_concern_department', ['id' => '_id_']) }}".replace('_id_', id),
+                        method: "GET",
+                        dataType: "json",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'The concerned department has been deleted.',
+                                icon: 'success',
+                                showConfirmButton: false, // Hide the OK button
+                                timer: 1500 // Auto-close after 1.5 seconds
+                            }).then(() => {
+                                // Optionally, you can force a reload if necessary
+                                location.reload();
+                            });
+                        },
+                    });
                 }
-            })
+            });
+        });
+
+        $('#formConcernDepartment').on('hidden.bs.modal', function() {
+            $('#form_result').html('');
+            $('#form_concern_department')[0].reset();
+        });
+
+        // Copy functionality
+        $('#copy_btn').click(function() {
+            $.ajax({
+                url: "{{ route('concern_department.index') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
+
+                    // Add the table header
+                    $('#concern_department_table thead tr').each(function(rowIndex, tr) {
+                        $(tr).find('th').each(function(cellIndex, th) {
+                            tableData += $(th).text().trim() + '\t'; // Add a tab space
+                        });
+                        tableData += '\n'; // New line after each row
+                    });
+
+                    // Add the table body from the fetched data
+                    $(data).each(function(index, item) {
+                        tableData += item.Name + '\t' + item.Description + '\n'; // Append each row's data
+                    });
+
+                    // Create a temporary textarea element to hold the text
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove(); // Remove the temporary element
+
+                    // Notify the user
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
+
+        // Export functionality
+        $('#excel_btn').click(function() {
+            $.ajax({
+                url: "{{ route('export_concerned_department') }}", // URL for exporting all data
+                method: "GET",
+                data: {
+                    search: "{{ $search }}", // Pass current search parameters if needed
+                    sort: "{{ request('sort', 'Name') }}", // Use default 'Name' if not provided
+                    direction: "{{ request('direction', 'asc') }}" // Use default 'asc' if not provided
+                },
+                success: function(data) {
+                    // Ensure data is in array format
+                    if (Array.isArray(data)) {
+                        // Create a new workbook and worksheet
+                        var wb = XLSX.utils.book_new();
+                        var ws = XLSX.utils.json_to_sheet(data.map(item => ({
+                            Name: item.Name,
+                            Description: item.Description
+                        })));
+
+                        // Append the worksheet to the workbook
+                        XLSX.utils.book_append_sheet(wb, ws, "Concerned Department");
+
+                        // Write the workbook to a file
+                        XLSX.writeFile(wb, "Concerned Department.xlsx");
+                    }
+                }
+            });
         });
     });
 </script>

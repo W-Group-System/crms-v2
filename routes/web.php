@@ -145,8 +145,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 
     Route::post('new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 
     Route::post('update_customer_requirement/{id}', 'CustomerRequirementController@update');
-    Route::post('update_crr/{id}', 'CustomerRequirementController@update');
+    Route::post('update_crr/{id}', 'CustomerRequirementController@updateCrr');
+    Route::post('/delete_crr/{id}', 'CustomerRequirementController@delete');
     Route::get('view_customer_requirement/{id}', 'CustomerRequirementController@view');
+    Route::get('customer_requirement_export', 'CustomerRequirementController@export');
+
+    # Crr File
+    Route::post('add_crr_file', 'CustomerRequirementController@addCrrFile');
+    Route::post('update_crr_file/{id}', 'CustomerRequirementController@updateCrrFile');
+    Route::post('delete_crr_file/{id}', 'CustomerRequirementController@deleteCrrFile');
 
     // Product Evaluation
     Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
@@ -274,6 +281,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/edit_issue_category/{id}', 'IssueCategoryController@edit')->name('edit_issue_category');
     Route::post('update_issue_category/{id}', 'IssueCategoryController@update')->name('update_issue_category');
     Route::get('delete_issue_category/{id}', 'IssueCategoryController@delete')->name('delete_issue_category');
+    Route::get('/export-issue-category', 'IssueCategoryController@exportIssueCategory')->name('export_issue_category');
 
     // Concerned Department
     Route::get('/concern_department', 'ConcernDepartmentController@index')->name('concern_department.index');
@@ -281,6 +289,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/edit_concern_department/{id}', 'ConcernDepartmentController@edit')->name('edit_concern_department');     
     Route::post('update_concern_department/{id}', 'ConcernDepartmentController@update')->name('update_concern_department');
     Route::get('delete_concern_department/{id}', 'ConcernDepartmentController@delete')->name('delete_concern_department');
+    Route::get('/export-concerned-department', 'ConcernDepartmentController@exportConcernedDepartment')->name('export_concerned_department');
 
     // Activities
     Route::get('/activities', 'ActivityController@index')->name('activities.index');
@@ -315,7 +324,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/add_raw_material', 'RawMaterialController@add');
     Route::post('/deactivate_raw_material', 'RawMaterialController@deactivate');
     Route::post('/activate_raw_material', 'RawMaterialController@activate');
-    // Route::get('/get_raw_materials_products', 'RawMaterialController@getRawMaterialsProducts');
+    Route::get('/view_raw_materials/{id}', 'RawMaterialController@viewRawMaterials');
 
     // Base Price
     Route::get('/base_price', 'BasePriceController@index')->name('base_price.index');
@@ -395,5 +404,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/new_request_gae', 'RequestGAEController@store')->name('request_gae.store');
     Route::post('/update_request_gae/{id}', 'RequestGAEController@update')->name('update_request_gae');
     Route::post('delete_request_gae/{Id}', 'RequestGAEController@delete')->name('delete_request_gae');
+
+    # Reports
+    Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
 });
 
