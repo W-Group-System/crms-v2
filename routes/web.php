@@ -321,7 +321,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/add_raw_material', 'RawMaterialController@add');
     Route::post('/deactivate_raw_material', 'RawMaterialController@deactivate');
     Route::post('/activate_raw_material', 'RawMaterialController@activate');
-    // Route::get('/get_raw_materials_products', 'RawMaterialController@getRawMaterialsProducts');
+    Route::get('/view_raw_materials/{id}', 'RawMaterialController@viewRawMaterials');
 
     // Base Price
     Route::get('/base_price', 'BasePriceController@index')->name('base_price.index');

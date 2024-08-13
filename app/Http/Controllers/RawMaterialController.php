@@ -61,17 +61,10 @@ class RawMaterialController extends Controller
         return back();
     }
 
-    // public function getRawMaterialsProducts(Request $request)
-    // {
-    //     $rawMaterial = RawMaterial::with('product_raw_materials.products')->findOrFail($request->id);
-        
-    //     if ($rawMaterial->product_raw_materials != null)
-    //     {
-    //         return response()->json([
-    //             'status' => 1,
-    //             'products' => $rawMaterial->product_raw_materials->products->product_origin,
-    //             'percentage' => $rawMaterial->product_raw_materials->percent
-    //         ]);
-    //     }
-    // }
+    public function viewRawMaterials($id)
+    {
+        $rawMaterial = RawMaterial::findOrFail($id);
+
+        return view('raw_materials.view_raw_materials', array('raw_materials' => $rawMaterial));
+    }
 }
