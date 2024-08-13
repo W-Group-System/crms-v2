@@ -143,6 +143,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 
     Route::post('update_customer_requirement/{id}', 'CustomerRequirementController@update');
     Route::post('update_crr/{id}', 'CustomerRequirementController@updateCrr');
+    Route::post('/delete_crr/{id}', 'CustomerRequirementController@delete');
     Route::get('view_customer_requirement/{id}', 'CustomerRequirementController@view');
     Route::get('customer_requirement_export', 'CustomerRequirementController@export');
 
