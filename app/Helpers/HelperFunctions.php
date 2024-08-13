@@ -4,6 +4,7 @@ use App\CurrencyExchange;
 use App\CustomerRequirement;
 use App\Product;
 use App\ProductMaterialsComposition;
+use App\RequestProductEvaluation;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -110,4 +111,10 @@ function getProductIdByCode($code)
     $product = Product::where('code', $code)->first();
     
     return $product ? $product->id : null;
+}
+function getRpeIdByNumber($number)
+{
+    $rpe = RequestProductEvaluation::where('RpeNumber', $number)->first();
+    
+    return $rpe ? $rpe->id : null;
 }

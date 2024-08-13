@@ -2,7 +2,7 @@
 	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="editPriceMonitoringLabel">Edit Price Monitoring</h5>
+				<h5 class="modal-title" id="editPriceMonitoringLabel">Update Price Request</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -34,7 +34,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Requested (DD/MM/YYYY)</label>
-                                <input type="datetime" class="form-control" name="DateRequested" value="{{ !empty($priceMonitoring->DateRequested) ? date('m/d/y ', strtotime($priceMonitoring->DateRequested)) : '' }}" readonly>
+                                <input type="datetime" class="form-control" name="DateRequested" value="{{ !empty($priceMonitoring->DateRequested) ? date('Y-m-d  ', strtotime($priceMonitoring->DateRequested)) : '' }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
@@ -59,20 +59,16 @@
                                 <input type="date" class="form-control ValidityDate{{ $priceMonitoring->id }}" name="ValidityDate"  value="{{ !empty($priceMonitoring->ValidityDate) ? date('Y-m-d', strtotime($priceMonitoring->ValidityDate)) : '' }}" >
                             </div>
                             <div class="form-group">
-                                <label>Moq</label>
+                                <label>Packaging Type</label>
+                                <input type="text" class="form-control" name="PackagingType" value="{{ $priceMonitoring->PackagingType }}" placeholder="Enter Packaging Type">
+                            </div>
+                            <div class="form-group">
+                                <label>MOQ</label>
                                 <input type="text" class="form-control" name="Moq" value="{{ $priceMonitoring->Moq }}">
                             </div>
                             <div class="form-group">
                                 <label>Shelf Life</label>
                                 <input type="text" class="form-control" name="ShelfLife" value="{{ $priceMonitoring->ShelfLife }}">
-                            </div>
-                            <div class="form-group">
-                                <label>With Commission?</label>
-                                <input type="checkbox" name="WithCommission" value="1" {{ $priceMonitoring->IsWithCommission ? 'checked' : '' }}>
-                            </div>
-                            <div class="form-group">
-                                <label >Enter Commission</label>
-                                <input type="text" class="form-control" name="EnterCommission" placeholder="Enter Commission" value="{{ $priceMonitoring->Commission}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -97,10 +93,6 @@
                                     @endforeach
                                 </select>
                             </div> --}}
-                            <div class="form-group">
-                                <label>Other Cost Requirement</label>
-                                <input type="number" step=".01" class="form-control" name="OtherCostRequirement" value="{{ $priceMonitoring->OtherCostRequirements}}">
-                            </div>
                             <div class="form-group">
                                 <label>Purpose of Price Request</label>
                                 <select class="form-control js-example-basic-single" name="PriceRequestPurpose"  style="position: relative !important" title="Select Purpose">
@@ -221,6 +213,10 @@
                                             <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
                                         </div>
                                         <div class="form-group">
+                                            <label>Other Cost Requirement</label>
+                                            <input type="number" step=".01" class="form-control other-cost" name="OtherCostRequirement[]" placeholder="Enter Other Cost Requirement" value="{{  $priceProducts->OtherCostRequirements ?? 0  }}">
+                                        </div>
+                                        <div class="form-group">
                                             <label>Total Operating Cost</label>
                                             <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
                                         </div>
@@ -237,11 +233,11 @@
                                         <div><label>MARKUP COST</label></div>
                                         <div class="form-group">
                                             <label>Markup (%)</label>
-                                            <input type="number" step=".01" class="form-control markup-percent" name="MarkupPercent[]" value="0">
+                                            <input type="number" step=".01" class="form-control markup-percent" name="MarkupPercent[]" value="{{ $priceProducts->LsalesMarkupPercent ?? 0 }}">
                                         </div>
                                         <div class="form-group">
                                             <label>Markup (PHP)</label>
-                                            <input type="number" step=".01" class="form-control markup-php" name="MarkupPhp[]" value="0">
+                                            <input type="number" step=".01" class="form-control markup-php" name="MarkupPhp[]" value="{{ $priceProducts->LsalesMarkupValue ?? 0 }}">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -398,7 +394,7 @@ $(document).ready(function() {
         var blendingLoss = 0.01 * rmc;
         $row.find('.blending-loss').val(blendingLoss.toFixed(2));
         
-        var financingCost = 0.15 * totalManufacturingCost;
+        var financingCost = 0.05 * totalManufacturingCost;
         $row.find('.financing-cost').val(financingCost.toFixed(2));
         
         updateTotalOperationCost($row);
@@ -442,13 +438,13 @@ $(document).ready(function() {
 
        if (deliveryType === '10') {
            deliveryCostInput.val(0);
-           deliveryCostInput.prop('readonly', true);
+           deliveryCostInput.prop('readonly', false);
        } else if (deliveryType === '20') {
            deliveryCostInput.val(1.84);
            deliveryCostInput.prop('readonly', true);
        } else if (deliveryType === '30') {
            deliveryCostInput.val(0);
-           deliveryCostInput.prop('readonly', false);
+           deliveryCostInput.prop('readonly', true);
        }
        updateTotalOperationCost($row);
        updateTotalProductCost($row);
@@ -460,14 +456,15 @@ $(document).ready(function() {
        var deliveryCost = parseFloat($row.find('.delivery-cost').val());
        var financingCost = parseFloat($row.find('.financing-cost').val());
        var gaeCost = parseFloat($row.find('.GaeCost').val()); 
+       var otherCost = parseFloat($row.find('.other-cost').val()); 
        
-       var totalOperationCost = deliveryCost + financingCost + gaeCost;
+       var totalOperationCost = deliveryCost + financingCost + gaeCost + otherCost;
        $row.find('.total-operation-cost').val(totalOperationCost.toFixed(2)); 
 
        updateTotalProductCost($row);
    }
 
-   $(document).on('input', '.delivery-cost', function() {
+   $(document).on('input', '.delivery-cost, .other-cost', function() {
        var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
        updateTotalOperationCost($row);
        updateTotalProductCost($row);
@@ -665,6 +662,10 @@ function updateSellingPrice($row) {
                                    <label>GAE Cost</label>
                                    <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
                                </div>
+                               <div class="form-group">
+                                    <label>Other Cost Requirement</label>
+                                    <input type="number" step=".01" class="form-control other-cost" name="OtherCostRequirement[]" placeholder="Enter Other Cost Requirement" value="0">
+                                </div>
                                <div class="form-group">
                                    <label>Total Operating Cost</label>
                                    <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>

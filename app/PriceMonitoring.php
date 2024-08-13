@@ -17,7 +17,7 @@ class PriceMonitoring extends Model implements Auditable
     protected $fillable = [
         'PrfNumber', 'PrimarySalesPersonId', 'SecondarySalesPersonId', 'DateRequested', 'ClientId', 'ContactId', 'ValidityDate','Moq','ShelfLife', 'PriceRequestPurpose', 
         'ShipmentTerm', 'PaymentTermId', 'OtherCostRequirements', 'Commission', 'Remarks', 'Progress', 'Status', 'IsWithCommission', 'Destination', 'PriceLockPeriod',
-        'TaxType'
+        'TaxType', 'PackagingType'
     ];
     public function client()
     {
