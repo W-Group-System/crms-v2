@@ -140,11 +140,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/edit_file/{id}', 'ClientController@editFile')->name('edit_file');
     Route::post('delete_file/{id}', 'ClientController@deleteFile');
     
+    // Account Targeting
+
+    Route::get('/account_targeting', 'AccountTargetingController@index');
     // Customer Requirement
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 
     Route::post('new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 
     Route::post('update_customer_requirement/{id}', 'CustomerRequirementController@update');
     Route::post('update_crr/{id}', 'CustomerRequirementController@updateCrr');
+    Route::post('/delete_crr/{id}', 'CustomerRequirementController@delete');
     Route::get('view_customer_requirement/{id}', 'CustomerRequirementController@view');
     Route::get('customer_requirement_export', 'CustomerRequirementController@export');
 
@@ -322,7 +326,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/add_raw_material', 'RawMaterialController@add');
     Route::post('/deactivate_raw_material', 'RawMaterialController@deactivate');
     Route::post('/activate_raw_material', 'RawMaterialController@activate');
-    // Route::get('/get_raw_materials_products', 'RawMaterialController@getRawMaterialsProducts');
+    Route::get('/view_raw_materials/{id}', 'RawMaterialController@viewRawMaterials');
 
     // Base Price
     Route::get('/base_price', 'BasePriceController@index')->name('base_price.index');

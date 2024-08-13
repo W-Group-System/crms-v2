@@ -104,7 +104,7 @@
                                <td>{{ $srf->SrfNumber }}-{{ $product->ProductIndex }}</td>
                                <td>{{ $product->NumberOfPackages }}</td>
                                <td>{{ $product->Quantity }}</td>
-                               <td>{{ $product->ProductCode }}</td>
+                               <td>{{  $prodCode = $product->ProductCode}}</td>
                                <td>{{ $product->Label }}</td>
                                <td>{{ $product->productApplicationsId->Name }}</td>
                                <td>{{ $product->ProductDescription }}</td>

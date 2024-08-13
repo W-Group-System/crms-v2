@@ -5,6 +5,7 @@ use App\CustomerRequirement;
 use App\Product;
 use App\ProductMaterialsComposition;
 use App\UserAccessModule;
+use App\RequestProductEvaluation;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -125,4 +126,10 @@ function viewModule($module, $department, $role)
             return "no";
         }
     }
+}
+function getRpeIdByNumber($number)
+{
+    $rpe = RequestProductEvaluation::where('RpeNumber', $number)->first();
+    
+    return $rpe ? $rpe->id : null;
 }

@@ -61,13 +61,13 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Potential Volume</label>
-                                        <input type="text" class="form-control" id="PotentialVolume" name="PotentialVolume" value="{{$customerRequirement->PotentialVolume}}">
+                                        <input type="number" step=".01" class="form-control" id="PotentialVolume" name="PotentialVolume" value="{{$customerRequirement->PotentialVolume}}">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
                                     <div class="form-group">
                                         <label>Unit</label>
-                                        <select class="form-control js-example-basic-single" name="UnitOfMeasureId" id="UnitOfMeasureId" style="position: relative !important" title="Select Unit">
+                                        <select class="form-control js-example-basic-single" name="UnitOfMeasureId" style="position: relative !important" title="Select Unit">
                                             <option value="" disabled selected>Select Unit</option>
                                             <option value="1" @if($customerRequirement->UnitOfMeasureId == 1) selected @endif>Grams</option>
                                             <option value="2" @if($customerRequirement->UnitOfMeasureId == 2) selected @endif>Kilograms</option>
@@ -98,7 +98,7 @@
                                 <div class="col-sm-4" style="padding-left: 0px">
                                     <div class="form-group">
                                         <label>Currency</label>
-                                        <select class="form-control js-example-basic-single" name="CurrencyId" id="CurrencyId" style="position: relative !important" title="Select Currency">
+                                        <select class="form-control js-example-basic-single" name="CurrencyId" style="position: relative !important" title="Select Currency">
                                             <option value="" disabled selected>Select Currency</option>
                                             @foreach($price_currencies as $price_currency)
                                                 <option value="{{ $price_currency->id }}" @if($price_currency->id == $customerRequirement->CurrencyId) selected @endif>{{ $price_currency->Name }}</option>
@@ -133,17 +133,18 @@
                         </div>
                         <div class="col-lg-6">
                             <label for="name">Nature of Request</label>
+                            <button type="button" class="btn btn-sm btn-primary addRow">+</button>
                             <div class="natureOfRequestContainer">
                                 @foreach ($customerRequirement->crrNature as $data)
                                 <div class="input-group mb-3">
-                                    <select class="form-control js-example-basic-single" name="NatureOfRequestId[]" required>
+                                    <select class="form-control natureRequestSelect" name="NatureOfRequestId[]" required>
                                         <option value="" disabled selected>Select Nature of Request</option>
                                         @foreach($nature_requests as $nature_request)
                                             <option value="{{ $nature_request->id }}" @if($data->NatureOfRequestId == $nature_request->id) selected @endif>{{ $nature_request->Name }}</option>
                                         @endforeach
                                     </select>
                                     <div class="input-group-append">
-                                        <button type="button" class="btn btn-primary addRow">+</button>
+                                        <button type="button" class="btn btn-danger removeRow">-</button>
                                     </div>
                                 </div>
                                 @endforeach

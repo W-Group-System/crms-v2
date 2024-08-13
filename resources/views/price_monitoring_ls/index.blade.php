@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Price Monitoring List
-            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" data-toggle="modal" data-target="#AddPriceMonitoringLs">Add Price Monitoring</button>
+            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" data-toggle="modal" data-target="#AddPriceMonitoringLs">New</button>
             </h4>
             <div class="form-group">
                 <form method="GET" >
@@ -81,7 +81,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                {!! $price_monitorings->appends(['search' => $search])->links() !!}
+                {!! $price_monitorings->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
                 @php
                     $total = $price_monitorings->total();
                     $currentPage = $price_monitorings->currentPage();

@@ -25,6 +25,9 @@ class CustomerRequirementController extends Controller
     public function index(Request $request)
     {   
         $search = $request->input('search');
+        $sort = $request->get('sort', 'id');
+        $direction = $request->get('direction', 'desc');
+        
         $customer_requirements = CustomerRequirement::with(['client', 'product_application'])
         ->when($request->has('open') && $request->has('close'), function($query)use($request) {
             $query->whereIn('Status', [$request->open, $request->close]);
@@ -35,7 +38,7 @@ class CustomerRequirementController extends Controller
         ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
             $query->where('Status', $request->close);
         })
-        ->where(function ($query) use ($search){
+        ->when($search, function ($query) use ($search){
             $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
             ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
             ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
@@ -47,7 +50,10 @@ class CustomerRequirementController extends Controller
             })
             ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
         })
-        ->orderBy('id', 'desc')->paginate(10);
+        // ->orderBy('id', 'desc')
+        ->orderBy($sort, $direction)
+        ->paginate(10);
+
         $product_applications = ProductApplication::all();
         $clients = Client::all();
         $users = User::all();
@@ -100,7 +106,9 @@ class CustomerRequirementController extends Controller
                         ]);
                     }
         
-                    return redirect()->back()->with('success', 'Base prices updated successfully.');
+        Alert::success('Successfully Save')->persistent('Dismiss');
+        return back();
+                    // return redirect()->back()->with('success', 'Base prices updated successfully.');
     }
 
     public function update(Request $request, $id)
@@ -254,5 +262,14 @@ class CustomerRequirementController extends Controller
     public function export(Request $request)
     {
         return Excel::download(new CustomerRequirementExport($request->open, $request->close), 'Customer Requirement.xlsx');
+    }
+
+    public function delete($id)
+    {
+        $customerRequirement = CustomerRequirement::findOrFail($id);
+        $customerRequirement->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
     }
 }
