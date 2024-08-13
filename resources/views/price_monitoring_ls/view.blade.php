@@ -37,7 +37,7 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div>
                 <div class="col-lg-12" align="right">
-                    <a href="{{ url('/price_monitoring') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a href="{{ url('/price_monitoring_ls') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
                     <button type="button" class="btn btn-md btn-warning"
                         data-target="#closePrf{{ $price_monitorings->id }}" 
                         data-toggle="modal">
@@ -65,9 +65,9 @@
                             <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->secondarySalesPerson)->full_name }}</p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Progress:</b></p>
                             <p class="col-sm-3 col-form-label">
-                                @if ($price_monitorings == '25')
+                                @if ($price_monitorings->Progress == '25')
                                 Reopened
-                                @elseif ($price_monitorings == '30')
+                                @elseif ($price_monitorings->Progress == '30')
                                 Closed
                                 @else
                                 Waiting For Disposition
@@ -113,8 +113,6 @@
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Packaging Type:</b></p>
                             <p class="col-sm-3 col-form-label">{{ $price_monitorings->PackagingType}}</p>
-                            <p class="offset-sm-2 col-sm-2 col-form-label"><b>Other Cost Requirements :</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->OtherCostRequirements}}</p>
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>MOQ:</b></p>
@@ -138,14 +136,8 @@
                             <p class="col-sm-3 col-form-label">{{ $price_monitorings->PriceLockPeriod}}</p>
                         </div>
                         <div class="form-group row">
-                            <p class="col-sm-2 col-form-label"><b>With Commission :</b></p>
-                            <p class="col-sm-3 col-form-label"> 
-                                @if ($price_monitorings->IsWithCommission == "1")
-                                YES
-                                @else
-                                NO
-                                @endif
-                            </p>
+                            <p class="col-sm-2 col-form-label"><b></b></p>
+                            <p class="col-sm-3 col-form-label"></p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Tax Type:</b></p>
                             <p class="col-sm-3 col-form-label">
                                 @if($price_monitorings->TaxType == 10)
@@ -155,12 +147,6 @@
                                 @else
                                 {{ $price_monitorings->TaxType }}
                                 @endif
-                        </div>
-                        <div class="form-group row">
-                            <p class="col-sm-2 col-form-label"><b>Commission:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->Commission}}</p>
-                            <p class="offset-sm-2 col-sm-2 col-form-label"><b></b></p>
-                            <p class="col-sm-3 col-form-label"></p>
                         </div>
                     </div>
                 </div>
@@ -172,17 +158,24 @@
                         <div class="col-lg-4">
                            <div class="form-group row">
                             <p class="col-sm-6 col-form-label"><b>Product:</b></p>
-                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->ProductId }}
+                            <p class="col-sm-6 col-form-label">{{ optional($prcieProduct->products)->code }}
                             </p>
                            </div>
                            <div class="form-group row">
                             <p class="col-sm-6 col-form-label"><b>Category:</b></p>
-                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->Type }}
+                            <p class="col-sm-6 col-form-label">
+                                @if ($prcieProduct->Type == 1)
+                                    Pure
+                                @elseif ($prcieProduct->Type == 2)
+                                    Blend
+                                @else
+                                {{ $prcieProduct->Type }}
+                                @endif
                             </p>
                            </div>
                            <div class="form-group row">
                             <p class="col-sm-6 col-form-label"><b>Application:</b></p>
-                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->ApplicationId }}
+                            <p class="col-sm-6 col-form-label">{{ optional($prcieProduct->product_application)->Name }}
                             </p>
                            </div>
                            <div class="form-group row">
@@ -209,7 +202,7 @@
                             </div>
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Total Manufacturing Cost:</b></p>
-                                <p class="col-sm-6 col-form-label"></p>
+                                <p class="col-sm-6 col-form-label">{{ number_format($prcieProduct->ProductRmc + $prcieProduct->LsalesDirectLabor + $prcieProduct->LsalesFactoryOverhead, 2) }}</p>
                             </div>
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Blending Loss:</b></p>
@@ -233,15 +226,37 @@
                              </p>
                             </div>
                             <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Other Cost Requirements :</b></p>
+                                <p class="col-sm-6 col-form-label">{{$prcieProduct->OtherCostRequirements}}</p>
+                            </div>
+                            <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Total Operating Cost:</b></p>
-                                <p class="col-sm-6 col-form-label"></p>
+                                <p class="col-sm-6 col-form-label">{{ number_format($prcieProduct->LsalesDeliveryCost + $prcieProduct->LsalesFinancingCost + $prcieProduct->LsalesGaeValue + $prcieProduct->OtherCostRequirements, 2) }}</p>
                             </div>
                          </div>
+                         @php
+                             $totalCost = $prcieProduct->ProductRmc +
+                                $prcieProduct->LsalesDirectLabor +
+                                $prcieProduct->LsalesFactoryOverhead +
+                                $prcieProduct->LsalesDeliveryCost +
+                                $prcieProduct->LsalesFinancingCost +
+                                $prcieProduct->LsalesGaeValue +
+                                $prcieProduct->OtherCostRequirements +
+                                $prcieProduct->LsalesBlendingLoss;
+
+                            $markupPercent = $prcieProduct->LsalesMarkupPercent;
+                            $markupValue = $prcieProduct->LsalesMarkupValue;
+                            $sellingPrice = number_format($totalCost,2) + ($markupValue);
+                            $sellingPriceWithVAT = number_format($sellingPrice,2) * 0.12;
+                            $sumWithVat = $sellingPrice + $sellingPriceWithVAT;
+                         @endphp
                          <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209)"></div>
                          <div class="col-lg-4">
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Total Product Cost:</b></p>
-                                <p class="col-sm-6 col-form-label"> </p>
+                                <p class="col-sm-6 col-form-label">
+                                    {{ number_format($totalCost, 2) }}
+                                </p>
                             </div>
                          </div>
                          <div class="col-lg-4">
@@ -257,11 +272,11 @@
                          <div class="col-lg-4">
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Selling Price :</b></p>
-                                <p class="col-sm-6 col-form-label"></p>
+                                <p class="col-sm-6 col-form-label">{{ number_format($sellingPrice, 2) }}</p>
                             </div>
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Selling Price + 12% VAT :</b></p>
-                                <p class="col-sm-6 col-form-label"></p>
+                                <p class="col-sm-6 col-form-label">{{ number_format($sumWithVat, 2) }}</p>
                             </div>
                          </div>
                     </div>

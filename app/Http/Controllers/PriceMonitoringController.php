@@ -315,7 +315,7 @@ class PriceMonitoringController extends Controller
         })
         
         ->where('PrfNumber', 'LIKE', 'PRF-LS%')
-        ->orderBy('id', 'desc')->paginate(25);
+        ->orderBy('id', 'desc')->paginate(10);
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
         ->get();
@@ -349,14 +349,14 @@ class PriceMonitoringController extends Controller
             'ClientId' => $request->input('ClientId'),
             'ContactId' => $request->input('ClientContactId'),
             'ValidityDate' => $request->input('ValidityDate'),
+            'PackagingType' => $request->input('PackagingType'),
             'Moq' => $request->input('Moq'),
             'ShelfLife' => $request->input('ShelfLife'),
-            'IsWithCommission' =>  $request->input('WithCommission') ? 1 : 0, 
-            'Commission' => $request->input('EnterCommission'),
+            // 'IsWithCommission' =>  $request->input('WithCommission') ? 1 : 0, 
+            // 'Commission' => $request->input('EnterCommission'),
             'ShipmentTerm' => $request->input('ShipmentTerm'),
             'Destination' => $request->input('Destination'),
             'PaymentTermId' => $request->input('PaymentTerm'),
-            'OtherCostRequirements' => $request->input('OtherCostRequirement'),
             'PriceRequestPurpose' => $request->input('PriceRequestPurpose'),
             'PriceLockPeriod' => $request->input('DeliverySchedule'),
             'TaxType' => $request->input('TaxType'),
@@ -378,6 +378,7 @@ class PriceMonitoringController extends Controller
                 'LsalesBlendingLoss' => $request->input('BlendingLoss')[$key],
                 'LsalesDeliveryType' => $request->input('DeliveryType')[$key],
                 'LsalesDeliveryCost' => $request->input('DeliveryCost')[$key],
+                'OtherCostRequirements' => $request->input('OtherCostRequirement')[$key],
                 'LsalesFinancingCost' => $request->input('FinancingCost')[$key],
                 'PriceRequestGaeId' => $request->input('PriceGae')[$key],
                 'LsalesGaeValue' => $request->input('GaeCost')[$key],
@@ -386,24 +387,6 @@ class PriceMonitoringController extends Controller
 
         ]);
     }
-        //     PriceRequestProduct::create([
-        //         'PriceRequestFormId' => $priceMonitoringData->id,
-        //         'ProductId' => $request->input('Product'),
-        //         'Type' => $request->input('Type'),
-        //         'ApplicationId' => $request->input('ApplicationId'),
-        //         'QuantityRequired' => $request->input('QuantityRequired'),
-        //         'ProductRmc' => $request->input('Rmc'),
-        //         'LsalesDirectLabor' => $request->input('DirectLabor'),
-        //         'LsalesFactoryOverhead' => $request->input('FactoryOverhead'),
-        //         'LsalesBlendingLoss' => $request->input('BlendingLoss'),
-        //         'LsalesDeliveryType' => $request->input('DeliveryType'),
-        //         'LsalesDeliveryCost' => $request->input('DeliveryCost'),
-        //         'LsalesFinancingCost' => $request->input('FinancingCost'),
-        //         'PriceRequestGaeId' => $request->input('PriceGae'),
-        //         'LsalesGaeValue' => $request->input('GaeCost'),
-        //         'LsalesMarkupPercent' => $request->input('MarkupPercent'),
-        //         'LsalesMarkupValue' => $request->input('MarkupPhp'),
-        // ]);
                     return redirect()->back()->with('success', 'Base prices updated successfully.');
     }
 
@@ -417,14 +400,14 @@ class PriceMonitoringController extends Controller
         $priceMonitoringData->ClientId = $request->input('ClientId');
         $priceMonitoringData->ContactId = $request->input('ContactId');
         $priceMonitoringData->ValidityDate = $request->input('ValidityDate');
+        $priceMonitoringData->PackagingType = $request->input('PackagingType');
         $priceMonitoringData->Moq = $request->input('Moq');
         $priceMonitoringData->ShelfLife = $request->input('ShelfLife');
-        $priceMonitoringData->IsWithCommission = $request->input('WithCommission') ? 1 : 0;
-        $priceMonitoringData->Commission = $request->input('EnterCommission');
+        // $priceMonitoringData->IsWithCommission = $request->input('WithCommission') ? 1 : 0;
+        // $priceMonitoringData->Commission = $request->input('EnterCommission');
         $priceMonitoringData->ShipmentTerm = $request->input('ShipmentTerm');
         $priceMonitoringData->Destination = $request->input('Destination');
         $priceMonitoringData->PaymentTermId = $request->input('PaymentTerm');
-        $priceMonitoringData->OtherCostRequirements = $request->input('OtherCostRequirement');
         $priceMonitoringData->PriceRequestPurpose = $request->input('PriceRequestPurpose');
         $priceMonitoringData->PriceLockPeriod = $request->input('DeliverySchedule'); $priceMonitoringData->TaxType = $request->input('TaxType');
         $priceMonitoringData->save();
@@ -444,16 +427,15 @@ class PriceMonitoringController extends Controller
                     'LsalesDirectLabor' => $request->input('DirectLabor.' . $key),
                     'LsalesFactoryOverhead' => $request->input('FactoryOverhead.' . $key),
                     'LsalesBlendingLoss' => $request->input('BlendingLoss.' . $key),
-                    'BlendingLoss' => $request->input('RpeNumber.' . $key),
                     'LsalesDeliveryType' => $request->input('DeliveryType.' . $key),
                     'LsalesDeliveryCost' => $request->input('DeliveryCost.' . $key),
+                    'OtherCostRequirements' => $request->input('OtherCostRequirement.' . $key),
                     'LsalesFinancingCost' => $request->input('FinancingCost.' . $key),
                     'PriceRequestGaeId' => $request->input('PriceGae.' . $key),
                     'LsalesGaeValue' => $request->input('GaeCost.' . $key),
                     'LsalesMarkupPercent' => $request->input('MarkupPercent.' . $key),
                     'LsalesMarkupValue' => $request->input('MarkupPhp.' . $key),
 
-                    // 'ProductIndex' => $key + 1,
                 ]
             );
         }

@@ -23,7 +23,7 @@
                     </div>
                     <div class="form-group">
                         <label for="DateRequired">Date Required (MM/DD/YYYY):</label>
-                        <input type="date" class="form-control" name="DateRequired" value="{{ !empty($srf->DateRequired) ? date('Y-m-d', strtotime($srf->DateRequired)) : '' }}" placeholder="" >
+                        <input type="date" class="form-control DateRequired{{ $srf->Id  }}" name="DateRequired" value="{{ !empty($srf->DateRequired) ? date('Y-m-d', strtotime($srf->DateRequired)) : '' }}" placeholder="" >
                     </div>
                     <div class="form-group">
                         <label for="DateStarted">Date Started (MM/DD/YYYY):</label>
@@ -96,16 +96,11 @@
                     <span class="header-label">Product</span>
                     <hr class="form-divider">
                 </div>
-                <div class="edit_srf">  
-                    <div class="col-lg-12">
-                        <button type="button" class="btn btn-danger editeditDeleteRowBtn" hidden style="float: right;">Delete Row</button>
-                    </div>  
                     <div id="productRows{{ $srf->Id }}">
                     @foreach ($srf->requestProducts as $index => $product )
-                    <div class="row product-row{{ $product->id }}" data-index="{{ $index }}">
+                    <div class="row product-row{{ $product->id }}"  data-row-index="{{ $index }}">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label >{{ $product->id }}</label>
                                 <input type="hidden" name="product_id[]" value="{{ $product->id }}">
                                 <label>Product Type:</label>
                                 <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type">
@@ -123,9 +118,18 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="ProductCode">Product Code:</label>
                                 <input type="text" class="form-control" name="ProductCode[]" value="{{  $product->ProductCode }}" placeholder="Enter Product Code">
+                            </div> --}}
+                            <div class="form-group">
+                                <label>Product Code:</label>
+                                <select class="form-control js-example-basic-single" name="ProductCode[] "  style="position: relative !important" title="Select Product Code" required>
+                                    <option value="" disabled selected>Product Code</option>
+                                    @foreach ($productCodes as $productCode)
+                                        <option value="{{ $productCode->code }}" @if ($product->ProductCode == $productCode->code) selected @endif>{{ $productCode->code }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="ProductDescription">Product Description:</label>
@@ -196,7 +200,6 @@
                 <div class="col-lg-12">
                     {{-- <button type="button" class="btn btn-primary editAddRowButton{{ $srf->Id }}">Add Row</button> --}}
                 </div>
-                </div>
                 <div class="modal-footer product-footer"></div>
                 <div class="form-header">
                     <span class="header-label">Dispatch Details</span>
@@ -242,8 +245,23 @@
       </div>
     </div>
   </div>
-  
+  <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
   <script>
+     @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'OK'
+            });
+        @elseif(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'OK'
+            });
+        @endif
     $(document).ready(function() {
     function loadClientContacts(clientId, selectedContactId) {
         if (clientId) {
@@ -320,63 +338,16 @@
     loadClientContacts(initialClientId, initialClientContactId);
 
 
-    // Jun
-
-// $('.editAddProductRowBtn').click(function() {
-//     let newRow = `
-//         <!-- Copy the structure of your product row here -->
-//         <div class="form-group">
-//             <label>Product Type:</label>
-//             <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type">
-//                 <option value="" disabled selected>Select Product Type</option>
-//                 <option value="1">Pure</option>
-//                 <option value="2">Blend</option>
-//             </select>
-//         </div>
-//         <!-- Add other product fields as needed -->
-//         <button type="button" class="btn btn-danger deleteRowBtn">Delete Row</button>
-//     </div>`;
-//     $('#productRows{{ $srf->Id }}').append(newRow);
-//     updateButtonsVisibility();
-// });
-
-// $('#editDuplicateProductForm').click(function() {
-//     let lastRow = $('#productRows{{ $srf->Id }} .product-row{{ $product->id }}').last();
-//     let clonedRow = lastRow.clone();
-//     rowIndex++;
-//     clonedRow.attr('data-index', rowIndex);
-//     clonedRow.find('input, select, textarea').val('');
-//     $('#productRows{{ $srf->Id }}').append(clonedRow);
-//     updateButtonsVisibility();
-// });
-
-// $(document).on('click', '.deleteRowBtn', function() {
-//     $(this).closest('.product-row{{ $product->id }}').remove();
-//     updateButtonsVisibility();
-// });
-
-// function updateButtonsVisibility() {
-//     if ($('#productRows{{ $srf->Id }} .product-row{{ $product->id }}').length > 1) {
-//         $('#editDuplicateProductForm').show();
-//     } else {
-//         $('#editDuplicateProductForm').hide();
-//     }
-//     $('.editAddProductRowBtn').show();
-// }
-
-// updateButtonsVisibility();
-
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    let rowIndex = {{ $srf->requestProducts->count() }}; // Start index after existing rows
+    let rowIndex = {{ $srf->requestProducts->count() }};
     console.log(rowIndex);
 
     document.querySelector('.editAddRowButton{{ $srf->Id }}').addEventListener('click', function () {
         rowIndex++;
         const productRows = document.getElementById('productRows{{ $srf->Id }}');
         
-        // Create a new product row element
         const newRow = document.createElement('div');
         newRow.classList.add('row', 'product-row' + rowIndex);
         newRow.dataset.index = rowIndex;
@@ -471,5 +442,17 @@ document.addEventListener('DOMContentLoaded', function () {
         productRows.appendChild(newRow);
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+        var dueDateInput = document.querySelector('.DateRequired{{ $srf->Id  }}');
+        var storedDate = '{{ !empty($srf->DateRequired) ? date('Y-m-d', strtotime($srf->DateRequired)) : '' }}';
+        var today = new Date().toISOString().split('T')[0];
+
+        if (storedDate) {
+            dueDateInput.setAttribute('min', storedDate);
+        } else {
+            dueDateInput.setAttribute('min', today);
+        }
+    });
 </script>
 

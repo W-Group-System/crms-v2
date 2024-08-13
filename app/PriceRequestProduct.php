@@ -17,7 +17,7 @@ class PriceRequestProduct extends Model
         'PriceRequestFormId','Type', 'QuantityRequired', 'ProductId', 'ProductRmc', 'IsalesShipmentCost', 'IsalesFinancingCost', 'IsalesOthers', 'IsalesTotalBaseCost',
         'IsalesBaseSellingPrice', 'IsalesOfferedPrice', 'IsalesMargin', 'IsalesMarginPercentage', 'ApplicationId', 'LsalesDirectLabor', 'LsalesFactoryOverhead',
         'LsalesBlendingLoss', 'LsalesDeliveryType', 'LsalesDeliveryCost', 'LsalesFinancingCost', 'PriceRequestGaeId', 'LsalesGaeValue', 'LsalesMarkupPercent',
-        'LsalesMarkupValue'
+        'LsalesMarkupValue', 'OtherCostRequirements'
     ];
     public function client()
     {

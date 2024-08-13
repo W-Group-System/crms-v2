@@ -231,7 +231,17 @@
                             @endif
                         </p>
                         <p class="offset-sm-2 col-sm-2 col-form-label"><b>RPE Number:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->RpeNumber}}</p>
+                        <p class="col-sm-3 col-form-label">
+                            @php
+                                    $rpeNumber = $requestProducts->RpeNumber;
+                                    $rpeId = getRpeIdByNumber($rpeNumber);
+                                    if ($rpeId) {
+                                        echo '<a href="'.url('product_evaluation/view/'.$rpeId).'">'.$rpeNumber.'</a>';
+                                    } else {
+                                        echo $rpeNumber; // Or whatever you want to display if the product ID is not found
+                                    }
+                                @endphp
+                        </p>
                     </div>
                     <div class="form-group row">
                         <p class="col-sm-2 col-form-label"><b>Application:</b></p>
@@ -241,7 +251,16 @@
                     </div>
                     <div class="form-group row">
                         <p class="col-sm-2 col-form-label"><b>Product Code:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->ProductCode }}</p>
+                        <p class="col-sm-3 col-form-label">
+                            @php
+                                    $prodCode = $requestProducts->ProductCode;
+                                    $productId = getProductIdByCode($prodCode);
+                                    if ($productId) {
+                                        echo '<a href="'.url('view_product/'.$productId).'">'.$prodCode.'</a>';
+                                    } else {
+                                        echo $prodCode; // Or whatever you want to display if the product ID is not found
+                                    }
+                                @endphp</p>
                     </div>
                     <div class="form-group row">
                         <p class="col-sm-2 col-form-label"><b>Product Description:</b></p>
