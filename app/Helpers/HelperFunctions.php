@@ -4,6 +4,7 @@ use App\CurrencyExchange;
 use App\CustomerRequirement;
 use App\Product;
 use App\ProductMaterialsComposition;
+use App\UserAccessModule;
 use App\RequestProductEvaluation;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -111,6 +112,20 @@ function getProductIdByCode($code)
     $product = Product::where('code', $code)->first();
     
     return $product ? $product->id : null;
+}
+
+function viewModule($module, $department, $role)
+{
+    $user_access = UserAccessModule::where('module_name', $module)->where('department_id', $department)->where('role_id', $role)->first();
+
+    if ($user_access != null)
+    {
+        if ($user_access->view != null)
+            return "yes";
+        {
+            return "no";
+        }
+    }
 }
 function getRpeIdByNumber($number)
 {

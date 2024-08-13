@@ -8,7 +8,14 @@ class Role extends Model
 {
     use SoftDeletes;
     protected $table = "roles";
-    protected $fillable = [
-        'name', 'description'
-    ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function access()
+    {
+        return $this->hasMany(UserAccessModule::class);
+    }
 }

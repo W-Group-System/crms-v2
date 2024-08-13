@@ -51,6 +51,10 @@
         }
     </style>
     @yield('css')
+    @php
+        $role = auth()->user()->role_id;
+        $department = auth()->user()->department_id;
+    @endphp
     <body>
         <div class="container-scroller">
             <!-- partial:partials/_navbar.html -->
@@ -110,6 +114,7 @@
                                 <span class="menu-title">Dashboard</span>
                             </a>
                         </li>
+                        @if((viewModule('Current Products', $department, $role) == "yes") || (viewModule('New Products', $department, $role) == "yes") || (viewModule('Draft Products', $department, $role) == "yes") || (viewModule('Archived Products', $department, $role) == "yes") || (viewModule('Current Base Price', $department, $role) == "yes") || (viewModule('New Base Price', $department, $role) == "yes") || (viewModule('Product Application', $department, $role) == "yes") || (viewModule('Application Sub Categories', $department, $role) == "yes") || (viewModule('Raw Materials', $department, $role) == "yes"))
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#table_product" aria-expanded="false" aria-controls="table_product" onclick="toggleTablesProduct(event)">
                                 <i class="icon-layout menu-icon"></i>
@@ -118,55 +123,83 @@
                             </a>
                             <div class="collapse" id="table_product">
                                 <ul class="nav flex-column sub-menu">
+                                    @if((viewModule('Current Products', $department, $role) == "yes") || (viewModule('New Products', $department, $role) == "yes") || (viewModule('Draft Products', $department, $role) == "yes") || (viewModule('Archived Products', $department, $role) == "yes"))
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#nav_products" aria-expanded="false" aria-controls="nav_products" onclick="toggleProducts(event)">
                                             <span class="menu-title">Products</span>
                                             <i class="menu-arrow"></i>
                                         </a>
                                     </li>
+                                    @endif
                                     <!-- <li class="nav-item"><a class="nav-link" href="">Certificate of Analysis</a></li> -->
+                                    @if((viewModule('Current Base Price', $department, $role) == "yes") || (viewModule('New Base Price', $department, $role) == "yes"))
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#table_pricing2" aria-expanded="false" aria-controls="table_pricing2" onclick="toggleSetupPricing(event)">
                                             <span class="menu-title">Pricing</span>
                                             <i class="menu-arrow"></i>
                                         </a>
                                     </li>
+                                    @endif
+                                    @if((viewModule('Product Application', $department, $role) == "yes") || (viewModule('Application Sub Categories', $department, $role) == "yes") || (viewModule('Raw Materials', $department, $role) == "yes"))
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#table_product2" aria-expanded="false" aria-controls="table_product2" onclick="toggleSetupProduct(event)">
                                             <span class="menu-title">Setup</span>
                                             <i class="menu-arrow"></i>
                                         </a>
                                     </li>
+                                    @endif
                                 </ul>
                             </div>
                             <div class="collapse" id="nav_products">
                                 <ul class="nav flex-column sub-menu">
+                                    @if(viewModule('Current Products', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/current_products') }}">Current Products</a></li>
+                                    @endif
+                                    @if(viewModule('New Products', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/new_products') }}">New Products</a></li>
+                                    @endif
+                                    @if(viewModule('Draft Products', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/draft_products') }}">Draft Products</a></li>
+                                    @endif
+                                    @if(viewModule('Archived Products', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/archived_products') }}">Archived Products</a></li>
+                                    @endif
                                 </ul>
                             </div>
                             <div class="collapse" id="table_pricing2">
                                 <ul class="nav flex-column sub-menu">
+                                    @if(viewModule('Current Base Price', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/base_price') }}">Current Base Price</a></li>
+                                    @endif
+                                    @if(viewModule('New Base Price', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/new_base_price') }}">New Base Price</a></li>
+                                    @endif
                                 </ul>
                             </div>
                             <div class="collapse" id="table_product2">
                                 <ul class="nav flex-column sub-menu">
+                                    @if(viewModule('Product Application', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/product_applications') }}">Product Applications</a></li>
+                                    @endif
+                                    @if(viewModule('Application Sub Categories', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/product_subcategories') }}">Product Subcategories</a></li>
+                                    @endif
+                                    @if(viewModule('Raw Materials', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/raw_material') }}">Raw Materials</a></li>
+                                    @endif
                                 </ul>
                             </div>
                         </li>
+                        @endif
+                        @if(viewModule('Products', $department, $role) == "yes")
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('/products') }}">
                             <i class="icon-paper menu-icon"></i>
                             <span class="menu-title">Products</span>
                             </a>
                         </li>
+                        @endif
+                        @if((viewModule('Current Clients', $department, $role) == "yes") || (viewModule('Prospects Client', $department, $role) == "yes") || (viewModule('Archived Client', $department, $role) == "yes"))
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
                                 <i class="icon-bar-graph menu-icon"></i>
@@ -175,12 +208,20 @@
                             </a>
                             <div class="collapse" id="charts">
                                 <ul class="nav flex-column sub-menu">
+                                    @if(viewModule('Current Clients', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/client') }}">Current</a></li>
+                                    @endif
+                                    @if(viewModule('Prospects Client', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/client_prospect') }}">Prospects</a></li>
+                                    @endif
+                                    @if(viewModule('Archived Client', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/client_archived') }}">Archived</a></li>
+                                    @endif
                                 </ul>
                             </div>
                         </li>
+                        @endif
+                        @if((viewModule('Customer Requirement', $department, $role) == "yes") || (viewModule('Request for Product Evaluation', $department, $role) == "yes") || (viewModule('Sample Request Form', $department, $role) == "yes") || (viewModule('Price Monitoring', $department, $role) == "yes") )
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#tables" aria-expanded="false" aria-controls="tables" onclick="toggleTables(event)">
                                 <i class="icon-grid-2 menu-icon"></i>
@@ -189,30 +230,54 @@
                             </a>
                             <div class="collapse" id="tables">
                                 <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/account_targeting') }}">Account Targeting</a></li> 
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/customer_requirement?open=10') }}">Customer Requirement</a></li>             
+                                    @if(viewModule('Customer Requirement', $department, $role) == "yes")
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/customer_requirement?open=10') }}">Customer Requirement</a></li> 
+                                    @endif
+                                    @if(viewModule('Request for Product Evaluation', $department, $role) == "yes")
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/account_targeting') }}">Account Targeting</a></li>           
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/request_product_evaluation') }}">Request for Product Evaluation</a></li>
+                                    @endif
+                                    @if(viewModule('Sample Request Form', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request') }}">Sample Request Form</a></li>
+                                    @endif
+                                    @if(viewModule('Price Monitoring', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
+                                    @endif
+                                    @if(viewModule('Price Monitoring', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring_ls') }}">Price Monitoring</a></li>
+                                    @endif
+                                    
+                                    @if((viewModule('Categorization', $department, $role) == "yes") || (viewModule('Project Name', $department, $role) == "yes") || (viewModule('Nature of Request', $department, $role) == "yes") || (viewModule('CRR Priority', $department, $role) == "yes"))
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#tables2" aria-expanded="false" aria-controls="tables2" onclick="toggleSetup(event)">
                                             <span class="menu-title">Setup</span>
                                             <i class="menu-arrow"></i>
                                         </a>
                                     </li>
+                                    @endif
                                 </ul>
                             </div>
                         </li>
                         <!-- Separate collapse for setup submenu -->
                         <div class="collapse" id="tables2">
                             <ul class="nav flex-column sub-menu">
+                                @if(viewModule('Categorization', $department, $role) == "yes")
                                 <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/categorization') }}">Categorization</a></li> 
+                                @endif
+                                @if(viewModule('Project Name', $department, $role) == "yes")
                                 <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/project_name') }}">Project Name</a></li>
+                                @endif
+                                @if(viewModule('Nature of Request', $department, $role) == "yes")
                                 <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/nature_request') }}">Nature of Request</a></li>
+                                @endif
+                                @if(viewModule('CRR Priority', $department, $role) == "yes")
                                 <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/crr_priority') }}">CRR Priority</a></li>
+                                @endif
                             </ul>
                         </div>
+                        @endif
+                        
+                        @if((viewModule('Customer Complaints', $department, $role) == "yes") || (viewModule('Customer Feedback', $department, $role) == "yes"))
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#table_service" aria-expanded="false" aria-controls="table_service" onclick="toggleTablesService(event)">
                                 <i class="icon-grid-2 menu-icon"></i>
@@ -221,8 +286,13 @@
                             </a>
                             <div class="collapse" id="table_service">
                                 <ul class="nav flex-column sub-menu">
+                                    @if(viewModule('Customer Complaints', $department, $role) == "yes")
                                     <li class="nav-item"> <a class="nav-link" href="{{ url('/customer_complaint') }}">Customer Complaints</a></li>
+                                    @endif
+                                    @if(viewModule('Customer Feedback', $department, $role) == "yes")
                                     <li class="nav-item"> <a class="nav-link" href="{{ url('/customer_feedback') }}">Customer Feedbacks</a></li>
+                                    @endif
+                                    
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#table_service2" aria-expanded="false" aria-controls="table_service2" onclick="toggleSetupService(event)">
                                             <span class="menu-title">Setup</span>
@@ -235,10 +305,15 @@
                         <!-- Separate collapse for setup submenu -->
                         <div class="collapse" id="table_service2">
                             <ul class="nav flex-column sub-menu">
+                                @if(viewModule('Issue Category', $department, $role) == "yes")
                                 <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/issue_category') }}">Issue Category</a></li>
+                                @endif
+                                @if(viewModule('Concerned Department', $department, $role) == "yes")
                                 <li class="nav-item"><a class="nav-link setup-item" href="{{ url('concern_department') }}">Concerned Department</a></li>
+                                @endif
                             </ul>
                         </div>
+                        @endif
                         <!-- <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
                                 <i class="icon-contract menu-icon"></i>
@@ -253,12 +328,14 @@
                                 </ul>
                             </div>
                         </li> -->
+                        @if(viewModule('Activities', $department, $role) == "yes")
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('/activities?open=10') }}">
                             <i class="icon-paper menu-icon"></i>
                             <span class="menu-title">Activities</span>
                             </a>
                         </li>
+                        @endif
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#module" aria-expanded="false" aria-controls="module" onclick="toggleModule(event)">
                                 <i class="icon-layout menu-icon"></i>
@@ -267,10 +344,10 @@
                             </a>
                             <div class="collapse" id="module">
                                 <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"><a class="nav-link" href="">R&D</a></li>
+                                    {{-- <li class="nav-item"><a class="nav-link" href="">R&D</a></li>
                                     <li class="nav-item"><a class="nav-link" href="">Accounting Users</a></li>
                                     <li class="nav-item"><a class="nav-link" href="">Production Users</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="">Sales</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="">Sales</a></li> --}}
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#nav_location" aria-expanded="false" aria-controls="nav_location" onclick="toggleLocation(event)">
                                             <span class="menu-title">Location</span>
@@ -324,6 +401,7 @@
                                 </ul>
                             </div>
                         </li>
+                        @if(auth()->user()->department_id == 1)
                         <li class="nav-item"> 
                             <a class="nav-link" data-toggle="collapse" href="#setup" aria-expanded="false" aria-controls="setup">
                                 <i class="icon-cog menu-icon"></i>
@@ -332,13 +410,14 @@
                             </a>
                             <div class="collapse" id="setup">
                                 <ul class="nav flex-column sub-menu">
-                                    <!-- <li class="nav-item"><a class="nav-link" href="{{ url('/user') }}">User Accounts</a></li> -->
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/user') }}">User Accounts</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/role') }}">Roles</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/company') }}">Company</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/department') }}">Department</a></li>
                                 </ul>
                             </div>
                         </li>
+                        @endif
                         <li class="nav-item"> 
                             <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="reports">
                                 <i class="icon-cog menu-icon"></i>
