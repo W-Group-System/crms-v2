@@ -61,7 +61,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Potential Volume</label>
-                                        <input type="text" class="form-control" id="PotentialVolume" name="PotentialVolume" value="0">
+                                        <input type="number" step=".01" class="form-control" id="PotentialVolume" name="PotentialVolume" value="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -82,7 +82,7 @@
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
+                                        <option value="{{ $user->id }}" @if($user->id == auth()->user()->id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -92,7 +92,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Target Price</label>
-                                        <input type="text" class="form-control" id="TargetPrice" name="TargetPrice" value="0">
+                                        <input type="number" step=".01" class="form-control" id="TargetPrice" name="TargetPrice" value="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -128,13 +128,15 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Competitor Price</label>
-                                <input type="text" class="form-control" id="CompetitorPrice" name="CompetitorPrice" value="0">
+                                <input type="number" step=".01" class="form-control" id="CompetitorPrice" name="CompetitorPrice" value="0">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <label for="name">Nature of Request</label>
+                            <button type="button" class="btn btn-primary btn-sm addRow">+</button>
+
                             <div class="natureOfRequestContainer">
-                                <div class="input-group mb-3">
+                                {{-- <div class="input-group mb-3">
                                     <select class="form-control js-example-basic-single" name="NatureOfRequestId[]" required>
                                         <option value="" disabled selected>Select Nature of Request</option>
                                         @foreach($nature_requests as $nature_request)
@@ -144,7 +146,7 @@
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-primary addRow">+</button>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -175,7 +177,7 @@
 		</div>
 	</div>
 </div>
-<script src="{{ asset('js/sweetalert2.min.js') }}"></script>
+{{-- <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
 <script>
      @if(session('error'))
             Swal.fire({
@@ -192,4 +194,4 @@
                 confirmButtonText: 'OK'
             });
         @endif
-</script>
+</script> --}}
