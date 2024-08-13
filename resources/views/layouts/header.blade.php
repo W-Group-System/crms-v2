@@ -234,8 +234,10 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/customer_requirement?open=10') }}">Customer Requirement</a></li> 
                                     @endif
                                     @if(viewModule('Request for Product Evaluation', $department, $role) == "yes")
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/account_targeting') }}">Account Targeting</a></li>           
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/request_product_evaluation') }}">Request for Product Evaluation</a></li>
+                                    @endif
+                                    @if(viewModule('Accounting Targeting', $department, $role) == "yes")
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/account_targeting') }}">Account Targeting</a></li> 
                                     @endif
                                     @if(viewModule('Sample Request Form', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request') }}">Sample Request Form</a></li>
