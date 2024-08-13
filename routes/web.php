@@ -138,6 +138,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/edit_file/{id}', 'ClientController@editFile')->name('edit_file');
     Route::post('delete_file/{id}', 'ClientController@deleteFile');
     
+    // Account Targeting
+
+    Route::get('/account_targeting', 'AccountTargetingController@index');
     // Customer Requirement
     Route::get('/customer_requirement', 'CustomerRequirementController@index')->name('customer_requirement.index'); 
     Route::post('new_customer_requirement', 'CustomerRequirementController@store')->name('customer_requirement.store'); 
