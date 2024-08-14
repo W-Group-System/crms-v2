@@ -17,7 +17,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $departments = Department::all();
-        $companies = Company::all();
+        $companies = Company::where('status', 'Activate')->get();
         $roles = Role::all();
     
         $search = $request->input('search');
@@ -82,7 +82,7 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($id);
-        $user->user_id = 'N/A';
+        // $user->user_id = 'N/A';
         $user->username = $request->username;
         $user->full_name = $request->full_name;
         // $user->password = bcrypt($request->password);
