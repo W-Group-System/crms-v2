@@ -2,101 +2,115 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
 use App\Department;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class DepartmentController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::with('company')->latest()->get();
-        $companies = $departments->pluck('company')->unique('id');
-        if(request()->ajax())
-        {
-            return datatables()->of($departments)
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('departments.index', compact('departments', 'companies'));
+        $departments = Department::with('company')
+            ->when($request->search, function($query)use($request) {
+                $query->whereHas('company', function($q)use($request) {
+                    $q->where('name', 'LIKE', "%".$request->search."%");
+                })
+                ->orWhere('department_code', 'LIKE', "%".$request->search."%")
+                ->orWhere('name', 'LIKE', "%".$request->search."%")
+                ->orWhere('description', 'LIKE', "%".$request->search."%");
+            })
+            ->latest()
+            ->paginate(10);
+
+        $companies = Company::where('status', 'Active')->get();
+        $search = $request->search;
+
+        return view('departments.index', compact('departments', 'companies', 'search'));
     }
     
     // Store
     public function store(Request $request) 
     {
         $rules = array(
-            'company_id'    =>  'required',
-            'name'          =>  'required',
-            'description'   =>  'required'
+            'code' => 'unique:departments,department_code'
         );
 
+        $validator = Validator::make($request->all(), $rules);
 
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
+        if($validator->fails())
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            return response()->json(['errors' => $validator->errors()->all(), 'status' => 0]);
         }
+        else
+        {
+            $department = new Department;
+            $department->company_id = $request->company_id;
+            $department->department_code = $request->code;
+            $department->name = $request->name;
+            $department->description = $request->description;
+            $department->save();
 
-        $form_data = array(
-            'company_id'    =>  $request->company_id,
-            'name'          =>  $request->name,
-            'description'   =>  $request->description
-        );
-
-        Department::create($form_data);
-
-        return response()->json(['success' => 'Data Added Successfully.']);
+            return response()->json(['message' => 'Successfully Saved', 'status' => 1]);
+        }
     }
 
     // Edit
     public function edit($id)
     {
-        if(request()->ajax())
-        {
-            $data = Department::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
+        $data = Department::findOrFail($id);
+
+        return response()->json(['data' => $data]);
     }
 
     // Update
     public function update(Request $request, $id)
     {
         $rules = array(
-            'company_id'    =>  'required',
-            'name'          =>  'required',
-            'description'   =>  'required'
+            'code' => 'unique:departments,department_code,' . $id
         );
 
-        $error = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules);
 
-        if($error->fails())
+        if($validator->fails())
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            return response()->json(['errors' => $validator->errors()->all(), 'status' => 0]);
         }
+        else
+        {
+            $department = Department::findOrFail($id);
+            $department->company_id = $request->company_id;
+            $department->department_code = $request->code;
+            $department->name = $request->name;
+            $department->description = $request->description;
+            $department->save();
 
-        $form_data = array(
-            'company_id'    =>  $request->company_id,
-            'name'          =>  $request->name,
-            'description'   =>  $request->description
-        );
-
-        Department::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+            return response()->json(['message' => 'Successfully Update', 'status' => 1]);
+        }
     }
 
     // Delete
-    public function delete($id)
+    public function active($id)
     {
-        $data = Department::findOrFail($id);
-        $data->delete();
+        $department = Department::findOrFail($id);
+        $department->status = 'Active';
+        $department->save();
+
+        Alert::success('Successfully Activated')->persistent('Dismiss');
+        return back();
     }
+
+    public function deactive($id)
+    {
+        $department = Department::findOrFail($id);
+        $department->status = 'Inactive';
+        $department->save();
+
+        Alert::success('Successfully Deactivated')->persistent('Dismiss');
+        return back();
+    }
+
+
 }

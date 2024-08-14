@@ -5,19 +5,100 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Department List
-            <button type="button" class="btn btn-md btn-primary" name="add_department" id="add_department">Add Department</button>
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formDepartment">Add Department</button>
             </h4>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-5">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search Department" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="department_table">
                     <thead>
                         <tr>
+                            <th width="10%">Action</th>
                             <th width="25%">Company</th>
-                            <th width="25%">Department</th>
+                            <th width="25%">Code</th>
+                            <th width="25%">Name</th>
                             <th width="25%">Description</th>
-                            <th width="25%">Action</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        @if(count($departments) > 0)
+                            @foreach ($departments as $dept)
+                                <tr>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-warning editBtn" data-toggle="modal" data-target="#editDepartment-{{$dept->id}}" data-id="{{$dept->id}}">
+                                            <i class="ti-pencil"></i>
+                                        </button>
+                                        @if($dept->status == "Active")
+                                        <form method="POST" action="{{url('deactivate_department/'.$dept->id)}}" class="d-inline-block">
+                                            @csrf
+
+                                            <button type="button" class="btn btn-sm btn-danger deactivateBtn" title="Deactivate">
+                                                <i class="mdi mdi-cancel"></i>
+                                            </button>
+                                        </form>
+                                        @elseif($dept->status == "Inactive")
+                                        <form method="POST" action="{{url('activate_department/'.$dept->id)}}" class="d-inline-block">
+                                            @csrf
+
+                                            <button type="button" class="btn btn-sm btn-info activateBtn" title="Deactivate" class="d-inline-block">
+                                                <i class="ti ti-check"></i>
+                                            </button>
+                                        </form>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($dept->company)
+                                        {{$dept->company->name}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{$dept->department_code}}
+                                    </td>
+                                    <td>
+                                        {{$dept->name}}
+                                    </td>
+                                    <td>
+                                        {{$dept->description}}
+                                    </td>
+                                    <td>
+                                        @if($dept->status == "Active")
+                                        <div class="badge badge-success">{{$dept->status}}</div>
+                                        @elseif($dept->status == "Inactive")
+                                        <div class="badge badge-danger">{{$dept->status}}</div>
+                                        @endif
+                                    </td>
+                                </tr>
+
+                                @include('departments.edit_departments')
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="6" class="text-center">No data available</td>
+                            </tr>
+                        @endif
+                    </tbody>
                 </table>
+                {!! $departments->appends(['search' => $search])->links() !!}
+                @php
+                    $total = $departments->total();
+                    $currentPage = $departments->currentPage();
+                    $perPage = $departments->perPage();
+                    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+
+                <p  class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
             </div>
         </div>
     </div>
@@ -32,12 +113,12 @@
                 </button>               
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_department" enctype="multipart/form-data" action="{{ route('department.store') }}">
-                    <span id="form_result"></span>
+                <form method="POST" id="form_department" enctype="multipart/form-data" action="{{ url('new_department') }}">
+                    <div class="alert"></div>
                     @csrf
                     <div class="form-group">
                         <label>Company</label>
-                        <select class="form-control js-example-basic-single" name="company_id" id="company_id" style="position: relative !important" title="Select Company">
+                        <select class="form-control js-example-basic-single" name="company_id" style="position: relative !important" title="Select Company" required>
                             <option value="" disabled selected>Select Company</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->id }}">{{ $company->name }}</option>
@@ -45,25 +126,27 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="name">Department</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name">
+                        <label for="name">Code</label>
+                        <input type="text" class="form-control" id="code" name="code" placeholder="Enter Code" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
-                        <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description">
+                        <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description" required>
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="action" id="action" value="Save">
-                        <input type="hidden" name="hidden_id" id="hidden_id">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
+                        <button type="submit" class="btn btn-success">Save</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+{{-- <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -81,9 +164,9 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
 <script>
     $(document).ready(function(){
@@ -251,5 +334,129 @@
             })
         });
     });
+</script> --}}
+
+<script>
+    $(document).ready(function() {
+        $('#form_department').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serializeArray()
+
+            $.ajax({
+                type: "post",
+                url: "{{url('new_department')}}",
+                data: formData,
+                success: function(res)
+                {
+                    if (res.status == 0)
+                    {
+                        $('.alert').html('');
+                        $.each(res.errors, function(key,error) {
+                            $('.alert').addClass('alert-danger').append(error)
+                        })
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            icon: "success",
+                            title: res.message
+                        }).then(() => {
+                            location.reload();
+                        })
+                    }
+                }
+            })
+        })
+
+        $('.update_form_department').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serializeArray()
+            var url = $(this).attr('action')
+
+            $.ajax({
+                type: "post",
+                url: url,
+                data: formData,
+                success: function(res)
+                {
+                    if (res.status == 0)
+                    {
+                        $('.alert').html('');
+                        $.each(res.errors, function(key,error) {
+                            $('.alert').addClass('alert-danger').append(error)
+                        })
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            icon: "success",
+                            title: res.message
+                        }).then(() => {
+                            location.reload();
+                        })
+                    }
+                }
+            })
+        })
+
+        $('#formDepartment').on('hidden.bs.modal', function() {
+            $("[name='company_id']").val(null).trigger('change');
+            $("[name='code']").val(null);
+            $("[name='name']").val(null);
+            $("[name='description']").val(null);
+        })
+
+        $('.editBtn').on('click', function() {
+            var id = $(this).data('id')
+
+            $.ajax({
+                type: "get",
+                url: "{{url('edit_department')}}/" + id,
+                success: function(res)
+                {
+                    $("[name='company_id']").val(res.data.company_id).trigger('change');
+                    $("[name='code']").val(res.data.department_code);
+                    $("[name='name']").val(res.data.name);
+                    $("[name='description']").val(res.data.description);
+                }
+            })
+        })
+
+        $('.deactivateBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, deactivate it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.activateBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, activate it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+    })
 </script>
 @endsection
