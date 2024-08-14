@@ -30,10 +30,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Company
     Route::get('/company', 'CompanyController@index')->name('company.index');
-    Route::post('/sample_form', 'CompanyController@store')->name('store');
+    Route::post('/add_company', 'CompanyController@store')->name('store');
     Route::get('/edit_company/{id}', 'CompanyController@edit')->name('edit');
     Route::post('update_company/{id}', 'CompanyController@update')->name('update_company');
     Route::get('delete/{id}', 'CompanyController@delete')->name('delete');
+    Route::post('activate_company/{id}', 'CompanyController@activate');
+    Route::post('deactivate_company/{id}', 'CompanyController@deactivate');
 
     // User
     Route::get('/user', 'UserController@index');

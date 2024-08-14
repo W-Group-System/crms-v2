@@ -18,7 +18,7 @@ class UserController extends Controller
     {
         $departments = Department::all();
         $companies = Company::all();
-        $roles = Role::all();
+        $roles = Role::where('status', 'Active')->get();
     
         $search = $request->input('search');
     
