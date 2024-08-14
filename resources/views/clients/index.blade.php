@@ -8,7 +8,8 @@
             <!-- <button type="button" class="btn btn-md btn-primary" name="add_client" id="add_client">Add Client</button> -->
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
+                <div class="height d-flex justify-content-between align-items-between">
+                    <a href="{{url('export_current_client')}}" class="btn btn-md btn-success mb-1">Export</a>
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
@@ -23,11 +24,36 @@
                     <thead>
                         <tr>
                             <th>Action</th>
-                            <th>Type</th>
-                            <th>Industry</th>
-                            <th>Buyer Code</th>
-                            <th>Name</th>
-                            <th>Account Manager</th>
+                            <th>
+                                Type
+                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'Type', 'direction' => request('sort') == 'Type' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Type' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Industry
+                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'ClientIndustryId', 'direction' => request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Buyer Code
+                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'BuyerCode', 'direction' => request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Name
+                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'Name', 'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Name' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Account Manager
+                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'PrimaryAccountManagerId', 'direction' => request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,7 +90,7 @@
                     </tbody>
                 </table>
             </div>
-            {!! $clients->appends(['search' => $search])->links() !!}
+            {!! $clients->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
             @php
                 $total = $clients->total();
                 $currentPage = $clients->currentPage();

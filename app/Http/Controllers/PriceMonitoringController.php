@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Activity;
 use App\Client;
+use App\FileActivity;
 use App\PaymentTerms;
 use App\PrfFile;
 use App\PriceMonitoring;
@@ -22,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use OwenIt\Auditing\Models\Audit;
 use App\ProductMaterialsComposition;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class PriceMonitoringController extends Controller
 {
@@ -42,7 +44,7 @@ class PriceMonitoringController extends Controller
             // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
         })
         ->where('PrfNumber', 'LIKE', 'PRF-IS%')
-        ->orderBy('id', 'desc')->paginate(25);
+        ->orderBy('id', 'desc')->paginate(10);
         $clients = Client::all();
         $users = User::all();
         $products = Product::where('status', '4')->get();
@@ -273,11 +275,33 @@ class PriceMonitoringController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to delete File.'], 500);
         }
     }
+
+    public function deleteActivity($id)
+    {
+        try { 
+            $activity = Activity::findOrFail($id); 
+            $activity->delete();  
+            return response()->json(['success' => true, 'message' => 'File deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to delete File.'], 500);
+        }
+    }
     
     public function indexLocal(Request $request)
     {   
         $search = $request->input('search');
+        $open = $request->open;
+        $close = $request->close;
         $price_monitorings = PriceMonitoring::with(['client', 'product_application', 'requestPriceProducts', 'productMaterialComposition'])
+        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+            $query->whereIn('Status', [$request->open, $request->close]);
+        })
+        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+            $query->where('Status', $request->open);
+        })
+        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+            $query->where('Status', $request->close);
+        })
         ->where(function ($query) use ($search){
             $query->where('PrfNumber', 'LIKE', '%' . $search . '%')
             ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
@@ -289,16 +313,19 @@ class PriceMonitoringController extends Controller
             // })
             // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
         })
+        
         ->where('PrfNumber', 'LIKE', 'PRF-LS%')
-        ->orderBy('id', 'desc')->paginate(25);
-        $clients = Client::all();
+        ->orderBy('id', 'desc')->paginate(10);
+        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        ->get();
         $productApplications = ProductApplication::all(); 
-        $users = User::all();
+        $users = User::wherehas('localsalespersons')->get();
         $products = Product::where('status', '4')->get();
         // $products = Product::get();
         $pricegaes = PriceRequestGae::get();
         $payment_terms = PaymentTerms::all();
-        return view('price_monitoring_ls.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms', 'productApplications', 'pricegaes')); 
+        return view('price_monitoring_ls.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms', 'productApplications', 'pricegaes', 'open', 'close',)); 
     }
 
     public function storeLocalSalePre(Request $request)
@@ -322,14 +349,14 @@ class PriceMonitoringController extends Controller
             'ClientId' => $request->input('ClientId'),
             'ContactId' => $request->input('ClientContactId'),
             'ValidityDate' => $request->input('ValidityDate'),
+            'PackagingType' => $request->input('PackagingType'),
             'Moq' => $request->input('Moq'),
             'ShelfLife' => $request->input('ShelfLife'),
-            'IsWithCommission' =>  $request->input('WithCommission') ? 1 : 0, 
-            'Commission' => $request->input('EnterCommission'),
+            // 'IsWithCommission' =>  $request->input('WithCommission') ? 1 : 0, 
+            // 'Commission' => $request->input('EnterCommission'),
             'ShipmentTerm' => $request->input('ShipmentTerm'),
             'Destination' => $request->input('Destination'),
             'PaymentTermId' => $request->input('PaymentTerm'),
-            'OtherCostRequirements' => $request->input('OtherCostRequirement'),
             'PriceRequestPurpose' => $request->input('PriceRequestPurpose'),
             'PriceLockPeriod' => $request->input('DeliverySchedule'),
             'TaxType' => $request->input('TaxType'),
@@ -351,6 +378,7 @@ class PriceMonitoringController extends Controller
                 'LsalesBlendingLoss' => $request->input('BlendingLoss')[$key],
                 'LsalesDeliveryType' => $request->input('DeliveryType')[$key],
                 'LsalesDeliveryCost' => $request->input('DeliveryCost')[$key],
+                'OtherCostRequirements' => $request->input('OtherCostRequirement')[$key],
                 'LsalesFinancingCost' => $request->input('FinancingCost')[$key],
                 'PriceRequestGaeId' => $request->input('PriceGae')[$key],
                 'LsalesGaeValue' => $request->input('GaeCost')[$key],
@@ -359,34 +387,74 @@ class PriceMonitoringController extends Controller
 
         ]);
     }
-        //     PriceRequestProduct::create([
-        //         'PriceRequestFormId' => $priceMonitoringData->id,
-        //         'ProductId' => $request->input('Product'),
-        //         'Type' => $request->input('Type'),
-        //         'ApplicationId' => $request->input('ApplicationId'),
-        //         'QuantityRequired' => $request->input('QuantityRequired'),
-        //         'ProductRmc' => $request->input('Rmc'),
-        //         'LsalesDirectLabor' => $request->input('DirectLabor'),
-        //         'LsalesFactoryOverhead' => $request->input('FactoryOverhead'),
-        //         'LsalesBlendingLoss' => $request->input('BlendingLoss'),
-        //         'LsalesDeliveryType' => $request->input('DeliveryType'),
-        //         'LsalesDeliveryCost' => $request->input('DeliveryCost'),
-        //         'LsalesFinancingCost' => $request->input('FinancingCost'),
-        //         'PriceRequestGaeId' => $request->input('PriceGae'),
-        //         'LsalesGaeValue' => $request->input('GaeCost'),
-        //         'LsalesMarkupPercent' => $request->input('MarkupPercent'),
-        //         'LsalesMarkupValue' => $request->input('MarkupPhp'),
-        // ]);
                     return redirect()->back()->with('success', 'Base prices updated successfully.');
+    }
+
+    public function LocalSalesUpdate(Request $request, $id)
+    {
+        $priceMonitoringData = PriceMonitoring::with('requestPriceProducts')->findOrFail($id);
+    
+        $priceMonitoringData->PrimarySalesPersonId = $request->input('PrimarySalesPersonId');
+        $priceMonitoringData->SecondarySalesPersonId = $request->input('SecondarySalesPersonId');
+        $priceMonitoringData->DateRequested = $request->input('DateRequested');
+        $priceMonitoringData->ClientId = $request->input('ClientId');
+        $priceMonitoringData->ContactId = $request->input('ContactId');
+        $priceMonitoringData->ValidityDate = $request->input('ValidityDate');
+        $priceMonitoringData->PackagingType = $request->input('PackagingType');
+        $priceMonitoringData->Moq = $request->input('Moq');
+        $priceMonitoringData->ShelfLife = $request->input('ShelfLife');
+        // $priceMonitoringData->IsWithCommission = $request->input('WithCommission') ? 1 : 0;
+        // $priceMonitoringData->Commission = $request->input('EnterCommission');
+        $priceMonitoringData->ShipmentTerm = $request->input('ShipmentTerm');
+        $priceMonitoringData->Destination = $request->input('Destination');
+        $priceMonitoringData->PaymentTermId = $request->input('PaymentTerm');
+        $priceMonitoringData->PriceRequestPurpose = $request->input('PriceRequestPurpose');
+        $priceMonitoringData->PriceLockPeriod = $request->input('DeliverySchedule'); $priceMonitoringData->TaxType = $request->input('TaxType');
+        $priceMonitoringData->save();
+    
+        foreach ($request->input('Product') as $key => $value) {
+            $productId = $request->input('product_id.' . $key); 
+    
+            $priceMonitoringData->requestPriceProducts()->updateOrCreate(
+                ['id' => $productId],
+                [
+                    'PriceRequestFormId' => $id, 
+                    'ProductId' => $value,
+                    'Type' => $request->input('Type.' . $key),
+                    'ApplicationId' => $request->input('ApplicationId.' . $key),
+                    'QuantityRequired' => $request->input('QuantityRequired.' . $key),
+                    'ProductRmc' => $request->input('Rmc.' . $key),
+                    'LsalesDirectLabor' => $request->input('DirectLabor.' . $key),
+                    'LsalesFactoryOverhead' => $request->input('FactoryOverhead.' . $key),
+                    'LsalesBlendingLoss' => $request->input('BlendingLoss.' . $key),
+                    'LsalesDeliveryType' => $request->input('DeliveryType.' . $key),
+                    'LsalesDeliveryCost' => $request->input('DeliveryCost.' . $key),
+                    'OtherCostRequirements' => $request->input('OtherCostRequirement.' . $key),
+                    'LsalesFinancingCost' => $request->input('FinancingCost.' . $key),
+                    'PriceRequestGaeId' => $request->input('PriceGae.' . $key),
+                    'LsalesGaeValue' => $request->input('GaeCost.' . $key),
+                    'LsalesMarkupPercent' => $request->input('MarkupPercent.' . $key),
+                    'LsalesMarkupValue' => $request->input('MarkupPhp.' . $key),
+
+                ]
+            );
+        }
+    
+        return redirect()->back()->with('success', 'Price Request updated successfully');
     }
 
     public function localview($id)
     {
         $price_monitorings = PriceMonitoring::with(['client', 'product_application', 'requestPriceProducts'])->findOrFail($id);
         $prfNumber = $price_monitorings->id;
+        $PriceRequestNumber = $price_monitorings->PrfNumber;
         $prfFileUploads = PrfFile::where('PriceRequestFormId', $prfNumber)->get();
         $clientId = $price_monitorings->ClientId;
-        $activities = Activity::where('ClientId', $clientId)->get();
+        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        ->get();
+        $users = User::wherehas('localsalespersons')->get();
+        $activities = Activity::where('TransactionNumber', $PriceRequestNumber)->get();
         $transactionLogs = TransactionLogs::where('Type', '50')
         ->where('TransactionId', $prfNumber)
         ->get();
@@ -435,7 +503,7 @@ class PriceMonitoringController extends Controller
         $mappedAuditsCollection = collect($mappedAudits);
     
         $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-        return view('price_monitoring_ls.view', compact('price_monitorings','prfFileUploads', 'activities', 'combinedLogs'));
+        return view('price_monitoring_ls.view', compact('price_monitorings','prfFileUploads', 'activities', 'combinedLogs', 'clients','users'));
     }
 
     public function getPrfContacts($clientId)
@@ -471,5 +539,126 @@ class PriceMonitoringController extends Controller
             ]);
         }
     }
+
+    public function deleteProduct(Request $request , $id)
+{
+    $product = PriceRequestProduct::find($id); 
+    if ($product) {
+        $product->delete();
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false]);
+}
+
+public function ClosePrf( Request $request , $id)
+    {
+        $closePrf = PriceMonitoring::find($id);    
+        if ($closePrf) {
+            $closePrf->IsAccepted = $request->input('IsAccepted') ? 1 : 0;
+            $closePrf->BuyerRefCode = $request->input('BuyersRefCode'); 
+            $closePrf->DispositionRemarks = $request->input('DispositionRemarks'); 
+            $closePrf->Progress = '30'; 
+            $closePrf->Status = '30'; 
+
+
+        }
+            $closePrf->save();
+            return back();
+    }
+
+    public function PrfActivityStore(Request $request) 
+    {
+        $request->validate([
+            'path.*' => 'mimes:jpg,pdf,docx'
+        ]);
+
+        $activityNumber = null;
+            $checkActivity = Activity::select('ActivityNumber')->where('ActivityNumber', 'LIKE', "%ACT-LS%")->orderBy('ActivityNumber', 'desc')->first();
+            $count = substr($checkActivity->ActivityNumber, 10);
+            $totalCount = $count + 1;
+            $deptCode = 'LS';
+            
+            $activityNumber = 'ACT'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        
+        
+        $activity = new Activity; 
+        $activity->Type = $request->Type;
+        $activity->ActivityNumber = $activityNumber;
+        $activity->RelatedTo = $request->RelatedTo;
+        $activity->ClientId = $request->ClientId;
+        $activity->TransactionNumber = $request->TransactionNumber;
+        $activity->ClientContactId = $request->ClientContactId;
+        $activity->ScheduleFrom = $request->ScheduleFrom;
+        $activity->PrimaryResponsibleUserId = $request->PrimarySalesPersonId;
+        $activity->ScheduleTo = $request->ScheduleTo;
+        $activity->SecondaryResponsibleUserId = $request->SecondarySalesPersonId;
+        $activity->Title = $request->Title;
+        $activity->Description = $request->Description;
+        $activity->Status = 10;
+        $activity->save();
+        
+        if ($request->has('path'))
+        {
+            $attachments = $request->file('path');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path().'/activity_attachment/', $name);
     
+                $file_name = '/activity_attachment/'.$name;
+                
+                $activityFiles = new FileActivity;
+                $activityFiles->activity_id = $activity->id;
+                $activityFiles->path = $file_name;
+                $activityFiles->save();
+            }
+        }
+        
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function PrfActivityUpdate(Request $request, $id) 
+    {
+        $priceMonitoringData = Activity::findOrFail($id);
+        $request->validate([
+            'path.*' => 'mimes:jpg,pdf,docx'
+        ]);
+
+        $priceMonitoringData->Type = $request->Type;
+        $priceMonitoringData->RelatedTo = $request->RelatedTo;
+        $priceMonitoringData->ClientId = $request->ClientId;
+        $priceMonitoringData->TransactionNumber = $request->TransactionNumber;
+        $priceMonitoringData->ClientContactId = $request->ClientContactId;
+        $priceMonitoringData->ScheduleFrom = $request->ScheduleFrom;
+        $priceMonitoringData->PrimaryResponsibleUserId = $request->PrimarySalesPersonId;
+        $priceMonitoringData->ScheduleTo = $request->ScheduleTo;
+        $priceMonitoringData->SecondaryResponsibleUserId = $request->SecondarySalesPersonId;
+        $priceMonitoringData->Title = $request->Title;
+        $priceMonitoringData->Description = $request->Description;
+        $priceMonitoringData->DateClosed = $request->DateClosed;
+        $priceMonitoringData->Response = $request->Response;
+        $priceMonitoringData->Description = $request->Description;
+        $priceMonitoringData->Status = $request->Status;
+        $priceMonitoringData->save();
+        
+        $attachments = $request->file('path');
+        foreach($attachments as $attachment)
+        {
+            $name = time().'_'.$attachment->getClientOriginalName();
+            $attachment->move(public_path().'/activity_attachment/', $name);
+
+            $file_name = '/activity_attachment/'.$name;
+            
+            $activityFiles = new FileActivity;
+            $activityFiles->activity_id = $priceMonitoringData->id;
+            $activityFiles->path = $file_name;
+            $activityFiles->save();
+        }
+        
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
 }

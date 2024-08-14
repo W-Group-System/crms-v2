@@ -37,61 +37,12 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div>
                 <div class="col-lg-12" align="right">
-                    <a href="{{ url('/price_monitoring') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
-                    {{-- @if ($price_monitorings->Progress == 10)
-                        <button type="button" class="btn btn-sm btn-success"
-                                data-target="#approveSrf{{ $price_monitorings->id }}" 
-                                data-toggle="modal" 
-                                title='Approve SRF'>
-                            <i class="ti-check"><br>Approve</i>
-                        </button>
-                    @elseif ($price_monitorings->Progress == 30)
-                        <button type="button" class="btn btn-sm btn-success"
-                                data-target="#receiveSrf{{ $price_monitorings->id }}" 
-                                data-toggle="modal" 
-                                title='Receive SRF'>
-                            <i class="ti-check"><br>Receive</i>
-                        </button>
-                    @endif
-                    @if ($price_monitorings->Progress == 50)
-                        <button type="button" class="btn btn-sm btn-warning"
-                        data-target="#pauseSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Pause SRF'>
-                        <i class="ti-control-pause"><br>Pause</i>
-                    </button>
-                    @else 
-                    <button type="button" class="btn btn-sm btn-warning"
-                        data-target="#startSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Start SRF'>
-                        <i class="ti-control-play"><br>Start</i>
-                    </button>
-                    @endif --}}
-                    {{-- <button type="button" class="btn btn-md btn-success"
-                        data-target="#approveSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Approve SRF'>
-                        <i class="ti-check">&nbsp;Approve</i>
-                    </button>
-                    <button type="button" class="btn btn-md btn-success"
-                        data-target="#receiveSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Receive SRF'>
-                    <i class="ti-check">&nbsp;Receive</i>
-                    </button>
+                    <a href="{{ url('/price_monitoring_ls') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
                     <button type="button" class="btn btn-md btn-warning"
-                        data-target="#startSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Start SRF'>
-                        <i class="ti-control-play">&nbsp;Start</i>
+                        data-target="#closePrf{{ $price_monitorings->id }}" 
+                        data-toggle="modal">
+                        <i class="ti-folder"></i>&nbsp;Close
                     </button>
-                    <button type="button" class="btn btn-md btn-warning"
-                        data-target="#pauseSrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Pause SRF'>
-                        <i class="ti-control-pause">&nbsp;Pause</i>
-                    </button> --}}
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
@@ -113,7 +64,15 @@
                             <p class="col-sm-2 col-form-label"><b>Secondary Sales Person:</b></p>
                             <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->secondarySalesPerson)->full_name }}</p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Progress:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->Progress}}</p>
+                            <p class="col-sm-3 col-form-label">
+                                @if ($price_monitorings->Progress == '25')
+                                Reopened
+                                @elseif ($price_monitorings->Progress == '30')
+                                Closed
+                                @else
+                                Waiting For Disposition
+                                @endif
+                            </p>
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b></b></p>
@@ -131,7 +90,7 @@
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Contact:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->ContactId }}</p>
+                            <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->clientContact)->ContactName }}</p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Shipment Term:</b></p>
                             <p class="col-sm-3 col-form-label">{{ $price_monitorings->ShipmentTerm}}</p>
                         </div>
@@ -154,14 +113,21 @@
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Packaging Type:</b></p>
                             <p class="col-sm-3 col-form-label">{{ $price_monitorings->PackagingType}}</p>
-                            <p class="offset-sm-2 col-sm-2 col-form-label"><b>Other Cost Requirements :</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->OtherCostRequirements}}</p>
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>MOQ:</b></p>
                             <p class="col-sm-3 col-form-label">{{ $price_monitorings->Moq}}</p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Purpose of Price Request:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->PriceRequestPurpose}}</p>
+                            <p class="col-sm-3 col-form-label">
+                                @if($price_monitorings->PriceRequestPurpose == 10)
+                                    Indication
+                                    @elseif($price_monitorings->PriceRequestPurpose == 20)
+                                    Firm
+                                    @elseif($price_monitorings->PriceRequestPurpose == 30)
+                                    Sample
+                                    @else
+                                    {{ $price_monitorings->PriceRequestPurpose }}
+                                    @endif</td>
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Shelf Life:</b></p>
@@ -170,22 +136,17 @@
                             <p class="col-sm-3 col-form-label">{{ $price_monitorings->PriceLockPeriod}}</p>
                         </div>
                         <div class="form-group row">
-                            <p class="col-sm-2 col-form-label"><b>With Commission :</b></p>
-                            <p class="col-sm-3 col-form-label"> 
-                                @if ($price_monitorings->IsWithCommission == "1")
-                                YES
-                                @else
-                                NO
-                                @endif
-                            </p>
-                            <p class="offset-sm-2 col-sm-2 col-form-label"><b>Tax Type:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->TaxType}}</p>
-                        </div>
-                        <div class="form-group row">
-                            <p class="col-sm-2 col-form-label"><b>Commission:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->Commission}}</p>
-                            <p class="offset-sm-2 col-sm-2 col-form-label"><b></b></p>
+                            <p class="col-sm-2 col-form-label"><b></b></p>
                             <p class="col-sm-3 col-form-label"></p>
+                            <p class="offset-sm-2 col-sm-2 col-form-label"><b>Tax Type:</b></p>
+                            <p class="col-sm-3 col-form-label">
+                                @if($price_monitorings->TaxType == 10)
+                                VAT Inclusive
+                                @elseif($price_monitorings->TaxType == 20)
+                                VAT Exclusive
+                                @else
+                                {{ $price_monitorings->TaxType }}
+                                @endif
                         </div>
                     </div>
                 </div>
@@ -197,17 +158,24 @@
                         <div class="col-lg-4">
                            <div class="form-group row">
                             <p class="col-sm-6 col-form-label"><b>Product:</b></p>
-                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->ProductId }}
+                            <p class="col-sm-6 col-form-label">{{ optional($prcieProduct->products)->code }}
                             </p>
                            </div>
                            <div class="form-group row">
                             <p class="col-sm-6 col-form-label"><b>Category:</b></p>
-                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->Type }}
+                            <p class="col-sm-6 col-form-label">
+                                @if ($prcieProduct->Type == 1)
+                                    Pure
+                                @elseif ($prcieProduct->Type == 2)
+                                    Blend
+                                @else
+                                {{ $prcieProduct->Type }}
+                                @endif
                             </p>
                            </div>
                            <div class="form-group row">
                             <p class="col-sm-6 col-form-label"><b>Application:</b></p>
-                            <p class="col-sm-6 col-form-label">{{ $prcieProduct->ApplicationId }}
+                            <p class="col-sm-6 col-form-label">{{ optional($prcieProduct->product_application)->Name }}
                             </p>
                            </div>
                            <div class="form-group row">
@@ -234,7 +202,7 @@
                             </div>
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Total Manufacturing Cost:</b></p>
-                                <p class="col-sm-6 col-form-label"></p>
+                                <p class="col-sm-6 col-form-label">{{ number_format($prcieProduct->ProductRmc + $prcieProduct->LsalesDirectLabor + $prcieProduct->LsalesFactoryOverhead, 2) }}</p>
                             </div>
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Blending Loss:</b></p>
@@ -258,15 +226,37 @@
                              </p>
                             </div>
                             <div class="form-group row">
+                                <p class="col-sm-6 col-form-label"><b>Other Cost Requirements :</b></p>
+                                <p class="col-sm-6 col-form-label">{{$prcieProduct->OtherCostRequirements}}</p>
+                            </div>
+                            <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Total Operating Cost:</b></p>
-                                <p class="col-sm-6 col-form-label"></p>
+                                <p class="col-sm-6 col-form-label">{{ number_format($prcieProduct->LsalesDeliveryCost + $prcieProduct->LsalesFinancingCost + $prcieProduct->LsalesGaeValue + $prcieProduct->OtherCostRequirements, 2) }}</p>
                             </div>
                          </div>
+                         @php
+                             $totalCost = $prcieProduct->ProductRmc +
+                                $prcieProduct->LsalesDirectLabor +
+                                $prcieProduct->LsalesFactoryOverhead +
+                                $prcieProduct->LsalesDeliveryCost +
+                                $prcieProduct->LsalesFinancingCost +
+                                $prcieProduct->LsalesGaeValue +
+                                $prcieProduct->OtherCostRequirements +
+                                $prcieProduct->LsalesBlendingLoss;
+
+                            $markupPercent = $prcieProduct->LsalesMarkupPercent;
+                            $markupValue = $prcieProduct->LsalesMarkupValue;
+                            $sellingPrice = number_format($totalCost,2) + ($markupValue);
+                            $sellingPriceWithVAT = number_format($sellingPrice,2) * 0.12;
+                            $sumWithVat = $sellingPrice + $sellingPriceWithVAT;
+                         @endphp
                          <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209)"></div>
                          <div class="col-lg-4">
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Total Product Cost:</b></p>
-                                <p class="col-sm-6 col-form-label"> </p>
+                                <p class="col-sm-6 col-form-label">
+                                    {{ number_format($totalCost, 2) }}
+                                </p>
                             </div>
                          </div>
                          <div class="col-lg-4">
@@ -282,11 +272,11 @@
                          <div class="col-lg-4">
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Selling Price :</b></p>
-                                <p class="col-sm-6 col-form-label"></p>
+                                <p class="col-sm-6 col-form-label">{{ number_format($sellingPrice, 2) }}</p>
                             </div>
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Selling Price + 12% VAT :</b></p>
-                                <p class="col-sm-6 col-form-label"></p>
+                                <p class="col-sm-6 col-form-label">{{ number_format($sumWithVat, 2) }}</p>
                             </div>
                          </div>
                     </div>
@@ -363,10 +353,16 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Create Activity"  data-toggle="modal" data-target="#createPrfActivity">
+                            <i class="ti-plus"></i>
+                        </button>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover prf-detailed-table" id="activities_table" style="width: 100%">
                             <thead>
                                 <tr>
+                                    <th>Actions</th>
                                     <th>#</th>
                                     <th>Schedule</th>
                                     <th>Title</th>
@@ -376,6 +372,15 @@
                             <tbody>
                                 @foreach ($activities as $activity)
                                     <tr>
+                                        <td>
+                                        <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                            data-target="#editPrfActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
+                                            <i class="ti-pencil"></i>
+                                        </button>   
+                                        <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Activity'>
+                                            <i class="ti-trash"></i>
+                                        </button> 
+                                        </td>
                                         <td>{{ optional($activity)->ActivityNumber }}</td>
                                         <td>
                                             {{ optional($activity)->ScheduleFrom ? optional($activity)->ScheduleFrom : '' }}
@@ -451,8 +456,8 @@
             let url;
             if (type === 'fileupload') {
                 url = '{{ url('price_monitorings/view/file-delete') }}/' + id;
-            } else if (type === 'personnel') {
-                url = '{{ url('price_monitorings/view/personnel-delete') }}/' + id;
+            } else if (type === 'activity') {
+                url = '{{ url('price_monitorings/view/activity-delete') }}/' + id;
             } else if (type === 'SrfMaterial') {
                 url = '{{ url('price_monitorings/view/material-delete') }}/' + id;
             }
@@ -501,19 +506,21 @@
     });
     </script>
 @include('price_monitoring.upload_prf_file')
+@include('price_monitoring_ls.create_activity')
 @foreach ($prfFileUploads as $fileupload)
 @include('price_monitoring.edit_prfFiles')
+@endforeach
+@foreach ($activities as $activity)
+@include('price_monitoring_ls.edit_activity')
+@endforeach
+@foreach ($price_monitorings as $prf)
+    @include('price_monitoring_ls.close')
 @endforeach
 {{-- @include('sample_requests.create_supplementary')
 @include('sample_requests.assign_personnel')
 @include('sample_requests.upload_srf_file')
 @include('sample_requests.create_raw_materials')
-@foreach ($price_monitorings as $srf)
-    @include('sample_requests.srf_approval')
-    @include('sample_requests.srf_receive')
-    @include('sample_requests.srf_start')
-    @include('sample_requests.srf_pause')
-@endforeach
+
 @foreach ($SrfSupplementary as $supplementary)
 @include('sample_requests.edit_supplementary')
 @endforeach

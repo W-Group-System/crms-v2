@@ -65,9 +65,14 @@
                                         <i class="ti-eye"></i>
                                     </a>
 
-                                    <button class="btn btn-warning btn-sm archiveProducts" type="button" title="Archived" data-id="{{$product->id}}">
-                                        <i class="ti-archive"></i>
-                                    </button>
+                                    <form method="POST" class="d-inline-block" action="{{url('add_to_archive_products')}}">
+                                        @csrf 
+
+                                        <input type="hidden" name="id" value="{{$product->id}}">
+                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archived" data-id="{{$product->id}}">
+                                            <i class="ti-archive"></i>
+                                        </button>
+                                    </form>
                                 </td>
                                 <td>{{$product->code}}</td>
                                 <td>
@@ -154,26 +159,20 @@
 <script>
     $(document).ready(function() {
         $(".archiveProducts").on('click', function() {
-            var id = $(this).data();
+            var form = $(this).closest('form');
 
-            $.ajax({
-                type: "POST",
-                url: "{{url('add_to_archive_products')}}",
-                data: id,
-                headers: 
-                {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(res)
-                {
-                    Swal.fire({
-                        icon: 'success',
-                        title: res.message,
-                    }).then(() => {
-                        location.reload();
-                    })
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Archived"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
                 }
-            })
+            });
         })
     })
 </script>

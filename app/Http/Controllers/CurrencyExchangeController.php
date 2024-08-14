@@ -32,6 +32,11 @@ class CurrencyExchangeController extends Controller
     // Store
     public function store(Request $request)
     {
+        $request->validate([
+            'rate' => 'numeric',
+            'from_currency' => 'different:to_currency',
+        ]);
+
         $currencyExhange = new CurrencyExchange;
         $currencyExhange->EffectiveDate = $request->effective_date;
         $currencyExhange->FromCurrencyId = $request->from_currency;
@@ -46,6 +51,11 @@ class CurrencyExchangeController extends Controller
     // Update
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'rate' => 'numeric',
+            'from_currency' => 'different:to_currency',
+        ]);
+
         $currencyExhange = CurrencyExchange::findOrFail($id);
         $currencyExhange->EffectiveDate = $request->effective_date;
         $currencyExhange->FromCurrencyId = $request->from_currency;
@@ -65,5 +75,17 @@ class CurrencyExchangeController extends Controller
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
         return back();
+    }
+
+    public function edit(Request $request)
+    {
+        $currency = CurrencyExchange::findOrFail($request->id);
+
+        return array(
+            'EffectiveDate' => $currency->EffectiveDate,
+            'FromCurrency' => $currency->FromCurrencyId,
+            'ToCurrency' => $currency->ToCurrencyId,
+            'ExchangeRate' => $currency->ExchangeRate
+        );
     }
 }

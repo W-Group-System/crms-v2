@@ -19,8 +19,8 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $departments = Department::all();
+        $roles = Role::where('status', 'Active')->get();
         $companies = Company::where('status', 'Active')->get();
-        $roles = Role::all();
         $approvers = User::with('salesApproverByUserId', 'salesApproverById')->where('is_active', 1)->get();
     
         $search = $request->input('search');

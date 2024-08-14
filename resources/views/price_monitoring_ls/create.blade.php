@@ -34,7 +34,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Requested (DD/MM/YYYY)</label>
-                                <input type="date" class="form-control" name="DateRequested">
+                                <input type="date" class="form-control DateRequested" name="DateRequested" readonly>
                             </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
@@ -56,23 +56,19 @@
                             </div>
                             <div class="form-group">
                                 <label>Validity Date</label>
-                                <input type="date" class="form-control" name="ValidityDate" placeholder="Enter Validity">
+                                <input type="date" class="form-control ValidityDate" name="ValidityDate" placeholder="Enter Validity">
                             </div>
                             <div class="form-group">
-                                <label>Moq</label>
+                                <label>Packaging Type</label>
+                                <input type="text" class="form-control" name="PackagingType" placeholder="Enter Packaging Type">
+                            </div>
+                            <div class="form-group">
+                                <label>MOQ</label>
                                 <input type="text" class="form-control" name="Moq" placeholder="Enter Moq">
                             </div>
                             <div class="form-group">
                                 <label>Shelf Life</label>
                                 <input type="text" class="form-control" name="ShelfLife" placeholder="Enter Shelf Life">
-                            </div>
-                            <div class="form-group">
-                                <label>With Commission?</label>
-                                <input type="checkbox" name="WithCommission">
-                            </div>
-                            <div class="form-group">
-                                <label >Enter Commission</label>
-                                <input type="text" class="form-control" name="EnterCommission" placeholder="Enter Commission">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -98,10 +94,6 @@
                                 </select>
                             </div> --}}
                             <div class="form-group">
-                                <label>Other Cost Requirement</label>
-                                <input type="number" step=".01" class="form-control" name="OtherCostRequirement" placeholder="Enter Other Cost Requirement">
-                            </div>
-                            <div class="form-group">
                                 <label>Purpose of Price Request</label>
                                 <select class="form-control js-example-basic-single" name="PriceRequestPurpose"  style="position: relative !important" title="Select Purpose">
                                    <option value="" disabled selected>Select Purpose</option>
@@ -123,7 +115,7 @@
                            </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
-                        <div class="create_prf_form col-lg-12 row">
+                        <div class="add_create_prf_form col-lg-12 row">
                             <div class="col-lg-4">
                                 <div><label>PRODUCT</label></div>
                                 <div class="form-group">
@@ -214,6 +206,10 @@
                                     <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
                                 </div>
                                 <div class="form-group">
+                                    <label>Other Cost Requirement</label>
+                                    <input type="number" step=".01" class="form-control other-cost" name="OtherCostRequirement[]" placeholder="Enter Other Cost Requirement" value="0">
+                                </div>
+                                <div class="form-group">
                                     <label>Total Operating Cost</label>
                                     <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
                                 </div>
@@ -249,13 +245,13 @@
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <button type="button" class="btn btn-primary addPrfProductRowBtn" id="addPrfProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
+                                <button type="button" class="btn btn-primary addPrfProductRowBtn" id="addPrfProductRowBtn" style="float: left; margin:5px;"><i class="ti ti-plus"></i></button> 
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit"  class="btn btn-success" value="Save">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <input type="submit"  class="btn btn-success" value="Send Request">
                     </div>
                 </form>
             </div>
@@ -329,19 +325,19 @@
 }
 
 $(document).ready(function() {
-    var $initialRow = $('.create_prf_form');
+    var $initialRow = $('.add_create_prf_form');
     var initialGae = $initialRow.find('.PriceGae').val();
     fetchGaeCost(initialGae, $initialRow);
 
     $(document).on('change', '.PriceGae', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var priceGae = $(this).val();
         fetchGaeCost(priceGae, $row);
     });
 });
 
         $(document).on('change', '.product-select', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var productId = $(this).val();
         
         if (productId) {
@@ -358,7 +354,7 @@ $(document).ready(function() {
                     $row.find('.total-manufacturing-cost-input').val(totalManufacturingCost.toFixed(2));
                     var blendingLoss = 0.01 * rmc ;
                     $row.find('.blending-loss').val(blendingLoss.toFixed(2));
-                    var financingCost = 0.15 * totalManufacturingCost ;
+                    var financingCost = 0.05 * totalManufacturingCost ;
                     $row.find('.financing-cost').val(financingCost.toFixed(2));
 
                     updateTotalOperationCost($row);
@@ -372,19 +368,19 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '.delivery-type', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var deliveryType = $(this).val();
         var deliveryCostInput = $row.find('.delivery-cost');
 
         if (deliveryType === '10') {
             deliveryCostInput.val(0);
-            deliveryCostInput.prop('readonly', true);
+            deliveryCostInput.prop('readonly', false);
         } else if (deliveryType === '20') {
             deliveryCostInput.val(1.84);
             deliveryCostInput.prop('readonly', true);
         } else if (deliveryType === '30') {
             deliveryCostInput.val(0);
-            deliveryCostInput.prop('readonly', false);
+            deliveryCostInput.prop('readonly', true);
         }
         updateTotalOperationCost($row);
         updateTotalProductCost($row);
@@ -396,15 +392,16 @@ $(document).ready(function() {
         var deliveryCost = parseFloat($row.find('.delivery-cost').val());
         var financingCost = parseFloat($row.find('.financing-cost').val());
         var gaeCost = parseFloat($row.find('.GaeCost').val()); 
+        var otherCost = parseFloat($row.find('.other-cost').val()); 
         
-        var totalOperationCost = deliveryCost + financingCost + gaeCost;
+        var totalOperationCost = deliveryCost + financingCost + gaeCost + otherCost;
         $row.find('.total-operation-cost').val(totalOperationCost.toFixed(2)); 
 
         updateTotalProductCost($row);
     }
 
-    $(document).on('input', '.delivery-cost', function() {
-        var $row = $(this).closest('.create_prf_form');
+    $(document).on('input', '.delivery-cost, .other-cost', function() {
+        var $row = $(this).closest('.add_create_prf_form');
         updateTotalOperationCost($row);
         updateTotalProductCost($row);
     });
@@ -465,17 +462,17 @@ function updateSellingPrice($row) {
     }
 
     $(document).on('input', '.markup-percent', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         updateMarkupPHP($row);
     });
 
     $(document).on('input', '.markup-php', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         updateMarkupPercent($row);
     });
 
     $(document).on('input', '.selling-price-php', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var sellingPrice = parseFloat($(this).val());
         var totalProductCost = parseFloat($row.find('.total-product-cost').val());
 
@@ -491,7 +488,7 @@ function updateSellingPrice($row) {
     });
 
     $(document).on('input', '.selling-price-vat', function() {
-        var $row = $(this).closest('.create_prf_form');
+        var $row = $(this).closest('.add_create_prf_form');
         var sellingPriceWithVAT = parseFloat($(this).val());
         var totalProductCost = parseFloat($row.find('.total-product-cost').val());
 
@@ -508,8 +505,8 @@ function updateSellingPrice($row) {
     
         function addProductRow() {
         var newProductForm = `
-        <div class="col-lg-12"><hr style="background-color: black"></div>
-                        <div class="create_prf_form col-lg-12 row">
+                        <div class="add_create_prf_form col-lg-12 row">
+                            <div class="col-lg-12"><hr style="background-color: black"></div>
                             <div class="col-lg-12">
                                 <button type="button" class="btn btn-danger deletePrfBtn" style="float: right;">Delete Row</button>
                             </div>
@@ -603,6 +600,10 @@ function updateSellingPrice($row) {
                                     <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
                                 </div>
                                 <div class="form-group">
+                                    <label>Other Cost Requirement</label>
+                                    <input type="number" step=".01" class="form-control other-cost" name="OtherCostRequirement[]" placeholder="Enter Other Cost Requirement" value="0">
+                                </div>
+                                <div class="form-group">
                                     <label>Total Operating Cost</label>
                                     <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
                                 </div>
@@ -638,15 +639,15 @@ function updateSellingPrice($row) {
                                 </div>
                             </div>
                             <div class="col-lg-12">
-                                <button type="button" class="btn btn-primary addFormPrfProductRowBtn">Add Row</button> 
+                                <button type="button" class="btn btn-primary newAddFormPrfProductRowBtn"><i class="ti ti-plus"></i></button> 
                             </div>
                         </div>`;
 
-        $('.create_prf_form').last().find('.addPrfProductRowBtn').hide();
+        $('.add_create_prf_form').last().find('.newAddFormPrfProductRowBtn').hide();
         
-        $('.create_prf_form').last().after(newProductForm);
+        $('.add_create_prf_form').last().after(newProductForm);
         $('.js-example-basic-single').select2();
-        $('.create_prf_form').last().find('.deletePrfBtn').removeAttr('hidden');
+        $('.add_create_prf_form').last().find('.deletePrfBtn').removeAttr('hidden');
     }
 
     $(document).on('click', '.addPrfProductRowBtn', function() {
@@ -654,8 +655,32 @@ function updateSellingPrice($row) {
         $('.addPrfProductRowBtn').hide(); 
     });
 
-    $(document).on('click', '.addFormPrfProductRowBtn', function() {
+    $(document).on('click', '.newAddFormPrfProductRowBtn', function() {
         addProductRow();
     });
+    });
+
+    $(document).on('click', '.deletePrfBtn', function() {
+        var currentRow = $(this).closest('.add_create_prf_form');
+        
+        if ($('.add_create_prf_form').last().is(currentRow)) {
+            currentRow.prev().find('.addPrfProductRowBtn').show();
+        }
+
+        currentRow.remove();
+
+        if ($('.add_create_prf_form').length === 1) {
+            $('.addPrfProductRowBtn').show();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var validityDateInput = document.querySelector('.ValidityDate');
+        var dateRequestedInput = document.querySelector('.DateRequested');
+
+        var today = new Date().toISOString().split('T')[0];
+
+            validityDateInput.setAttribute('min', today);
+            dateRequestedInput.value = today;
     });
 </script>

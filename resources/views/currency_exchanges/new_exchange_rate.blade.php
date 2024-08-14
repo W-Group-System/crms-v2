@@ -26,7 +26,7 @@
                     <div class="form-group">
                         <label for="name">To Currency :</label>
                         <select name="to_currency" class="form-control js-example-basic-single" required>
-                            <option value="">-From Currency-</option>
+                            <option value="">-To Currency-</option>
                             @foreach ($currencies as $c)
                                 <option value="{{$c->id}}">{{$c->Name}}</option>
                             @endforeach
@@ -34,7 +34,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Rate :</label>
-                        <input type="text" name="rate" class="form-control" required>
+                        <input type="number" name="rate" class="form-control" step=".01" placeholder="0.00" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

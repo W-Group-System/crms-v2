@@ -55,7 +55,7 @@ class ActivityController extends Controller
     public function store(Request $request) 
     {
         $request->validate([
-            'path.*' => 'mimes:jpg,pdf,docx'
+            'path.*' => 'mimes:jpg,pdf,docx,png'
         ]);
 
         $activityNumber = null;
@@ -118,7 +118,7 @@ class ActivityController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'path.*' => 'mimes:jpg,pdf,docx'
+            'path.*' => 'mimes:jpg,pdf,docx,png'
         ]);
 
         $activity = Activity::findOrFail($id);
@@ -134,7 +134,7 @@ class ActivityController extends Controller
         $activity->Title = $request->Title;
         $activity->DateClosed = $request->DateClosed;
         $activity->Description = $request->Description;
-        $activity->Status = 10;
+        $activity->Status = $request->Status;
         $activity->Response = $request->Response;
         $activity->save();
         

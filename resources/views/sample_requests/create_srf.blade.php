@@ -411,9 +411,7 @@
 
         currentRow.remove();
 
-        if ($('.form_request_product').length === 1) {
-            $('#addProductRowBtn').show();
-        }
+        
     });
 });
 

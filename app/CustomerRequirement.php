@@ -51,4 +51,29 @@ class CustomerRequirement extends Model
     {
         return $this->belongsTo(CrrPriority::class,'Priority','Id');
     }
+
+    public function crrDetails()
+    {
+        return $this->hasMany(CrrDetail::class,'CustomerRequirementId');
+    }
+
+    public function crrPersonnel()
+    {
+        return $this->hasMany(CrrPersonnel::class,'CustomerRequirementId');
+    }
+
+    public function crrFiles()
+    {
+        return $this->hasMany(FileCrr::class,'CustomerRequirementId');
+    }
+
+    public function crrTransactionApprovals()
+    {
+        return $this->hasMany(TransactionApproval::class,'TransactionId','id')->where('Type', 10);
+    }
+
+    public function historyLogs()
+    {
+        return $this->hasMany(TransactionLogs::class,'TransactionId','id')->where('Type', 10);
+    }
 }

@@ -31,25 +31,32 @@
                         @foreach ($products as $product)
                             <tr>
                                 <td>
-                                    <div>
-                                        <a href="{{url('view_new_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product">
-                                            <i class="ti-eye"></i>
-                                        </a>
-    
-                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archive" data-id="{{$product->id}}">
+                                    <a href="{{url('view_new_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product">
+                                        <i class="ti-eye"></i>
+                                    </a>
+
+                                    <button class="btn btn-warning btn-sm" type="button" title="Edit" data-toggle="modal" data-target="#formProduct-{{$product->id}}">
+                                        <i class="ti-pencil"></i>
+                                    </button>
+
+                                    <form method="POST" class="d-inline-block" action="{{url('add_to_archive_products')}}">
+                                        @csrf
+
+                                        <input type="hidden" name="id" value="{{$product->id}}">
+                                        <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archive">
                                             <i class="ti-archive"></i>
                                         </button>
-                                    </div>
-    
-                                    <div>
-                                        <button class="btn btn-success btn-sm currentProducts" type="button" title="Add current products" data-id="{{$product->id}}">
+                                    </form>
+
+                                    <form method="POST" class="d-inline-block" action="{{url('add_to_current_products')}}">
+                                        @csrf
+                                        
+                                        <input type="hidden" name="id" value="{{$product->id}}">
+                                        <button class="btn btn-success btn-sm currentProducts" type="button" title="Add current products">
                                             <i class="ti-plus"></i>
                                         </button>
+                                    </form>
 
-                                        <button class="btn btn-warning btn-sm" type="button" title="Edit" data-toggle="modal" data-target="#formProduct-{{$product->id}}">
-                                            <i class="ti-pencil"></i>
-                                        </button>
-                                    </div>
                                 </td>
                                 <td>{{$product->ddw_number}}</td>
                                 <td>{{$product->code}}</td>
@@ -90,49 +97,37 @@
 <script>
     $(document).ready(function() {
         $(".currentProducts").on('click', function() {
-            var id = $(this).data();
+            var form = $(this).closest('form');
 
-            $.ajax({
-                type: "POST",
-                url: "{{url('add_to_current_products')}}",
-                data: id,
-                headers: 
-                {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(res)
-                {
-                    Swal.fire({
-                        icon: 'success',
-                        title: res.message,
-                    }).then(() => {
-                        location.reload();
-                    })
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Current"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
                 }
-            })
+            });
         })
 
         $(".archiveProducts").on('click', function() {
-            var id = $(this).data();
+            var form = $(this).closest('form');
 
-            $.ajax({
-                type: "POST",
-                url: "{{url('add_to_archive_products')}}",
-                data: id,
-                headers: 
-                {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(res)
-                {
-                    Swal.fire({
-                        icon: 'success',
-                        title: res.message,
-                    }).then(() => {
-                        location.reload();
-                    })
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Archive"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
                 }
-            })
+            });
         })
     })
     

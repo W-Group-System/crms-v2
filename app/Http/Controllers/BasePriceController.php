@@ -25,7 +25,7 @@ class BasePriceController extends Controller
     //     })
     //     ->where('Status', 3)
     //     ->orderBy('Id', 'desc')
-    //     ->paginate(25);
+    //     ->paginate(10);
         
     //     return view('base_prices.index', compact('currentBasePrice', 'search')); 
     // }
@@ -55,7 +55,7 @@ class BasePriceController extends Controller
             ->where('Status', 3)
             ->whereNull('deleted_at') 
             ->orderBy('productmaterialbaseprices.Id', 'desc')
-            ->paginate(25);
+            ->paginate(10);
             
         return view('base_prices.index', compact('currentBasePrice', 'search')); 
     }
@@ -86,7 +86,7 @@ class BasePriceController extends Controller
             })
             ->where('Status', 1)
             ->orderBy('CreatedDate', 'desc') 
-            ->paginate(25);
+            ->paginate(10);
 
         $rawMaterials = RawMaterial::all();
         $productCurrency = PriceCurrency::all();

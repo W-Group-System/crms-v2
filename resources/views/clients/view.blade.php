@@ -151,9 +151,9 @@
                 <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li>
-                <!-- <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" id="collection-tab" data-toggle="tab" href="#collection" role="tab" aria-controls="collection" aria-selected="false">Collection</a>
-                </li> -->
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" id="productFiles-tab" data-toggle="tab" href="#productFiles" role="tab" aria-controls="productFiles" aria-selected="false">Product Files</a>
                 </li>
@@ -346,6 +346,27 @@
                                         <td>{{ $activity->Status == 10 ? 'Open' : 'Closed' }}</td>
                                     </tr>
                                 @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="tab-pane fade" id="collection" role="tabpanel" aria-labelledby="collection-tab">
+                    <input type="date" class="form-control col-md-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="collection-table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>SAP Code</th>
+                                    <th>Client</th>
+                                    <th>Ref Date(Y-M-D)</th>
+                                    <th>Document</th>
+                                    <th>Due Date(Y-M-D)</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               
                             </tbody>
                         </table>
                     </div>
@@ -760,6 +781,7 @@
     initializeDataTable('#files-table', 'Files', 'Files');
     initializeDataTable('#transaction-table', 'Transactions', 'Transactions');
     initializeDataTable('#activities-table', 'Activities', 'Activities');
+    initializeDataTable('#collection-table', 'Collection', 'Collection');
     initializeDataTable('#productFiles-table', 'Product Files', 'Product Files');
     initializeDataTable('#transactionFiles-table', 'Transaction Files', 'Transaction Files');
 

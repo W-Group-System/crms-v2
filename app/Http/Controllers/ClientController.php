@@ -12,6 +12,10 @@ use App\BusinessType;
 use App\Contact;
 use App\FileClient;
 use App\Industry;
+use App\Exports\CurrentClientExport;
+use App\Exports\ProspectClientExport;
+use App\Exports\ArchivedClientExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Http\Request;
@@ -36,31 +40,48 @@ class ClientController extends Controller
         // return view('clients.index', compact('clients'));
         $request->session()->put('last_client_page', url()->full());
         $search = $request->input('search');
-        $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
-                        ->where('Status', '2')
-                        ->where(function ($query) use ($search) {
-                            $query->where('Type', 'LIKE', '%' . $search . '%')
-                                ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')
-                                ->orWhere('Name', 'LIKE', '%' . $search . '%')
-                                ->orWhereHas('userById', function ($q) use ($search) {
-                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                                })
-                                ->orWhereHas('userByUserId', function ($q) use ($search) {
-                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                                })
-                                ->orWhereHas('userByUserId2', function ($q) use ($search) {
-                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                                })
-                                ->orWhereHas('industry', function ($q) use ($search) {
-                                    $q->where('Name', 'LIKE', '%' . $search . '%');
-                                });        
-                        })
-                        ->orderBy('id', 'desc')
-                        ->paginate(10);
+        // Map search terms to type values
+        $typeMap = [
+            'Local' => '1',
+            'local' => '1',
+            'International' => '2',
+            'international' => '2',
+        ];
         
+        // Default to all types if no specific type is searched
+        $typeSearch = $typeMap[$search] ?? null;
+
+        $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
+            ->where('Status', '2')  // Filter by status
+            ->where(function ($query) use ($search, $typeSearch) {
+                // Search by type
+                if ($typeSearch) {
+                    $query->where('Type', $typeSearch);
+                } else {
+                    $query->whereRaw('CAST(Type AS CHAR) LIKE ?', ['%' . $search . '%'])  // Search in Type field
+                        ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')  // Search in BuyerCode field
+                        ->orWhere('Name', 'LIKE', '%' . $search . '%')  // Search in Name field
+                        ->orWhereHas('userById', function ($q) use ($search) {
+                            $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userById
+                        })
+                        ->orWhereHas('userByUserId', function ($q) use ($search) {
+                            $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId
+                        })
+                        ->orWhereHas('userByUserId2', function ($q) use ($search) {
+                            $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId2
+                        })
+                        ->orWhereHas('industry', function ($q) use ($search) {
+                            $q->where('Name', 'LIKE', '%' . $search . '%');  // Search in related industry
+                        });
+                }
+            })
+            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
+            ->paginate(10);  // Paginate results with 10 items per page
+
+        // Return view with search term and paginated client data
         return view('clients.index', [
             'search' => $search,
-            'clients' => $clients,
+            'clients' => $clients
         ]);
     }
 
@@ -81,29 +102,48 @@ class ClientController extends Controller
         // }
         // return view('clients.prospect', compact('clients')); 
         $request->session()->put('last_client_page', url()->full());
+        // Retrieve search term from the request
         $search = $request->input('search');
-        $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
-                        ->where('Status', '1')
-                        ->where(function ($query) use ($search) {
-                            $query->where('Type', 'LIKE', '%' . $search . '%')
-                                ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')
-                                ->orWhere('Name', 'LIKE', '%' . $search . '%')
-                                ->orWhereHas('userById', function ($q) use ($search) {
-                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                                })
-                                ->orWhereHas('userByUserId', function ($q) use ($search) {
-                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                                })
-                                ->orWhereHas('userByUserId2', function ($q) use ($search) {
-                                    $q->where('full_name', 'LIKE', '%' . $search . '%');
-                                })
-                                ->orWhereHas('industry', function ($q) use ($search) {
-                                    $q->where('Name', 'LIKE', '%' . $search . '%');
-                                });        
-                        })
-                        ->orderBy('id', 'desc')
-                        ->paginate(10);
+    
+        // Map search terms to type values
+        $typeMap = [
+            'Local' => '1',
+            'local' => '1',
+            'International' => '2',
+            'international' => '2',
+        ];
         
+        // Default to all types if no specific type is searched
+        $typeSearch = $typeMap[$search] ?? null;
+
+        $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
+            ->where('Status', '1')  // Filter by status
+            ->where(function ($query) use ($search, $typeSearch) {
+                // Search by type
+                if ($typeSearch) {
+                    $query->where('Type', $typeSearch);
+                } else {
+                    $query->whereRaw('CAST(Type AS CHAR) LIKE ?', ['%' . $search . '%'])  // Search in Type field
+                        ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')  // Search in BuyerCode field
+                        ->orWhere('Name', 'LIKE', '%' . $search . '%')  // Search in Name field
+                        ->orWhereHas('userById', function ($q) use ($search) {
+                            $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userById
+                        })
+                        ->orWhereHas('userByUserId', function ($q) use ($search) {
+                            $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId
+                        })
+                        ->orWhereHas('userByUserId2', function ($q) use ($search) {
+                            $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId2
+                        })
+                        ->orWhereHas('industry', function ($q) use ($search) {
+                            $q->where('Name', 'LIKE', '%' . $search . '%');  // Search in related industry
+                        });
+                }
+            })
+            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
+            ->paginate(10);  // Paginate results with 10 items per page
+
+        // Return view with search term and paginated client data
         return view('clients.prospect', [
             'search' => $search,
             'clients' => $clients,
@@ -118,28 +158,43 @@ class ClientController extends Controller
 
         // Retrieve search term from the request
         $search = $request->input('search');
+    
+        // Map search terms to type values
+        $typeMap = [
+            'Local' => '1',
+            'local' => '1',
+            'International' => '2',
+            'international' => '2',
+        ];
+        
+        // Default to all types if no specific type is searched
+        $typeSearch = $typeMap[$search] ?? null;
 
-        // Query clients with eager loading and search functionality
         $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
             ->where('Status', '5')  // Filter by status
-            ->where(function ($query) use ($search) {
-                $query->whereRaw('CAST(Type AS CHAR) LIKE ?', ['%' . $search . '%'])  // Search in Type field
-                    ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')  // Search in BuyerCode field
-                    ->orWhere('Name', 'LIKE', '%' . $search . '%')  // Search in Name field
-                    ->orWhereHas('userById', function ($q) use ($search) {
-                        $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userById
-                    })
-                    ->orWhereHas('userByUserId', function ($q) use ($search) {
-                        $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId
-                    })
-                    ->orWhereHas('userByUserId2', function ($q) use ($search) {
-                        $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId2
-                    })
-                    ->orWhereHas('industry', function ($q) use ($search) {
-                        $q->where('Name', 'LIKE', '%' . $search . '%');  // Search in related industry
-                    });
+            ->where(function ($query) use ($search, $typeSearch) {
+                // Search by type
+                if ($typeSearch) {
+                    $query->where('Type', $typeSearch);
+                } else {
+                    $query->whereRaw('CAST(Type AS CHAR) LIKE ?', ['%' . $search . '%'])  // Search in Type field
+                        ->orWhere('BuyerCode', 'LIKE', '%' . $search . '%')  // Search in BuyerCode field
+                        ->orWhere('Name', 'LIKE', '%' . $search . '%')  // Search in Name field
+                        ->orWhereHas('userById', function ($q) use ($search) {
+                            $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userById
+                        })
+                        ->orWhereHas('userByUserId', function ($q) use ($search) {
+                            $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId
+                        })
+                        ->orWhereHas('userByUserId2', function ($q) use ($search) {
+                            $q->where('full_name', 'LIKE', '%' . $search . '%');  // Search in related userByUserId2
+                        })
+                        ->orWhereHas('industry', function ($q) use ($search) {
+                            $q->where('Name', 'LIKE', '%' . $search . '%');  // Search in related industry
+                        });
+                }
             })
-            ->orderBy('id', 'desc')  // Sort by ID in descending order
+            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
             ->paginate(10);  // Paginate results with 10 items per page
 
         // Return view with search term and paginated client data
@@ -500,11 +555,10 @@ class ClientController extends Controller
         }
 
         // Save the updated file client
-        $fileClient->update();
+        $fileClient->save();
 
         return response()->json(['success' => 'File updated successfully']);
     }
-
     // Delete File
     public function deleteFile($id)
     {
@@ -514,4 +568,18 @@ class ClientController extends Controller
         return response()->json(['message' => 'File deleted successfully!']);
     }
 
+    public function exportCurrentClient()
+    {
+        return Excel::download(new CurrentClientExport, 'Current Client.xlsx');
+    }
+
+    public function exportProspectClient()
+    {
+        return Excel::download(new ProspectClientExport, 'Prospect Client.xlsx');
+    }
+
+    public function exportArchivedClient()
+    {
+        return Excel::download(new ArchivedClientExport, 'Archived Client.xlsx');
+    }
 }

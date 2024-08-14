@@ -2,42 +2,68 @@
 
 namespace App\Http\Controllers;
 use App\ConcernDepartment;
-use Validator;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class ConcernDepartmentController extends Controller
 {
     // List
-    public function index()
-    {   
-        if(request()->ajax())
-        {
-            return datatables()->of(ConcernDepartment::query())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+        $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
+        $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
+
+        // Ensure sort and direction are valid
+        $validSorts = ['Name', 'Description'];
+        if (!in_array($sort, $validSorts)) {
+            $sort = 'Name';
         }
-        return view('concerned_departments.index'); 
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        $query = ConcernDepartment::where(function ($query) use ($search) {
+                $query->where('Name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('Description', 'LIKE', '%' . $search . '%');
+            })
+            ->orderBy($sort, $direction);
+
+        if ($fetchAll) {
+            $concernDepartments = $query->get(); // Fetch all results
+            return response()->json($concernDepartments); // Return JSON response for copying
+        } else {
+            $concernDepartments = $query->paginate(10); // Default pagination
+            return view('concerned_departments.index', [
+                'search' => $search,
+                'concernDepartments' => $concernDepartments,
+                'fetchAll' => $fetchAll
+            ]);
+        }
     }
 
     // Store
     public function store(Request $request) 
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
+        // $rules = array(
+        //     'Name'          =>  'required',
+        //     'Description'   =>  'required'
+        // );  
+        $rules = [
+            'Name' => [
+                'required',
+                Rule::unique('customerserviceconcerneddepartm', 'Name')
+                    ->whereNull('deleted_at')
+            ],
+            'Description' => 'required',
+        ];
 
-        $error = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules);
 
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
         }
 
         $form_data = array(
@@ -47,7 +73,7 @@ class ConcernDepartmentController extends Controller
 
         ConcernDepartment::create($form_data);
 
-        return response()->json(['success' => 'Data Added Successfully.']);
+        return response()->json(['success' => 'Concerned Department added successfully.']);
     }
 
     // Edit
@@ -63,10 +89,14 @@ class ConcernDepartmentController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'Name'          =>  'required',
-            'Description'   =>  'required'
-        );
+        $rules = [
+            'Name' => [
+                'required',
+                Rule::unique('customerserviceconcerneddepartm', 'Name')
+                    ->whereNull('deleted_at')
+            ],
+            'Description' => 'required',
+        ];
 
         $error = Validator::make($request->all(), $rules);
 
@@ -88,7 +118,40 @@ class ConcernDepartmentController extends Controller
     // Delete
     public function delete($id)
     {
-        $data = ConcernDepartment::findOrFail($id);
-        $data->delete();
+        try {
+            $data = ConcernDepartment::findOrFail($id);
+            $data->delete();
+
+            return response()->json(['success' => 'Concerned department deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete issue category.'], 500);
+        }
+    }
+
+    // Export
+    public function exportConcernedDepartment(Request $request)
+    {
+        $search = $request->input('search');
+        $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
+        $direction = $request->get('direction', 'asc'); // Default to ascending order
+
+        // Define a list of valid columns for sorting
+        $validSortColumns = ['Name', 'Description'];
+
+        // Validate sort column
+        if (!in_array($sort, $validSortColumns)) {
+            $sort = 'Name'; // Default to 'Name' if invalid
+        }
+
+        // Fetch all records based on search, sort, and direction
+        $concernDepartments = ConcernDepartment::where(function ($query) use ($search) {
+                $query->where('Name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('Description', 'LIKE', '%' . $search . '%');
+            })
+            ->orderBy($sort, $direction)
+            ->get(); // Fetch all results
+
+        // Convert data to an array format that can be easily handled by JavaScript
+        return response()->json($concernDepartments);
     }
 }

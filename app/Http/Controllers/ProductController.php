@@ -36,6 +36,7 @@ class ProductController extends Controller
     public function current(Request $request)
     {   
         $products = Product::with(['userById', 'userByUserId'])
+            ->where('status', 4)
             ->when($request->search, function($q)use($request){
                 $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
@@ -54,7 +55,6 @@ class ProductController extends Controller
                     $q->where('MaterialId', $request->material_filter);
                 });
             }) 
-            ->where('status', '4')
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
         
@@ -77,6 +77,7 @@ class ProductController extends Controller
     public function new(Request $request)
     {   
         $products = Product::with(['userById', 'userByUserId'])
+            ->where('status', 2)
             ->when($request->search, function($q)use($request){
                 $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
@@ -87,7 +88,6 @@ class ProductController extends Controller
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
             }) 
-            ->where('status', '2')
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
 
@@ -109,7 +109,8 @@ class ProductController extends Controller
     {  
         $search = $request->search;
 
-        $products = Product::with(['userById', 'userByUserId'])->where('status', '1')
+        $products = Product::where('status', 1)
+            ->with(['userById', 'userByUserId'])
             ->when($request->search, function($q)use($request) {
                 $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
@@ -120,8 +121,6 @@ class ProductController extends Controller
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
             })
-            // ->orWhere('code', $request->search)
-            ->where('status', 1)
             ->orderBy('id', 'desc')
             ->paginate(10);
 
@@ -135,6 +134,7 @@ class ProductController extends Controller
     public function archived(Request $request)
     {   
         $products = Product::with(['userById', 'userByUserId'])
+            ->where('status', 5)
             ->when($request->search, function($q)use($request) {
                 $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
@@ -145,7 +145,6 @@ class ProductController extends Controller
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
             })
-            ->where('status', '5')
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
         
@@ -266,7 +265,8 @@ class ProductController extends Controller
         $data = Product::findOrFail($request->id);
         $data->delete();
 
-        return array('message' => 'Successfully Deleted.');
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
     }
 
     public function updateRawMaterials(Request $request, $id)
@@ -287,16 +287,24 @@ class ProductController extends Controller
         {
             $product_raw_materials = ProductMaterialsComposition::where('ProductId', $id)->delete();
     
-            foreach($request->raw_materials as $key=>$rm)
-            {   
-                $product_raw_materials = new ProductMaterialsComposition;
-                $product_raw_materials->MaterialId = $rm;
-                $product_raw_materials->Percentage = $request->percent[$key];
-                $product_raw_materials->ProductId = $id;
-                $product_raw_materials->save();
+            if($request->raw_materials != null)
+            {
+                foreach($request->raw_materials as $key=>$rm)
+                {   
+                    $product_raw_materials = new ProductMaterialsComposition;
+                    $product_raw_materials->MaterialId = $rm;
+                    $product_raw_materials->Percentage = $request->percent[$key];
+                    $product_raw_materials->ProductId = $id;
+                    $product_raw_materials->save();
+                }
+
+                Alert::success('Successfully Saved')->persistent('Dismiss');
+            }
+            else
+            {
+                Alert::error('Error! You must add raw materials')->persistent('Dismiss');
             }
     
-            Alert::success('Successfully Saved')->persistent('Dismiss');
         }
 
         return back();
@@ -308,16 +316,8 @@ class ProductController extends Controller
         $product->status = 2;
         $product->save();
 
-        if($request->action)
-        {
-            Alert::success('Successfully added to new products')->persistent("Dismiss");
-            return redirect('/new_products');
-        }
-        else
-        {
-            return array('message' => 'Successfully added to new products');
-        }
-
+        Alert::success('Successfully added to new products')->persistent("Dismiss");
+        return redirect('/new_products');
     }
 
     public function addToCurrentProducts(Request $request)
@@ -326,15 +326,8 @@ class ProductController extends Controller
         $product->status = 4;
         $product->save();
 
-        if ($request->action == "Current")
-        {
-            Alert::success('Successfully added to current products')->persistent("Dismiss");
-            return redirect('/current_products');
-        }
-        else
-        {
-            return array('message' => 'Successfully added to current products');
-        }
+        Alert::success('Successfully added to current products')->persistent("Dismiss");
+        return redirect('/current_products');
     }
 
     public function addToDraftProducts(Request $request)
@@ -342,16 +335,9 @@ class ProductController extends Controller
         $product = Product::findOrFail($request->id);
         $product->status = 1;
         $product->save();
-
-        if ($request->action == 'Draft')
-        {
-            Alert::success('Successfully added to draft products')->persistent("Dismiss");
-            return redirect('/draft_products');
-        }
-        else
-        {
-            return array('message' => 'Successfully added to draft products');
-        }
+        
+        Alert::success('Successfully added to draft products')->persistent("Dismiss");
+        return redirect('/draft_products');
     }
 
     public function addToArchiveProducts(Request $request)
@@ -360,15 +346,8 @@ class ProductController extends Controller
         $product->status = 5;
         $product->save();
 
-        if ($request->action == "Archive")
-        {
-            Alert::success('Successfully added to archive')->persistent("Dismiss");
-            return redirect('/archived_products');
-        }
-        else
-        {
-            return array('message' => 'Successfully added to archive products');
-        }
+        Alert::success('Sucessfully Archived')->persistent('Dismiss');
+        return redirect('/archived_products');
     }
 
     public function specification(Request $request)
@@ -884,5 +863,45 @@ class ProductController extends Controller
     public function exportDraftProducts()
     {
         return Excel::download(new DraftProductExport, 'Draft Product.xlsx');
+    }
+
+    public function salesProduct(Request $request)
+    {
+        $products = Product::with(['userById', 'userByUserId', 'application'])
+            ->when($request->search, function($q)use($request){
+                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+                    ->orWhere('code', "LIKE", "%".$request->search."%")
+                    ->orWhereHas('userByUserId', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    })
+                    ->orWhereHas('userById', function($q)use($request) {
+                        $q->where('full_name', 'LIKE', "%".$request->search."%");
+                    });
+            })
+            ->when($request->application_filter, function($q)use($request) {
+                $q->where('application_id', $request->application_filter);
+            })
+            ->when($request->material_filter, function($q)use($request) {
+                $q->whereHas('productMaterialComposition', function($q)use($request) {
+                    $q->where('MaterialId', $request->material_filter);
+                });
+            }) 
+            ->where('status', '4')
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
+        
+        $application = ProductApplication::get();
+        $raw_material = RawMaterial::get();
+        
+        return view('products.sales_product',
+            array(
+                'products' => $products,
+                'search' => $request->search,
+                'application' =>  $application,
+                'raw_material' => $raw_material,
+                'application_filter' => $request->application_filter,
+                'material_filter' => $request->material_filter
+            )
+        ); 
     }
 }

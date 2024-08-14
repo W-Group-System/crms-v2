@@ -13,4 +13,14 @@ class TransactionApproval extends Model
     {
         return $this->belongsTo(User::class, 'UserId', 'user_id');
     }
+
+    public function userByUserId()
+    {
+        return $this->belongsTo(User::class,'UserId','user_id');
+    }
+
+    public function userById()
+    {
+        return $this->belongsTo(User::class,'UserId','id');
+    }
 }

@@ -46,7 +46,7 @@ class SampleRequestController extends Controller
         //     $query->where('status', 10);
         // })
         // // ->get()
-        // ->paginate(25);
+        // ->paginate(10);
         $search = $request->input('search');
         $sampleRequests = SampleRequest::with('requestProducts') 
         ->where(function ($query) use ($search){
@@ -58,7 +58,7 @@ class SampleRequestController extends Controller
             // });
         })
         ->where('status', 10) 
-        ->paginate(25);
+        ->paginate(10);
 
        
         return view('sample_requests.index', compact('sampleRequests','clients', 'contacts', 'categories', 'departments', 'salesPersons', 'productApplications', 'productCodes', 'search'));
@@ -412,8 +412,27 @@ class SampleRequestController extends Controller
     }
     public function update(Request $request, $id)
     {
+
         $srf = SampleRequest::with('requestProducts')->findOrFail($id);
-    
+        $refCode = $request->input('RefCode');
+        $quantities = $request->input('Quantity');        
+        foreach ($quantities as $key => $quantity) {
+            if ($refCode == 2) {
+                if ($quantity < 1000 && $request->input('UnitOfMeasure')[$key] == 1) {
+                    return redirect()->back()->with('error', 'Quantity must be at least 1000g for QCD.')->withInput();
+                } elseif ($quantity < 1 && $request->input('UnitOfMeasure')[$key] == 2) {
+                    return redirect()->back()->with('error', 'Quantity must be at least 1kg for QCD.')->withInput();
+                }
+            }
+            
+            if ($refCode == 1) {
+                if ($quantity > 999 && $request->input('UnitOfMeasure')[$key] == 1) {
+                    return redirect()->back()->with('error', 'Quantity must be 999g or less for RND.')->withInput();
+                } elseif ($quantity >= 1 && $request->input('UnitOfMeasure')[$key] == 2) {
+                    return redirect()->back()->with('error', 'Quantity must be less than 1kg for RND.')->withInput();
+                }
+            }
+        }
         $srf->DateRequired = $request->input('DateRequired');
         $srf->DateStarted = $request->input('DateStarted');
         $srf->PrimarySalesPersonId = $request->input('PrimarySalesPerson');

@@ -35,7 +35,8 @@
             <div class="row">
                 <div class="col-lg-6"> 
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
-                </div>
+                </div> 
+                @include('components.error')
                 <div class="col-lg-12" align="right">
                     <a href="{{ url('/sample_request') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
                     {{-- @if ($requestEvaluation->Progress == 10)
@@ -92,6 +93,16 @@
                         title='Pause SRF'>
                         <i class="ti-control-pause">&nbsp;Pause</i>
                     </button> --}}
+                    <button type="button" class="btn btn-md btn-warning"
+                        data-target="#cancelRpe{{ $requestEvaluation->id }}" 
+                        data-toggle="modal">
+                        <i class="ti-na"></i>&nbsp;Cancel
+                    </button>
+                    <button type="button" class="btn btn-md btn-warning"
+                        data-target="#closeRpe{{ $requestEvaluation->id }}" 
+                        data-toggle="modal">
+                        <i class="ti-file"></i>&nbsp;Close
+                    </button>
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
@@ -174,6 +185,8 @@
                         Open
                     @elseif($requestEvaluation->Status == 30)
                         Closed
+                    @elseif($requestEvaluation->Status == 50)
+                        Cancelled
                     @else
                         {{ $requestEvaluation->Status }}
                     @endif</p>
@@ -302,16 +315,13 @@
                     <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="raw-materials-tab" data-toggle="tab" href="#raw_materials" role="tab" aria-controls="rawMaterials" aria-selected="false">Raw Materials</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History</a>
                 </li>
             </ul>
-            {{-- <div class="tab-content" id="myTabContent">
+            <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="supplementary" role="tabpanel" aria-labelledby="supplementary-tab">
                     <div class="d-flex">
-                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Supplementary Details" data-toggle="modal" data-target="#addSrfSuplementary">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Supplementary Details" data-toggle="modal" data-target="#addRpeSuplementary">
                             <i class="ti-plus"></i>
                         </button>
                     </div>
@@ -326,14 +336,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($SrfSupplementary as $supplementary)
+                                @foreach ($RpeSupplementary as $supplementary)
                                     <tr>
                                         <td align="center">
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                                data-target="#editSrfSupplementary{{ $supplementary->id }}" data-toggle="modal" title='Edit Supplementary'>
+                                                data-target="#editRpeSupplementary{{ $supplementary->Id }}" data-toggle="modal" title='Edit Supplementary'>
                                                 <i class="ti-pencil"></i>
                                             </button>   
-                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $supplementary->id }}, 'supplementary')" title='Delete Supplementary'>
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $supplementary->Id }}, 'supplementary')" title='Delete Supplementary'>
                                                 <i class="ti-trash"></i>
                                             </button> 
                                         </td>
@@ -348,7 +358,7 @@
                 </div>
                 <div class="tab-pane fade" id="srfPersonnel" role="tabpanel" aria-labelledby="srfPersonnel-tab">
                     <div class="d-flex">
-                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Assign R&D"  data-toggle="modal" data-target="#addSrfPersonnel">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Assign R&D"  data-toggle="modal" data-target="#addRpePersonnel">
                             <i class="ti-plus"></i>
                         </button>
                     </div>
@@ -365,7 +375,7 @@
                                     <tr>
                                         <td align="center">
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                                data-target="#editSrfPersonnel{{ $Personnel->Id }}" data-toggle="modal" title='Edit Personnel'>
+                                                data-target="#editRpePersonnel{{ $Personnel->Id }}" data-toggle="modal" title='Edit Personnel'>
                                                 <i class="ti-pencil"></i>
                                             </button>   
                                             <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $Personnel->Id }}, 'personnel')" title='Delete Personnel'>
@@ -380,10 +390,20 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Create Activity"  data-toggle="modal" data-target="#createRpeActivity">
+                            <i class="ti-plus"></i>
+                        </button>
+                    </div>
                     <div class="table-responsive">
+                        <div class="filter">
+                            <label><input type="checkbox" class="status-filter" value="10" checked> Open</label>
+                            <label><input type="checkbox" class="status-filter" value="20" checked> Closed</label>
+                        </div>
                         <table class="table table-striped table-bordered table-hover table-detailed" id="activities_table" style="width: 100%">
                             <thead>
                                 <tr>
+                                    <th>Action</th>
                                     <th>#</th>
                                     <th>Schedule</th>
                                     <th>Title</th>
@@ -392,7 +412,16 @@
                             </thead>
                             <tbody>
                                 @foreach ($activities as $activity)
-                                    <tr>
+                                    <tr data-status="{{ $activity->Status }}">
+                                        <td>
+                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                data-target="#editRpeActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
+                                                <i class="ti-pencil"></i>
+                                            </button>   
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Activity'>
+                                                <i class="ti-trash"></i>
+                                            </button> 
+                                            </td>
                                         <td>{{ optional($activity)->ActivityNumber }}</td>
                                         <td>
                                             {{ optional($activity)->ScheduleFrom ? optional($activity)->ScheduleFrom : '' }}
@@ -430,11 +459,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($srfFileUploads as $fileupload)
+                                @foreach ($rpeFileUploads as $fileupload)
                                     <tr>
                                         <td align="center">
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                                data-target="#editSrfFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
+                                                data-target="#editRpeFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
                                                 <i class="ti-pencil"></i>
                                             </button>   
                                             <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $fileupload->Id }}, 'fileupload')" title='Delete fileupload'>
@@ -453,43 +482,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="raw_materials" role="tabpanel" aria-labelledby="raw-materials-tab">
-                    <div class="d-flex">
-                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Raw Material"  data-toggle="modal" data-target="#addRawMaterial">
-                            <i class="ti-plus"></i>
-                        </button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover table-detailed" id="raw_materials_table" style="width: 100%">
-                            <thead>
-                                <tr>
-                                    <th>Actions</th>
-                                    <th>Material</th>
-                                    <th>Lot Number</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($SrfMaterials as $SrfMaterial)
-                                    <tr>
-                                        <td align="center">
-                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                                data-target="#editSrfMaterial{{ $SrfMaterial->Id }}" data-toggle="modal" title='Edit SrfMaterial'>
-                                                <i class="ti-pencil"></i>
-                                            </button>   
-                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $SrfMaterial->Id }}, 'SrfMaterial')" title='Delete Raw Material'>
-                                                <i class="ti-trash"></i>
-                                            </button> 
-                                        </td>
-                                        <td>{{ $SrfMaterial->productMaterial->Name }}</td>
-                                        <td>{{ $SrfMaterial->LotNumber }}</td>
-                                        <td>{{ $SrfMaterial->Remarks }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+               
                 <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover table-detailed" style="width:100%;">
@@ -512,7 +505,7 @@
                         </table>
                     </div>
                 </div>
-            </div> --}}
+            </div>
         </div>
     </div>
 </div>
@@ -548,8 +541,8 @@
                 url = '{{ url('requestEvaluation/view/personnel-delete') }}/' + id;
             } else if (type === 'fileupload') {
                 url = '{{ url('requestEvaluation/view/file-delete') }}/' + id;
-            } else if (type === 'SrfMaterial') {
-                url = '{{ url('requestEvaluation/view/material-delete') }}/' + id;
+            } else if (type === 'activity') {
+                url = '{{ url('requestEvaluation/view/activity-delete') }}/' + id;
             }
 
             $.ajax({
@@ -594,27 +587,57 @@
             order: []
         });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const filters = document.querySelectorAll('.status-filter');
+
+    filters.forEach(filter => {
+        filter.addEventListener('change', filterTable);
+    });
+
+    function filterTable() {
+        const selectedStatuses = Array.from(filters)
+            .filter(filter => filter.checked)
+            .map(filter => filter.value);
+
+        document.querySelectorAll('#activities_table tbody tr').forEach(row => {
+            const status = row.getAttribute('data-status');
+            if (selectedStatuses.includes(status)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    filterTable();
+});
+
     </script>
-{{-- @include('sample_requests.create_supplementary')
-@include('sample_requests.assign_personnel')
-@include('sample_requests.upload_srf_file')
-@include('sample_requests.create_raw_materials')
-@foreach ($requestEvaluation as $srf)
+@include('product_evaluations.create_supplementary')
+@include('product_evaluations.assign_personnel')
+@include('product_evaluations.create_activity')
+@include('product_evaluations.upload_rpe_file')
+
+@foreach ($RpeSupplementary as $supplementary)
+@include('product_evaluations.edit_supplementary')
+@endforeach
+@foreach ($assignedPersonnel as $Personnel)
+@include('product_evaluations.edit_personnel')
+@endforeach
+@foreach ($activities as $activity)
+@include('product_evaluations.edit_activity')
+@endforeach
+@foreach ($rpeFileUploads as $fileupload)
+@include('product_evaluations.edit_files')
+@endforeach
+@include('product_evaluations.cancel')
+@include('product_evaluations.close')
+{{-- @include('sample_requests.upload_srf_file') --}}
+{{-- @include('sample_requests.create_raw_materials') --}}
+{{-- @foreach ($requestEvaluation as $srf)
     @include('sample_requests.srf_approval')
     @include('sample_requests.srf_receive')
     @include('sample_requests.srf_start')
     @include('sample_requests.srf_pause')
-@endforeach
-@foreach ($SrfSupplementary as $supplementary)
-@include('sample_requests.edit_supplementary')
-@endforeach
-@foreach ($assignedPersonnel as $Personnel)
-@include('sample_requests.edit_personnel')
-@endforeach
-@foreach ($srfFileUploads as $fileupload)
-@include('sample_requests.edit_files')
-@endforeach
-@foreach ($SrfMaterials as $SrfMaterial)
-@include('sample_requests.edit_material')
 @endforeach --}}
 @endsection

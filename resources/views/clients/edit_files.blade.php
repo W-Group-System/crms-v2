@@ -47,7 +47,9 @@
             $.ajax({
                 type: "POST",
                 url: url,
-                data: form.serialize(),
+                data: formData, // Pass FormData object
+                processData: false, // Prevent jQuery from automatically processing data
+                contentType: false, 
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },

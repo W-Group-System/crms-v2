@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Currency Exchange Rates List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#addExchangeRates">Add Currency Exchange Rates</button>
+            <button type="button" class="btn btn-md btn-primary addExchangeRates" data-toggle="modal" data-target="#addExchangeRates">Add Currency Exchange Rates</button>
             </h4>
             @include('currency_exchanges.new_exchange_rate')
 
@@ -20,6 +20,7 @@
                     </div>
                 </div>
             </form>
+            @include('components.error')
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover table-bordered" id="currency_exchange_table" width="100%">
                     <thead>
@@ -35,7 +36,7 @@
                         @foreach ($currency_exchanges as $currency)
                             <tr>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-warning" title="Edit" data-toggle="modal" data-target="#editExchangeRate-{{$currency->id}}">
+                                    <button type="button" class="btn btn-sm btn-warning editBtn" title="Edit" data-toggle="modal" data-target="#editExchangeRate-{{$currency->id}}" data-id="{{$currency->id}}">
                                         <i class="ti-pencil"></i>
                                     </button>
                                     <form method="POST" class="deleteCurrencyExchangeRateForm d-inline-block" action="{{url('delete_currency_exchange/'.$currency->id)}}">
@@ -52,6 +53,7 @@
                                 <td>{{$currency->ExchangeRate}}</td>
                             </tr>
 
+                            <input type="hidden" class="currency_id" value="{{$currency->id}}">
                             @include('currency_exchanges.edit_exchange_rate')
                         @endforeach
                     </tbody>
@@ -92,6 +94,38 @@
                     form.submit();
                 }
             });
+        })
+
+        $('#addExchangeRates').on('hidden.bs.modal', function(){
+            $('[name="from_currency"]').val(null).trigger('change')
+            $('[name="to_currency"]').val(null).trigger('change')
+            $('[name="rate"]').val('')
+        })
+
+        $('.addExchangeRates').on('click', function() {
+            $('[name="from_currency"]').val(null).trigger('change')
+            $('[name="to_currency"]').val(null).trigger('change')
+            $('[name="rate"]').val('')
+        })
+        
+        $('.editBtn').on('click', function() {
+            var id = $(this).data('id');
+
+            $.ajax({
+                type: "GET", 
+                url: "{{url('edit_currency_exchange')}}",
+                data: {
+                    id: id
+                },
+                
+                success: function(res) {
+                    $('[name="effective_date"]').val(res.EffectiveDate)
+                    $('[name="from_currency"]').val(res.FromCurrency).trigger('change')
+                    $('[name="to_currency"]').val(res.ToCurrency).trigger('change')
+                    $('[name="rate"]').val(res.ExchangeRate)
+                }
+            })
+            
         })
     })
 </script>

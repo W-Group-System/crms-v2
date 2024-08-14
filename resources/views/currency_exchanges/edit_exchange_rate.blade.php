@@ -12,14 +12,14 @@
                     @csrf
                     <div class="form-group">
                         <label for="name">Effective Date :</label>
-                        <input type="date" class="form-control" name="effective_date" value="{{$currency->EffectiveDate}}" required>
+                        <input type="date" class="form-control" name="effective_date" required>
                     </div>
                     <div class="form-group">
                         <label for="name">From Currency :</label>
                         <select name="from_currency" class="form-control js-example-basic-single" required>
                             <option value="">-From Currency-</option>
                             @foreach ($currencies as $c)
-                                <option value="{{$c->id}}" @if($c->id == $currency->FromCurrencyId) selected @endif>{{$c->Name}}</option>
+                                <option value="{{$c->id}}">{{$c->Name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -28,13 +28,13 @@
                         <select name="to_currency" class="form-control js-example-basic-single" required>
                             <option value="">-From Currency-</option>
                             @foreach ($currencies as $c)
-                                <option value="{{$c->id}}"  @if($c->id == $currency->ToCurrencyId) selected @endif>{{$c->Name}}</option>
+                                <option value="{{$c->id}}">{{$c->Name}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="name">Rate :</label>
-                        <input type="text" name="rate" class="form-control" value="{{$currency->ExchangeRate}}" required>
+                        <input type="number" name="rate" class="form-control" step=".01" placeholder="0.00" required>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
