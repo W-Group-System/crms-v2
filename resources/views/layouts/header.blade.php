@@ -109,7 +109,7 @@
                 <nav class="sidebar sidebar-offcanvas" id="sidebar">
                     <ul class="nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/home') }}">
+                            <a class="nav-link" href="{{ url('/dashboard') }}">
                                 <i class="icon-grid menu-icon"></i>
                                 <span class="menu-title">Dashboard</span>
                             </a>
@@ -428,7 +428,7 @@
                             </a>
                             <div class="collapse" id="reports">
                                 <ul class="nav flex-column sub-menu">
-                                    <li class="nav-item"><a class="nav-link" href="#">Price Request Summary</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url ('/price_request') }}">Price Request Summary</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url ('/transaction_activity') }}">Transaction/Activity Summary</a></li>
                                 </ul>
                             </div>

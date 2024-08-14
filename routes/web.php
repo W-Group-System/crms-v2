@@ -21,7 +21,7 @@ Auth::routes();
 // Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', 'HomeController@index');
-    Route::get('/home','HomeController@index');
+    Route::get('/dashboard','DashboardController@index');
 
     // change password
     Route::get('my_account','HomeController@myAccount')->name('my_account');
@@ -411,6 +411,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('delete_request_gae/{Id}', 'RequestGAEController@delete')->name('delete_request_gae');
 
     # Reports
+    Route::get('/price_request', 'ReportsController@price_summary')->name('reports.price_request');
     Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
 });
 
