@@ -15,7 +15,7 @@ class NatureRequestController extends Controller
             $query->where('Name', 'LIKE', '%' . $search . '%')
                 ->orWhere('Description', 'LIKE', '%' . $search . '%');        
         })
-        ->orderBy('id', 'desc')->paginate(25);
+        ->orderBy('id', 'desc')->paginate(10);
         return view('nature_requests.index',  compact('natureRequests', 'search')); 
     }
 

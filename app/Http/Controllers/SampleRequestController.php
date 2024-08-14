@@ -46,7 +46,7 @@ class SampleRequestController extends Controller
         //     $query->where('status', 10);
         // })
         // // ->get()
-        // ->paginate(25);
+        // ->paginate(10);
         $search = $request->input('search');
         $sampleRequests = SampleRequest::with('requestProducts') 
         ->where(function ($query) use ($search){

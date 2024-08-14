@@ -14,7 +14,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Created (DD/MM/YYYY) - Hour Minute</label>
-                                <input type="datetime-local" class="form-control" name="CreatedDate" required>
+                                <input type="datetime-local" class="form-control CreatedDate" name="CreatedDate" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -53,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate">
+                                <input type="date" class="form-control DueDate" name="DueDate">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -193,12 +193,21 @@
             });
         @endif
 
-        $(document).on('click', '.addRow', function() {
-            
-            $('.js-example-basic-single').select2(); // Reinitialize Select2 for new elements
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+        var validityDateInput = document.querySelector('.CreatedDate');
+        var dateRequestedInput = document.querySelector('.DueDate');
 
-        $(document).on('click', '.removeRow', function() {
-            $(this).closest('.input-group').remove();
-        });
+
+
+        var now = new Date();
+        var date = now.toISOString().split('T')[0];
+        var time = now.toTimeString().split(' ')[0]; 
+
+        var todayWithTime = date + 'T' + time;
+
+        validityDateInput.setAttribute('min', todayWithTime);
+        validityDateInput.value = todayWithTime;
+        dateRequestedInput.setAttribute('min', date);
+
+    });
 </script>

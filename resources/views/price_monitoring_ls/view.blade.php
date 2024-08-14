@@ -377,7 +377,7 @@
                                             data-target="#editPrfActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
                                             <i class="ti-pencil"></i>
                                         </button>   
-                                        <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Personnel'>
+                                        <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Activity'>
                                             <i class="ti-trash"></i>
                                         </button> 
                                         </td>

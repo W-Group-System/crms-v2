@@ -172,6 +172,25 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('product_evaluation/view/{id}', 'RequestProductEvaluationController@view');
     Route::delete('request_evaluation/{id}', 'RequestProductEvaluationController@destroy');
 
+    Route::post('addRpeSupplementary', 'RequestProductEvaluationController@addSupplementary');
+    Route::post('UpdateRpeSupplementary/{id}', 'RequestProductEvaluationController@editSupplementary');
+    Route::delete('requestEvaluation/view/supp-delete/{id}', 'RequestProductEvaluationController@deleteRpeDetails');
+
+    Route::post('assignRpePersonnel', 'RequestProductEvaluationController@assignPersonnel');
+    Route::post('UpdateAssignedRpePersonnel/{id}', 'RequestProductEvaluationController@editPersonnel');
+    Route::delete('requestEvaluation/view/personnel-delete/{id}', 'RequestProductEvaluationController@deleteSrfPersonnel');
+
+    Route::post('rpe_new_activity', 'RequestProductEvaluationController@RpeActivityStore'); 
+    Route::post('rpe_edit_activity/{id}', 'RequestProductEvaluationController@RpeActivityUpdate');
+    Route::delete('requestEvaluation/view/activity-delete/{id}', 'RequestProductEvaluationController@deleteActivity');
+
+    Route::post('rpeFiles', 'RequestProductEvaluationController@uploadFile');
+    Route::post('updateRpeFile/{id}', 'RequestProductEvaluationController@editFile');
+    Route::delete('requestEvaluation/view/file-delete/{id}', 'RequestProductEvaluationController@deleteFile');
+
+    Route::post('CancelRpe/{id}', 'RequestProductEvaluationController@CancelRpe');
+    Route::post('CloseRpe/{id}', 'RequestProductEvaluationController@CloseRpe');
+
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
     Route::post('/new_sample_request', 'SampleRequestController@store')->name('sample_request.store');

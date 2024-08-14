@@ -53,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" name="DueDate" value="{{ !empty($productEvaluation->DueDate) ? date('Y-m-d', strtotime($productEvaluation->DueDate)) : '' }}">
+                                <input type="date" class="form-control DueDate{{ $productEvaluation->DueDate }}" name="DueDate" value="{{ !empty($productEvaluation->DueDate) ? date('Y-m-d', strtotime($productEvaluation->DueDate)) : '' }}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -128,11 +128,11 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Attention To:</label>
-                        <select class="form-control js-example-basic-single" name="AttentionTo" style="position: relative !important" title="Select Attention To">
-                            <option value="" disabled selected>Select</option>
-                            <option value="1" @if ( $productEvaluation->AttentionTo == "1") selected @endif>RND</option>
-                            <option value="2" @if ( $productEvaluation->AttentionTo == "2") selected @endif>QCD</option>
-                        </select>
+                                <select class="form-control js-example-basic-single" name="AttentionTo" style="position: relative !important" title="Select Attention To">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="1" @if ( $productEvaluation->AttentionTo == "1") selected @endif>RND</option>
+                                    <option value="2" @if ( $productEvaluation->AttentionTo == "2") selected @endif>QCD</option>
+                                </select>
                             </div>
                         </div>
                         
@@ -159,6 +159,19 @@
                                 <textarea type="text" class="form-control" name="ObjectiveForRpeProject">{{ $productEvaluation->ObjectiveForRpeProject }}</textarea>
                             </div>
                         </div>
+                        <div class="col-lg-6"></div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Status :</label>
+                                <select class="form-control js-example-basic-single" name="Status" style="position: relative !important" title="Select Status">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="10" @if ( $productEvaluation->Status == "10") selected @endif>Open</option>
+                                    <option value="30" @if ( $productEvaluation->Status == "30") selected @endif>Close</option>
+                                    <option value="50" @if ( $productEvaluation->Status == "50") selected @endif>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -186,4 +199,16 @@
                 confirmButtonText: 'OK'
             });
         @endif
+
+        document.addEventListener('DOMContentLoaded', function() {
+        var dueDateInput = document.querySelector('.DueDate{{ $productEvaluation->DueDate }}');
+        var storedDate = '{{ !empty($productEvaluation->DieDate) ? date('Y-m-d', strtotime($productEvaluation->DieDate)) : '' }}';
+        var today = new Date().toISOString().split('T')[0];
+
+        if (storedDate) {
+            dueDateInput.setAttribute('min', storedDate);
+        } else {
+            dueDateInput.setAttribute('min', today);
+        }
+    });
 </script>
