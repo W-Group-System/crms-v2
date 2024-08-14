@@ -702,8 +702,7 @@
 @foreach ($rpeFileUploads as $fileupload)
 @include('product_evaluations.edit_files')
 @endforeach
-@include('product_evaluations.cancel')
-@include('product_evaluations.close')
+
 {{-- @include('sample_requests.upload_srf_file') --}}
 {{-- @include('sample_requests.create_raw_materials') --}}
 {{-- @foreach ($requestEvaluation as $srf)
