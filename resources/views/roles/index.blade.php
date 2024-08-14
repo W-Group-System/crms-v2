@@ -8,7 +8,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Role List
-            <button type="button" class="btn btn-md btn-primary" name="add_role" id="add_role" data-toggle="modal" data-target="#formRole">Add Role</button>
+            <button type="button" class="btn btn-md btn-primary" id="add_role" data-toggle="modal" data-target="#formRole">Add Role</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -29,6 +29,7 @@
                             <th width="35%">Department</th>
                             <th width="35%">Name</th>
                             <th width="50%">Description</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,27 +40,57 @@
                                     <a href="{{url('module_access/'.$role->id)}}" class="btn btn-sm btn-info" title="Module Access" target="_blank">
                                         <i class="ti-eye"></i>
                                     </a>
-                                    <button type="button" name="edit" class="edit btn btn-sm btn-warning" data-toggle="modal" data-target="#editRole-{{$role->id}}">
+                                    <button type="button" name="edit" class="edit btn btn-sm btn-warning editBtn" data-toggle="modal" data-target="#editRole-{{$role->id}}" data-id="{{$role->id}}">
                                         <i class="ti ti-pencil"></i>
                                     </button>
-                                    <button type="button" name="delete" class="delete btn btn-sm btn-danger" data-id="{{$role->id}}"><i class="ti ti-trash"></i></button>
+
+                                    @if($role->status == "Active")
+                                    <form method="POST" action="{{url('deactivate/'.$role->id)}}" class="d-inline-block">
+                                        @csrf 
+
+                                        <button type="button" class="deactivate btn btn-sm btn-danger" title="Deactivate"><i class="ti ti-trash"></i></button>
+                                    </form>
+                                    @elseif($role->status == "Inactive")
+                                    <form method="POST" action="{{url('activate/'.$role->id)}}" class="d-inline-block">
+                                        @csrf
+
+                                        <button type="button" class="activate btn btn-sm btn-info" title="Activate"><i class="ti ti-check"></i></button>
+                                    </form>
+                                    @endif
                                 </td>
                                 <td>{{$role->department->name}}</td>
                                 <td>{{$role->name}}</td>
                                 <td>{{$role->description}}</td>
+                                <td>
+                                    @if($role->status == "Active")
+                                        <div class="badge badge-success">{{$role->status}}</div>
+                                    @elseif($role->status == "Inactive")
+                                        <div class="badge badge-danger">{{$role->status}}</div>
+                                    @endif
+                                </td>
                             </tr>
 
                             @include('roles.edit_roles')
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="4" class="text-center">No matching records found</td>
+                                <td colspan="5" class="text-center">No matching records found</td>
                             </tr>
                         @endif
                     </tbody>
                 </table>
             </div>
             {!! $roles->appends(['search' => $search])->links() !!}
+
+            @php
+                $total = $roles->total();
+                $currentPage = $roles->currentPage();
+                $perPage = $roles->perPage();
+                
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <p class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
         </div>
     </div>
 </div>
@@ -104,40 +135,59 @@
 
 <script>
     $(document).ready(function() {
-        $(".delete").on('click', function() {
-            var id = $(this).data('id');
+        $(".deactivate").on('click', function() {
+            var form = $(this).closest('form');
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-                }).then((result) => {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{url('delete_role')}}",
-                        data: {
-                            id: id
-                        },
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(res) {
-                            if (result.isConfirmed) {
-                                Swal.fire({
-                                    title: "Deleted!",
-                                    text: res.message,
-                                    icon: "success"
-                                }).then(() => {
-                                    location.reload();
-                                });
-                            }
-                        }
-                    })
+                confirmButtonText: "Yes, deactivate it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
+        })
+
+        $(".activate").on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, activate it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        })
+
+        $('#formRole').on('hidden.bs.modal', function() {
+            $("[name='department']").val(null).trigger('change');
+            $("[name='name']").val(null);
+            $("[name='description']").val(null);
+        })
+
+        $('.editBtn').on('click', function() {
+            var id = $(this).data('id')
+
+            $.ajax({
+                type: "GET",
+                url: "{{url('edit_role')}}/" + id,
+                success: function(res)
+                {
+                    $("[name='department']").val(res.department);
+                    $("[name='name']").val(res.description);
+                    $("[name='description']").val(res.name);
+                }
+            })
         })
     })
 </script>
