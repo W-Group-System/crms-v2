@@ -39,6 +39,7 @@ class RoleController extends Controller
         $role->name = $request->name;
         $role->description = $request->description;
         $role->department_id = $request->department;
+        $role->status = "Active";
         $role->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
@@ -2061,5 +2062,34 @@ class RoleController extends Controller
             'Supplier Shipment Evaluation',
             // 'User Setup'
         ];
+    }
+
+    public function editRole($id)
+    {
+        $role = Role::findOrFail($id);
+
+        return array(
+            'department' => $role->department_id,
+            'name' => $role->name,
+            'description' => $role->description,
+        );
+    }
+    public function deactivate($id)
+    {
+        $role = Role::findOrFail($id);
+        $role->status = "Inactive";
+        $role->save();
+
+        Alert::success('Successfully Deactivated')->persistent('Dismiss');
+        return back();
+    }
+    public function activate($id)
+    {
+        $role = Role::findOrFail($id);
+        $role->status = "Active";
+        $role->save();
+
+        Alert::success('Successfully Activated')->persistent('Dismiss');
+        return back();
     }
 }
