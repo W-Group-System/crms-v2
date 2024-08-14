@@ -44,7 +44,7 @@ class PriceMonitoringController extends Controller
             // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
         })
         ->where('PrfNumber', 'LIKE', 'PRF-IS%')
-        ->orderBy('id', 'desc')->paginate(25);
+        ->orderBy('id', 'desc')->paginate(10);
         $clients = Client::all();
         $users = User::all();
         $products = Product::where('status', '4')->get();
@@ -638,6 +638,7 @@ public function ClosePrf( Request $request , $id)
         $priceMonitoringData->Title = $request->Title;
         $priceMonitoringData->Description = $request->Description;
         $priceMonitoringData->DateClosed = $request->DateClosed;
+        $priceMonitoringData->Response = $request->Response;
         $priceMonitoringData->Description = $request->Description;
         $priceMonitoringData->Status = $request->Status;
         $priceMonitoringData->save();

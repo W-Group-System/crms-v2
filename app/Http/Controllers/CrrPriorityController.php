@@ -28,7 +28,7 @@ class CrrPriorityController extends Controller
                 ->orWhere('Description', 'LIKE', '%' . $search . '%')        
                 ->orWhere('Days', 'LIKE', '%' . $search . '%');        
         })
-        ->orderBy('id', 'desc')->paginate(25);
+        ->orderBy('id', 'desc')->paginate(10);
         return view('crr_priorities.index',  compact('crrPriorities', 'search')); 
     }
 

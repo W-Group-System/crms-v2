@@ -15,7 +15,7 @@ class ProjectNameController extends Controller
             $query->where('Name', 'LIKE', '%' . $search . '%')
                 ->orWhere('Description', 'LIKE', '%' . $search . '%');        
         })
-        ->orderBy('id', 'desc')->paginate(25);
+        ->orderBy('id', 'desc')->paginate(10);
         return view('project_name.index', compact('projectNames', 'search')); 
     }
 
