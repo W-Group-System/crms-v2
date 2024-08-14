@@ -44,6 +44,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(RndUser::class, 'ProductRndUserId', 'user_id')->where('isDeleted', 0);
     }
+    public function salesApproverByUserId()
+    {
+        return $this->hasMany(SalesApprovers::class,'UserId','user_id');
+    }
+    public function salesApproverById()
+    {
+        return $this->hasMany(SalesApprovers::class,'UserId','id');
+    }
+    public function rndApproverByUserId()
+    {
+        return $this->hasMany(RndApprovers::class,'UserId','user_id');
+    }
+    public function rndApproverById()
+    {
+        return $this->hasMany(RndApprovers::class,'UserId','id');
+    }
     /**
      * The attributes that are mass assignable.
      *

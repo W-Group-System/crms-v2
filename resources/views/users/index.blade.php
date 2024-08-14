@@ -19,7 +19,7 @@
                 </div>
             </form>
             @include('components.error')
-            <a href="{{url('export_user')}}" class="btn btn-success mb-3">Export</a>
+            {{-- <a href="{{url('export_user')}}" class="btn btn-success mb-3">Export</a> --}}
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="user_table" width="100%">
                     <thead>
@@ -37,7 +37,7 @@
                         @foreach($users as $user)
                         <tr>
                             <td>
-                                <button class="btn btn-sm btn-warning" title="Edit Users" data-toggle="modal" data-target="#editUser-{{$user->id}}" title="Edit">
+                                <button class="btn btn-sm btn-warning editBtn" title="Edit Users" data-toggle="modal" data-target="#editUser-{{$user->id}}" title="Edit" data-id="{{$user->id}}">
                                     <i class="ti-pencil"></i>
                                 </button>
 
@@ -95,11 +95,11 @@
                     @csrf
                     <div class="form-group">
                         <label for="name">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" required>
+                        <input type="text" class="form-control" name="username" placeholder="Enter Username" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Full Name</label>
-                        <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Enter Full Name" required>
+                        <input type="text" class="form-control" name="full_name" placeholder="Enter Full Name" required>
                     </div>
                     <div class="form-group" id="formPasword">
                         <label for="name">Password</label>
@@ -111,7 +111,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Email Address</label>
-                        <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email Address" required>
+                        <input type="text" class="form-control" name="email" placeholder="Enter Email Address" required>
                     </div>
                     <div class="form-group">
                         <label>Role</label>
@@ -127,7 +127,7 @@
                         <select class="form-control js-example-basic-single" name="company_id" style="position: relative !important" title="Select Company" required>
                             <option value="" disabled selected>Select Company</option>
                             @foreach($companies as $company)
-                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                <option value="{{ $company->id }}">{{ $company->code.' - '.$company->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -136,18 +136,18 @@
                         <select class="form-control js-example-basic-single" name="department_id" style="position: relative !important" title="Select Company" required>
                             <option value="" disabled selected>Select Department</option>
                             @foreach($departments as $department)
-                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                <option value="{{ $department->id }}">{{ $department->department_code.' - '.$department->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    {{-- <div class="form-group" id="formStatus" >
-                        <label for="name">Status</label>
-                        <select class="form-control js-example-basic-single" name="is_active" id="is_active" style="position: relative !important" title="Select Type">
-                            <option value="" disabled selected>Select Status</option>
-                            <option value="0">Inactive</option>
-                            <option value="1">Active</option>
+                    <div class="form-group">
+                        <label for="name">User Approvers</label>
+                        <select class="form-control js-example-basic-multiple" name="user_approvers[]" style="position: relative !important" multiple>
+                            @foreach ($approvers as $approver)
+                                <option value="{{$approver->id}}">{{$approver->full_name}}</option>
+                            @endforeach
                         </select>
-                    </div> --}}
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-success">Save</button>
@@ -158,4 +158,39 @@
     </div>
 </div>
 
+<script>
+    $(document).ready(function() {
+        $('#formUser').on('hidden.bs.modal', function() {
+            $("[name='username']").val(null);
+            $("[name='full_name']").val(null);
+            $("[name='password']").val(null);
+            $("[name='password_confirmation']").val(null);
+            $("[name='email']").val(null);
+            $("[name='role_id']").val(null).trigger('change');
+            $("[name='company_id']").val(null).trigger('change');
+            $("[name='department_id']").val(null).trigger('change');
+            $("[name='user_approvers[]']").val(null).trigger('change');
+        })
+
+        $('.editBtn').on('click', function() {
+            var id = $(this).data('id')
+
+            $.ajax({
+                type: "get",
+                url: "{{url('edit_user')}}/" + id,
+                success: function(res)
+                {
+                    $("[name='username']").val(res.username);
+                    $("[name='full_name']").val(res.full_name);
+                    $("[name='email']").val(res.email);
+                    $("[name='role_id']").val(res.role_id).trigger('change');
+                    $("[name='company_id']").val(res.company_id).trigger('change');
+                    $("[name='department_id']").val(res.department_id).trigger('change');
+                    $("[name='is_active']").val(res.status).trigger('change');
+                    $("[name='user_approvers[]']").val(res.approvers).trigger('change');
+                }
+            })
+        })
+    })
+</script>
 @endsection

@@ -12,15 +12,15 @@
                     @csrf
                     <div class="form-group">
                         <label for="name">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" value="{{$user->username}}" required>
+                        <input type="text" class="form-control" name="username" placeholder="Enter Username" value="{{$user->username}}" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Full Name</label>
-                        <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Enter Full Name" value="{{$user->full_name}}" required>
+                        <input type="text" class="form-control" name="full_name" placeholder="Enter Full Name" value="{{$user->full_name}}" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Email Address</label>
-                        <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email Address" value="{{$user->email}}" required>
+                        <input type="text" class="form-control" name="email" placeholder="Enter Email Address" value="{{$user->email}}" required>
                     </div>
                     <div class="form-group">
                         <label>Role</label>
@@ -36,7 +36,7 @@
                         <select class="form-control js-example-basic-single" name="company_id" style="position: relative !important" title="Select Company" required>
                             <option value="" disabled selected>Select Company</option>
                             @foreach($companies as $company)
-                                <option value="{{ $company->id }}" @if($company->id == $user->company_id) selected @endif>{{ $company->name }}</option>
+                                <option value="{{ $company->id }}" @if($company->id == $user->company_id) selected @endif>{{ $company->code.' - '.$company->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -45,7 +45,7 @@
                         <select class="form-control js-example-basic-single" name="department_id" style="position: relative !important" title="Select Company" required>
                             <option value="" disabled selected>Select Department</option>
                             @foreach($departments as $department)
-                                <option value="{{ $department->id }}" @if($department->id == $user->department_id) selected @endif>{{ $department->name }}</option>
+                                <option value="{{ $department->id }}" @if($department->id == $user->department_id) selected @endif>{{ $department->department_code.' - '.$department->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -55,6 +55,24 @@
                             <option value="" disabled selected>Select Status</option>
                             <option value="0" @if($user->is_active == 0) selected @endif>Inactive</option>
                             <option value="1" @if($user->is_active == 1) selected @endif>Active</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">User Approvers</label>
+                        @php
+                            $salesApprover = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+                            $rndApprover = $user->rndApproverById->pluck('RndApproverId')->toArray();
+                        @endphp
+                        <select class="form-control js-example-basic-multiple" name="user_approvers[]" style="position: relative !important" multiple>
+                            @foreach ($approvers as $approver)
+                                @if(collect($salesApprover)->isNotEmpty())
+                                <option value="{{$approver->id}}" @if((in_array($approver->id, $salesApprover)) || (in_array($approver->user_id, $salesApprover))) selected @endif>{{$approver->full_name}}</option>
+                                @elseif(collect($rndApprover)->isNotEmpty())
+                                <option value="{{$approver->id}}" @if((in_array($approver->id, $rndApprover)) || (in_array($approver->user_id, $rndApprover))) selected @endif>{{$approver->full_name}}</option>
+                                @else
+                                <option value="{{$approver->id}}">{{$approver->full_name}}</option>
+                                @endif
+                            @endforeach
                         </select>
                     </div>
                     <div class="modal-footer">

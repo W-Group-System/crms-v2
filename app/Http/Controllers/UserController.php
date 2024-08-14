@@ -6,6 +6,8 @@ use App\Role;
 use App\Company;
 use App\Department;
 use App\Exports\UserExport;
+use App\RndApprovers;
+use App\SalesApprovers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,11 +19,9 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $departments = Department::all();
-
-        $companies = Company::all();
         $roles = Role::where('status', 'Active')->get();
         $companies = Company::where('status', 'Active')->get();
-        $roles = Role::all();
+        $approvers = User::with('salesApproverByUserId', 'salesApproverById')->where('is_active', 1)->get();
     
         $search = $request->input('search');
     
@@ -48,20 +48,22 @@ class UserController extends Controller
             'users' => $users,
             'roles' => $roles,
             'companies' => $companies,
-            'departments' => $departments
+            'departments' => $departments,
+            'approvers' => $approvers
         ]);
     }
     
     // Store
     public function store(Request $request) 
     {
+        // dd($request->all());
         $request->validate([
             'password' => 'confirmed|min:6',
             'email' => 'email|unique:users,email',
         ]);
 
         $user = new User;
-        $user->user_id = 'N/A';
+        // $user->user_id = 'N/A';
         $user->username = $request->username;
         $user->full_name = $request->full_name;
         $user->password = bcrypt($request->password);
@@ -72,6 +74,42 @@ class UserController extends Controller
         $user->is_active = 1;
         $user->save();
 
+        if ($request->has('user_approvers'))
+        {
+            $approvers = User::whereIn('id', $request->user_approvers)->get();
+
+            if ($request->department_id == 5 || $request->department_id == 38)
+            {
+                foreach($approvers as $key=>$approver)
+                {
+                    $salesApprover = new SalesApprovers;
+                    $salesApprover->SalesApproverId = $approver->id;
+                    $salesApprover->UserId = $user->id;
+                    if ($approver->department_id == 5)
+                    {
+                        $salesApprover->Type = 2;
+                    }
+                    elseif($approver->department_id == 38)
+                    {
+                        $salesApprover->Type = 1;
+                    }
+                    $salesApprover->save();
+                }
+            }
+
+            if ($request->department_id == 15)
+            {
+                foreach($approvers as $key=>$approver)
+                {
+                    $rndApprover = new RndApprovers;
+                    $rndApprover->UserId = $user->id;
+                    $rndApprover->RndApproverId = $approver->id;
+                    $rndApprover->save();
+                }
+            }
+
+        }
+
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
@@ -79,6 +117,7 @@ class UserController extends Controller
     // Update
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $request->validate([
             // 'password' => 'confirmed|min:6',
             'email' => 'email|unique:users,email,' . $id
@@ -95,6 +134,46 @@ class UserController extends Controller
         $user->department_id = $request->department_id;
         $user->is_active = $request->is_active;
         $user->save();
+
+        if ($request->has('user_approvers'))
+        {
+            $approvers = User::whereIn('id', $request->user_approvers)->get();
+            
+            if ($request->department_id == 5 || $request->department_id == 38)
+            {
+                $salesApprover = SalesApprovers::where('UserId', $id)->delete();
+
+                foreach($approvers as $key=>$approver)
+                {
+                    $salesApprover = new SalesApprovers;
+                    $salesApprover->SalesApproverId = $approver->id;
+                    $salesApprover->UserId = $user->id;
+                    if ($approver->department_id == 5)
+                    {
+                        $salesApprover->Type = 2;
+                    }
+                    elseif($approver->department_id == 38)
+                    {
+                        $salesApprover->Type = 1;
+                    }
+                    $salesApprover->save();
+                }
+            }
+
+            if ($request->department_id == 15)
+            {
+                $rndApprover = RndApprovers::where('UserId', $id)->delete();
+                
+                foreach($approvers as $key=>$approver)
+                {
+                    $rndApprover = new RndApprovers;
+                    $rndApprover->UserId = $user->id;
+                    $rndApprover->RndApproverId = $approver->id;
+                    $rndApprover->save();
+                }
+            }
+
+        }
 
         Alert::success('Successfully Update')->persistent('Dismiss');
         return back();
@@ -117,5 +196,27 @@ class UserController extends Controller
     public function exportUser()
     {
         return Excel::download(new UserExport, 'User.xlsx');
+    }
+
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+
+        $approvers = SalesApprovers::where('UserId', $id)->pluck('SalesApproverId')->toArray();
+        if ($approvers == null)
+        {
+            $approvers = RndApprovers::where('UserId', $id)->pluck('RndApproverId')->toArray();
+        }
+
+        return array(
+            'username' => $user->username,
+            'full_name' => $user->full_name,
+            'email' => $user->email,
+            'company_id' => $user->company_id,
+            'role_id' => $user->role_id,
+            'department_id' => $user->department_id,
+            'status' => $user->is_active,
+            'approvers' => $approvers
+        );
     }
 }
