@@ -63,7 +63,7 @@
                                         <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
                                             <i class="ti-eye"></i>
                                         </button>
-                                        <a href="{{ url('/edit_client/' . $client->id) }}" class="btn btn-sm btn-primary"><i class="ti ti-pencil"></i></a>
+                                        <a href="{{ url('/edit_client/' . $client->id) }}" class="btn btn-sm btn-warning"><i class="ti ti-pencil"></i></a>
                                         <button type="button" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button>
                                     </td>
                                     <td>{{ $client->Type == "1" ? 'Local' : 'International' }}</td>
