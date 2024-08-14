@@ -69,6 +69,8 @@
                                         Open
                                     @elseif($productEvaluation->Status == 30)
                                         Closed
+                                    @elseif($productEvaluation->Status == 50)
+                                        Cancelled
                                     @else
                                         {{ $productEvaluation->Status }}
                                     @endif
