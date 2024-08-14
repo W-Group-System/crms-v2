@@ -62,6 +62,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/new_department', 'DepartmentController@store')->name('department.store');
     Route::get('/edit_department/{id}', 'DepartmentController@edit')->name('edit_department');
     Route::post('update_department/{id}', 'DepartmentController@update')->name('update_department');
+    Route::post('activate_department/{id}', 'DepartmentController@active');
+    Route::post('deactivate_department/{id}', 'DepartmentController@deactive');
     Route::get('delete_department/{id}', 'DepartmentController@delete')->name('delete_department');
 
     # Product
