@@ -6,87 +6,85 @@ use Illuminate\Http\Request;
 use App\Company;
 use Validator;
 use DataTables;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class CompanyController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-        if(request()->ajax())
-        {
-            return datatables()->of(Company::latest()->get())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('companies.index'); 
+        $company = Company::latest()
+            ->when($request->search, function($query)use($request){
+                $query->where('code', 'LIKE', '%'.$request->search.'%')
+                ->orWhere('name', 'LIKE', '%'.$request->search.'%')
+                ->orWhere('description', 'LIKE', '%'.$request->search.'%');
+            })
+            ->paginate(10);
+
+        return view('companies.index',
+            array(
+                'company' => $company,
+                'search' => $request->search
+            )
+        ); 
     }
     // Create
     public function store(Request $request) 
     {
-        $rules = array(
-            'name'          =>  'required',
-            'description'   =>  'required'
-        );
+        $request->validate([
+            'code' => 'unique:companies,code',
+        ]);
 
-        $error = Validator::make($request->all(), $rules);
+        $company = new Company;
+        $company->code = $request->code;
+        $company->name = $request->name;
+        $company->description = $request->description;
+        $company->status = "Active";
+        $company->save();
 
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'name'          =>  $request->name,
-            'description'   =>  $request->description
-        );
-
-        Company::create($form_data);
-
-        return response()->json(['success' => 'Data Added Successfully.']);
+        Alert::success('Successfully Save')->persistent('Dismiss');
+        return back();
     }
     // Edit
     public function edit($id)
     {
-        if(request()->ajax())
-        {
-            $data = Company::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
+        $company = Company::findOrFail($id);
+
+        return array(
+            'name' => $company->name,
+            'description' => $company->description,
+            'code' => $company->code
+        );
     }
     // update
     public function update(Request $request, $id)
     {
-        $rules = array(
-            'name'          =>  'required',
-            'description'   =>  'required'
-        );
-
-        $error = Validator::make($request->all(), $rules);
-
-        if($error->fails())
-        {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
-
-        $form_data = array(
-            'name'          =>  $request->name,
-            'description'   =>  $request->description
-        );
-
-        Company::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        
     }
     // delete
     public function delete($id)
     {
         $data = Company::findOrFail($id);
         $data->delete();
+    }
+
+    public function activate($id)
+    {
+        $company = Company::findOrFail($id);
+        $company->status = "Active";
+        $company->save();
+
+        Alert::success('Successfully Activated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function deactivate($id)
+    {
+        $company = Company::findOrFail($id);
+        $company->status = "Inactive";
+        $company->save();
+
+        Alert::success('Successfully Deactivated')->persistent('Dismiss');
+        return back();
     }
 }

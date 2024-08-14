@@ -5,18 +5,88 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Company List
-            <button type="button" class="btn btn-md btn-primary" name="add_company" id="add_company">Add Company</button>
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formCompany">Add Company</button>
             </h4>
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                <div class="row height d-flex justify-content-end align-items-end">
+                    <div class="col-md-5">
+                        <div class="search">
+                            <i class="ti ti-search"></i>
+                            <input type="text" class="form-control" placeholder="Search Company" name="search" value="{{$search}}"> 
+                            <button class="btn btn-sm btn-info">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            @include('components.error')
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="company_table" width="100%">
                     <thead>
                         <tr>
+                            <th width="10%">Action</th>
+                            <th>Code</th>
                             <th width="30%">Name</th>
                             <th width="30%">Description</th>
-                            <th width="20%">Action</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        @foreach ($company as $comp)
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-warning editBtn" title="Edit" data-toggle="modal" data-target="#editCompany-{{$comp->id}}" data-id="{{$comp->id}}">
+                                        <i class="ti-pencil"></i>
+                                    </button>
+
+                                    @if($comp->status == "Active")
+                                    <form method="POST" action="{{url('deactivate_company/'.$comp->id)}}" class="d-inline-block">
+                                        @csrf
+                                        <button type="button" class="btn btn-sm btn-danger deactivate" title="Deactivate">
+                                            <i class="ti-trash"></i>
+                                        </button>
+                                    </form>
+                                    @elseif($comp->status == "Inactive")
+                                    <form method="POST" action="{{url('activate_company/'.$comp->id)}}" class="d-inline-block">
+                                        @csrf
+                                        <button type="button" class="btn btn-sm btn-info activate" title="Activate">
+                                            <i class="ti-check"></i>
+                                        </button>
+                                    </form>
+                                    @endif
+                                </td>
+                                <td>{{$comp->code}}</td>
+                                <td>{{$comp->name}}</td>
+                                <td>
+                                    @if($comp->description == null)
+                                    <p>No Description</p>
+                                    @else
+                                    {{$comp->description}}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($comp->status == "Active")
+                                    <div class="badge badge-success">{{$comp->status}}</div>
+                                    @elseif($comp->status == "Inactive")
+                                    <div class="badge badge-danger">{{$comp->status}}</div>
+                                    @endif
+                                </td>
+                            </tr>
+
+                            @include('companies.edit_company')
+                        @endforeach
+                    </tbody>
                 </table>
+                {!! $company->appends(['search' => $search])->links() !!}
+                @php
+                    $total = $company->total();
+                    $currentPage = $company->currentPage();
+                    $perPage = $company->perPage();
+                    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+
+                <p  class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
             </div>
         </div>
     </div>
@@ -31,212 +101,87 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_company" enctype="multipart/form-data" action="{{ route('store') }}">
-                    <span id="form_result"></span>
+                <form method="POST" id="form_company" enctype="multipart/form-data" action="{{url('add_company')}}">
                     @csrf
                     <div class="form-group">
+                        <label for="name">Code</label>
+                        <input type="text" class="form-control" id="code" name="code" placeholder="Enter company code" required>
+                    </div>
+                    <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter company name" required>
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
-                        <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description">
+                        <input type="text" class="form-control" id="description" name="description" placeholder="Enter description" required>
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="action" id="action" value="Save">
-                        <input type="hidden" name="hidden_id" id="hidden_id">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
+                        <button type="submit" class="btn btn-success">Submit</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Company</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding: 20px">
-                <h5 style="margin: 0">Are you sure you want to delete this data?</h5>
-            </div>
-            <div class="modal-footer" style="padding: 0.6875rem">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" name="yes_button" id="yes_button" class="btn btn-danger">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
+
 <script>
-    $(document).ready(function(){
-        $('#company_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('company.index') }}"
-            },
-            columns: [
-                {
-                    data: 'name',
-                    name: 'name'
-                },
-                {
-                    data: 'description',
-                    name: 'description'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: [0, 1], // Target the first column (index 1)
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
+    $(document).ready(function() {
+        $('#formCompany').on('hidden.bs.modal', function() {
+            $("[name='code']").val(null);
+            $("[name='name']").val(null);
+            $("[name='description']").val(null);
+        })
 
-        $('#add_company').click(function(){
-            $('#formCompany').modal('show');
-            $('.modal-title').text("Add Company");
-        });
+        $('.editBtn').on('click', function() {
+            var id = $(this).data('id');
 
-        $('#form_company').on('submit', function(event){
-            event.preventDefault();
-            if($('#action').val() == 'Save')
-            {
-                $.ajax({
-                    url: "{{ route('store') }}",
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success: function(data)
-                    {
-                        var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
-                        }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_company')[0].reset();
-                            setTimeout(function(){
-                                $('#formCompany').modal('hide');
-                            }, 2000);
-                            $('#company_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
-                        $('#form_result').html(html);
-                    }
-                })
-            }
-
-            if($('#action').val() == 'Edit')
-            {
-                var formData = new FormData(this);
-                formData.append('id', $('#hidden_id').val());
-                $.ajax({
-                    url: "{{ route('update_company', ':id') }}".replace(':id', $('#hidden_id').val()),
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success:function(data)
-                    {
-                        var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
-                        }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_company')[0].reset();
-                            setTimeout(function(){
-                                $('#formCompany').modal('hide');
-                            }, 2000);
-                            $('#company_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
-                        $('#form_result').html(html);
-                    }
-                });
-            }
-        });
-
-        $(document).on('click', '.edit', function(){
-            var id = $(this).attr('id');
-            console.log(id);
-            $('#form_result').html('');
             $.ajax({
-                url: "{{ route('edit', ['id' => '_id_']) }}".replace('_id_', id),
-                dataType: "json",
-                success: function(html){
-                    $('#name').val(html.data.name);
-                    $('#description').val(html.data.description);
-                    $('#hidden_id').val(html.data.id);
-                    $('.modal-title').text("Edit Company");
-                    $('#action_button').val("Update");
-                    $('#action').val("Edit");
-                    $('#formCompany').modal('show');
-                }
-            });
-        });
-
-        var company_id;
-        $(document).on('click', '.delete', function(){
-            company_id = $(this).attr('id');
-            $('#confirmModal').modal('show');
-            $('.modal-title').text("Delete Company");
-        });
-
-        $('#yes_button').click(function(){
-            $.ajax({
-                url: "{{ url('delete') }}/" + company_id, 
-                method: "GET",
-                beforeSend:function(){
-                    $('#yes_button').text('Deleting...');
-                },
-                success:function(data)
+                type: "get",
+                url: "{{url('edit_company')}}/" + id,
+                success: function(res)
                 {
-                    setTimeout(function(){
-                        $('#confirmModal').modal('hide');
-                        $('#company_table').DataTable().ajax.reload();
-                    }, 2000);
+                    $("[name='code']").val(res.code);
+                    $("[name='name']").val(res.name);
+                    $("[name='description']").val(res.description);
                 }
             })
-        });
-    });
+        })
+
+        $('.deactivate').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, deactivate it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.activate').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, activate it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+    })
 </script>
+
 @endsection
