@@ -38,7 +38,7 @@
                 </div> 
                 @include('components.error')
                 <div class="col-lg-12" align="right">
-                    <a href="{{ url('/sample_request') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a href="{{ url('/request_product_evaluation') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
                     {{-- @if ($requestEvaluation->Progress == 10)
                         <button type="button" class="btn btn-sm btn-success"
                                 data-target="#approveSrf{{ $requestEvaluation->id }}" 
@@ -93,14 +93,14 @@
                         title='Pause SRF'>
                         <i class="ti-control-pause">&nbsp;Pause</i>
                     </button> --}}
-                    <button type="button" class="btn btn-md btn-warning"
-                        data-target="#cancelRpe{{ $requestEvaluation->id }}" 
-                        data-toggle="modal">
+                    <button type="button" class="cancelRpe btn btn-md btn-danger" data-id="{{ $requestEvaluation->id }}"
+                       >
                         <i class="ti-na"></i>&nbsp;Cancel
                     </button>
-                    <button type="button" class="btn btn-md btn-warning"
-                        data-target="#closeRpe{{ $requestEvaluation->id }}" 
-                        data-toggle="modal">
+                    <button type="button" class="closeRpe btn btn-md btn-success" data-id="{{ $requestEvaluation->id }}"
+                        {{-- data-target="#closeRpe{{ $requestEvaluation->id }}" 
+                        data-toggle="modal" --}}
+                        >
                         <i class="ti-file"></i>&nbsp;Close
                     </button>
                 </div>
@@ -571,6 +571,78 @@
         }
         });
     }
+
+    $(".closeRpe").on('click', function() {
+            var rpeId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to close this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('CloseRpe') }}/" + rpeId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        $(".cancelRpe").on('click', function() {
+            var rpeId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to cancel this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('CancelRpe') }}/" + rpeId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
 
     $(document).ready(function() {
         new DataTable('.table-detailed', {

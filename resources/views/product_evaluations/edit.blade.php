@@ -61,7 +61,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Potential Volume</label>
-                                        <input type="text" class="form-control" name="PotentialVolume" value="{{ $productEvaluation->PotentialVolume }}">
+                                        <input type="number" class="form-control" name="PotentialVolume" value="{{ $productEvaluation->PotentialVolume }}">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -92,7 +92,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Target Price</label>
-                                        <input type="text" class="form-control"  name="TargetRawPrice" value="{{ $productEvaluation->TargetRawPrice }}">
+                                        <input type="number" class="form-control"  name="TargetRawPrice" value="{{ $productEvaluation->TargetRawPrice }}">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">

@@ -2,7 +2,7 @@
 	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="addCustomerRequirentLabel">Add New Customer Requiremnt</h5>
+				<h5 class="modal-title" id="addCustomerRequirentLabel">New Request For Product Evaluation</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -61,7 +61,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Potential Volume</label>
-                                        <input type="text" class="form-control" id="PotentialVolume" name="PotentialVolume" value="0">
+                                        <input type="number" class="form-control" id="PotentialVolume" name="PotentialVolume" value="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -92,7 +92,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Target Price</label>
-                                        <input type="text" class="form-control" id="TargetRawPrice" name="TargetRawPrice" value="0">
+                                        <input type="number" class="form-control" id="TargetRawPrice" name="TargetRawPrice" value="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -155,7 +155,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Supplier</label>
-                                <input type="text" class="form-control" id="Supplier" name="Supplier" placeholder="Enter CRR Number">
+                                <input type="text" class="form-control" id="Supplier" name="Supplier" placeholder="Enter Supplier">
                             </div>
                         </div>
                         <div class="col-lg-6"></div>
