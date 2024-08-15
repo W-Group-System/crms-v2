@@ -54,8 +54,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Transaction Number</label>
-                                <input type="text" class="form-control form-control-sm" id="TransactionNumber" name="TransactionNumber" placeholder="Enter Transaction Number" required>
-                            </div>
+                                <input type="text" class="form-control form-control-sm" id="TransactionNumber" name="TransactionNumber" placeholder="Enter Transaction Number" @if(Route::currentRouteName() == "viewCrr") value="{{$crr->CrrNumber}}" readonly @endif required>
+                            </div> 
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
