@@ -47,6 +47,16 @@ class CustomerRequirement extends Model
         return $this->belongsTo(User::class, 'SecondarySalesPersonId','user_id');
     }
 
+    public function primarySalesById()
+    {
+        return $this->belongsTo(User::class, 'PrimarySalesPersonId','id');
+    }
+
+    public function secondarySalesById()
+    {
+        return $this->belongsTo(User::class, 'SecondarySalesPersonId','id');
+    }
+
     public function priority()
     {
         return $this->belongsTo(CrrPriority::class,'Priority','Id');
@@ -75,5 +85,10 @@ class CustomerRequirement extends Model
     public function historyLogs()
     {
         return $this->hasMany(TransactionLogs::class,'TransactionId','id')->where('Type', 10);
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(Activity::class,'TransactionNumber','CrrNumber');
     }
 }

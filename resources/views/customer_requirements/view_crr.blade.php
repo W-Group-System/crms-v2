@@ -13,8 +13,27 @@
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
                     </button>
-                    <button type="button" class="btn btn-warning" title="Update" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                    @if(auth()->user()->department_id == 15 || auth()->user()->department_id == 42)
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
                         <i class="ti ti-pencil"></i>&nbsp;Update
+                    </button>
+                    @endif
+                    @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38)
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editCrr{{$crr->id}}">
+                        <i class="ti ti-pencil"></i>&nbsp;Update
+                    </button>
+                    @endif
+                    <button type="button" class="btn btn-info" data-toggle="modal">
+                        <i class="ti ti-back-left"></i>&nbsp;Return
+                    </button>
+                    <button type="button" class="btn btn-success">
+                        <i class="ti ti-check-box"></i>&nbsp;Accept
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        <i class="ti ti-close"></i>&nbsp;Close
+                    </button>
+                    <button type="button" class="btn btn-danger">
+                        <i class="mdi mdi-cancel"></i>&nbsp;Cancel
                     </button>
                 </div>
             </h4>
@@ -64,7 +83,13 @@
                     </div>
                     <label class="col-sm-3 col-form-label"><b>Primary Sales Person :</b></label>
                     <div class="col-sm-3">
-                        <label>{{$crr->primarySales->full_name}}</label>
+                        <label>
+                            @if($crr->primarySales)
+                            {{$crr->primarySales->full_name}}
+                            @elseif($crr->primarySalesById)
+                            {{$crr->primarySalesById->full_name}}
+                            @endif
+                        </label>
                     </div>
                 </div>
                 <div class="form-group row mb-2">
@@ -74,7 +99,13 @@
                     </div>
                     <label class="col-sm-3 col-form-label"><b>Secondary Sales Person :</b></label>
                     <div class="col-sm-3">
-                        <label>{{$crr->secondarySales->full_name}}</label>
+                        <label>
+                            @if($crr->secondarySales)
+                            {{$crr->secondarySales->full_name}}
+                            @elseif($crr->secondarySalesById)
+                            {{$crr->secondarySalesById->full_name}}
+                            @endif
+                        </label>
                     </div>
                 </div>
                 <div class="form-group row mb-2">
@@ -220,7 +251,7 @@
                     <a class="nav-link" id="assigned-tab" data-toggle="tab" href="#assigned" role="tab" aria-controls="assigned" aria-selected="false">Assigned R&D Personnel</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
+                    <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
@@ -265,7 +296,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="assigned" role="tabpanel" aria-labelledby="assigned">
+                <div class="tab-pane fade " id="assigned" role="tabpanel" aria-labelledby="assigned">
                     <div class="table-responsive">
                         <table class="table table-hover table-striped table-bordered tables" width="100%">
                             <thead>
@@ -290,16 +321,68 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities">
+                    <div class="form-group">
+                        <label>Show : </label>
+                        <label class="checkbox-inline">
+                            <input name="open" class="activity_status" type="checkbox" value="10"> Open
+                        </label>
+                        <label class="checkbox-inline">
+                            <input name="close" class="activity_status" type="checkbox" value="20"> Closed
+                        </label>
+                    </div>
+                    <button class="btn btn-primary mb-3 float-right" data-toggle="modal" data-target="#addActivity">Add Activities</button>
+                    @include('activities.new_activities')
+
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered table-striped tables" width="100%">
                             <thead>
                                 <tr>
+                                    <th>Actions</th>
                                     <th>#</th>
                                     <th>Schedule (Y-M-D)</th>
                                     <th>Title</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
+                            <tbody>
+                                @if($crr->activities)
+                                    @foreach ($crr->activities as $a)
+                                        <tr>
+                                            <td width="10%">
+                                                <button type="button" class="btn btn-warning btn-sm edit_activity" data-toggle="modal" data-target="#editActivity-{{$a->id}}" data-clientid="{{$a->ClientId}}" data-clientcontact="{{$a->ClientContactId}}">
+                                                    <i class="ti ti-pencil"></i>
+                                                </button>
+
+                                                <form method="POST" class="d-inline-block" action="{{url('delete_activity/'.$a->id)}}">
+                                                    @csrf
+
+                                                    <button type="button" class="btn btn-danger btn-sm deleteActivityBtn">
+                                                        <i class="ti ti-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <a href="{{url('view_activity/'.$a->id)}}" target="_blank">
+                                                    {{$a->ActivityNumber}}
+                                                </a>
+                                            </td>
+                                            <td>{{$a->ScheduleFrom}}</td>
+                                            <td>{{$a->Title}}</td>
+                                            <td>
+                                                @if($a->Status == 10)
+                                                <div class="badge badge-success">Open</div>
+                                                @elseif($a->Status == 20)
+                                                <div class="badge badge-danger">Close</div>
+                                                @elseif($a->Status == 50)
+                                                <div class="badge badge-warning">Cancelled</div>
+                                                @endif
+                                            </td>
+                                        </tr>
+
+                                        @include('activities.edit_activities')
+                                    @endforeach
+                                @endif
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -406,7 +489,11 @@
                                 @foreach ($crr->historyLogs as $logs)
                                     <tr>
                                         <td>{{date('Y-m-d h:i:s', strtotime($logs->ActionDate))}}</td>
-                                        <td>{{$logs->historyUser->full_name}}</td>
+                                        <td>
+                                            @if($logs->historyUser)
+                                            {{$logs->historyUser->full_name}}
+                                            @endif
+                                        </td>
                                         <td>{{$logs->Details}}</td>
                                     </tr>
                                 @endforeach
@@ -419,6 +506,7 @@
     </div>
 </div>
 @include('customer_requirements.update')
+@include('customer_requirements.edit2_crr')
 
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
@@ -427,33 +515,128 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
-    new DataTable('.tables', {
-        destroy: true,
-        processing: true,
-        pageLength: 10,
-        ordering: false
-    });
-
-    $('[name="crr_file"]').on('change', function(e) {
-        var filename = e.target.files[0].name;
-
-        $(".crrFileName").val(filename);
-    })
-
-    $('.deleteBtn').on('click', function() {
-        var form = $(this).closest('form');
-
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-            form.submit()
+    $(document).ready(function(){
+        new DataTable('.tables', {
+            destroy: true,
+            processing: true,
+            pageLength: 10,
+            ordering: false
         });
+
+        $('[name="crr_file"]').on('change', function(e) {
+            var filename = e.target.files[0].name;
+
+            $(".crrFileName").val(filename);
+        })
+
+        $('.deleteBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if(result.isConfirmed)
+                {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.edit_activity').on('click', function() {
+            var clientId = $(this).data('clientid');
+            var clientContact = $(this).data('clientcontact');
+
+            setTimeout(function() {
+                $.ajax({
+                    type: "POST",
+                    url: "{{url('edit_client_contact')}}",
+                    data: {
+                        clientId: clientId
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(res)
+                    {
+                        setTimeout(function() {
+                            $('.ClientContactId').html(res)
+                            $('.ClientContactId').val(clientContact);
+                        }, 500)
+                    }
+                })
+            }, 500)
+        })
+        
+        $(".ClientId").on('change', function() {
+            var client_id = $(this).val();
+            console.log(client_id);
+            
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_client_contact')}}",
+                data: {
+                    client_id: client_id
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res)
+                {
+                    setTimeout(function() {
+                        $('.ClientContactId').html(res)
+                    }, 500)
+                }
+            })
+        })
+
+        $('.edit_activity').on('click', function() {
+            var clientId = $(this).data('clientid');
+            var clientContact = $(this).data('clientcontact');
+            
+            setTimeout(function() {
+                $.ajax({
+                    type: "POST",
+                    url: "{{url('edit_client_contact')}}",
+                    data: {
+                        clientId: clientId
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(res)
+                    {
+                        setTimeout(function() {
+                            $('.ClientContactId').html(res)
+                            $('.ClientContactId').val(clientContact);
+                        }, 500)
+                    }
+                })
+            }, 500)
+        })
+
+        $('.deleteActivityBtn').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
     })
 </script>
 @endsection

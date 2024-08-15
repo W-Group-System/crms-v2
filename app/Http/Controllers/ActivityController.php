@@ -59,7 +59,7 @@ class ActivityController extends Controller
         ]);
 
         $activityNumber = null;
-        if (auth()->user()->department_id == 2)
+        if (auth()->user()->department_id == 38)
         {
             $checkActivity = Activity::select('ActivityNumber')->where('ActivityNumber', 'LIKE', "%ACT-LS%")->orderBy('ActivityNumber', 'desc')->first();
             $count = substr($checkActivity->ActivityNumber, 10);
@@ -69,7 +69,7 @@ class ActivityController extends Controller
             $activityNumber = 'ACT'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
         }
 
-        if (auth()->user()->department_id == 1)
+        if (auth()->user()->department_id == 5)
         {
             $checkActivity = Activity::select('ActivityNumber')->where('ActivityNumber', 'LIKE', "%ACT-IS%")->orderBy('ActivityNumber', 'desc')->first();
             $count = substr($checkActivity->ActivityNumber, 10);
@@ -148,7 +148,7 @@ class ActivityController extends Controller
     
                 $file_name = '/activity_attachment/'.$name;
                 
-                $activityFiles = new FileActivity;
+                $activityFiles = FileActivity::findOrFail($activity->id);
                 $activityFiles->activity_id = $activity->id;
                 $activityFiles->path = $file_name;
                 $activityFiles->save();
@@ -212,12 +212,13 @@ class ActivityController extends Controller
         return array('message' => 'Successfully Open');
     }
 
-    public function delete(Request $request)
+    public function delete($id)
     {
-        $activity = Activity::findOrFail($request->id);
+        $activity = Activity::findOrFail($id);
         $activity->delete();
-
-        return array('message' => 'Successfully Deleted');
+    
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
     }
 
     public function editClientContact(Request $request)
