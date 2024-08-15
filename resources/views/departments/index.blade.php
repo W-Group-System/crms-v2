@@ -104,7 +104,7 @@
                         @endif
                     </tbody>
                 </table>
-                {!! $departments->appends(['search' => $search])->links() !!}
+                {!! $departments->appends(['search' => $search, 'entries' => $entries])->links() !!}
                 @php
                     $total = $departments->total();
                     $currentPage = $departments->currentPage();
