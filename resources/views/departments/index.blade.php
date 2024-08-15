@@ -7,17 +7,33 @@
             Department List
             <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formDepartment">Add Department</button>
             </h4>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
-                    <div class="col-md-5">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search Department" name="search" value="{{$search}}"> 
-                            <button class="btn btn-sm btn-info">Search</button>
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Show</span>
+                    <form method="GET" class="d-inline-block">
+                        <select name="number_of_entries" class="form-control">
+                            <option value="10" @if($entries == 10) selected @endif>10</option>
+                            <option value="25" @if($entries == 25) selected @endif>25</option>
+                            <option value="50" @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
                 </div>
-            </form>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Department" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="department_table">
                     <thead>
@@ -121,7 +137,7 @@
                         <select class="form-control js-example-basic-single" name="company_id" style="position: relative !important" title="Select Company" required>
                             <option value="" disabled selected>Select Company</option>
                             @foreach($companies as $company)
-                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                <option value="{{ $company->id }}">{{ $company->code.' - '.$company->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -456,6 +472,12 @@
                     form.submit()
                 }
             });
+        })
+
+        $("[name='number_of_entries']").on('change', function() {
+            var form = $(this).closest('form')
+
+            form.submit()
         })
     })
 </script>

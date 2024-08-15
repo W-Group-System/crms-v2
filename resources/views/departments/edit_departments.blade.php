@@ -16,7 +16,7 @@
                         <select class="form-control js-example-basic-single" name="company_id" style="position: relative !important" title="Select Company" required>
                             <option value="" disabled selected>Select Company</option>
                             @foreach($companies as $company)
-                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                <option value="{{ $company->id }}">{{ $company->code.' - '.$company->name }}</option>
                             @endforeach
                         </select>
                     </div>
