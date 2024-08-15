@@ -15,7 +15,7 @@
                         <select name="department" class="js-example-basic-single form-control">
                             <option value="">-Department-</option>
                             @foreach ($department as $dpt)
-                                <option value="{{$dpt->id}}" @if($dpt->id == $role->department_id) selected @endif>{{$dpt->name}}</option>
+                                <option value="{{$dpt->id}}" @if($dpt->id == $role->department_id) selected @endif>{{$dpt->department_code.' - '.$dpt->name}}</option>
                             @endforeach
                         </select>
                     </div>
