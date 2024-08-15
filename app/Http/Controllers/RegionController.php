@@ -4,25 +4,26 @@ namespace App\Http\Controllers;
 use App\Region;
 use Validator;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class RegionController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {
-        if(request()->ajax())
-        {
-            return datatables()->of(Region::latest()->get())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('regions.index');
+        $region = Region::when($request->search, function($query)use($request) {
+                $query->where('Name', 'LIKE', '%'.$request->search.'%')->orWhere('Description', 'LIKE', '%'.$request->search.'%');
+            })
+            ->latest()
+            ->paginate($request->entries ?? 10);
+
+        return view('regions.index',
+            array(
+                'region' => $region,
+                'search' => $request->search,
+                'entries' => $request->entries
+            )
+        );
     }
 
     // Store
@@ -39,28 +40,24 @@ class RegionController extends Controller
 
         if($error->fails())
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            return response()->json(['errors' => $error->errors()->all(), 'status' => 0]);
         }
 
-        $form_data = array(
-            'Type'          =>  $request->Type,
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
-        );
+        $region = new Region;
+        $region->Type = $request->Type;
+        $region->Name = $request->Name;
+        $region->Description = $request->Description;
+        $region->save();
 
-        Region::create($form_data);
-
-        return response()->json(['success' => 'Data Added Successfully.']);
+        return response()->json(['message' => 'Data Added Successfully.', 'status' => 1]);
     }
 
     // Edit
     public function edit($id)
     {
-        if(request()->ajax())
-        {
-            $data = Region::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
+        $data = Region::findOrFail($id);
+
+        return response()->json(['data' => $data]);
     }
 
     // Update
@@ -76,18 +73,16 @@ class RegionController extends Controller
 
         if($error->fails())
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            return response()->json(['errors' => $error->errors()->all(), 'status' => 0]);
         }
 
-        $form_data = array(
-            'Type'          =>  $request->Type,
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
-        );
+        $region = Region::findOrFail($id);
+        $region->Type = $request->Type;
+        $region->Name = $request->Name;
+        $region->Description = $request->Description;
+        $region->save();
 
-        Region::whereId($id)->update($form_data);
-
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        return response()->json(['message' => 'Data is Successfully Updated.', 'status' => 1]);
     }
 
     // Delete
@@ -95,5 +90,8 @@ class RegionController extends Controller
     {
         $data = Region::findOrFail($id);
         $data->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
     }
 }
