@@ -4,25 +4,26 @@ namespace App\Http\Controllers;
 use App\Country;
 use Validator;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class CountryController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {
-        if(request()->ajax())
-        {
-            return datatables()->of(Country::latest()->get())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        return view('countries.index');
+        $country = Country::when($request->search, function($query)use($request) {
+                $query->where('Name', $request->search)->orWhere('Description', $request->Description);
+            })
+            ->latest()
+            ->paginate($request->entries ?? 10);
+
+        return view('countries.index',
+            array(
+                'country' => $country,
+                'entries' => $request->entries,
+                'search' => $request->search
+            )
+        );
     }
 
     // Store
@@ -38,7 +39,7 @@ class CountryController extends Controller
 
         if($error->fails())
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            return response()->json(['errors' => $error->errors()->all(), 'status' => 0]);
         }
 
         $form_data = array(
@@ -48,7 +49,7 @@ class CountryController extends Controller
 
         Country::create($form_data);
 
-        return response()->json(['success' => 'Data Added Successfully.']);
+        return response()->json(['success' => 'Data Added Successfully.', 'status' => 1]);
     }
     
     // Edit
@@ -73,7 +74,7 @@ class CountryController extends Controller
 
         if($error->fails())
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            return response()->json(['errors' => $error->errors()->all(), 'status' => 0]);
         }
 
         $form_data = array(
@@ -83,7 +84,7 @@ class CountryController extends Controller
 
         Country::whereId($id)->update($form_data);
 
-        return response()->json(['success' => 'Data is Successfully Updated.']);
+        return response()->json(['success' => 'Data is Successfully Updated.', 'status' => 1]);
     }
 
     // Delete
@@ -91,5 +92,8 @@ class CountryController extends Controller
     {
         $data = Country::findOrFail($id);
         $data->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
     }
 }
