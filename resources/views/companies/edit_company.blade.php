@@ -8,7 +8,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_company" enctype="multipart/form-data" action="{{url('add_company')}}">
+                <form method="POST" class="update_company_form" action="{{url('update_company/'.$comp->id)}}">
+                    <div class="alert"></div>
                     @csrf
                     <div class="form-group">
                         <label for="name">Code</label>

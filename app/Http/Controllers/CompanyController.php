@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Company;
-use Validator;
-use DataTables;
+use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class CompanyController extends Controller
@@ -19,31 +18,40 @@ class CompanyController extends Controller
                 ->orWhere('name', 'LIKE', '%'.$request->search.'%')
                 ->orWhere('description', 'LIKE', '%'.$request->search.'%');
             })
-            ->paginate(10);
+            ->paginate($request->entries ?? 10);
 
         return view('companies.index',
             array(
                 'company' => $company,
-                'search' => $request->search
+                'search' => $request->search,
+                'entries' => $request->entries
             )
         ); 
     }
     // Create
     public function store(Request $request) 
     {
-        $request->validate([
+        $rules = [
             'code' => 'unique:companies,code',
-        ]);
+        ];
 
-        $company = new Company;
-        $company->code = $request->code;
-        $company->name = $request->name;
-        $company->description = $request->description;
-        $company->status = "Active";
-        $company->save();
+        $validator = Validator::make($request->all(), $rules);
 
-        Alert::success('Successfully Save')->persistent('Dismiss');
-        return back();
+        if ($validator->fails())
+        {
+            return response()->json(['error' => $validator->errors()->all(), 'status' => 0]);
+        }
+        else
+        {
+            $company = new Company;
+            $company->code = $request->code;
+            $company->name = $request->name;
+            $company->description = $request->description;
+            $company->status = "Active";
+            $company->save();
+
+            return response()->json(['message' => 'Successfully Saved', 'status' => 1]);
+        }
     }
     // Edit
     public function edit($id)
@@ -59,7 +67,26 @@ class CompanyController extends Controller
     // update
     public function update(Request $request, $id)
     {
-        
+        $rules = [
+            'code' => 'unique:companies,code,' . $id,
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails())
+        {
+            return response()->json(['error' => $validator->errors()->all(), 'status' => 0]);
+        }
+        else
+        {
+            $company = Company::findOrFail($id);
+            $company->code = $request->code;
+            $company->name = $request->name;
+            $company->description = $request->description;
+            $company->save();
+
+            return response()->json(['message' => 'Successfully Saved', 'status' => 1]);
+        }
     }
     // delete
     public function delete($id)
