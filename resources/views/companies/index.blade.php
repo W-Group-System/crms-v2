@@ -7,17 +7,33 @@
             Company List
             <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formCompany">Add Company</button>
             </h4>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
-                    <div class="col-md-5">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search Company" name="search" value="{{$search}}"> 
-                            <button class="btn btn-sm btn-info">Search</button>
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Showing</span>
+                    <form action="" method="get" class="d-inline-block">
+                        <select name="entries" class="form-control ">
+                            <option value="10"  @if($entries == 10) selected @endif>10</option>
+                            <option value="25"  @if($entries == 25) selected @endif>25</option>
+                            <option value="50"  @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
                 </div>
-            </form>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Company" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
             @include('components.error')
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="company_table" width="100%">
@@ -42,7 +58,7 @@
                                     <form method="POST" action="{{url('deactivate_company/'.$comp->id)}}" class="d-inline-block">
                                         @csrf
                                         <button type="button" class="btn btn-sm btn-danger deactivate" title="Deactivate">
-                                            <i class="ti-trash"></i>
+                                            <i class="mdi mdi-cancel"></i>
                                         </button>
                                     </form>
                                     @elseif($comp->status == "Inactive")
@@ -76,7 +92,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                {!! $company->appends(['search' => $search])->links() !!}
+                {!! $company->appends(['search' => $search, 'entries' => $entries])->links() !!}
                 @php
                     $total = $company->total();
                     $currentPage = $company->currentPage();
@@ -101,7 +117,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_company" enctype="multipart/form-data" action="{{url('add_company')}}">
+                <form method="POST" id="form_company" action="{{url('add_company')}}">
+                    <div class="alert"></div>
                     @csrf
                     <div class="form-group">
                         <label for="name">Code</label>
@@ -180,6 +197,78 @@
                     form.submit()
                 }
             });
+        })
+        console.log('asdad');
+        
+        $("#form_company").on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serializeArray()
+            var url = $(this).attr('action');
+
+            
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: formData,
+                success: function(res)
+                {
+                    if (res.status == 0)
+                    {
+                        $('.alert').html("")
+                        $.each(res.error, function(key, msg) {
+                            $('.alert').addClass('alert-danger').append(msg);
+                        })
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            icon: "success",
+                            title: res.message
+                        }).then(() => {
+                            location.reload()
+                        })
+                    }
+                }
+            })
+        })
+
+        $(".update_company_form").on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serializeArray()
+            var url = $(this).attr('action');
+            
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: formData,
+                success: function(res)
+                {
+                    if (res.status == 0)
+                    {
+                        $('.alert').html("")
+                        $.each(res.error, function(key, msg) {
+                            $('.alert').addClass('alert-danger').append(msg);
+                        })
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            icon: "success",
+                            title: res.message
+                        }).then(() => {
+                            location.reload()
+                        })
+                    }
+                }
+            })
+        })
+
+        $('[name="entries"]').on('change', function() {
+            var form = $(this).closest('form')
+
+            form.submit()
         })
     })
 </script>
