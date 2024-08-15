@@ -13,6 +13,7 @@ class DepartmentController extends Controller
     // List
     public function index(Request $request)
     {
+        // dd();
         $departments = Department::with('company')
             ->when($request->search, function($query)use($request) {
                 $query->whereHas('company', function($q)use($request) {
@@ -23,12 +24,13 @@ class DepartmentController extends Controller
                 ->orWhere('description', 'LIKE', "%".$request->search."%");
             })
             ->latest()
-            ->paginate(10);
+            ->paginate($request->number_of_entries ?? 10);
 
         $companies = Company::where('status', 'Active')->get();
         $search = $request->search;
+        $entries = $request->number_of_entries;
 
-        return view('departments.index', compact('departments', 'companies', 'search'));
+        return view('departments.index', compact('departments', 'companies', 'search', 'entries'));
     }
     
     // Store
@@ -51,6 +53,7 @@ class DepartmentController extends Controller
             $department->department_code = $request->code;
             $department->name = $request->name;
             $department->description = $request->description;
+            $department->status = "Active";
             $department->save();
 
             return response()->json(['message' => 'Successfully Saved', 'status' => 1]);
