@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Department List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formDepartment">Add Department</button>
+            <button type="button" class="btn btn-md btn-primary" id="addDepartment" data-toggle="modal" data-target="#formDepartment">Add Department</button>
             </h4>
             <div class="row">
                 <div class="col-lg-6">
@@ -418,6 +418,13 @@
         })
 
         $('#formDepartment').on('hidden.bs.modal', function() {
+            $("[name='company_id']").val(null).trigger('change');
+            $("[name='code']").val(null);
+            $("[name='name']").val(null);
+            $("[name='description']").val(null);
+        })
+
+        $("#addDepartment").on('click', function() {
             $("[name='company_id']").val(null).trigger('change');
             $("[name='code']").val(null);
             $("[name='name']").val(null);

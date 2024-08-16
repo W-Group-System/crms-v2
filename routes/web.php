@@ -156,7 +156,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('update_customer_requirement/{id}', 'CustomerRequirementController@update');
     Route::post('update_crr/{id}', 'CustomerRequirementController@updateCrr');
     Route::post('/delete_crr/{id}', 'CustomerRequirementController@delete');
-    Route::get('view_customer_requirement/{id}', 'CustomerRequirementController@view');
+    Route::get('view_customer_requirement/{id}', 'CustomerRequirementController@view')->name('viewCrr');
     Route::get('customer_requirement_export', 'CustomerRequirementController@export');
 
     # Crr File
@@ -329,7 +329,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/edit_activity/{id}', 'ActivityController@edit')->name('edit_activity');    
     Route::post('/update_activity/{id}', 'ActivityController@update')->name('update_activity');
     // Route::get('get_contacts/{clientId}', [ActivityController::class, 'getContactsByClient']);
-    Route::post('delete_activity', 'ActivityController@delete');
+    Route::post('delete_activity/{id}', 'ActivityController@delete');
     Route::get('view_activity/{id}', 'ActivityController@view')->name('activity.view');
     Route::post('close_activity', 'ActivityController@close')->name('delete_activity');
     Route::post('open_activity', 'ActivityController@open')->name('open_activity');
@@ -378,14 +378,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/new_region', 'RegionController@store')->name('region.store');
     Route::get('/edit_region/{id}', 'RegionController@edit')->name('edit_region');
     Route::post('update_region/{id}', 'RegionController@update')->name('update_region');
-    Route::get('delete_region/{id}', 'RegionController@delete')->name('delete_region');
+    Route::post('delete_region/{id}', 'RegionController@delete')->name('delete_region');
 
     // Country
     Route::get('/country', 'CountryController@index')->name('country.index');
     Route::post('/new_country', 'CountryController@store')->name('country.store');
     Route::get('/edit_country/{id}', 'CountryController@edit')->name('edit_country');
     Route::post('update_country/{id}', 'CountryController@update')->name('update_country');
-    Route::get('delete_country/{id}', 'CountryController@delete')->name('delete_country');
+    Route::post('delete_country/{id}', 'CountryController@delete')->name('delete_country');
 
     // Area
     Route::get('/area', 'AreaController@index')->name('area.index');
