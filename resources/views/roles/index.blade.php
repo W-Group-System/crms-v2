@@ -86,8 +86,6 @@
                                     @endif
                                 </td>
                             </tr>
-
-                            @include('roles.edit_roles')
                             @endforeach
                         @else
                             <tr>
@@ -125,7 +123,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="department">Department</label>
-                        <select name="department" class="js-example-basic-single form-control">
+                        <select name="department" class="js-example-basic-single form-control departmentSelectOption" required>
                             <option value="">-Department-</option>
                             @foreach ($department as $dpt)
                                 <option value="{{$dpt->id}}">{{$dpt->department_code.' - '.$dpt->name}}</option>
@@ -140,6 +138,11 @@
                         <label for="name">Description</label>
                         <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description" required>
                     </div>
+                    <div class="type-container">
+                        {{-- @foreach ($collection as $item)
+                            
+                        @endforeach --}}
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <input type="submit" class="btn btn-success" value="Save">
@@ -149,6 +152,10 @@
         </div>
     </div>
 </div>
+
+@foreach ($roles as $role)
+@include('roles.edit_roles')
+@endforeach
 
 <script>
     $(document).ready(function() {
@@ -207,8 +214,8 @@
                 success: function(res)
                 {
                     $("[name='department']").val(res.department).trigger('change');
-                    $("[name='name']").val(res.description);
-                    $("[name='description']").val(res.name);
+                    $("[name='name']").val(res.name);
+                    $("[name='description']").val(res.description);
                 }
             })
         })
@@ -217,6 +224,33 @@
             var form = $(this).closest('form');
 
             form.submit();
+        })
+
+        $(".departmentSelectOption").on('change', function() {
+            
+            if($(this).val() == 38 || $(this).val() == 5)
+            {
+                if ($('.form-group:contains("Type")').length == 0)
+                {
+                    var newRow = `
+                        <div class="form-group">
+                            <label for="name">Type</label>
+                            <select name="type" class="form-control">
+                                <option disabled selected value>Select Type</option>
+                                <option value="LS">Local Sales</option>
+                                <option value="IS">International Sales</option>
+                            </select>
+                        </div>
+                    `
+
+                    $('.type-container').append(newRow)
+                    $("[name='type']").select2()
+                }
+            }
+            else 
+            {
+                $('.type-container').children().remove()
+            }
         })
     })
 </script>
