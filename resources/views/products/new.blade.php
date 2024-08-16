@@ -50,6 +50,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if(count($products) > 0)
                         @foreach ($products as $product)
                             <tr>
                                 <td>
@@ -94,6 +95,11 @@
                                 <td>{{date('M d, Y', strtotime($product->created_at))}}</td>
                             </tr>
                         @endforeach
+                        @else
+                        <tr>
+                            <td colspan="5" class="text-center">No data available.</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
 
