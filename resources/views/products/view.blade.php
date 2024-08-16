@@ -22,12 +22,11 @@
                 </div>
             </div>
             @php
-                use App\Helpers\Helpers;
-                
-                $rmc = Helpers::rmc($data->productMaterialComposition, $data->id);
-                $identicalComposition = Helpers::identicalComposition($data->productMaterialComposition, $data->id);
-                $customerRequirements = Helpers::customerRequirements($data->code);
-                $productRps = Helpers::productRps($data->code);
+                $rmc = rmc($data->productMaterialComposition, $data->id);
+                $identicalComposition = identicalComposition($data->productMaterialComposition, $data->id);
+                $customerRequirements = customerRequirements($data->code);
+                $productRps = productRps($data->code);
+                $historyRmc = historyRmc($data->productMaterialComposition, $data->id);
             @endphp
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
                 <div class="form-group row">
@@ -40,13 +39,13 @@
                     <label class="col-sm-2 col-form-label"><b>Code:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->code }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>EUR</strong> {{Helpers::usdToEur($rmc)}}</label>
+                    <label class="col-sm-2 col-form-label"><strong>EUR</strong> {{usdToEur($rmc)}}</label>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Type:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->type == 1 ? 'Pure' : 'Blend' }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>PHP</strong> {{Helpers::usdToPhp($rmc)}}</label>
+                    <label class="col-sm-2 col-form-label"><strong>PHP</strong> {{usdToPhp($rmc)}}</label>
                 </div>
                 <div class="form-group row" style="margin-top: 20px">
                     <label class="col-sm-2 col-form-label"><b>Reference Number:</b></label>
@@ -97,7 +96,7 @@
             </form>
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
+                    <a class="nav-link " id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
@@ -109,7 +108,7 @@
                     <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
+                    <a class="nav-link active" id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
@@ -118,11 +117,11 @@
                     <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="historycal-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
+                    <a class="nav-link" id="historical-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade active show" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                <div class="tab-pane fade " id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @include('components.error')
                     <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
                         {{csrf_field()}}
@@ -332,7 +331,7 @@
                         @include('products.edit_file')
                     @endforeach
                 </div>
-                <div class="tab-pane fade " id="rmc" role="tabpanel" aria-labelledby="rmc-tab">
+                <div class="tab-pane fade active show" id="rmc" role="tabpanel" aria-labelledby="rmc-tab">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered table-striped tables" width="100%">
                             <thead>
