@@ -44,13 +44,13 @@
                     <label class="col-sm-2 col-form-label"><b>Code:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->code }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>EUR</strong> {{Helpers::usdToEur($rmc)}}</label>
+                    <label class="col-sm-2 col-form-label"><strong>EUR</strong> {{usdToEur($rmc)}}</label>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Type:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->type == 1 ? 'Pure' : 'Blend' }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>PHP</strong> {{Helpers::usdToPhp($rmc)}}</label>
+                    <label class="col-sm-2 col-form-label"><strong>PHP</strong> {{usdToPhp($rmc)}}</label>
                 </div>
                 <div class="form-group row" style="margin-top: 20px">
                     <label class="col-sm-2 col-form-label"><b>Reference Number:</b></label>
