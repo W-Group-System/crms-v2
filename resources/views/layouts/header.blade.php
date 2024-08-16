@@ -338,6 +338,7 @@
                             </a>
                         </li>
                         @endif
+                        @if(auth()->user()->department_id == 1)
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#module" aria-expanded="false" aria-controls="module" onclick="toggleModule(event)">
                                 <i class="icon-layout menu-icon"></i>
@@ -403,6 +404,7 @@
                                 </ul>
                             </div>
                         </li>
+                        @endif
                         @if(auth()->user()->department_id == 1)
                         <li class="nav-item"> 
                             <a class="nav-link" data-toggle="collapse" href="#setup" aria-expanded="false" aria-controls="setup">
