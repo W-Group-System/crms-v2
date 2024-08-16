@@ -99,12 +99,15 @@ class CustomerRequirementController extends Controller
             'RefCrrNumber' => $request->input('RefCrrNumber'),
             'RefRpeNumber' => $request->input('RefRpeNumber'),
         ]);
-        foreach ($request->input('NatureOfRequestId') as $natureOfRequestId) {
-                        CrrNature::create([
-                            'CustomerRequirementId' => $customerRequirementData->id,
-                            'NatureOfRequestId' => $natureOfRequestId
-                        ]);
-                    }
+        if($request->has('NatureOfRequestId'))
+        {
+            foreach ($request->input('NatureOfRequestId') as $natureOfRequestId) {
+                            CrrNature::create([
+                                'CustomerRequirementId' => $customerRequirementData->id,
+                                'NatureOfRequestId' => $natureOfRequestId
+                            ]);
+                        }
+        }
         
         Alert::success('Successfully Save')->persistent('Dismiss');
         return back();
@@ -150,10 +153,22 @@ class CustomerRequirementController extends Controller
     public function view($id)
     {
         $customerRequirement = CustomerRequirement::with('client', 'product_application', 'progressStatus', 'crrNature', 'primarySales', 'secondarySales', 'priority', 'crrDetails')->findOrFail($id);
+        $client = Client::get();
+        $user = User::where('is_active', 1)->get();
+        $currentUser = Auth::user();
+        $product_applications = ProductApplication::get();
+        $price_currencies = PriceCurrency::all();
+        $nature_requests = NatureRequest::all();
 
         return view('customer_requirements.view_crr',
             array(
-                'crr' => $customerRequirement
+                'crr' => $customerRequirement,
+                'clients' => $client,
+                'users' => $user,
+                'currentUser' => $currentUser,
+                'product_applications' => $product_applications,
+                'price_currencies' => $price_currencies,
+                'nature_requests' => $nature_requests
             )
         );
     }

@@ -39,4 +39,9 @@ class Activity extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function files()
+    {
+        return $this->hasOne(FileActivity::class);
+    }
 }
