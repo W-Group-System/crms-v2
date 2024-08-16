@@ -53,6 +53,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if(count($products) > 0)
                         @foreach ($products as $p)
                             <tr>
                                 <td>
@@ -92,6 +93,11 @@
                                 <td>{{date('M d, Y', strtotime($p->created_at))}}</td>
                             </tr>
                         @endforeach
+                        @else
+                        <tr>
+                            <td colspan="5" class="text-center">No data available.</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
                 {!! $products->appends(['search' => $search])->links() !!}

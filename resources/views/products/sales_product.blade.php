@@ -81,6 +81,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if(count($products) > 0)
                         @foreach ($products as $product)
                             @php
                                 $usd = rmc($product->productMaterialComposition, $product->id);
@@ -118,6 +119,11 @@
                                 <td>{{$php}}</td>
                             </tr>
                         @endforeach
+                        @else
+                        <tr>
+                            <td colspan="7" class="text-center">No data available.</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
 

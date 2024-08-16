@@ -140,3 +140,10 @@ function getCrrIdByNumber($number)
     
     return $crr ? $crr->id : null;
 }
+
+function productRps($code)
+{
+    $rpe = RequestProductEvaluation::where('RpeResult', 'LIKE', '%'.$code.'%')->get();
+
+    return $rpe;
+}
