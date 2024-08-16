@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between">
             Users List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formUser">Add User</button>
+            <button type="button" class="btn btn-md btn-primary" id="addUserBtn" data-toggle="modal" data-target="#formUser">Add User</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -161,6 +161,18 @@
 <script>
     $(document).ready(function() {
         $('#formUser').on('hidden.bs.modal', function() {
+            $("[name='username']").val(null);
+            $("[name='full_name']").val(null);
+            $("[name='password']").val(null);
+            $("[name='password_confirmation']").val(null);
+            $("[name='email']").val(null);
+            $("[name='role_id']").val(null).trigger('change');
+            $("[name='company_id']").val(null).trigger('change');
+            $("[name='department_id']").val(null).trigger('change');
+            $("[name='user_approvers[]']").val(null).trigger('change');
+        })
+
+        $('#addUserBtn').on('click', function() {
             $("[name='username']").val(null);
             $("[name='full_name']").val(null);
             $("[name='password']").val(null);
