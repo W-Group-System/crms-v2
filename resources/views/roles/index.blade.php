@@ -192,6 +192,12 @@
             $("[name='description']").val(null);
         })
 
+        $('#add_role').on('click', function() {
+            $("[name='department']").val(null).trigger('change');
+            $("[name='name']").val(null);
+            $("[name='description']").val(null);
+        })
+
         $('.editBtn').on('click', function() {
             var id = $(this).data('id')
 
@@ -200,7 +206,7 @@
                 url: "{{url('edit_role')}}/" + id,
                 success: function(res)
                 {
-                    $("[name='department']").val(res.department);
+                    $("[name='department']").val(res.department).trigger('change');
                     $("[name='name']").val(res.description);
                     $("[name='description']").val(res.name);
                 }
