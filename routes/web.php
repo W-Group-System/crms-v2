@@ -382,7 +382,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/new_country', 'CountryController@store')->name('country.store');
     Route::get('/edit_country/{id}', 'CountryController@edit')->name('edit_country');
     Route::post('update_country/{id}', 'CountryController@update')->name('update_country');
-    Route::get('delete_country/{id}', 'CountryController@delete')->name('delete_country');
+    Route::post('delete_country/{id}', 'CountryController@delete')->name('delete_country');
 
     // Area
     Route::get('/area', 'AreaController@index')->name('area.index');
