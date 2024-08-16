@@ -62,8 +62,8 @@
                                 <td>{{ $srf->SrfNumber }}</td>
                                 <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                 <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
-                                <td>{{ $srf->client->Name }}</td>
-                               <td>{{ $srf->productApplicationsId->Name }}</td>
+                                <td>{{ optional($srf->client)->Name }}</td>
+                               <td>{{ optional($srf->productApplicationsId)->Name }}</td>
                                <td>
                                     @if($srf->Status == 10)
                                         Open
@@ -155,16 +155,16 @@
                                         {{ $product->sampleRequest->SrfType }}
                                     @endif
                                 </td>
-                                <td>{{ $product->sampleRequest->client->Name }}</td>
-                                <td>{{ $product->sampleRequest->client->clientregion->Name }}</td>
-                                <td>{{ $product->sampleRequest->client->clientcountry->Name }}</td>
+                                <td>{{ optional($product->sampleRequest->client)->Name }}</td>
+                                <td>{{ optional($product->sampleRequest->client)->clientregion->Name }}</td>
+                                <td>{{ optional($product->sampleRequest->client)->clientcountry->Name }}</td>
                                 <td>{{ $product->sampleRequest->primarySalesPerson->full_name ?? 'N/A' }}</td>
                                 <td>{{ $product->ProductIndex }}</td>
                                 <td>{{ $product->NumberOfPackages }}</td>
                                 <td>{{ $product->Quantity }}</td>
                                 <td>{{ $product->ProductCode }}</td>
                                 <td>{{ $product->Label }}</td>
-                                <td>{{ $product->productApplicationsId->Name }}</td>
+                                <td>{{optional( $product->productApplicationsId)->Name }}</td>
                                 <td>{{ $product->ProductDescription }}</td>
                                 <td>{{ $product->RpeNumber }}</td>
                                 <td>{{ $product->CrrNumber }}</td>
