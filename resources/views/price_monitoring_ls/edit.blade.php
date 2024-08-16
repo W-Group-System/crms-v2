@@ -586,7 +586,7 @@ function updateSellingPrice($row) {
                                </div>
                                <div class="form-group">
                                     <label>Category</label>
-                                    <select class="form-control js-example-basic-single" name="Type[]"  style="position: relative !important" title="Select Category">
+                                    <select class="form-control js-example-basic-single ProductType" name="Type[]"  style="position: relative !important" title="Select Category">
                                        <option value="" disabled selected>Select Category</option>
                                        <option value="1">Pure</option>
                                        <option value="2">Blend</option>
@@ -594,7 +594,7 @@ function updateSellingPrice($row) {
                                </div>
                                <div class="form-group">
                                    <label>Application:</label>
-                                   <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
+                                   <select class="form-control js-example-basic-single ApplicationId" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
                                        <option value="" disabled selected>Select Application</option>
                                        @foreach ($productApplications as $application)
                                            <option value="{{ $application->id }}" >{{ $application->Name }}</option>
@@ -703,11 +703,13 @@ function updateSellingPrice($row) {
                            </div>
                        </div>`;
                        $('.prfForm{{ $priceMonitoring->id }}').append(newProductForm);
+                       $('.ProductType, .product-select, .ApplicationId, .delivery-type, .PriceGae').select2();
+
    }
 
    $(document).on('click', '.addPrfProductRowBtn{{ $priceMonitoring->id }}', function() {
-       addProductRow();
-   });
+        addProductRow();
+    });
 
    $(document).on('click', '.editDeletePrfBtn', function() {
         $(this).closest('.create_prf_form{{ $priceMonitoring->id }}').remove();

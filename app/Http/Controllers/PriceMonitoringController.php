@@ -541,15 +541,15 @@ class PriceMonitoringController extends Controller
     }
 
     public function deleteProduct(Request $request , $id)
-{
-    $product = PriceRequestProduct::find($id); 
-    if ($product) {
-        $product->delete();
-        return response()->json(['success' => true]);
-    }
+    {
+        $product = PriceRequestProduct::find($id); 
+        if ($product) {
+            $product->delete();
+            return response()->json(['success' => true]);
+        }
 
-    return response()->json(['success' => false]);
-}
+        return response()->json(['success' => false]);
+    }
 
 public function ClosePrf( Request $request , $id)
     {

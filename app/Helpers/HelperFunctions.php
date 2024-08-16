@@ -133,3 +133,10 @@ function getRpeIdByNumber($number)
     
     return $rpe ? $rpe->id : null;
 }
+
+function getCrrIdByNumber($number)
+{
+    $crr = CustomerRequirement::where('CrrNumber', $number)->first();
+    
+    return $crr ? $crr->id : null;
+}

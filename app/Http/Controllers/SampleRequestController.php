@@ -57,11 +57,21 @@ class SampleRequestController extends Controller
             //     $q->where('name', 'LIKE', '%' . $search . '%');
             // });
         })
-        ->where('status', 10) 
+        ->where('SrfNumber', 'LIKE', '%' . 'SRF-LS' . '%')
+        ->paginate(10);
+
+        $products = SampleRequestProduct::whereHas('sampleRequest', function ($query) use ($search) {
+            $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                  ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                  ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+        })
+        ->whereHas('sampleRequest', function ($query) {
+            $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
+        })
         ->paginate(10);
 
        
-        return view('sample_requests.index', compact('sampleRequests','clients', 'contacts', 'categories', 'departments', 'salesPersons', 'productApplications', 'productCodes', 'search'));
+        return view('sample_requests.index', compact('products', 'sampleRequests','clients', 'contacts', 'categories', 'departments', 'salesPersons', 'productApplications', 'productCodes', 'search'));
     }
 
     public function getSampleContactsByClientF($clientId)
@@ -96,6 +106,7 @@ class SampleRequestController extends Controller
         $assignedPersonnel = SrfPersonnel::where('SampleRequestId', $scrfNumber)->get();
         $SrfMaterials = SrfRawMaterial::where('SampleRequestId', $scrfNumber)->get();
         $rndPersonnel = User::whereHas('rndUsers')->get();
+        $srfProgress = SrfProgress::all();
         $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)->get();
         $rawMaterials = RawMaterial::where('IsDeleted', '0')
         ->orWhere('deleted_at', '=', '')->get();
@@ -151,7 +162,7 @@ class SampleRequestController extends Controller
     $mappedAuditsCollection = collect($mappedAudits);
 
     $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'combinedLogs'));
+        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'combinedLogs', 'srfProgress'));
     }               
 
     // public function update(Request $request, $id)
@@ -451,16 +462,16 @@ class SampleRequestController extends Controller
         $srf->Note = $request->input('Note');
         $srf->save();
     
-        foreach ($request->input('ProductType', []) as $key => $value) {
+        foreach ($request->input('ProductCode',) as $key => $value) {
             $productId = $request->input('product_id.' . $key); 
     
             $srf->requestProducts()->updateOrCreate(
-                ['id' => $productId],
+                ['id' => $productId ?: null],
                 [
                     'SampleRequestId' => $id, 
-                    'ProductType' => $value,
+                    'ProductType' => $request->input('ProductType.' . $key),
                     'ApplicationId' => $request->input('ApplicationId.' . $key),
-                    'ProductCode' => $request->input('ProductCode.' . $key),
+                    'ProductCode' =>  $value,
                     'ProductDescription' => $request->input('ProductDescription.' . $key),
                     'NumberOfPackages' => $request->input('NumberOfPackages.' . $key),
                     'Quantity' => $request->input('Quantity.' . $key),
@@ -502,7 +513,7 @@ class SampleRequestController extends Controller
             $receiveSrf->save();
             return back();
     } 
-    public function startSrf($id)
+    public function StartSrf($id)
     {
         $startSrf = SampleRequest::find($id);    
         if ($startSrf) {
@@ -512,7 +523,7 @@ class SampleRequestController extends Controller
             $startSrf->save();
             return back();
     }
-    public function pauseSrf($id)
+    public function PauseSrf($id)
     {
         $pauseSrf = SampleRequest::find($id);  
         if ($pauseSrf) {
@@ -522,5 +533,25 @@ class SampleRequestController extends Controller
             $pauseSrf->save();
             return back();
     } 
+    public function RndUpdate($id)
+    {
+        $pauseSrf = SampleRequest::find($id);  
+        if ($pauseSrf) {
+                $pauseSrf->Progress = request()->input('Progress'); 
+        }
+            $pauseSrf->save();
+            return back();
+    } 
+
+    public function deleteSrfProduct(Request $request , $id)
+    {
+        $product = SampleRequestProduct::find($id); 
+        if ($product) {
+            $product->delete();
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
 }    
 
