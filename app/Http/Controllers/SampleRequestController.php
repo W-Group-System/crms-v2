@@ -29,7 +29,9 @@ class SampleRequestController extends Controller
 {
     public function index(Request $request)
     {   
-        $clients = Client::all();
+        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        ->get();
         $contacts = Contact::all();
         $categories = IssueCategory::all();
         $departments = ConcernDepartment::all(); 

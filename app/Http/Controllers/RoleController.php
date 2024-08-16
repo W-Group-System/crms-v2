@@ -40,6 +40,7 @@ class RoleController extends Controller
         $role->name = $request->name;
         $role->description = $request->description;
         $role->department_id = $request->department;
+        $role->type = $request->type;
         $role->status = "Active";
         $role->save();
 
@@ -62,6 +63,7 @@ class RoleController extends Controller
     {
         $role = Role::findOrFail($id);
         $role->name = $request->name;
+        $role->type = $request->type;
         $role->description = $request->description;
         $role->department_id = $request->department;
         $role->save();

@@ -219,6 +219,10 @@
 @foreach ($sampleRequests as $srf)
 @include('sample_requests.edit')
 @endforeach
+@elseif ((auth()->user()->department_id == 5))
+@foreach ($products as $product)
+@include('sample_requests.edit')
+@endforeach
 @endif
 
 
