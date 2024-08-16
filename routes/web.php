@@ -220,10 +220,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('ReceiveSrf/{id}', 'SampleRequestController@receiveSrf');
     Route::post('StartSrf/{id}', 'SampleRequestController@StartSrf');
     Route::post('PauseSrf/{id}', 'SampleRequestController@PauseSrf');
+    Route::post('RndUpdate/{id}', 'SampleRequestController@RndUpdate');
     
     Route::get('sample_contacts-by-client-f/{clientId}', [SampleRequestController::class, 'getSampleContactsByClientF']);
     Route::get('sample_get-last-increment-f/{year}/{clientCode}', [SampleRequestController::class, 'getSampleLastIncrementF']);
     
+    Route::delete('delete-srf-product/{id}', 'SampleRequestController@deleteSrfProduct');
+
     // Price Monitoring 
     Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
     Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');

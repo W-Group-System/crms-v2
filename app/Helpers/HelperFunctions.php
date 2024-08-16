@@ -134,9 +134,8 @@ function getRpeIdByNumber($number)
     return $rpe ? $rpe->id : null;
 }
 
-function productRps($code)
+function getCrrIdByNumber($number)
 {
-    $rpe = RequestProductEvaluation::where('RpeResult', 'LIKE', '%'.$code.'%')->get();
-
-    return $rpe;
-}
+    $crr = CustomerRequirement::where('CrrNumber', $number)->first();
+    
+    return $crr ? $crr->id : null;
