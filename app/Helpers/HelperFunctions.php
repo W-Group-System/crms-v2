@@ -139,3 +139,4 @@ function getCrrIdByNumber($number)
     $crr = CustomerRequirement::where('CrrNumber', $number)->first();
     
     return $crr ? $crr->id : null;
+}
