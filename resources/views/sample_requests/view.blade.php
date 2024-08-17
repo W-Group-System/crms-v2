@@ -428,10 +428,20 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Create Activity"  data-toggle="modal" data-target="#createSrfActivity">
+                            <i class="ti-plus"></i>
+                        </button>
+                    </div>
                     <div class="table-responsive">
+                        <div class="filter">
+                            <label><input type="checkbox" class="status-filter" value="10" checked> Open</label>
+                            <label><input type="checkbox" class="status-filter" value="20" checked> Closed</label>
+                        </div>
                         <table class="table table-striped table-bordered table-hover table-detailed" id="activities_table" style="width: 100%">
                             <thead>
                                 <tr>
+                                    <th>Action</th>
                                     <th>#</th>
                                     <th>Schedule</th>
                                     <th>Title</th>
@@ -441,6 +451,15 @@
                             <tbody>
                                 @foreach ($activities as $activity)
                                     <tr>
+                                        <td>
+                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                data-target="#editRpeActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
+                                                <i class="ti-pencil"></i>
+                                            </button>   
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Activity'>
+                                                <i class="ti-trash"></i>
+                                            </button> 
+                                            </td>
                                         <td>{{ optional($activity)->ActivityNumber }}</td>
                                         <td>
                                             {{ optional($activity)->ScheduleFrom ? optional($activity)->ScheduleFrom : '' }}
@@ -719,6 +738,7 @@
 @include('sample_requests.assign_personnel')
 @include('sample_requests.upload_srf_file')
 @include('sample_requests.create_raw_materials')
+@include('sample_requests.create_activity')
 @foreach ($sampleRequest as $srf)
     @include('sample_requests.srf_approval')
     {{-- @include('sample_requests.srf_receive') --}}
@@ -738,4 +758,5 @@
 @foreach ($SrfMaterials as $SrfMaterial)
 @include('sample_requests.edit_material')
 @endforeach
+
 @endsection
