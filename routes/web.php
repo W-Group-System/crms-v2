@@ -216,6 +216,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('UpdateRawMaterial/edit/{id}', 'SampleRequestController@editRawMaterial');
     Route::delete('samplerequest/view/material-delete/{id}', 'SampleRequestController@deleteSrfMaterial');
 
+    Route::delete('samplerequest/view/activity-delete/{id}', 'SampleRequestController@deleteSrfActivity');
+
     Route::post('ApproveSrf/{id}', 'SampleRequestController@approveSrfSales');
     Route::post('ReceiveSrf/{id}', 'SampleRequestController@receiveSrf');
     Route::post('StartSrf/{id}', 'SampleRequestController@StartSrf');
