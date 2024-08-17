@@ -102,14 +102,20 @@ class SampleRequestController extends Controller
     {
         $sampleRequest = SampleRequest::with('requestProducts')->findOrFail($id);
         $scrfNumber = $sampleRequest->Id;
+        $SampletNumber = $sampleRequest->SrfNumber;
+
         $clientId = $sampleRequest->ClientId;
-        $activities = Activity::where('ClientId', $clientId)->get();
+        $activities = Activity::where('TransactionNumber', $SampletNumber)->get();
         $SrfSupplementary = SrfDetail::where('SampleRequestId', $scrfNumber)->get();
         $assignedPersonnel = SrfPersonnel::where('SampleRequestId', $scrfNumber)->get();
         $SrfMaterials = SrfRawMaterial::where('SampleRequestId', $scrfNumber)->get();
         $rndPersonnel = User::whereHas('rndUsers')->get();
         $srfProgress = SrfProgress::all();
         $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)->get();
+        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        ->get();
+        $users = User::wherehas('localsalespersons')->get();
         $rawMaterials = RawMaterial::where('IsDeleted', '0')
         ->orWhere('deleted_at', '=', '')->get();
         $transactionLogs = TransactionLogs::where('Type', '30')
@@ -164,7 +170,7 @@ class SampleRequestController extends Controller
     $mappedAuditsCollection = collect($mappedAudits);
 
     $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'combinedLogs', 'srfProgress'));
+        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'combinedLogs', 'srfProgress', 'clients', 'users'));
     }               
 
     // public function update(Request $request, $id)
