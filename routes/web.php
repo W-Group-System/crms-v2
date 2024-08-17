@@ -392,7 +392,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/new_area', 'AreaController@store')->name('area.store');       
     Route::get('/edit_area/{id}', 'AreaController@edit')->name('edit_area');
     Route::post('update_area/{id}', 'AreaController@update')->name('update_area');
-    Route::get('delete_area/{id}', 'AreaController@delete')->name('delete_area');
+    Route::post('delete_area/{id}', 'AreaController@delete')->name('delete_area');
 
     // Business Type
     Route::get('/business_type', 'BusinessTypeController@index')->name('business_type.index');
