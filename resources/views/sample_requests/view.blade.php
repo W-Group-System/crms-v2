@@ -453,7 +453,7 @@
                                     <tr>
                                         <td>
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                                data-target="#editRpeActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
+                                                data-target="#editSrfActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
                                                 <i class="ti-pencil"></i>
                                             </button>   
                                             <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Activity'>
@@ -613,6 +613,8 @@
                 url = '{{ url('samplerequest/view/supp-delete') }}/' + id;
             } else if (type === 'personnel') {
                 url = '{{ url('samplerequest/view/personnel-delete') }}/' + id;
+            }else if (type === 'activity') {
+                url = '{{ url('samplerequest/view/activity-delete') }}/' + id;
             } else if (type === 'fileupload') {
                 url = '{{ url('samplerequest/view/file-delete') }}/' + id;
             } else if (type === 'SrfMaterial') {
@@ -758,5 +760,7 @@
 @foreach ($SrfMaterials as $SrfMaterial)
 @include('sample_requests.edit_material')
 @endforeach
-
+@foreach ($activities as $activity)
+@include('sample_requests.edit_activity')
+@endforeach
 @endsection

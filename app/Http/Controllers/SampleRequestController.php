@@ -600,5 +600,16 @@ class SampleRequestController extends Controller
 
         return response()->json(['success' => false]);
     }
+
+    public function deleteSrfActivity($id)
+    {
+        try { 
+            $activity = Activity::findOrFail($id); 
+            $activity->delete();  
+            return response()->json(['success' => true, 'message' => 'File deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to delete File.'], 500);
+        }
+    }
 }    
 

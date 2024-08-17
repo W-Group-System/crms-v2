@@ -1,4 +1,4 @@
-<div class="modal fade" id="editRpeActivity{{ $activity->id }}" tabindex="-1" role="dialog" aria-labelledby="RPE Activity" aria-hidden="true">
+<div class="modal fade" id="editSrfActivity{{ $activity->id }}" tabindex="-1" role="dialog" aria-labelledby="RPE Activity" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
@@ -54,7 +54,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Transaction Number</label>
-                                <input type="text" class="form-control form-control-sm" name="TransactionNumber" value="{{ $requestEvaluation->RpeNumber }}" readonly>
+                                <input type="text" class="form-control form-control-sm" name="TransactionNumber" value="{{ $sampleRequest->SrfNumber }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
