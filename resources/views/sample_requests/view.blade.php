@@ -106,25 +106,25 @@
                 <div class="group-form">
                 <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Client Name:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ $sampleRequest->client->Name  }}</p>
+                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->client)->Name  }}</p>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Contact:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->ContactName}}</p>
                 </div>
                  <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Client Trade Name:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ $sampleRequest->client->trade_name }}</p>
+                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->client)->trade_name }}</p>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Telephone:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->PrimaryTelephone}}</p>
                 </div>
                 <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Region:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ $sampleRequest->client->clientregion->Name }}</p>
+                    <p class="col-sm-3 col-form-label">{{ optional(optional($sampleRequest->client)->clientregion)->Name }}</p>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Mobile:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->PrimaryMobile}}</p>
                 </div>
                 <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Country:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->client->clientcountry)->Name }}</p>
+                    <p class="col-sm-3 col-form-label">{{ optional(optional($sampleRequest->client)->clientcountry)->Name }}</p>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Email:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->EmailAddress}}</p>
                 </div>

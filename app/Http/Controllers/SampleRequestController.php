@@ -359,27 +359,64 @@ class SampleRequestController extends Controller
     public function store(Request $request)
     {
         $refCode = $request->input('RefCode');
-        $quantities = $request->input('Quantity');        
+        $quantities = $request->input('Quantity'); 
+        $remarks = $request->input('quantity_remarks'); 
+        $userRole = auth()->user()->role_id;
+      
         foreach ($quantities as $key => $quantity) {
+            $isValid = true;
+
             if ($refCode == 2) {
                 if ($quantity < 1000 && $request->input('UnitOfMeasure')[$key] == 1) {
-                    return redirect()->back()->with('error', 'Quantity must be at least 1000g for QCD.')->withInput();
+                    // return redirect()->back()->with('error', 'Quantity must be at least 1000g for QCD.')->withInput();
+                    $isValid = false;
                 } elseif ($quantity < 1 && $request->input('UnitOfMeasure')[$key] == 2) {
-                    return redirect()->back()->with('error', 'Quantity must be at least 1kg for QCD.')->withInput();
+                    // return redirect()->back()->with('error', 'Quantity must be at least 1kg for QCD.')->withInput();
+                    $isValid = false;
                 }
             }
             
             if ($refCode == 1) {
                 if ($quantity > 999 && $request->input('UnitOfMeasure')[$key] == 1) {
-                    return redirect()->back()->with('error', 'Quantity must be 999g or less for RND.')->withInput();
+                    // return redirect()->back()->with('error', 'Quantity must be 999g or less for RND.')->withInput();
+                    $isValid = false;
                 } elseif ($quantity >= 1 && $request->input('UnitOfMeasure')[$key] == 2) {
-                    return redirect()->back()->with('error', 'Quantity must be less than 1kg for RND.')->withInput();
+                    // return redirect()->back()->with('error', 'Quantity must be less than 1kg for RND.')->withInput();
+                    $isValid = false;
+                }
+            }
+            if (!$isValid) {
+                if ($userRole == '15' && $remarks) {
+                    break;
+                } else {
+                    return redirect()->back()->with('error', 'Quantity validation failed.')->withInput();
                 }
             }
         }
 
+        $srfNumber = null;
+        if (auth()->user()->department_id == 38)
+        {
+            $checkSrf= SampleRequest::select('SrfNumber')->where('SrfNumber', 'LIKE', "%SRF-LS%")->orderBy('SrfNumber', 'desc')->first();
+            $count = substr($checkSrf->SrfNumber, 10);
+            $totalCount = $count + 1;
+            $deptCode = 'LS';
+            
+            $srfNumber = 'SRF'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        }
+
+        if (auth()->user()->department_id == 5)
+        {
+            $checkActivity = Activity::select('ActivityNumber')->where('ActivityNumber', 'LIKE', "%ACT-IS%")->orderBy('ActivityNumber', 'desc')->first();
+            $count = substr($checkActivity->ActivityNumber, 10);
+            $totalCount = $count + 1;
+            $deptCode = 'IS';
+            
+            $activityNumber = 'ACT'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        }
+
         $samplerequest = SampleRequest::create([
-            'SrfNumber' => $request->input('SrfNumber'),
+            'SrfNumber' => $srfNumber,
             'DateRequested' => $request->input('DateRequested'),
             'DateRequired' => $request->input('DateRequired'),
             'DateStarted' => $request->input('DateStarted'),
@@ -401,6 +438,7 @@ class SampleRequestController extends Controller
             'Note' => $request->input('Note'),
 
             ]);
+
             $maxId = SampleRequestProduct::max('Id');
             foreach ($request->input('ProductType') as $key => $value) {
                 SampleRequestProduct::create([
@@ -417,6 +455,7 @@ class SampleRequestController extends Controller
                     'Label' => $request->input('Label')[$key],
                     'RpeNumber' => $request->input('RpeNumber')[$key],
                     'CrrNumber' => $request->input('CrrNumber')[$key],
+                    'quantity_remarks' => $remarks,
                     'Remarks' => $request->input('RemarksProduct')[$key],
 
             ]);

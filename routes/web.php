@@ -413,7 +413,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/new_price_currency', 'PriceCurrencyController@store')->name('price_currency.store');
     Route::get('/edit_price_currency/{id}', 'PriceCurrencyController@edit')->name('edit_price_currency');
     Route::post('/update_price_currency/{id}', 'PriceCurrencyController@update')->name('update_price_currency');
-    Route::get('delete_price_currency/{id}', 'PriceCurrencyController@delete')->name('delete_price_currency');
+    Route::delete('delete_price_currency/{id}', 'PriceCurrencyController@delete')->name('delete_price_currency');
+
+    // Export Price Currency 
+    Route::get('/export_price_currencies', 'PriceCurrencyController@exportPriceCurrency');
 
     // Currency Exchange
     Route::get('/currency_exchange', 'CurrencyExchangeController@index')->name('currency_exchange.index');
