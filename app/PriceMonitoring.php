@@ -51,6 +51,12 @@ class PriceMonitoring extends Model implements Auditable
     {
         return $this->belongsTo(User::class, 'SecondarySalesPersonId', 'user_id');
     }
+
+    public function userById()
+    {
+        return $this->belongsTo(User::class, 'PrimarySalesPersonId', 'id');
+    }
+
     public function paymentterms() 
     {
         return $this->belongsTo(PaymentTerms::class, 'PaymentTermId', 'id');
@@ -59,5 +65,16 @@ class PriceMonitoring extends Model implements Auditable
     public function productMaterialComposition()
     {
         return $this->hasMany(ProductMaterialsComposition::class, 'ProductId');
+    }
+
+    // To get all products associated with the PriceRequest through PriceRequestProducts
+    public function products()
+    {
+        return $this->hasManyThrough(Product::class, PriceRequestProduct::class, 'PriceRequestFormId', 'Id', 'Id', 'ProductId');
+    }
+
+    public function priceRequestProduct()
+    {
+        return $this->hasOne(PriceRequestProduct::class, 'PriceRequestFormId', 'Id');
     }
 }
