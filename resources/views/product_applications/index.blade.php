@@ -7,31 +7,46 @@
             Product Application List
             <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formProductApplication">Add Product Application</button>
             </h4>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
-                    <div class="col-md-3">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search Product Application" name="search" value="{{$search}}"> 
-                            <button class="btn btn-sm btn-info">Search</button>
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Showing</span>
+                    <form action="" method="get" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10"  @if($entries == 10) selected @endif>10</option>
+                            <option value="25"  @if($entries == 25) selected @endif>25</option>
+                            <option value="50"  @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
                 </div>
-            </form>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Product Application" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover table-bordered" id="product_application_table" width="100%">
                     <thead>
                         <tr>
+                            <th width="15%">Action</th>
                             <th width="35%">Application</th>
                             <th width="50%">Description</th>
-                            <th width="15%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($productApplications as $pa)
                             <tr>
-                                <td>{{$pa->Name}}</td>
-                                <td>{{$pa->Description}}</td>
                                 <td>
                                     <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#productApplication-{{$pa->id}}" title="Edit">
                                         <i class="ti-pencil"></i>
@@ -41,11 +56,13 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </td>
+                                <td>{{$pa->Name}}</td>
+                                <td>{{$pa->Description}}</td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-                {!! $productApplications->appends(['search' => $search])->links() !!}
+                {!! $productApplications->appends(['search' => $search, 'entries' => $entries])->links() !!}
                 @php
                     $total = $productApplications->total();
                     $currentPage = $productApplications->currentPage();
@@ -271,28 +288,44 @@
     $(document).ready(function() {
         $('.deleteProductApplication').on('click', function() {
             var id = $(this).data('id')
-            console.log(id);
-            $.ajax({
-                type: "POST",
-                url: "{{url('delete_product_applications')}}",
-                data:
-                {
-                    id: id
-                },
-                headers: 
-                {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(res)
-                {
-                    Swal.fire({
-                        icon: "success",
-                        title: res.message
-                    }).then(() => {
-                        location.reload()
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url('delete_product_applications')}}",
+                        data:
+                        {
+                            id: id
+                        },
+                        headers: 
+                        {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(res)
+                        {
+                            Swal.fire({
+                                icon: "success",
+                                title: res.message
+                            }).then(() => {
+                                location.reload()
+                            })
+                        }
                     })
                 }
-            })
+            });
+        })
+
+        $("[name='entries']").on('change', function() {
+            $(this).closest('form').submit()
         })
     })
 </script>
