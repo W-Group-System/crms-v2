@@ -7,6 +7,12 @@
             Department List
             <button type="button" class="btn btn-md btn-primary" id="addDepartment" data-toggle="modal" data-target="#formDepartment">Add Department</button>
             </h4>
+
+            <div class="mb-3">
+                <button type="button" id="copy_btn" class="btn btn-info">Copy</button>
+                <a href="{{url('department_export')}}" class="btn btn-success" target="_blank">Excel</a>
+            </div>
+
             <div class="row">
                 <div class="col-lg-6">
                     <span>Show</span>
@@ -417,18 +423,19 @@
             })
         })
 
-        $('#formDepartment').on('hidden.bs.modal', function() {
-            $("[name='company_id']").val(null).trigger('change');
-            $("[name='code']").val(null);
-            $("[name='name']").val(null);
-            $("[name='description']").val(null);
-        })
+        // $('#formDepartment').on('hidden.bs.modal', function() {
+        //     $("[name='company_id']").val(null).trigger('change');
+        //     $("[name='code']").val(null);
+        //     $("[name='name']").val(null);
+        //     $("[name='description']").val(null);
+        // })
 
         $("#addDepartment").on('click', function() {
             $("[name='company_id']").val(null).trigger('change');
             $("[name='code']").val(null);
             $("[name='name']").val(null);
             $("[name='description']").val(null);
+            $('.alert').removeClass('alert-danger').html('');
         })
 
         $('.editBtn').on('click', function() {
@@ -486,6 +493,65 @@
 
             form.submit()
         })
+
+        $('#copy_btn').click(function() {
+            
+            $.ajax({
+                url: "{{ route('department.index') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
+
+                    // Add the table header
+                    $('#department_table thead tr').each(function(rowIndex, tr) {
+                        
+                        $(tr).find('th').each(function(cellIndex, th) {
+
+                            if($(th).text().trim() !== "Action")
+                            {
+                                tableData += $(th).text().trim() + '\t'; // Add a tab space
+                            }
+
+                        });
+                        tableData += '\n'; // New line after each row
+                    });
+                    
+                    var companies = {!! json_encode($companies) !!};
+                    var companyArray = [];
+                    
+                    $.each(companies, function(key, data) {
+                        companyArray[data.id] = data.name;
+                    })
+                    
+                    // Add the table body from the fetched data
+                    $(data).each(function(index, item) {
+                        tableData += companyArray[item.company_id] + '\t' + item.department_code + '\t' + item.name + '\t' + item.description + '\t' + item.status + '\n';
+                    });
+
+                    // Create a temporary textarea element to hold the text
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove(); // Remove the temporary element
+
+                    // Notify the user
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
     })
 </script>
 @endsection
