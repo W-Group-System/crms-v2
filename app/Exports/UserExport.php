@@ -14,7 +14,7 @@ class UserExport implements FromCollection, WithHeadings, WithMapping
     */
     public function collection()
     {
-        return User::with('role', 'department', 'company')->select('username', 'full_name', 'role_id', 'company_id', 'department_id')->latest()->get();
+        return User::with('role', 'department', 'company')->select('username', 'full_name', 'role_id', 'company_id', 'department_id',  'is_active')->latest()->get();
     }
 
     public function headings(): array
@@ -24,7 +24,8 @@ class UserExport implements FromCollection, WithHeadings, WithMapping
             'Name',
             'Role',
             'Company',
-            'Department'
+            'Department',
+            'Status'
         ];
     }
 
@@ -48,13 +49,24 @@ class UserExport implements FromCollection, WithHeadings, WithMapping
             $company = $user->company->name;
         }
 
+        $status = "";
+        if ($user->is_active == 1)
+        {
+            $status = "Active";
+        }
+        elseif($user->is_active == 0)
+        {
+            $status = "Inactive";
+        }
+
 
         return [
             $user->username,
             $user->full_name,
             $role,
             $company,
-            $department
+            $department,
+            $status
         ];
     }
 }
