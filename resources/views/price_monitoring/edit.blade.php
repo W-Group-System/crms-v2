@@ -36,7 +36,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label for="name">Date Requested (DD/MM/YYYY)</label>
-                                    <input type="date" class="form-control" name="DateRequested" value="{{ !empty($priceMonitoring->DateRequested) ? date('Y-m-d', strtotime($priceMonitoring->DateRequested)) : '' }}">
+                                    <input type="date" class="form-control" name="DateRequested" value="{{ !empty($priceMonitoring->DateRequested) ? date('Y-m-d', strtotime($priceMonitoring->DateRequested)) : '' }}" readonly>
                                 </div>
                             </div>
                             <div class="col-lg-12"><hr style="background-color: black"></div>
