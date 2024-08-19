@@ -70,7 +70,7 @@ class PriceMonitoring extends Model implements Auditable
     // To get all products associated with the PriceRequest through PriceRequestProducts
     public function products()
     {
-        return $this->hasManyThrough(Product::class, PriceRequestProduct::class, 'PriceRequestFormId', 'Id', 'Id', 'ProductId');
+        return $this->hasManyThrough(Product::class, PriceRequestProduct::class, 'PriceRequestFormId', 'Id', 'id', 'ProductId');
     }
 
     public function priceRequestProduct()
