@@ -27,10 +27,7 @@ class IssueCategoryController extends Controller
 
         $query = IssueCategory::where(function ($query) use ($search) {
                 $query->where('Name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('Description', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
-                        $q->where('full_name', 'LIKE', '%' . $search . '%');
-                    });
+                    ->orWhere('Description', 'LIKE', '%' . $search . '%');
             })
             ->orderBy($sort, $direction);
 
