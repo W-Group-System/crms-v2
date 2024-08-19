@@ -20,17 +20,15 @@
                 </div>
             </div>
             @php
-                use App\Helpers\Helpers;
-                
-                $rmc = Helpers::rmc($data->productMaterialComposition, $data->id);
-                $identicalComposition = Helpers::identicalComposition($data->productMaterialComposition, $data->id);
-                $customerRequirements = Helpers::customerRequirements($data->code);
-                $productRps = Helpers::productRps($data->code);
+                $rmc = rmc($data->productMaterialComposition, $data->id);
+                $identicalComposition = identicalComposition($data->productMaterialComposition, $data->id);
+                $customerRequirements = customerRequirements($data->code);
+                $productRps = productRps($data->code);
             @endphp
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->ddw_number }}</label>
+                    <label class="col-sm-3 col-form-label">@if($data->ddw_number != null){{ $data->ddw_number }}@endif</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials:</b></label>
                     <label class="col-sm-2 col-form-label"><strong>USD</strong> {{number_format($rmc, 2)}}</label>
                 </div>
@@ -38,13 +36,13 @@
                     <label class="col-sm-2 col-form-label"><b>Code:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->code }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>EUR</strong> {{Helpers::usdToEur($rmc)}}</label>
+                    <label class="col-sm-2 col-form-label"><strong>EUR</strong> {{usdToEur($rmc)}}</label>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Type:</b></label>
                     <label class="col-sm-3 col-form-label">{{ $data->type == 1 ? 'Pure' : 'Blend' }}</label>
                     <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>PHP</strong> {{Helpers::usdToPhp($rmc)}}</label>
+                    <label class="col-sm-2 col-form-label"><strong>PHP</strong> {{usdToPhp($rmc)}}</label>
                 </div>
                 <div class="form-group row" style="margin-top: 20px">
                     <label class="col-sm-2 col-form-label"><b>Reference Number:</b></label>
@@ -410,7 +408,7 @@
                             <tbody>
                                 @foreach ($identicalComposition as $ic)
                                     <tr>
-                                        <td>{{$ic->products->ddw_number}}</td>
+                                        <td>@if($ic->products){{$ic->products->ddw_number}}@endif</td>
                                         <td>
                                             @if($ic->products->status == 1)
                                                 <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>

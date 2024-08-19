@@ -10,17 +10,34 @@
             Role List
             <button type="button" class="btn btn-md btn-primary" id="add_role" data-toggle="modal" data-target="#formRole">Add Role</button>
             </h4>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
-                    <div class="col-md-5">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search Role" name="search" value="{{$search}}"> 
-                            <button class="btn btn-sm btn-info">Search</button>
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Showing</span>
+                    <form action="" method="get" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10"  @if($entries == 10) selected @endif>10</option>
+                            <option value="25"  @if($entries == 25) selected @endif>25</option>
+                            <option value="50"  @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
                 </div>
-            </form>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Role" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="role_table" width="100%">
                     <thead>
@@ -48,7 +65,7 @@
                                     <form method="POST" action="{{url('deactivate/'.$role->id)}}" class="d-inline-block">
                                         @csrf 
 
-                                        <button type="button" class="deactivate btn btn-sm btn-danger" title="Deactivate"><i class="ti ti-trash"></i></button>
+                                        <button type="button" class="deactivate btn btn-sm btn-danger" title="Deactivate"><i class="mdi mdi-cancel"></i></button>
                                     </form>
                                     @elseif($role->status == "Inactive")
                                     <form method="POST" action="{{url('activate/'.$role->id)}}" class="d-inline-block">
@@ -69,8 +86,6 @@
                                     @endif
                                 </td>
                             </tr>
-
-                            @include('roles.edit_roles')
                             @endforeach
                         @else
                             <tr>
@@ -108,10 +123,10 @@
                     @csrf
                     <div class="form-group">
                         <label for="department">Department</label>
-                        <select name="department" class="js-example-basic-single form-control">
+                        <select name="department" class="js-example-basic-single form-control departmentSelectOption" required>
                             <option value="">-Department-</option>
                             @foreach ($department as $dpt)
-                                <option value="{{$dpt->id}}">{{$dpt->name}}</option>
+                                <option value="{{$dpt->id}}">{{$dpt->department_code.' - '.$dpt->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -123,6 +138,11 @@
                         <label for="name">Description</label>
                         <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description" required>
                     </div>
+                    <div class="type-container">
+                        {{-- @foreach ($collection as $item)
+                            
+                        @endforeach --}}
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <input type="submit" class="btn btn-success" value="Save">
@@ -132,6 +152,10 @@
         </div>
     </div>
 </div>
+
+@foreach ($roles as $role)
+@include('roles.edit_roles')
+@endforeach
 
 <script>
     $(document).ready(function() {
@@ -175,6 +199,12 @@
             $("[name='description']").val(null);
         })
 
+        $('#add_role').on('click', function() {
+            $("[name='department']").val(null).trigger('change');
+            $("[name='name']").val(null);
+            $("[name='description']").val(null);
+        })
+
         $('.editBtn').on('click', function() {
             var id = $(this).data('id')
 
@@ -183,11 +213,44 @@
                 url: "{{url('edit_role')}}/" + id,
                 success: function(res)
                 {
-                    $("[name='department']").val(res.department);
-                    $("[name='name']").val(res.description);
-                    $("[name='description']").val(res.name);
+                    $("[name='department']").val(res.department).trigger('change');
+                    $("[name='name']").val(res.name);
+                    $("[name='description']").val(res.description);
                 }
             })
+        })
+
+        $("[name='entries']").on('change', function() {
+            var form = $(this).closest('form');
+
+            form.submit();
+        })
+
+        $(".departmentSelectOption").on('change', function() {
+            
+            if($(this).val() == 38 || $(this).val() == 5)
+            {
+                if ($('.form-group:contains("Type")').length == 0)
+                {
+                    var newRow = `
+                        <div class="form-group">
+                            <label for="name">Type</label>
+                            <select name="type" class="form-control">
+                                <option disabled selected value>Select Type</option>
+                                <option value="LS">Local Sales</option>
+                                <option value="IS">International Sales</option>
+                            </select>
+                        </div>
+                    `
+
+                    $('.type-container').append(newRow)
+                    $("[name='type']").select2()
+                }
+            }
+            else 
+            {
+                $('.type-container').children().remove()
+            }
         })
     })
 </script>

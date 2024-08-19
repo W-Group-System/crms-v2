@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Company List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formCompany">Add Company</button>
+            <button type="button" class="btn btn-md btn-primary" id="addCompanyBtn" data-toggle="modal" data-target="#formCompany">Add Company</button>
             </h4>
             <div class="row">
                 <div class="col-lg-6">
@@ -150,6 +150,12 @@
             $("[name='description']").val(null);
         })
 
+        $('#addCompanyBtn').on('click', function() {
+            $("[name='code']").val(null);
+            $("[name='name']").val(null);
+            $("[name='description']").val(null);
+        })
+
         $('.editBtn').on('click', function() {
             var id = $(this).data('id');
 
@@ -198,7 +204,6 @@
                 }
             });
         })
-        console.log('asdad');
         
         $("#form_company").on('submit', function(e) {
             e.preventDefault();

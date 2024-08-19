@@ -74,16 +74,14 @@
                         title='Approve SRF'>
                         <i class="ti-check">&nbsp;Approve</i>
                     </button>
-                    <button type="button" class="btn btn-md btn-success"
-                        data-target="#receiveSrf{{ $sampleRequest->Id }}" 
-                        data-toggle="modal" 
+                    <button type="button" class="btn btn-md btn-success receiveSrf" data-id="{{ $sampleRequest->Id }}" 
+                        {{-- data-target="#receiveSrf{{ $sampleRequest->Id }}" 
+                        data-toggle="modal"  --}}
                         title='Receive SRF'>
                     <i class="ti-check">&nbsp;Receive</i>
                     </button>
-                    <button type="button" class="btn btn-md btn-warning"
-                        data-target="#startSrf{{ $sampleRequest->Id }}" 
-                        data-toggle="modal" 
-                        title='Start SRF'>
+                    <button type="button" class="btn btn-md btn-warning startSrf"  data-id="{{ $sampleRequest->Id }}" 
+                       >
                         <i class="ti-control-play">&nbsp;Start</i>
                     </button>
                     <button type="button" class="btn btn-md btn-warning"
@@ -91,6 +89,12 @@
                         data-toggle="modal" 
                         title='Pause SRF'>
                         <i class="ti-control-pause">&nbsp;Pause</i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-warning"
+                        data-target="#rndUpdate{{ $sampleRequest->Id }}" 
+                        data-toggle="modal" 
+                        title='RND Update'>
+                        <i class="ti-control-play"><br>RND Update</i>
                     </button>
                 </div>
             </div>
@@ -102,25 +106,25 @@
                 <div class="group-form">
                 <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Client Name:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ $sampleRequest->client->Name  }}</p>
+                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->client)->Name  }}</p>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Contact:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->ContactName}}</p>
                 </div>
                  <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Client Trade Name:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ $sampleRequest->client->trade_name }}</p>
+                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->client)->trade_name }}</p>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Telephone:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->PrimaryTelephone}}</p>
                 </div>
                 <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Region:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ $sampleRequest->client->clientregion->Name }}</p>
+                    <p class="col-sm-3 col-form-label">{{ optional(optional($sampleRequest->client)->clientregion)->Name }}</p>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Mobile:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->PrimaryMobile}}</p>
                 </div>
                 <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Country:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->client->clientcountry)->Name }}</p>
+                    <p class="col-sm-3 col-form-label">{{ optional(optional($sampleRequest->client)->clientcountry)->Name }}</p>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Email:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->EmailAddress}}</p>
                 </div>
@@ -140,13 +144,13 @@
                 <p class="col-sm-2 col-form-label"><b>SRF #:</b></p>
                 <p class="col-sm-3 col-form-label">{{ $sampleRequest->SrfNumber }}</p>
                 <p class="offset-sm-2 col-sm-2 col-form-label"><b>Primary Sales Person:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->primarySalesPerson->full_name}}</p>
+                <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->primarySalesPerson)->full_name}}</p>
             </div>
              <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>Date Requested :</b></p>
                 <p class="col-sm-3 col-form-label">{{ $sampleRequest->DateRequested }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Primary Sales Person:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->secondarySalesPerson->full_name}}</p>
+                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Secondary Sales Person:</b></p>
+                <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->secondarySalesPerson)->full_name}}</p>
             </div>
             <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>Date Started :</b></p>
@@ -236,18 +240,28 @@
                                     $rpeNumber = $requestProducts->RpeNumber;
                                     $rpeId = getRpeIdByNumber($rpeNumber);
                                     if ($rpeId) {
-                                        echo '<a href="'.url('product_evaluation/view/'.$rpeId).'">'.$rpeNumber.'</a>';
+                                     echo '<a href="'.url('product_evaluation/view/'.$rpeId).'">'.$rpeNumber.'</a>';
                                     } else {
-                                        echo $rpeNumber; // Or whatever you want to display if the product ID is not found
-                                    }
-                                @endphp
+                                    echo $rpeNumber;
+                                }
+                            @endphp
                         </p>
                     </div>
                     <div class="form-group row">
                         <p class="col-sm-2 col-form-label"><b>Application:</b></p>
                         <p class="col-sm-3 col-form-label">{{ $requestProducts->productApplicationsId->Name }}</p>
                         <p class="offset-sm-2 col-sm-2 col-form-label"><b>CRR Number:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->CrrNumber}}</p>
+                        <p class="col-sm-3 col-form-label">
+                            @php
+                                    $crrNumber = $requestProducts->CrrNumber;
+                                    $crr = getCrrIdByNumber($crrNumber);
+                                    if ($crr) {
+                                     echo '<a href="'.url('view_customer_requirement/'.$crr).'">'.$crrNumber.'</a>';
+                                    } else {
+                                    echo $crrNumber;
+                                }
+                            @endphp
+                        </p>
                     </div>
                     <div class="form-group row">
                         <p class="col-sm-2 col-form-label"><b>Product Code:</b></p>
@@ -414,10 +428,20 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Create Activity"  data-toggle="modal" data-target="#createSrfActivity">
+                            <i class="ti-plus"></i>
+                        </button>
+                    </div>
                     <div class="table-responsive">
+                        <div class="filter">
+                            <label><input type="checkbox" class="status-filter" value="10" checked> Open</label>
+                            <label><input type="checkbox" class="status-filter" value="20" checked> Closed</label>
+                        </div>
                         <table class="table table-striped table-bordered table-hover table-detailed" id="activities_table" style="width: 100%">
                             <thead>
                                 <tr>
+                                    <th>Action</th>
                                     <th>#</th>
                                     <th>Schedule</th>
                                     <th>Title</th>
@@ -427,6 +451,15 @@
                             <tbody>
                                 @foreach ($activities as $activity)
                                     <tr>
+                                        <td>
+                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                data-target="#editSrfActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
+                                                <i class="ti-pencil"></i>
+                                            </button>   
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Activity'>
+                                                <i class="ti-trash"></i>
+                                            </button> 
+                                            </td>
                                         <td>{{ optional($activity)->ActivityNumber }}</td>
                                         <td>
                                             {{ optional($activity)->ScheduleFrom ? optional($activity)->ScheduleFrom : '' }}
@@ -580,6 +613,8 @@
                 url = '{{ url('samplerequest/view/supp-delete') }}/' + id;
             } else if (type === 'personnel') {
                 url = '{{ url('samplerequest/view/personnel-delete') }}/' + id;
+            }else if (type === 'activity') {
+                url = '{{ url('samplerequest/view/activity-delete') }}/' + id;
             } else if (type === 'fileupload') {
                 url = '{{ url('samplerequest/view/file-delete') }}/' + id;
             } else if (type === 'SrfMaterial') {
@@ -613,6 +648,78 @@
         });
     }
 
+    $(".receiveSrf").on('click', function() {
+            var srfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to receive this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('ReceiveSrf') }}/" + srfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        $(".startSrf").on('click', function() {
+            var srfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to start this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('StartSrf') }}/" + srfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
     $(document).ready(function() {
         new DataTable('.table-detailed', {
             pageLength: 10,
@@ -633,11 +740,13 @@
 @include('sample_requests.assign_personnel')
 @include('sample_requests.upload_srf_file')
 @include('sample_requests.create_raw_materials')
+@include('sample_requests.create_activity')
 @foreach ($sampleRequest as $srf)
     @include('sample_requests.srf_approval')
-    @include('sample_requests.srf_receive')
+    {{-- @include('sample_requests.srf_receive') --}}
     @include('sample_requests.srf_start')
     @include('sample_requests.srf_pause')
+    @include('sample_requests.rnd_update')
 @endforeach
 @foreach ($SrfSupplementary as $supplementary)
 @include('sample_requests.edit_supplementary')
@@ -650,5 +759,8 @@
 @endforeach
 @foreach ($SrfMaterials as $SrfMaterial)
 @include('sample_requests.edit_material')
+@endforeach
+@foreach ($activities as $activity)
+@include('sample_requests.edit_activity')
 @endforeach
 @endsection

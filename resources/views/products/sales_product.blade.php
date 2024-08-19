@@ -32,19 +32,39 @@
                     </div>
                 </div>
             </form>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
-                    <div class="col-md-3">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search Products" name="search" value="{{$search}}"> 
-                            <button class="btn btn-sm btn-info">Search</button>
-                        </div>
-                    </div>
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-md btn-info">Copy</button>
+                <a href="{{url('export_current_products')}}" class="btn btn-md btn-success">Excel</a>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Showing</span>
+                    <form action="" method="get" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10"  @if($entries == 10) selected @endif>10</option>
+                            <option value="25"  @if($entries == 25) selected @endif>25</option>
+                            <option value="50"  @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
                 </div>
-            </form>
-            
-            <a href="{{url('export_current_products')}}" class="btn btn-md btn-success mb-3">Export</a>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Products" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover table-bordered" id="product_table" width="100%">
@@ -61,6 +81,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if(count($products) > 0)
                         @foreach ($products as $product)
                             @php
                                 $usd = rmc($product->productMaterialComposition, $product->id);
@@ -98,10 +119,15 @@
                                 <td>{{$php}}</td>
                             </tr>
                         @endforeach
+                        @else
+                        <tr>
+                            <td colspan="7" class="text-center">No data available.</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
 
-                {!! $products->appends(['search' => $search, 'application_filter' => $application_filter, 'material_filter' => $material_filter])->links() !!}
+                {!! $products->appends(['search' => $search, 'application_filter' => $application_filter, 'material_filter' => $material_filter, 'entries' => $entries])->links() !!}
 
                 @php
                     $total = $products->total();
@@ -135,6 +161,10 @@
                     form.submit();
                 }
             });
+        })
+
+        $("[name='entries']").on('change', function() {
+            $(this).closest('form').submit()
         })
     })
 </script>

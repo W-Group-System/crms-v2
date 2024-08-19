@@ -29,7 +29,9 @@ class SampleRequestController extends Controller
 {
     public function index(Request $request)
     {   
-        $clients = Client::all();
+        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        ->get();
         $contacts = Contact::all();
         $categories = IssueCategory::all();
         $departments = ConcernDepartment::all(); 
@@ -57,11 +59,21 @@ class SampleRequestController extends Controller
             //     $q->where('name', 'LIKE', '%' . $search . '%');
             // });
         })
-        ->where('status', 10) 
+        ->where('SrfNumber', 'LIKE', '%' . 'SRF-LS' . '%')
+        ->paginate(10);
+
+        $products = SampleRequestProduct::whereHas('sampleRequest', function ($query) use ($search) {
+            $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                  ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                  ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+        })
+        ->whereHas('sampleRequest', function ($query) {
+            $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
+        })
         ->paginate(10);
 
        
-        return view('sample_requests.index', compact('sampleRequests','clients', 'contacts', 'categories', 'departments', 'salesPersons', 'productApplications', 'productCodes', 'search'));
+        return view('sample_requests.index', compact('products', 'sampleRequests','clients', 'contacts', 'categories', 'departments', 'salesPersons', 'productApplications', 'productCodes', 'search'));
     }
 
     public function getSampleContactsByClientF($clientId)
@@ -90,13 +102,20 @@ class SampleRequestController extends Controller
     {
         $sampleRequest = SampleRequest::with('requestProducts')->findOrFail($id);
         $scrfNumber = $sampleRequest->Id;
+        $SampletNumber = $sampleRequest->SrfNumber;
+
         $clientId = $sampleRequest->ClientId;
-        $activities = Activity::where('ClientId', $clientId)->get();
+        $activities = Activity::where('TransactionNumber', $SampletNumber)->get();
         $SrfSupplementary = SrfDetail::where('SampleRequestId', $scrfNumber)->get();
         $assignedPersonnel = SrfPersonnel::where('SampleRequestId', $scrfNumber)->get();
         $SrfMaterials = SrfRawMaterial::where('SampleRequestId', $scrfNumber)->get();
         $rndPersonnel = User::whereHas('rndUsers')->get();
+        $srfProgress = SrfProgress::all();
         $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)->get();
+        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        ->get();
+        $users = User::wherehas('localsalespersons')->get();
         $rawMaterials = RawMaterial::where('IsDeleted', '0')
         ->orWhere('deleted_at', '=', '')->get();
         $transactionLogs = TransactionLogs::where('Type', '30')
@@ -151,7 +170,7 @@ class SampleRequestController extends Controller
     $mappedAuditsCollection = collect($mappedAudits);
 
     $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'combinedLogs'));
+        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'combinedLogs', 'srfProgress', 'clients', 'users'));
     }               
 
     // public function update(Request $request, $id)
@@ -346,27 +365,64 @@ class SampleRequestController extends Controller
     public function store(Request $request)
     {
         $refCode = $request->input('RefCode');
-        $quantities = $request->input('Quantity');        
+        $quantities = $request->input('Quantity'); 
+        $remarks = $request->input('quantity_remarks'); 
+        $userRole = auth()->user()->role_id;
+      
         foreach ($quantities as $key => $quantity) {
+            $isValid = true;
+
             if ($refCode == 2) {
                 if ($quantity < 1000 && $request->input('UnitOfMeasure')[$key] == 1) {
-                    return redirect()->back()->with('error', 'Quantity must be at least 1000g for QCD.')->withInput();
+                    // return redirect()->back()->with('error', 'Quantity must be at least 1000g for QCD.')->withInput();
+                    $isValid = false;
                 } elseif ($quantity < 1 && $request->input('UnitOfMeasure')[$key] == 2) {
-                    return redirect()->back()->with('error', 'Quantity must be at least 1kg for QCD.')->withInput();
+                    // return redirect()->back()->with('error', 'Quantity must be at least 1kg for QCD.')->withInput();
+                    $isValid = false;
                 }
             }
             
             if ($refCode == 1) {
                 if ($quantity > 999 && $request->input('UnitOfMeasure')[$key] == 1) {
-                    return redirect()->back()->with('error', 'Quantity must be 999g or less for RND.')->withInput();
+                    // return redirect()->back()->with('error', 'Quantity must be 999g or less for RND.')->withInput();
+                    $isValid = false;
                 } elseif ($quantity >= 1 && $request->input('UnitOfMeasure')[$key] == 2) {
-                    return redirect()->back()->with('error', 'Quantity must be less than 1kg for RND.')->withInput();
+                    // return redirect()->back()->with('error', 'Quantity must be less than 1kg for RND.')->withInput();
+                    $isValid = false;
+                }
+            }
+            if (!$isValid) {
+                if ($userRole == '15' && $remarks) {
+                    break;
+                } else {
+                    return redirect()->back()->with('error', 'Quantity validation failed.')->withInput();
                 }
             }
         }
 
+        $srfNumber = null;
+        if (auth()->user()->department_id == 38)
+        {
+            $checkSrf= SampleRequest::select('SrfNumber')->where('SrfNumber', 'LIKE', "%SRF-LS%")->orderBy('SrfNumber', 'desc')->first();
+            $count = substr($checkSrf->SrfNumber, 10);
+            $totalCount = $count + 1;
+            $deptCode = 'LS';
+            
+            $srfNumber = 'SRF'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        }
+
+        if (auth()->user()->department_id == 5)
+        {
+            $checkActivity = Activity::select('ActivityNumber')->where('ActivityNumber', 'LIKE', "%ACT-IS%")->orderBy('ActivityNumber', 'desc')->first();
+            $count = substr($checkActivity->ActivityNumber, 10);
+            $totalCount = $count + 1;
+            $deptCode = 'IS';
+            
+            $activityNumber = 'ACT'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        }
+
         $samplerequest = SampleRequest::create([
-            'SrfNumber' => $request->input('SrfNumber'),
+            'SrfNumber' => $srfNumber,
             'DateRequested' => $request->input('DateRequested'),
             'DateRequired' => $request->input('DateRequired'),
             'DateStarted' => $request->input('DateStarted'),
@@ -388,6 +444,7 @@ class SampleRequestController extends Controller
             'Note' => $request->input('Note'),
 
             ]);
+
             $maxId = SampleRequestProduct::max('Id');
             foreach ($request->input('ProductType') as $key => $value) {
                 SampleRequestProduct::create([
@@ -404,6 +461,7 @@ class SampleRequestController extends Controller
                     'Label' => $request->input('Label')[$key],
                     'RpeNumber' => $request->input('RpeNumber')[$key],
                     'CrrNumber' => $request->input('CrrNumber')[$key],
+                    'quantity_remarks' => $remarks,
                     'Remarks' => $request->input('RemarksProduct')[$key],
 
             ]);
@@ -451,16 +509,16 @@ class SampleRequestController extends Controller
         $srf->Note = $request->input('Note');
         $srf->save();
     
-        foreach ($request->input('ProductType', []) as $key => $value) {
+        foreach ($request->input('ProductCode',) as $key => $value) {
             $productId = $request->input('product_id.' . $key); 
     
             $srf->requestProducts()->updateOrCreate(
-                ['id' => $productId],
+                ['id' => $productId ?: null],
                 [
                     'SampleRequestId' => $id, 
-                    'ProductType' => $value,
+                    'ProductType' => $request->input('ProductType.' . $key),
                     'ApplicationId' => $request->input('ApplicationId.' . $key),
-                    'ProductCode' => $request->input('ProductCode.' . $key),
+                    'ProductCode' =>  $value,
                     'ProductDescription' => $request->input('ProductDescription.' . $key),
                     'NumberOfPackages' => $request->input('NumberOfPackages.' . $key),
                     'Quantity' => $request->input('Quantity.' . $key),
@@ -502,7 +560,7 @@ class SampleRequestController extends Controller
             $receiveSrf->save();
             return back();
     } 
-    public function startSrf($id)
+    public function StartSrf($id)
     {
         $startSrf = SampleRequest::find($id);    
         if ($startSrf) {
@@ -512,7 +570,7 @@ class SampleRequestController extends Controller
             $startSrf->save();
             return back();
     }
-    public function pauseSrf($id)
+    public function PauseSrf($id)
     {
         $pauseSrf = SampleRequest::find($id);  
         if ($pauseSrf) {
@@ -522,5 +580,36 @@ class SampleRequestController extends Controller
             $pauseSrf->save();
             return back();
     } 
+    public function RndUpdate($id)
+    {
+        $pauseSrf = SampleRequest::find($id);  
+        if ($pauseSrf) {
+                $pauseSrf->Progress = request()->input('Progress'); 
+        }
+            $pauseSrf->save();
+            return back();
+    } 
+
+    public function deleteSrfProduct(Request $request , $id)
+    {
+        $product = SampleRequestProduct::find($id); 
+        if ($product) {
+            $product->delete();
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
+    public function deleteSrfActivity($id)
+    {
+        try { 
+            $activity = Activity::findOrFail($id); 
+            $activity->delete();  
+            return response()->json(['success' => true, 'message' => 'File deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to delete File.'], 500);
+        }
+    }
 }    
 

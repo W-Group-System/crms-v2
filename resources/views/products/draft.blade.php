@@ -5,20 +5,41 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
                 Product List (Draft)
-            <button type="button" class="btn btn-sm  btn-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">Add Product</button>
-        </h4>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
-                    <div class="col-md-3">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search Product" name="search" value="{{$search}}"> 
-                            <button class="btn btn-sm btn-info">Search</button>
-                        </div>
-                    </div>
+            <button type="button" class="btn btn-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">Add Product</button>
+            </h4>
+            
+            <div class="mb-3">
+                <button type="button" class="btn btn-md btn-info">Copy</button>
+                <a href="{{url('draft_new_products')}}" class="btn btn-md btn-success">Excel</a>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Showing</span>
+                    <form action="" method="get" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10"  @if($entries == 10) selected @endif>10</option>
+                            <option value="25"  @if($entries == 25) selected @endif>25</option>
+                            <option value="50"  @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
                 </div>
-            </form>
-            <a href="{{url('draft_new_products')}}" class="btn btn-md btn-success mb-3">Export</a>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Product" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             <div class="table-responsive">
                 <table class="table table-bordered table-striped table-hover mt-3" id="draft_table">
@@ -32,6 +53,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if(count($products) > 0)
                         @foreach ($products as $p)
                             <tr>
                                 <td>
@@ -71,6 +93,11 @@
                                 <td>{{date('M d, Y', strtotime($p->created_at))}}</td>
                             </tr>
                         @endforeach
+                        @else
+                        <tr>
+                            <td colspan="5" class="text-center">No data available.</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
                 {!! $products->appends(['search' => $search])->links() !!}
@@ -192,6 +219,10 @@
                     form.submit()
                 }
             });
+        })
+
+        $("[name='entries']").on('change', function() {
+            $(this).closest('form').submit()
         })
     })
 </script>

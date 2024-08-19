@@ -5,36 +5,49 @@ use App\Area;
 use App\Region;
 use Validator;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AreaController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {
-        $areas = Area::with('region')->orderBy('id', 'desc')->get();
-        $regions = Region::all();
+        $areas = Area::with('region')->when($request->search, function($query)use($request) {
+                if (strtolower($request->search) == 'international')
+                {
+                    $query->where('Type', 2);
+                }
+                elseif(strtolower($request->search) == "local")
+                {
+                    $query->where('Type', 1);
+                }
+                else
+                {
+                    $query->where(function($q)use($request) {
+                        $q->where('Name', 'LIKE', '%'.$request->search.'%')
+                            ->orWhere('Description', 'LIKE', '%'.$request->search.'%')
+                            ->orWhereHas('region', function($region)use($request) {
+                                $region->where('Name', 'LIKE', "%".$request->search."%");
+                            });
+                    });
+                }
+            })
+            ->orderBy('id', 'desc')
+            ->paginate($request->entries ?? 10);
 
-        if (request()->ajax()) 
-        {
-            return datatables()->of($areas)
-                ->addColumn('action', function ($data) {
-                    $buttons = '<button type="button" name="edit" id="' . $data->id . '" class="edit btn btn-primary">Edit</button>';
-                    $buttons .= '&nbsp;&nbsp;';
-                    $buttons .= '<button type="button" name="delete" id="' . $data->id . '" class="delete btn btn-danger">Delete</button>';
-                    return $buttons;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
-        return view('areas.index', compact('areas', 'regions'));
+        $regions = Region::all();
+        $entries = $request->entries;
+        $search = $request->search;
+
+        return view('areas.index', compact('areas', 'regions', 'entries', 'search'));
     }
 
     // Store
     public function store(Request $request) 
     {
         $rules = array(
-            // 'Type'          =>  'required',
-            // 'Region'        =>  'required',
+            'Type'          =>  'required',
+            'RegionId'        =>  'required',
             'Name'          =>  'required',
             'Description'   =>  'required'
         );
@@ -44,7 +57,7 @@ class AreaController extends Controller
 
         if($error->fails())
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            return response()->json(['errors' => $error->errors()->all(), 'status' => 0]);
         }
 
         $form_data = array(
@@ -56,17 +69,14 @@ class AreaController extends Controller
 
         Area::create($form_data);
 
-        return response()->json(['success' => 'Data Added Successfully.']);
+        return response()->json(['success' => 'Data Added Successfully.', 'status' => 1]);
     }
 
     // Edit
     public function edit($id)
     {
-        if(request()->ajax())
-        {
-            $data = Area::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
+        $data = Area::findOrFail($id);
+        return response()->json(['data' => $data]);
     }
 
     // Update
@@ -103,5 +113,8 @@ class AreaController extends Controller
     {
         $data = Area::findOrFail($id);
         $data->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
     }
 }

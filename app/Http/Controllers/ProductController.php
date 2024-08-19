@@ -56,7 +56,7 @@ class ProductController extends Controller
                 });
             }) 
             ->orderBy('updated_at', 'desc')
-            ->paginate(10);
+            ->paginate($request->entries ?? 10);
         
         $application = ProductApplication::get();
         $raw_material = RawMaterial::get();
@@ -68,7 +68,8 @@ class ProductController extends Controller
                 'application' =>  $application,
                 'raw_material' => $raw_material,
                 'application_filter' => $request->application_filter,
-                'material_filter' => $request->material_filter
+                'material_filter' => $request->material_filter,
+                'entries' => $request->entries
             )
         ); 
     }
@@ -89,7 +90,7 @@ class ProductController extends Controller
                     });
             }) 
             ->orderBy('updated_at', 'desc')
-            ->paginate(10);
+            ->paginate($request->entries ?? 10);
 
         $product_applications = ProductApplication::all();
         $product_subcategories = ProductSubcategories::all();
@@ -99,7 +100,8 @@ class ProductController extends Controller
                 'products' => $products,
                 'search' => $request->search,
                 'product_applications' => $product_applications,
-                'product_subcategories' => $product_subcategories
+                'product_subcategories' => $product_subcategories,
+                'entries' => $request->entries
             )
         ); 
     }
@@ -122,12 +124,13 @@ class ProductController extends Controller
                     });
             })
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->paginate($request->entries ?? 10);
 
         $product_applications = ProductApplication::all();
         $product_subcategories = ProductSubcategories::all();
+        $entries = $request->entries;
 
-        return view('products.draft', compact('products','product_applications', 'product_subcategories', 'search')); 
+        return view('products.draft', compact('products','product_applications', 'product_subcategories', 'search', 'entries')); 
     }
 
     // Archived List
@@ -146,12 +149,13 @@ class ProductController extends Controller
                     });
             })
             ->orderBy('updated_at', 'desc')
-            ->paginate(10);
+            ->paginate($request->entries ?? 10);
         
         return view('products.archived', 
             array(
                 'products' => $products,
-                'search' => $request->search
+                'search' => $request->search,
+                'entries' => $request->entries
             )
         ); 
     }
@@ -888,7 +892,7 @@ class ProductController extends Controller
             }) 
             ->where('status', '4')
             ->orderBy('updated_at', 'desc')
-            ->paginate(10);
+            ->paginate($request->entries ?? 10);
         
         $application = ProductApplication::get();
         $raw_material = RawMaterial::get();
@@ -900,7 +904,8 @@ class ProductController extends Controller
                 'application' =>  $application,
                 'raw_material' => $raw_material,
                 'application_filter' => $request->application_filter,
-                'material_filter' => $request->material_filter
+                'material_filter' => $request->material_filter,
+                'entries' => $request->entries
             )
         ); 
     }
