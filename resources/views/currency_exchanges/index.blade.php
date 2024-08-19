@@ -48,8 +48,16 @@
                                     </form>
                                 </td>
                                 <td>{{date('M d, Y', strtotime($currency->EffectiveDate))}}</td>
-                                <td>{{$currency->FromCurrency->Name}}</td>
-                                <td>{{$currency->ToCurrency->Name}}</td>
+                                <td>
+                                    @if($currency->FromCurrency)
+                                    {{$currency->FromCurrency->Name}}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($currency->ToCurrency)
+                                    {{$currency->ToCurrency->Name}}
+                                    @endif
+                                </td>
                                 <td>{{$currency->ExchangeRate}}</td>
                             </tr>
 
