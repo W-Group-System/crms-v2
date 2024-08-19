@@ -15,12 +15,13 @@ class ProductApplicationController extends Controller
             $q->where('Name', 'LIKE', "%".$request->search."%")->orWhere('Description', 'LIKE', "%".$request->search."%");
         })
         ->orderBy('id', 'desc')
-        ->paginate(10);
+        ->paginate($request->entries ?? 10);
         
         return view('product_applications.index', 
             array(
                 'productApplications' => $productApplications,
-                'search' => $request->search
+                'search' => $request->search,
+                'entries' => $request->entries
             )
         ); 
     }
