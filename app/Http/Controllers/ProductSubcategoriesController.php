@@ -22,7 +22,7 @@ class ProductSubcategoriesController extends Controller
                 ->orWhere('Description', 'LIKE', '%'.$request->search.'%');
             })
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->paginate($request->entries ?? 10);
 
         $productapp = ProductApplication::get();
 
@@ -30,7 +30,8 @@ class ProductSubcategoriesController extends Controller
             array(
                 'subcategories' => $subcategories,
                 'productapp' => $productapp,
-                'search' => $request->search
+                'search' => $request->search,
+                'entries' => $request->entries
             )
         ); 
     }

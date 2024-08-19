@@ -7,7 +7,7 @@
             Product Subcategories List
             <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formProductSubcategories">Add Product Subcategories</button>
             </h4>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+            {{-- <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-3">
                         <div class="search">
@@ -17,22 +17,47 @@
                         </div>
                     </div>
                 </div>
-            </form>
+            </form> --}}
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Showing</span>
+                    <form action="" method="get" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10"  @if($entries == 10) selected @endif>10</option>
+                            <option value="25"  @if($entries == 25) selected @endif>25</option>
+                            <option value="50"  @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
+                </div>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Product Sub Categories" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <table class="table table-striped table-bordered table-hover table-bordered" id="product_subcategories_table" width="100%">
                 <thead>
                     <tr>
+                        <th width="10%">Action</th>
                         <th width="25%">Application</th>
                         <th width="30%">Subcategory</th>
                         <th width="35%">Description</th>
-                        <th width="10%">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($subcategories as $sub)
                         <tr>
-                            <td>{{$sub->application->Name}}</td>
-                            <td>{{$sub->Name}}</td>
-                            <td>{{$sub->Description}}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#formProductSubcategories-{{$sub->id}}" title="Edit">
                                     <i class="ti-pencil"></i>
@@ -42,12 +67,15 @@
                                     <i class="ti-trash"></i>
                                 </button>
                             </td>
+                            <td>{{$sub->application->Name}}</td>
+                            <td>{{$sub->Name}}</td>
+                            <td>{{$sub->Description}}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
 
-            {!! $subcategories->appends(['search' => $search])->links() !!}
+            {!! $subcategories->appends(['search' => $search, 'entries' => $entries])->links() !!}
 
             @php
                 $total = $subcategories->total();
@@ -111,28 +139,44 @@
     $(document).ready(function() {
         $('.deleteSub').on('click', function() {
             var id = $(this).data('id')
-            
-            $.ajax({
-                type: "POST",
-                url: "{{url('delete_product_subcategories')}}",
-                data:
-                {
-                    id: id
-                },
-                headers: 
-                {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(res)
-                {
-                    Swal.fire({
-                        icon: "success",
-                        title: res.message
-                    }).then(() => {
-                        location.reload()
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url('delete_product_subcategories')}}",
+                        data:
+                        {
+                            id: id
+                        },
+                        headers: 
+                        {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(res)
+                        {
+                            Swal.fire({
+                                icon: "success",
+                                title: res.message
+                            }).then(() => {
+                                location.reload()
+                            })
+                        }
                     })
                 }
-            })
+            });
+        })
+
+        $("[name='entries']").on('change', function() {
+            $(this).closest('form').submit()
         })
     })
 </script>
