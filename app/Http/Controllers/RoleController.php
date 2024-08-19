@@ -21,7 +21,7 @@ class RoleController extends Controller
                     ->orWhere('description', 'LIKE', '%' . $search . '%');
             })
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->paginate($request->entries ?? 10);
         
         $department = Department::get();
 
@@ -29,6 +29,7 @@ class RoleController extends Controller
             'search' => $search,
             'roles' => $roles,
             'department' => $department,
+            'entries' => $request->entries
         ]);
     }
 
@@ -39,6 +40,7 @@ class RoleController extends Controller
         $role->name = $request->name;
         $role->description = $request->description;
         $role->department_id = $request->department;
+        $role->type = $request->type;
         $role->status = "Active";
         $role->save();
 
@@ -61,6 +63,7 @@ class RoleController extends Controller
     {
         $role = Role::findOrFail($id);
         $role->name = $request->name;
+        $role->type = $request->type;
         $role->description = $request->description;
         $role->department_id = $request->department;
         $role->save();

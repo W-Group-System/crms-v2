@@ -18,39 +18,46 @@ class UserController extends Controller
     // List 
     public function index(Request $request)
     {
-        $departments = Department::all();
-        $roles = Role::where('status', 'Active')->get();
-        $companies = Company::where('status', 'Active')->get();
-        $approvers = User::with('salesApproverByUserId', 'salesApproverById')->where('is_active', 1)->get();
-    
-        $search = $request->input('search');
-    
-        $users = User::with(['role', 'company', 'department'])
-                ->where(function ($query) use ($search) {
-                    $query->where('username', 'LIKE', '%' . $search . '%')
-                        ->orWhere('full_name', 'LIKE', '%' . $search . '%')
-                        ->orWhereHas('role', function ($q) use ($search) {
-                            $q->where('name', 'LIKE', '%' . $search . '%');
-                        })
-                        ->orWhereHas('company', function ($q) use ($search) {
-                            $q->where('name', 'LIKE', '%' . $search . '%');
-                        })
-                        ->orWhereHas('department', function ($q) use ($search) {
-                            $q->where('name', 'LIKE', '%' . $search . '%');
-                        })
-                        ->orWhere('email', 'LIKE', '%'.$search.'%');
-                })
-                ->orderBy('id', 'desc')
-                ->paginate(10);
-    
-        return view('users.index', [
-            'search' => $search,
-            'users' => $users,
-            'roles' => $roles,
-            'companies' => $companies,
-            'departments' => $departments,
-            'approvers' => $approvers
-        ]);
+        if (auth()->user()->department_id == 1)
+        {
+            $departments = Department::all();
+            $roles = Role::where('status', 'Active')->get();
+            $companies = Company::where('status', 'Active')->get();
+            $approvers = User::with('salesApproverByUserId', 'salesApproverById')->where('is_active', 1)->get();
+        
+            $search = $request->input('search');
+        
+            $users = User::with(['role', 'company', 'department'])
+                    ->where(function ($query) use ($search) {
+                        $query->where('username', 'LIKE', '%' . $search . '%')
+                            ->orWhere('full_name', 'LIKE', '%' . $search . '%')
+                            ->orWhereHas('role', function ($q) use ($search) {
+                                $q->where('name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhereHas('company', function ($q) use ($search) {
+                                $q->where('name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhereHas('department', function ($q) use ($search) {
+                                $q->where('name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhere('email', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+        
+            return view('users.index', [
+                'search' => $search,
+                'users' => $users,
+                'roles' => $roles,
+                'companies' => $companies,
+                'departments' => $departments,
+                'approvers' => $approvers
+            ]);
+        }
+        else
+        {
+            return redirect('/');
+        }
     }
     
     // Store

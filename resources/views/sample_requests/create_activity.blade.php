@@ -1,14 +1,14 @@
-<div class="modal fade" id="addActivity" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="createSrfActivity" tabindex="-1" role="dialog" aria-labelledby="RPE Activity" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Activity</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                <h5 class="modal-title" id="Prf Acitivity">New Activity</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_activity" enctype="multipart/form-data" action="{{url('new_activity')}}">
+                <form method="POST" id="form_price_request" enctype="multipart/form-data" action="{{ url('new_activity') }}">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -43,7 +43,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
-                                <select class="form-control form-control-sm js-example-basic-single ClientId" name="ClientId" id="ClientId" style="position: relative !important" title="Select Client" required>
+                                <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select Client" required>
                                     <option value="" disabled selected>Select Client</option>
                                     @foreach($clients as $client)
                                         <option value="{{ $client->id }}">{{ $client->Name }}</option>
@@ -54,8 +54,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Transaction Number</label>
-                                <input type="text" class="form-control form-control-sm" id="TransactionNumber" name="TransactionNumber" placeholder="Enter Transaction Number" @if(Route::currentRouteName() == "viewCrr") value="{{$crr->CrrNumber}}" readonly @endif required>
-                            </div> 
+                                <input type="text" class="form-control form-control-sm" name="TransactionNumber" value="{{ $sampleRequest->SrfNumber }}" readonly>
+                            </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
@@ -65,23 +65,19 @@
                                 </select>
                             </div>
                         </div>
-                        <?php $today = date('Y-m-d'); ?>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Schedule</label>
-                                <input type="date" class="form-control form-control-sm" id="ScheduleFrom" name="ScheduleFrom" required value="{{date('Y-m-d')}}">
+                                <input type="date" class="form-control form-control-sm ScheduleFrom" id="ScheduleFrom" name="ScheduleFrom" required value="{{date('Y-m-d')}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Responsible</label>
-                                <select class="form-control form-control-sm js-example-basic-single" name="PrimaryResponsibleUserId" id="PrimaryResponsibleUserId" style="position: relative !important" title="Select Contact" required>
-                                    <option value="" disabled selected>Select Primary Responsible</option>
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                    <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->id }}" 
-                                            {{ $currentUser && ($currentUser->id == $user->id || $currentUser->user_id == $user->id) ? 'selected' : '' }}>
-                                            {{ $user->full_name }}
-                                        </option>
+                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -89,18 +85,16 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Due Date</label>
-                                <input type="date" class="form-control" id="ScheduleTo" name="ScheduleTo" required>
+                                <input type="date" class="form-control ScheduleTo" id="ScheduleTo" name="ScheduleTo" required>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Responsible</label>
-                                <select class="form-control form-control-sm js-example-basic-single" name="SecondaryResponsibleUserId" id="SecondaryResponsibleUserId" style="position: relative !important" title="Select Contact" required>
-                                    <option value="" disabled selected>Select Secondary Responsible</option>
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                    <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->id }}">
-                                            {{ $user->full_name }}
-                                        </option>
+                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -153,3 +147,42 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('.ClientId').change(function() {
+            var clientId = $(this).val();
+            if (clientId) {
+                $.ajax({
+                    url: '{{ url("client-contact") }}/' + clientId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        $('#ClientContactId').empty();
+                        $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
+                        $.each(data, function(key, value) {
+                            $('#ClientContactId').append('<option value="'+ key +'">'+ value +'</option>');
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                    }
+                });
+            } else {
+                $('#ClientContactId').empty();
+                $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var scheduleInput = document.querySelector('.ScheduleFrom');
+        var DueDateInput = document.querySelector('.ScheduleTo');
+
+        var today = new Date().toISOString().split('T')[0];
+
+            scheduleInput.setAttribute('min', today);
+            DueDateInput.setAttribute('min', today);
+    });
+</script>
+    

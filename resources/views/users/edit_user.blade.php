@@ -27,7 +27,7 @@
                         <select class="form-control js-example-basic-single" name="role_id" style="position: relative !important" title="Select Role" required>
                             <option value="" disabled selected>Select Role</option>
                             @foreach($roles as $role)
-                                <option value="{{ $role->id }}" @if($role->id == $user->role_id) selected @endif>{{ $role->name }}</option>
+                                <option value="{{ $role->id }}" @if($role->id == $user->role_id) selected @endif>{{ $role->department->department_code.' - ' .$role->name }}</option>
                             @endforeach
                         </select>
                     </div>
