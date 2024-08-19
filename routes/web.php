@@ -38,7 +38,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('deactivate_company/{id}', 'CompanyController@deactivate');
 
     // User
-    Route::get('/user', 'UserController@index');
+    Route::get('/user', 'UserController@index')->name('user.index');
     Route::post('/new_user', 'UserController@store');
     Route::get('/edit_user/{id}', 'UserController@edit');
     Route::post('update_user/{id}', 'UserController@update');

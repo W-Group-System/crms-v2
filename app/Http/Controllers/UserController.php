@@ -24,11 +24,10 @@ class UserController extends Controller
             $roles = Role::where('status', 'Active')->get();
             $companies = Company::where('status', 'Active')->get();
             $approvers = User::with('salesApproverByUserId', 'salesApproverById')->where('is_active', 1)->get();
-        
             $search = $request->input('search');
         
             $users = User::with(['role', 'company', 'department'])
-                    ->where(function ($query) use ($search) {
+                    ->when($search, function ($query) use ($search) {
                         $query->where('username', 'LIKE', '%' . $search . '%')
                             ->orWhere('full_name', 'LIKE', '%' . $search . '%')
                             ->orWhereHas('role', function ($q) use ($search) {
@@ -42,17 +41,29 @@ class UserController extends Controller
                             })
                             ->orWhere('email', 'LIKE', '%'.$search.'%');
                     })
-                    ->orderBy('id', 'desc')
-                    ->paginate(10);
-        
-            return view('users.index', [
-                'search' => $search,
-                'users' => $users,
-                'roles' => $roles,
-                'companies' => $companies,
-                'departments' => $departments,
-                'approvers' => $approvers
-            ]);
+                    ->latest();
+
+            if ($request->fetch_all)
+            {
+                $users = $users->get();
+
+                return response()->json($users);
+            }
+            else
+            {
+                $users = $users->paginate($request->entries ?? 10);
+            
+                return view('users.index', [
+                    'search' => $search,
+                    'users' => $users,
+                    'roles' => $roles,
+                    'companies' => $companies,
+                    'departments' => $departments,
+                    'approvers' => $approvers,
+                    'entries' => $request->entries,
+                    'user_status' => ['1' => 'Active', '0' => 'Inactive']
+                ]);
+            }
         }
         else
         {
