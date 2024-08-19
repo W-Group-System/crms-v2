@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Company;
 use App\Department;
+use App\Exports\DepartmentExport;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class DepartmentController extends Controller
@@ -23,14 +25,23 @@ class DepartmentController extends Controller
                 ->orWhere('name', 'LIKE', "%".$request->search."%")
                 ->orWhere('description', 'LIKE', "%".$request->search."%");
             })
-            ->latest()
-            ->paginate($request->number_of_entries ?? 10);
+            ->latest();
 
         $companies = Company::where('status', 'Active')->get();
         $search = $request->search;
         $entries = $request->number_of_entries;
 
-        return view('departments.index', compact('departments', 'companies', 'search', 'entries'));
+        if ($request->fetch_all)
+        {
+            $departments = $departments->get();
+            return response()->json($departments);
+        }
+        else
+        {
+            $departments = $departments->paginate($request->number_of_entries ?? 10);
+
+            return view('departments.index', compact('departments', 'companies', 'search', 'entries'));
+        }
     }
     
     // Store
@@ -115,5 +126,8 @@ class DepartmentController extends Controller
         return back();
     }
 
-
+    public function exportDepartment()
+    {
+        return Excel::download(new DepartmentExport, 'Department.xlsx');
+    }
 }
