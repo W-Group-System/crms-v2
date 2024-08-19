@@ -53,9 +53,13 @@ function usdToEur($cost)
         })
         ->first();
 
-    $eur = $currencyExchangeRates->ExchangeRate * $cost;
+    if ($currencyExchangeRates != null){
 
-    return round($eur, 2);
+        $eur = $currencyExchangeRates->ExchangeRate * $cost;
+
+        return round($eur, 2);
+    }
+    
 }
 
 function usdToPhp($cost)
@@ -66,9 +70,12 @@ function usdToPhp($cost)
         })
         ->first();
 
-    $php = $currencyExchangeRates->ExchangeRate * $cost;
+        if ($currencyExchangeRates != null){
+            $php = $currencyExchangeRates->ExchangeRate * $cost;
 
-    return round($php, 2);
+            return round($php, 2);
+        }
+   
 }
 
 function identicalComposition($materials, $product_id)
