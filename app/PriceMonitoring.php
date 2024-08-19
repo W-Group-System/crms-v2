@@ -75,6 +75,6 @@ class PriceMonitoring extends Model implements Auditable
 
     public function priceRequestProduct()
     {
-        return $this->hasOne(PriceRequestProduct::class, 'PriceRequestFormId', 'Id');
+        return $this->hasOne(PriceRequestProduct::class, 'PriceRequestFormId', 'id');
     }
 }
