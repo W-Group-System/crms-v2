@@ -38,6 +38,11 @@
                 </div>
                 <div class="col-lg-12" align="right">
                     <a href="{{ url('/price_monitoring') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <button type="button" class="btn btn-md btn-warning"
+                        data-target="#closePrf{{ $price_monitorings->id }}" 
+                        data-toggle="modal">
+                        <i class="ti-folder"></i>&nbsp;Close
+                    </button>
                     {{-- @if ($price_monitorings->Progress == 10)
                         <button type="button" class="btn btn-sm btn-success"
                                 data-target="#approveSrf{{ $price_monitorings->id }}" 
@@ -485,6 +490,9 @@
 @include('price_monitoring.upload_prf_file')
 @foreach ($prfFileUploads as $fileupload)
 @include('price_monitoring.edit_prfFiles')
+@endforeach
+@foreach ($price_monitorings as $prf)
+    @include('price_monitoring_ls.close')
 @endforeach
 {{-- @include('sample_requests.create_supplementary')
 @include('sample_requests.assign_personnel')

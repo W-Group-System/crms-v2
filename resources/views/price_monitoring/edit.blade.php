@@ -179,11 +179,28 @@
                             </div>
                         </div>
                            @endforeach
+                           <div class="col-lg-12"><hr style="background-color: black"></div>
+                           <div class="col-lg-6">
+                               <div class="form-group">
+                                   <label>Is Accepted?</label>
+                                   <input type="checkbox" name="IsAccepted" value="1" {{ $priceMonitoring->IsAccepted ? 'checked' : '' }}>
+                               </div>
+                               <div class="form-group">
+                                   <label >Price Bid</label>
+                                   <input type="number" step="0.01" class="form-control" name="PriceBid" value="{{ $priceMonitoring->PriceBid ?? 0}}">
+                               </div>
+                           </div>
+                           <div class="col-lg-6">
+                               <div class="form-group">
+                                   <label >Remarks</label>
+                                   <input type="text" class="form-control" name="DispositionRemarks" value="{{ $priceMonitoring->DispositionRemarks}}" placeholder="Enter Disposition Remarks">
+                               </div>
+                           </div>
                         </div>
                 </div>    
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>            
 		</div>
