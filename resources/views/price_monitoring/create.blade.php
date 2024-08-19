@@ -34,7 +34,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Requested (DD/MM/YYYY)</label>
-                                <input type="date" class="form-control" name="DateRequested">
+                                <input type="date" class="form-control DateRequested" name="DateRequested" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6"></div>
@@ -236,5 +236,21 @@
                 $('input[name="Region"]').val('');
             }
         });
+
+        $('#AddPriceMonitoring').on('hide.bs.modal', function () {
+        $(this).find('form')[0].reset();
+        $(this).find('select').val('').trigger('change'); 
+        $(this).find('input[type="checkbox"]').prop('checked', false); // Uncheck all checkboxes
+    });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // var validityDateInput = document.querySelector('.ValidityDate');
+        var dateRequestedInput = document.querySelector('.DateRequested');
+
+        var today = new Date().toISOString().split('T')[0];
+
+            // validityDateInput.setAttribute('min', today);
+            dateRequestedInput.value = today;
     });
 </script>

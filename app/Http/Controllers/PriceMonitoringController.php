@@ -31,7 +31,18 @@ class PriceMonitoringController extends Controller
     public function index(Request $request)
     {   
         $search = $request->input('search');
+        $open = $request->open;
+        $close = $request->close;
         $price_monitorings = PriceMonitoring::with(['client', 'product_application', 'requestPriceProducts'])
+        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+            $query->whereIn('Status', [$request->open, $request->close]);
+        })
+        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+            $query->where('Status', $request->open);
+        })
+        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+            $query->where('Status', $request->close);
+        })
         ->where(function ($query) use ($search){
             $query->where('PrfNumber', 'LIKE', '%' . $search . '%')
             ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
@@ -49,21 +60,41 @@ class PriceMonitoringController extends Controller
         $users = User::all();
         $products = Product::where('status', '4')->get();
         $payment_terms = PaymentTerms::all();
-        return view('price_monitoring.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms')); 
+        return view('price_monitoring.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms', 'open', 'close')); 
     }
 
     public function store(Request $request)
     {
         $user = Auth::user(); 
-        $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
-        $type = $salesUser->Type == 2 ? 'IS' : 'LS';
-        $year = Carbon::parse($request->input('DateRequested'))->format('y');
-        $lastEntry = PriceMonitoring::where('PrfNumber', 'LIKE', "Prf-{$type}-%")
-                    ->orderBy('id', 'desc')
-                    ->first();
-        $lastNumber = $lastEntry ? intval(substr($lastEntry->PrfNumber, -4)) : 0;
-        $newIncrement = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        $prfNo = "PRF-{$type}-{$year}-{$newIncrement}";
+        // $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
+        // $type = $salesUser->Type == 2 ? 'IS' : 'LS';
+        // $year = Carbon::parse($request->input('DateRequested'))->format('y');
+        // $lastEntry = PriceMonitoring::where('PrfNumber', 'LIKE', "Prf-{$type}-%")
+        //             ->orderBy('id', 'desc')
+        //             ->first();
+        // $lastNumber = $lastEntry ? intval(substr($lastEntry->PrfNumber, -4)) : 0;
+        // $newIncrement = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        // $prfNo = "PRF-{$type}-{$year}-{$newIncrement}";
+        $prfNo = null;
+        if (auth()->user()->department_id == 38)
+        {
+            $checkPrf = PriceMonitoring::select('PrfNumber')->where('PrfNumber', 'LIKE', "%PRF-LS%")->orderBy('PrfNumber', 'desc')->first();
+            $count = substr($checkPrf->PrfNumber, 10);
+            $totalCount = $count + 1;
+            $deptCode = 'LS';
+            
+            $prfNo = 'PRF'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        }
+
+        if (auth()->user()->department_id == 5)
+        {
+            $checkPrf = PriceMonitoring::select('PrfNumber')->where('PrfNumber', 'LIKE', "%PRF-IS%")->orderBy('PrfNumber', 'desc')->first();
+            $count = substr($checkPrf->PrfNumber, 10);
+            $totalCount = $count + 1;
+            $deptCode = 'IS';
+            
+            $prfNo = 'PRF'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        }
 
         $priceMonitoringData = PriceMonitoring::create([
             'PrfNumber' => $prfNo,
@@ -113,30 +144,51 @@ class PriceMonitoringController extends Controller
         $prf->ShipmentTerm = $request->input('ShipmentTerm');
         $prf->PaymentTermId = $request->input('PaymentTermId');
         $prf->OtherCostRequirements = $request->input('OtherCostRequirement');
-        $prf->IsWithCommission = $request->input('WithCommission');
+        $prf->IsWithCommission = $request->input('WithCommission') ? 1 : 0;
         $prf->Commission = $request->input('EnterCommission');
         $prf->Remarks = $request->input('Remarks');
+        $prf->IsAccepted = $request->input('IsAccepted') ? 1 : 0;
+        $prf->PriceBid = $request->input('PriceBid');
+        $prf->DispositionRemarks = $request->input('DispositionRemarks');
         $prf->save();
     
        
-            $prf->requestPriceProducts()->where('Id',  $request->input('requestPriceId') )->updateOrCreate(
-                [
-                    'PriceRequestFormId' => $id, 
-                    'Type' => $request->input('Type'),
-                    'QuantityRequired' => $request->input('QuantityRequired'),
-                    'ProductId' => $request->input('Product'),
-                    'ProductRmc' => $request->input('Rmc'),
-                    'IsalesCommission' => $request->input('Commission'),
-                    'IsalesShipmentCost' => $request->input('ShipmentCost'),
-                    'IsalesFinancingCost' => $request->input('FinancingCost'),
-                    'IsalesOthers' => $request->input('Others'),
-                    'IsalesTotalBaseCost' => $request->input('TotalBaseCost'),
-                    'IsalesBaseSellingPrice' => $request->input('BaseSellingPrice'),
-                    'IsalesOfferedPrice' => $request->input('OfferedPrice'),
-                    'IsalesMargin' => $request->input('Margin'),
-                    'IsalesMarginPercentage' => $request->input('MarginPercent'),
-                ]
-            );
+        $requestPriceProduct = $prf->requestPriceProducts()->find($request->input('requestPriceId'));
+    
+        if ($requestPriceProduct) {
+            $requestPriceProduct->update([
+                'Type' => $request->input('Type'),
+                'QuantityRequired' => $request->input('QuantityRequired'),
+                'ProductId' => $request->input('Product'),
+                'ProductRmc' => $request->input('Rmc'),
+                'IsalesCommission' => $request->input('Commission'),
+                'IsalesShipmentCost' => $request->input('ShipmentCost'),
+                'IsalesFinancingCost' => $request->input('FinancingCost'),
+                'IsalesOthers' => $request->input('Others'),
+                'IsalesTotalBaseCost' => $request->input('TotalBaseCost'),
+                'IsalesBaseSellingPrice' => $request->input('BaseSellingPrice'),
+                'IsalesOfferedPrice' => $request->input('OfferedPrice'),
+                'IsalesMargin' => $request->input('Margin'),
+                'IsalesMarginPercentage' => $request->input('MarginPercent'),
+            ]);
+        } else {
+            $prf->requestPriceProducts()->create([
+                'PriceRequestFormId' => $id, 
+                'Type' => $request->input('Type'),
+                'QuantityRequired' => $request->input('QuantityRequired'),
+                'ProductId' => $request->input('Product'),
+                'ProductRmc' => $request->input('Rmc'),
+                'IsalesCommission' => $request->input('Commission'),
+                'IsalesShipmentCost' => $request->input('ShipmentCost'),
+                'IsalesFinancingCost' => $request->input('FinancingCost'),
+                'IsalesOthers' => $request->input('Others'),
+                'IsalesTotalBaseCost' => $request->input('TotalBaseCost'),
+                'IsalesBaseSellingPrice' => $request->input('BaseSellingPrice'),
+                'IsalesOfferedPrice' => $request->input('OfferedPrice'),
+                'IsalesMargin' => $request->input('Margin'),
+                'IsalesMarginPercentage' => $request->input('MarginPercent'),
+            ]);
+        }
         
     
         return redirect()->back()->with('success', 'Price Request updated successfully');

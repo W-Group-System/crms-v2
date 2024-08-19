@@ -20,7 +20,7 @@
                     <div class="col-lg-12">
                         <div class="form-group">
                             <label >Buyers Ref Code</label>
-                            <input type="text" class="form-control" name="Buyers Ref Code" placeholder="Enter Buyers Ref Code">
+                            <input type="text" class="form-control" name="BuyersRefCode" placeholder="Enter Buyers Ref Code">
                         </div>
                     </div>
                     <div class="col-lg-12">

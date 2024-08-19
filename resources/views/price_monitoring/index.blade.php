@@ -5,8 +5,20 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Price Monitoring List
-            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" data-toggle="modal" data-target="#AddPriceMonitoring">Add Price Monitoring</button>
+            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" data-toggle="modal" data-target="#AddPriceMonitoring">Add</button>
             </h4>
+            <div class="form-group">
+                <form method="GET" >
+                    <label>Show : </label>
+                    <label class="checkbox-inline">
+                        <input name="open" class="price_monitoring" type="checkbox" value="10" @if($open == 10) checked @endif> Open
+                    </label>
+                    <label class="checkbox-inline">
+                        <input name="close" class="price_monitoring" type="checkbox" value="30" @if($close == 30) checked @endif> Closed
+                    </label>
+                    <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
+                </form>
+            </div>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-5">

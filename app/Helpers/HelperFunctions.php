@@ -62,20 +62,35 @@ function usdToEur($cost)
     
 }
 
+// function usdToPhp($cost)
+// {
+//     $currencyExchangeRates = CurrencyExchange::whereHas('fromCurrency', function($q)
+//         {
+//             $q->where('FromCurrencyId', 2)->where('ToCurrencyId', 3);
+//         })
+//         ->first();
+
+//         if ($currencyExchangeRates != null){
+//             $php = $currencyExchangeRates->ExchangeRate * $cost;
+
+//             return round($php, 2);
+//         } 
+
+   
+// }
+
 function usdToPhp($cost)
 {
-    $currencyExchangeRates = CurrencyExchange::whereHas('fromCurrency', function($q)
-        {
-            $q->where('FromCurrencyId', 2)->where('ToCurrencyId', 3);
-        })
-        ->first();
+    $currencyExchangeRates = CurrencyExchange::whereHas('fromCurrency', function($q) {
+        $q->where('FromCurrencyId', 2)->where('ToCurrencyId', 3);
+    })
+    ->first();
 
-        if ($currencyExchangeRates != null){
-            $php = $currencyExchangeRates->ExchangeRate * $cost;
+    $exchangeRate = ($currencyExchangeRates != null) ? $currencyExchangeRates->ExchangeRate : 1;
 
-            return round($php, 2);
-        }
-   
+    $php = $exchangeRate * $cost;
+
+    return round($php, 2);
 }
 
 function identicalComposition($materials, $product_id)
