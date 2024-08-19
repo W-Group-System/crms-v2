@@ -94,10 +94,10 @@
                                     <td>{{ $price_request->priceRequestProduct->IsalesOfferedPrice ?? 'N/A' }}</td>
                                     <td>{{ $price_request->ShipmentTerm ?? 'N/A' }}</td>
                                     <td>{{ $price_request->paymentterms->Name ?? 'N/A' }}</td>
-                                    <td>{{ $price_request->priceRequestProduct->QuantityRequired }}</td>
+                                    <td>{{ $price_request->priceRequestProduct->QuantityRequired ?? '0'}}</td>
                                     <td>{{ $price_request->priceRequestProduct->IsalesMargin ?? 'N/A' }}</td>
                                     <td>{{ $price_request->priceRequestProduct->IsalesMarginPercentage ?? 'N/A' }}</td>
-                                    <td>{{ number_format($price_request->priceRequestProduct->QuantityRequired * $price_request->priceRequestProduct->IsalesMargin),2 }} </td>
+                                    <td>{{ $price_request->priceRequestProduct ? number_format($price_request->priceRequestProduct->QuantityRequired * $price_request->priceRequestProduct->IsalesMargin, 2) : 'N/A' }} </td>
                                     <td>
                                         @if($price_request->IsAccepted == 1)
                                             YES
