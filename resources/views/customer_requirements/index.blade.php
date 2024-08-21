@@ -355,11 +355,9 @@
                                 @endif
                             </td>
                             <td>
-                                @if($customerRequirement->crrNature)
-                                    @foreach ($customerRequirement->crrNature as $crr_nature)
-                                        <small>{{$crr_nature->natureOfRequest->Name}}</small><br>
-                                    @endforeach
-                                @endif
+                                @foreach ($customerRequirement->crrNature as $crr_nature)
+                                    <small>{{optional($crr_nature->natureOfRequest)->Name}}</small><br>
+                                @endforeach
                             </td>
                             <td>
                                 @if($customerRequirement->Status == 10)
