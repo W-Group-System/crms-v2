@@ -3,10 +3,14 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
+            @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Customer Requirement List
             <button type="button" class="btn btn-md btn-primary" name="add_customer_requirement" data-toggle="modal" data-target="#AddCustomerRequirement" class="btn btn-md btn-primary">Add Customer Requirement</button>
             </h4>
+            @else
+            <h4 class="card-title d-flex justify-content-between align-items-center">Customer Requirement List</h4>
+            @endif
 
             <div class="form-group">
                 <form method="GET" >
@@ -21,32 +25,48 @@
                 </form>
             </div>
 
-            <div class="row height d-flex mb-3">
-                <div class="col-md-5 mt-2">
-                    <a href="#" id="copy_btn" class="btn btn-md btn-info">Copy</a>
+            <div class="mb-3">
+                <a href="#" id="copy_btn" class="btn btn-md btn-info">Copy</a>
+                <form method="GET" action="{{url('customer_requirement_export')}}" class="d-inline-block">
+    
+                    <input type="hidden" name="open" value="{{$open}}">
+                    <input type="hidden" name="close" value="{{$close}}">
                     
-                    <form method="GET" action="{{url('customer_requirement_export')}}" class="d-inline-block">
-
-                        <input type="hidden" name="open" value="{{$open}}">
-                        <input type="hidden" name="close" value="{{$close}}">
-                        
-                        <button type="submit" class="btn btn-success">Export</button>
+                    <button type="submit" class="btn btn-success">Export</button>
+                </form>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Show</span>
+                    <form method="GET" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10" @if($entries == 10) selected @endif>10</option>
+                            <option value="25" @if($entries == 25) selected @endif>25</option>
+                            <option value="50" @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
                     </form>
+                    <span>Entries</span>
                 </div>
-
-                <div class="offset-md-2 col-md-5 mt-2">
-                    <form method="GET">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search Customer Requirement" name="search" value="{{$search}}"> 
-                            <button type="submit" class="btn btn-sm btn-info">Search</button>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Customer Requirement" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
-            
+
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%">
+                    @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == null)
                     <thead>
                         <tr>
                             <th>Action</th>
@@ -117,10 +137,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if(count($customer_requirements) > 0)
                         @foreach ($customer_requirements as $customerRequirement)
                         <tr>
                             <td>
-                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements">
+                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements" target="_blank">
                                     <i class="ti-eye"></i>
                                 </a>
                                 @if(auth()->user()->id == $customerRequirement->PrimarySalesPersonId || auth()->user()->user_id == $customerRequirement->PrimarySalesPersonId)
@@ -130,32 +151,233 @@
                                 </button>  
                                 <form method="POST" action="{{url('delete_crr/'.$customerRequirement->id)}}" class="d-inline-block">
                                     @csrf
-                                    <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $customerRequirement->Id }}" title='Delete Base Price'>
+                                    <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $customerRequirement->Id }}" >
                                         <i class="ti-trash"></i>
                                     </button>
                                 </form>
                                 @endif
                             </td>
                             <td>{{ optional($customerRequirement)->CrrNumber }}</td>
-                            <td>{{ $customerRequirement->CreatedDate }}</td>
-                            <td>{{ $customerRequirement->DueDate }}</td>
+                            <td>
+                                {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
+                            </td>
+                            <td>{{ date('M d Y', strtotime($customerRequirement->DueDate)) }}</td>
                             <td>{{ optional($customerRequirement->client)->Name }}</td>
                             <td>{{ optional($customerRequirement->product_application)->Name }}</td>
                             <td style="white-space: break-spaces; width: 100%;">{{ $customerRequirement->Recommendation }}</td>
                             <td>
                                 @if($customerRequirement->Status == 10)
-                                        Open
+                                        <div class="badge badge-success">Open</div>
                                     @elseif($customerRequirement->Status == 30)
-                                        Closed
-                                    @else
-                                        {{ $customerRequirement->Status }}
+                                        <div class="badge badge-warning">Closed</div>
+                                    @elseif($customerRequirement->Status == 50)
+                                        <div class="badge badge-danger">Cancelled</div>
                                     @endif
                             </td>
                             <td>{{ optional($customerRequirement->progressStatus)->name }}</td>
                             
                         </tr>
                         @endforeach
+                        @else
+                        <tr>
+                            <td colspan="9" class="text-center">No data available.</td>
+                        </tr>
+                        @endif
                     </tbody>
+                    @elseif(auth()->user()->role->type == "IS")
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>CRR #
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'CrrNumber', 
+                                    'direction' => request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Date Created
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'DateCreated', 
+                                    'direction' => request('sort') == 'DateCreated' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'DateCreated' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Due Date
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'DueDate', 
+                                    'direction' => request('sort') == 'DueDate' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'DueDate' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Client Name
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'ClientId', 
+                                    'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Application
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'ApplicationId', 
+                                    'direction' => request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Competitor
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'Competitor', 
+                                    'direction' => request('sort') == 'Competitor' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Competitor' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Primary Sales Person
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'PrimarySalesPersonId', 
+                                    'direction' => request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Details of Requirement
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'DetailsOfRequirement', 
+                                    'direction' => request('sort') == 'DetailsOfRequirement' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'DetailsOfRequirement' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Recommendation
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'Recommendation', 
+                                    'direction' => request('sort') == 'Recommendation' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Recommendation' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Date Received
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'DateReceived', 
+                                    'direction' => request('sort') == 'DateReceived' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'DateReceived' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Days Late
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'DueDate', 
+                                    'direction' => request('sort') == 'DueDate' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'DueDate' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Nature of Request
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'NatureRequestId', 
+                                    'direction' => request('sort') == 'NatureRequestId' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'NatureRequestId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Status
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'Status', 
+                                    'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Progress
+                                <a href="{{ route('customer_requirement.index', [
+                                    'sort' => 'Progress', 
+                                    'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(count($customer_requirements) > 0)
+                        @foreach ($customer_requirements as $customerRequirement)
+                        <tr>
+                            <td>
+                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements" target="_blank">
+                                    <i class="ti-eye"></i>
+                                </a>
+                                @if(auth()->user()->id == $customerRequirement->PrimarySalesPersonId || auth()->user()->user_id == $customerRequirement->PrimarySalesPersonId)
+                                <button type="button" class="btn btn-sm btn-warning"
+                                    data-target="#editCrr-{{ $customerRequirement->id }}" data-toggle="modal" title='Edit'>
+                                    <i class="ti-pencil"></i>
+                                </button>  
+                                <form method="POST" action="{{url('delete_crr/'.$customerRequirement->id)}}" class="d-inline-block">
+                                    @csrf
+                                    <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $customerRequirement->Id }}" >
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                </form>
+                                @endif
+                            </td>
+                            <td>{{ optional($customerRequirement)->CrrNumber }}</td>
+                            <td>
+                                {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
+                            </td>
+                            <td>{{ date('M d Y', strtotime($customerRequirement->DueDate)) }}</td>
+                            <td>{{ optional($customerRequirement->client)->Name }}</td>
+                            <td>{{ optional($customerRequirement->product_application)->Name }}</td>
+                            <td>{{$customerRequirement->Competitor}}</td>
+                            <td>
+                                @if($customerRequirement->primarySales)
+                                    {{$customerRequirement->primarySales->full_name}}
+                                @elseif($customerRequirement->primarySalesById)
+                                    {{$customerRequirement->primarySalesById->full_name}}
+                                @endif
+                            </td>
+                            <td>{!! nl2br(e($customerRequirement->DetailsOfRequirement)) !!}</td>
+                            <td style="white-space: break-spaces; width: 100%;">{{ $customerRequirement->Recommendation }}</td>
+                            <td>
+                                @if($customerRequirement->DateReceived)
+                                {{date('M d Y', strtotime($customerRequirement->DateReceived))}}
+                                @else
+                                No date received
+                                @endif
+                            </td>
+                            <td>
+                                @if($customerRequirement->DueDate)
+                                {{date('M d Y', strtotime($customerRequirement->DueDate))}}
+                                @else
+                                No due date
+                                @endif
+                            </td>
+                            <td>
+                                @foreach ($customerRequirement->crrNature as $crr_nature)
+                                    <small>{{$crr_nature->natureOfRequest->Name}}</small><br>
+                                @endforeach
+                            </td>
+                            <td>
+                                @if($customerRequirement->Status == 10)
+                                        <div class="badge badge-success">Open</div>
+                                    @elseif($customerRequirement->Status == 30)
+                                        <div class="badge badge-warning">Closed</div>
+                                    @elseif($customerRequirement->Status == 50)
+                                        <div class="badge badge-danger">Cancelled</div>
+                                    @endif
+                            </td>
+                            <td>{{ optional($customerRequirement->progressStatus)->name }}</td>
+                        </tr>
+                        @endforeach
+                        @else
+                        <tr>
+                            <td colspan="15" class="text-center">No data available.</td>
+                        </tr>
+                        @endif
+                    </tbody>
+                    @endif
                 </table>
                 {!! $customer_requirements->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
                 @php
@@ -257,6 +479,15 @@
                     form.submit()
                 }
             });
+        })
+
+        $("[name='entries']").on('change', function() {
+            $(this).closest('form').submit()
+        })
+
+        $('.deleteBtn').on('click', function() {
+            console.log('asdad');
+            
         })
     })
 </script>

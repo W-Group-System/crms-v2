@@ -159,6 +159,26 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/delete_crr/{id}', 'CustomerRequirementController@delete');
     Route::get('view_customer_requirement/{id}', 'CustomerRequirementController@view')->name('viewCrr');
     Route::get('customer_requirement_export', 'CustomerRequirementController@export');
+    Route::post('close_remarks/{id}', 'CustomerRequirementController@closeRemarks');
+    Route::post('cancel_remarks/{id}', 'CustomerRequirementController@cancelRemarks');
+    Route::post('accept_crr/{id}', 'CustomerRequirementController@acceptCrr');
+    Route::post('open_status/{id}', 'CustomerRequirementController@openStatus');
+    Route::post('rnd_received/{id}', 'CustomerRequirementController@rndReceived');
+    Route::post('start_crr/{id}', 'CustomerRequirementController@startCrr');
+    Route::post('pause_crr/{id}', 'CustomerRequirementController@pauseCrr');
+    Route::post('submit_crr/{id}', 'CustomerRequirementController@submitCrr');
+    Route::post('submit_final_crr/{id}', 'CustomerRequirementController@submitFinalCrr');
+    Route::post('complete_crr/{id}', 'CustomerRequirementController@completeCrr');
+
+    # Crr Supplementary Details
+    Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');
+    Route::post('update_supplementary/{id}', 'CustomerRequirementController@updateSupplementary');
+    Route::post('delete_supplementary/{id}', 'CustomerRequirementController@deleteSupplementary');
+
+    # Crr Personnel
+    Route::post('add_personnel', 'CustomerRequirementController@addPersonnel');
+    Route::post('update_personnel/{id}', 'CustomerRequirementController@updatePersonnel');
+    Route::post('delete_personnel/{id}', 'CustomerRequirementController@deletePersonnel');
 
     # Crr File
     Route::post('add_crr_file', 'CustomerRequirementController@addCrrFile');

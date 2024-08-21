@@ -3,14 +3,16 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CrrDetail extends Model
 {
+    use SoftDeletes;
     protected $primaryKey = 'Id';
     protected $table = 'crrdetails';
 
-    CONST created_at = 'CreatedDate';
-    CONST updated_at = 'ModifiedDate';
+    CONST CREATED_AT = 'DateCreated';
+    CONST UPDATED_AT = 'ModifiedDate';
 
     public function userByUserId()
     {

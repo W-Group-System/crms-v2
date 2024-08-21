@@ -6,35 +6,207 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
                 <div align="right">
-                    <a href="{{ url('/customer_requirement') }}" class="btn btn-md btn-secondary">
+                    <a href="{{ url('/customer_requirement') }}" class="btn btn-md btn-secondary" onclick="window.close()">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
+
+                    @if(authCheckIfItsSales(auth()->user()->department_id))
                     <button type="button" class="btn btn-danger btn-icon-text" >
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
                     </button>
-                    @if(auth()->user()->department_id == 15 || auth()->user()->department_id == 42)
-                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
-                        <i class="ti ti-pencil"></i>&nbsp;Update
-                    </button>
                     @endif
-                    @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38)
-                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editCrr{{$crr->id}}">
-                        <i class="ti ti-pencil"></i>&nbsp;Update
-                    </button>
+
+                    @if(authCheckIfItsRndStaff(auth()->user()->role))
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                            <i class="ti ti-pencil"></i>&nbsp;Update
+                        </button>
+
+                        @if($crr->Progress == 35)
+                        <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block">
+                            @csrf 
+
+                            <button type="button" class="btn btn-success startCrrBtn">
+                                <i class="ti-control-play"></i>&nbsp; Start
+                            </button>
+                        </form>
+                        @endif
+
+                        @if($crr->Progress == 50)
+                            <button type="button" class="btn btn-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
+                                <i class="ti-control-pause"></i>&nbsp; Pause
+                            </button>
+
+                            @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
+                            <form method="POST" action="{{url('submit_crr/'.$crr->id)}}" class="d-inline-block">
+                                @csrf 
+
+                                <button type="button" class="btn btn-warning submitCrrBtn">
+                                    <i class="ti-check"></i>&nbsp; Submit
+                                </button>
+                            </form>
+                            @endif
+                        @endif
+
+                        @if($crr->Progress == 55)
+                            <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block">
+                                @csrf 
+
+                                <button type="button" class="btn btn-success startCrrBtn">
+                                    <i class="ti-control-play"></i>&nbsp; Continue
+                                </button>
+                            </form>
+                        @endif
+
+                        @if($crr->Progress == 57)
+                            <form method="POST" action="{{url('submit_final_crr/'.$crr->id)}}" class="d-inline-block">
+                                @csrf 
+
+                                <button type="button" class="btn btn-success submitFinalCrr">
+                                    <i class="ti-check"></i>&nbsp; Submit
+                                </button>
+                            </form>
+                        @endif
                     @endif
-                    <button type="button" class="btn btn-info" data-toggle="modal">
-                        <i class="ti ti-back-left"></i>&nbsp;Return
-                    </button>
-                    <button type="button" class="btn btn-success">
-                        <i class="ti ti-check-box"></i>&nbsp;Accept
-                    </button>
-                    <button type="button" class="btn btn-primary">
-                        <i class="ti ti-close"></i>&nbsp;Close
-                    </button>
-                    <button type="button" class="btn btn-danger">
-                        <i class="mdi mdi-cancel"></i>&nbsp;Cancel
-                    </button>
+
+                    @if(auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId)
+                        @if($crr->Status == 10)
+                            @if(auth()->user()->department_id == 15 || auth()->user()->department_id == 42)
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Update
+                            </button>
+                            @endif
+
+                            @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38)
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editCrr{{$crr->id}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Update
+                            </button>
+                            @endif
+                        @endif
+
+                        @if(checkRolesIfHaveApprove('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
+                        @if($crr->Progress == 60)
+                        <button type="button" class="btn btn-info" data-toggle="modal">
+                            <i class="ti ti-back-left"></i>&nbsp;Return
+                        </button>
+                        @endif
+
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
+                            <i class="ti ti-check-box"></i>&nbsp;Accept
+                        </button>
+                        @endif
+                        
+                        @if($crr->Status == 30)
+                        <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}">
+                            @csrf
+
+                            <button type="button" class="btn btn-success openBtn">
+                                <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                            </button>
+                        </form>
+                        @endif
+                        
+                        @if($crr->Status == 10)
+                        <button type="button" class="btn btn-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
+                            <i class="ti ti-close"></i>&nbsp;Close
+                        </button>
+                        <button type="button" class="btn btn-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                            <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                        </button>
+                        @endif
+                    @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
+                        @if(auth()->user()->department_id == 15 || auth()->user()->department_id == 42)
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                            <i class="ti ti-pencil"></i>&nbsp;Update
+                        </button>
+                        @endif
+
+                        @if(authCheckIfItsSales(auth()->user()->department_id))
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editCrr{{$crr->id}}">
+                            <i class="ti ti-pencil"></i>&nbsp;Update
+                        </button>
+                        @endif
+
+                        @if(checkRolesIfHaveApprove('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
+                            {{-- @if($crr->Progress == 60)
+                            <button type="button" class="btn btn-info" data-toggle="modal">
+                                <i class="ti ti-back-left"></i>&nbsp;Return
+                            </button>
+                            @endif --}}
+                            
+                            @if(checkIfItsApprover(auth()->user()->id, $crr->PrimarySalesPersonId, "CRR") == "yes" && $crr->Progress == 10)
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
+                                <i class="ti ti-check-box"></i>&nbsp;Accept
+                            </button>
+                            @endif
+                        @endif
+                        
+                        @if(authCheckIfItsSales(auth()->user()->department_id))
+                        <button type="button" class="btn btn-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
+                            <i class="ti ti-close"></i>&nbsp;Close
+                        </button>
+                        <button type="button" class="btn btn-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                            <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                        </button>
+                        @else
+
+                            @if($crr->Progress != 60)
+                            <form action="{{url('start_crr/'.$crr->id)}}" method="post" class="d-inline-block">
+                                @csrf
+
+                                <button type="button" class="btn btn-danger returnBtn">
+                                    <i class="ti-back-left">&nbsp;</i> Return
+                                </button>
+                            </form>
+                            @endif
+
+                            @if($crr->Progress == 30)
+                            <form action="{{url('rnd_received/'.$crr->id)}}" method="post" class="d-inline-block">
+                                @csrf
+
+                                <button type="button" class="btn btn-success receivedBtn">
+                                    <i class="ti-bookmark">&nbsp;</i> Received
+                                </button>
+                            </form>
+                            @endif
+
+                            @if($crr->Progress == 35)
+                            <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block">
+                                @csrf 
+
+                                <button type="button" class="btn btn-success startCrrBtn">
+                                    <i class="ti-control-play"></i>&nbsp; Start
+                                </button>
+                            </form>
+                            @endif
+
+                            @if($crr->Progress == 50)
+                                <button type="button" class="btn btn-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
+                                    <i class="ti-control-pause"></i>&nbsp; Pause
+                                </button>
+                            @endif
+
+                            @if($crr->Progress == 55)
+                            <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block">
+                                @csrf 
+
+                                <button type="button" class="btn btn-success startCrrBtn" data-label="Continue">
+                                    <i class="ti-control-play"></i>&nbsp; Continue
+                                </button>
+                            </form>
+                            @endif
+
+                            @if($crr->Progress == 57 || $crr->Progress == 81)
+                                <form method="POST" action="{{url('complete_crr/'.$crr->id)}}" class="d-inline-block">
+                                    @csrf 
+
+                                    <button type="button" class="btn btn-primary completeCrr">
+                                        <i class="ti-pencil-alt"></i>&nbsp; Completed
+                                    </button>
+                                </form>
+                            @endif
+                        @endif
+                    @endif
                 </div>
             </h4>
             <div class="col-md-12">
@@ -128,6 +300,8 @@
                             Open
                             @elseif($crr->Status == 30)
                             Closed
+                            @elseif($crr->Status == 50)
+                            Cancelled
                             @endif
                         </label>
                     </div>
@@ -163,7 +337,11 @@
                     </div>
                     <label class="col-sm-3 col-form-label"><b>REF CRR Number :</b></label>
                     <div class="col-sm-3">
-                        <label>{{$crr->RefCrrNumber}}</label>
+                        <label>
+                            <a href="{{url('view_customer_requirement/'.$crr->id)}}" target="_blank">
+                                {{$crr->RefCrrNumber}}
+                            </a>
+                        </label>
                     </div>
                 </div>
                 <div class="form-group row mb-2">
@@ -173,7 +351,14 @@
                     </div>
                     <label class="col-sm-3 col-form-label"><b>REF RPE Number :</b></label>
                     <div class="col-sm-3">
-                        <label>{{$crr->RefRpeNumber}}</label>
+                        @php
+                            $id = linkToRpe($crr->RefRpeNumber);
+                        @endphp
+                        <label>
+                            <a href="{{url('product_evaluation/view/'.$id)}}" target="_blank">
+                                {{$crr->RefRpeNumber}}
+                            </a>
+                        </label>
                     </div>
                 </div>
                 <div class="form-group row mb-2">
@@ -200,6 +385,13 @@
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
                 <div class="form-group row mb-2">
                     <label class="col-sm-3 col-form-label">
+                        @if($crr->crrTransactionApprovals->isEmpty())
+                            @if($crr->approver)
+                            <b>{{$crr->approver->full_name}} :</b> {{$crr->AcceptRemarks}}
+                            @else
+                            <p>No approver remarks yet</p>
+                            @endif
+                        @else
                         @foreach ($crr->crrTransactionApprovals as $transactionApproval)
                             <b>
                                 @if($transactionApproval->userByUserId)
@@ -209,6 +401,7 @@
                                 @endif
                             </b> 
                         @endforeach
+                        @endif
                     </label>
                 </div>
             </div>
@@ -223,23 +416,47 @@
                     </div>
                     <label class="col-sm-3 col-form-label"><b>Date Received :</b></label>
                     <div class="col-sm-3">
-                        <label>{{date('M d Y', strtotime($crr->DateReceived))}}</label>
+                        <label>
+                            @if($crr->DateReceived != null)
+                            {{date('M d Y', strtotime($crr->DateReceived))}}
+                            @else
+                            No date received
+                            @endif
+                        </label>
                     </div>
                 </div>
                 <div class="form-group row mb-2">
                     <label class="col-sm-3 col-form-label"><b>Recommendation : </b></label>
                     <div class="col-sm-3">
-                        <label>{{$crr->Recommendation}}</label>
+                        <label>
+                            {!! nl2br(e($crr->Recommendation)) !!}
+                        </label>
                     </div>
                     <label class="col-sm-3 col-form-label"><b>Date Completed :</b></label>
                     <div class="col-sm-3">
-                        <label>{{date('M d Y', strtotime($crr->DateCompleted))}}</label>
+                        <label>
+                            @if($crr->DateCompleted != null)
+                            {{date('M d Y', strtotime($crr->DateCompleted))}}
+                            @else
+                            No date completed
+                            @endif
+                        </label>
                     </div>
                 </div>
                 <div class="form-group row mb-2">
                     <label class="col-sm-3 col-form-label"><b>Days Late : </b></label>
                     <div class="col-sm-3">
-                        <label></label>
+                        @php
+                            $today = new DateTime();
+                            $due_date = new DateTime($crr->DueDate);
+                            $diff = $due_date->diff($today);
+                            
+                            $days_late = $diff;
+                            $s = $days_late->d > 1 ? 's' : '';
+                        @endphp
+                        <label>
+                            {{$days_late->d .' day' .$s}}
+                        </label>
                     </div>
                 </div>
             </div>
@@ -265,19 +482,41 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="supplementary_details" role="tabpanel" aria-labelledby="supplementary_details">
+                    
+                    @if($crr->Progress != 55 && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81)
+                    <button type="button" class="btn btn-primary float-right mb-3" data-toggle="modal" data-target="#addSupplementary">
+                        Add Supplementary Details
+                    </button>
+                    @include('customer_requirements.add_supplementary_details')
+                    @endif
+
                     <div class="table-responsive">
                         <table class="table table-hover table-striped table-bordered tables" width="100%">
                             <thead>
                                 <tr>
-                                    <td>Date</td>
-                                    <td>Name</td>
-                                    <td>Details</td>
+                                    <th>Action</th>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Details</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($crr->crrDetails as $details)
                                     <tr>
-                                        <td>{{date('Y-m-d h:i:s', strtotime($details->DateCreated))}}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editSupplementary{{$details->Id}}">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+
+                                            <form method="POST" class="d-inline-block" action="{{url('delete_supplementary/'.$details->Id)}}">
+                                                @csrf 
+
+                                                <button type="button" class="btn btn-sm btn-danger deleteSupplementaryDetailsBtn">
+                                                    <i class="ti-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td>{{date('M d Y', strtotime($details->DateCreated))}}</td>
                                         <td>
                                             @if($details->userByUserId)
                                                 {{$details->userByUserId->full_name}}
@@ -291,16 +530,25 @@
                                             {{$details->DetailsOfRequirement}}
                                         </td>
                                     </tr>
+                                    @include('customer_requirements.edit_supplementary_details')
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="tab-pane fade " id="assigned" role="tabpanel" aria-labelledby="assigned">
+                    @if($crr->Progress != 55 && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81)
+                    <button type="button" class="btn btn-primary float-right mb-3" data-toggle="modal" data-target="#addPersonnel">
+                        Add Personnel
+                    </button>
+                    @include('customer_requirements.new_personnel')
+                    @endif
+
                     <div class="table-responsive">
                         <table class="table table-hover table-striped table-bordered tables" width="100%">
                             <thead>
                                 <tr>
+                                    <th>Action</th>
                                     <th>Name</th>
                                 </tr>
                             </thead>
@@ -308,12 +556,27 @@
                                 <tbody>
                                     <tr>
                                         <td>
+                                            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editPersonnel{{$personnel->Id}}">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+
+                                            <form method="POST" class="d-inline-block" action="{{url('delete_personnel/'.$personnel->Id)}}">
+                                                @csrf
+
+                                                <button type="button" class="btn btn-danger btn-sm deletePersonnelButton">
+                                                    <i class="ti-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td>
                                             @if($personnel->crrPersonnelByUserId)
                                                 {{$personnel->crrPersonnelByUserId->full_name}}
                                             @elseif($personnel->crrPersonnelById)
                                                 {{$personnel->crrPersonnelById->full_name}}
                                             @endif
                                         </td>
+
+                                        @include('customer_requirements.edit_personnel')
                                     </tr>
                                 </tbody>
                             @endforeach
@@ -330,8 +593,11 @@
                             <input name="close" class="activity_status" type="checkbox" value="20"> Closed
                         </label>
                     </div>
+
+                    @if(checkIfHaveActivities(auth()->user()->role) == "yes")
                     <button class="btn btn-primary mb-3 float-right" data-toggle="modal" data-target="#addActivity">Add Activities</button>
                     @include('activities.new_activities')
+                    @endif
 
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered table-striped tables" width="100%">
@@ -349,6 +615,7 @@
                                     @foreach ($crr->activities as $a)
                                         <tr>
                                             <td width="10%">
+                                                @if(checkIfHaveActivities(auth()->user()->role) == "yes")
                                                 <button type="button" class="btn btn-warning btn-sm edit_activity" data-toggle="modal" data-target="#editActivity-{{$a->id}}" data-clientid="{{$a->ClientId}}" data-clientcontact="{{$a->ClientContactId}}">
                                                     <i class="ti ti-pencil"></i>
                                                 </button>
@@ -360,6 +627,7 @@
                                                         <i class="ti ti-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endif
                                             </td>
                                             <td>
                                                 <a href="{{url('view_activity/'.$a->id)}}" target="_blank">
@@ -387,23 +655,41 @@
                     </div>
                 </div>
                 <div class="tab-pane fade " id="files" role="tabpanel" aria-labelledby="files-tab">
+                    @if(checkIfHaveFiles(auth()->user()->role) == "yes")
                     <button type="button" class="btn btn-primary mb-3 float-right" data-toggle="modal" data-target="#addCrrFiles">
                         Add Customer Requirement Files
                     </button>
+                    @endif
+
                     @include('customer_requirements.new_crr_files')
 
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover tables" width="100%">
                             <thead>
                                 <tr>
+                                    <th>Action</th>
                                     <th>Name</th>
                                     <th>File</th>
-                                    <th>Action</th>
                                 </tr>
                             </thead>
                             @foreach ($crr->crrFiles as $files)
                                 <tbody>
                                     <tr>
+                                        <td>
+                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes")
+                                            <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCrrFiles-{{$files->Id}}" title="Edit">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+
+                                            <form method="POST" class="d-inline-block" action="{{url('delete_crr_file/'.$files->Id)}}">
+                                                @csrf 
+
+                                                <button type="button" class="btn btn-sm btn-danger deleteBtn" title="Delete">
+                                                    <i class="ti-trash"></i>
+                                                </button>
+                                            </form>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($files->IsForReview)
                                                 <i class="ti-pencil-alt text-danger"></i>
@@ -418,19 +704,6 @@
                                             <a href="{{url($files->Path)}}" target="_blank" class="btn btn-sm btn-info" title="View a file">
                                                 <i class="ti-eye"></i>
                                             </a>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCrrFiles-{{$files->Id}}" title="Edit">
-                                                <i class="ti-pencil"></i>
-                                            </button>
-
-                                            <form method="POST" class="d-inline-block" action="{{url('delete_crr_file/'.$files->Id)}}">
-                                                @csrf 
-
-                                                <button type="button" class="btn btn-sm btn-danger deleteBtn" title="Delete">
-                                                    <i class="ti-trash"></i>
-                                                </button>
-                                            </form>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -507,6 +780,10 @@
 </div>
 @include('customer_requirements.update')
 @include('customer_requirements.edit2_crr')
+@include('customer_requirements.close_crr')
+@include('customer_requirements.cancel_crr')
+@include('customer_requirements.accept_crr')
+@include('customer_requirements.pause_remarks')
 
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
@@ -631,6 +908,169 @@
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.openBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Open"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.receivedBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Received"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.deleteSupplementaryDetailsBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.deletePersonnelButton').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.startCrrBtn').on('click', function() {
+            var form = $(this).closest('form');
+            var labelBtn = $(this).data('label');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: labelBtn != null ? labelBtn : "Start"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.submitCrrBtn').on('click', function() {
+            var form = $(this).closest('form');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Submit"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.submitFinalCrr').on('click', function() {
+            var form = $(this).closest('form');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Submit"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+        
+        $('.returnBtn').on('click', function() {
+            var form = $(this).closest('form');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Return"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.completeCrr').on('click', function() {
+            var form = $(this).closest('form');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Complete"
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit()

@@ -11,12 +11,12 @@
                 <form method="POST" enctype="multipart/form-data" action="{{ url('new_customer_requirement') }}">
                     @csrf
                     <div class="row">
-                        <div class="col-lg-6">
+                        {{-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Created (DD/MM/YYYY) - Hour Minute</label>
                                 <input type="datetime-local" class="form-control" id="CreatedDate" name="CreatedDate" required>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
@@ -114,7 +114,7 @@
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
+                                        <option value="{{ $user->id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -147,6 +147,17 @@
                                         <button type="button" class="btn btn-primary addRow">+</button>
                                     </div>
                                 </div> --}}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">REF Code</label>
+                                <select name="RefCode" class="form-control js-example-basic-single" required>
+                                    <option disabled selected value>Select REF Code</option>
+                                    @foreach ($refCode as $key=>$code)
+                                        <option value="{{$key}}">{{$code}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-lg-6">
