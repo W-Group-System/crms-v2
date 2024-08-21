@@ -6,6 +6,8 @@ use App\Product;
 use App\ProductMaterialsComposition;
 use App\UserAccessModule;
 use App\RequestProductEvaluation;
+use App\SalesApprovers;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -168,4 +170,117 @@ function productRps($code)
     $rpe = RequestProductEvaluation::where('RpeResult', 'LIKE', '%'.$code.'%')->get();
 
     return $rpe;
+}
+function linkToRpe($rpeNumber)
+{
+    $rpe = RequestProductEvaluation::where('RpeNumber', $rpeNumber)->first();
+    
+    if($rpe != null)
+    {
+        return $rpe->id;
+    }
+}
+
+function checkRolesIfHaveApprove($module, $department, $role)
+{
+    $user_access = UserAccessModule::where('module_name', $module)->where('department_id', $department)->where('role_id', $role)->first();
+    
+    if ($user_access != null)
+    {
+        if ($user_access->approve != null)
+        {
+            return "yes";
+        }
+        
+        return "no";
+    }
+}
+
+function checkIfHaveActivities($role)
+{
+    if (($role->department_id == 5 || $role->department_id == 38) && $role->name == "Department Admin")
+    {
+        return "yes";
+    }
+    
+    return "no";
+}
+
+function checkIfHaveFiles($role)
+{
+    if (($role->department_id == 5 || $role->department_id == 38) && $role->name == "Department Admin")
+    {
+        return "yes";
+    }
+    
+    return "no";
+}
+
+function checkIfItsManagerOrSupervisor($role)
+{
+    if (($role->department_id == 5 || $role->department_id == 38 || $role->department_id == 15) && ($role->name == "Department Admin" || $role->name == "Staff L2"))
+    {
+        return "yes";
+    }
+    
+    return "no";
+}
+
+function checkIfItsApprover($user_id, $primary_sales_person, $type)
+{
+    if ($type == "CRR")
+    {
+        $user = User::where('id', $primary_sales_person)->orWhere('user_id', $primary_sales_person)->first();
+
+        $salesApprovers = SalesApprovers::where('SalesApproverId', $user_id)->where('UserId', $user->id)->first();
+        
+        if ($salesApprovers != null)
+        {
+            return "yes";
+        }
+    }
+
+    return "no";
+}
+
+function checkRolesIfHaveCreate($module, $department, $role)
+{
+    $user_access = UserAccessModule::where('module_name', $module)->where('department_id', $department)->where('role_id', $role)->first();
+    
+    if ($user_access != null)
+    {
+        if ($user_access->create != null)
+        {
+            return "yes";
+        }
+        
+        return "no";
+    }
+}
+
+function authCheckIfItsSales($department)
+{
+    if ($department == 5 || $department == 38)
+    {
+        return true;
+    }
+    
+    return false;
+}
+
+function authCheckIfItsRndStaff($role)
+{
+    if ($role->department_id == 15 && $role->name == "Staff L1")
+    {
+        return true;
+    }
+    
+    return false;
+}
+
+function rndPersonnel($personnel, $user_id)
+{
+    $p = $personnel->pluck('PersonnelUserId')->toArray();
+
+    return collect($p)->contains($user_id);
 }

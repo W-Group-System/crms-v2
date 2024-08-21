@@ -75,7 +75,7 @@
                                     </form>
                                     @endif
                                 </td>
-                                <td>{{$role->department->name}}</td>
+                                <td>{{$role->department->department_code.' - '.$role->department->name}}</td>
                                 <td>{{$role->name}}</td>
                                 <td>{{$role->description}}</td>
                                 <td>

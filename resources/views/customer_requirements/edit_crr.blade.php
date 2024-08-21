@@ -82,7 +82,7 @@
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}" @if($user->user_id == $customerRequirement->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                        <option value="{{ $user->id }}" @if($user->user_id == $customerRequirement->PrimarySalesPersonId || $user->id == $customerRequirement->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -114,7 +114,7 @@
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}" @if($user->user_id == $customerRequirement->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                        <option value="{{ $user->id }}" @if($user->user_id == $customerRequirement->SecondarySalesPersonId || $user->id == $customerRequirement->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -148,6 +148,17 @@
                                     </div>
                                 </div>
                                 @endforeach
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">REF Code</label>
+                                <select name="RefCode" class="form-control js-example-basic-single" required>
+                                    <option disabled selected value>Select REF Code</option>
+                                    @foreach ($refCode as $key=>$code)
+                                        <option value="{{$key}}" @if($key == $customerRequirement->RefCode) selected @endif>{{$code}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-lg-6">

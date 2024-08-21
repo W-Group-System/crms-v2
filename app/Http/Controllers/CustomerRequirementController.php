@@ -7,13 +7,16 @@ use Carbon\Carbon;
 use Validator;
 use App\CustomerRequirement;
 use App\Client;
+use App\CrrDetail;
 use App\User;
 use App\PriceCurrency;
 use App\NatureRequest;
 use App\CrrNature;
+use App\CrrPersonnel;
 use App\Exports\CustomerRequirementExport;
 use App\FileCrr;
 use App\ProductApplication;
+use App\SalesApprovers;
 use App\SalesUser;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -27,33 +30,51 @@ class CustomerRequirementController extends Controller
         $search = $request->input('search');
         $sort = $request->get('sort', 'id');
         $direction = $request->get('direction', 'desc');
+        $role = auth()->user()->role;
         
         $customer_requirements = CustomerRequirement::with(['client', 'product_application'])
-        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
-            $query->whereIn('Status', [$request->open, $request->close]);
-        })
-        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
-            $query->where('Status', $request->open);
-        })
-        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
-            $query->where('Status', $request->close);
-        })
-        ->when($search, function ($query) use ($search){
-            $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
-            ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
-            ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
-            ->orWhereHas('client', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
+            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+                $query->whereIn('Status', [$request->open, $request->close]);
             })
-            ->orWhereHas('product_application', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
+            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+                $query->where('Status', $request->open);
             })
-            ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
-        })
-        // ->orderBy('id', 'desc')
-        ->orderBy($sort, $direction)
-        ->paginate(10);
-
+            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+                $query->where('Status', $request->close);
+            })
+            ->when($search, function ($query) use ($search){
+                $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%');
+                })
+                ->orWhereHas('product_application', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%');
+                })
+                ->orWhereHas('primarySales', function($query)use($search) {
+                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                })
+                ->orWhereHas('primarySalesById', function($query)use($search) {
+                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                })
+                ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
+            })
+            // ->orderBy('id', 'desc')
+            ->when($role->type, function($q)use($role) {
+                if ($role->type == "IS")
+                {
+                    $q->where('CrrNumber', 'LIKE', "%CRR-IS%");
+                }
+                elseif ($role->type == "LS")
+                {
+                    $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
+                }
+            })
+            // ->where('CrrNumber', 'LIKE', "%CRR-IS%")
+            ->orderBy($sort, $direction)
+            ->paginate($request->entries ?? 10);
+            
         $product_applications = ProductApplication::all();
         $clients = Client::all();
         $users = User::all();
@@ -61,26 +82,54 @@ class CustomerRequirementController extends Controller
         $nature_requests = NatureRequest::all();
         $open = $request->open;
         $close = $request->close;
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close')); 
+        $entries = $request->entries;
+        $refCode = $this->refCode();
+
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode')); 
     }
 
     // Store
     public function store(Request $request)
     {
+        // $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
+        // $type = $salesUser->Type == 2 ? 'IS' : 'LS';
+        // $year = Carbon::parse($request->input('CreatedDate'))->format('y');
+        // $lastEntry = CustomerRequirement::where('CrrNumber', 'LIKE', "CRR-{$type}-%")
+        //             ->orderBy('id', 'desc')
+        //             ->first();
+        // $lastNumber = $lastEntry ? intval(substr($lastEntry->CrrNumber, -4)) : 0;
+        // $newIncrement = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        // $crrNo = "CRR-{$type}-{$year}-{$newIncrement}";
+
         $user = Auth::user(); 
-        $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
-        $type = $salesUser->Type == 2 ? 'IS' : 'LS';
-        $year = Carbon::parse($request->input('CreatedDate'))->format('y');
-        $lastEntry = CustomerRequirement::where('CrrNumber', 'LIKE', "CRR-{$type}-%")
-                    ->orderBy('id', 'desc')
-                    ->first();
-        $lastNumber = $lastEntry ? intval(substr($lastEntry->CrrNumber, -4)) : 0;
-        $newIncrement = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        $crrNo = "CRR-{$type}-{$year}-{$newIncrement}";
+        if (($user->department_id == 5) || ($user->department_id == 38))
+        {
+            $type = "";
+            $year = date('y');
+            if ($user->department_id == 5)
+            {
+                $type = "IS";
+                $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-IS%')->latest()->first();
+                $count = substr($crrList->CrrNumber, 10);
+                $totalCount = $count + 1;
+                
+                $crrNo = "CRR-".$type.'-'.$year.'-'.$totalCount;
+            }
+
+            if ($user->department_id == 38)
+            {
+                $type = "LS";
+                $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-LS%')->latest()->first();
+                $count = substr($crrList->CrrNumber, 10);
+                $totalCount = $count + 1;
+                
+                $crrNo = "CRR-".$type.'-'.$year.'-'.$totalCount;
+            }
+        }
 
         $customerRequirementData = CustomerRequirement::create([
             'CrrNumber' => $crrNo,
-            'CreatedDate' => $request->input('CreatedDate'),
+            // 'CreatedDate' => $request->input('CreatedDate'),
             'DueDate' => $request->input('DueDate'),
             'ClientId' => $request->input('ClientId'),
             'ApplicationId' => $request->input('ApplicationId'),
@@ -98,6 +147,7 @@ class CustomerRequirementController extends Controller
             'CompetitorPrice' => $request->input('CompetitorPrice'),
             'RefCrrNumber' => $request->input('RefCrrNumber'),
             'RefRpeNumber' => $request->input('RefRpeNumber'),
+            'RefCode' => $request->RefCode
         ]);
         if($request->has('NatureOfRequestId'))
         {
@@ -133,6 +183,7 @@ class CustomerRequirementController extends Controller
         $customerRequirements->RefCrrNumber = $request->RefCrrNumber;
         $customerRequirements->RefRpeNumber = $request->RefRpeNumber;
         $customerRequirements->DetailsOfRequirement = $request->DetailsOfRequirement;
+        $customerRequirements->RefCode = $request->RefCode;
         if($request->has('NatureOfRequestId'))
         {
             $crrNature = CrrNature::where('CustomerRequirementId', $id)->delete();
@@ -159,6 +210,7 @@ class CustomerRequirementController extends Controller
         $product_applications = ProductApplication::get();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
+        $rnd_personnel = User::where('department_id', 15)->get();
 
         return view('customer_requirements.view_crr',
             array(
@@ -168,7 +220,8 @@ class CustomerRequirementController extends Controller
                 'currentUser' => $currentUser,
                 'product_applications' => $product_applications,
                 'price_currencies' => $price_currencies,
-                'nature_requests' => $nature_requests
+                'nature_requests' => $nature_requests,
+                'rnd_personnel' => $rnd_personnel
             )
         );
     }
@@ -287,4 +340,196 @@ class CustomerRequirementController extends Controller
         Alert::success('Successfully Deleted')->persistent('Dismiss');
         return back();
     }
+
+    public function refCode()
+    {
+        return array(
+            'RND' => 'R&D',
+            'QCD-WHI' => 'QCD-WHI',
+            'QCD-PBI' => 'QCD-PBI',
+            'QCD-MRDC' => 'QCD-MRDC',
+            'QCD-CCC' => 'QCD-CCC'
+        );
+    }
+
+    public function closeRemarks(Request $request, $id)
+    {
+        $customerRequirement = CustomerRequirement::findOrFail($id);
+        $customerRequirement->CloseRemarks = $request->close_remarks;
+        $customerRequirement->Status = 30;
+        $customerRequirement->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function cancelRemarks(Request $request, $id)
+    {
+        $customerRequirement = CustomerRequirement::findOrFail($id);
+        $customerRequirement->CancelRemarks = $request->cancel_remarks;
+        $customerRequirement->Status = 50;
+        $customerRequirement->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function acceptCrr(Request $request, $id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+
+        if ($request->action == "approved_to_sales")
+        {
+            $crr->Progress = 20;
+            $crr->AcceptRemarks = $request->accept_remarks;
+            $crr->ApprovedBy = auth()->user()->id;
+            $crr->save();
+        }
+        elseif($request->action == "approved_to_RND")
+        {
+            $crr->Progress = 30;
+            $crr->AcceptRemarks = $request->accept_remarks;
+            $crr->ApprovedBy = auth()->user()->id;
+            $crr->save();
+        }
+
+        Alert::success('Successfully Save')->persistent('Dismiss');
+        return back();
+    }
+
+    public function openStatus(Request $request, $id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Status = 10;
+        $crr->save();
+
+        Alert::success('The status are now open')->persistent('Dismiss');
+        return back();
+    }
+
+    public function rndReceived(Request $request, $id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 35;
+        $crr->DateReceived = date('Y-m-d h:i:s');
+        $crr->save();
+
+        Alert::success('The status are now received')->persistent('Dismiss');
+        return back();
+    }
+
+    public function startCrr(Request $request, $id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 50;
+        $crr->save();
+
+        Alert::success('Successfully Start')->persistent('Dismiss');
+        return back();
+    }
+
+    public function pauseCrr(Request $request, $id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 55;
+        $crr->save();
+
+        Alert::success('Successfully Paused')->persistent('Dismiss');
+        return back();
+    }
+
+    public function submitCrr(Request $request, $id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 57;
+        $crr->save();
+
+        Alert::success('Successfully Submitted')->persistent('Dismiss');
+        return back();
+    }
+
+    public function submitFinalCrr(Request $request, $id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 81;
+        $crr->save();
+
+        Alert::success('Successfully Submitted')->persistent('Dismiss');
+        return back();
+    }
+
+    public function completeCrr(Request $request, $id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 60;
+        $crr->save();
+
+        Alert::success('Successfully Completed')->persistent('Dismiss');
+        return back();
+    }
+
+    public function addSupplementary(Request $request)
+    {
+        $crrDetails = new CrrDetail;
+        $crrDetails->CustomerRequirementId = $request->customer_requirement_id;
+        $crrDetails->UserId = $request->user_id;
+        $crrDetails->DetailsOfRequirement = $request->details;
+        $crrDetails->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function updateSupplementary(Request $request, $id)
+    {
+        $crrDetails = CrrDetail::findOrFail($id);
+        $crrDetails->CustomerRequirementId = $request->customer_requirement_id;
+        $crrDetails->UserId = $request->user_id;
+        $crrDetails->DetailsOfRequirement = $request->details;
+        $crrDetails->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function deleteSupplementary(Request $request, $id)
+    {
+        $crrDetails = CrrDetail::findOrFail($id);
+        $crrDetails->delete();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function addPersonnel(Request $request)
+    {
+        $personnel = new CrrPersonnel;
+        $personnel->CustomerRequirementId = $request->customer_requirement_id;
+        $personnel->PersonnelUserId = $request->personnel;
+        $personnel->save(); 
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+    
+    public function updatePersonnel(Request $request, $id)
+    {
+        $personnel = CrrPersonnel::findOrFail($id);
+        $personnel->CustomerRequirementId = $request->customer_requirement_id;
+        $personnel->PersonnelUserId = $request->personnel;
+        $personnel->save(); 
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
+    public function deletePersonnel($id)
+    {
+        $personnel = CrrPersonnel::findOrFail($id);
+        $personnel->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
+    }
+    
 }

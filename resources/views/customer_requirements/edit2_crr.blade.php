@@ -76,7 +76,7 @@
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}" @if($user->user_id == $crr->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                        <option value="{{ $user->id }}" @if($user->user_id == $crr->PrimarySalesPersonId || $user->id == $crr->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -108,7 +108,7 @@
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}" @if($user->user_id == $crr->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                        <option value="{{ $user->id }}" @if($user->user_id == $crr->SecondarySalesPersonId || $user->id == $crr->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>

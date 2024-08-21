@@ -20,7 +20,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Date Received :</label>
-                                <input type="date" name="date_received" class="form-control" value="{{$crr->DateReceived}}">
+                                <input type="date" name="date_received" class="form-control" value="{{date('Y-m-d', strtotime($crr->DateReceived))}}">
                             </div>
                         </div>
                         <div class="col-lg-12">
@@ -35,7 +35,7 @@
                                 <input type="date" class="form-control" name="due_date" value="{{$crr->DueDate}}">
                             </div>
                         </div>
-                        <div class="col-lg-12">
+                        {{-- <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="name">Progress</label>
                                 <select name="progress" class="js-example-basic-single form-control">
@@ -51,7 +51,7 @@
                                     <option value="70" @if($crr->Progress == 70) selected @endif>Sales Accepted</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

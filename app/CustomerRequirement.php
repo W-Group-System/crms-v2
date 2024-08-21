@@ -14,7 +14,7 @@ class CustomerRequirement extends Model
     protected $fillable = [
         'CrrNumber', 'CreatedDate', 'ClientId', 'Priority', 'ApplicationId', 'DueDate', 'PotentialVolume', 'UnitOfMeasureId',
         'PrimarySalesPersonId', 'TargetPrice', 'CurrencyId', 'SecondarySalesPersonId', 'Competitor', 'CompetitorPrice',
-        'NatureOfRequestId', 'RefCrrNumber', 'RefRpeNumber', 'DetailsOfRequirement', 'Status', 'Progress'
+        'NatureOfRequestId', 'RefCrrNumber', 'RefRpeNumber', 'DetailsOfRequirement', 'Status', 'Progress', 'RefCode'
     ];
 
     public function client()
@@ -90,5 +90,10 @@ class CustomerRequirement extends Model
     public function activities()
     {
         return $this->hasMany(Activity::class,'TransactionNumber','CrrNumber');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class,'ApprovedBy','id');
     }
 }
