@@ -85,7 +85,8 @@
                                         <option value="{{ $user->id }}" @if($user->id == auth()->user()->id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select> --}}
-                                <input type="text" name="PrimarySalesPersonId" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
