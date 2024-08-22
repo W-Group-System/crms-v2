@@ -12,6 +12,7 @@ use App\IssueCategory;
 use App\Product;
 use App\ProductApplication;
 use App\RndUser;
+use App\SalesApprovers;
 use App\SampleRequestProduct;
 use App\SrfDetail;
 use App\SrfFile;
@@ -36,11 +37,19 @@ class SampleRequestController extends Controller
         $categories = IssueCategory::all();
         $departments = ConcernDepartment::all(); 
         $productApplications = ProductApplication::all();   
-        $salesPersons = User::whereHas('salespersons')->get();
-        // $loggedInUserId = Auth::user()->user_id;
-        // $primarySalesPersons = User::whereHas('salespersons', function ($query) use ($loggedInUserId) {
-        //     $query->where('user_id', $loggedInUserId);
-        //     })->get();
+        // $salesPersons = User::whereHas('salespersons')->get();
+        $loggedInUser = Auth::user(); 
+        $role = $loggedInUser->role;
+        $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        if (($role->name == 'International Sales Manager') || ($role->name == 'Local Sales Manager')) {
+            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            
+        } else {
+            $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+        }
         $productCodes = Product::where('status', '4')->get();
        
         // $sampleRequestProducts = SampleRequestProduct::with('sampleRequest')
@@ -73,7 +82,7 @@ class SampleRequestController extends Controller
         ->paginate(10);
 
        
-        return view('sample_requests.index', compact('products', 'sampleRequests','clients', 'contacts', 'categories', 'departments', 'salesPersons', 'productApplications', 'productCodes', 'search'));
+        return view('sample_requests.index', compact('products', 'sampleRequests','clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'primarySalesPersons', 'secondarySalesPersons'));
     }
 
     public function getSampleContactsByClientF($clientId)
@@ -363,177 +372,217 @@ class SampleRequestController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $refCode = $request->input('RefCode');
-        $quantities = $request->input('Quantity'); 
-        $remarks = $request->input('quantity_remarks'); 
-        $userRole = auth()->user()->role_id;
-      
-        foreach ($quantities as $key => $quantity) {
-            $isValid = true;
+{
+    $refCode = $request->input('RefCode');
+    $quantities = $request->input('Quantity'); 
+    $remarks = $request->input('quantity_remarks'); 
+    $userRole = auth()->user()->role->name;
+    $isManager = $userRole == 'International Sales Manager' || $userRole == 'Local Sales Manager';
 
-            if ($refCode == 2) {
-                if ($quantity < 1000 && $request->input('UnitOfMeasure')[$key] == 1) {
-                    // return redirect()->back()->with('error', 'Quantity must be at least 1000g for QCD.')->withInput();
-                    $isValid = false;
-                } elseif ($quantity < 1 && $request->input('UnitOfMeasure')[$key] == 2) {
-                    // return redirect()->back()->with('error', 'Quantity must be at least 1kg for QCD.')->withInput();
-                    $isValid = false;
-                }
-            }
-            
-            if ($refCode == 1) {
-                if ($quantity > 999 && $request->input('UnitOfMeasure')[$key] == 1) {
-                    // return redirect()->back()->with('error', 'Quantity must be 999g or less for RND.')->withInput();
-                    $isValid = false;
-                } elseif ($quantity >= 1 && $request->input('UnitOfMeasure')[$key] == 2) {
-                    // return redirect()->back()->with('error', 'Quantity must be less than 1kg for RND.')->withInput();
-                    $isValid = false;
-                }
-            }
-            if (!$isValid) {
-                if ($userRole == '15' && $remarks) {
-                    break;
-                } else {
-                    return redirect()->back()->with('error', 'Quantity validation failed.')->withInput();
-                }
+    foreach ($quantities as $key => $quantity) {
+        $isValid = true;
+        $unitOfMeasure = $request->input('UnitOfMeasure')[$key];
+
+        if ($refCode == 2) {
+            if ($quantity < 1000 && $unitOfMeasure == 1) {
+                $isValid = false;
+            } elseif ($quantity < 1 && $unitOfMeasure == 2) {
+                $isValid = false;
             }
         }
 
-        $srfNumber = null;
-        if (auth()->user()->department_id == 38)
-        {
-            $checkSrf= SampleRequest::select('SrfNumber')->where('SrfNumber', 'LIKE', "%SRF-LS%")->orderBy('SrfNumber', 'desc')->first();
-            $count = substr($checkSrf->SrfNumber, 10);
-            $totalCount = $count + 1;
-            $deptCode = 'LS';
-            
-            $srfNumber = 'SRF'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        if ($refCode == 1) {
+            if ($quantity > 999 && $unitOfMeasure == 1) {
+                $isValid = false;
+            } elseif ($quantity >= 1 && $unitOfMeasure == 2) {
+                $isValid = false;
+            }
         }
 
-        if (auth()->user()->department_id == 5)
-        {
-            $checkActivity = Activity::select('ActivityNumber')->where('ActivityNumber', 'LIKE', "%ACT-IS%")->orderBy('ActivityNumber', 'desc')->first();
-            $count = substr($checkActivity->ActivityNumber, 10);
-            $totalCount = $count + 1;
-            $deptCode = 'IS';
-            
-            $activityNumber = 'ACT'.'-'.$deptCode.'-'.date('y').'-'.$totalCount;
+        if (!$isValid) {
+            if ($isManager) {
+                if (!$remarks) {
+                    return redirect()->back()->with([
+                        'error' => 'Quantity validation failed. Please provide remarks to bypass validation.',
+                        'formType' => 'create'
+                    ])->withInput();
+                }
+            } else {
+                return redirect()->back()->with([
+                    'error' => 'Quantity validation failed.',
+                    'formType' => 'create'
+                ])->withInput();
+            }
+            break; 
         }
-
-        $samplerequest = SampleRequest::create([
-            'SrfNumber' => $srfNumber,
-            'DateRequested' => $request->input('DateRequested'),
-            'DateRequired' => $request->input('DateRequired'),
-            'DateStarted' => $request->input('DateStarted'),
-            'PrimarySalesPersonId' => $request->input('PrimarySalesPerson'),
-            'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
-            'SoNumber' => $request->input('SoNumber'),
-            'RefCode' => $request->input('RefCode'),
-            'Status' => '10',
-            'Progress' => '10',
-            'SrfType' => $request->input('SrfType'),
-            'ClientId' => $request->input('ClientId'),
-            'ContactId' => $request->input('ClientContactId'),
-            'InternalRemarks' => $request->input('Remarks'),
-            'Courier' => $request->input('Courier'),
-            'AwbNumber' => $request->input('AwbNumber'),
-            'DateDispatched' => $request->input('DateDispatched'),
-            'DateSampleReceived' => $request->input('DateSampleReceived'),
-            'DeliveryRemarks' => $request->input('DeliveryRemarks'),
-            'Note' => $request->input('Note'),
-
-            ]);
-
-            $maxId = SampleRequestProduct::max('Id');
-            foreach ($request->input('ProductType') as $key => $value) {
-                SampleRequestProduct::create([
-                    'Id' => $maxId + $key + 1, 
-                    'SampleRequestId' => $samplerequest->Id,
-                    'ProductType' => $request->input('ProductType')[$key],
-                    'ApplicationId' => $request->input('ApplicationId')[$key],
-                    'ProductCode' => $request->input('ProductCode')[$key],
-                    'ProductDescription' => $request->input('ProductDescription')[$key],
-                    'NumberOfPackages' => $request->input('NumberOfPackages')[$key],
-                    'Quantity' => $request->input('Quantity')[$key],
-                    'UnitOfMeasureId' => $request->input('UnitOfMeasure')[$key],
-                    'ProductIndex' => $key + 1,
-                    'Label' => $request->input('Label')[$key],
-                    'RpeNumber' => $request->input('RpeNumber')[$key],
-                    'CrrNumber' => $request->input('CrrNumber')[$key],
-                    'quantity_remarks' => $remarks,
-                    'Remarks' => $request->input('RemarksProduct')[$key],
-
-            ]);
-         }
-        return redirect()->route('sample_request.index')->with('success', 'Sample Request created successfully.');
     }
+    $loggedInUser = Auth::user(); 
+    $role = $loggedInUser->role;
+    $srfNumber = null;
+    if (auth()->user()->role->type == 'LS') {
+        $checkSrf = SampleRequest::select('SrfNumber')
+            ->where('SrfNumber', 'LIKE', "%SRF-LS%")
+            ->orderBy('SrfNumber', 'desc')
+            ->first();
+        $count = substr($checkSrf->SrfNumber, 10) ?? 0;
+        $totalCount = $count + 1;
+        $deptCode = 'LS';
+        $srfNumber = 'SRF' . '-' . $deptCode . '-' . date('y') . '-' . $totalCount;
+    }
+
+    if (auth()->user()->role->type == 'IS') {
+        $checkSrf = SampleRequest::select('SrfNumber')
+            ->where('SrfNumber', 'LIKE', "%SRF-IS%")
+            ->orderBy('SrfNumber', 'desc')
+            ->first();
+        $count = substr($checkSrf->SrfNumber, 10) ?? 0;
+        $totalCount = $count + 1;
+        $deptCode = 'IS';
+        $srfNumber = 'SRF' . '-' . $deptCode . '-' . date('y') . '-' . $totalCount;
+    }
+
+    $samplerequest = SampleRequest::create([
+        'SrfNumber' => $srfNumber,
+        'DateRequested' => $request->input('DateRequested'),
+        'DateRequired' => $request->input('DateRequired'),
+        'DateStarted' => $request->input('DateStarted'),
+        'PrimarySalesPersonId' => $request->input('PrimarySalesPerson'),
+        'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
+        'SoNumber' => $request->input('SoNumber'),
+        'RefCode' => $request->input('RefCode'),
+        'Status' => '10',
+        'Progress' => '10',
+        'SrfType' => $request->input('SrfType'),
+        'ClientId' => $request->input('ClientId'),
+        'ContactId' => $request->input('ClientContactId'),
+        'InternalRemarks' => $request->input('Remarks'),
+        'Courier' => $request->input('Courier'),
+        'AwbNumber' => $request->input('AwbNumber'),
+        'DateDispatched' => $request->input('DateDispatched'),
+        'DateSampleReceived' => $request->input('DateSampleReceived'),
+        'DeliveryRemarks' => $request->input('DeliveryRemarks'),
+        'Note' => $request->input('Note'),
+    ]);
+
+    $maxId = SampleRequestProduct::max('Id') ?? 0;
+
+    foreach ($request->input('ProductType', []) as $key => $value) {
+        SampleRequestProduct::create([
+            'Id' => $maxId + $key + 1,
+            'SampleRequestId' => $samplerequest->Id,
+            'ProductType' => $request->input('ProductType')[$key],
+            'ApplicationId' => $request->input('ApplicationId')[$key],
+            'ProductCode' => $request->input('ProductCode')[$key],
+            'ProductDescription' => $request->input('ProductDescription')[$key],
+            'NumberOfPackages' => $request->input('NumberOfPackages')[$key],
+            'Quantity' => $request->input('Quantity')[$key],
+            'UnitOfMeasureId' => $request->input('UnitOfMeasure')[$key],
+            'ProductIndex' => $key + 1,
+            'Label' => $request->input('Label')[$key],
+            'RpeNumber' => $request->input('RpeNumber')[$key],
+            'CrrNumber' => $request->input('CrrNumber')[$key],
+            'quantity_remarks' => $remarks,
+            'Remarks' => $request->input('RemarksProduct')[$key],
+        ]);
+    }
+
+    return redirect()->route('sample_request.index')->with('success', 'Sample Request created successfully.');
+}
     public function update(Request $request, $id)
-    {
+{
+    $srf = SampleRequest::with('requestProducts')->findOrFail($id);
+    $refCode = $request->input('RefCode');
+    $quantities = $request->input('Quantity');        
+    $remarks = $request->input('quantity_remarks'); 
+    $userRole = auth()->user()->role->name;
+    $isManager = $userRole == 'International Sales Manager' || $userRole == 'Local Sales Manager';
 
-        $srf = SampleRequest::with('requestProducts')->findOrFail($id);
-        $refCode = $request->input('RefCode');
-        $quantities = $request->input('Quantity');        
-        foreach ($quantities as $key => $quantity) {
-            if ($refCode == 2) {
-                if ($quantity < 1000 && $request->input('UnitOfMeasure')[$key] == 1) {
-                    return redirect()->back()->with('error', 'Quantity must be at least 1000g for QCD.')->withInput();
-                } elseif ($quantity < 1 && $request->input('UnitOfMeasure')[$key] == 2) {
-                    return redirect()->back()->with('error', 'Quantity must be at least 1kg for QCD.')->withInput();
-                }
-            }
-            
-            if ($refCode == 1) {
-                if ($quantity > 999 && $request->input('UnitOfMeasure')[$key] == 1) {
-                    return redirect()->back()->with('error', 'Quantity must be 999g or less for RND.')->withInput();
-                } elseif ($quantity >= 1 && $request->input('UnitOfMeasure')[$key] == 2) {
-                    return redirect()->back()->with('error', 'Quantity must be less than 1kg for RND.')->withInput();
-                }
+    foreach ($quantities as $key => $quantity) {
+        $isValid = true;
+        $unitOfMeasure = $request->input('UnitOfMeasure')[$key]; 
+
+        if ($refCode == 2) {
+            if ($quantity < 1000 && $unitOfMeasure == 1) {
+                $isValid = false;
+            } elseif ($quantity < 1 && $unitOfMeasure == 2) {
+                $isValid = false;
             }
         }
-        $srf->DateRequired = $request->input('DateRequired');
-        $srf->DateStarted = $request->input('DateStarted');
-        $srf->PrimarySalesPersonId = $request->input('PrimarySalesPerson');
-        $srf->SecondarySalesPersonId = $request->input('SecondarySalesPerson');
-        $srf->RefCode = $request->input('RefCode');
-        $srf->SrfType = $request->input('SrfType');
-        $srf->SoNumber = $request->input('SoNumber');
-        $srf->ClientId = $request->input('ClientId');
-        $srf->ContactId = $request->input('ClientContactId');
-        $srf->InternalRemarks = $request->input('Remarks');
-        $srf->Courier = $request->input('Courier');
-        $srf->AwbNumber = $request->input('AwbNumber');
-        $srf->DateDispatched = $request->input('DateDispatched');
-        $srf->DateSampleReceived = $request->input('DateSampleReceived');
-        $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
-        $srf->Note = $request->input('Note');
-        $srf->save();
-    
-        foreach ($request->input('ProductCode',) as $key => $value) {
-            $productId = $request->input('product_id.' . $key); 
-    
-            $srf->requestProducts()->updateOrCreate(
-                ['id' => $productId ?: null],
-                [
-                    'SampleRequestId' => $id, 
-                    'ProductType' => $request->input('ProductType.' . $key),
-                    'ApplicationId' => $request->input('ApplicationId.' . $key),
-                    'ProductCode' =>  $value,
-                    'ProductDescription' => $request->input('ProductDescription.' . $key),
-                    'NumberOfPackages' => $request->input('NumberOfPackages.' . $key),
-                    'Quantity' => $request->input('Quantity.' . $key),
-                    'UnitOfMeasure' => $request->input('UnitOfMeasure.' . $key),
-                    'Label' => $request->input('Label.' . $key),
-                    'RpeNumber' => $request->input('RpeNumber.' . $key),
-                    'CrrNumber' => $request->input('CrrNumber.' . $key),
-                    'Remarks' => $request->input('RemarksProduct.' . $key),
-                    // 'ProductIndex' => $key + 1,
-                ]
-            );
+
+        if ($refCode == 1) {
+            if ($quantity > 999 && $unitOfMeasure == 1) {
+                $isValid = false;
+            } elseif ($quantity >= 1 && $unitOfMeasure == 2) {
+                $isValid = false;
+            }
         }
-    
-        return redirect()->back()->with('success', 'Sample Request updated successfully');
+
+        if (!$isValid) {
+            if ($isManager) {
+                if (!$remarks) {
+                    return redirect()->back()->with([
+                        'error' => 'Quantity validation failed. Please provide remarks to bypass validation.',
+                        'formType' => 'update',
+                        'srfId' => $id
+                    ])->withInput();
+                }
+            } else {
+                return redirect()->back()->with([
+                    'error' => 'Quantity validation failed.',
+                    'formType' => 'update',
+                    'srfId' => $id
+                ])->withInput();
+            }
+            break;
+        }
     }
+
+    $srf->DateRequired = $request->input('DateRequired');
+    $srf->DateStarted = $request->input('DateStarted');
+    $srf->PrimarySalesPersonId = $request->input('PrimarySalesPerson');
+    $srf->SecondarySalesPersonId = $request->input('SecondarySalesPerson');
+    $srf->RefCode = $request->input('RefCode');
+    $srf->SrfType = $request->input('SrfType');
+    $srf->SoNumber = $request->input('SoNumber');
+    $srf->ClientId = $request->input('ClientId');
+    $srf->ContactId = $request->input('ClientContactId');
+    $srf->InternalRemarks = $request->input('Remarks');
+    $srf->Courier = $request->input('Courier');
+    $srf->AwbNumber = $request->input('AwbNumber');
+    $srf->DateDispatched = $request->input('DateDispatched');
+    $srf->DateSampleReceived = $request->input('DateSampleReceived');
+    $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
+    $srf->Note = $request->input('Note');
+    $srf->save();
+
+    foreach ($request->input('ProductCode', []) as $key => $value) {
+        $productId = $request->input('product_id.' . $key); 
+
+        $srf->requestProducts()->updateOrCreate(
+            ['id' => $productId],  
+            [
+                'SampleRequestId' => $id, 
+                'ProductType' => $request->input('ProductType.' . $key),
+                'ApplicationId' => $request->input('ApplicationId.' . $key),
+                'ProductCode' =>  $value,
+                'ProductDescription' => $request->input('ProductDescription.' . $key),
+                'NumberOfPackages' => $request->input('NumberOfPackages.' . $key),
+                'Quantity' => $request->input('Quantity.' . $key),
+                'UnitOfMeasure' => $request->input('UnitOfMeasure.' . $key),
+                'Label' => $request->input('Label.' . $key),
+                'RpeNumber' => $request->input('RpeNumber.' . $key),
+                'CrrNumber' => $request->input('CrrNumber.' . $key),
+                'quantity_remarks' => $remarks,
+                'Remarks' => $request->input('RemarksProduct.' . $key),
+                'Disposition' => $request->input('Disposition.' . $key),
+                'DispositionRejectionDescription' => $request->input('DispositionRejectionDescription.' . $key),
+            ]
+        );
+    }
+
+    return redirect()->back()->with('success', 'Sample Request updated successfully');
+}
+
     
     public function approveSrfSales($id)
     {

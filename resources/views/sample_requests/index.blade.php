@@ -34,7 +34,7 @@
                     </div>
                 </div>
             </form>
-            @if(auth()->user()->department_id == 38)
+            @if(auth()->user()->role->type == 'LS')
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="sample_request_table">
                     <thead>
@@ -96,7 +96,7 @@
                     <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                 </div>
             </div>
-            @elseif (auth()->user()->department_id == 5)
+            @elseif (auth()->user()->role->type == 'IS')
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="sample_request_table">
                     <thead>
@@ -132,7 +132,7 @@
                                 <td align="center">
                                     <a href="{{ url('samplerequest/view/' . $product->sampleRequest->Id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
                                     <button type="button" id="editSrf{{ $product->sampleRequest->Id }}" class="btn btn-sm btn-warning btn-outline"
-                                        data-target="#edit{{ $product->sampleRequest->Id }}" data-toggle="modal" title='Edit SRF'>
+                                        data-target="#edit_is{{ $product->sampleRequest->Id }}" data-toggle="modal" title='Edit SRF'>
                                         <i class="ti-pencil"></i>
                                     </button>
                                 </td>
@@ -160,8 +160,8 @@
                                     @endif
                                 </td>
                                 <td>{{ optional($product->sampleRequest->client)->Name }}</td>
-                                {{-- <td>{{ optional($product->sampleRequest->client)->clientregion->Name }}</td>
-                                <td>{{ optional($product->sampleRequest->client)->clientcountry->Name }}</td> --}}
+                                <td>{{ optional(optional($product->sampleRequest->client)->clientregion)->Name }}</td>
+                                <td>{{ optional(optional($product->sampleRequest->client)->clientcountry)->Name }}</td>
                                 <td>{{ $product->sampleRequest->primarySalesPerson->full_name ?? 'N/A' }}</td>
                                 <td>{{ $product->ProductIndex }}</td>
                                 <td>{{ $product->NumberOfPackages }}</td>
@@ -209,21 +209,78 @@
         </div>
     </div>
 </div>
+<script src="{{ asset('js/sweetalert2.min.js') }}"></script>
 
 <script>
-   
+    document.addEventListener('DOMContentLoaded', function () {
+    @if(session('error'))
+        var isManager = @json(auth()->user()->role->name == 'International Sales Manager' || auth()->user()->role->name == 'Local Sales Manager');
+        var errorMessage = @json(session('error'));
+        var formType = @json(session('formType')); 
+
+        if (isManager) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: errorMessage,
+                showCancelButton: true,
+                confirmButtonText: 'Proceed',
+                cancelButtonText: 'Cancel',
+                input: 'textarea',
+                inputPlaceholder: 'Enter remarks...',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to write something!';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var remarks = result.value;
+                    var form;
+
+                    if (formType === 'create') {
+                        form = document.getElementById('create_srf_form');
+                    } else if (formType === 'update') {
+                        var srfId = @json(session('srfId'));
+                        form = document.getElementById('edit_sample_request' + srfId);
+                    }
+
+                    if (form) {
+                        var input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'quantity_remarks';
+                        input.value = remarks;
+                        form.appendChild(input);
+                        form.submit();
+                    }
+                }
+            });
+        } else {
+            $('#formSampleRequest').modal('show');
+            var $errorMessage = $('#formSampleRequest .error-message');
+            $errorMessage.text(errorMessage).show();
+        }
+    @elseif(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: "{{ session('success') }}",
+            confirmButtonText: 'OK'
+        });
+    @endif
+});
 </script>
-@foreach ($sampleRequests as $srf)
+{{-- @foreach ($sampleRequests as $srf)
 @foreach ($srf->requestProducts as $product)
 @include('sample_requests.edit')
 @endforeach  
-@endforeach  
+@endforeach   --}}
 
-@if(auth()->user()->department_id == 38)
+@if(auth()->user()->role->type == 'LS')
 @foreach ($sampleRequests as $srf)
 @include('sample_requests.edit')
 @endforeach
-@elseif ((auth()->user()->department_id == 5))
+@elseif ((auth()->user()->role->type == 'IS'))
 @foreach ($products as $product)
 @include('sample_requests.edit')
 @endforeach
