@@ -416,30 +416,32 @@ class SampleRequestController extends Controller
             break; 
         }
     }
-    $loggedInUser = Auth::user(); 
-    $role = $loggedInUser->role;
-    $srfNumber = null;
-    if (auth()->user()->role->type == 'LS') {
-        $checkSrf = SampleRequest::select('SrfNumber')
-            ->where('SrfNumber', 'LIKE', "%SRF-LS%")
-            ->orderBy('SrfNumber', 'desc')
-            ->first();
-        $count = substr($checkSrf->SrfNumber, 10) ?? 0;
-        $totalCount = $count + 1;
-        $deptCode = 'LS';
-        $srfNumber = 'SRF' . '-' . $deptCode . '-' . date('y') . '-' . $totalCount;
+   $srfNumber = null;
+$currentYear = date('y');
+$deptCode = '';
+
+if (auth()->user()->role->type == 'LS') {
+    $deptCode = 'LS';
+} elseif (auth()->user()->role->type == 'IS') {
+    $deptCode = 'IS';
+}
+
+if ($deptCode) {
+    $checkSrf = SampleRequest::select('SrfNumber')
+        ->where('SrfNumber', 'LIKE', "SRF-$deptCode-$currentYear%")
+        ->orderBy('SrfNumber', 'desc')
+        ->first();
+
+    if ($checkSrf) {
+        $count = (int)substr($checkSrf->SrfNumber, -4);
+    } else {
+        $count = 0; 
     }
 
-    if (auth()->user()->role->type == 'IS') {
-        $checkSrf = SampleRequest::select('SrfNumber')
-            ->where('SrfNumber', 'LIKE', "%SRF-IS%")
-            ->orderBy('SrfNumber', 'desc')
-            ->first();
-        $count = substr($checkSrf->SrfNumber, 10) ?? 0;
-        $totalCount = $count + 1;
-        $deptCode = 'IS';
-        $srfNumber = 'SRF' . '-' . $deptCode . '-' . date('y') . '-' . $totalCount;
-    }
+    $totalCount = str_pad($count + 1, 4, '0', STR_PAD_LEFT); 
+    $srfNumber = 'SRF' . '-' . $deptCode . '-' . $currentYear . '-' . $totalCount;
+}
+
 
     $samplerequest = SampleRequest::create([
         'SrfNumber' => $srfNumber,
@@ -464,11 +466,9 @@ class SampleRequestController extends Controller
         'Note' => $request->input('Note'),
     ]);
 
-    $maxId = SampleRequestProduct::max('Id') ?? 0;
 
-    foreach ($request->input('ProductType', []) as $key => $value) {
+    foreach ($request->input('ProductCode', []) as $key => $value) {
         SampleRequestProduct::create([
-            'Id' => $maxId + $key + 1,
             'SampleRequestId' => $samplerequest->Id,
             'ProductType' => $request->input('ProductType')[$key],
             'ApplicationId' => $request->input('ApplicationId')[$key],
