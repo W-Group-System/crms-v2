@@ -240,7 +240,7 @@
         $('#AddPriceMonitoring').on('hide.bs.modal', function () {
         $(this).find('form')[0].reset();
         $(this).find('select').val('').trigger('change'); 
-        $(this).find('input[type="checkbox"]').prop('checked', false); // Uncheck all checkboxes
+        $(this).find('input[type="checkbox"]').prop('checked', false);
     });
     });
 

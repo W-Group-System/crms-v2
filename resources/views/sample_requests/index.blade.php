@@ -214,7 +214,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     @if(session('error'))
-        var isManager = @json(auth()->user()->role->name == 'International Sales Manager' || auth()->user()->role->name == 'Local Sales Manager');
+        var isManager = @json(auth()->user()->role->description == 'International Sales - Supervisor' || auth()->user()->role->description == 'Local Sales - Supervisor');
         var errorMessage = @json(session('error'));
         var formType = @json(session('formType')); 
 

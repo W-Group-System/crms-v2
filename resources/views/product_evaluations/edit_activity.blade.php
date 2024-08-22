@@ -43,7 +43,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
-                                <select class="form-control js-example-basic-single ActivityClient{{ $activity->id }}" name="ClientId"  style="position: relative !important" title="Select Client" required>
+                                <select class="form-control js-example-basic-single ActivityClient{{ $activity->id }}" name="ClientId"  style="position: relative !important" title="Select Client" required disabled>
                                     <option value="" disabled selected>Select Client</option>
                                     @foreach($clients as $client)
                                         <option value="{{ $client->id }}" @if($activity->ClientId == $client->id) selected @endif>{{ $client->Name }}</option>
@@ -174,7 +174,7 @@
 </div>
 
 <script>
-    $(document).ready(function() {;
+    $(document).ready(function() {
         var activityId = '{{ $activity->id }}';
         var clientIdSelector = '.ActivityClient' + activityId;
         var contactIdSelector = '#ActivityClientContactId' + activityId;
