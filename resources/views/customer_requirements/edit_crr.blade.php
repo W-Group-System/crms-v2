@@ -179,6 +179,17 @@
                                 <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" rows="7">{!! nl2br(e($customerRequirement->DetailsOfRequirement)) !!}</textarea>
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select name="Status" class="form-control js-example-basic-single">
+                                    <option disabled selected value>Select Status</option>
+                                    <option value="10" @if($customerRequirement->Status == 10) selected @endif>Open</option>
+                                    <option value="30" @if($customerRequirement->Status == 30) selected @endif>Closed</option>
+                                    <option value="50" @if($customerRequirement->Status == 50) selected @endif>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

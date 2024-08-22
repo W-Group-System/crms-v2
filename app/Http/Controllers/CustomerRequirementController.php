@@ -21,6 +21,7 @@ use App\SalesUser;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
+use Collective\Html\FormFacade as Form;
 
 class CustomerRequirementController extends Controller
 {
@@ -183,6 +184,7 @@ class CustomerRequirementController extends Controller
         $customerRequirements->RefCrrNumber = $request->RefCrrNumber;
         $customerRequirements->RefRpeNumber = $request->RefRpeNumber;
         $customerRequirements->DetailsOfRequirement = $request->DetailsOfRequirement;
+        $customerRequirements->Status = $request->Status;
         $customerRequirements->RefCode = $request->RefCode;
         if($request->has('NatureOfRequestId'))
         {
@@ -210,7 +212,8 @@ class CustomerRequirementController extends Controller
         $product_applications = ProductApplication::get();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
-        $rnd_personnel = User::where('department_id', 15)->get();
+        $rnd_personnel = User::where('department_id', 15)->whereNotIn('id', [auth()->user()->id])->get();
+        $refCode = $this->refCode();
 
         return view('customer_requirements.view_crr',
             array(
@@ -221,7 +224,8 @@ class CustomerRequirementController extends Controller
                 'product_applications' => $product_applications,
                 'price_currencies' => $price_currencies,
                 'nature_requests' => $nature_requests,
-                'rnd_personnel' => $rnd_personnel
+                'rnd_personnel' => $rnd_personnel,
+                'refCode' => $refCode
             )
         );
     }
@@ -393,7 +397,7 @@ class CustomerRequirementController extends Controller
             $crr->save();
         }
 
-        Alert::success('Successfully Save')->persistent('Dismiss');
+        Alert::success('Approved to RND')->persistent('Dismiss');
         return back();
     }
 
@@ -454,7 +458,7 @@ class CustomerRequirementController extends Controller
         $crr->Progress = 81;
         $crr->save();
 
-        Alert::success('Successfully Submitted')->persistent('Dismiss');
+        Alert::success('Successfully Final Review')->persistent('Dismiss');
         return back();
     }
 
@@ -532,4 +536,28 @@ class CustomerRequirementController extends Controller
         return back();
     }
     
+    public function refreshUserApprover()
+    {
+        $user = User::where('id', auth()->user()->id)->first();
+
+        if ($user != null)
+        {
+            if($user->salesApproverById)
+            {
+                $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
+
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+            elseif($user->salesApproverByUserId)
+            {
+                $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
+
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+        }
+
+        return "";
+    }
 }

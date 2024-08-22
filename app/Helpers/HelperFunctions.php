@@ -196,15 +196,15 @@ function checkRolesIfHaveApprove($module, $department, $role)
     }
 }
 
-function checkIfHaveActivities($role)
-{
-    if (($role->department_id == 5 || $role->department_id == 38) && $role->name == "Department Admin")
-    {
-        return "yes";
-    }
+// function checkIfHaveActivities($role)
+// {
+//     if (($role->department_id == 5 || $role->department_id == 38) && $role->name == "Department Admin")
+//     {
+//         return "yes";
+//     }
     
-    return "no";
-}
+//     return "no";
+// }
 
 function checkIfHaveFiles($role)
 {
@@ -283,4 +283,24 @@ function rndPersonnel($personnel, $user_id)
     $p = $personnel->pluck('PersonnelUserId')->toArray();
 
     return collect($p)->contains($user_id);
+}
+
+function linkToCrr($crrNumber)
+{
+    $crr = CustomerRequirement::where('CrrNumber', $crrNumber)->first();
+    
+    if($crr != null)
+    {
+        return $crr->id;
+    }
+}
+
+function checkIfItsSalesDept($department)
+{
+    if ($department == 5 || $department == 38)
+    {
+        return true;
+    }
+
+    return false;
 }

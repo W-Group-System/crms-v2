@@ -169,6 +169,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('submit_crr/{id}', 'CustomerRequirementController@submitCrr');
     Route::post('submit_final_crr/{id}', 'CustomerRequirementController@submitFinalCrr');
     Route::post('complete_crr/{id}', 'CustomerRequirementController@completeCrr');
+    Route::post('refresh_user_approvers', 'CustomerRequirementController@refreshUserApprover');
 
     # Crr Supplementary Details
     Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');

@@ -6,7 +6,7 @@
             @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Customer Requirement List
-            <button type="button" class="btn btn-md btn-primary" name="add_customer_requirement" data-toggle="modal" data-target="#AddCustomerRequirement" class="btn btn-md btn-primary">Add Customer Requirement</button>
+            <button type="button" class="btn btn-md btn-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement" class="btn btn-md btn-primary">Add Customer Requirement</button>
             </h4>
             @else
             <h4 class="card-title d-flex justify-content-between align-items-center">Customer Requirement List</h4>
@@ -489,6 +489,28 @@
             console.log('asdad');
             
         })
+
+        $("#addCustomerRequirement").on('click', function() {
+
+            refreshSecondaryApprovers()
+        })
+
+        function refreshSecondaryApprovers()
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                    }, 500);
+                }
+            })
+        }
     })
 </script>
 @endsection
