@@ -11,4 +11,9 @@ class SalesApprovers extends Model
 
     CONST CREATED_AT = 'CreatedDate';
     CONST UPDATED_AT = 'ModifiedDate';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'UserId');
+    }
 }

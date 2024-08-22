@@ -40,6 +40,24 @@ class User extends Authenticatable
         ->where('isDeleted', 0)
         ->where('Type', 1);
     }
+
+    public function localSalesApprovers()
+    {
+        return $this->hasMany(SalesApprovers::class, 'SalesApproverId', 'id')
+        ->where('isDeleted', 0)
+        ->where('Type', 1);
+    }
+    public function internationalSalesApprovers()
+    {
+        return $this->hasMany(SalesApprovers::class, 'SalesApproverId', 'id')
+        ->where('isDeleted', 0)
+        ->where('Type', 2);
+    }
+
+    public function salesApprovers()
+    {
+        return $this->hasMany(SalesApprovers::class, 'UserId', 'id');
+    }
     public function rndUsers()
     {
         return $this->hasMany(RndUser::class, 'ProductRndUserId', 'user_id')->where('isDeleted', 0);
