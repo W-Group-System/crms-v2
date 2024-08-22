@@ -170,6 +170,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('submit_final_crr/{id}', 'CustomerRequirementController@submitFinalCrr');
     Route::post('complete_crr/{id}', 'CustomerRequirementController@completeCrr');
     Route::post('refresh_user_approvers', 'CustomerRequirementController@refreshUserApprover');
+    Route::post('return_to_sales/{id}', 'CustomerRequirementController@returnToSales');
+    Route::post('return_to_rnd/{id}', 'CustomerRequirementController@returnToRnd');
+    Route::post('sales_accepted/{id}', 'CustomerRequirementController@salesAccepted');
 
     # Crr Supplementary Details
     Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');

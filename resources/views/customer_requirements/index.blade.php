@@ -491,17 +491,21 @@
         })
 
         $("#addCustomerRequirement").on('click', function() {
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
 
-            refreshSecondaryApprovers()
+            refreshSecondaryApprovers(primarySales)
         })
 
-        function refreshSecondaryApprovers()
+        function refreshSecondaryApprovers(primarySales)
         {
             $.ajax({
                 type: "POST",
                 url: "{{url('refresh_user_approvers')}}",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
                 },
                 success: function(data)
                 {
