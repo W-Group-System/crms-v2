@@ -12,6 +12,7 @@ use App\RequestProductEvaluation;
 use App\RpeDetail;
 use App\RpeFile;
 use App\RpePersonnel;
+use App\SalesApprovers;
 use App\SalesUser;
 use App\TransactionApproval;
 use App\TransactionLogs;
@@ -57,12 +58,24 @@ class RequestProductEvaluationController extends Controller
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
         ->get();
-        $users = User::all();
+        // $users = User::all();
+        $loggedInUser = Auth::user(); 
+        $role = $loggedInUser->role;
+        $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        if (($role->description == 'International Sales - Supervisor') || ($role->description == 'Local Sales - Supervisor')) {
+            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            
+        } else {
+            $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+        }
         $price_currencies = PriceCurrency::all();
         $project_names = ProjectName::all();
 
         $product_applications = ProductApplication::all();
-        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications', 'users',  'price_currencies', 'project_names', 'search' , 'open', 'close',)); 
+        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications',  'price_currencies', 'project_names', 'search' , 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons')); 
     }
 
     public function store(Request $request)

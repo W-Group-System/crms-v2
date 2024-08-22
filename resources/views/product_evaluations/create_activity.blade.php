@@ -43,12 +43,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
-                                <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select Client" required>
+                                <input type="hidden" class="form-control form-control-sm ClientId" name="ClientId" value="{{ $requestEvaluation->client->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{$requestEvaluation->client->Name }}" readonly>
+                                {{-- <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select Client" required>
                                     <option value="" disabled selected>Select Client</option>
                                     @foreach($clients as $client)
                                         <option value="{{ $client->id }}">{{ $client->Name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -74,10 +76,12 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Responsible</label>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{ $requestEvaluation->primarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($requestEvaluation->primarySalesPerson)->full_name }}" readonly>
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
+                                        <option value="{{ $user->user_id }}" @if ($requestEvaluation->primarySalesPerson->id ==  $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -91,12 +95,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                <input type="hidden" name="SecondarySalesPersonId" value="{{ $requestEvaluation->secondarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($requestEvaluation->secondarySalesPerson)->full_name }}" readonly>
+                                {{-- <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -150,29 +156,25 @@
 
 <script>
     $(document).ready(function() {
-        $('.ClientId').change(function() {
-            var clientId = $(this).val();
-            if (clientId) {
-                $.ajax({
-                    url: '{{ url("client-contact") }}/' + clientId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(data) {
-                        $('#ClientContactId').empty();
-                        $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
-                        $.each(data, function(key, value) {
-                            $('#ClientContactId').append('<option value="'+ key +'">'+ value +'</option>');
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
-                    }
-                });
-            } else {
-                $('#ClientContactId').empty();
-                $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
-            }
-        });
+        var contactIdSelector = '.ClientContactId';
+
+        var clientIdSelector = '.ClientId';
+        var storedClientId = $(clientIdSelector).val();
+
+        if(storedClientId) {
+            $.ajax({
+                url: '{{ url("client-contact") }}/' + storedClientId,
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    $(contactIdSelector).empty();
+                    $(contactIdSelector).append('<option value="" disabled>Select Contact</option>');
+                    $.each(data, function(key, value) {
+                        $(contactIdSelector).append('<option value="'+ key +'">'+ value +'</option>');
+                    });
+                }
+            });
+        }
     });
 
     document.addEventListener('DOMContentLoaded', function() {
