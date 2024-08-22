@@ -53,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate">
+                                <input type="date" class="form-control" id="DueDate" name="DueDate" min="{{date('Y-m-d')}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -79,12 +79,13 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                {{-- <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->id == auth()->user()->id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
+                                <input type="text" name="PrimarySalesPersonId" class="form-control" value="{{auth()->user()->full_name}}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">

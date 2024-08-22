@@ -156,6 +156,28 @@
                                 <input type="text" class="form-control" id="RefRpeNumber" name="RefRpeNumber" placeholder="Enter RPE Number" value="{{$crr->RefRpeNumber}}">
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">Status</label>
+                                <select class="form-control js-example-basic-single" name="Status" required>
+                                    <option value="" disabled selected>Select Status</option>
+                                    <option value="10" @if($crr->Status == 10) selected @endif>Open</option>
+                                    <option value="30" @if($crr->Status == 30) selected @endif>Closed</option>
+                                    <option value="50" @if($crr->Status == 50) selected @endif>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="">REF Code</label>
+                                <select name="RefCode" class="form-control js-example-basic-single" required>
+                                    <option disabled selected value>Select REF Code</option>
+                                    @foreach ($refCode as $key=>$code)
+                                        <option value="{{$key}}" @if($key == $crr->RefCode) selected @endif>{{$code}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="name">Details of Requirement</label>
