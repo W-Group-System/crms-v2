@@ -53,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$customerRequirement->DueDate}}">
+                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$customerRequirement->DueDate}}" min="{{date('Y-m-d')}}">
                             </div>
                         </div>
                         <div class="col-lg-6">

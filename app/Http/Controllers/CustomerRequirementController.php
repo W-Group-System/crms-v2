@@ -324,7 +324,7 @@ class CustomerRequirementController extends Controller
         $customerRequirement->DateReceived = $request->date_received;
         $customerRequirement->DueDate = $request->due_date;
         $customerRequirement->Recommendation = $request->recommendation;
-        $customerRequirement->Progress = $request->progress;
+        // $customerRequirement->Progress = $request->progress;
         $customerRequirement->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
@@ -466,6 +466,7 @@ class CustomerRequirementController extends Controller
     {
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 60;
+        $crr->DateCompleted = date('Y-m-d h:i:s');
         $crr->save();
 
         Alert::success('Successfully Completed')->persistent('Dismiss');
@@ -536,10 +537,10 @@ class CustomerRequirementController extends Controller
         return back();
     }
     
-    public function refreshUserApprover()
+    public function refreshUserApprover(Request $request)
     {
-        $user = User::where('id', auth()->user()->id)->first();
-
+        $user = User::where('id', $request->ps)->first();
+        
         if ($user != null)
         {
             if($user->salesApproverById)
@@ -559,5 +560,35 @@ class CustomerRequirementController extends Controller
         }
 
         return "";
+    }
+
+    public function returnToSales($id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 10;
+        $crr->save(); 
+
+        Alert::success('Successfully return to sales')->persistent('Dismiss');
+        return back();
+    }
+
+    public function returnToRnd($id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 50;
+        $crr->save(); 
+
+        Alert::success('Successfully return to rnd')->persistent('Dismiss');
+        return back();
+    }
+
+    public function salesAccepted($id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 70;
+        $crr->save(); 
+
+        Alert::success('Sales Accepted')->persistent('Dismiss');
+        return back();
     }
 }

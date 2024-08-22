@@ -268,6 +268,16 @@ function authCheckIfItsSales($department)
     return false;
 }
 
+function authCheckIfItsRnd($department)
+{
+    if ($department == 15)
+    {
+        return true;
+    }
+    
+    return false;
+}
+
 function authCheckIfItsRndStaff($role)
 {
     if ($role->department_id == 15 && $role->name == "Staff L1")
@@ -302,5 +312,15 @@ function checkIfItsSalesDept($department)
         return true;
     }
 
+    return false;
+}
+
+function rndManager($role)
+{
+    if ($role->department_id == 15 && $role->id == 14)
+    {
+        return true;
+    }
+    // dd($role);
     return false;
 }
