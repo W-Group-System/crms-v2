@@ -275,42 +275,58 @@ class ProductController extends Controller
 
     public function updateRawMaterials(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'raw_materials' => 'array|min:1',
-            'raw_materials.*' => 'distinct'
-        ], [
-            'raw_materials.*.distinct' => 'The raw materials should be unique.',
-        ]);
-
-        if ($validator->fails())
+        $product_composition = ProductMaterialsComposition::where('ProductId', $id)->delete();
+        
+        foreach($request->percentage as $key=>$value)
         {
-            $msg = $validator->errors()->first();
-            Alert::error($msg)->persistent('Dismiss');
-        }
-        else
-        {
-            $product_raw_materials = ProductMaterialsComposition::where('ProductId', $id)->delete();
-    
-            if($request->raw_materials != null)
-            {
-                foreach($request->raw_materials as $key=>$rm)
-                {   
-                    $product_raw_materials = new ProductMaterialsComposition;
-                    $product_raw_materials->MaterialId = $rm;
-                    $product_raw_materials->Percentage = $request->percent[$key];
-                    $product_raw_materials->ProductId = $id;
-                    $product_raw_materials->save();
-                }
+            if (is_null($request->percentage[$key])) {
+                continue;
+            }
 
-                Alert::success('Successfully Saved')->persistent('Dismiss');
-            }
-            else
-            {
-                Alert::error('Error! You must add raw materials')->persistent('Dismiss');
-            }
-    
+            $product_composition = new ProductMaterialsComposition;
+            $product_composition->MaterialId = $request->raw_materials[$key];
+            $product_composition->Percentage = $value;
+            $product_composition->ProductId = $id;
+            $product_composition->save(); 
         }
 
+        // $validator = Validator::make($request->all(), [
+        //     'raw_materials' => 'array|min:1',
+        //     'raw_materials.*' => 'distinct'
+        // ], [
+        //     'raw_materials.*.distinct' => 'The raw materials should be unique.',
+        // ]);
+
+        // if ($validator->fails())
+        // {
+        //     $msg = $validator->errors()->first();
+        //     Alert::error($msg)->persistent('Dismiss');
+        // }
+        // else
+        // {
+        //     $product_raw_materials = ProductMaterialsComposition::where('ProductId', $id)->delete();
+    
+        //     if($request->raw_materials != null)
+        //     {
+        //         foreach($request->raw_materials as $key=>$rm)
+        //         {   
+        //             $product_raw_materials = new ProductMaterialsComposition;
+        //             $product_raw_materials->MaterialId = $rm;
+        //             $product_raw_materials->Percentage = $request->percent[$key];
+        //             $product_raw_materials->ProductId = $id;
+        //             $product_raw_materials->save();
+        //         }
+
+                // Alert::success('Successfully Saved')->persistent('Dismiss');
+        //     }
+        //     else
+        //     {
+        //         Alert::error('Error! You must add raw materials')->persistent('Dismiss');
+        //     }
+    
+        // }
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
 
