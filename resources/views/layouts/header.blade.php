@@ -182,7 +182,7 @@
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/product_applications') }}">Product Applications</a></li>
                                     @endif
                                     @if(viewModule('Application Sub Categories', $department, $role) == "yes")
-                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/product_subcategories') }}">Product Subcategories</a></li>
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/product_subcategories') }}">Application Sub Categories</a></li>
                                     @endif
                                     @if(viewModule('Raw Materials', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/raw_material') }}">Raw Materials</a></li>
