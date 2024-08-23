@@ -47,6 +47,7 @@ class PriceMonitoring extends Model implements Auditable
     {
         return $this->belongsTo(User::class, 'PrimarySalesPersonId', 'user_id');
     }
+
     public function secondarySalesPerson()
     {
         return $this->belongsTo(User::class, 'SecondarySalesPersonId', 'user_id');
@@ -77,4 +78,5 @@ class PriceMonitoring extends Model implements Auditable
     {
         return $this->hasOne(PriceRequestProduct::class, 'PriceRequestFormId', 'id');
     }
+    
 }

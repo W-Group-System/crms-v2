@@ -468,7 +468,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     # Reports
     Route::get('/price_request', 'ReportsController@price_summary')->name('reports.price_request');
-    Route::get('/export-price-request', 'ReportsController@exportPriceRequest')->name('export_price_request');
+    Route::get('/export_price_request', 'ReportsController@exportPriceRequest')->name('export_price_request');
     Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
 });
 
