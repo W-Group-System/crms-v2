@@ -424,7 +424,7 @@
                         @endif
                         <li class="nav-item"> 
                             <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="reports">
-                                <i class="icon-cog menu-icon"></i>
+                                <i class="icon-book menu-icon"></i>
                                 <span class="menu-title">Reports</span>
                                 <i class="menu-arrow"></i>
                             </a>
