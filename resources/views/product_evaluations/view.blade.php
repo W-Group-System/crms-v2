@@ -37,8 +37,23 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div> 
                 @include('components.error')
-                <div class="col-lg-12" align="right">
-                    <a href="{{ url('/request_product_evaluation') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                <div class="col-lg-12" align="right">W
+                    <a href="{{ url()->previous() ?: url('/request_product_evaluation') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    {{-- @if ($requestEvaluation->Progress == 10)
+                        <button type="button" class="btn btn-sm btn-success"
+                                data-target="#approveSrf{{ $requestEvaluation->id }}" 
+                                data-toggle="modal" 
+                                title='Approve SRF'>
+                            <i class="ti-check"><br>Approve</i>
+                        </button>
+                    @elseif ($requestEvaluation->Progress == 30)
+                        <button type="button" class="btn btn-sm btn-success"
+                                data-target="#receiveSrf{{ $requestEvaluation->id }}" 
+                                data-toggle="modal" 
+                                title='Receive SRF'>
+                            <i class="ti-check"><br>Receive</i>
+                        </button>
+                 
                     
                     <button type="button" class="btn btn-danger btn-icon-text" >
                         <i class="ti ti-printer btn-icon-prepend"></i>
@@ -101,7 +116,7 @@
                             
                         @if($requestEvaluation->Progress != 60)
                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateRnd{{$requestEvaluation->id}}">
-                            <i class="ti ti-pencil"></i>&nbsp;Update
+                            <i class="ti ti-pencil"></i>&nbsp;UpdateW
                         </button>
                         @endif
 

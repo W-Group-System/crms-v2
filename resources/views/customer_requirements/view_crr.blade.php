@@ -6,7 +6,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
                 <div align="right">
-                    <a href="{{ url('/customer_requirement') }}" class="btn btn-md btn-secondary" onclick="window.close()">
+                    <a href="{{ url()->previous() ?: url('/customer_requirements') }}" class="btn btn-md btn-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
 
@@ -417,7 +417,7 @@
                             $id = linkToCrr($crr->RefCrrNumber);
                         @endphp
                         <label>
-                            <a href="{{url('view_customer_requirement/'.$id)}}" target="_blank">
+                            <a href="{{url('view_customer_requirement/'.$id)}}">
                                 {{$crr->RefCrrNumber}}
                             </a>
                         </label>
@@ -499,7 +499,7 @@
                             @if($crr->DateReceived != null)
                             {{date('M d Y', strtotime($crr->DateReceived))}}
                             @else
-                            No date received
+                            N/A
                             @endif
                         </label>
                     </div>
@@ -508,7 +508,11 @@
                     <label class="col-sm-3 col-form-label"><b>Recommendation : </b></label>
                     <div class="col-sm-3">
                         <label>
+                            @if($crr->Recommendation != null)
                             {!! nl2br(e($crr->Recommendation)) !!}
+                            @else
+                            N/A
+                            @endif
                         </label>
                     </div>
                     <label class="col-sm-3 col-form-label"><b>Date Completed :</b></label>
@@ -517,7 +521,7 @@
                             @if($crr->DateCompleted != null)
                             {{date('M d Y', strtotime($crr->DateCompleted))}}
                             @else
-                            No date completed
+                            N/A
                             @endif
                         </label>
                     </div>
@@ -679,20 +683,20 @@
                     <div class="form-group">
                         <label>Show : </label>
                         <label class="checkbox-inline">
-                            <input name="open" class="activity_status" type="checkbox" value="10"> Open
+                            <input name="open" class="activity_status" id="IsShowOpen" type="checkbox" value="10"> Open
                         </label>
                         <label class="checkbox-inline">
-                            <input name="close" class="activity_status" type="checkbox" value="20"> Closed
+                            <input name="close" class="activity_status" id="IsShowClosed" type="checkbox" value="20"> Closed
                         </label>
                     </div>
-
+                    
                     @if(checkIfItsSalesDept(auth()->user()->department_id))
                     <button class="btn btn-primary mb-3 float-right" data-toggle="modal" data-target="#addActivity">Add Activities</button>
                     @include('activities.new_activities')
                     @endif
 
                     <div class="table-responsive">
-                        <table class="table table-hover table-bordered table-striped tables" width="100%">
+                        <table class="table table-hover table-bordered table-striped" id="activityTable" width="100%">
                             <thead>
                                 <tr>
                                     <th>Actions</th>
@@ -707,7 +711,7 @@
                                     @foreach ($crr->activities as $a)
                                         <tr>
                                             <td width="10%">
-                                                @if(checkIfHaveActivities(auth()->user()->role) == "yes")
+                                                @if(checkIfItsSalesDept(auth()->user()->department_id))
                                                 <button type="button" class="btn btn-warning btn-sm edit_activity" data-toggle="modal" data-target="#editActivity-{{$a->id}}" data-clientid="{{$a->ClientId}}" data-clientcontact="{{$a->ClientContactId}}">
                                                     <i class="ti ti-pencil"></i>
                                                 </button>
@@ -853,10 +857,12 @@
                             <tbody>
                                 @foreach ($crr->historyLogs as $logs)
                                     <tr>
-                                        <td>{{date('Y-m-d h:i:s', strtotime($logs->ActionDate))}}</td>
+                                        <td>{{date('M d, Y - H:i A', strtotime($logs->ActionDate))}}</td>
                                         <td>
                                             @if($logs->historyUser)
                                             {{$logs->historyUser->full_name}}
+                                            @elseif($logs->user)
+                                            {{$logs->user->full_name}}
                                             @endif
                                         </td>
                                         <td>{{$logs->Details}}</td>
@@ -885,8 +891,15 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     $(document).ready(function(){
-        new DataTable('.tables', {
-            destroy: true,
+        $('.tables').DataTable({
+            destroy: false,
+            processing: true,
+            pageLength: 10,
+            ordering: false
+        });
+
+        var activityTable = $('#activityTable').DataTable({
+            destroy: false,
             processing: true,
             pageLength: 10,
             ordering: false

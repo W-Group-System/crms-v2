@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
                 <div align="right">
-                    <a href="{{ session('last_client_page', url('/client')) }}" class="btn btn-md btn-secondary">
+                    <a href="{{ url()->previous() ?: url('/client') }}" class="btn btn-md btn-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
                     <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-primary"><i class="ti ti-pencil"></i>&nbsp;Update</a>
