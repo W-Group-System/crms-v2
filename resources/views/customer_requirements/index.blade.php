@@ -144,7 +144,9 @@
                                 <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements" target="_blank">
                                     <i class="ti-eye"></i>
                                 </a>
-                                @if(auth()->user()->id == $customerRequirement->PrimarySalesPersonId || auth()->user()->user_id == $customerRequirement->PrimarySalesPersonId)
+                                @php
+                                    $user = auth()->user();
+                                @endphp
                                 <button type="button" class="btn btn-sm btn-warning"
                                     data-target="#editCrr-{{ $customerRequirement->id }}" data-toggle="modal" title='Edit' @if($user->id != $customerRequirement->PrimarySalesPersonId && $user->user_id != $customerRequirement->PrimarySalesPersonId) disabled @endif>
                                     <i class="ti-pencil"></i>
@@ -155,7 +157,6 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </form>
-                                @endif
                             </td>
                             <td>{{ optional($customerRequirement)->CrrNumber }}</td>
                             <td>
