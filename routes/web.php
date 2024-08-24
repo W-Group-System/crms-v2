@@ -389,9 +389,13 @@ Route::group(['middleware' => 'auth'], function () {
     // Raw Material
     Route::get('/raw_material', 'RawMaterialController@index')->name('raw_material.index');
     Route::post('/add_raw_material', 'RawMaterialController@add');
-    Route::post('/deactivate_raw_material', 'RawMaterialController@deactivate');
-    Route::post('/activate_raw_material', 'RawMaterialController@activate');
+    // Route::post('/deactivate_raw_material', 'RawMaterialController@deactivate');
+    // Route::post('/activate_raw_material', 'RawMaterialController@activate');
+    Route::get('/edit_raw_materials/{id}', 'RawMaterialController@edit');
+    Route::post('/raw_materials_update/{id}', 'RawMaterialController@update');
+    Route::post('/delete_raw_materials/{id}', 'RawMaterialController@delete');
     Route::get('/view_raw_materials/{id}', 'RawMaterialController@viewRawMaterials');
+    Route::get('/export_raw_materials', 'RawMaterialController@export');
 
     // Base Price
     Route::get('/base_price', 'BasePriceController@index')->name('base_price.index');
