@@ -386,6 +386,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/edit_product_subcategories/{id}', 'ProductSubcategoriesController@edit')->name('edit_product_subcategories');
     Route::post('update_product_subcategories/{id}', 'ProductSubcategoriesController@update')->name('update_product_subcategories');
     Route::post('delete_product_subcategories', 'ProductSubcategoriesController@delete')->name('delete_product_subcategories');
+    Route::get('export_application_subcategories', 'ProductSubcategoriesController@export');
 
     // Raw Material
     Route::get('/raw_material', 'RawMaterialController@index')->name('raw_material.index');
