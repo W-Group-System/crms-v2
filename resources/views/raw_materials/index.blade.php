@@ -8,33 +8,52 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Raw Material List
-            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#formRawMaterial">Add Raw Material</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" id="addBtn" data-target="#formRawMaterial">Add Raw Material</button>
             </h4>
             @include('components.error')
-
-            <div class="table-responsive">
-                <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                    <div class="row height d-flex ">
-                        <div class="col-md-5 mt-2">
-                            <a href="#" id="copy_issue_btn" class="btn btn-md btn-info mb-1">Copy</a>
-                            <a href="#" id="excel_btn" class="btn btn-md btn-success mb-1">Excel</a>
-                        </div>
-                        <div class="offset-md-2 col-md-5 mt-2">
-                            <div class="search">
-                                <i class="ti ti-search"></i>
-                                <input type="text" class="form-control" placeholder="Search Issue Category" name="search" value="{{$search}}"> 
-                                <button class="btn btn-sm btn-info">Search</button>
+            
+            <div class="mb-3">
+                <button type="button" id="copy_issue_btn" class="btn btn-md btn-info mb-1">Copy</button>
+                <a href="{{url('export_raw_materials')}}" id="excel_btn" class="btn btn-md btn-success mb-1">Excel</a>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Show</span>
+                    <form method="GET" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10" @if($entries == 10) selected @endif>10</option>
+                            <option value="25" @if($entries == 25) selected @endif>25</option>
+                            <option value="50" @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
+                </div>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Raw Materials" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                
                 <table class="table table-striped table-bordered table-hover" id="raw_material_table">
                     <thead>
                         <tr>
                             <th width="10%">Action</th>
                             <th width="30%">Material</th>
                             <th width="30%">Description</th>
-                            <th width="30%">Status</th>
+                            {{-- <th width="30%">Status</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -44,27 +63,37 @@
                                     <a href="{{url('view_raw_materials/'.$rm->id)}}" class="btn btn-sm btn-info" title="View Raw Material Details">
                                         <i class="ti-eye"></i>
                                     </a>
-    
-                                    @if($rm->status == "Active")
-                                    <button class="btn btn-sm btn-danger deactivate" title="Deactivate" data-id="{{$rm->id}}">
-                                        <i class="ti-trash"></i>
+
+                                    <button type="button" data-toggle="modal" data-target="#editRawMaterials{{$rm->id}}" class="btn btn-sm btn-warning editBtn" data-id="{{$rm->id}}">
+                                        <i class="ti-pencil"></i>
                                     </button>
+    
+                                    <form method="POST" class="d-inline-block" action="{{url('delete_raw_materials/'.$rm->id)}}">
+                                        @csrf
+
+                                        <button type="button" class="btn btn-sm btn-danger deleteBtn" data-id="{{$rm->id}}">
+                                            <i class="ti-trash"></i>
+                                        </button>
+                                    </form>
+                                    {{-- @if($rm->status == "Active")
                                     @else
                                     <button class="btn btn-sm btn-info activate" title="Activate" data-id="{{$rm->id}}">
                                         <i class="ti-check"></i>
                                     </button>
-                                    @endif
+                                    @endif --}}
                                 </td>
                                 <td>{{$rm->Name}}</td>
                                 <td>{{$rm->Description}}</td>
-                                <td>
+                                {{-- <td>
                                     @if($rm->status == "Active")
                                         <div class="badge badge-success">Active</div>
                                     @else
                                         <div class="badge badge-danger">Inactive</div>
                                     @endif
-                                </td>
+                                </td> --}}
                             </tr>
+
+                            @include('raw_materials.edit_raw_materials')
                         @endforeach
                     </tbody>
                 </table>
@@ -133,64 +162,157 @@
         //     ordering: false,
         // })
 
+        $('.table').tablesorter({
+            theme: "bootstrap"
+        })
 
-        $(".deactivate").on('click', function()
-        {
+        $("[name='entries']").on('change', function() {
+            $(this).closest('form').submit()
+        })
+
+        $(".editBtn").on('click', function() {
             var id = $(this).data('id');
 
-            $.ajax
-            ({
-                type: "POST",
-                url: "{{url('deactivate_raw_material')}}",
-                data: 
+            $.ajax({
+                type: "get",
+                url: "{{url('edit_raw_materials')}}/" + id,
+                success: function(data)
                 {
-                    id: id
-                },
-                headers: 
-                {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function()
-                {
-                    Swal.fire
-                    ({
-                        icon: 'success',
-                        title: 'Successfully Deactivate'
-                    }).then(() => {
-                        location.reload();
-                    })
+                    $('[name="Name"]').val(data.Name)
+                    $('[name="Description"]').val(data.Description)
                 }
             })
         })
 
-        $(".activate").on('click', function()
-        {
-            var id = $(this).data('id');
-
-            $.ajax
-            ({
-                type: "POST",
-                url: "{{url('activate_raw_material')}}",
-                data: 
-                {
-                    id: id
-                },
-                headers: 
-                {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function()
-                {
-                    Swal.fire
-                    ({
-                        icon: 'success',
-                        title: 'Successfully Activate'
-                    }).then(() => {
-                        location.reload();
-                    })
-                }
-            })
+        $("#addBtn").on('click', function() {
+            $('[name="Name"]').val(null)
+            $('[name="Description"]').val(null)
         })
+
+        $(".deleteBtn").on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('#copy_issue_btn').click(function() {
+            $.ajax({
+                url: "{{ route('raw_material.index') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
+
+                    $('#raw_material_table thead tr').each(function(rowIndex, tr) {
+                        $(tr).find('th').each(function(cellIndex, th) {
+                            if($(th).text().trim() !== "Action")
+                            {
+                                tableData += $(th).text().trim() + '\t';
+                            }
+
+                        });
+                        tableData += '\n';
+                    });
+
+                    $(data).each(function(index, item) {
+                        if (item.Description == null)
+                        {
+                            item.Description = "";    
+                        }
+
+                        tableData += item.Name + '\t' + item.Description + '\n';
+                    });
+
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
+
+        // $(".deactivate").on('click', function()
+        // {
+        //     var id = $(this).data('id');
+
+        //     $.ajax
+        //     ({
+        //         type: "POST",
+        //         url: "{{url('deactivate_raw_material')}}",
+        //         data: 
+        //         {
+        //             id: id
+        //         },
+        //         headers: 
+        //         {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         success: function()
+        //         {
+        //             Swal.fire
+        //             ({
+        //                 icon: 'success',
+        //                 title: 'Successfully Deactivate'
+        //             }).then(() => {
+        //                 location.reload();
+        //             })
+        //         }
+        //     })
+        // })
+
+        // $(".activate").on('click', function()
+        // {
+        //     var id = $(this).data('id');
+
+        //     $.ajax
+        //     ({
+        //         type: "POST",
+        //         url: "{{url('activate_raw_material')}}",
+        //         data: 
+        //         {
+        //             id: id
+        //         },
+        //         headers: 
+        //         {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         success: function()
+        //         {
+        //             Swal.fire
+        //             ({
+        //                 icon: 'success',
+        //                 title: 'Successfully Activate'
+        //             }).then(() => {
+        //                 location.reload();
+        //             })
+        //         }
+        //     })
+        // })
     })
 </script>
 {{-- <script>
