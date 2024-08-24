@@ -36,6 +36,14 @@ class RequestProductEvaluation extends Model
     {
         return $this->belongsTo(User::class, 'SecondarySalesPersonId', 'user_id');
     }
+    public function primarySalesPersonById()
+    {
+        return $this->belongsTo(User::class,'PrimarySalesPersonId','id');
+    }
+    public function secondarySalesPersonById()
+    {
+        return $this->belongsTo(User::class,'SecondarySalesPersonId','id');
+    }
 
     public function progressStatus()
     {
@@ -48,5 +56,13 @@ class RequestProductEvaluation extends Model
     public function priceCurrency()
     {
         return $this->belongsTo(PriceCurrency::class, 'CurrencyId', 'id');
+    }
+    public function rpePersonnel()
+    {
+        return $this->hasMany(RpePersonnel::class,'RequestProductEvaluationId','id');
+    }
+    public function supplementaryDetails()
+    {
+        return $this->hasMany(RpeDetail::class,'RequestProductEvaluationId','id');
     }
 }

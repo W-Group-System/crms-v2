@@ -220,6 +220,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('CancelRpe/{id}', 'RequestProductEvaluationController@CancelRpe');
     Route::post('CloseRpe/{id}', 'RequestProductEvaluationController@CloseRpe');
+    Route::post('open_rpe/{id}', 'RequestProductEvaluationController@openRpe');
+    Route::post('accept_rpe/{id}', 'RequestProductEvaluationController@acceptRpe');
+    Route::post('received_rpe/{id}', 'RequestProductEvaluationController@receivedRpe');
+    Route::post('start_rpe/{id}', 'RequestProductEvaluationController@startRpe');
+    Route::post('pause_rpe/{id}', 'RequestProductEvaluationController@pauseRpe');
+    Route::post('initial_review_rpe/{id}', 'RequestProductEvaluationController@initialReview');
+    Route::post('final_review_rpe/{id}', 'RequestProductEvaluationController@finalReview');
+    Route::post('complete_rpe/{id}', 'RequestProductEvaluationController@completeRpe');
+    Route::post('sales_accept_rpe/{id}', 'RequestProductEvaluationController@salesAcceptRpe');
 
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
@@ -369,9 +378,10 @@ Route::group(['middleware' => 'auth'], function () {
     // Product Applications
     Route::get('/product_applications', 'ProductApplicationController@index')->name('product_applications.index');
     Route::post('/new_product_applications', 'ProductApplicationController@store')->name('product_applications.store');
-    // Route::get('/edit_product_applications/{id}', 'ProductApplicationController@edit')->name('edit_product_applications');
+    Route::get('/edit_product_applications/{id}', 'ProductApplicationController@edit')->name('edit_product_applications');
     Route::post('update_product_applications/{id}', 'ProductApplicationController@update')->name('update_product_applications');
     Route::post('delete_product_applications', 'ProductApplicationController@delete')->name('delete_product_applications');
+    Route::get('export_product_application', 'ProductApplicationController@export');
 
     // Product Subcategories
     Route::get('/product_subcategories', 'ProductSubcategoriesController@index')->name('product_subcategories.index');
@@ -379,13 +389,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/edit_product_subcategories/{id}', 'ProductSubcategoriesController@edit')->name('edit_product_subcategories');
     Route::post('update_product_subcategories/{id}', 'ProductSubcategoriesController@update')->name('update_product_subcategories');
     Route::post('delete_product_subcategories', 'ProductSubcategoriesController@delete')->name('delete_product_subcategories');
+    Route::get('export_application_subcategories', 'ProductSubcategoriesController@export');
 
     // Raw Material
     Route::get('/raw_material', 'RawMaterialController@index')->name('raw_material.index');
     Route::post('/add_raw_material', 'RawMaterialController@add');
-    Route::post('/deactivate_raw_material', 'RawMaterialController@deactivate');
-    Route::post('/activate_raw_material', 'RawMaterialController@activate');
+    // Route::post('/deactivate_raw_material', 'RawMaterialController@deactivate');
+    // Route::post('/activate_raw_material', 'RawMaterialController@activate');
+    Route::get('/edit_raw_materials/{id}', 'RawMaterialController@edit');
+    Route::post('/raw_materials_update/{id}', 'RawMaterialController@update');
+    Route::post('/delete_raw_materials/{id}', 'RawMaterialController@delete');
     Route::get('/view_raw_materials/{id}', 'RawMaterialController@viewRawMaterials');
+    Route::get('/export_raw_materials', 'RawMaterialController@export');
 
     // Base Price
     Route::get('/base_price', 'BasePriceController@index')->name('base_price.index');

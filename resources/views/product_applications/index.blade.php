@@ -5,8 +5,14 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Application List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formProductApplication">Add Product Application</button>
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" id="addBtn" data-target="#formProductApplication">Add Product Application</button>
             </h4>
+
+            <div class="mb-3">
+                <button class="btn btn-md btn-info" id="copy_issue_btn">Copy</button>
+                <a href="{{url('export_product_application')}}" class="btn btn-md btn-success">Excel</a>
+            </div>
+
             <div class="row">
                 <div class="col-lg-6">
                     <span>Showing</span>
@@ -48,7 +54,7 @@
                         @foreach ($productApplications as $pa)
                             <tr>
                                 <td>
-                                    <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#productApplication-{{$pa->id}}" title="Edit">
+                                    <button class="btn btn-warning btn-sm editBtn" data-toggle="modal" data-target="#productApplication-{{$pa->id}}" data-id="{{$pa->id}}" title="Edit">
                                         <i class="ti-pencil"></i>
                                     </button>
 
@@ -286,6 +292,10 @@
 
 <script>
     $(document).ready(function() {
+        $(".table").tablesorter({
+            theme: "bootstrap"
+        })
+
         $('.deleteProductApplication').on('click', function() {
             var id = $(this).data('id')
 
@@ -327,6 +337,75 @@
         $("[name='entries']").on('change', function() {
             $(this).closest('form').submit()
         })
+
+        $("#addBtn").on('click', function() {
+            $('[name="Name"]').val(null)
+            $('[name="Description"]').val(null)
+        })
+
+        $(".editBtn").on('click', function() {
+            var id = $(this).data('id')
+            
+            $.ajax({
+                type: "GET",
+                url: "{{url('edit_product_applications')}}/" + id,
+                success: function(data)
+                {
+                    console.log(data);
+                    $('[name="Name"]').val(data.data.Name)
+                    $('[name="Description"]').val(data.data.Description)
+                }
+            })
+        })
+
+        $('#copy_issue_btn').click(function() {
+            $.ajax({
+                url: "{{ route('product_applications.index') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
+
+                    $('#product_application_table thead tr').each(function(rowIndex, tr) {
+                        $(tr).find('th').each(function(cellIndex, th) {
+                            if($(th).text().trim() !== "Action")
+                            {
+                                tableData += $(th).text().trim() + '\t';
+                            }
+                        });
+                        tableData += '\n';
+                    });
+
+                    $(data).each(function(index, item) {
+                        if (item.Description == null)
+                        {
+                            item.Description = ""
+                        }
+
+                        tableData += item.Name + '\t' + item.Description + '\n';
+                    });
+
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
     })
 </script>
 @endsection

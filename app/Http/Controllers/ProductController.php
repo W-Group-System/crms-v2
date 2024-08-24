@@ -789,7 +789,7 @@ class ProductController extends Controller
         $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
         $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
 
-        $rawMaterials = RawMaterial::where('status', 'Active')->get();
+        $rawMaterials = RawMaterial::get();
         $client = Client::get();
 
         return view('products.draft_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));

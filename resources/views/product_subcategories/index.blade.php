@@ -4,8 +4,8 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
-            Product Subcategories List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formProductSubcategories">Add Product Subcategories</button>
+            Application Sub Categories
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formProductSubcategories" id="addBtn">Add Application Sub Categories</button>
             </h4>
             {{-- <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -18,6 +18,11 @@
                     </div>
                 </div>
             </form> --}}
+            <div class="mb-3">
+                <button type="button" id="copy_btn" class="btn btn-info">Copy</button>
+                <a href="{{url('export_application_subcategories')}}" class="btn btn-success" target="_blank">Excel</a>
+            </div>
+
             <div class="row">
                 <div class="col-lg-6">
                     <span>Showing</span>
@@ -37,7 +42,7 @@
                             <div class="col-md-8">
                                 <div class="search">
                                     <i class="ti ti-search"></i>
-                                    <input type="text" class="form-control" placeholder="Search Product Sub Categories" name="search" value="{{$search}}"> 
+                                    <input type="text" class="form-control" placeholder="Search Application Sub Categories" name="search" value="{{$search}}"> 
                                     <button class="btn btn-sm btn-info">Search</button>
                                 </div>
                             </div>
@@ -59,7 +64,7 @@
                     @foreach ($subcategories as $sub)
                         <tr>
                             <td>
-                                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#formProductSubcategories-{{$sub->id}}" title="Edit">
+                                <button class="btn btn-warning btn-sm editBtn" data-toggle="modal" data-target="#formProductSubcategories-{{$sub->id}}" title="Edit" data-id="{{$sub->id}}">
                                     <i class="ti-pencil"></i>
                                 </button>
 
@@ -177,6 +182,92 @@
 
         $("[name='entries']").on('change', function() {
             $(this).closest('form').submit()
+        })
+
+        $("#addBtn").on('click', function() {
+            $("[name='ProductApplicationId']").val(null).trigger('change')
+            $("[name='Name']").val(null)
+            $("[name='Description']").val(null)
+        })
+
+        $(".editBtn").on('click', function() {
+            
+            var id = $(this).data('id')
+
+            $.ajax({
+                type: "GET",
+                url: "{{url('edit_product_subcategories')}}/" + id,
+                success: function(data)
+                {
+                    $("[name='ProductApplicationId']").val(data.data.ProductApplicationId).trigger('change')
+                    $("[name='Name']").val(data.data.Name)
+                    $("[name='Description']").val(data.data.Description)
+                }
+            })
+        })
+
+        $('#copy_btn').click(function() {
+            
+            $.ajax({
+                url: "{{ route('product_subcategories.index') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
+
+                    $('#product_subcategories_table thead tr').each(function(rowIndex, tr) {
+                        
+                        $(tr).find('th').each(function(cellIndex, th) {
+
+                            if($(th).text().trim() !== "Action")
+                            {
+                                tableData += $(th).text().trim() + '\t';
+                            }
+
+                        });
+                        tableData += '\n';
+                    });
+                    
+                    var application = {!! json_encode($productapp) !!};
+                    var applicationArray = [];
+                    
+                    $.each(application, function(key, data) {
+                        applicationArray[data.id] = data.Name;
+                    })
+                    
+                    $(data).each(function(index, item) {
+                        if (item.Description == null)
+                        {
+                            item.Description == ""
+                        }
+
+                        tableData += applicationArray[item.ProductApplicationId] + '\t' + item.Name + '\t' + item.Description + '\n';
+                    });
+
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
+
+        $('#product_subcategories_table').tablesorter({
+            theme: "bootstrap"
         })
     })
 </script>

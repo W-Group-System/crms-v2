@@ -8,14 +8,14 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_sample_request" enctype="multipart/form-data" action="{{ url('UpdateAssignedRpePersonnel/'.$Personnel->Id) }}">
+                <form method="POST" id="form_sample_request" action="{{ url('UpdateAssignedRpePersonnel/'.$Personnel->Id) }}">
                     @csrf
                     <div class="form-group">
                         <label>R&D Personnel:</label>
                         <select class="form-control js-example-basic-single" name="RndPersonnel"  style="position: relative !important" title="Select RND Personnel" >
                             <option value="" disabled selected>R&D Personnel</option>
                             @foreach ($rndPersonnel as $personnel)
-                                <option value="{{ $personnel->user_id }}" @if ($Personnel->PersonnelUserId == $personnel->user_id) selected @endif>{{ $personnel->full_name }}</option>
+                                <option value="{{ $personnel->id }}" @if ($Personnel->PersonnelUserId == $personnel->user_id || $Personnel->PersonnelUserId == $personnel->id) selected @endif>{{ $personnel->full_name }}</option>
                             @endforeach
                         </select>
                     </div>
