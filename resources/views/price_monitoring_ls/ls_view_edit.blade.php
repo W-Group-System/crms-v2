@@ -1,4 +1,4 @@
-<div class="modal fade" id="editPriceRequest{{ $priceMonitoring->id }}" tabindex="-1" role="dialog" aria-labelledby="editPriceMonitoring" aria-hidden="true">
+<div class="modal fade" id="prfEdit{{ $price_monitorings->id }}" tabindex="-1" role="dialog" aria-labelledby="editPriceMonitoring" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('price_monitoring_local/edit/' . $priceMonitoring->id) }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('price_monitoring_local/edit/' . $price_monitorings->id) }}">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -16,8 +16,8 @@
                                 <label>Primary Sales Person</label>
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($primarySalesPersons as $user)
-                                        <option value="{{ $user->user_id }}" @if ($priceMonitoring->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->user_id }}" @if ($price_monitorings->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -25,8 +25,8 @@
                                 <label>Secondary Sales Person</label>
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId"  style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($secondarySalesPersons as $user)
-                                        <option value="{{ $user->user_id }}" @if ($priceMonitoring->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->user_id }}" @if ($price_monitorings->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -34,55 +34,55 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Requested (DD/MM/YYYY)</label>
-                                <input type="datetime" class="form-control" name="DateRequested" value="{{ !empty($priceMonitoring->DateRequested) ? date('Y-m-d  ', strtotime($priceMonitoring->DateRequested)) : '' }}" readonly>
+                                <input type="datetime" class="form-control" name="DateRequested" value="{{ !empty($price_monitorings->DateRequested) ? date('Y-m-d  ', strtotime($price_monitorings->DateRequested)) : '' }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
-                                <select class="form-control js-example-basic-single PrfEditClientId PrfEditClient{{ $priceMonitoring->id }}" name="ClientId"  style="position: relative !important" title="Select Client" required>
+                                <select class="form-control js-example-basic-single PrfEditClientId PrfEditClient{{ $price_monitorings->id }}" name="ClientId"  style="position: relative !important" title="Select Client" required>
                                     <option value="" disabled selected>Select Client</option>
                                     @foreach($clients as $client)
-                                        <option value="{{ $client->id }}" @if ($priceMonitoring->ClientId == $client->id) selected @endif>{{ $client->Name }}</option>
+                                        <option value="{{ $client->id }}" @if ($price_monitorings->ClientId == $client->id) selected @endif>{{ $client->Name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Contact:</label>
-                                <select class="form-control js-example-basic-single" name="ClientContactId" id="PrfEditContactClientId{{ $priceMonitoring->id }}" style="position: relative !important" title="Select ClientContacId" required>
+                                <select class="form-control js-example-basic-single" name="ClientContactId" id="PrfEditContactClientId{{ $price_monitorings->id }}" style="position: relative !important" title="Select ClientContacId" required>
                                     <option value="" disabled selected>Select Contact</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Validity Date</label>
-                                <input type="date" class="form-control ValidityDate{{ $priceMonitoring->id }}" name="ValidityDate"  value="{{ !empty($priceMonitoring->ValidityDate) ? date('Y-m-d', strtotime($priceMonitoring->ValidityDate)) : '' }}" >
+                                <input type="date" class="form-control ValidityDate{{ $price_monitorings->id }}" name="ValidityDate"  value="{{ !empty($price_monitorings->ValidityDate) ? date('Y-m-d', strtotime($price_monitorings->ValidityDate)) : '' }}" >
                             </div>
                             <div class="form-group">
                                 <label>Packaging Type</label>
-                                <input type="text" class="form-control" name="PackagingType" value="{{ $priceMonitoring->PackagingType }}" placeholder="Enter Packaging Type">
+                                <input type="text" class="form-control" name="PackagingType" value="{{ $price_monitorings->PackagingType }}" placeholder="Enter Packaging Type">
                             </div>
                             <div class="form-group">
                                 <label>MOQ</label>
-                                <input type="text" class="form-control" name="Moq" value="{{ $priceMonitoring->Moq }}">
+                                <input type="text" class="form-control" name="Moq" value="{{ $price_monitorings->Moq }}">
                             </div>
                             <div class="form-group">
                                 <label>Shelf Life</label>
-                                <input type="text" class="form-control" name="ShelfLife" value="{{ $priceMonitoring->ShelfLife }}">
+                                <input type="text" class="form-control" name="ShelfLife" value="{{ $price_monitorings->ShelfLife }}">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Shipment Term</label>
-                                <input type="text" class="form-control" name="ShipmentTerm" value="{{ $priceMonitoring->ShipmentTerm}}">
+                                <input type="text" class="form-control" name="ShipmentTerm" value="{{ $price_monitorings->ShipmentTerm}}">
                             </div>
                             <div class="form-group">
                                 <label>Destination</label>
-                                <input type="text" class="form-control" name="Destination" value="{{ $priceMonitoring->Destination}}">
+                                <input type="text" class="form-control" name="Destination" value="{{ $price_monitorings->Destination}}">
                             </div>
                             <div class="form-group">
                                 <label>Payment Term</label>
-                                <input type="text" class="form-control payment-term" name="PaymentTerm" value="{{ $priceMonitoring->PaymentTermId}}" readonly>
+                                <input type="text" class="form-control payment-term" name="PaymentTerm" value="{{ $price_monitorings->PaymentTermId}}" readonly>
                             </div>
                             {{-- <div class="form-group">
                                 <label>Payment Term</label>
@@ -96,28 +96,28 @@
                             <div class="form-group">
                                 <label>Purpose of Price Request</label>
                                 <select class="form-control js-example-basic-single" name="PriceRequestPurpose"  style="position: relative !important" title="Select Purpose">
-                                   <option value="" @if ($priceMonitoring->PriceRequestPurpose == '') selected @endif disabled selected>Select Purpose</option>
-                                   <option value="10" @if ($priceMonitoring->PriceRequestPurpose == '10') selected @endif>Indication</option>
-                                   <option value="20" @if ($priceMonitoring->PriceRequestPurpose == '20') selected @endif>Firm</option>
-                                   <option value="30" @if ($priceMonitoring->PriceRequestPurpose == '30') selected @endif>Sample</option>
+                                   <option value="" @if ($price_monitorings->PriceRequestPurpose == '') selected @endif disabled selected>Select Purpose</option>
+                                   <option value="10" @if ($price_monitorings->PriceRequestPurpose == '10') selected @endif>Indication</option>
+                                   <option value="20" @if ($price_monitorings->PriceRequestPurpose == '20') selected @endif>Firm</option>
+                                   <option value="30" @if ($price_monitorings->PriceRequestPurpose == '30') selected @endif>Sample</option>
                                 </select>
                            </div>
                            <div class="form-group">
                             <label>Delivery Schedule</label>
-                            <input type="text" class="form-control" name="DeliverySchedule" value="{{ $priceMonitoring->PriceLockPeriod }}">
+                            <input type="text" class="form-control" name="DeliverySchedule" value="{{ $price_monitorings->PriceLockPeriod }}">
                             </div>
                             <div class="form-group">
                                 <label>Tax Type</label>
                                 <select class="form-control js-example-basic-single" name="TaxType"  style="position: relative !important" title="Select Tax Type">
-                                   <option value="10" @if ($priceMonitoring->TaxType == '10') selected @endif>VAT Inclusive</option>
-                                   <option value="20" @if ($priceMonitoring->TaxType == '20') selected @endif>VAT Exclusive</option>
+                                   <option value="10" @if ($price_monitorings->TaxType == '10') selected @endif>VAT Inclusive</option>
+                                   <option value="20" @if ($price_monitorings->TaxType == '20') selected @endif>VAT Exclusive</option>
                                 </select>
                            </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
-                        <div class="prfForm{{ $priceMonitoring->id }}">
-                            @foreach ($priceMonitoring->requestPriceProducts as $index => $priceProducts)
-                            <div class="create_prf_form{{ $priceMonitoring->id }} col-lg-12 row">
+                        <div class="prfForm{{ $price_monitorings->id }}">
+                            @foreach ($price_monitorings->requestPriceProducts as $index => $priceProducts)
+                            <div class="create_prf_form{{ $price_monitorings->id }} col-lg-12 row">
                                 <div class="create_prf_forms{{ $priceProducts->Id }} col-lg-12 row" data-row-index="{{ $index }}">
                                     <div class="col-lg-12">
                                         <button type="button" class="btn btn-danger delete-product" data-id="{{ $priceProducts->Id }}" style="float: right;">Delete</button>
@@ -256,7 +256,7 @@
                             @endforeach
                         </div>
                             <div class="col-lg-12">
-                                <button type="button" class="btn btn-primary addPrfProductRowBtn{{ $priceMonitoring->id }}" id="addPrfProductRowBtn{{ $priceMonitoring->id }}" style="float: left; margin:5px;"><i class="ti ti-plus"></i></button> 
+                                <button type="button" class="btn btn-primary addPrfProductRowBtn{{ $price_monitorings->id }}" id="addPrfProductRowBtn{{ $price_monitorings->id }}" style="float: left; margin:5px;"><i class="ti ti-plus"></i></button> 
                             </div>
                         
                     </div>
@@ -288,9 +288,9 @@
        @endif
 
        $(document).ready(function() {
-        var priceMonitoringId = '{{ $priceMonitoring->id }}';
-        var clientIdSelector = '.PrfEditClient' + priceMonitoringId;
-        var contactIdSelector = '#PrfEditContactClientId' + priceMonitoringId;
+        var price_monitoringsId = '{{ $price_monitorings->id }}';
+        var clientIdSelector = '.PrfEditClient' + price_monitoringsId;
+        var contactIdSelector = '#PrfEditContactClientId' + price_monitoringsId;
 
         var storedClientId = $(clientIdSelector).val();
 
@@ -306,7 +306,7 @@
                         $(contactIdSelector).append('<option value="'+ key +'">'+ value +'</option>');
                     });
 
-                    var storedClientContactId = '{{ $priceMonitoring->ContactId }}';
+                    var storedClientContactId = '{{ $price_monitorings->ContactId }}';
                     if(storedClientContactId) {
                         $(contactIdSelector).val(storedClientContactId);
                     }
@@ -372,12 +372,12 @@
 }
 
 $(document).ready(function() {
-   var $initialRow = $('.create_prf_form{{ $priceMonitoring->id }}');
+   var $initialRow = $('.create_prf_form{{ $price_monitorings->id }}');
    var initialGae = $initialRow.find('.PriceGae').val();
    fetchGaeCost(initialGae, $initialRow);
 
    $(document).on('change', '.PriceGae', function() {
-       var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        var priceGae = $(this).val();
        fetchGaeCost(priceGae, $row);
    });
@@ -402,7 +402,7 @@ $(document).ready(function() {
     }
 
     $(document).on('change', '.product-select', function() {
-        var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
         var productId = $(this).val();
         
         if (productId) {
@@ -422,7 +422,7 @@ $(document).ready(function() {
     });
 
     $('.product-select').each(function() {
-        var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
         var rmc = parseFloat($row.find('.rmc-input').val());
         
         if (!isNaN(rmc) && rmc > 0) {
@@ -432,7 +432,7 @@ $(document).ready(function() {
 });
 
    $(document).on('change', '.delivery-type', function() {
-       var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        var deliveryType = $(this).val();
        var deliveryCostInput = $row.find('.delivery-cost');
 
@@ -465,7 +465,7 @@ $(document).ready(function() {
    }
 
    $(document).on('input', '.delivery-cost, .other-cost', function() {
-       var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        updateTotalOperationCost($row);
        updateTotalProductCost($row);
    });
@@ -526,17 +526,17 @@ function updateSellingPrice($row) {
    }
 
    $(document).on('input', '.markup-percent', function() {
-       var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        updateMarkupPHP($row);
    });
 
    $(document).on('input', '.markup-php', function() {
-       var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        updateMarkupPercent($row);
    });
 
    $(document).on('input', '.selling-price-php', function() {
-       var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        var sellingPrice = parseFloat($(this).val());
        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
 
@@ -552,7 +552,7 @@ function updateSellingPrice($row) {
    });
 
    $(document).on('input', '.selling-price-vat', function() {
-       var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        var sellingPriceWithVAT = parseFloat($(this).val());
        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
 
@@ -569,7 +569,7 @@ function updateSellingPrice($row) {
    
        function addProductRow() {
        var newProductForm = `
-                       <div class="create_prf_form{{ $priceMonitoring->id }} col-lg-12 row">
+                       <div class="create_prf_form{{ $price_monitorings->id }} col-lg-12 row">
                           <div class="col-lg-12">
                                 <button type="button" class="btn btn-danger editDeletePrfBtn" style="float: right;">Delete Row</button>
                             </div>
@@ -702,23 +702,23 @@ function updateSellingPrice($row) {
                                </div>
                            </div>
                        </div>`;
-                       $('.prfForm{{ $priceMonitoring->id }}').append(newProductForm);
+                       $('.prfForm{{ $price_monitorings->id }}').append(newProductForm);
                        $('.ProductType, .product-select, .ApplicationId, .delivery-type, .PriceGae').select2();
 
    }
 
-   $(document).on('click', '.addPrfProductRowBtn{{ $priceMonitoring->id }}', function() {
+   $(document).on('click', '.addPrfProductRowBtn{{ $price_monitorings->id }}', function() {
         addProductRow();
     });
 
    $(document).on('click', '.editDeletePrfBtn', function() {
-        $(this).closest('.create_prf_form{{ $priceMonitoring->id }}').remove();
+        $(this).closest('.create_prf_form{{ $price_monitorings->id }}').remove();
     });
    });
 
    document.addEventListener('DOMContentLoaded', function() {
-        var validityDateInput = document.querySelector('.ValidityDate{{ $priceMonitoring->id }}');
-        var storedDate = '{{ !empty($priceMonitoring->ValidityDate) ? date('Y-m-d', strtotime($priceMonitoring->ValidityDate)) : '' }}';
+        var validityDateInput = document.querySelector('.ValidityDate{{ $price_monitorings->id }}');
+        var storedDate = '{{ !empty($price_monitorings->ValidityDate) ? date('Y-m-d', strtotime($price_monitorings->ValidityDate)) : '' }}';
         var today = new Date().toISOString().split('T')[0];
 
         if (storedDate) {

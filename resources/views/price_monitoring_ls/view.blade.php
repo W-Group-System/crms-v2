@@ -38,11 +38,31 @@
                 </div>
                 <div class="col-lg-12" align="right">
                     <a href="{{ url('/price_monitoring_ls') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
-                    <button type="button" class="btn btn-md btn-warning"
-                        data-target="#closePrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal">
-                        <i class="ti-folder"></i>&nbsp;Close
-                    </button>
+                    @if ($price_monitorings->Progress != 30)
+                            <button type="button" class="btn btn-md btn-warning"
+                            data-target="#closePrf{{ $price_monitorings->id }}" 
+                            data-toggle="modal">
+                            <i class="ti-folder"></i>&nbsp;Close
+                        </button>
+                        <button type="button" class="btn btn-warning"
+                            data-target="#prfEdit{{ $price_monitorings->id }}" 
+                            data-toggle="modal" 
+                            title='Update PRF'>
+                            <i class="ti ti-pencil">&nbsp;</i>Update
+                        </button>
+                    @elseif($price_monitorings->Status == 30)
+                         <button type="button" class="btn btn-success reopenStatus" data-id="{{ $price_monitorings->id }}">
+                            <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                        </button>
+                    @endif
+                    @if(checkIfItsApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, "PRF") == "yes" && $price_monitorings->Progress == 10)
+                            <button type="button" class="btn btn-md btn-success"
+                                data-target="#approvePrf{{ $price_monitorings->id }}" 
+                                data-toggle="modal" 
+                                title='Approve PRF'>
+                                <i class="ti ti-check-box">&nbsp;</i>Approve
+                            </button>
+                        @endif
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
@@ -65,7 +85,11 @@
                             <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->secondarySalesPerson)->full_name }}</p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Progress:</b></p>
                             <p class="col-sm-3 col-form-label">
-                                @if ($price_monitorings->Progress == '25')
+                                @if ($price_monitorings->Progress == '10')
+                                For Approval
+                                @elseif ($price_monitorings->Progress == '20')
+                                Waiting For Disposition
+                                @elseif ($price_monitorings->Progress == '25')
                                 Reopened
                                 @elseif ($price_monitorings->Progress == '30')
                                 Closed
@@ -315,9 +339,11 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="prfFiles" role="tabpanel" aria-labelledby="prfFiles-tab">
                     <div class="d-flex">
+                        @if(checkIfHaveFiles(auth()->user()->role) == "yes")
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Upload File"  data-toggle="modal" data-target="#uploadPrfFile">
                             <i class="ti-plus"></i>
                         </button>
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover prf-detailed-table" id="prfFiles_table" style="width: 100%">
@@ -332,6 +358,7 @@
                                 @foreach ($prfFileUploads as $fileupload)
                                     <tr>
                                         <td align="center">
+                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes")
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
                                                 data-target="#editPrfFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
                                                 <i class="ti-pencil"></i>
@@ -339,6 +366,7 @@
                                             <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $fileupload->Id }}, 'fileupload')" title='Delete fileupload'>
                                                 <i class="ti-trash"></i>
                                             </button> 
+                                            @endif
                                         </td>
                                         <td>{{ $fileupload->Name }}</td>
                                         <td>
@@ -354,11 +382,17 @@
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
                     <div class="d-flex">
+                    @if(checkIfItsSalesDept(auth()->user()->department_id))
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Create Activity"  data-toggle="modal" data-target="#createPrfActivity">
                             <i class="ti-plus"></i>
                         </button>
                     </div>
+                    @endif
                     <div class="table-responsive">
+                        <div class="filter">
+                            <label><input type="checkbox" class="status-filter" value="10" checked> Open</label>
+                            <label><input type="checkbox" class="status-filter" value="20" checked> Closed</label>
+                        </div>
                         <table class="table table-striped table-bordered table-hover prf-detailed-table" id="activities_table" style="width: 100%">
                             <thead>
                                 <tr>
@@ -371,15 +405,17 @@
                             </thead>
                             <tbody>
                                 @foreach ($activities as $activity)
-                                    <tr>
+                                    <tr data-status="{{ $activity->Status }}">
                                         <td>
+                                        @if(checkIfItsSalesDept(auth()->user()->department_id))
                                         <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                            data-target="#editPrfActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
-                                            <i class="ti-pencil"></i>
+                                        data-target="#editPrfActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
+                                        <i class="ti-pencil"></i>
                                         </button>   
                                         <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Activity'>
                                             <i class="ti-trash"></i>
-                                        </button> 
+                                        </button>
+                                        @endif 
                                         </td>
                                         <td>{{ optional($activity)->ActivityNumber }}</td>
                                         <td>
@@ -442,6 +478,58 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
+     @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'OK'
+            });
+        @elseif(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'OK'
+            });
+        @endif
+
+        $(".reopenStatus").on('click', function() {
+            var prfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to open this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('ReopenPrf') }}/" + prfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
     function confirmDelete(id, type) {
         Swal.fire({
             title: 'Are you sure?',
@@ -504,6 +592,31 @@
             order: []
         });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const filters = document.querySelectorAll('.status-filter');
+
+    filters.forEach(filter => {
+        filter.addEventListener('change', filterTable);
+    });
+
+    function filterTable() {
+        const selectedStatuses = Array.from(filters)
+            .filter(filter => filter.checked)
+            .map(filter => filter.value);
+
+        document.querySelectorAll('#activities_table tbody tr').forEach(row => {
+            const status = row.getAttribute('data-status');
+            if (selectedStatuses.includes(status)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    filterTable();
+});
+
     </script>
 @include('price_monitoring.upload_prf_file')
 @include('price_monitoring_ls.create_activity')
@@ -513,9 +626,11 @@
 @foreach ($activities as $activity)
 @include('price_monitoring_ls.edit_activity')
 @endforeach
-@foreach ($price_monitorings as $prf)
-    @include('price_monitoring_ls.close')
-@endforeach
+
+
+@include('price_monitoring_ls.close')
+@include('price_monitoring_ls.prf_approval')
+@include('price_monitoring_ls.ls_view_edit')
 {{-- @include('sample_requests.create_supplementary')
 @include('sample_requests.assign_personnel')
 @include('sample_requests.upload_srf_file')

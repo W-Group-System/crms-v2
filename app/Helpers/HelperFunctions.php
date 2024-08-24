@@ -218,7 +218,7 @@ function checkIfHaveFiles($role)
 
 function checkIfItsManagerOrSupervisor($role)
 {
-    if (($role->department_id == 5 || $role->department_id == 38 || $role->department_id == 15) && ($role->name == "Department Admin" || $role->name == "Staff L2"))
+    if (($role->department_id == 5 || $role->department_id == 38 || $role->department_id == 15 || $role->department_id == 42) && ($role->name == "Department Admin" || $role->name == "Staff L2"))
     {
         return "yes";
     }
@@ -268,9 +268,19 @@ function authCheckIfItsSales($department)
     return false;
 }
 
+function authCheckIfItsRnd($department)
+{
+    if ($department == 15)
+    {
+        return true;
+    }
+    
+    return false;
+}
+
 function authCheckIfItsRndStaff($role)
 {
-    if ($role->department_id == 15 && $role->name == "Staff L1")
+    if (($role->department_id == 15 || $role->department_id == 42) && $role->name == "Staff L1")
     {
         return true;
     }
@@ -281,7 +291,7 @@ function authCheckIfItsRndStaff($role)
 function rndPersonnel($personnel, $user_id)
 {
     $p = $personnel->pluck('PersonnelUserId')->toArray();
-
+    
     return collect($p)->contains($user_id);
 }
 
@@ -302,5 +312,15 @@ function checkIfItsSalesDept($department)
         return true;
     }
 
+    return false;
+}
+
+function rndManager($role)
+{
+    if ($role->department_id == 15 || $role->id == 14 || $role->department_id == 42)
+    {
+        return true;
+    }
+    // dd($role);
     return false;
 }

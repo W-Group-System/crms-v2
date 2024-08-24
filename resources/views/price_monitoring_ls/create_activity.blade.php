@@ -8,8 +8,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_price_request" enctype="multipart/form-data" action="{{ url('prf_new_activity') }}">
+                <form method="POST" id="form_prf_activity" enctype="multipart/form-data" action="{{ url('new_activity') }}">
                     @csrf
+                    <div class="prf-activity">
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
@@ -43,12 +44,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
-                                <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select Client" required>
+                                <input type="hidden" class="form-control form-control-sm ClientId" name="ClientId" value="{{ $price_monitorings->client->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{$price_monitorings->client->Name }}" readonly>
+                                {{-- <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select Client" required>
                                     <option value="" disabled selected>Select Client</option>
                                     @foreach($clients as $client)
                                         <option value="{{ $client->id }}">{{ $client->Name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -74,12 +77,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{ $price_monitorings->primarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($price_monitorings->primarySalesPerson)->full_name }}" readonly>
+                                {{-- <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -91,12 +96,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{ $price_monitorings->secondarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($price_monitorings->secondarySalesPerson)->full_name }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -108,7 +109,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Attachments</label>
-                                <input type="file" class="form-control form-control-sm" name="path[]" multiple required>
+                                <input type="file" class="form-control form-control-sm" name="path[]">
                                 <small><b style="color:red">Note:</b> The file must be a type of: jpg, jpeg, png, pdf, doc, docx.</small>
                                 <div class="col-sm-9">
                                     <ul id="fileList"></ul>
@@ -138,6 +139,7 @@
                             </div>
                         </div>
                     </div>
+                </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-success">Save</button>
@@ -150,31 +152,33 @@
 
 <script>
     $(document).ready(function() {
-        $('.ClientId').change(function() {
-            var clientId = $(this).val();
-            if (clientId) {
-                $.ajax({
-                    url: '{{ url("client-contact") }}/' + clientId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(data) {
-                        $('#ClientContactId').empty();
-                        $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
-                        $.each(data, function(key, value) {
-                            $('#ClientContactId').append('<option value="'+ key +'">'+ value +'</option>');
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
-                    }
-                });
-            } else {
-                $('#ClientContactId').empty();
-                $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
-            }
+        var contactIdSelector = '.ClientContactId';
+
+        var clientIdSelector = '.ClientId';
+        var storedClientId = $(clientIdSelector).val();
+
+        if(storedClientId) {
+            $.ajax({
+                url: '{{ url("client-contact") }}/' + storedClientId,
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    $(contactIdSelector).empty();
+                    $(contactIdSelector).append('<option value="" disabled>Select Contact</option>');
+                    $.each(data, function(key, value) {
+                        $(contactIdSelector).append('<option value="'+ key +'">'+ value +'</option>');
+                    });
+                }
+            });
+        }
+
+        $('#createPrfActivity').on('hidden.bs.modal', function () {
+            $('#form_prf_activity')[0].reset(); 
+            $('#form_prf_activity select').each(function() {
+                $(this).val('').trigger('change'); 
+            });
         });
     });
-
     document.addEventListener('DOMContentLoaded', function() {
         var scheduleInput = document.querySelector('.ScheduleFrom');
         var DueDateInput = document.querySelector('.ScheduleTo');

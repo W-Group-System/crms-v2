@@ -5,7 +5,11 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Price Monitoring List
+            @if(auth()->user()->role->type == 'LS')
             <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" data-toggle="modal" data-target="#AddPriceMonitoringLs">New</button>
+            @elseif (auth()->user()->role->type == 'IS')
+            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" data-toggle="modal" data-target="#AddPriceMonitoring">Add</button>
+            @endif
             </h4>
             <div class="form-group">
                 <form method="GET" >
@@ -30,6 +34,7 @@
                     </div>
                 </div>
             </form>
+            @if (auth()->user()->role->type == 'LS')
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="price_monitoring_table">
                     <thead>
@@ -94,6 +99,72 @@
                     <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                 </div>
             </div>
+            @elseif (auth()->user()->role->type == 'IS')
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="price_monitoring_table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Price Request #</th>
+                            <th>Date Created</th>
+                            <th>Client Name</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ( $price_monitorings as $priceMonitoring)
+                        <tr>
+                            <td align="center">
+                                <a href="{{ url('price_monitoring/view/' . $priceMonitoring->id) }}" class="btn btn-sm btn-info btn-outline" title="View Price Request"><i class="ti-eye"></i></a>
+                                <button type="button" class="btn btn-sm btn-warning"
+                                    data-target="#editPriceRequest{{ $priceMonitoring->id }}" data-toggle="modal" title='Edit Price Request'>
+                                    <i class="ti-pencil"></i>
+                                </button>  
+                                <button type="button" class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete({{ $priceMonitoring->id }})" title='Delete Request'>
+                                    <i class="ti-trash"></i>
+                                </button>
+                            </td>
+                            <td>{{ optional($priceMonitoring)->PrfNumber }}</td>
+                            <td>{{ $priceMonitoring->DateRequested }}</td>
+                            <td>{{ optional($priceMonitoring->client)->Name }}</td>
+                            <td>
+                                @if($priceMonitoring->Status == 10)
+                                        Open
+                                    @elseif($priceMonitoring->Status == 30)
+                                        Closed
+                                    @else
+                                        {{ $priceMonitoring->Status }}
+                                    @endif
+                            </td>
+                            <td>
+                                {{ optional($priceMonitoring->progressStatus)->name }}
+                                {{-- @if($priceMonitoring->Progress == 10)
+                                        For Approval
+                                    @elseif($priceMonitoring->Progress == 30)
+                                        Waiting For Disposition
+                                    @else
+                                        {{ $priceMonitoring->Progress }}
+                                    @endif --}}
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                {!! $price_monitorings->appends(['search' => $search])->links() !!}
+                @php
+                    $total = $price_monitorings->total();
+                    $currentPage = $price_monitorings->currentPage();
+                    $perPage = $price_monitorings->perPage();
+    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -140,8 +211,15 @@
     }   
     
 </script>
-@include('price_monitoring_ls.create')
-@foreach ( $price_monitorings as $priceMonitoring)
-@include('price_monitoring_ls.edit')
-@endforeach
+@if(auth()->user()->role->type == 'LS')
+    @include('price_monitoring_ls.create')
+    @foreach ( $price_monitorings as $priceMonitoring)
+    @include('price_monitoring_ls.edit')
+    @endforeach
+@elseif ((auth()->user()->role->type == 'IS'))
+    @include('price_monitoring.create')
+    @foreach ( $price_monitorings as $priceMonitoring)
+    @include('price_monitoring.edit')
+    @endforeach
+@endif
 @endsection

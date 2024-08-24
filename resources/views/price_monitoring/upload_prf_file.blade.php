@@ -93,6 +93,14 @@
         if ($('.prf-file').length === 1) {
             $('.prf-file').find('.deleteRowBtn').hide();
         }
+
+        
+        $('#uploadPrfFile').on('hidden.bs.modal', function () {
+        $('#form_price_request')[0].reset(); 
+        $('.prf-file').not(':first').remove(); 
+        $('.prf-file').find('.addPrfFile').show(); 
+        $('.prf-file').find('.deleteRowBtn').hide(); 
+    });
     });
     </script>
     
