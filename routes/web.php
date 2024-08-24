@@ -184,6 +184,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('update_personnel/{id}', 'CustomerRequirementController@updatePersonnel');
     Route::post('delete_personnel/{id}', 'CustomerRequirementController@deletePersonnel');
 
+    # Activity Tab
+    Route::post('get_status', 'CustomerRequirementController@getStatus');
+
     # Crr File
     Route::post('add_crr_file', 'CustomerRequirementController@addCrrFile');
     Route::post('update_crr_file/{id}', 'CustomerRequirementController@updateCrrFile');

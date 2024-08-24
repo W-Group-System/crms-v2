@@ -38,7 +38,7 @@
                 </div> 
                 @include('components.error')
                 <div class="col-lg-12" align="right">
-                    <a href="{{ url('/request_product_evaluation') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a href="{{ url()->previous() ?: url('/request_product_evaluation') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
                     {{-- @if ($requestEvaluation->Progress == 10)
                         <button type="button" class="btn btn-sm btn-success"
                                 data-target="#approveSrf{{ $requestEvaluation->id }}" 
