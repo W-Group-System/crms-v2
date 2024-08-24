@@ -39,70 +39,258 @@
                 @include('components.error')
                 <div class="col-lg-12" align="right">
                     <a href="{{ url('/request_product_evaluation') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
-                    {{-- @if ($requestEvaluation->Progress == 10)
-                        <button type="button" class="btn btn-sm btn-success"
-                                data-target="#approveSrf{{ $requestEvaluation->id }}" 
-                                data-toggle="modal" 
-                                title='Approve SRF'>
-                            <i class="ti-check"><br>Approve</i>
+                    
+                    <button type="button" class="btn btn-danger btn-icon-text" >
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        Print
+                    </button>
+
+                    {{-- Sales Button --}}
+                    @if(auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->user_id == $requestEvaluation->PrimarySalesPersonId)
+
+                        @if($requestEvaluation->Status == 10)
+                            <button type="button" class="btn btn-warning editBtn" data-toggle="modal" data-target="#editRpe{{$requestEvaluation->id}}" data-secondarysales="{{$requestEvaluation->SecondarySalesPersonId}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Update
+                            </button>
+                        @endif
+
+                        @if($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 70)
+                            <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
+                                @csrf
+
+                                <button type="button" class="btn btn-info returnToRnd">
+                                    <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                </button>
+                            </form>
+                        @endif
+
+                        @if($requestEvaluation->Progress == 60 && $requestEvaluation->Progress != 70)
+                            <form method="POST" class="d-inline-block" action="{{url('sales_accept_rpe/'.$requestEvaluation->id)}}">
+                                @csrf
+
+                                <button type="button" class="btn btn-success salesAccept">
+                                    <i class="ti ti-check-box"></i>&nbsp;Accept
+                                </button>
+                            </form>
+                        @endif
+
+                        @if($requestEvaluation->Status == 10)
+                            <button type="button" class="btn btn-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$requestEvaluation->id}}">
+                                <i class="ti ti-close"></i>&nbsp;Close
+                            </button>
+
+                            <button type="button" class="btn btn-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
+                                <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                            </button>
+                        @endif
+
+                        @if($requestEvaluation->Status == 30)
+                            <form method="POST" class="d-inline-block" action="{{url('open_rpe/'.$requestEvaluation->id)}}">
+                                @csrf
+
+                                <button type="button" class="btn btn-success openBtn">
+                                    <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                                </button>
+                            </form>
+                        @endif
+                    
+                    @elseif(authCheckIfItsRndStaff(auth()->user()->role))
+                    {{-- RND Staff --}}
+                    
+                    @if(rndPersonnel($requestEvaluation->rpePersonnel, auth()->user()->id))
+                            
+                        @if($requestEvaluation->Progress != 60)
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateRnd{{$requestEvaluation->id}}">
+                            <i class="ti ti-pencil"></i>&nbsp;Update
                         </button>
-                    @elseif ($requestEvaluation->Progress == 30)
-                        <button type="button" class="btn btn-sm btn-success"
-                                data-target="#receiveSrf{{ $requestEvaluation->id }}" 
-                                data-toggle="modal" 
-                                title='Receive SRF'>
-                            <i class="ti-check"><br>Receive</i>
-                        </button>
+                        @endif
+
+                        @if($requestEvaluation->Progress == 35)
+                            <form method="POST" action="{{url('start_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                @csrf 
+
+                                <button type="button" class="btn btn-success startBtn">
+                                    <i class="ti-control-play"></i>&nbsp; Start
+                                </button>
+                            </form>
+                        @endif
+
+                        @if($requestEvaluation->Progress == 50)
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
+                                <i class="ti-control-pause"></i>&nbsp; Pause
+                            </button>
+
+                            <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                @csrf
+
+                                <button type="button" class="btn btn-warning initialReviewBtn">
+                                    <i class="ti-check"></i>&nbsp; Submit
+                                </button>
+                            </form>
+                        @endif
+
+                        @if($requestEvaluation->Progress == 55)
+                            <form method="POST" action="{{url('start_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                @csrf 
+
+                                <button type="button" class="btn btn-success continueBtn">
+                                    <i class="ti-control-play"></i>&nbsp; Continue
+                                </button>
+                            </form>
+                        @endif
+
+                        @if($requestEvaluation->Progress == 57)
+                            <form method="POST" action="{{url('final_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                @csrf 
+
+                                <button type="button" class="btn btn-warning finalReviewBtn">
+                                    <i class="ti-check"></i>&nbsp; Submit
+                                </button>
+                            </form>
+                        @endif
+
+                        @if($requestEvaluation->Progress == 57 || $requestEvaluation->Progress == 81)
+                            <form method="POST" class="d-inline-block" action="{{url('complete_rpe/'.$requestEvaluation->id)}}">
+                                @csrf 
+
+                                <button type="button" class="btn btn-primary completeBtn">
+                                    <i class="ti-pencil-alt"></i>&nbsp; Completed
+                                </button>
+                            </form>
+                        @endif
                     @endif
-                    @if ($requestEvaluation->Progress == 50)
-                        <button type="button" class="btn btn-sm btn-warning"
-                        data-target="#pauseSrf{{ $requestEvaluation->id }}" 
-                        data-toggle="modal" 
-                        title='Pause SRF'>
-                        <i class="ti-control-pause"><br>Pause</i>
-                    </button>
-                    @else 
-                    <button type="button" class="btn btn-sm btn-warning"
-                        data-target="#startSrf{{ $requestEvaluation->id }}" 
-                        data-toggle="modal" 
-                        title='Start SRF'>
-                        <i class="ti-control-play"><br>Start</i>
-                    </button>
-                    @endif --}}
-                    {{-- <button type="button" class="btn btn-md btn-success"
-                        data-target="#approveSrf{{ $requestEvaluation->id }}" 
-                        data-toggle="modal" 
-                        title='Approve SRF'>
-                        <i class="ti-check">&nbsp;Approve</i>
-                    </button>
-                    <button type="button" class="btn btn-md btn-success"
-                        data-target="#receiveSrf{{ $requestEvaluation->id }}" 
-                        data-toggle="modal" 
-                        title='Receive SRF'>
-                    <i class="ti-check">&nbsp;Receive</i>
-                    </button>
-                    <button type="button" class="btn btn-md btn-warning"
-                        data-target="#startSrf{{ $requestEvaluation->id }}" 
-                        data-toggle="modal" 
-                        title='Start SRF'>
-                        <i class="ti-control-play">&nbsp;Start</i>
-                    </button>
-                    <button type="button" class="btn btn-md btn-warning"
-                        data-target="#pauseSrf{{ $requestEvaluation->id }}" 
-                        data-toggle="modal" 
-                        title='Pause SRF'>
-                        <i class="ti-control-pause">&nbsp;Pause</i>
-                    </button> --}}
-                    <button type="button" class="cancelRpe btn btn-md btn-danger" data-id="{{ $requestEvaluation->id }}"
-                       >
-                        <i class="ti-na"></i>&nbsp;Cancel
-                    </button>
-                    <button type="button" class="closeRpe btn btn-md btn-success" data-id="{{ $requestEvaluation->id }}"
-                        {{-- data-target="#closeRpe{{ $requestEvaluation->id }}" 
-                        data-toggle="modal" --}}
-                        >
-                        <i class="ti-file"></i>&nbsp;Close
-                    </button>
+                    
+                    {{-- RND and Sales Manager and Supervisor --}}
+                    @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
+                            
+                        @if(authCheckIfItsSales(auth()->user()->department_id))
+                            @if($requestEvaluation->Status == 10)
+                                <button type="button" class="btn btn-warning editBtn" data-toggle="modal" data-target="#editRpe{{$requestEvaluation->id}}" data-secondarysales="{{$requestEvaluation->SecondarySalesPersonId}}">
+                                    <i class="ti ti-pencil"></i>&nbsp;Update
+                                </button>
+
+                                @if($requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 40 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && $requestEvaluation->Progress != 70)
+                                <form method="POST" class="d-inline-block" action="{{url('accept_rpe/'.$requestEvaluation->id)}}">
+                                    @csrf 
+
+                                    <button type="button" class="btn btn-success acceptBtn">
+                                        <i class="ti ti-check-box"></i>&nbsp;Accept
+                                    </button>
+                                </form>
+                                @endif
+                            @endif
+
+                            @if($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 70)
+                                <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
+                                    @csrf
+
+                                    <button type="button" class="btn btn-info returnToRnd">
+                                        <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($requestEvaluation->Progress == 60 && $requestEvaluation->Progress != 70)
+                                <form method="POST" class="d-inline-block" action="{{url('sales_accept_rpe/'.$requestEvaluation->id)}}">
+                                    @csrf
+
+                                    <button type="button" class="btn btn-success salesAccept">
+                                        <i class="ti ti-check-box"></i>&nbsp;Accept
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($requestEvaluation->Status == 10)
+                                <button type="button" class="btn btn-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$requestEvaluation->id}}">
+                                    <i class="ti ti-close"></i>&nbsp;Close
+                                </button>
+
+                                <button type="button" class="btn btn-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
+                                    <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                                </button>
+                            @endif
+
+                            @if($requestEvaluation->Status == 30)
+                                <form method="POST" class="d-inline-block" action="{{url('open_rpe/'.$requestEvaluation->id)}}">
+                                    @csrf
+
+                                    <button type="button" class="btn btn-success openBtn">
+                                        <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                                    </button>
+                                </form>
+                            @endif
+                        @endif
+
+                        @if(authCheckIfItsRnd(auth()->user()->department_id))
+                            @if($requestEvaluation->Progress != 60)
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateRnd{{$requestEvaluation->id}}">
+                                    <i class="ti ti-pencil"></i>&nbsp;Update
+                                </button>
+                            @endif
+
+                            @if($requestEvaluation->Progress == 30)
+                                <form method="POST" class="d-inline-block" action="{{url('received_rpe/'.$requestEvaluation->id)}}">
+                                    @csrf 
+                                    <button type="button" class="btn btn-success receivedBtn">
+                                        <i class="ti-bookmark">&nbsp;</i> Received
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($requestEvaluation->Progress == 35)
+                                <button type="button" class="btn btn-success startBtn">
+                                    <i class="ti-control-play"></i>&nbsp; Start
+                                </button>
+                            @endif
+
+                            @if($requestEvaluation->Progress == 50)
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
+                                    <i class="ti-control-pause"></i>&nbsp; Pause
+                                </button>
+
+                                <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                    @csrf
+    
+                                    <button type="button" class="btn btn-warning initialReviewBtn">
+                                        <i class="ti-check"></i>&nbsp; Submit
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($requestEvaluation->Progress == 55)
+                                <form method="POST" action="{{url('start_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                    @csrf 
+
+                                    <button type="button" class="btn btn-success continueBtn">
+                                        <i class="ti-control-play"></i>&nbsp; Continue
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($requestEvaluation->Progress == 57)
+                                <form method="POST" action="{{url('final_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                    @csrf 
+
+                                    <button type="button" class="btn btn-warning finalReviewBtn">
+                                        <i class="ti-check"></i>&nbsp; Submit
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($requestEvaluation->Progress == 57 || $requestEvaluation->Progress == 81)
+                                <form method="POST" class="d-inline-block" action="{{url('complete_rpe/'.$requestEvaluation->id)}}">
+                                    @csrf 
+
+                                    <button type="button" class="btn btn-primary completeBtn">
+                                        <i class="ti-pencil-alt"></i>&nbsp; Completed
+                                    </button>
+                                </form>
+                            @endif
+
+                        @endif
+
+                    @endif
+                    
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
@@ -141,13 +329,31 @@
                 <p class="col-sm-2 col-form-label"><b>RPE #:</b></p>
                 <p class="col-sm-3 col-form-label">{{ $requestEvaluation->RpeNumber }}</p>
                 <p class="offset-sm-2 col-sm-2 col-form-label"><b>Primary Sales Person:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->primarySalesPerson->full_name}}</p>
+                <p class="col-sm-3 col-form-label">
+                    @if($requestEvaluation->primarySalesPerson)
+                    {{ optional($requestEvaluation->primarySalesPerson)->full_name}}
+                    @elseif($requestEvaluation->primarySalesPersonById)
+                    {{ optional($requestEvaluation->primarySalesPersonById)->full_name}}
+                    @endif
+                </p>
             </div>
              <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>Date Requested :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->CreatedDate }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Primary Sales Person:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->secondarySalesPerson->full_name}}</p>
+                <p class="col-sm-3 col-form-label">
+                    @if($requestEvaluation->CreatedDate != null)
+                    {{ date('M d, Y h:i A', strtotime($requestEvaluation->CreatedDate)) }}
+                    @else
+                    {{ date('M d, Y h:i A', strtotime($requestEvaluation->created_at)) }}
+                    @endif
+                </p>
+                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Secondary Sales Person:</b></p>
+                <p class="col-sm-3 col-form-label">
+                    @if($requestEvaluation->secondarySalesPerson)
+                    {{ optional($requestEvaluation->secondarySalesPerson)->full_name}}
+                    @elseif($requestEvaluation->secondarySalesPersonById)
+                    {{ optional($requestEvaluation->secondarySalesPersonById)->full_name}}
+                    @endif
+                </p>
             </div>
             <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>Date Required :</b></p>
@@ -189,7 +395,8 @@
                         Cancelled
                     @else
                         {{ $requestEvaluation->Status }}
-                    @endif</p>
+                    @endif
+                </p>
             </div>
             <div class="form-group row">
                 <p class="col-sm-2 col-form-label"></p>
@@ -236,6 +443,13 @@
             <div class="form-header">
                 <span class="header-label"><b>Approver Remarks</b></span>
                 <hr class="form-divider">
+                <p>
+                    @if($requestEvaluation->secondarySalesPerson)
+                    {{$requestEvaluation->secondarySalesPerson->full_name}} :
+                    @elseif($requestEvaluation->secondarySalesPersonById)
+                    {{$requestEvaluation->secondarySalesPersonById->full_name}} :
+                    @endif
+                </p>
             </div>
             @foreach ( $rpeTransactionApprovals as $rpeTransactionApproval )
             <div class="group-form">
@@ -256,7 +470,7 @@
                 <p class="col-sm-2 col-form-label"><b>DDW Number:</b></p>
                 <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DdwNumber  }}</p>
                 <p class="offset-sm-2 col-sm-2 col-form-label"><b>Date Received:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DateReceived}}</p>
+                <p class="col-sm-3 col-form-label">{{ date('M d, Y', strtotime($requestEvaluation->DateReceived)) }}</p>
             </div>
              <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>RPE Recommendation:</b></p>
@@ -274,11 +488,11 @@
                     }
                     return $matches[0];
                 }, $rpeResult);
-            @endphp            
+                @endphp            
                 
                 <p class="col-sm-3 col-form-label">{!! $rpeResultLinked !!}</p>
                 <p class="offset-sm-2 col-sm-2 col-form-label"><b>Date Started:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DateStarted}}</p>
+                <p class="col-sm-3 col-form-label">{{ date('M d, Y', strtotime($requestEvaluation->DateStarted)) }}</p>
             </div>
             <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b></b></p>
@@ -320,11 +534,19 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="supplementary" role="tabpanel" aria-labelledby="supplementary-tab">
-                    <div class="d-flex">
+                    {{-- <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Supplementary Details" data-toggle="modal" data-target="#addRpeSuplementary">
                             <i class="ti-plus"></i>
                         </button>
-                    </div>
+                    </div> --}}
+                    @if(!checkIfItsSalesDept(auth()->user()->department_id))
+                        @if($requestEvaluation->Progress != 60)
+                        <button type="button" class="btn btn-primary float-right mb-3" data-toggle="modal" data-target="#addRpeSuplementary">
+                            Add Supplementary Details
+                        </button>
+                        {{-- @include('customer_requirements.add_supplementary_details') --}}
+                        @endif
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover table-detailed" id="supplementary_table" style="width: 100%">
                             <thead>
@@ -336,32 +558,49 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($RpeSupplementary as $supplementary)
+                                @foreach ($requestEvaluation->supplementaryDetails as $supplementary)
                                     <tr>
-                                        <td align="center">
-                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                                data-target="#editRpeSupplementary{{ $supplementary->Id }}" data-toggle="modal" title='Edit Supplementary'>
-                                                <i class="ti-pencil"></i>
-                                            </button>   
-                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $supplementary->Id }}, 'supplementary')" title='Delete Supplementary'>
-                                                <i class="ti-trash"></i>
-                                            </button> 
+                                        <td>
+                                            @if(!checkIfItsSalesDept(auth()->user()->department_id))
+                                                <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                    data-target="#editRpeSupplementary{{ $supplementary->Id }}" data-toggle="modal" title='Edit Supplementary'>
+                                                    <i class="ti-pencil"></i>
+                                                </button>   
+                                                <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $supplementary->Id }}, 'supplementary')" title='Delete Supplementary'>
+                                                    <i class="ti-trash"></i>
+                                                </button> 
+                                            @endif
                                         </td>
-                                        <td>{{ $supplementary->DateCreated }}</td>
-                                        <td>{{ optional($supplementary->userSupplementary)->full_name }}</td>
-                                        <td>{{ $supplementary->DetailsOfRequest }}</td>
+                                        <td>{{ date('M d, Y h:i A', strtotime($supplementary->DateCreated)) }}</td>
+                                        <td>
+                                            @if($supplementary->userSupplementary)
+                                            {{$supplementary->userSupplementary->full_name}}
+                                            @elseif($supplementary->userId)
+                                            {{$supplementary->userId->full_name}}
+                                            @endif
+                                        </td>
+                                        <td>{!! nl2br( $supplementary->DetailsOfRequest) !!}</td>
                                     </tr>
+                                    @include('product_evaluations.edit_supplementary')
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="srfPersonnel" role="tabpanel" aria-labelledby="srfPersonnel-tab">
-                    <div class="d-flex">
+                    {{-- <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Assign R&D"  data-toggle="modal" data-target="#addRpePersonnel">
                             <i class="ti-plus"></i>
                         </button>
-                    </div>
+                    </div> --}}
+                    @if(!checkIfItsSalesDept(auth()->user()->department_id))
+                        @if($requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && rndManager(auth()->user()->role))
+                        <button type="button" class="btn btn-primary float-right mb-3" data-toggle="modal" data-target="#addRpePersonnel">
+                            Add Personnel
+                        </button>
+                        {{-- @include('customer_requirements.new_personnel') --}}
+                        @endif
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover table-detailed" id="personnel_table" style="width: 100%">
                             <thead>
@@ -371,30 +610,41 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($assignedPersonnel as $Personnel)
+                                @foreach ($requestEvaluation->rpePersonnel as $Personnel)
                                     <tr>
-                                        <td align="center">
-                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                                data-target="#editRpePersonnel{{ $Personnel->Id }}" data-toggle="modal" title='Edit Personnel'>
-                                                <i class="ti-pencil"></i>
-                                            </button>   
-                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $Personnel->Id }}, 'personnel')" title='Delete Personnel'>
-                                                <i class="ti-trash"></i>
-                                            </button> 
+                                        <td>
+                                            @if(!checkIfItsSalesDept(auth()->user()->department_id))
+                                                <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                    data-target="#editRpePersonnel{{ $Personnel->Id }}" data-toggle="modal" title='Edit Personnel'>
+                                                    <i class="ti-pencil"></i>
+                                                </button>   
+                                                <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $Personnel->Id }}, 'personnel')" title='Delete Personnel'>
+                                                    <i class="ti-trash"></i>
+                                                </button> 
+                                            @endif
                                         </td>
-                                        <td>{{ optional($Personnel->assignedPersonnel)->full_name }}</td>
+                                        <td>
+                                            @if($Personnel->assignedPersonnel)
+                                            {{ $Personnel->assignedPersonnel->full_name }}
+                                            @elseif($Personnel->userId)
+                                            {{$Personnel->userId->full_name}}
+                                            @endif
+                                        </td>
                                     </tr>
+                                    @include('product_evaluations.edit_personnel') 
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                    @if(checkIfItsSalesDept(auth()->user()->department_id))
                     <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Create Activity"  data-toggle="modal" data-target="#createRpeActivity">
                             <i class="ti-plus"></i>
                         </button>
                     </div>
+                    @endif
                     <div class="table-responsive">
                         <div class="filter">
                             <label><input type="checkbox" class="status-filter" value="10" checked> Open</label>
@@ -510,9 +760,12 @@
     </div>
 </div>
 
+@include('product_evaluations.edit_sales')
+@include('product_evaluations.close_rpe')
+@include('product_evaluations.update_rnd')
+@include('product_evaluations.pause_rpe')
 
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> --}}
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
@@ -572,7 +825,23 @@
         });
     }
 
-    $(".closeRpe").on('click', function() {
+    $(document).ready(function() {
+        new DataTable('.table-detailed', {
+            destroy: false,
+            pageLength: 10,
+            paging: true,
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel'
+            ],
+            // columnDefs: [{
+            //     "defaultContent": "-",
+            //     "targets": "_all"
+            // }],
+            ordering: false
+        });
+
+        $(".closeRpe").on('click', function() {
             var rpeId = $(this).data('id');
 
             Swal.fire({
@@ -644,20 +913,213 @@
             });
         });
 
-    $(document).ready(function() {
-        new DataTable('.table-detailed', {
-            pageLength: 10,
-            paging: true,
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'excel'
-            ],
-            columnDefs: [{
-                "defaultContent": "-",
-                "targets": "_all"
-            }],
-            order: []
-        });
+        $(".editBtn").on('click', function() {
+            var secondarySales = $(this).data('secondarysales');
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+
+            refreshSecondaryApprovers(primarySales,secondarySales)
+        })
+
+        function refreshSecondaryApprovers(primarySales,secondarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                        $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                    }, 500);
+                }
+            })
+        }
+
+        $('.openBtn').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Open"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.acceptBtn').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Approved"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.receivedBtn').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Received"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.startBtn').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Start"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.continueBtn').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Continue"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.initialReviewBtn').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Submit"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.finalReviewBtn').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Submit"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.completeBtn').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Complete"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.returnToRnd').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Return to RND"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.salesAccept').on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Accept"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
     });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -687,15 +1149,14 @@
     </script>
 @include('product_evaluations.create_supplementary')
 @include('product_evaluations.assign_personnel')
-@include('product_evaluations.create_activity')
+{{-- @include('product_evaluations.create_activity') --}}
 @include('product_evaluations.upload_rpe_file')
 
-@foreach ($RpeSupplementary as $supplementary)
-@include('product_evaluations.edit_supplementary')
-@endforeach
-@foreach ($assignedPersonnel as $Personnel)
-@include('product_evaluations.edit_personnel')
-@endforeach
+{{-- @foreach ($RpeSupplementary as $supplementary) --}}
+{{-- @endforeach --}}
+{{-- @foreach ($assignedPersonnel as $Personnel) --}}
+{{-- @include('product_evaluations.edit_personnel') --}}
+{{-- @endforeach --}}
 @foreach ($activities as $activity)
 @include('product_evaluations.edit_activity')
 @endforeach
