@@ -451,7 +451,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/new_industry', 'IndustryController@store')->name('industry.store');
     Route::get('/edit_industry/{id}', 'IndustryController@edit')->name('edit_industry');
     Route::post('/update_industry/{id}', 'IndustryController@update')->name('update_industry');
-    Route::get('delete_industry/{id}', 'IndustryController@delete')->name('delete_industry');
+    Route::post('delete_industry/{id}', 'IndustryController@delete')->name('delete_industry');
+    Route::get('export_industry', 'IndustryController@export');
 
     // Price Currencies
     Route::get('/price_currency', 'PriceCurrencyController@index')->name('price_currency.index');
