@@ -2,27 +2,43 @@
 
 namespace App\Http\Controllers;
 use App\BusinessType;
+use App\Exports\BusinessTypeExport;
 use Validator;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class BusinessTypeController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-        if(request()->ajax())
+        $fetchAll = $request->input('fetch_all', false);
+        
+        $businessType = BusinessType::when($request->search, function($query)use($request) {
+                $query->where('Name', 'LIKE', '%'.$request->search.'%')->orWhere('Description', 'LIKE', '%'.$request->search.'%');
+            })
+            ->latest();
+
+
+        if ($fetchAll)
         {
-            return datatables()->of(BusinessType::latest()->get())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+            $businessType = $businessType->get();
+
+            return response()->json($businessType);
         }
-        return view('business_types.index'); 
+        else
+        {
+            $businessType = $businessType->paginate($request->entries ?? 10);
+
+            return view('business_types.index', 
+                array(
+                    'bussinessType' => $businessType,
+                    'search' => $request->search,
+                    'entries' => $request->entries
+                )
+            ); 
+        }
     }
 
     // Store
@@ -54,11 +70,8 @@ class BusinessTypeController extends Controller
     // Edit
     public function edit($id)
     {
-        if(request()->ajax())
-        {
-            $data = BusinessType::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
+        $data = BusinessType::findOrFail($id);
+        return response()->json(['data' => $data]);
     }
 
     // Update
@@ -91,5 +104,13 @@ class BusinessTypeController extends Controller
     {
         $data = BusinessType::findOrFail($id);
         $data->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
+    }
+
+    public function export()
+    {
+        return Excel::download(new BusinessTypeExport, 'Business Type.xlsx');
     }
 }

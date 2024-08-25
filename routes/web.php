@@ -444,7 +444,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/new_business_type', 'BusinessTypeController@store')->name('business_type.store');
     Route::get('/edit_business_type/{id}', 'BusinessTypeController@edit')->name('edit_business_type');
     Route::post('/update_business_type/{id}', 'BusinessTypeController@update')->name('update_business_type');
-    Route::get('delete_business_type/{id}', 'BusinessTypeController@delete')->name('delete_business_type');
+    Route::post('delete_business_type/{id}', 'BusinessTypeController@delete')->name('delete_business_type');
+    Route::get('export_business_type', 'BusinessTypeController@export');
 
     // Industry
     Route::get('/industry', 'IndustryController@index')->name('industry.index');
