@@ -217,6 +217,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('CancelRpe/{id}', 'RequestProductEvaluationController@CancelRpe');
     Route::post('CloseRpe/{id}', 'RequestProductEvaluationController@CloseRpe');
+    Route::post('open_rpe/{id}', 'RequestProductEvaluationController@openRpe');
+    Route::post('accept_rpe/{id}', 'RequestProductEvaluationController@acceptRpe');
+    Route::post('received_rpe/{id}', 'RequestProductEvaluationController@receivedRpe');
+    Route::post('start_rpe/{id}', 'RequestProductEvaluationController@startRpe');
+    Route::post('pause_rpe/{id}', 'RequestProductEvaluationController@pauseRpe');
+    Route::post('initial_review_rpe/{id}', 'RequestProductEvaluationController@initialReview');
+    Route::post('final_review_rpe/{id}', 'RequestProductEvaluationController@finalReview');
+    Route::post('complete_rpe/{id}', 'RequestProductEvaluationController@completeRpe');
+    Route::post('sales_accept_rpe/{id}', 'RequestProductEvaluationController@salesAcceptRpe');
 
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');

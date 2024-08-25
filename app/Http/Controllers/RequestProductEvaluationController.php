@@ -54,7 +54,8 @@ class RequestProductEvaluationController extends Controller
             })
             ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
         })
-        ->orderBy('id', 'desc')->paginate(10);
+        ->orderBy('id', 'desc')->paginate($request->entries ?? 10);
+
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
         ->get();
@@ -75,25 +76,53 @@ class RequestProductEvaluationController extends Controller
         $project_names = ProjectName::all();
 
         $product_applications = ProductApplication::all();
-        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications',  'price_currencies', 'project_names', 'search' , 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons')); 
+        $entries = $request->entries;
+
+        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications',  'price_currencies', 'project_names', 'search' , 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons', 'entries')); 
     }
 
     public function store(Request $request)
     {
+        $user = Auth::user();
+        // $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
+        // $type = $salesUser->Type == 2 ? 'IS' : 'LS';
+        // $year = Carbon::parse($request->input('CreatedDate'))->format('y');
+        // $lastEntry = RequestProductEvaluation::where('RpeNumber', 'LIKE', "RPE-{$type}-%")
+        //             ->orderBy('id', 'desc')
+        //             ->first();
+        // $lastNumber = $lastEntry ? intval(substr($lastEntry->RpeNumber, -4)) : 0;
+        // $newIncrement = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        // $rpeNo = "RPE-{$type}-{$year}-{$newIncrement}";
+
         $user = Auth::user(); 
-        $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
-        $type = $salesUser->Type == 2 ? 'IS' : 'LS';
-        $year = Carbon::parse($request->input('CreatedDate'))->format('y');
-        $lastEntry = RequestProductEvaluation::where('RpeNumber', 'LIKE', "RPE-{$type}-%")
-                    ->orderBy('id', 'desc')
-                    ->first();
-        $lastNumber = $lastEntry ? intval(substr($lastEntry->RpeNumber, -4)) : 0;
-        $newIncrement = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        $rpeNo = "RPE-{$type}-{$year}-{$newIncrement}";
+        if (($user->department_id == 5) || ($user->department_id == 38))
+        {
+            $type = "";
+            $year = date('y');
+            if ($user->department_id == 5)
+            {
+                $type = "IS";
+                $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-IS%')->orderBy('id', 'desc')->first();
+                $count = substr($rpeList->RpeNumber, 10);
+                $totalCount = $count + 1;
+                
+                $rpeNo = "RPE-".$type.'-'.$year.'-'.$totalCount;
+            }
+
+            if ($user->department_id == 38)
+            {
+                $type = "LS";
+                $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-LS%')->latest()->first();
+                $count = substr($rpeList->RpeNumber, 10);
+                $totalCount = $count + 1;
+                
+                $rpeNo = "RPE-".$type.'-'.$year.'-0'.$totalCount;
+            }
+        }
 
         $productEvaluationData = RequestProductEvaluation::create([
             'RpeNumber' => $rpeNo,
-            'CreatedDate' => $request->input('CreatedDate'),
+            // 'CreatedDate' => $request->input('CreatedDate'),
             'DueDate' => $request->input('DueDate'),
             'ClientId' => $request->input('ClientId'),
             'ApplicationId' => $request->input('ApplicationId'),
@@ -112,7 +141,7 @@ class RequestProductEvaluationController extends Controller
             'Status' =>'10',
             'Progress' => '10',
         ]);
-                    return redirect()->back()->with('success', 'Base prices updated successfully.');
+        return redirect()->back()->with('success', 'Base prices updated successfully.');
     }
     public function update(Request $request, $id)
     {
@@ -132,7 +161,8 @@ class RequestProductEvaluationController extends Controller
         $rpe->SampleName = $request->input('SampleName');
         $rpe->Supplier = $request->input('Supplier');
         $rpe->ObjectiveForRpeProject = $request->input('ObjectiveForRpeProject');
-        $rpe->Status = $request->input('Status');
+        $rpe->Manufacturer = $request->Manufacturer;
+        // $rpe->Status = $request->input('Status');
         $rpe->save();
         return redirect()->back()->with('success', 'RPE updated successfully');
     }
@@ -150,13 +180,13 @@ class RequestProductEvaluationController extends Controller
 
     public function view($id)
     {
-        $requestEvaluation = RequestProductEvaluation::with(['client', 'product_application'])->findOrFail($id);
+        $requestEvaluation = RequestProductEvaluation::with(['client', 'product_application', 'rpePersonnel', 'supplementaryDetails'])->findOrFail($id);
         $rpeNumber = $requestEvaluation->id;
         $RequestNumber = $requestEvaluation->RpeNumber;
         $clientId = $requestEvaluation->ClientId;
-        $RpeSupplementary = RpeDetail::where('RequestProductEvaluationId', $rpeNumber)->get();
-        $assignedPersonnel = RpePersonnel::where('RequestProductEvaluationId', $rpeNumber)->get();
-        $rndPersonnel = User::whereHas('rndUsers')->get();
+        // $RpeSupplementary = RpeDetail::where('RequestProductEvaluationId', $rpeNumber)->get();
+        $rndPersonnel = User::where('is_active', 1)->where('department_id', 15)->whereNotIn('id', [auth()->user()->id])->get();
+        // $rndPersonnel = User::whereHas('rndUsers')->get();
         $activities = Activity::where('TransactionNumber', $RequestNumber)->get();
         $rpeFileUploads = RpeFile::where('RequestProductEvaluationId', $rpeNumber)->get();
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
@@ -218,17 +248,40 @@ class RequestProductEvaluationController extends Controller
         $mappedAuditsCollection = collect($mappedAudits);
     
         $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals', 'RpeSupplementary', 'assignedPersonnel','rndPersonnel','activities', 'clients','users','rpeFileUploads', 'combinedLogs'));
+        
+        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        ->get();
+        // $users = User::all();
+        $loggedInUser = Auth::user(); 
+        $role = $loggedInUser->role;
+        $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        if (($role->description == 'International Sales - Supervisor') || ($role->description == 'Local Sales - Supervisor')) {
+            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            
+        } else {
+            $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+        }
+        $price_currencies = PriceCurrency::all();
+        $project_names = ProjectName::all();
+
+        $product_applications = ProductApplication::all();
+        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals','rndPersonnel','activities', 'clients','users','rpeFileUploads', 'combinedLogs', 'project_names', 'price_currencies', 'product_applications', 'secondarySalesPersons'));
     }
 
     public function addSupplementary(Request $request)
     {
         RpeDetail::create([
                 'RequestProductEvaluationId' => $request->input('rpe_id'),
-                'UserId' => auth()->user()->user_id,
+                'UserId' => auth()->user()->id,
                 'DetailsOfRequest' => $request->input('details_of_request'),
 
             ]);
+
+            Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
     }
 
@@ -237,6 +290,8 @@ class RequestProductEvaluationController extends Controller
         $rpeDetail = RpeDetail::findOrFail($id);
         $rpeDetail->DetailsOfRequest = $request->input('details_of_request');
         $rpeDetail->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
     }
 
@@ -259,13 +314,17 @@ class RequestProductEvaluationController extends Controller
             'PersonnelType' => 20,
             'PersonnelUserId' => $request->input('RndPersonnel'),
             ]);
-            return back();
+        
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
     }
     public function editPersonnel(Request $request, $id)
     {
         $rpePersonnel = RpePersonnel::findOrFail($id);
         $rpePersonnel->PersonnelUserId = $request->input('RndPersonnel');
         $rpePersonnel->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
     }
     public function deleteSrfPersonnel($id)
@@ -355,12 +414,104 @@ class RequestProductEvaluationController extends Controller
 
     public function CloseRpe($id)
     {
-        $closeRpe = RequestProductEvaluation::find($id);    
-        if ($closeRpe) {
-            $closeRpe->Status = '30'; 
-        }
-            $closeRpe->save();
-            return back();
+        $rpeList = RequestProductEvaluation::find($id);    
+        $rpeList->Status = 30; 
+        $rpeList->save();
+        
+        Alert::success('Successfully Closed')->persistent('Dismiss');
+        return back();
+    }
+    
+    public function openRpe($id)
+    {
+        $rpeList = RequestProductEvaluation::find($id);    
+        $rpeList->Status = 10; 
+        $rpeList->save();
+        
+        Alert::success('Successfully Open')->persistent('Dismiss');
+        return back();
     }
 
+    public function acceptRpe($id)
+    {
+        $rpeList = RequestProductEvaluation::find($id);
+        $rpeList->Progress = 30; 
+        $rpeList->save();
+        
+        Alert::success('Successfully Approved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function receivedRpe($id)
+    {
+        $rpeList = RequestProductEvaluation::find($id);
+        $rpeList->Progress = 35;
+        $rpeList->DateReceived = date('Y-m-d'); 
+        $rpeList->save();
+        
+        Alert::success('Successfully Received')->persistent('Dismiss');
+        return back();
+    }
+
+    public function startRpe($id)
+    {
+        $rpeList = RequestProductEvaluation::find($id);
+        $rpeList->Progress = 50;
+        $rpeList->DateStarted = date('Y-m-d'); 
+        $rpeList->save();
+        
+        Alert::success('Successfully Start')->persistent('Dismiss');
+        return back();
+    }
+
+    public function pauseRpe($id)
+    {
+        $rpeList = RequestProductEvaluation::find($id);
+        $rpeList->Progress = 55;
+        $rpeList->save();
+        
+        Alert::success('Successfully Pause')->persistent('Dismiss');
+        return back();
+    }
+
+    public function initialReview($id)
+    {
+        $rpeList = RequestProductEvaluation::find($id);
+        $rpeList->Progress = 57;
+        $rpeList->save();
+        
+        Alert::success('Successfully Initial Review')->persistent('Dismiss');
+        return back();
+    }
+
+    public function finalReview($id)
+    {
+        $rpeList = RequestProductEvaluation::find($id);
+        $rpeList->Progress = 81;
+        $rpeList->save();
+        
+        Alert::success('Successfully Final Review')->persistent('Dismiss');
+        return back();
+    }
+
+    public function completeRpe($id)
+    {
+        $rpeList = RequestProductEvaluation::find($id);
+        $rpeList->Progress = 60;
+        $rpeList->DateCompleted = date('Y-m-d');
+        $rpeList->save();
+        
+        Alert::success('Successfully Completed')->persistent('Dismiss');
+        return back();
+    }
+
+    public function salesAcceptRpe($id)
+    {
+        $rpeList = RequestProductEvaluation::find($id);
+        $rpeList->Progress = 70;
+        $rpeList->save();
+        
+        Alert::success('Successfully Accepted')->persistent('Dismiss');
+        return back();
+    }
 }

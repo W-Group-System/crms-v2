@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Evaluation List
-            <button type="button" class="btn btn-md btn-primary" name="add_product_evaluation" data-toggle="modal" data-target="#AddProductEvaluation">Add Product Evaluation</button>
+            <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">Add Product Evaluation</button>
             </h4>
             <div class="form-group">
                 <form method="GET" >
@@ -19,68 +19,176 @@
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
             </div>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
-                    <div class="col-md-5">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
-                            <button class="btn btn-sm btn-info">Search</button>
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Show</span>
+                    <form method="GET" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10" @if($entries == 10) selected @endif>10</option>
+                            <option value="25" @if($entries == 25) selected @endif>25</option>
+                            <option value="50" @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
                 </div>
-            </form>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Request Product Evaluation" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="product_evaluation_table">
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th>RPE #</th>
-                            <th>Date Created</th>
-                            <th>Due Date</th>
-                            <th>Client Name</th>
-                            <th>Application</th>
-                            <th>Recommendation</th>
-                            <th>Status</th>
-                            <th>Progress</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ( $request_product_evaluations as $productEvaluation)
-                        <tr>
-                            <td align="center">
-                                <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
-                                <button type="button" class="btn btn-sm btn-warning"
-                                    data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE'>
-                                    <i class="ti-pencil"></i>
-                                </button>  
-                                <button type="button" class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete({{ $productEvaluation->id }})" title='Delete Request'>
-                                    <i class="ti-trash"></i>
-                                </button>
-                            </td>
-                            <td>{{ optional($productEvaluation)->RpeNumber }}</td>
-                            <td>{{ $productEvaluation->CreatedDate }}</td>
-                            <td>{{ $productEvaluation->DueDate }}</td>
-                            <td>{{ optional($productEvaluation->client)->Name }}</td>
-                            <td>{{ optional($productEvaluation->product_application)->Name }}</td>
-                            <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td>
-                            <td>
-                                @if($productEvaluation->Status == 10)
-                                        Open
-                                    @elseif($productEvaluation->Status == 30)
-                                        Closed
-                                    @elseif($productEvaluation->Status == 50)
-                                        Cancelled
+                    @if(auth()->user()->role->type == "IS")
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>RPE #</th>
+                                <th>Date Created</th>
+                                <th>Due Date</th>
+                                <th>Client Name</th>
+                                <th>Region</th>
+                                <th>Country</th>
+                                <th>Primary Sales Person</th>
+                                <th>Project Name</th>
+                                <th>Application</th>
+                                <th>Sample Name</th>
+                                <th>Manufacturer</th>
+                                <th>Date Completed</th>
+                                <th>Leadtime</th>
+                                <th>Delayed</th>
+                                <th>RPE Recommendation</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ( $request_product_evaluations as $productEvaluation)
+                            <tr>
+                                <td align="center">
+                                    <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
+
+                                    <button type="button" class="btn btn-sm btn-warning editBtn" data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}">
+                                        <i class="ti-pencil"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete({{ $productEvaluation->id }})" title='Delete Request' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif>
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                </td>
+                                <td>{{ optional($productEvaluation)->RpeNumber }}</td>
+                                <td>
+                                    @if($productEvaluation->CreatedDate != null)
+                                    {{ date('M d, Y h:i A', strtotime($productEvaluation->CreatedDate)) }}
                                     @else
-                                        {{ $productEvaluation->Status }}
+                                    {{date('M d, Y h:i A', strtotime($productEvaluation->created_at))}}
                                     @endif
-                            </td>
-                            <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
-                            
-                        </tr>
-                            
-                        @endforeach
-                    </tbody>
+                                </td>
+                                <td>{{ $productEvaluation->DueDate }}</td>
+                                <td>{{ optional($productEvaluation->client)->Name }}</td>
+                                <td>{{optional($productEvaluation->client->clientregion)->Name}}</td>
+                                <td>{{optional($productEvaluation->client->clientcountry)->Name}}</td>
+                                <td>
+                                    @if($productEvaluation->primarySalesPerson)
+                                    {{$productEvaluation->primarySalesPerson->full_name}}
+                                    @elseif($productEvaluation->primarySalesPersonById)
+                                    {{$productEvaluation->primarySalesPersonById->full_name}}
+                                    @endif
+                                </td>
+                                <td>{{optional($productEvaluation->ProjectName)->Name}}</td>
+                                <td>{{ optional($productEvaluation->product_application)->Name }}</td>
+                                <td>{{$productEvaluation->SampleName}}</td>
+                                <td>{{$productEvaluation->Manufacturer}}</td>
+                                <td>
+                                    @if($productEvaluation->DateCompleted == null)
+                                    N/A
+                                    @else 
+                                    {{date('M d, Y', strtotime($productEvaluation->DateCompleted))}}
+                                    @endif
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td>
+                                <td>
+                                    @if($productEvaluation->Status == 10)
+                                            Open
+                                        @elseif($productEvaluation->Status == 30)
+                                            Closed
+                                        @elseif($productEvaluation->Status == 50)
+                                            Cancelled
+                                        @else
+                                            {{ $productEvaluation->Status }}
+                                        @endif
+                                </td>
+                                <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    @else
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>RPE #</th>
+                                <th>Date Created</th>
+                                <th>Due Date</th>
+                                <th>Client Name</th>
+                                <th>Application</th>
+                                <th>RPE Recommendation</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ( $request_product_evaluations as $productEvaluation)
+                            <tr>
+                                <td align="center">
+                                    <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
+
+                                    <button type="button" class="btn btn-sm btn-warning editBtn" data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}">
+                                        <i class="ti-pencil"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete({{ $productEvaluation->id }})" title='Delete Request' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif>
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                </td>
+                                <td>{{ optional($productEvaluation)->RpeNumber }}</td>
+                                <td>
+                                    @if($productEvaluation->CreatedDate != null)
+                                    {{ date('M d, Y h:i A', strtotime($productEvaluation->CreatedDate)) }}
+                                    @else
+                                    {{date('M d, Y h:i A', strtotime($productEvaluation->created_at))}}
+                                    @endif
+                                </td>
+                                <td>{{ $productEvaluation->DueDate }}</td>
+                                <td>{{ optional($productEvaluation->client)->Name }}</td>
+                                <td>{{ optional($productEvaluation->product_application)->Name }}</td>
+                                <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td>
+                                <td>
+                                    @if($productEvaluation->Status == 10)
+                                            Open
+                                        @elseif($productEvaluation->Status == 30)
+                                            Closed
+                                        @elseif($productEvaluation->Status == 50)
+                                            Cancelled
+                                        @else
+                                            {{ $productEvaluation->Status }}
+                                        @endif
+                                </td>
+                                <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    @endif
                 </table>
                 {!! $request_product_evaluations->appends(['search' => $search])->links() !!}
                 @php
@@ -104,7 +212,7 @@
 
 
 <script>
-     function confirmDelete(id) {
+    function confirmDelete(id) {
         Swal.fire({
             title: 'Are you sure?',
             text: 'This action cannot be undone.',
@@ -140,7 +248,47 @@
                 });
             }
         });
-    }     
+    }
+    
+    $(document).ready(function() {
+        $('[name="entries"]').on('change', function() {
+            $(this).closest('form').submit()
+        })
+
+        $("#addRpeBtn").on('click', function() {
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+
+            refreshSecondaryApprovers(primarySales,"")
+        })
+
+        $(".editBtn").on('click', function() {
+            var secondarySales = $(this).data('secondarysales');
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+
+            refreshSecondaryApprovers(primarySales,secondarySales)
+        })
+
+        function refreshSecondaryApprovers(primarySales,secondarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                        $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                    }, 500);
+                }
+            })
+        }
+    })
 </script>
 @include('product_evaluations.create')
 @foreach ( $request_product_evaluations as $productEvaluation )
