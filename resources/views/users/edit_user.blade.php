@@ -12,7 +12,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="name">Username</label>
-                        <input type="text" class="form-control" name="username" placeholder="Enter Username" value="{{$user->username}}" required>
+                        <input type="text" class="form-control" name="username" placeholder="Enter Username" value="{{$user->username}}" readonly>
                     </div>
                     <div class="form-group">
                         <label for="name">Full Name</label>
