@@ -255,6 +255,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('OpenStatus/{id}', 'SampleRequestController@OpenStatus');
     Route::post('CompleteSrf/{id}', 'SampleRequestController@CompleteSrf');
 
+    Route::get('print_srf/{id}', 'SampleRequestController@print_srf');
 
 
     

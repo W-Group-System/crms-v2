@@ -239,6 +239,17 @@ function checkIfItsApprover($user_id, $primary_sales_person, $type)
             return "yes";
         }
     }
+    if ($type == "SRF")
+    {
+        $user = User::where('user_id', $primary_sales_person)->first();
+
+        $salesApprovers = SalesApprovers::where('SalesApproverId', $user_id)->where('UserId', $user->id)->first();
+        
+        if ($salesApprovers != null)
+        {
+            return "yes";
+        }
+    }
 
     return "no";
 }
