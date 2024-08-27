@@ -2,24 +2,21 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="addRpeSuplementaryLabel">Supplementary Details</h5>
+				<h5 class="modal-title" id="addRpeSuplementaryLabel">Add Supplementary Details</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form method="POST" action="{{ url('addRpeSupplementary') }}" onsubmit="show()" enctype="multipart/form-data">
+			<form method="POST" action="{{ url('addRpeSupplementary') }}">
                 @csrf
+
+                <input type="hidden" name="rpe_id" value="{{$requestEvaluation->id}}">
                 <div class="modal-body">
-                    <div class="form-card">
-                        <div class="row mb-2">
-                            <div class="col-lg-12 mt-1">
-                                <div class="form-group">
-                                    <label for="SoNumber">Supplementary Detail:</label>
-                                    <input type="text" class="form-control" name="details_of_request" placeholder="Add Supplementary Detail">
-                                </div>
-                                <div class="form-group">
-                                    <input type="hidden" class="form-control" name="rpe_id" value="{{ $requestEvaluation->id }}">
-                                </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Supplementary Detail:</label>
+                                <textarea class="form-control" name="details_of_request" placeholder="Add Supplementary Detail" cols="30" rows="10"></textarea>
                             </div>
                         </div>
                     </div>

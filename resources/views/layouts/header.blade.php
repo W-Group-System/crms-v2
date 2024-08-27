@@ -26,6 +26,7 @@
         <link href="{{ asset('css/buttons.bootstrap4.css') }}" rel="stylesheet">
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
+        <link rel="stylesheet" href="{{asset('css/theme.bootstrap_4.min.css')}}">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
@@ -48,6 +49,10 @@
         input[type=number] 
         {
             -moz-appearance: textfield;
+        }
+        th
+        {
+            background-color: white !important;
         }
     </style>
     @yield('css')
@@ -182,7 +187,7 @@
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/product_applications') }}">Product Applications</a></li>
                                     @endif
                                     @if(viewModule('Application Sub Categories', $department, $role) == "yes")
-                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/product_subcategories') }}">Product Subcategories</a></li>
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/product_subcategories') }}">Application Sub Categories</a></li>
                                     @endif
                                     @if(viewModule('Raw Materials', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/raw_material') }}">Raw Materials</a></li>
@@ -424,7 +429,7 @@
                         @endif
                         <li class="nav-item"> 
                             <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="reports">
-                                <i class="icon-cog menu-icon"></i>
+                                <i class="icon-book menu-icon"></i>
                                 <span class="menu-title">Reports</span>
                                 <i class="menu-arrow"></i>
                             </a>
@@ -1155,5 +1160,6 @@
         <script src="{{ asset('js/dashboard.js') }}"></script>
         <script src="{{ asset('js/Chart.roundedBarCharts.js') }}"></script>
         <script src="{{asset('js/sweetalert2.min.js')}}"></script>
+        <script src="{{asset('js/jquery.tablesorter.min.js')}}"></script>
     </body>
 </html>

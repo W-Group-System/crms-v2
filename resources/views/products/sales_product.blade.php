@@ -94,24 +94,18 @@
                                         <i class="ti-eye"></i>
                                     </a>
 
-                                    <form action="{{url('add_to_archive_products')}}" class="d-inline-block" method="post">
+                                    {{-- <form action="{{url('add_to_archive_products')}}" class="d-inline-block" method="post">
                                         @csrf
                                         <input type="hidden" name="id" value="{{$product->id}}">
 
                                         <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archived">
                                             <i class="ti-archive"></i>
                                         </button>
-                                    </form>
+                                    </form> --}}
                                 </td>
                                 <td>{{$product->code}}</td>
                                 <td>
-                                    @if($product->userByUserId)
-                                        {{$product->userByUserId->full_name}}
-                                    @endif
-
-                                    @if($product->userById)
-                                        {{$product->userById->full_name}}
-                                    @endif
+                                    {{date('M d, Y', strtotime($product->created_at))}}
                                 </td>
                                 <td>{{$product->application->Name}}</td>
                                 <td>{{$usd}}</td>
@@ -146,21 +140,25 @@
 
 <script>
     $(document).ready(function() {
-        $(".archiveProducts").on('click', function() {
-            var form = $(this).closest('form');
+        // $(".archiveProducts").on('click', function() {
+        //     var form = $(this).closest('form');
 
-            Swal.fire({
-                title: "Are you sure?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Archived"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
+        //     Swal.fire({
+        //         title: "Are you sure?",
+        //         icon: "warning",
+        //         showCancelButton: true,
+        //         confirmButtonColor: "#3085d6",
+        //         cancelButtonColor: "#d33",
+        //         confirmButtonText: "Archived"
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             form.submit();
+        //         }
+        //     });
+        // })
+
+        $(".table").tablesorter({
+            theme : "bootstrap",
         })
 
         $("[name='entries']").on('change', function() {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Activity;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Validator;
@@ -18,6 +19,7 @@ use App\FileCrr;
 use App\ProductApplication;
 use App\SalesApprovers;
 use App\SalesUser;
+use App\TransactionLogs;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -110,7 +112,7 @@ class CustomerRequirementController extends Controller
             if ($user->department_id == 5)
             {
                 $type = "IS";
-                $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-IS%')->latest()->first();
+                $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-IS%')->orderBy('id', 'desc')->first();
                 $count = substr($crrList->CrrNumber, 10);
                 $totalCount = $count + 1;
                 
@@ -120,7 +122,7 @@ class CustomerRequirementController extends Controller
             if ($user->department_id == 38)
             {
                 $type = "LS";
-                $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-LS%')->latest()->first();
+                $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-LS%')->orderBy('id', 'desc')->first();
                 $count = substr($crrList->CrrNumber, 10);
                 $totalCount = $count + 1;
                 
@@ -184,7 +186,7 @@ class CustomerRequirementController extends Controller
         $customerRequirements->RefCrrNumber = $request->RefCrrNumber;
         $customerRequirements->RefRpeNumber = $request->RefRpeNumber;
         $customerRequirements->DetailsOfRequirement = $request->DetailsOfRequirement;
-        $customerRequirements->Status = $request->Status;
+        // $customerRequirements->Status = $request->Status;
         $customerRequirements->RefCode = $request->RefCode;
         if($request->has('NatureOfRequestId'))
         {
@@ -212,7 +214,7 @@ class CustomerRequirementController extends Controller
         $product_applications = ProductApplication::get();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
-        $rnd_personnel = User::where('department_id', 15)->whereNotIn('id', [auth()->user()->id])->get();
+        $rnd_personnel = User::whereIn('department_id', [15, 42])->whereNotIn('id', [auth()->user()->id])->get();
         $refCode = $this->refCode();
 
         return view('customer_requirements.view_crr',
@@ -324,7 +326,8 @@ class CustomerRequirementController extends Controller
         $customerRequirement->DateReceived = $request->date_received;
         $customerRequirement->DueDate = $request->due_date;
         $customerRequirement->Recommendation = $request->recommendation;
-        $customerRequirement->Progress = $request->progress;
+        $customerRequirement->Status = $request->Status;
+        // $customerRequirement->Progress = $request->progress;
         $customerRequirement->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
@@ -359,9 +362,17 @@ class CustomerRequirementController extends Controller
     public function closeRemarks(Request $request, $id)
     {
         $customerRequirement = CustomerRequirement::findOrFail($id);
-        $customerRequirement->CloseRemarks = $request->close_remarks;
+        // $customerRequirement->CloseRemarks = $request->close_remarks;
         $customerRequirement->Status = 30;
         $customerRequirement->save();
+
+        $transactionLogs = new TransactionLogs;
+        $transactionLogs->Type = 10;
+        $transactionLogs->TransactionId = $customerRequirement->id;
+        $transactionLogs->ActionDate = date('Y-m-d h:i:s');
+        $transactionLogs->UserId = auth()->user()->id;
+        $transactionLogs->Details = $request->close_remarks;
+        $transactionLogs->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
@@ -373,6 +384,14 @@ class CustomerRequirementController extends Controller
         $customerRequirement->CancelRemarks = $request->cancel_remarks;
         $customerRequirement->Status = 50;
         $customerRequirement->save();
+
+        $transactionLogs = new TransactionLogs;
+        $transactionLogs->Type = 10;
+        $transactionLogs->TransactionId = $customerRequirement->id;
+        $transactionLogs->ActionDate = date('Y-m-d h:i:s');
+        $transactionLogs->UserId = auth()->user()->id;
+        $transactionLogs->Details = $request->cancel_remarks;
+        $transactionLogs->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
@@ -388,6 +407,14 @@ class CustomerRequirementController extends Controller
             $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
+
+            $transactionLogs = new TransactionLogs;
+            $transactionLogs->Type = 10;
+            $transactionLogs->TransactionId = $crr->id;
+            $transactionLogs->ActionDate = date('Y-m-d h:i:s');
+            $transactionLogs->UserId = auth()->user()->id;
+            $transactionLogs->Details = $request->accept_remarks;
+            $transactionLogs->save();
         }
         elseif($request->action == "approved_to_RND")
         {
@@ -395,6 +422,29 @@ class CustomerRequirementController extends Controller
             $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
+
+            $transactionLogs = new TransactionLogs;
+            $transactionLogs->Type = 10;
+            $transactionLogs->TransactionId = $crr->id;
+            $transactionLogs->ActionDate = date('Y-m-d h:i:s');
+            $transactionLogs->UserId = auth()->user()->id;
+            $transactionLogs->Details = $request->accept_remarks;
+            $transactionLogs->save();
+        }
+        elseif($request->action == "approved_to_QCD-MRDC")
+        {
+            $crr->Progress = 30;
+            $crr->AcceptRemarks = $request->accept_remarks;
+            $crr->ApprovedBy = auth()->user()->id;
+            $crr->save();
+
+            $transactionLogs = new TransactionLogs;
+            $transactionLogs->Type = 10;
+            $transactionLogs->TransactionId = $crr->id;
+            $transactionLogs->ActionDate = date('Y-m-d h:i:s');
+            $transactionLogs->UserId = auth()->user()->id;
+            $transactionLogs->Details = $request->accept_remarks;
+            $transactionLogs->save();
         }
 
         Alert::success('Approved to RND')->persistent('Dismiss');
@@ -438,6 +488,14 @@ class CustomerRequirementController extends Controller
         $crr->Progress = 55;
         $crr->save();
 
+        $transactionLogs = new TransactionLogs;
+        $transactionLogs->Type = 10;
+        $transactionLogs->TransactionId = $crr->id;
+        $transactionLogs->ActionDate = date('Y-m-d h:i:s');
+        $transactionLogs->UserId = auth()->user()->id;
+        $transactionLogs->Details = $request->pause_remarks;
+        $transactionLogs->save();
+
         Alert::success('Successfully Paused')->persistent('Dismiss');
         return back();
     }
@@ -466,6 +524,7 @@ class CustomerRequirementController extends Controller
     {
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 60;
+        $crr->DateCompleted = date('Y-m-d h:i:s');
         $crr->save();
 
         Alert::success('Successfully Completed')->persistent('Dismiss');
@@ -536,10 +595,10 @@ class CustomerRequirementController extends Controller
         return back();
     }
     
-    public function refreshUserApprover()
+    public function refreshUserApprover(Request $request)
     {
-        $user = User::where('id', auth()->user()->id)->first();
-
+        $user = User::where('id', $request->ps)->first();
+        
         if ($user != null)
         {
             if($user->salesApproverById)
@@ -559,5 +618,35 @@ class CustomerRequirementController extends Controller
         }
 
         return "";
+    }
+
+    public function returnToSales($id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 10;
+        $crr->save(); 
+
+        Alert::success('Successfully return to sales')->persistent('Dismiss');
+        return back();
+    }
+
+    public function returnToRnd($id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 50;
+        $crr->save(); 
+
+        Alert::success('Successfully return to rnd')->persistent('Dismiss');
+        return back();
+    }
+
+    public function salesAccepted($id)
+    {
+        $crr = CustomerRequirement::findOrFail($id);
+        $crr->Progress = 70;
+        $crr->save(); 
+
+        Alert::success('Sales Accepted')->persistent('Dismiss');
+        return back();
     }
 }

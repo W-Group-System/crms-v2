@@ -120,7 +120,7 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade active show" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @include('components.error')
-                    <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
+                    {{-- <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
                         {{csrf_field()}}
 
                         <div class="col-lg-12" align="right">
@@ -155,7 +155,30 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    </form>
+                    </form> --}}
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-bordered tables" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Materials</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($data->productMaterialComposition as $pmc)
+                                    <tr>
+                                        <td>
+                                            {{$pmc->rawMaterials->Name}}
+                                        </td>
+                                        <td>
+                                            {{$pmc->Percentage}}%
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     @include('components.error')
@@ -410,6 +433,7 @@
                                     <tr>
                                         <td>@if($ic->products){{$ic->products->ddw_number}}@endif</td>
                                         <td>
+                                            @if($ic->products)
                                             @if($ic->products->status == 1)
                                                 <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
                                             @elseif($ic->products->status == 2)
@@ -419,15 +443,18 @@
                                             @elseif($ic->products->status == 5)
                                                 <a href="{{url('view_archive_products/'.$ic->products->id)}}">{{$ic->products->code}}</a>
                                             @endif
+                                            @endif
                                         </td>
                                         <td>
+                                            @if($ic->products)
                                             @if($ic->products->userByUserId)
                                                 {{$ic->products->userByUserId->full_name}}
                                             @else
                                                 {{$ic->products->userById->full_name}}
                                             @endif
+                                            @endif
                                         </td>
-                                        <td>{{date('M d, Y', strtotime($ic->products->created_at))}}</td>
+                                        <td>{{date('M d, Y', strtotime(optional($ic->products)->created_at))}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

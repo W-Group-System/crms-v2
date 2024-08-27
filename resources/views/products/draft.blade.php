@@ -61,18 +61,18 @@
                                         <i class="ti-eye"></i>
                                     </a>
 
-                                    <button class="btn btn-sm btn-warning" title="edit" type="button" data-toggle="modal" data-target="#formProduct-{{$p->id}}">
+                                    <button class="btn btn-sm btn-warning" title="Edit" type="button" data-toggle="modal" data-target="#formProduct-{{$p->id}}">
                                         <i class="ti-pencil"></i>
                                     </button>
                                     
-                                    <form method="POST" class="d-inline-block" action="{{url('add_to_archive_products')}}">
+                                    {{-- <form method="POST" class="d-inline-block" action="{{url('add_to_archive_products')}}">
                                         @csrf
 
                                         <input type="hidden" name="id" value="{{$p->id}}">
                                         <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archived" data-id="{{$p->id}}">
                                             <i class="ti-archive"></i>
                                         </button>
-                                    </form>
+                                    </form> --}}
 
                                     <form method="POST" class="d-inline-block" action="{{url('add_to_new_products')}}">
                                         @csrf
@@ -187,6 +187,10 @@
 
 <script>
     $(document).ready(function() {
+        $('.table').tablesorter({
+            theme: "bootstrap"
+        })
+
         $(".newProducts").on('click', function() {
             var form = $(this).closest('form');
 

@@ -1,4 +1,4 @@
-<div class="modal fade" id="closeModal{{$crr->id}}" tabindex="-1" role="dialog" aria-labelledby="closeModal" aria-hidden="true">
+<div class="modal fade" id="closeModal{{$requestEvaluation->id}}" tabindex="-1" role="dialog" aria-labelledby="closeModal" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('close_remarks/'.$crr->id) }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('CloseRpe/'.$requestEvaluation->id) }}">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">

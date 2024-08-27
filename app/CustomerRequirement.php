@@ -3,9 +3,12 @@
 namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class CustomerRequirement extends Model
+class CustomerRequirement extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     use SoftDeletes;
     protected $table = "customerrequirements";
 

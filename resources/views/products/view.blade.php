@@ -11,6 +11,7 @@
                 <div class="col-lg-6" align="right">
                     <a href="{{ url('/current_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
+                    @if(!checkIfItsSalesDept(auth()->user()->department_id))
                     <form method="POST" action="{{url('add_to_archive_products')}}" class="d-inline-block">
                         {{csrf_field()}}
 
@@ -18,6 +19,7 @@
                         
                         <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Archive" title="Submit to archive products">Archive</button>
                     </form>
+                    @endif
                    
                 </div>
             </div>
@@ -122,7 +124,7 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade active show" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @include('components.error')
-                    <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
+                    {{-- <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
                         {{csrf_field()}}
 
                         <div class="col-lg-12" align="right">
@@ -157,7 +159,30 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    </form>
+                    </form> --}}
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped tables">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($data->productMaterialComposition as $pmc)
+                                    <tr>
+                                        <td>
+                                            {{$pmc->rawMaterials->Name}}
+                                        </td>
+                                        <td>
+                                            {{$pmc->Percentage}}%
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="tab-pane fade " id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     @include('components.error')

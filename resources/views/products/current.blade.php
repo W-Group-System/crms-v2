@@ -184,6 +184,10 @@
 
 <script>
     $(document).ready(function() {
+        $('.table').tablesorter({
+            theme: "bootstrap"
+        })
+
         $(".archiveProducts").on('click', function() {
             var form = $(this).closest('form');
 
