@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_price_request" enctype="multipart/form-data" action="{{ url('new_activity') }}">
+                <form method="POST" id="sample_request" enctype="multipart/form-data" action="{{ url('new_activity') }}">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -43,12 +43,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
-                                <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select Client" required>
+                                <input type="hidden" class="form-control form-control-sm ClientId" name="ClientId" value="{{ $sampleRequest->client->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{$sampleRequest->client->Name }}" readonly>
+                                {{-- <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select Client" required>
                                     <option value="" disabled selected>Select Client</option>
                                     @foreach($clients as $client)
                                         <option value="{{ $client->id }}">{{ $client->Name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -74,12 +76,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{ $sampleRequest->primarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($sampleRequest->primarySalesPerson)->full_name }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -91,12 +89,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{ $sampleRequest->secondarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($sampleRequest->secondarySalesPerson)->full_name }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -108,7 +102,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Attachments</label>
-                                <input type="file" class="form-control form-control-sm" name="path[]" multiple required>
+                                <input type="file" class="form-control form-control-sm" name="path[]">
                                 <small><b style="color:red">Note:</b> The file must be a type of: jpg, jpeg, png, pdf, doc, docx.</small>
                                 <div class="col-sm-9">
                                     <ul id="fileList"></ul>
@@ -149,29 +143,57 @@
 </div>
 
 <script>
+    // $(document).ready(function() {
+    //     $('.ClientId').change(function() {
+    //         var clientId = $(this).val();
+    //         if (clientId) {
+    //             $.ajax({
+    //                 url: '{{ url("client-contact") }}/' + clientId,
+    //                 type: "GET",
+    //                 dataType: "json",
+    //                 success: function(data) {
+    //                     $('#ClientContactId').empty();
+    //                     $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
+    //                     $.each(data, function(key, value) {
+    //                         $('#ClientContactId').append('<option value="'+ key +'">'+ value +'</option>');
+    //                     });
+    //                 },
+    //                 error: function(xhr, status, error) {
+    //                     console.error('AJAX Error:', status, error);
+    //                 }
+    //             });
+    //         } else {
+    //             $('#ClientContactId').empty();
+    //             $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
+    //         }
+    //     });
+    // });
     $(document).ready(function() {
-        $('.ClientId').change(function() {
-            var clientId = $(this).val();
-            if (clientId) {
-                $.ajax({
-                    url: '{{ url("client-contact") }}/' + clientId,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(data) {
-                        $('#ClientContactId').empty();
-                        $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
-                        $.each(data, function(key, value) {
-                            $('#ClientContactId').append('<option value="'+ key +'">'+ value +'</option>');
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
-                    }
-                });
-            } else {
-                $('#ClientContactId').empty();
-                $('#ClientContactId').append('<option value="" disabled selected>Select Contact</option>');
-            }
+        var contactIdSelector = '.ClientContactId';
+
+        var clientIdSelector = '.ClientId';
+        var storedClientId = $(clientIdSelector).val();
+
+        if(storedClientId) {
+            $.ajax({
+                url: '{{ url("client-contact") }}/' + storedClientId,
+                type: "GET",
+                dataType: "json",
+                success:function(data) {
+                    $(contactIdSelector).empty();
+                    $(contactIdSelector).append('<option value="" disabled>Select Contact</option>');
+                    $.each(data, function(key, value) {
+                        $(contactIdSelector).append('<option value="'+ key +'">'+ value +'</option>');
+                    });
+                }
+            });
+        }
+
+        $('#createSrfActivity').on('hidden.bs.modal', function () {
+            $('#sample_request')[0].reset(); 
+            $('#sample_request select').each(function() {
+                $(this).val('').trigger('change'); 
+            });
         });
     });
 

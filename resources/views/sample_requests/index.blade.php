@@ -28,7 +28,7 @@
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
+                            <input type="text" class="form-control" placeholder="Search Sample Request" name="search" value="{{$search}}"> 
                             <button class="btn btn-sm btn-info">Search</button>
                         </div>
                     </div>
@@ -200,6 +200,68 @@
                     $to = min($currentPage * $perPage, $total);
                 @endphp
             
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                </div>
+            </div>
+            @elseif ((auth()->user()->role->department_id == '15' && auth()->user()->role->name == "Staff L1") || (auth()->user()->role->department_id == '15' && auth()->user()->role->name == "Staff L2"))
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="sample_request_table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>SRF #</th>
+                            <th>Date Requested</th>
+                            <th>Date Required</th>
+                            <th>Client Name</th>
+                            <th>Application</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($rndSrf as $srf)
+                        <tr>
+                            <td align="center">
+                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
+                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-warning btn-outline"
+                                    data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
+                                    <i class="ti-pencil"></i>
+                                </button>    
+                            </td>
+                                <td>{{ $srf->SrfNumber }}</td>
+                                <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
+                                <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
+                                <td>{{ optional($srf->client)->Name }}</td>
+                                <td>
+                                    @foreach ($srf->requestProducts as $product)
+                                        {{ optional($product->productApplicationsId)->Name }}<br>
+                                    @endforeach
+                                </td>
+                               <td>
+                                    @if($srf->Status == 10)
+                                        Open
+                                    @elseif($srf->Status == 30)
+                                        Closed
+                                    @else
+                                        {{ $srf->Status }}
+                                    @endif
+                                </td>
+                                <td>{{ optional($srf->progressStatus)->name }}</td>
+                                
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+                {!! $sampleRequests->appends(['search' => $search])->links() !!}
+                @php
+                    $total = $sampleRequests->total();
+                    $currentPage = $sampleRequests->currentPage();
+                    $perPage = $sampleRequests->perPage();
+    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                 </div>

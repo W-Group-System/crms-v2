@@ -71,4 +71,8 @@ class SampleRequest extends Model implements Auditable
     {
         return $this->hasMany(SampleRequestProduct::class, 'SampleRequestId', 'Id');
     }
+    public function srfPersonnel()
+    {
+        return $this->hasMany(SrfPersonnel::class,'SampleRequestId');
+    }
 }

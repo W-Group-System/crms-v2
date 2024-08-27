@@ -260,6 +260,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('StartSrf/{id}', 'SampleRequestController@StartSrf');
     Route::post('PauseSrf/{id}', 'SampleRequestController@PauseSrf');
     Route::post('RndUpdate/{id}', 'SampleRequestController@RndUpdate');
+    Route::post('CancelRemarks/{id}', 'SampleRequestController@CancelRemarks');
+    Route::post('CloseRemarks/{id}', 'SampleRequestController@CloseRemarks');
+    Route::post('ReturnToSales/{id}', 'SampleRequestController@ReturnToSales');
+    Route::post('ReturnToRnd/{id}', 'SampleRequestController@ReturnToRnd');
+    Route::post('ReturnToSpecialist/{id}', 'SampleRequestController@ReturnToSpecialist');
+    Route::post('SubmitSrf/{id}', 'SampleRequestController@SubmitSrf');
+    Route::post('AcceptSrf/{id}', 'SampleRequestController@AcceptSrf');
+    Route::post('OpenStatus/{id}', 'SampleRequestController@OpenStatus');
+    Route::post('CompleteSrf/{id}', 'SampleRequestController@CompleteSrf');
+
+
+
     
     Route::get('sample_contacts-by-client-f/{clientId}', [SampleRequestController::class, 'getSampleContactsByClientF']);
     Route::get('sample_get-last-increment-f/{year}/{clientCode}', [SampleRequestController::class, 'getSampleLastIncrementF']);
@@ -267,7 +279,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('delete-srf-product/{id}', 'SampleRequestController@deleteSrfProduct');
 
     // Price Monitoring 
-    Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
+    // Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
     Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');
     Route::post('/price_monitoring', 'PriceMonitoringController@store');
     Route::post('price_monitoring/edit/{id}', 'PriceMonitoringController@update');
@@ -280,7 +292,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
 
     // Price Monitoring Local Sales
-    Route::get('/price_monitoring_ls', 'PriceMonitoringController@indexLocal')->name('price_monitoring.index');
+    Route::get('/price_monitoring_ls', 'PriceMonitoringController@index')->name('price_monitoring.index');
     Route::get('client-contact/{clientId}', 'PriceMonitoringController@getPrfContacts');
     Route::get('/getGaeCost/{id}', 'PriceMonitoringController@getGaeDetails');
     Route::get('product-rmc/{id}', 'PriceMonitoringController@getProductRmc');
@@ -293,7 +305,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('prf_new_activity', 'PriceMonitoringController@PrfActivityStore'); 
     Route::post('prf_edit_activity/{id}', 'PriceMonitoringController@PrfActivityUpdate');
     Route::delete('price_monitorings/view/activity-delete/{id}', 'PriceMonitoringController@deleteActivity');
-    
+
+    Route::post('ApprovePrf/{id}', 'PriceMonitoringController@ApprovePrf');
+    Route::post('ReopenPrf/{id}', 'PriceMonitoringController@ReopenPrf');
+
 
     // Customer Complaint 
     Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');
