@@ -5,17 +5,82 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Business Type List
-            <button type="button" class="btn btn-md btn-primary" name="add_business_type" id="add_business_type">Add Business Type</button>
+            <button type="button" class="btn btn-md btn-primary" id="add_business_type" data-toggle="modal" data-target="#formBusinessType">Add Business Type</button>
             </h4>
+            <div class="mb-3">
+                <button class="btn btn-info" id="copyBtn" type="button">Copy</button>
+                <a href="{{url('export_business_type')}}" class="btn btn-success" target="_blank">Excel</a>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Show</span>
+                    <form method="GET" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10" @if($entries == 10) selected @endif>10</option>
+                            <option value="25" @if($entries == 25) selected @endif>25</option>
+                            <option value="50" @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
+                </div>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-8">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Business Type" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <table class="table table-striped table-bordered table-hover" id="business_type_table" width="100%">
                 <thead>
                     <tr>
+                        <th width="25%">Action</th>
                         <th width="35%">Name</th>
                         <th width="40%">Description</th>
-                        <th width="25%">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($bussinessType as $bt)
+                        <tr>
+                            <td>
+                                <button class="btn btn-sm btn-warning editBtn" type="button" data-toggle="modal" data-target="#edit{{$bt->id}}" data-id="{{$bt->id}}">
+                                    <i class="ti-pencil"></i>
+                                </button>
+
+                                <form method="POST" class="d-inline-block" action="{{url('delete_business_type/'.$bt->id)}}">
+                                    @csrf 
+
+                                    <button class="btn btn-sm btn-danger deleteBtn" type="button">
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td>{{$bt->Name}}</td>
+                            <td>{{$bt->Description}}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
+
+            {!! $bussinessType->appends(['search' => $search])->links() !!}
+            @php
+                $total = $bussinessType->total();
+                $currentPage = $bussinessType->currentPage();
+                $perPage = $bussinessType->perPage();
+                
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <p  class="mt-3">{{"Showing {$from} to {$to} of {$total} entries"}}</p>
         </div>
     </div>
 </div>
@@ -24,13 +89,13 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add New Region</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Add Bussiness Type</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_business_type" enctype="multipart/form-data" action="{{ route('business_type.store') }}">
+                <form method="POST" id="form_business_type" action="{{ route('business_type.store') }}">
                     <span id="form_result"></span>
                     @csrf
                     <div class="form-group">
@@ -42,17 +107,15 @@
                         <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="action" id="action" value="Save">
-                        <input type="hidden" name="hidden_id" id="hidden_id">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
+                        <input type="submit" class="btn btn-success" value="Save">
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+{{-- <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -73,169 +136,204 @@
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> 
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>  --}}
+@foreach ($bussinessType as $bt)
+@include('business_types.edit_business_type')
+@endforeach
 
 <script>
     $(document).ready(function(){
-        $('#business_type_table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('business_type.index') }}"
-            },
-            columns: [
-                {
-                    data: 'Name',
-                    name: 'Name'
-                },
-                {
-                    data: 'Description',
-                    name: 'Description',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false
-                }
-            ],
-            columnDefs: [
-                {
-                    targets: 1, // Target the Description column
-                    render: function(data, type, row) {
-                        return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
-                    }
-                }
-            ]
-        });
+        // $('#business_type_table').DataTable({
+        //     processing: true,
+        //     serverSide: true,
+        //     ajax: {
+        //         url: "{{ route('business_type.index') }}"
+        //     },
+        //     columns: [
+        //         {
+        //             data: 'Name',
+        //             name: 'Name'
+        //         },
+        //         {
+        //             data: 'Description',
+        //             name: 'Description',
+        //         },
+        //         {
+        //             data: 'action',
+        //             name: 'action',
+        //             orderable: false
+        //         }
+        //     ],
+        //     columnDefs: [
+        //         {
+        //             targets: 1, // Target the Description column
+        //             render: function(data, type, row) {
+        //                 return '<div style="white-space: break-spaces; width: 100%;">' + data + '</div>';
+        //             }
+        //         }
+        //     ]
+        // });
 
         $('#add_business_type').click(function(){
-            $('#formBusinessType').modal('show');
-            $('.modal-title').text("Add New Business Type");
+            $("[name='Name']").val(null)
+            $("[name='Description']").val(null)
+            $('#form_result').html(null);
         });
 
         $('#form_business_type').on('submit', function(event){
             event.preventDefault();
-            if($('#action').val() == 'Save')
-            {
-                $.ajax({
-                    url: "{{ route('business_type.store') }}",
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success: function(data)
-                    {
-                        var html = '';
-                        if(data.errors)
-                        {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
-                        }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_business_type')[0].reset();
-                            setTimeout(function(){
-                                $('#formBusinessType').modal('hide');
-                            }, 2000);
-                            $('#company_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
-                        $('#form_result').html(html);
-                    }
-                })
-            }
 
-            if($('#action').val() == 'Edit')
-            {
-                var formData = new FormData(this);
-                formData.append('id', $('#hidden_id').val());
-                $.ajax({
-                    url: "{{ route('update_business_type', ':id') }}".replace(':id', $('#hidden_id').val()),
-                    method: "POST",
-                    data: new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    dataType: "json",
-                    success:function(data)
+            var formData = $(this).serializeArray()
+
+            $.ajax({
+                url: "{{ route('business_type.store') }}",
+                method: "POST",
+                data: formData,
+                success: function(data)
+                {
+                    var html = '';
+                    if(data.errors)
                     {
-                        var html = '';
-                        if(data.errors)
+                        html = '<div class="alert alert-danger">';
+                        for(var count = 0; count < data.errors.length; count++)
                         {
-                            html = '<div class="alert alert-danger">';
-                            for(var count = 0; count < data.errors.length; count++)
-                            {
-                                html += '<p>' + data.errors[count] + '</p>';
-                            }
-                            html += '</div>';
+                            html += '<p>' + data.errors[count] + '</p>';
                         }
-                        if(data.success)
-                        {
-                            html = '<div class="alert alert-success">' + data.success + '</div>';
-                            $('#form_business_type')[0].reset();
-                            setTimeout(function(){
-                                $('#formBusinessType').modal('hide');
-                            }, 2000);
-                            $('#business_type_table').DataTable().ajax.reload();
-                            setTimeout(function(){
-                                $('#form_result').empty(); 
-                            }, 2000); 
-                        }
+                        html += '</div>';
+
                         $('#form_result').html(html);
                     }
-                });
-            }
+
+                    if(data.success)
+                    {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Successfully Saved"
+                        }).then(() => {
+                            location.reload()
+                        })   
+                    }
+                }
+            })
         });
 
-        $(document).on('click', '.edit', function(){
-            var id = $(this).attr('id');
-            $('#form_result').html('');
+        $('.editBtn').on('click', function(){
+            var id = $(this).data('id');
+            $('#update_form_result').html(null);
+
             $.ajax({
-                url: "{{ route('edit_business_type', ['id' => '_id_']) }}".replace('_id_', id),
+                type: "GET",
+                url: "{{url('edit_business_type')}}/" + id,
                 dataType: "json",
+
                 success: function(html){
-                    $('#Name').val(html.data.Name);
-                    $('#Description').val(html.data.Description);
-                    $('#hidden_id').val(html.data.id);
-                    $('.modal-title').text("Edit Business Type");
-                    $('#action_button').val("Update");
-                    $('#action').val("Edit");
-                    $('#formBusinessType').modal('show');
+                    $('[name="Name"]').val(html.data.Name);
+                    $('[name="Description"]').val(html.data.Description);
                 }
             });
         });
 
-        var business_type_id;
-        $(document).on('click', '.delete', function(){
-            business_type_id = $(this).attr('id');
-            $('#confirmModal').modal('show');
-            $('.modal-title').text("Delete Business Type");
-        }); 
+        $('.update_form').on('submit', function(event){
+            event.preventDefault();
 
-        $('#yes_button').click(function(){
+            var formData = $(this).serializeArray()
+            var action = $(this).attr('action')
+
             $.ajax({
-                url: "{{ url('delete_business_type') }}/" + business_type_id, 
-                method: "GET",
-                beforeSend:function(){
-                    $('#yes_button').text('Deleting...');
-                },
+                url: action,
+                method: "POST",
+                data: formData,
                 success:function(data)
                 {
-                    setTimeout(function(){
-                        $('#confirmModal').modal('hide');
-                        $('#business_type_table').DataTable().ajax.reload();
-                    }, 2000);
+                    var html = '';
+                    if(data.errors)
+                    {
+                        html = '<div class="alert alert-danger">';
+                        for(var count = 0; count < data.errors.length; count++)
+                        {
+                            html += '<p>' + data.errors[count] + '</p>';
+                        }
+                        html += '</div>';
+                        $('.update_form_result').html(html);
+                    }
+
+                    if(data.success)
+                    {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Successfully Updated"
+                        }).then(() => {
+                            location.reload()
+                        }) 
+                    }
                 }
-            })
+            });
+        });
+
+        $(".deleteBtn").on('click', function() {
+            var form = $(this).closest('form')
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes! Delete it"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('[name="entries"]').on('change', function() {
+            $(this).closest('form').submit()
+        })
+
+        $('#copyBtn').click(function() {
+            $.ajax({
+                url: "{{ route('business_type.index') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
+
+                    $('#business_type_table thead tr').each(function(rowIndex, tr) {
+                        $(tr).find('th').each(function(cellIndex, th) {
+                            if($(th).text().trim() !== "Action")
+                            {
+                                tableData += $(th).text().trim() + '\t';
+                            }
+                        });
+                        tableData += '\n';
+                    });
+
+                    $(data).each(function(index, item) {
+                        tableData += item.Name + '\t' + item.Description + '\n';
+                    });
+
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
         });
     });
 </script>
