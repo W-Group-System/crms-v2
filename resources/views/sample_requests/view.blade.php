@@ -77,9 +77,14 @@
                         Print
                     </button>
                     @endif --}}
+                    <a target='_blank' href="{{ url('print_srf', $sampleRequest->Id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print</a>
+                    {{-- <button type="button" class="btn btn-danger btn-icon-text" >
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        Print
+                    </button> --}}
 
                     @if(authCheckIfItsRndStaff(auth()->user()->role))
-                        @if(rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->id))
+                        @if(rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->id) || rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->user_id))
                             @if($sampleRequest->Progress == 35)
                             <button type="button" class="btn btn-md btn-success startSrf"  data-id="{{ $sampleRequest->Id }}">
                                  <i class="ti-control-play">&nbsp;</i>Start
@@ -192,7 +197,11 @@
                             </button>
                             @endif
                         @endif
-                        @if(checkIfItsApprover(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, "SRF") == "yes" && $sampleRequest->Progress == 10)
+                        @if(
+                            (checkIfItsApprover(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, "SRF") == "yes" || 
+                            checkIfItsApprover(auth()->user()->user_id, $sampleRequest->PrimarySalesPersonId, "SRF") == "yes") && 
+                            $sampleRequest->Progress == 10
+                        )
                             <button type="button" class="btn btn-md btn-success"
                                 data-target="#approveSrf{{ $sampleRequest->Id }}" 
                                 data-toggle="modal" 
@@ -585,6 +594,9 @@
                     <a class="nav-link" id="raw-materials-tab" data-toggle="tab" href="#raw_materials" role="tab" aria-controls="rawMaterials" aria-selected="false">Raw Materials</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" id="transaction-remarks" data-toggle="tab" href="#transactionRemarks" role="tab" aria-controls="transactionRemarks" aria-selected="false">Transaction Remarks</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History</a>
                 </li>
             </ul>
@@ -829,6 +841,35 @@
                         </table>
                     </div>
                 </div>
+                <div class="tab-pane fade" id="transactionRemarks" role="tabpanel" aria-labelledby="transaction-remarks">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-detailed" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Action</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($sampleRequest->srfTransactionApprovals as $transactionRemarks)
+                                    <tr>
+                                        <td>{{ $transactionRemarks->CreatedDate }}</td>
+                                        <td> 
+                                            @if($transactionRemarks->userByUserId)
+                                            {{$transactionRemarks->userByUserId->full_name}}
+                                        @elseif($transactionRemarks->userById)
+                                            {{$transactionRemarks->userById->full_name}}
+                                        @endif</td>
+                                        <td>{{ $transactionRemarks->RemarksType }}</td>
+                                        <td>{{ $transactionRemarks->Remarks }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover table-detailed" style="width:100%;">
@@ -840,7 +881,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($combinedLogs as $combinedLog)
+                                @foreach ($orderedCombinedLogs as $combinedLog)
                                     <tr>
                                         <td>{{ $combinedLog->CreatedDate }}</td>
                                         <td>{{ $combinedLog->full_name }}</td>
