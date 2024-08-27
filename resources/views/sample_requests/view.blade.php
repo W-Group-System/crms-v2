@@ -68,34 +68,238 @@
                         <i class="ti-control-play"><br>Start</i>
                     </button>
                     @endif --}}
-                    <button type="button" class="btn btn-md btn-success"
-                        data-target="#approveSrf{{ $sampleRequest->Id }}" 
-                        data-toggle="modal" 
-                        title='Approve SRF'>
-                        <i class="ti-check">&nbsp;Approve</i>
+
+                    {{-- SRF Process  --}}
+
+                    {{-- @if(authCheckIfItsSales(auth()->user()->department_id))
+                    <button type="button" class="btn btn-danger btn-icon-text" >
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        Print
                     </button>
-                    <button type="button" class="btn btn-md btn-success receiveSrf" data-id="{{ $sampleRequest->Id }}" 
-                        {{-- data-target="#receiveSrf{{ $sampleRequest->Id }}" 
-                        data-toggle="modal"  --}}
-                        title='Receive SRF'>
-                    <i class="ti-check">&nbsp;Receive</i>
-                    </button>
-                    <button type="button" class="btn btn-md btn-warning startSrf"  data-id="{{ $sampleRequest->Id }}" 
+                    @endif --}}
+
+                    @if(authCheckIfItsRndStaff(auth()->user()->role))
+                        @if(rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->id))
+                            @if($sampleRequest->Progress == 35)
+                            <button type="button" class="btn btn-md btn-success startSrf"  data-id="{{ $sampleRequest->Id }}">
+                                 <i class="ti-control-play">&nbsp;</i>Start
+                             </button>
+                            @endif
+                        @endif
+
+                        @if($sampleRequest->Progress == 50)
+                        <button type="button" class="btn btn-md btn-success"
+                            data-target="#pauseSrf{{ $sampleRequest->Id }}" 
+                            data-toggle="modal" 
+                            title='Pause SRF'>
+                            <i class="ti-control-pause">&nbsp;</i>Pause
+                        </button>
+                        @endif
+
+                        @if($sampleRequest->Progress == 55)
+                            <button type="button" class="btn btn-md btn-success startSrf"  data-id="{{ $sampleRequest->Id }}">
+                                <i class="ti-control-play">&nbsp;</i>Continue
+                            </button>
+                        @endif
+                    @endif
+
+                    @if(rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->id))
+                        @if($sampleRequest->Progress == 50)
+                            <button type="button" class="btn btn-md btn-warning submitSrf"  data-id="{{ $sampleRequest->Id }}">
+                                <i class="ti-check">&nbsp;</i>Submit
+                            </button>
+                        @endif
+                    @endif
+
+                    @if(auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId)
+                            @if(auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'LS')
+                            <button type="button" class="btn btn-warning"
+                                data-target="#salesEdit{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                title='Update SRF'>
+                                <i class="ti ti-pencil">&nbsp;</i>Update
+                            </button>
+                            @endif
+                        {{-- @endif --}}
+
+                        @if($sampleRequest->Progress == 70 && $sampleRequest->Status == 10)
+                            <button type="button" class="btn btn-info returnToRnd" data-id="{{ $sampleRequest->Id }}">
+                                <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                            </button>
+                        @endif
+
+                        @if(checkRolesIfHaveApprove('Sample Request', auth()->user()->department_id, auth()->user()->role_id) == "yes")
+                            <button type="button" class="btn btn-md btn-success"
+                                data-target="#approveSrf{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                title='Approve SRF'>
+                                <i class="ti ti-check-box">&nbsp;</i>Approve
+                            </button>
+                        @endif
+
+                        @if($sampleRequest->Progress == 60)
+                            <button type="button" class="btn btn-info returnToRnd" data-id="{{ $sampleRequest->Id }}">
+                                <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                            </button>
+
+                            <button type="button" class="btn btn-info salesAccepted" data-id="{{ $sampleRequest->Id }}">
+                                <i class="ti ti-check-box"></i>&nbsp;Accept
+                            </button>
+                        @endif
+                        
+                        @if($sampleRequest->Status == 30)
+                            <button type="button" class="btn btn-success openStatus" data-id="{{ $sampleRequest->Id }}">
+                                <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                            </button>
+                        @endif
+                        
+                        @if($sampleRequest->Status == 10)
+                            <button type="button" class="btn btn-primary"
+                                data-target="#closeSrf{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                title='Close SRF'>
+                                <i class="ti ti-close">&nbsp;</i>Close
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                data-target="#cancelSrf{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                title='Cancel SRF'>
+                                <i class="mdi mdi-cancel">&nbsp;</i>Cancel
+                            </button>
+                        @endif
+
+
+
+
+
+
+                    @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
+                        @if(authCheckIfItsRnd(auth()->user()->department_id))
+                             @if($sampleRequest->Progress != 10 && $sampleRequest->Progress != 20 && $sampleRequest->Progress != 60)
+                                <button type="button" class="btn btn-info returnToSales"  data-id="{{ $sampleRequest->Id }}" >
+                                    <i class="ti-control-left">&nbsp;</i>Return To Sales
+                                </button>
+                            @endif
+                        @endif
+
+                        @if(authCheckIfItsSales(auth()->user()->department_id))
+                            @if($sampleRequest->Status == 10)
+                            <button type="button" class="btn btn-warning"
+                                data-target="#salesEdit{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                title='Update SRF'>
+                                <i class="ti ti-pencil">&nbsp;</i>Update
+                            </button>
+                            @endif
+                        @endif
+                        @if(checkIfItsApprover(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, "SRF") == "yes" && $sampleRequest->Progress == 10)
+                            <button type="button" class="btn btn-md btn-success"
+                                data-target="#approveSrf{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                title='Approve SRF'>
+                                <i class="ti ti-check-box">&nbsp;</i>Approve
+                            </button>
+                        @endif
+                        
+                        @if(authCheckIfItsSales(auth()->user()->department_id))
+
+                            @if(($sampleRequest->Progress == 60 || $sampleRequest->Progress == 70) && $sampleRequest->Status == 10)
+                                <button type="button" class="btn btn-info returnToRnd" data-id="{{ $sampleRequest->Id }}">
+                                    <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                </button>
+                            @endif 
+
+                            @if($sampleRequest->Progress == 60)
+                                <button type="button" class="btn btn-info salesAccepted" data-id="{{ $sampleRequest->Id }}">
+                                    <i class="ti ti-check-box"></i>&nbsp;Accept
+                                </button>
+                            @endif
+
+                            @if($sampleRequest->Status == 30)
+                                <button type="button" class="btn btn-success openStatus" data-id="{{ $sampleRequest->Id }}">
+                                    <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                                </button>
+                            @endif
+
+                            @if($sampleRequest->Status == 10)
+                                <button type="button" class="btn btn-primary"
+                                    data-target="#closeSrf{{ $sampleRequest->Id }}" 
+                                    data-toggle="modal" 
+                                    title='Close SRF'>
+                                    <i class="ti ti-close">&nbsp;</i>Close
+                                </button>
+                                <button type="button" class="btn btn-danger"
+                                    data-target="#cancelSrf{{ $sampleRequest->Id }}" 
+                                    data-toggle="modal" 
+                                    title='Cancel SRF'>
+                                    <i class="mdi mdi-cancel">&nbsp;</i>Cancel
+                                </button>
+                            @endif
+                        @else
+                            @if($sampleRequest->Progress == 55 || $sampleRequest->Progress == 57 || $sampleRequest->Progress == 81)
+                                {{-- <button type="button" class="btn btn-danger returnBtn">
+                                    <i class="ti-back-left">&nbsp;</i> Return To Specialist
+                                </button> --}}
+                                <button type="button" class="btn btn-info returnToRnd" data-id="{{ $sampleRequest->Id }}">
+                                    <i class="ti ti-check-box"></i>&nbsp;Return to Specialist
+                                </button>
+                                {{-- <button type="button" class="btn btn-md btn-success startSrf"  data-id="{{ $sampleRequest->Id }}">
+                                    <i class="ti-control-play">&nbsp;</i>Start
+                                </button> --}}
+                            @endif
+
+                            @if($sampleRequest->Progress == 30)
+                            <button type="button" class="btn btn-md btn-success receiveSrf" data-id="{{ $sampleRequest->Id }}"  
+                                 title='Receive SRF'>
+                            <i class="ti-bookmark">&nbsp;</i>Receive
+                            </button>
+                            @endif
+
+                            @if($sampleRequest->Progress == 35)
+                                <button type="button" class="btn btn-md btn-success startSrf"  data-id="{{ $sampleRequest->Id }}">
+                                    <i class="ti-control-play">&nbsp;</i>Start
+                                </button>
+                            @endif
+
+                            @if($sampleRequest->Progress == 50)
+                                <button type="button" class="btn btn-md btn-warning"
+                                data-target="#pauseSrf{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                title='Pause SRF'>
+                                <i class="ti-control-pause">&nbsp;</i>Pause
+                            </button>
+                            @endif
+
+                            @if($sampleRequest->Progress == 55)
+                                <button type="button" class="btn btn-md btn-success startSrf"  data-id="{{ $sampleRequest->Id }}">
+                                    <i class="ti-control-play">&nbsp;</i>Continue
+                                </button>
+                            @endif
+
+                            @if($sampleRequest->Progress == 57 )
+                                <button type="button" class="btn btn-md btn-success completeSrf"  data-id="{{ $sampleRequest->Id }}">
+                                    <i class="ti-pencil-alt">&nbsp;</i>Completed
+                                </button>
+                            @endif
+
+                        @endif
+                    @endif
+                    
+                    {{-- <button type="button" class="btn btn-md btn-warning startSrf"  data-id="{{ $sampleRequest->Id }}" 
                        >
                         <i class="ti-control-play">&nbsp;Start</i>
                     </button>
-                    <button type="button" class="btn btn-md btn-warning"
-                        data-target="#pauseSrf{{ $sampleRequest->Id }}" 
-                        data-toggle="modal" 
-                        title='Pause SRF'>
-                        <i class="ti-control-pause">&nbsp;Pause</i>
-                    </button>
+                    
                     <button type="button" class="btn btn-sm btn-warning"
                         data-target="#rndUpdate{{ $sampleRequest->Id }}" 
                         data-toggle="modal" 
                         title='RND Update'>
-                        <i class="ti-control-play"><br>RND Update</i>
+                        <i class="ti-control-play">&nbsp;</i>RND Update
                     </button>
+                    
+                    
+                    
+                     --}}
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
@@ -153,18 +357,22 @@
                 <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->secondarySalesPerson)->full_name}}</p>
             </div>
             <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Date Started :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->DateStarted }}</p>
+                <p class="col-sm-2 col-form-label"><b>Date Required :</b></p>
+                <p class="col-sm-3 col-form-label">{{ $sampleRequest->DateRequired }}</p>
+                <p class="offset-sm-2 col-sm-2 col-form-label"><b></b></p>
+                <p class="col-sm-3 col-form-label"></p>
             </div>
             <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"></p>
+                <p class="col-sm-2 col-form-label"><b>Date Started :</b></p>
+                <p class="col-sm-3 col-form-label">{{ $sampleRequest->DateStarted }}</p>
                 <p class="offset-sm-2 col-sm-2 col-form-label"><b>Status:</b></p>
                 <p class="col-sm-3 col-form-label">
                     @if($sampleRequest->Status == 10)
-                    Open
+                        Open
                     @elseif($sampleRequest->Status == 30)
                         Closed
+                    @elseif($sampleRequest->Status == 50)
+                        Cancelled
                     @else
                         {{ $sampleRequest->Status }}
                     @endif</p>
@@ -176,10 +384,14 @@
                 <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->progressStatus)->name  }}</p>
             </div>
             <div class="form-group row">
+                <p class="col-sm-2 col-form-label"></p>
+                <p class="col-sm-3 col-form-label"></p>
+            </div>
+            <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>REF CODE</b></p>
                 <p class="col-sm-3 col-form-label">
                     @if($sampleRequest->RefCode == 1)
-                    RND
+                        RND
                     @elseif($sampleRequest->RefCode == 2)
                         QCD
                     @else
@@ -226,7 +438,7 @@
                     <div class="form-group row">
                         <p class="col-sm-2 col-form-label"><b>Product Type:</b></p>
                         <p class="col-sm-3 col-form-label">
-                            @if($requestProducts->SrfType == 1)
+                            @if($requestProducts->ProductType == 1)
                                 Pure
                             @elseif($requestProducts->ProductType == 2)
                                 Blend
@@ -286,7 +498,13 @@
                     </div>
                     <div class="form-group row">
                         <p class="col-sm-2 col-form-label"><b>Quantity:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->Quantity }}</p>
+                        <p class="col-sm-3 col-form-label">{{ $requestProducts->Quantity }} 
+                            @if ( $requestProducts->UnitOfMeasureId == 1)
+                            g
+                            @elseif ($requestProducts->UnitOfMeasureId == 2)
+                            kg
+                            @endif
+                           </p>
                     </div>
                     <div class="form-group row">
                         <p class="col-sm-2 col-form-label"><b>Label:</b></p>
@@ -299,7 +517,17 @@
                     </div>
                     <div class="form-group row">
                         <p class="col-sm-2 col-form-label"><b>Disposition:</b></p>
-                        <p class="col-sm-3 col-form-label"></p>
+                        <p class="col-sm-3 col-form-label">
+                            @if ($requestProducts->Disposition == '1')
+                                No Feedback
+                            @elseif ($requestProducts->Disposition == '10')
+                                Accepted
+                            @elseif ($requestProducts->Disposition == '20')
+                                Rejected
+                            @else
+                                {{ $requestProducts->Disposition }}
+                            @endif
+                        </p>
                         <p class="offset-sm-2 col-sm-2 col-form-label"><b>Disposition Remarks</b></p>
                         <p class="col-sm-3 col-form-label">{{ $requestProducts->DispositionRejectionDescription}}</p>
                     </div>
@@ -310,12 +538,16 @@
                 <span class="header-label"><b>Dispatch Details</b></span>
                 <hr class="form-divider">
             </div>
+            <div class="form-header">
+                <span class="header-label"><b>Approver Remarks</b></span>
+                <hr class="form-divider">
+            </div>
             <div class="group-form">
             <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>Courier:</b></p>
                 <p class="col-sm-3 col-form-label">{{ $sampleRequest->Courier  }}</p>
                 <p class="offset-sm-2 col-sm-2 col-form-label"><b>Late:</b></p>
-                <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->ContactName}}</p>
+                <p class="col-sm-3 col-form-label"></p>
             </div>
              <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>AWB Number:</b></p>
@@ -359,9 +591,19 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="supplementary" role="tabpanel" aria-labelledby="supplementary-tab">
                     <div class="d-flex">
-                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Supplementary Details" data-toggle="modal" data-target="#addSrfSuplementary">
-                            <i class="ti-plus"></i>
-                        </button>
+                        @if(!checkIfItsSalesDept(auth()->user()->department_id))
+                            @if($sampleRequest->Progress != 60)
+                            <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Supplementary Details" data-toggle="modal" data-target="#addSrfSuplementary">
+                                <i class="ti-plus"></i>
+                            </button>
+                            @endif
+                        @elseif (checkIfItsSalesDept(auth()->user()->department_id))
+                            @if($sampleRequest->Progress != 60 && $sampleRequest->Progress != 10)
+                            <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Supplementary Details" data-toggle="modal" data-target="#addSrfSuplementary">
+                                <i class="ti-plus"></i>
+                            </button>
+                            @endif
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover table-detailed" id="supplementary_table" style="width: 100%">
@@ -377,6 +619,8 @@
                                 @foreach ($SrfSupplementary as $supplementary)
                                     <tr>
                                         <td align="center">
+                                        @if(!checkIfItsSalesDept(auth()->user()->department_id))
+                                        @if($sampleRequest->Progress != 60)
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
                                                 data-target="#editSrfSupplementary{{ $supplementary->id }}" data-toggle="modal" title='Edit Supplementary'>
                                                 <i class="ti-pencil"></i>
@@ -384,6 +628,18 @@
                                             <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $supplementary->id }}, 'supplementary')" title='Delete Supplementary'>
                                                 <i class="ti-trash"></i>
                                             </button> 
+                                        @endif
+                                    @elseif(checkIfItsSalesDept(auth()->user()->department_id))
+                                        @if($sampleRequest->Progress != 60 && $sampleRequest->Progress != 10)
+                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                data-target="#editSrfSupplementary{{ $supplementary->id }}" data-toggle="modal" title='Edit Supplementary'>
+                                                <i class="ti-pencil"></i>
+                                            </button>   
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $supplementary->id }}, 'supplementary')" title='Delete Supplementary'>
+                                                <i class="ti-trash"></i>
+                                            </button> 
+                                        @endif
+                                    @endif
                                         </td>
                                         <td>{{ $supplementary->DateCreated }}</td>
                                         <td>{{ optional($supplementary->userSupplementary)->full_name }}</td>
@@ -396,9 +652,13 @@
                 </div>
                 <div class="tab-pane fade" id="srfPersonnel" role="tabpanel" aria-labelledby="srfPersonnel-tab">
                     <div class="d-flex">
+                        @if(!checkIfItsSalesDept(auth()->user()->department_id))
+                        @if($sampleRequest->Progress != 55 && $sampleRequest->Progress != 57 && $sampleRequest->Progress != 60 && $sampleRequest->Progress != 81 && rndManager(auth()->user()->role))
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Assign R&D"  data-toggle="modal" data-target="#addSrfPersonnel">
                             <i class="ti-plus"></i>
                         </button>
+                        @endif
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover table-detailed" id="personnel_table" style="width: 100%">
@@ -412,6 +672,7 @@
                                 @foreach ($assignedPersonnel as $Personnel)
                                     <tr>
                                         <td align="center">
+                                            @if(rndManager(auth()->user()->role) && $sampleRequest->Progress != 57 && $sampleRequest->Progress != 60 && $sampleRequest->Progress != 81)
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
                                                 data-target="#editSrfPersonnel{{ $Personnel->Id }}" data-toggle="modal" title='Edit Personnel'>
                                                 <i class="ti-pencil"></i>
@@ -419,6 +680,7 @@
                                             <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $Personnel->Id }}, 'personnel')" title='Delete Personnel'>
                                                 <i class="ti-trash"></i>
                                             </button> 
+                                            @endif
                                         </td>
                                         <td>{{ optional($Personnel->assignedPersonnel)->full_name }}</td>
                                     </tr>
@@ -429,9 +691,11 @@
                 </div>
                 <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
                     <div class="d-flex">
+                        @if(checkIfItsSalesDept(auth()->user()->department_id))
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Create Activity"  data-toggle="modal" data-target="#createSrfActivity">
                             <i class="ti-plus"></i>
                         </button>
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <div class="filter">
@@ -449,31 +713,35 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($activities as $activity)
-                                    <tr>
+                                @foreach ($activities as $a)
+                                    <tr  data-status="{{ $a->Status }}">
                                         <td>
+                                            @if(checkIfItsSalesDept(auth()->user()->department_id))
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                                data-target="#editSrfActivity{{ $activity->id }}" data-toggle="modal" title='Edit Activity'>
+                                                data-target="#editSrfActivity{{ $a->id }}" data-toggle="modal" title='Edit Activity'>
                                                 <i class="ti-pencil"></i>
                                             </button>   
-                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $activity->id }}, 'activity')" title='Delete Activity'>
+                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $a->id }}, 'activity')" title='Delete Activity'>
                                                 <i class="ti-trash"></i>
                                             </button> 
+                                            @endif
                                             </td>
-                                        <td>{{ optional($activity)->ActivityNumber }}</td>
+                                        <td> <a href="{{url('view_activity/'.$a->id)}}" target="_blank">
+                                            {{$a->ActivityNumber}}
+                                        </a></td>
                                         <td>
-                                            {{ optional($activity)->ScheduleFrom ? optional($activity)->ScheduleFrom : '' }}
+                                            {{ optional($a)->ScheduleFrom ? optional($a)->ScheduleFrom : '' }}
                                             -
-                                            {{ optional($activity)->ScheduleTo ? optional($activity)->ScheduleTo : '' }}
+                                            {{ optional($a)->ScheduleTo ? optional($a)->ScheduleTo : '' }}
                                         </td>
-                                        <td>{{ optional($activity)->Title  }}</td>
+                                        <td>{{ optional($a)->Title  }}</td>
                                         <td>
-                                            @if($activity->Status == 10)
+                                            @if($a->Status == 10)
                                             Open
-                                            @elseif($activity->Status == 20)
+                                            @elseif($a->Status == 20)
                                             Closed
                                             @else
-                                            {{ $activity->Status }}
+                                            {{ $a->Status }}
                                             @endif</td>
                                     </tr>
                                 @endforeach
@@ -483,9 +751,11 @@
                 </div>
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
+                        @if(checkIfHaveFiles(auth()->user()->role) == "yes")
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Upload File"  data-toggle="modal" data-target="#uploadFile">
                             <i class="ti-plus"></i>
                         </button>
+                        @endif
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover table-detailed" id="files_table" style="width: 100%">
@@ -500,6 +770,7 @@
                                 @foreach ($srfFileUploads as $fileupload)
                                     <tr>
                                         <td align="center">
+                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes")
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
                                                 data-target="#editSrfFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
                                                 <i class="ti-pencil"></i>
@@ -507,6 +778,7 @@
                                             <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $fileupload->Id }}, 'fileupload')" title='Delete fileupload'>
                                                 <i class="ti-trash"></i>
                                             </button> 
+                                            @endif
                                         </td>
                                         <td>{{ $fileupload->Name }}</td>
                                         <td>
@@ -720,6 +992,222 @@
             });
         });
 
+        $(".returnToSales").on('click', function() {
+            var srfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to return this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('ReturnToSales') }}/" + srfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        $(".returnToRnd").on('click', function() {
+            var srfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to return this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('ReturnToRnd') }}/" + srfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        $(".salesAccepted").on('click', function() {
+            var srfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to accept this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('AcceptSrf') }}/" + srfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        $(".submitSrf").on('click', function() {
+            var srfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to submit this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('SubmitSrf') }}/" + srfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        
+        $(".completeSrf").on('click', function() {
+            var srfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to submit this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('CompleteSrf') }}/" + srfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        $(".openStatus").on('click', function() {
+            var srfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to open this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('OpenStatus') }}/" + srfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
     $(document).ready(function() {
         new DataTable('.table-detailed', {
             pageLength: 10,
@@ -735,19 +1223,80 @@
             order: []
         });
     });
+    document.addEventListener('DOMContentLoaded', function () {
+    @if(session('error'))
+        var isManager = @json(auth()->user()->role->description == 'International Sales - Supervisor' || auth()->user()->role->description == 'Local Sales - Supervisor');
+        var errorMessage = @json(session('error'));
+        var formType = @json(session('formType')); 
+
+        if (isManager) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: errorMessage,
+                showCancelButton: true,
+                confirmButtonText: 'Proceed',
+                cancelButtonText: 'Cancel',
+                input: 'textarea',
+                inputPlaceholder: 'Enter remarks...',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to write something!';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var remarks = result.value;
+                    var form;
+
+                    if (formType === 'create') {
+                        form = document.getElementById('create_srf_form');
+                    } else if (formType === 'update') {
+                        var srfId = @json(session('srfId'));
+                        form = document.getElementById('edit_sample_request' + srfId);
+                    }
+
+                    if (form) {
+                        var input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'quantity_remarks';
+                        input.value = remarks;
+                        form.appendChild(input);
+                        form.submit();
+                    }
+                }
+            });
+        } else {
+            $('#formSampleRequest').modal('show');
+            var $errorMessage = $('#formSampleRequest .error-message');
+            $errorMessage.text(errorMessage).show();
+        }
+    @elseif(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: "{{ session('success') }}",
+            confirmButtonText: 'OK'
+        });
+    @endif
+});
     </script>
 @include('sample_requests.create_supplementary')
 @include('sample_requests.assign_personnel')
 @include('sample_requests.upload_srf_file')
 @include('sample_requests.create_raw_materials')
 @include('sample_requests.create_activity')
-@foreach ($sampleRequest as $srf)
-    @include('sample_requests.srf_approval')
-    {{-- @include('sample_requests.srf_receive') --}}
-    @include('sample_requests.srf_start')
-    @include('sample_requests.srf_pause')
-    @include('sample_requests.rnd_update')
-@endforeach
+
+@include('sample_requests.srf_start')
+@include('sample_requests.srf_pause')
+@include('sample_requests.rnd_update')
+@include('sample_requests.srf_approval')
+@include('sample_requests.cancel_srf')
+@include('sample_requests.close_srf')
+@include('sample_requests.edit_sales')
+{{-- @include('sample_requests.srf_receive') --}}
+
+
 @foreach ($SrfSupplementary as $supplementary)
 @include('sample_requests.edit_supplementary')
 @endforeach

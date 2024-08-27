@@ -1,28 +1,45 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Exports\IndustryExport;
 use App\Industry;
 use Validator;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class IndustryController extends Controller
 {
     // List
-    public function index()
+    public function index(Request $request)
     {   
-        if(request()->ajax())
+        $fetchAll = $request->input('fetch_all', false);
+
+        $industry = Industry::when($request->search, function($query)use($request) {
+              $query->where('Name', 'LIKE', '%'.$request->search.'%')->orWhere('Description', 'LIKE', '%'.$request->search.'%');
+            })
+            ->latest();
+
+        if($fetchAll)
         {
-            return datatables()->of(Industry::latest()->get())
-                    ->addColumn('action', function($data){
-                        $buttons = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary">Edit</button>';
-                        $buttons .= '&nbsp;&nbsp;';
-                        $buttons .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger">Delete</button>';
-                        return $buttons;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+            $industry = $industry->get();
+            return response()->json($industry);
         }
-        return view('industries.index'); 
+        else
+        {
+            $industry = $industry->paginate($request->entries ?? 10);
+
+            return view('industries.index',
+                array(
+                    'industry' => $industry,
+                    'entries' => $request->entries,
+                    'search' => $request->search
+                )
+            ); 
+
+        }
+
     }
 
     // Store
@@ -54,11 +71,8 @@ class IndustryController extends Controller
     // Edit
     public function edit($id)
     {
-        if(request()->ajax())
-        {
-            $data = Industry::findOrFail($id);
-            return response()->json(['data' => $data]);
-        }
+        $data = Industry::findOrFail($id);
+        return response()->json(['data' => $data]);
     }
 
     // Update
@@ -91,5 +105,13 @@ class IndustryController extends Controller
     {
         $data = Industry::findOrFail($id);
         $data->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
+    }
+
+    public function export()
+    {
+        return Excel::download(new IndustryExport, 'Industry.xlsx');
     }
 }

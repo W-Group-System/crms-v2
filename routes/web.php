@@ -236,6 +236,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/new_sample_request', 'SampleRequestController@store')->name('sample_request.store');
         Route::get('samplerequest/view/{id}', 'SampleRequestController@view');
         Route::post('sample_request/edit/{id}', 'SampleRequestController@update');
+        Route::delete('samplerequest/view/supp-delete/{id}', 'SampleRequestController@deleteSrfDetails');
 
         // Route::get('samplerequest/edit/{id}', 'SampleRequestController@edit');
         Route::post('addSrfSupplementary', 'SampleRequestController@addSupplementary');
@@ -261,6 +262,15 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('StartSrf/{id}', 'SampleRequestController@StartSrf');
         Route::post('PauseSrf/{id}', 'SampleRequestController@PauseSrf');
         Route::post('RndUpdate/{id}', 'SampleRequestController@RndUpdate');
+        Route::post('CancelRemarks/{id}', 'SampleRequestController@CancelRemarks');
+        Route::post('CloseRemarks/{id}', 'SampleRequestController@CloseRemarks');
+        Route::post('ReturnToSales/{id}', 'SampleRequestController@ReturnToSales');
+        Route::post('ReturnToRnd/{id}', 'SampleRequestController@ReturnToRnd');
+        Route::post('ReturnToSpecialist/{id}', 'SampleRequestController@ReturnToSpecialist');
+        Route::post('SubmitSrf/{id}', 'SampleRequestController@SubmitSrf');
+        Route::post('AcceptSrf/{id}', 'SampleRequestController@AcceptSrf');
+        Route::post('OpenStatus/{id}', 'SampleRequestController@OpenStatus');
+        Route::post('CompleteSrf/{id}', 'SampleRequestController@CompleteSrf');
         
         Route::get('sample_contacts-by-client-f/{clientId}', [SampleRequestController::class, 'getSampleContactsByClientF']);
         Route::get('sample_get-last-increment-f/{year}/{clientCode}', [SampleRequestController::class, 'getSampleLastIncrementF']);
@@ -281,7 +291,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
 
         // Price Monitoring Local Sales
-        Route::get('/price_monitoring_ls', 'PriceMonitoringController@indexLocal')->name('price_monitoring.index');
+        Route::get('/price_monitoring_ls', 'PriceMonitoringController@index')->name('price_monitoring.index');
         Route::get('client-contact/{clientId}', 'PriceMonitoringController@getPrfContacts');
         Route::get('/getGaeCost/{id}', 'PriceMonitoringController@getGaeDetails');
         Route::get('product-rmc/{id}', 'PriceMonitoringController@getProductRmc');
@@ -294,7 +304,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('prf_new_activity', 'PriceMonitoringController@PrfActivityStore'); 
         Route::post('prf_edit_activity/{id}', 'PriceMonitoringController@PrfActivityUpdate');
         Route::delete('price_monitorings/view/activity-delete/{id}', 'PriceMonitoringController@deleteActivity');
-        
+
+        Route::post('ApprovePrf/{id}', 'PriceMonitoringController@ApprovePrf');
+        Route::post('ReopenPrf/{id}', 'PriceMonitoringController@ReopenPrf');        
 
         // Customer Complaint 
         Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');
@@ -446,6 +458,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/edit_business_type/{id}', 'BusinessTypeController@edit')->name('edit_business_type');
         Route::post('/update_business_type/{id}', 'BusinessTypeController@update')->name('update_business_type');
         Route::get('delete_business_type/{id}', 'BusinessTypeController@delete')->name('delete_business_type');
+        Route::get('export_business_type', 'BusinessTypeController@export');
 
         // Industry
         Route::get('/industry', 'IndustryController@index')->name('industry.index');
@@ -453,6 +466,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/edit_industry/{id}', 'IndustryController@edit')->name('edit_industry');
         Route::post('/update_industry/{id}', 'IndustryController@update')->name('update_industry');
         Route::get('delete_industry/{id}', 'IndustryController@delete')->name('delete_industry');
+        Route::get('export_industry', 'IndustryController@export');
 
         // Price Currencies
         Route::get('/price_currency', 'PriceCurrencyController@index')->name('price_currency.index');
@@ -490,6 +504,5 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/export_price_request', 'ReportsController@exportPriceRequest')->name('export_price_request');
         Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
     });
-    
 });
 

@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use OwenIt\Auditing\Models\Audit;
 use App\ProductMaterialsComposition;
+use App\SalesApprovers;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PriceMonitoringController extends Controller
@@ -34,33 +35,55 @@ class PriceMonitoringController extends Controller
         $open = $request->open;
         $close = $request->close;
         $price_monitorings = PriceMonitoring::with(['client', 'product_application', 'requestPriceProducts'])
-        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+        ->when($request->has('open') && $request->has('close'), function ($query) use ($request) {
             $query->whereIn('Status', [$request->open, $request->close]);
         })
-        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+        ->when($request->has('open') && !$request->has('close'), function ($query) use ($request) {
             $query->where('Status', $request->open);
         })
-        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+        ->when($request->has('close') && !$request->has('open'), function ($query) use ($request) {
             $query->where('Status', $request->close);
         })
-        ->where(function ($query) use ($search){
+        ->where(function ($query) use ($search) {
             $query->where('PrfNumber', 'LIKE', '%' . $search . '%')
-            ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-            ->orWhereHas('client', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
-            });
-            // ->orWhereHas('product_application', function ($q) use ($search) {
-            //     $q->where('name', 'LIKE', '%' . $search . '%');
-            // })
-            // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
+                ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%');
+                });
+                // ->orWhereHas('product_application', function ($q) use ($search) {
+                //     $q->where('name', 'LIKE', '%' . $search . '%');
+                // })
+                // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
         })
-        ->where('PrfNumber', 'LIKE', 'PRF-IS%')
-        ->orderBy('id', 'desc')->paginate(10);
-        $clients = Client::all();
-        $users = User::all();
+        ->when(auth()->user()->role->type == 'IS', function ($query) {
+            $query->where('PrfNumber', 'LIKE', 'PRF-IS%');
+        })
+        ->when(auth()->user()->role->type == 'LS', function ($query) {
+            $query->where('PrfNumber', 'LIKE', 'PRF-LS%');
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(10);
+        $productApplications = ProductApplication::all(); 
+        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        ->get();
+        $loggedInUser = Auth::user(); 
+        $role = $loggedInUser->role;
+        $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        if (($role->description == 'International Sales - Supervisor') || ($role->description == 'Local Sales - Supervisor')) {
+            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            
+        } else {
+            $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+        }
         $products = Product::where('status', '4')->get();
         $payment_terms = PaymentTerms::all();
-        return view('price_monitoring.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms', 'open', 'close')); 
+        $pricegaes = PriceRequestGae::get();
+        $payment_terms = PaymentTerms::all();
+        return view('price_monitoring_ls.index', compact('price_monitorings','clients','primarySalesPersons', 'secondarySalesPersons', 'search', 'products', 'payment_terms', 'open', 'close', 'productApplications', 'pricegaes' )); 
     }
 
     public function store(Request $request)
@@ -339,46 +362,46 @@ class PriceMonitoringController extends Controller
         }
     }
     
-    public function indexLocal(Request $request)
-    {   
-        $search = $request->input('search');
-        $open = $request->open;
-        $close = $request->close;
-        $price_monitorings = PriceMonitoring::with(['client', 'product_application', 'requestPriceProducts', 'productMaterialComposition'])
-        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
-            $query->whereIn('Status', [$request->open, $request->close]);
-        })
-        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
-            $query->where('Status', $request->open);
-        })
-        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
-            $query->where('Status', $request->close);
-        })
-        ->where(function ($query) use ($search){
-            $query->where('PrfNumber', 'LIKE', '%' . $search . '%')
-            ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-            ->orWhereHas('client', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
-            });
-            // ->orWhereHas('product_application', function ($q) use ($search) {
-            //     $q->where('name', 'LIKE', '%' . $search . '%');
-            // })
-            // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
-        })
+    // public function indexLocal(Request $request)
+    // {   
+    //     $search = $request->input('search');
+    //     $open = $request->open;
+    //     $close = $request->close;
+    //     $price_monitorings = PriceMonitoring::with(['client', 'product_application', 'requestPriceProducts', 'productMaterialComposition'])
+    //     ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+    //         $query->whereIn('Status', [$request->open, $request->close]);
+    //     })
+    //     ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+    //         $query->where('Status', $request->open);
+    //     })
+    //     ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+    //         $query->where('Status', $request->close);
+    //     })
+    //     ->where(function ($query) use ($search){
+    //         $query->where('PrfNumber', 'LIKE', '%' . $search . '%')
+    //         ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+    //         ->orWhereHas('client', function ($q) use ($search) {
+    //             $q->where('name', 'LIKE', '%' . $search . '%');
+    //         });
+    //         // ->orWhereHas('product_application', function ($q) use ($search) {
+    //         //     $q->where('name', 'LIKE', '%' . $search . '%');
+    //         // })
+    //         // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
+    //     })
         
-        ->where('PrfNumber', 'LIKE', 'PRF-LS%')
-        ->orderBy('id', 'desc')->paginate(10);
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
-        ->get();
-        $productApplications = ProductApplication::all(); 
-        $users = User::wherehas('localsalespersons')->get();
-        $products = Product::where('status', '4')->get();
-        // $products = Product::get();
-        $pricegaes = PriceRequestGae::get();
-        $payment_terms = PaymentTerms::all();
-        return view('price_monitoring_ls.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms', 'productApplications', 'pricegaes', 'open', 'close',)); 
-    }
+    //     ->where('PrfNumber', 'LIKE', 'PRF-LS%')
+    //     ->orderBy('id', 'desc')->paginate(10);
+    //     $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+    //     ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+    //     ->get();
+    //     $productApplications = ProductApplication::all(); 
+    //     $users = User::wherehas('localsalespersons')->get();
+    //     $products = Product::where('status', '4')->get();
+    //     // $products = Product::get();
+    //     $pricegaes = PriceRequestGae::get();
+    //     $payment_terms = PaymentTerms::all();
+    //     return view('price_monitoring_ls.index', compact('price_monitorings','clients','users', 'search', 'products', 'payment_terms', 'productApplications', 'pricegaes', 'open', 'close',)); 
+    // }
 
     public function storeLocalSalePre(Request $request)
     {
@@ -501,6 +524,10 @@ class PriceMonitoringController extends Controller
         $prfNumber = $price_monitorings->id;
         $PriceRequestNumber = $price_monitorings->PrfNumber;
         $prfFileUploads = PrfFile::where('PriceRequestFormId', $prfNumber)->get();
+        $products = Product::where('status', '4')->get();
+        $productApplications = ProductApplication::all(); 
+        $pricegaes = PriceRequestGae::get();
+        $payment_terms = PaymentTerms::all();
         $clientId = $price_monitorings->ClientId;
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
@@ -555,7 +582,7 @@ class PriceMonitoringController extends Controller
         $mappedAuditsCollection = collect($mappedAudits);
     
         $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-        return view('price_monitoring_ls.view', compact('price_monitorings','prfFileUploads', 'activities', 'combinedLogs', 'clients','users'));
+        return view('price_monitoring_ls.view', compact('price_monitorings','prfFileUploads', 'activities', 'combinedLogs', 'clients','users','products', 'productApplications','pricegaes', 'payment_terms'));
     }
 
     public function getPrfContacts($clientId)
@@ -616,8 +643,34 @@ public function ClosePrf( Request $request , $id)
 
         }
             $closePrf->save();
+            Alert::success('Request Closed')->persistent('Dismiss');
             return back();
     }
+    public function ApprovePrf(Request $request, $id)
+    {
+        $approvePrf = PriceMonitoring::find( $id);    
+        if ($approvePrf) {
+            $approvePrf->ApprovalRemarks = $request->input('Remarks');
+            $approvePrf->Progress = '20'; 
+
+
+        }
+            $approvePrf->save();
+
+            Alert::success('Successfully Saved')->persistent('Dismiss');
+            return back();
+        }    
+
+        public function ReopenPrf(Request $request, $id)
+        {
+            $reopenPrf = PriceMonitoring::findOrFail($id);
+            $reopenPrf->Status = 10;
+            $reopenPrf->Progress = 25;
+            $reopenPrf->save();
+    
+            Alert::success('The status are now open')->persistent('Dismiss');
+            return back();
+        }
 
     public function PrfActivityStore(Request $request) 
     {

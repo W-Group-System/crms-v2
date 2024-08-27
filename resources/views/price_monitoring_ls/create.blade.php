@@ -16,7 +16,7 @@
                                 <label>Primary Sales Person</label>
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
+                                    @foreach($primarySalesPersons as $user)
                                         <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
@@ -25,7 +25,7 @@
                                 <label>Secondary Sales Person</label>
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
+                                    @foreach($secondarySalesPersons as $user)
                                         <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
@@ -258,23 +258,23 @@
 		</div>
 	</div>
 </div>
-<script src="{{ asset('js/sweetalert2.min.js') }}"></script>
+{{-- <script src="{{ asset('js/sweetalert2.min.js') }}"></script> --}}
 <script>
-     @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: "{{ session('error') }}",
-                confirmButtonText: 'OK'
-            });
-        @elseif(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: "{{ session('success') }}",
-                confirmButtonText: 'OK'
-            });
-        @endif
+    //  @if(session('error'))
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: 'Oops...',
+    //             text: "{{ session('error') }}",
+    //             confirmButtonText: 'OK'
+    //         });
+    //     @elseif(session('success'))
+    //         Swal.fire({
+    //             icon: 'success',
+    //             title: 'Success',
+    //             text: "{{ session('success') }}",
+    //             confirmButtonText: 'OK'
+    //         });
+    //     @endif
 
         $(document).ready(function() {
         $('.ClientId').change(function() {
