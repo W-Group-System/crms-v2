@@ -11,10 +11,10 @@
                     </a>
 
                     @if(authCheckIfItsSales(auth()->user()->department_id))
-                    <button type="button" class="btn btn-danger btn-icon-text" >
+                    <a class="btn btn-danger btn-icon-text" href="{{url('print_crr')}}" target="_blank">
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
-                    </button>
+                    </a>
                     @endif
 
                     @if(authCheckIfItsRndStaff(auth()->user()->role))
@@ -90,6 +90,7 @@
                         </form>
                         @endif
 
+                        @if($crr->Status == 10)
                         @if(checkRolesIfHaveApprove('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
                             {{-- @if($crr->Progress == 60)
                             <button type="button" class="btn btn-info" data-toggle="modal">
@@ -100,6 +101,7 @@
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
                                 <i class="ti ti-check-box"></i>&nbsp;Accept
                             </button>
+                        @endif
                         @endif
 
                         @if($crr->Progress == 60)
@@ -464,9 +466,9 @@
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
                 <div class="form-group row mb-2">
                     <label class="col-sm-3 col-form-label">
-                        @if($crr->crrTransactionApprovals->isEmpty())
+                        {{-- @if($crr->crrTransactionApprovals->isEmpty())
                             @if($crr->approver)
-                            <b>{{$crr->approver->full_name}} :</b> {{$crr->AcceptRemarks}}
+                            <b>{{$crr->approver->full_name}} :</b> 
                             @else
                             <p>No approver remarks yet</p>
                             @endif
@@ -480,6 +482,14 @@
                                 @endif
                             </b> 
                         @endforeach
+                        @endif --}}
+                        @if($crr->approver)
+                            @php
+                                $acceptRemarks = $crr->crrTransactionApprovals->sortByDesc('Id')->firstWhere('RemarksType', 'accept');
+                            @endphp
+                            <b>{{$crr->approver->full_name}} :</b> {{$acceptRemarks->Remarks}}
+                        @else
+                            <p>No approver remarks yet</p>
                         @endif
                     </label>
                 </div>
@@ -563,7 +573,7 @@
                     <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " id="approvals-tab" data-toggle="tab" href="#approvals" role="tab" aria-controls="approvals" aria-selected="false">Approvals</a>
+                    <a class="nav-link " id="approvals-tab" data-toggle="tab" href="#approvals" role="tab" aria-controls="approvals" aria-selected="false">Transaction Remarks</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link " id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
@@ -814,15 +824,15 @@
                         <table class="table table-bordered table-striped table-hover tables" width="100%">
                             <thead>
                                 <tr>
-                                    <th>Index</th>
                                     <th>Name</th>
                                     <th>Status</th>
+                                    <th>Remarks</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($crr->crrTransactionApprovals as $transactionApprovals)
                                     <tr>
-                                        <td>{{$transactionApprovals->Index}}</td>
                                         <td>
                                             @if($transactionApprovals->userByUserId)
                                                 {{$transactionApprovals->userByUserId->full_name}}
@@ -831,13 +841,18 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($transactionApprovals->Status == 10)
-                                                Declined
-                                            @elseif($transactionApprovals->Status == 20)
-                                                Approved
+                                            @if($transactionApprovals->Status == 20)
+                                                <div class="badge badge-danger">Closed</div>
+                                            @elseif($transactionApprovals->Status == 0)
+                                                <div class="badge badge-warning">Cancelled</div>
+                                            @elseif($transactionApprovals->Status == 10)
+                                                <div class="badge badge-success">Approved</div>
                                             @endif
-
                                         </td>
+                                        <td>
+                                            {!! nl2br($transactionApprovals->Remarks) !!}
+                                        </td>
+                                        <td>{{date('M d, Y', strtotime($transactionApprovals->CreatedDate))}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -857,7 +872,7 @@
                             <tbody>
                                 @foreach ($crr->historyLogs as $logs)
                                     <tr>
-                                        <td>{{date('M d, Y - H:i A', strtotime($logs->ActionDate))}}</td>
+                                        <td>{{date('M d, Y - h:i A', strtotime($logs->ActionDate))}}</td>
                                         <td>
                                             @if($logs->historyUser)
                                             {{$logs->historyUser->full_name}}

@@ -73,12 +73,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                {{-- <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $crr->PrimarySalesPersonId || $user->id == $crr->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{$crr->PrimarySalesPersonId}}">
+                                <input type="text" class="form-control" value="{{$crr->primarySalesById->full_name}}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -105,12 +107,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                {{-- <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $crr->SecondarySalesPersonId || $user->id == $crr->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
+                                <input type="hidden" name="SecondarySalesPersonId" value="{{$crr->SecondarySalesPersonId}}">
+                                <input type="text" class="form-control" value="{{$crr->secondarySalesById->full_name}}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
