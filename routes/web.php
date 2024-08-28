@@ -20,7 +20,7 @@ Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/', 'HomeController@index');
+    Route::get('/', 'DashboardController@index');
     Route::get('/dashboard','DashboardController@index');
 
     // change password
@@ -467,5 +467,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/price_request', 'ReportsController@price_summary')->name('reports.price_request');
     Route::get('/export_price_request', 'ReportsController@exportPriceRequest')->name('export_price_request');
     Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
+    Route::get('/export-transaction-activity', 'ReportsController@exportTransactionActivity')->name('export_transaction_activity');
+    Route::get('/copy-transaction-activity', 'ReportsController@copyTransactionActivity')->name('copy_transaction_activity');
 });
 

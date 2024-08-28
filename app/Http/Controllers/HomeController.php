@@ -30,7 +30,7 @@ class HomeController extends Controller
     public function changePassword()
     {
         return view('layouts.change_password');
-    }
+    }   
 
     public function myAccount()
     {
