@@ -108,7 +108,7 @@
                         @endif
                     @endif
 
-                    @if(rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->id))
+                    @if(rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->id) || rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->user_id))
                         @if($sampleRequest->Progress == 50)
                             <button type="button" class="btn btn-md btn-warning submitSrf"  data-id="{{ $sampleRequest->Id }}">
                                 <i class="ti-check">&nbsp;</i>Submit
