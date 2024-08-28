@@ -19,12 +19,16 @@ use App\SrfFile;
 use App\SrfPersonnel;
 use App\SrfProgress;
 use App\SrfRawMaterial;
+use App\TransactionApproval;
 use App\TransactionLogs;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use OwenIt\Auditing\Models\Audit;
+use PDF;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class SampleRequestController extends Controller
 {
@@ -59,6 +63,9 @@ class SampleRequestController extends Controller
         // // ->get()
         // ->paginate(10);
         $search = $request->input('search');
+        $sort = $request->get('sort', 'Id');
+        $direction = $request->get('direction', 'desc');
+        $entries = $request->entries;
         $sampleRequests = SampleRequest::with('requestProducts') 
         ->where(function ($query) use ($search){
             $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
@@ -69,7 +76,8 @@ class SampleRequestController extends Controller
             // });
         })
         ->where('SrfNumber', 'LIKE', '%' . 'SRF-LS' . '%')
-        ->paginate(10);
+        ->orderBy($sort, $direction)
+        ->paginate($request->entries ?? 10);
 
         $products = SampleRequestProduct::whereHas('sampleRequest', function ($query) use ($search) {
             $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
@@ -78,11 +86,20 @@ class SampleRequestController extends Controller
         })
         ->whereHas('sampleRequest', function ($query) {
             $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
+        }) 
+        ->orderBy('id' , 'desc')
+        ->paginate($request->entries ?? 10);
+        $rndSrf = SampleRequest::with('requestProducts') 
+        ->where(function ($query) use ($search){
+            $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+            ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+            ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
         })
-        ->paginate(10);
+        ->orderBy($sort, $direction)
+        ->paginate($request->entries ?? 10);
 
        
-        return view('sample_requests.index', compact('products', 'sampleRequests','clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'primarySalesPersons', 'secondarySalesPersons'));
+        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'primarySalesPersons', 'secondarySalesPersons', 'entries'));
     }
 
     public function getSampleContactsByClientF($clientId)
@@ -124,9 +141,27 @@ class SampleRequestController extends Controller
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
         ->get();
+        $loggedInUser = Auth::user(); 
+        $role = $loggedInUser->role;
+        $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        if (($role->description == 'International Sales - Supervisor') || ($role->description == 'Local Sales - Supervisor')) {
+            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            
+        } else {
+            $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+        }
+        $productApplications = ProductApplication::all(); 
+        $productCodes = Product::where('status', '4')->get();
         $users = User::wherehas('localsalespersons')->get();
         $rawMaterials = RawMaterial::where('IsDeleted', '0')
         ->orWhere('deleted_at', '=', '')->get();
+        $transactionApprovals = TransactionApproval::where('Type', '30')
+        ->where('TransactionId', $scrfNumber)
+        ->get();
+
         $transactionLogs = TransactionLogs::where('Type', '30')
         ->where('TransactionId', $scrfNumber)
         ->get();
@@ -179,7 +214,8 @@ class SampleRequestController extends Controller
     $mappedAuditsCollection = collect($mappedAudits);
 
     $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'combinedLogs', 'srfProgress', 'clients', 'users'));
+    $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate');
+        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'orderedCombinedLogs', 'srfProgress', 'clients', 'users', 'primarySalesPersons', 'secondarySalesPersons', 'productApplications', 'productCodes','transactionApprovals'));
     }               
 
     // public function update(Request $request, $id)
@@ -591,12 +627,22 @@ if ($deptCode) {
             $buttonClicked = request()->input('submitbutton');    
             if ($buttonClicked === 'Approve to R&D') {
                 $approveSrfSales->Progress = 30; 
-                $approveSrfSales->InternalRemarks = request()->input('Remarks'); 
+
+                $transactionApproval = new TransactionApproval();
+                $transactionApproval->Type = '30';
+                $transactionApproval->TransactionId = $id;
+                $transactionApproval->UserId = Auth::user()->id;
+                $transactionApproval->Remarks = request()->input('Remarks');
+                $transactionApproval->RemarksType = 'approved';
+                
+                $transactionApproval->save(); 
             } elseif ($buttonClicked === 'Approve to QCD') {
                 $approveSrfSales->Progress = 80;
                 $approveSrfSales->InternalRemarks = request()->input('submitbutton'); 
             }
             $approveSrfSales->save();
+
+            Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
         } 
     }    
@@ -607,6 +653,8 @@ if ($deptCode) {
                  $receiveSrf->Progress = 35; 
         }
             $receiveSrf->save();
+
+            Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
     } 
     public function StartSrf($id)
@@ -617,6 +665,7 @@ if ($deptCode) {
                 $startSrf->DateStarted = now(); 
         }
             $startSrf->save();
+            Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
     }
     public function PauseSrf($id)
@@ -624,9 +673,18 @@ if ($deptCode) {
         $pauseSrf = SampleRequest::find($id);  
         if ($pauseSrf) {
                 $pauseSrf->Progress = 55; 
-                $pauseSrf->InternalRemarks = request()->input('Remarks'); 
-        }
-            $pauseSrf->save();
+                $pauseSrf->save();
+
+                $transactionApproval = new TransactionApproval();
+                $transactionApproval->Type = '30';
+                $transactionApproval->TransactionId = $id;
+                $transactionApproval->UserId = Auth::user()->id;
+                $transactionApproval->Remarks = request()->input('Remarks');
+                $transactionApproval->RemarksType = 'paused';
+                $transactionApproval->save(); 
+                }
+
+            Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
     } 
     public function RndUpdate($id)
@@ -636,8 +694,71 @@ if ($deptCode) {
                 $pauseSrf->Progress = request()->input('Progress'); 
         }
             $pauseSrf->save();
+            Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
     } 
+    public function cancelRemarks(Request $request, $id)
+    {
+        $sampleRequest = SampleRequest::findOrFail($id);
+        $sampleRequest->Status = 50;
+        $sampleRequest->save();
+
+        $transactionApproval = new TransactionApproval();
+        $transactionApproval->Type = '30';
+        $transactionApproval->TransactionId = $id;
+        $transactionApproval->UserId = Auth::user()->id;
+        $transactionApproval->Remarks = request()->input('cancel_remarks');
+        $transactionApproval->RemarksType = 'cancelled';
+        $transactionApproval->save(); 
+
+        Alert::success('Successfully Cancelled')->persistent('Dismiss');
+        return back();
+    }
+
+    public function closeRemarks(Request $request, $id)
+    {
+        $sampleRequest = SampleRequest::findOrFail($id);
+        $sampleRequest->Status = 30;
+        $sampleRequest->save();
+
+        $transactionApproval = new TransactionApproval();
+        $transactionApproval->Type = '30';
+        $transactionApproval->TransactionId = $id;
+        $transactionApproval->UserId = Auth::user()->id;
+        $transactionApproval->Remarks = request()->input('close_remarks');
+        $transactionApproval->RemarksType = 'closed';
+        $transactionApproval->save(); 
+        Alert::success('Successfully Closed')->persistent('Dismiss');
+        return back();
+    }
+    public function ReturnToSales($id)
+    {
+        $sampleRequest = SampleRequest::findOrFail($id);
+        $sampleRequest->Progress = 10;
+        $sampleRequest->save(); 
+
+        Alert::success('Successfully return to sales')->persistent('Dismiss');
+        return back();
+    }
+
+    public function returnToRnd($id)
+    {
+        $sampleRequest = SampleRequest::findOrFail($id);
+        $sampleRequest->Progress = 50;
+        $sampleRequest->save(); 
+
+        Alert::success('Successfully return to rnd')->persistent('Dismiss');
+        return back();
+    }
+    public function submitSrf(Request $request, $id)
+    {
+        $srf = SampleRequest::findOrFail($id);
+        $srf->Progress = 57;
+        $srf->save();
+
+        Alert::success('Successfully Submitted')->persistent('Dismiss');
+        return back();
+    }
 
     public function deleteSrfProduct(Request $request , $id)
     {
@@ -650,6 +771,38 @@ if ($deptCode) {
         return response()->json(['success' => false]);
     }
 
+    public function AcceptSrf($id)
+    {
+        $srf = SampleRequest::findOrFail($id);
+        $srf->Progress = 70;
+        $srf->save(); 
+
+        Alert::success('Sales Accepted')->persistent('Dismiss');
+        return back();
+    }
+
+    public function OpenStatus(Request $request, $id)
+    {
+        $srf = SampleRequest::findOrFail($id);
+        $srf->Status = 10;
+        $srf->save();
+
+        Alert::success('The status are now open')->persistent('Dismiss');
+        return back();
+    }
+
+    public function CompleteSrf(Request $request, $id)
+    {
+        $srf = SampleRequest::findOrFail($id);
+        $srf->Progress = 60;
+        $srf->DateCompleted = date('Y-m-d h:i:s');
+        $srf->save();
+
+        Alert::success('Successfully Completed')->persistent('Dismiss');
+        return back();
+    }
+
+
     public function deleteSrfActivity($id)
     {
         try { 
@@ -659,6 +812,20 @@ if ($deptCode) {
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to delete File.'], 500);
         }
+    }
+
+    public function print_srf(Request $request, $id)
+    {
+        $srf = SampleRequest::findOrFail($id);
+
+        View::share('sample_requests', $srf);
+
+        // $cotts = Cott::all();
+        $pdf = PDF::loadView('sample_requests.print', [
+            'sample_requests' => $srf,
+        ])->setPaper('a4', 'portrait');
+    
+        return $pdf->stream('print.pdf');
     }
 }    
 

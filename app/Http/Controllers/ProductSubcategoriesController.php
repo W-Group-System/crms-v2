@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ApplicationSubCategoriesExport;
 use App\ProductApplication;
 use App\ProductSubcategories;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ProductSubcategoriesController extends Controller
@@ -13,6 +15,10 @@ class ProductSubcategoriesController extends Controller
     // List
     public function index(Request $request)
     {   
+        $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
+
+        $productapp = ProductApplication::get();
+
         $subcategories = ProductSubcategories::with('application')
             ->when($request->search, function($q)use($request){
                 $q->whereHas('application', function($q)use($request) {
@@ -21,19 +27,26 @@ class ProductSubcategoriesController extends Controller
                 ->orWhere('Name', "LIKE", "%".$request->search."%")
                 ->orWhere('Description', 'LIKE', '%'.$request->search.'%');
             })
-            ->orderBy('id', 'desc')
-            ->paginate($request->entries ?? 10);
+            ->orderBy('id', 'desc');
 
-        $productapp = ProductApplication::get();
 
-        return view('product_subcategories.index', 
-            array(
-                'subcategories' => $subcategories,
-                'productapp' => $productapp,
-                'search' => $request->search,
-                'entries' => $request->entries
-            )
-        ); 
+        if ($fetchAll)
+        {
+            $subcategories = $subcategories->get();
+            return response()->json($subcategories);
+        }
+        else
+        {
+            $subcategories = $subcategories->paginate($request->entries ?? 10);
+            return view('product_subcategories.index', 
+                array(
+                    'subcategories' => $subcategories,
+                    'productapp' => $productapp,
+                    'search' => $request->search,
+                    'entries' => $request->entries
+                )
+            ); 
+        }
     }
 
     // Store
@@ -50,14 +63,11 @@ class ProductSubcategoriesController extends Controller
     }
 
     // Edit
-    // public function edit($id)
-    // {
-    //     if(request()->ajax())
-    //     {
-    //         $data = ProductSubcategories::findOrFail($id);
-    //         return response()->json(['data' => $data]);
-    //     }
-    // }
+    public function edit($id)
+    {
+        $data = ProductSubcategories::findOrFail($id);
+        return response()->json(['data' => $data]);
+    }
 
     // Update
     public function update(Request $request, $id)
@@ -79,5 +89,10 @@ class ProductSubcategoriesController extends Controller
         $data->delete();
 
         return array('message' => 'Successfully Deleted');
+    }
+
+    public function export()
+    {
+        return Excel::download(new ApplicationSubCategoriesExport, 'Application Sub Categories.xlsx');
     }
 }

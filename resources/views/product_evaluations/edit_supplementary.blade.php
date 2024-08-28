@@ -12,7 +12,8 @@
                     @csrf
                     <div class="form-group">
                         <label >Supplementary Details</label>
-                        <input type="text" class="form-control" name="details_of_request" value="{{ optional($supplementary)->DetailsOfRequest }}">
+                        {{-- <input type="text" class="form-control" name="details_of_request" value="{{ optional($supplementary)->DetailsOfRequest }}"> --}}
+                        <textarea name="details_of_request" class="form-control" cols="30" rows="10">{{$supplementary->DetailsOfRequest}}</textarea>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

@@ -23,30 +23,96 @@
             Sample Request List
             <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formSampleRequest">Add Sample Request</button>
             </h4>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex justify-content-end align-items-end">
-                    <div class="col-md-5">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
-                            <button class="btn btn-sm btn-info">Search</button>
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Show</span>
+                    <form method="GET" class="d-inline-block">
+                        <select name="entries" class="form-control">
+                            <option value="10" @if($entries == 10) selected @endif>10</option>
+                            <option value="25" @if($entries == 25) selected @endif>25</option>
+                            <option value="50" @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
+                </div>
+                <div class="col-lg-6">
+                <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                    <div class="row height d-flex justify-content-end align-items-end">
+                        <div class="col-md-5">
+                            <div class="search">
+                                <i class="ti ti-search"></i>
+                                <input type="text" class="form-control" placeholder="Search Sample Request" name="search" value="{{$search}}"> 
+                                <button class="btn btn-sm btn-info">Search</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+        </div>
+            
             @if(auth()->user()->role->type == 'LS')
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="sample_request_table">
                     <thead>
                         <tr>
                             <th>Action</th>
-                            <th>SRF #</th>
-                            <th>Date Requested</th>
-                            <th>Date Required</th>
-                            <th>Client Name</th>
-                            <th>Application</th>
-                            <th>Status</th>
-                            <th>Progress</th>
+                            <th>SRF #
+                                <a href="{{ route('sample_request.index', [
+                                    'sort' => 'SrfNumber', 
+                                    'direction' => request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Date Requested
+                                <a href="{{ route('sample_request.index', [
+                                    'sort' => 'DateRequested', 
+                                    'direction' => request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Date Required
+                                <a href="{{ route('sample_request.index', [
+                                    'sort' => 'DateRequired', 
+                                    'direction' => request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Client Name
+                                <a href="{{ route('sample_request.index', [
+                                    'sort' => 'ClientId', 
+                                    'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Application
+                                <a href="{{ route('sample_request.index', [
+                                    'sort' => 'ApplicationId', 
+                                    'direction' => request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Status
+                                <a href="{{ route('sample_request.index', [
+                                    'sort' => 'Status', 
+                                    'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>Progress
+                                <a href="{{ route('sample_request.index', [
+                                    'sort' => 'Progress', 
+                                    'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -204,6 +270,68 @@
                     <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                 </div>
             </div>
+            @else
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="sample_request_table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>SRF #</th>
+                            <th>Date Requested</th>
+                            <th>Date Required</th>
+                            <th>Client Name</th>
+                            <th>Application</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($rndSrf as $srf)
+                        <tr>
+                            <td align="center">
+                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
+                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-warning btn-outline"
+                                    data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
+                                    <i class="ti-pencil"></i>
+                                </button>    
+                            </td>
+                                <td>{{ $srf->SrfNumber }}</td>
+                                <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
+                                <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
+                                <td>{{ optional($srf->client)->Name }}</td>
+                                <td>
+                                    @foreach ($srf->requestProducts as $product)
+                                        {{ optional($product->productApplicationsId)->Name }}<br>
+                                    @endforeach
+                                </td>
+                               <td>
+                                    @if($srf->Status == 10)
+                                        Open
+                                    @elseif($srf->Status == 30)
+                                        Closed
+                                    @else
+                                        {{ $srf->Status }}
+                                    @endif
+                                </td>
+                                <td>{{ optional($srf->progressStatus)->name }}</td>
+                                
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+                {!! $sampleRequests->appends(['search' => $search])->links() !!}
+                @php
+                    $total = $sampleRequests->total();
+                    $currentPage = $sampleRequests->currentPage();
+                    $perPage = $sampleRequests->perPage();
+    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                </div>
+            </div>
             @endif 
             
         </div>
@@ -268,6 +396,9 @@
             confirmButtonText: 'OK'
         });
     @endif
+    $("[name='entries']").on('change', function() {
+            $(this).closest('form').submit()
+        })
 });
 </script>
 {{-- @foreach ($sampleRequests as $srf)

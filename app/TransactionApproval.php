@@ -8,6 +8,8 @@ class TransactionApproval extends Model
 {
     //
     protected $table = 'transactionapprovals';
+    const UPDATED_AT = "ModifiedDate";
+    const CREATED_AT = "CreatedDate";
 
     public function approverRPE()
     {

@@ -47,7 +47,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$crr->DueDate}}">
+                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$crr->DueDate}}" min="{{date('Y-m-d')}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -156,7 +156,7 @@
                                 <input type="text" class="form-control" id="RefRpeNumber" name="RefRpeNumber" placeholder="Enter RPE Number" value="{{$crr->RefRpeNumber}}">
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        {{-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="">Status</label>
                                 <select class="form-control js-example-basic-single" name="Status" required>
@@ -166,7 +166,7 @@
                                     <option value="50" @if($crr->Status == 50) selected @endif>Cancelled</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="">REF Code</label>

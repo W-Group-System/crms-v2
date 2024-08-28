@@ -68,14 +68,14 @@
                                     @endif
                             </td>
                             <td>
-                                {{ optional($priceMonitoring->progressStatus)->name }}
-                                {{-- @if($priceMonitoring->Progress == 10)
+                                {{-- {{ optional($priceMonitoring->progressStatus)->name }} --}}
+                                @if($priceMonitoring->Progress == 10)
                                         For Approval
                                     @elseif($priceMonitoring->Progress == 30)
                                         Waiting For Disposition
                                     @else
                                         {{ $priceMonitoring->Progress }}
-                                    @endif --}}
+                                    @endif
                             </td>
                         </tr>
                         @endforeach

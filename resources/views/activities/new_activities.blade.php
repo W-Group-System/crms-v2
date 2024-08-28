@@ -89,7 +89,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Due Date</label>
-                                <input type="date" class="form-control" id="ScheduleTo" name="ScheduleTo" required>
+                                <input type="date" class="form-control" id="ScheduleTo" name="ScheduleTo" min="{{date('Y-m-d')}}" required>
                             </div>
                         </div>
                         <div class="col-lg-6">

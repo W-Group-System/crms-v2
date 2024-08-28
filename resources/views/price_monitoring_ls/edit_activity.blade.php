@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_price_request" enctype="multipart/form-data" action="{{ url('prf_edit_activity/'. $activity->id) }}">
+                <form method="POST" id="form_price_request" enctype="multipart/form-data" action="{{ url('update_activity/'. $activity->id) }}">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -43,12 +43,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
-                                <select class="form-control js-example-basic-single ActivityClient{{ $activity->id }}" name="ClientId"  style="position: relative !important" title="Select Client" required>
-                                    <option value="" disabled selected>Select Client</option>
-                                    @foreach($clients as $client)
-                                        <option value="{{ $client->id }}" @if($activity->ClientId == $client->id) selected @endif>{{ $client->Name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" class="form-control form-control-sm ClientId" name="ClientId" value="{{ $price_monitorings->client->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{$price_monitorings->client->Name }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -74,12 +70,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}" @if($activity->PrimaryResponsibleUserId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{ $price_monitorings->primarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($price_monitorings->primarySalesPerson)->full_name }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -91,12 +83,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}" @if($activity->SecondaryResponsibleUserId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{ $price_monitorings->secondarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($price_monitorings->secondarySalesPerson)->full_name }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -108,7 +96,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Attachments</label>
-                                <input type="file" class="form-control form-control-sm" name="path[]" multiple>
+                                <input type="file" class="form-control form-control-sm" name="path[]" >
                                 <small><b style="color:red">Note:</b> The file must be a type of: jpg, jpeg, png, pdf, doc, docx.</small>
                                 <div class="col-sm-9">
                                     <ul id="fileList"></ul>
@@ -157,8 +145,8 @@
                             <label class="form-label"> Status</label>
                             <select class="form-control form-control-sm js-example-basic-single" name="Status"  style="position: relative !important" title="Select Type" required>
                                 <option value="" disabled selected>Select Status</option>
-                                <option value="10">Open</option>
-                                <option value="20">Closed</option>
+                                <option value="10" @if($price_monitorings->Status == 10) selected @endif>Open</option>
+                                <option value="20" @if($price_monitorings->Status == 20) selected @endif>Closed</option>
                             </select>
                             </div>
                         </div>
@@ -177,7 +165,7 @@
     $(document).ready(function() {;
         var activityId = '{{ $activity->id }}';
         var clientIdSelector = '.ActivityClient' + activityId;
-        var contactIdSelector = '#ActivityClientContactId' + activityId;
+        var contactIdSelector = '.ClientContactId';
 
         var storedClientId = $(clientIdSelector).val();
 

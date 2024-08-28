@@ -11,12 +11,12 @@
                 <form method="POST" enctype="multipart/form-data" action="{{ url('product_evaluation/edit/'. $productEvaluation->id) }}">
                     @csrf
                     <div class="row">
-                        <div class="col-lg-6">
+                        {{-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Date Created (DD/MM/YYYY) - Hour Minute</label>
                                 <input type="datetime" class="form-control" name="CreatedDate" value="{{ !empty($productEvaluation->CreatedDate) ? date('m/d/y H:i', strtotime($productEvaluation->CreatedDate)) : '' }}" readonly>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Project Name</label>
@@ -79,12 +79,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                {{-- <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($primarySalesPersons as $user)
                                         <option value="{{ $user->user_id }}" @if ( $productEvaluation->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" disabled>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -114,7 +116,7 @@
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($secondarySalesPersons as $user)
-                                        <option value="{{ $user->user_id }}" @if ( $productEvaluation->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
+                                        <option value="{{ $user->id }}" @if ( $productEvaluation->SecondarySalesPersonId == $user->user_id || $productEvaluation->SecondarySalesPersonId == $user->id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -135,7 +137,12 @@
                                 </select>
                             </div>
                         </div>
-                        
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">Manufacturer</label>
+                                <input type="text" class="form-control" id="Manufacturer" name="Manufacturer" placeholder="Enter Manufacturer" value="{{$productEvaluation->Manufacturer}}">
+                            </div>
+                        </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Supplier</label>
@@ -159,7 +166,7 @@
                                 <textarea type="text" class="form-control" name="ObjectiveForRpeProject">{{ $productEvaluation->ObjectiveForRpeProject }}</textarea>
                             </div>
                         </div>
-                        <div class="col-lg-6"></div>
+                        {{-- <div class="col-lg-6"></div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Status :</label>
@@ -170,7 +177,7 @@
                                     <option value="50" @if ( $productEvaluation->Status == "50") selected @endif>Cancelled</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
 
                     </div>
                     <div class="modal-footer">

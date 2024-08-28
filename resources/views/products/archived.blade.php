@@ -229,6 +229,10 @@
 
 <script>
 $(document).ready(function() {
+    $('.table').tablesorter({
+        theme: "bootstrap"
+    })
+
     $(".draftProduct").on('click', function() {
         var form = $(this).closest('form');
 

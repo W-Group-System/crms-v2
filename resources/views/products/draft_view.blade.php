@@ -127,42 +127,62 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade active show" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @include('components.error')
-                    <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
-                        {{csrf_field()}}
-
-                        <div class="col-lg-12" align="right">
-                            <button type="submit" class="btn btn-md btn-primary submit_approval">Update</button>
-                        </div>
+                    <div class="col-lg-12" align="right">
+                        <button type="submit" class="btn btn-md btn-primary submit_approval mb-3" data-toggle="modal" data-target="#rawMaterials{{$data->id}}">Update</button>
+                    </div>
     
-                        <button type="button" class="btn btn-sm btn-success mb-4" id="addBtn">
-                            <i class="ti-plus"></i>
-                        </button>
+                    {{-- <button type="button" class="btn btn-sm btn-success mb-4" id="addBtn">
+                        <i class="ti-plus"></i>
+                    </button>
 
-                        <table class="table table-striped table-bordered table-hoverr" id="material_table" width="100%">
-                            <tbody class="tbodyRawMaterials">
+                    <table class="table table-striped table-bordered table-hoverr" id="material_table" width="100%">
+                        <tbody class="tbodyRawMaterials">
+                            @foreach ($data->productMaterialComposition as $pmc)
+                                <tr>
+                                    <td>
+                                        <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
+                                            <option value="">- Raw Materials -</option>
+                                            @foreach ($rawMaterials as $rm)
+                                                <option value="{{$rm->id}}" @if($pmc->MaterialId == $rm->id) selected @endif>{{$rm->Name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$pmc->Percentage}}" max="100" required>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger removeRawMat" type="button">
+                                            <i class="ti-minus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table> --}}
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover tables" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Materials</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
                                 @foreach ($data->productMaterialComposition as $pmc)
-                                    <tr>
-                                        <td>
-                                            <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
-                                                <option value="">- Raw Materials -</option>
-                                                @foreach ($rawMaterials as $rm)
-                                                    <option value="{{$rm->id}}" @if($pmc->MaterialId == $rm->id) selected @endif>{{$rm->Name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$pmc->Percentage}}" max="100" required>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-danger removeRawMat" type="button">
-                                                <i class="ti-minus"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>
+                                        {{$pmc->rawMaterials->Name}}
+                                    </td>
+                                    <td>
+                                        {{$pmc->Percentage}}%
+                                    </td>
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>
-                    </form>
+                    </div>
                 </div>
                 <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     @include('components.error')
@@ -416,24 +436,28 @@
                                     <tr>
                                         <td>@if($ic->products){{$ic->products->ddw_number}}@endif</td>
                                         <td>
-                                            @if($ic->products->status == 1)
-                                                <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
-                                            @elseif($ic->products->status == 2)
-                                                <a href="{{url('view_new_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
-                                            @elseif($ic->products->status == 4)
-                                                <a href="{{url('view_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
-                                            @elseif($ic->products->status == 5)
-                                                <a href="{{url('view_archive_products/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @if($ic->products)
+                                                @if(($ic->products)->status == 1)
+                                                    <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                                @elseif($ic->products->status == 2)
+                                                    <a href="{{url('view_new_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                                @elseif($ic->products->status == 4)
+                                                    <a href="{{url('view_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                                @elseif($ic->products->status == 5)
+                                                    <a href="{{url('view_archive_products/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                                @endif
                                             @endif
                                         </td>
                                         <td>
-                                            @if($ic->products->userByUserId)
-                                                {{$ic->products->userByUserId->full_name}}
-                                            @else
-                                                {{$ic->products->userById->full_name}}
+                                            @if($ic->products)
+                                                @if($ic->products->userByUserId)
+                                                    {{$ic->products->userByUserId->full_name}}
+                                                @else
+                                                    {{$ic->products->userById->full_name}}
+                                                @endif
                                             @endif
                                         </td>
-                                        <td>{{date('M d, Y', strtotime($ic->products->created_at))}}</td>
+                                        <td>{{date('M d, Y', strtotime(optional($ic->products)->created_at))}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -499,6 +523,77 @@
     }
 </style>
 
+<div class="modal fade" id="rawMaterials{{$data->id}}" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Edit Raw Materials</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}" id="materialsForm">
+                {{csrf_field()}}
+                
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <span id="totalPercentage">{{$percentage ?? 0.00}}</span>
+
+                        <table class="table table-striped table-bordered table-hover" id="rawMaterialsTable">
+                            <thead>
+                                <tr>
+                                    <th>Materials</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $percentage = 0;
+                                @endphp
+
+                                @foreach ($rawMaterials as $rm)
+                                <tr>
+                                    <td>{{$rm->Name}}</td>
+                                    <td>
+                                        <input type="hidden" name="raw_materials[]" value="{{$rm->id}}">
+
+                                        @php
+                                            $composition_found = false;
+                                        @endphp
+
+                                        @foreach ($data->productMaterialComposition as $rawMats)
+                                            @if($rawMats->MaterialId == $rm->id)
+                                                <input type="number" name="percentage[]" class="form-control percentageVal" value="{{$rawMats->Percentage}}">
+                                                @php
+                                                    $composition_found = true;
+                                                    $percentage += $rawMats->Percentage;
+                                                @endphp
+                                                @break
+                                            @endif
+                                        @endforeach
+
+                                        @if(!$composition_found)
+                                        <input type="number" name="percentage[]" class="form-control percentageVal">
+                                        @endif
+
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="padding: 0.6875rem">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
@@ -507,6 +602,9 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     $(document).ready(function() {
+        var percentage = {!! json_encode($percentage) !!}
+        document.getElementById('totalPercentage').innerText = percentage
+
         new DataTable('.tables', {
             destroy: true,
             processing: true,
@@ -514,40 +612,104 @@
             ordering: false
         });
 
-        $("#addBtn").on('click', function() {
-            
-            var newRow = `
-                <tr>
-                    <td>
-                        <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
-                            <option value="">- Raw Materials -</option>
-                            @foreach ($rawMaterials as $rm)
-                                <option value="{{$rm->id}}">{{$rm->Name}}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" max="100" required>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger btn-sm removeRawMat" type="button">
-                            <i class="ti-minus"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-            
-            var row = $(newRow);
-            $(".tbodyRawMaterials").append(row);
-            row.find('.js-example-basic-single').select2();
-
-        });
-
-        $(document).on('click', '.removeRawMat', function()
-        {
-            // $('.tbodyRawMaterials').children().last().remove();
-            $(this).closest('tr').remove()
+        var rawMatsTable = $("#rawMaterialsTable").DataTable({
+            destroy: true,
+            processing: true,
+            ordering: false,
+            paginate: false
         })
+
+        $(".percentageVal").on('change', function() {
+            var total = 0;
+            
+            $('.percentageVal').each(function() {
+                var value = $(this).val();
+                value = parseFloat(value) || 0;
+                total += value;
+            })
+            
+            $("#totalPercentage").text(total)
+        })
+
+        $("#materialsForm").on('submit', function(e) {
+            e.preventDefault()
+
+            var formData = $(this).serializeArray()
+            var totalPercentage = parseFloat($('#totalPercentage').text())
+            var message = "";
+            var action = $(this).attr('action')
+
+            if(totalPercentage > 100)
+            {
+                message = "Error because its above 100 percent"
+            }
+
+            if (totalPercentage < 100)
+            {
+                message = "Error because its less than 100 percent"
+            }
+
+            if (totalPercentage > 100 || totalPercentage < 100)
+            {
+                Swal.fire({
+                    icon: "error",
+                    title: message
+                })
+            }
+            else
+            {
+                $.ajax({
+                    type: "POST",
+                    url: action,
+                    data: formData,
+                    success: function()
+                    {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Successfully Saved",
+                        })
+
+                        location.reload()
+                    }
+                })
+            }
+
+        })
+
+        // $("#addBtn").on('click', function() {
+            
+        //     var newRow = `
+        //         <tr>
+        //             <td>
+        //                 <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
+        //                     <option value="">- Raw Materials -</option>
+        //                     @foreach ($rawMaterials as $rm)
+        //                         <option value="{{$rm->id}}">{{$rm->Name}}</option>
+        //                     @endforeach
+        //                 </select>
+        //             </td>
+        //             <td>
+        //                 <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" max="100" required>
+        //             </td>
+        //             <td>
+        //                 <button class="btn btn-danger btn-sm removeRawMat" type="button">
+        //                     <i class="ti-minus"></i>
+        //                 </button>
+        //             </td>
+        //         </tr>
+        //     `;
+            
+        //     var row = $(newRow);
+        //     $(".tbodyRawMaterials").append(row);
+        //     row.find('.js-example-basic-single').select2();
+
+        // });
+
+        // $(document).on('click', '.removeRawMat', function()
+        // {
+        //     // $('.tbodyRawMaterials').children().last().remove();
+        //     $(this).closest('tr').remove()
+        // })
 
         $(".addPotentialBenefit").on('click', function() {
 

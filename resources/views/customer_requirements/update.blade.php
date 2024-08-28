@@ -20,7 +20,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Date Received :</label>
-                                <input type="date" name="date_received" class="form-control" value="{{date('Y-m-d', strtotime($crr->DateReceived))}}">
+                                <input type="date" name="date_received" class="form-control" value="{{date('Y-m-d', strtotime($crr->DateReceived))}}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-12">
@@ -32,7 +32,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="name">Due Date :</label>
-                                <input type="date" class="form-control" name="due_date" value="{{$crr->DueDate}}">
+                                <input type="date" class="form-control" name="due_date" value="{{$crr->DueDate}}" min="{{date('Y-m-d')}}">
                             </div>
                         </div>
                         {{-- <div class="col-lg-12">

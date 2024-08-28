@@ -43,12 +43,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
-                                <select class="form-control js-example-basic-single ActivityClient{{ $activity->id }}" name="ClientId"  style="position: relative !important" title="Select Client" required>
-                                    <option value="" disabled selected>Select Client</option>
-                                    @foreach($clients as $client)
-                                        <option value="{{ $client->id }}" @if($activity->ClientId == $client->id) selected @endif>{{ $client->Name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" class="form-control form-control-sm ClientId" name="ClientId" value="{{ $sampleRequest->client->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{$sampleRequest->client->Name }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -74,12 +70,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}" @if($activity->PrimaryResponsibleUserId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{ $sampleRequest->primarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($sampleRequest->primarySalesPerson)->full_name }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -91,12 +83,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Responsible</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}" @if($activity->SecondaryResponsibleUserId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{ $sampleRequest->secondarySalesPerson->id }}" />
+                                <input type="text" class="form-control form-control-sm" value="{{ optional($sampleRequest->secondarySalesPerson)->full_name }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -157,8 +145,8 @@
                             <label class="form-label"> Status</label>
                             <select class="form-control form-control-sm js-example-basic-single" name="Status"  style="position: relative !important" title="Select Type" required>
                                 <option value="" disabled selected>Select Status</option>
-                                <option value="10">Open</option>
-                                <option value="20">Closed</option>
+                                <option value="10" @if($sampleRequest->Status == 10) selected @endif>Open</option>
+                                <option value="20" @if($sampleRequest->Status == 20) selected @endif>Closed</option>
                             </select>
                             </div>
                         </div>
