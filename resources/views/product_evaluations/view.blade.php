@@ -781,6 +781,7 @@
 
 @include('product_evaluations.edit_sales')
 @include('product_evaluations.close_rpe')
+@include('product_evaluations.cancel_rpe')
 @include('product_evaluations.update_rnd')
 @include('product_evaluations.pause_rpe')
 
