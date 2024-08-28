@@ -116,65 +116,65 @@
                             
                         @if ($requestEvaluation->Status == 10)
 
-                        @if($requestEvaluation->Progress != 60)
-                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateRnd{{$requestEvaluation->id}}">
-                            <i class="ti ti-pencil"></i>&nbsp;Update
-                        </button>
-                        @endif
-
-                        @if($requestEvaluation->Progress == 35)
-                            <form method="POST" action="{{url('start_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
-                                @csrf 
-
-                                <button type="button" class="btn btn-success startBtn">
-                                    <i class="ti-control-play"></i>&nbsp; Start
-                                </button>
-                            </form>
-                        @endif
-
-                        @if($requestEvaluation->Progress == 50)
-                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
-                                <i class="ti-control-pause"></i>&nbsp; Pause
+                            @if($requestEvaluation->Progress != 60)
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateRnd{{$requestEvaluation->id}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
+                            @endif
 
-                            <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
-                                @csrf
+                            @if($requestEvaluation->Progress == 35)
+                                <form method="POST" action="{{url('start_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                    @csrf 
 
-                                <button type="button" class="btn btn-success initialReviewBtn">
-                                    <i class="ti-check"></i>&nbsp; Submit
+                                    <button type="button" class="btn btn-success startBtn">
+                                        <i class="ti-control-play"></i>&nbsp; Start
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($requestEvaluation->Progress == 50)
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
+                                    <i class="ti-control-pause"></i>&nbsp; Pause
                                 </button>
-                            </form>
-                        @endif
 
-                        @if($requestEvaluation->Progress == 55)
-                            <form method="POST" action="{{url('start_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
-                                @csrf 
+                                <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                    @csrf
 
-                                <button type="button" class="btn btn-success continueBtn">
-                                    <i class="ti-control-play"></i>&nbsp; Continue
-                                </button>
-                            </form>
-                        @endif
+                                    <button type="button" class="btn btn-success initialReviewBtn">
+                                        <i class="ti-check"></i>&nbsp; Submit
+                                    </button>
+                                </form>
+                            @endif
 
-                        @if($requestEvaluation->Progress == 57)
-                            <form method="POST" action="{{url('final_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
-                                @csrf 
+                            @if($requestEvaluation->Progress == 55)
+                                <form method="POST" action="{{url('start_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                    @csrf 
 
-                                <button type="button" class="btn btn-success finalReviewBtn">
-                                    <i class="ti-check"></i>&nbsp; Submit
-                                </button>
-                            </form>
-                        @endif
+                                    <button type="button" class="btn btn-success continueBtn">
+                                        <i class="ti-control-play"></i>&nbsp; Continue
+                                    </button>
+                                </form>
+                            @endif
 
-                        @if($requestEvaluation->Progress == 57 || $requestEvaluation->Progress == 81)
-                            <form method="POST" class="d-inline-block" action="{{url('complete_rpe/'.$requestEvaluation->id)}}">
-                                @csrf 
+                            @if($requestEvaluation->Progress == 57)
+                                <form method="POST" action="{{url('final_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                    @csrf 
 
-                                <button type="button" class="btn btn-primary completeBtn">
-                                    <i class="ti-pencil-alt"></i>&nbsp; Completed
-                                </button>
-                            </form>
-                        @endif
+                                    <button type="button" class="btn btn-success finalReviewBtn">
+                                        <i class="ti-check"></i>&nbsp; Submit
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($requestEvaluation->Progress == 57 || $requestEvaluation->Progress == 81)
+                                <form method="POST" class="d-inline-block" action="{{url('complete_rpe/'.$requestEvaluation->id)}}">
+                                    @csrf 
+
+                                    <button type="button" class="btn btn-primary completeBtn">
+                                        <i class="ti-pencil-alt"></i>&nbsp; Completed
+                                    </button>
+                                </form>
+                            @endif
                             
                         @endif
                     @endif
@@ -241,6 +241,7 @@
                         @endif
 
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
+                            @if ($requestEvaluation->Status == 10)
                             @if($requestEvaluation->Progress != 60)
                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateRnd{{$requestEvaluation->id}}">
                                     <i class="ti ti-pencil"></i>&nbsp;Update
@@ -308,6 +309,8 @@
                                         <i class="ti-pencil-alt"></i>&nbsp; Completed
                                     </button>
                                 </form>
+                            @endif
+                                
                             @endif
 
                         @endif
