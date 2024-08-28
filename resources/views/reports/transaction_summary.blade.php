@@ -8,8 +8,9 @@
             </h4>
             <div class="row height d-flex ">
                 <div class="col-md-6 mt-2 mb-2">
-                    <a href="#" id="copy_transaction_btn" class="btn btn-md btn-info" style="margin-top: 2em">Copy</a>
-                    <a href="#" id="excel_btn" class="btn btn-md btn-success" style="margin-top: 2em">Excel</a>
+                    <!-- <a href="#" id="copy_transaction_btn" class="btn btn-md btn-info" style="margin-top: 2em">Copy</a> -->
+                    <button class="btn btn-md btn-info" style="margin-top: 2em" id="copy_transaction_btn">Copy</button>
+                    <a href="{{ route('export_transaction_activity', request()->all()) }}" class="btn btn-success" style="margin-top: 2em">Excel</a>
                 </div>
                 <form class="form-inline col-md-6" action="{{ route('reports.transaction_activity') }}" method="GET">
                     <div class="col-md-6 mt-2 mb-2">
@@ -57,16 +58,66 @@
                 <table class="table table-striped table-bordered table-hover" id="transaction_table" width="100%">
                     <thead>
                         <tr>
-                        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'type', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">Type</a></th>
-        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'transaction_number', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">Transaction Number</a></th>
-        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'bde', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">BDE</a></th>
-        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'client', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">Client</a></th>
-        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'date_created', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">Date Created</a></th>
-        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'due_date', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">Due Date</a></th>
-        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'details', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">Details</a></th>
-        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'result', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">Result</a></th>
-        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'status', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">Status</a></th>
-        <th><a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'progress', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">Progress</a></th>
+                            <th>
+                                Type
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'type', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'type' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Transaction Number
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'transaction_number', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'transaction_number' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                BDE
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'bde', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'bde' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Client
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'client', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'client' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Date Created
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'date_created', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'date_created' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Due Date
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'due_date', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'due_date' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Details
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'details', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'details' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Result
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'result', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'result' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Status
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'status', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Progress
+                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'progress', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <i class="ti ti-arrow-{{ request('sort') == 'progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                            </a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,12 +128,28 @@
                                     <td>{{ $transaction->transaction_number }}</td>
                                     <td>{{ $transaction->bde }}</td>
                                     <td>{{ $transaction->client }}</td>
-                                    <td>{{ date('Y-m-d', strtotime($transaction->date_created)) }}</td>
-                                    <td>{{ date('Y-m-d', strtotime($transaction->due_date)) }}</td>
+                                    <td>{{ date('M. d, Y', strtotime($transaction->date_created)) }}</td>
+                                    <td>{{ date('M. d, Y', strtotime($transaction->due_date)) }}</td>
                                     <td>{{ $transaction->details }}</td>
                                     <td>{{ $transaction->result ?? 'N/A' }}</td>
-                                    <td>{{ $transaction->status }}</td>
-                                    <td>{{ $transaction->progress }}</td>
+                                    <td>
+                                        @if($transaction->status == 10)
+                                            Open
+                                        @elseif($transaction->status == 20)
+                                            Closed 
+                                        @else
+                                            Cancelled
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($transaction->progress == 10)
+                                            Open
+                                        @elseif($transaction->progress == 20)
+                                            Closed 
+                                        @else
+                                            {{ $transaction->progress }}
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         @else 
@@ -91,6 +158,96 @@
                             </tr>
                         @endif
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>
+                                <select id="filter-type" name="filter_type" class="form-control js-example-basic-single">
+                                    <option value="">Select Type</option>
+                                    <option value="Customer Requirement">Customer Requirement</option>
+                                    <option value="Sample Request">Sample Request</option>
+                                    <option value="Request Product Evaluation">Request Product Evaluation</option>
+                                    <option value="Price Request">Price Request</option>
+                                    <option value="Activity">Activity</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select id="filter-transaction-number" name="filter_transaction_number" class="form-control js-example-basic-single">
+                                    <option value="">Select Transaction Number</option>
+                                    @foreach($transactionNumbers as $number)
+                                        <option value="{{ $number }}">{{ $number }}</option>
+                                    @endforeach
+                                </select>
+                            </th>
+                            <th>
+                                <select id="filter-bde" name="filter_bde" class="form-control js-example-basic-single">
+                                    <option value="">Select BDE</option>
+                                    @foreach($uniqueBde as $bde)
+                                        <option value="{{ $bde }}">{{ $bde }}</option>
+                                    @endforeach
+                                </select>
+                            </th>
+                            <th>
+                                <select id="filter-client" name="filter_client" class="form-control js-example-basic-single">
+                                    <option value="">Select Client</option>
+                                    @foreach($uniqueClient as $client)
+                                        <option value="{{ $client }}">{{ $client }}</option>
+                                    @endforeach
+                                </select>
+                            </th>
+                            <th>
+                                <select id="filter-date-created" name="filter_date_created" class="form-control js-example-basic-single">
+                                    <option value="">Select Date</option>
+                                    @foreach($uniqueDateCreated as $created)
+                                        <option value="{{ date('Y-m-d', strtotime($created)) }}">{{ date('M. d, Y', strtotime($created)) }}</option>
+                                    @endforeach
+                                </select>
+                            </th>
+                            <th>
+                                <select id="filter-due-date" name="filter_due_date" class="form-control js-example-basic-single">
+                                    <option value="">Select Date</option>
+                                    @foreach($uniqueDueDate as $due_date)
+                                        <option value="{{ date('Y-m-d', strtotime($due_date)) }}">{{ date('M. d, Y', strtotime($due_date)) }}</option>
+                                    @endforeach
+                                </select>
+                            </th>
+                            <th>
+                            </th>
+                            <th>
+                            </th>
+                            <th>
+                                <select id="filter-status" name="filter_status" class="form-control js-example-basic-single">
+                                    <option value="">Select Status</option>
+                                    @foreach($uniqueStatus as $status)
+                                        <option value="{{ $status }}">
+                                            @if($status == 10)
+                                                Open
+                                            @elseif($status == 20)
+                                                Closed 
+                                            @else
+                                                Cancelled
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </th>
+                            <th>
+                                <select id="filter-progress" name="filter_progress" class="form-control js-example-basic-single">
+                                    <option value="">Select Progress</option>
+                                    @foreach($uniqueProgress as $progress)
+                                        <option value="{{ $progress }}">
+                                            @if($progress == 10)
+                                                Open
+                                            @elseif($progress == 20)
+                                                Closed 
+                                            @else
+                                                {{ $progress }}
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
             {{ $transaction_data->appends(['from' => $from, 'to' => $to, 'search' => $search, 'sort' => $sort, 'direction' => $direction])->links() }}
@@ -116,6 +273,79 @@
             var form = $(this).closest('form');
             form.submit();
         });
+
+        $('.js-example-basic-single').select2();
+
+        $('#copy_transaction_btn').click(function() {
+            $.ajax({
+                url: '{{ route('copy_transaction_activity') }}', // Use Laravel's route helper
+                method: 'GET',
+                success: function(response) {
+                    copyToClipboard(response.data); // Call a function to copy data to clipboard
+                },
+                error: function(xhr) {
+                    console.error('An error occurred while copying the data:', xhr.responseText);
+                }
+            });
+        });
+
+        function copyToClipboard(data) {
+            // Create a temporary textarea element to hold the data
+            var textarea = document.createElement('textarea');
+            textarea.value = data;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Data has been copied to clipboard.',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+
+        // Function to handle filter changes
+        function applyFilters() {
+            const filterType = $('#filter-type').val();
+            const filterTransactionNumber = $('#filter-transaction-number').val();
+            const filterBDE = $('#filter-bde').val();
+            const filterClient = $('#filter-client').val();
+            const filterDateCreated = $('#filter-date-created').val();
+            const filterDueDate = $('#filter-due-date').val();
+            const filterStatus = $('#filter-status').val();
+            const filterProgress = $('#filter-progress').val();
+            
+            // Build query string based on filters
+            const queryParams = new URLSearchParams({
+                filter_type: filterType,
+                filter_transaction_number: filterTransactionNumber,
+                filter_bde: filterBDE,
+                filter_client: filterClient,
+                filter_date_created: filterDateCreated,
+                filter_due_date: filterDueDate,
+                filter_status: filterStatus,
+                filter_progress: filterProgress,
+                // Add other filters here if needed
+            }).toString();
+
+            // Redirect to the filtered URL
+            window.location.search = queryParams;
+        }
+
+        // Attach event handlers
+        $('#filter-type, #filter-transaction-number, #filter-bde, #filter-client, #filter-date-created, #filter-due-date, #filter-status, #filter-progress').on('change keyup', function() {
+            applyFilters();
+        });
+
+        // Helper function to format date
+        function formatDate(dateStr) {
+            var date = new Date(dateStr);
+            var options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
     });
 </script>
 @endsection
