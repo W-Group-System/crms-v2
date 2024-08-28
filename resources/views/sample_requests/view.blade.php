@@ -198,7 +198,7 @@
                             @endif
                         @endif
                         @if(
-                            (checkIfItsApprover(auth()->user()->user_id, $sampleRequest->PrimarySalesPersonId, "SRF") == "yes") && 
+                            (checkIfItsApprover(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, "SRF") == "yes") && 
                             $sampleRequest->Progress == 10
                         )
                             <button type="button" class="btn btn-md btn-success"
