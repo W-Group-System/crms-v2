@@ -114,9 +114,11 @@
                     
                     @if(rndPersonnel($requestEvaluation->rpePersonnel, auth()->user()->id))
                             
+                        @if ($requestEvaluation->Status == 10)
+
                         @if($requestEvaluation->Progress != 60)
                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateRnd{{$requestEvaluation->id}}">
-                            <i class="ti ti-pencil"></i>&nbsp;UpdateW
+                            <i class="ti ti-pencil"></i>&nbsp;Update
                         </button>
                         @endif
 
@@ -131,14 +133,14 @@
                         @endif
 
                         @if($requestEvaluation->Progress == 50)
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
+                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
                                 <i class="ti-control-pause"></i>&nbsp; Pause
                             </button>
 
                             <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
                                 @csrf
 
-                                <button type="button" class="btn btn-warning initialReviewBtn">
+                                <button type="button" class="btn btn-success initialReviewBtn">
                                     <i class="ti-check"></i>&nbsp; Submit
                                 </button>
                             </form>
@@ -158,7 +160,7 @@
                             <form method="POST" action="{{url('final_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
                                 @csrf 
 
-                                <button type="button" class="btn btn-warning finalReviewBtn">
+                                <button type="button" class="btn btn-success finalReviewBtn">
                                     <i class="ti-check"></i>&nbsp; Submit
                                 </button>
                             </form>
@@ -172,6 +174,8 @@
                                     <i class="ti-pencil-alt"></i>&nbsp; Completed
                                 </button>
                             </form>
+                        @endif
+                            
                         @endif
                     @endif
                     
@@ -263,14 +267,14 @@
                             @endif
 
                             @if($requestEvaluation->Progress == 50)
-                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
                                     <i class="ti-control-pause"></i>&nbsp; Pause
                                 </button>
 
                                 <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
                                     @csrf
     
-                                    <button type="button" class="btn btn-warning initialReviewBtn">
+                                    <button type="button" class="btn btn-success initialReviewBtn">
                                         <i class="ti-check"></i>&nbsp; Submit
                                     </button>
                                 </form>
@@ -290,7 +294,7 @@
                                 <form method="POST" action="{{url('final_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
                                     @csrf 
 
-                                    <button type="button" class="btn btn-warning finalReviewBtn">
+                                    <button type="button" class="btn btn-success finalReviewBtn">
                                         <i class="ti-check"></i>&nbsp; Submit
                                     </button>
                                 </form>
