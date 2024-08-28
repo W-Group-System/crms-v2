@@ -37,7 +37,7 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div> 
                 @include('components.error')
-                <div class="col-lg-12" align="right">W
+                <div class="col-lg-12" align="right">
                     <a href="{{ url()->previous() ?: url('/request_product_evaluation') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
                     {{-- @if ($requestEvaluation->Progress == 10)
                         <button type="button" class="btn btn-sm btn-success"
@@ -253,9 +253,13 @@
                             @endif
 
                             @if($requestEvaluation->Progress == 35)
+                            <form method="POST" action="{{url('start_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                @csrf 
+
                                 <button type="button" class="btn btn-success startBtn">
                                     <i class="ti-control-play"></i>&nbsp; Start
                                 </button>
+                            </form>
                             @endif
 
                             @if($requestEvaluation->Progress == 50)
