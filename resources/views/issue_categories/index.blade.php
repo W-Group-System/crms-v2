@@ -8,7 +8,7 @@
             <button type="button" class="btn btn-md btn-primary" name="add_issue_category" id="add_issue_category">Add Issue Category</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="row height d-flex ">
+                <div class="row height d-flex">
                     <div class="col-md-5 mt-2">
                         <a href="#" id="copy_issue_btn" class="btn btn-md btn-info mb-1">Copy</a>
                         <a href="#" id="excel_btn" class="btn btn-md btn-success mb-1">Excel</a>
