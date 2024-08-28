@@ -270,7 +270,7 @@
                     <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                 </div>
             </div>
-            @elseif ((auth()->user()->role->department_id == '15' && auth()->user()->role->name == "Staff L1") || (auth()->user()->role->department_id == '15' && auth()->user()->role->name == "Staff L2"))
+            @else
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="sample_request_table">
                     <thead>
