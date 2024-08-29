@@ -70,7 +70,7 @@ class RequestProductEvaluationController extends Controller
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
         $price_currencies = PriceCurrency::all();
         $project_names = ProjectName::all();
