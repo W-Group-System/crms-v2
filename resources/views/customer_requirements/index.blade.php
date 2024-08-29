@@ -147,7 +147,7 @@
                                 @php
                                     $user = auth()->user();
                                 @endphp
-                                <button type="button" class="btn btn-sm btn-warning"
+                                <button type="button" class="btn btn-sm btn-warning editBtn" data-secondarysales="{{$customerRequirement->SecondarySalesPersonId}}"
                                     data-target="#editCrr-{{ $customerRequirement->id }}" data-toggle="modal" title='Edit' @if($user->id != $customerRequirement->PrimarySalesPersonId && $user->user_id != $customerRequirement->PrimarySalesPersonId) disabled @endif>
                                     <i class="ti-pencil"></i>
                                 </button>  
@@ -316,7 +316,7 @@
                                 @php
                                     $user = auth()->user();
                                 @endphp
-                                <button type="button" class="btn btn-sm btn-warning"
+                                <button type="button" class="btn btn-sm btn-warning editBtn" data-secondarysales="{{$customerRequirement->SecondarySalesPersonId}}"
                                     data-target="#editCrr-{{ $customerRequirement->id }}" data-toggle="modal" title='Edit' @if($user->id != $customerRequirement->PrimarySalesPersonId && $user->user_id != $customerRequirement->PrimarySalesPersonId) disabled @endif>
                                     <i class="ti-pencil"></i>
                                 </button>  
@@ -489,13 +489,42 @@
             $(this).closest('form').submit()
         })
 
-        $('.deleteBtn').on('click', function() {
-            console.log('asdad');
+        // $('.deleteBtn').on('click', function() {
+        //     console.log('asdad');
             
-        })
+        // })
 
         $("#addCustomerRequirement").on('click', function() {
             var primarySales = $('[name="PrimarySalesPersonId"]').val();
+
+            refreshSecondaryApprovers(primarySales)
+        })
+
+        $(".editBtn").on('click', function() {
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            var secondarySales = $(this).data('secondarysales');
+
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                        $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                    }, 500);
+                }
+            })
+        })
+
+        $('[name="PrimarySalesPersonId"]').on('change', function() {
+            var primarySales = $(this).val();
 
             refreshSecondaryApprovers(primarySales)
         })

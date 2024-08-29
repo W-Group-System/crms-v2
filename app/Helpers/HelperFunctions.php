@@ -346,3 +346,10 @@ function rndManager($role)
     // dd($role);
     return false;
 }
+
+function getUserApprover($approver)
+{
+    $user = User::whereIn('id', ($approver->pluck('UserId')))->orWhere('id', auth()->user()->id)->get();
+    
+    return $user;
+}
