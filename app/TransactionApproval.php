@@ -11,8 +11,8 @@ class TransactionApproval extends Model
     const UPDATED_AT = "ModifiedDate";
     const CREATED_AT = "CreatedDate";
 
-    CONST UPDATED_AT = 'ModifiedDate';
-    CONST CREATED_AT = 'CreatedDate';
+    // CONST UPDATED_AT = 'ModifiedDate';
+    // CONST CREATED_AT = 'CreatedDate';
 
     public function approverRPE()
     {
