@@ -4,20 +4,41 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">Client List (Archived)</h4>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                <div class="height d-flex justify-content-between align-items-between">
-                    <a href="{{url('export_archived_client')}}" class="btn btn-md btn-success mb-1">Export</a>
-                    <div class="col-md-5">
-                        <div class="search">
-                            <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search Client" name="search" value="{{ $search }}"> 
-                            <button class="btn btn-sm btn-info" type="submit">Search</button>
-                        </div>
-                    </div>
+            <div class="row height d-flex ">
+                <div class="col-md-5 mt-2 mb-2">
+                    <a href="#" id="copy_archived_btn" class="btn btn-md btn-info mb-1">Copy</a>
+                    <a href="{{url('export_current_client')}}" class="btn btn-md btn-success mb-1">Excel</a>
                 </div>
-            </form>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Show</span>
+                    <form method="GET" class="d-inline-block">
+                        <select name="number_of_entries" class="form-control" onchange="this.form.submit()">
+                            <option value="10" @if($entries == 10) selected @endif>10</option>
+                            <option value="25" @if($entries == 25) selected @endif>25</option>
+                            <option value="50" @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
+                </div>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-lg-9">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Client" name="search" value="{{ $search }}"> 
+                                    <button class="btn btn-sm btn-info" type="submit">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover" id="client_archived">
+                <table class="table table-striped table-bordered table-hover" id="archived_table">
                     <thead>
                         <tr>
                             <th>Action</th>
@@ -54,8 +75,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if($clients->count() > 0)
-                            @foreach($clients as $client)
+                        @if($archivedClient->count() > 0)
+                            @foreach($archivedClient as $client)
                                 <tr>
                                     <td>
                                         <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
@@ -79,7 +100,11 @@
                                     </td>
                                     <td>{{ $client->industry->Name ?? 'N/A' }}</td>
                                     <td>{{ $client->BuyerCode ?? 'N/A' }}</td>
-                                    <td>{{ $client->Name ?? 'N/A' }}</td>
+                                    <td>
+                                        <a href="javascript:void(0);" onclick="viewClient({{ $client->id }})">
+                                            {{ $client->Name ?? 'N/A' }}
+                                        </a>
+                                    </td>
                                     <td>
                                         {{ $client->userByUserId->full_name ?? $client->userById->full_name ?? 'N/A' }} / 
                                         {{ $client->userByUserId2->full_name ?? $client->userById2->full_name ?? 'N/A' }}
@@ -94,11 +119,11 @@
                     </tbody>
                 </table>
             </div>
-            {!! $clients->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
+            {!! $archivedClient->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
             @php
-                $total = $clients->total();
-                $currentPage = $clients->currentPage();
-                $perPage = $clients->perPage();
+                $total = $archivedClient->total();
+                $currentPage = $archivedClient->currentPage();
+                $perPage = $archivedClient->perPage();
                 $from = ($currentPage - 1) * $perPage + 1;
                 $to = min($currentPage * $perPage, $total);
             @endphp
@@ -241,6 +266,57 @@
                                 text: response.responseJSON.error
                             });
                         }
+                    });
+                }
+            });
+        });
+
+        $('#copy_archived_btn').click(function() {
+            $.ajax({
+                url: "{{ route('client.archived') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
+
+                    // Add the table header
+                    $('#archived_table thead tr').each(function(rowIndex, tr) {
+                        $(tr).find('th').each(function(cellIndex, th) {
+                            tableData += $(th).text().trim() + '\t'; // Add a tab space
+                        });
+                        tableData += '\n'; // New line after each row
+                    });
+
+                    // Add the table body from the fetched data
+                    $(data).each(function(index, item) {
+                        tableData += (item.Action ?? '') + '\t' +
+                                    (item.Type === 1 ? 'Local' : 'International') + '\t' + 
+                                    (item.industry?.Name ?? 'N/A') + '\t' + 
+                                    (item.BuyerCode ?? 'N/A') + '\t' + 
+                                    (item.Name ?? 'N/A') + '\t' + 
+                                    ((item.user_by_user_id?.full_name ?? item.user_by_user_id?.full_name) ?? 'N/A') + ' / ' +
+                                    ((item.user_by_user_id2?.full_name ?? item.user_by_user_id2?.full_name) ?? 'N/A') + '\n';
+                    });
+
+                    // Create a temporary textarea element to hold the text
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove(); // Remove the temporary element
+
+                    // Notify the user
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
                     });
                 }
             });

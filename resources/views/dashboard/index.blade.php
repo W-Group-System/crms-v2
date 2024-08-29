@@ -183,7 +183,7 @@
                     <div class="d-flex justify-content-between">
                         <div class="mb-4 mt-2">
                             <h3 class="text-primary fs-30 font-weight-medium">
-                                38
+                                
                                 <i class="ti ti-comments"></i>
                             </h3>
                         </div>
@@ -193,7 +193,7 @@
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Customer Complaints</p>
-                        <h5 class="text-primary font-weight-medium">0</h5>
+                        <h5 class="text-primary font-weight-medium">{{ $customerComplaintsCount ?? '0' }}</h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Customer Feedback</p>

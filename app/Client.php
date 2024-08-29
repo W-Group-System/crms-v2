@@ -125,4 +125,8 @@ class Client extends Model
         return $this->belongsTo(PaymentTerms::class, 'PaymentTermId', 'id');
     }
     
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 }

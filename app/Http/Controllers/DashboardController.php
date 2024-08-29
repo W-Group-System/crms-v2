@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Activity;
+use App\CustomerComplaint;
+use App\CustomerFeedback;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -31,6 +33,11 @@ class DashboardController extends Controller
 
         // Total activities
         $totalActivitiesCount = $openActivitiesCount + $closedActivitiesCount;
+
+        $customerComplaintsCount = CustomerComplaint::where(function($query) use ($userId, $userByUser) {
+            $query->where('ReceivedByUserId', $userId)
+                ->orWhere('ReceivedByUserId', $userByUser);
+        })->where('status', '10')->count();
 
         return view('dashboard.index', compact('totalActivitiesCount', 'openActivitiesCount', 'closedActivitiesCount'));
     }
