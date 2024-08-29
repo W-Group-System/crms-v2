@@ -19,11 +19,13 @@ use App\FileCrr;
 use App\ProductApplication;
 use App\SalesApprovers;
 use App\SalesUser;
+use App\TransactionApproval;
 use App\TransactionLogs;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use Collective\Html\FormFacade as Form;
+use Illuminate\Support\Facades\App;
 
 class CustomerRequirementController extends Controller
 {
@@ -366,13 +368,14 @@ class CustomerRequirementController extends Controller
         $customerRequirement->Status = 30;
         $customerRequirement->save();
 
-        $transactionLogs = new TransactionLogs;
-        $transactionLogs->Type = 10;
-        $transactionLogs->TransactionId = $customerRequirement->id;
-        $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-        $transactionLogs->UserId = auth()->user()->id;
-        $transactionLogs->Details = $request->close_remarks;
-        $transactionLogs->save();
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $customerRequirement->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 20;
+        $transactionApproval->Remarks = $request->close_remarks;
+        $transactionApproval->RemarksType = "closed";
+        $transactionApproval->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
@@ -381,17 +384,18 @@ class CustomerRequirementController extends Controller
     public function cancelRemarks(Request $request, $id)
     {
         $customerRequirement = CustomerRequirement::findOrFail($id);
-        $customerRequirement->CancelRemarks = $request->cancel_remarks;
+        // $customerRequirement->CancelRemarks = $request->cancel_remarks;
         $customerRequirement->Status = 50;
         $customerRequirement->save();
 
-        $transactionLogs = new TransactionLogs;
-        $transactionLogs->Type = 10;
-        $transactionLogs->TransactionId = $customerRequirement->id;
-        $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-        $transactionLogs->UserId = auth()->user()->id;
-        $transactionLogs->Details = $request->cancel_remarks;
-        $transactionLogs->save();
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $customerRequirement->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 0;
+        $transactionApproval->Remarks = $request->cancel_remarks;
+        $transactionApproval->RemarksType = "cancelled";
+        $transactionApproval->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
@@ -404,50 +408,53 @@ class CustomerRequirementController extends Controller
         if ($request->action == "approved_to_sales")
         {
             $crr->Progress = 20;
-            $crr->AcceptRemarks = $request->accept_remarks;
+            // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
 
-            $transactionLogs = new TransactionLogs;
-            $transactionLogs->Type = 10;
-            $transactionLogs->TransactionId = $crr->id;
-            $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-            $transactionLogs->UserId = auth()->user()->id;
-            $transactionLogs->Details = $request->accept_remarks;
-            $transactionLogs->save();
+            $transactionApproval = new TransactionApproval;
+            $transactionApproval->Type = 10;
+            $transactionApproval->TransactionId = $crr->id;
+            $transactionApproval->UserId = auth()->user()->id;
+            $transactionApproval->Status = 10;
+            $transactionApproval->Remarks = $request->accept_remarks;
+            $transactionApproval->RemarksType = "accept";
+            $transactionApproval->save();
         }
         elseif($request->action == "approved_to_RND")
         {
             $crr->Progress = 30;
-            $crr->AcceptRemarks = $request->accept_remarks;
+            // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
 
-            $transactionLogs = new TransactionLogs;
-            $transactionLogs->Type = 10;
-            $transactionLogs->TransactionId = $crr->id;
-            $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-            $transactionLogs->UserId = auth()->user()->id;
-            $transactionLogs->Details = $request->accept_remarks;
-            $transactionLogs->save();
+            $transactionApproval = new TransactionApproval;
+            $transactionApproval->Type = 10;
+            $transactionApproval->TransactionId = $crr->id;
+            $transactionApproval->UserId = auth()->user()->id;
+            $transactionApproval->Status = 10;
+            $transactionApproval->Remarks = $request->accept_remarks;
+            $transactionApproval->RemarksType = "accept";
+            $transactionApproval->save();
         }
         elseif($request->action == "approved_to_QCD-MRDC")
         {
             $crr->Progress = 30;
-            $crr->AcceptRemarks = $request->accept_remarks;
+            // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
 
-            $transactionLogs = new TransactionLogs;
-            $transactionLogs->Type = 10;
-            $transactionLogs->TransactionId = $crr->id;
-            $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-            $transactionLogs->UserId = auth()->user()->id;
-            $transactionLogs->Details = $request->accept_remarks;
-            $transactionLogs->save();
+            $transactionApproval = new TransactionApproval;
+            $transactionApproval->Type = 10;
+            $transactionApproval->TransactionId = $crr->id;
+            $transactionApproval->UserId = auth()->user()->id;
+            $transactionApproval->Status = 10;
+            $transactionApproval->Remarks = $request->accept_remarks;
+            $transactionApproval->RemarksType = "accept";
+            $transactionApproval->save();
         }
 
-        Alert::success('Approved to RND')->persistent('Dismiss');
+        Alert::success('Successfully Approved')->persistent('Dismiss');
         return back();
     }
 
@@ -488,13 +495,14 @@ class CustomerRequirementController extends Controller
         $crr->Progress = 55;
         $crr->save();
 
-        $transactionLogs = new TransactionLogs;
-        $transactionLogs->Type = 10;
-        $transactionLogs->TransactionId = $crr->id;
-        $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-        $transactionLogs->UserId = auth()->user()->id;
-        $transactionLogs->Details = $request->pause_remarks;
-        $transactionLogs->save();
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $crr->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 20;
+        $transactionApproval->Remarks = $request->pause_remarks;
+        $transactionApproval->RemarksType = "paused";
+        $transactionApproval->save();
 
         Alert::success('Successfully Paused')->persistent('Dismiss');
         return back();
@@ -648,5 +656,13 @@ class CustomerRequirementController extends Controller
 
         Alert::success('Sales Accepted')->persistent('Dismiss');
         return back();
+    }
+
+    public function printCrr()
+    {
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('customer_requirements.crr_pdf');
+
+        return $pdf->stream();
     }
 }
