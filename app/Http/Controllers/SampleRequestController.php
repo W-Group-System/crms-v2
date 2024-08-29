@@ -172,7 +172,7 @@ class SampleRequestController extends Controller
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
         $productApplications = ProductApplication::all(); 
         $productCodes = Product::where('status', '4')->get();
