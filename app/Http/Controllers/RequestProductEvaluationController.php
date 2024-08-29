@@ -514,4 +514,14 @@ class RequestProductEvaluationController extends Controller
         Alert::success('Successfully Accepted')->persistent('Dismiss');
         return back();
     }
+
+    public function ReturnToSalesRpe($id)
+    {
+        $rpeList = RequestProductEvaluation::findOrFail($id);
+        $rpeList->Progress = 10;
+        $rpeList->save(); 
+
+        Alert::success('Successfully return to sales')->persistent('Dismiss');
+        return back();
+    }
 }

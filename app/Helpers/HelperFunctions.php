@@ -218,7 +218,7 @@ function checkIfHaveFiles($role)
 
 function checkIfItsManagerOrSupervisor($role)
 {
-    if (($role->department_id == 5 || $role->department_id == 38 || $role->department_id == 15 || $role->department_id == 42) && ($role->name == "Department Admin" || $role->name == "Staff L2"))
+    if (($role->department_id == 5 || $role->department_id == 38 || $role->department_id == 15 || $role->department_id == 42) && ($role->name == "Department Admin" || $role->name == "Staff - L2"))
     {
         return "yes";
     }

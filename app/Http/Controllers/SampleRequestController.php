@@ -45,28 +45,32 @@ class SampleRequestController extends Controller
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
-        if (($role->description == 'International Sales - Supervisor') || ($role->description == 'Local Sales - Supervisor')) {
+        if ($role->name == 'Staff - L2' ) {
             $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApprovers->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
             $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
         }
         $productCodes = Product::where('status', '4')->get();
-       
-        // $sampleRequestProducts = SampleRequestProduct::with('sampleRequest')
-        // ->whereHas('sampleRequest', function ($query) {
-        //     $query->where('status', 10);
-        // })
-        // // ->get()
-        // ->paginate(10);
         $search = $request->input('search');
         $sort = $request->get('sort', 'Id');
         $direction = $request->get('direction', 'desc');
         $entries = $request->entries;
+        $open = $request->open;
+        $close = $request->close;
         $sampleRequests = SampleRequest::with('requestProducts') 
+        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+            $query->whereIn('Status', [$request->open, $request->close]);
+        })
+        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+            $query->where('Status', $request->open);
+        })
+        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+            $query->where('Status', $request->close);
+        })
         ->where(function ($query) use ($search){
             $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
             ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
@@ -79,11 +83,26 @@ class SampleRequestController extends Controller
         ->orderBy($sort, $direction)
         ->paginate($request->entries ?? 10);
 
-        $products = SampleRequestProduct::whereHas('sampleRequest', function ($query) use ($search) {
-            $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
-                  ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-                  ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+        $openStatus = request('open');
+        $closeStatus = request('close');
+        $products = SampleRequestProduct::whereHas('sampleRequest', function ($query) use ($search, $openStatus, $closeStatus) {
+            $query->where(function ($query) use ($search) {
+                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                      ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                      ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+            });
+            if ($openStatus || $closeStatus) {
+                $query->where(function ($query) use ($openStatus, $closeStatus) {
+                    if ($openStatus) {
+                        $query->orWhere('Status', $openStatus);
+                    }
+                    if ($closeStatus) {
+                        $query->orWhere('Status', $closeStatus);
+                    }
+                });
+            }
         })
+        
         ->whereHas('sampleRequest', function ($query) {
             $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
         }) 
@@ -99,7 +118,7 @@ class SampleRequestController extends Controller
         ->paginate($request->entries ?? 10);
 
        
-        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'primarySalesPersons', 'secondarySalesPersons', 'entries'));
+        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'primarySalesPersons', 'secondarySalesPersons', 'entries', 'open','close'));
     }
 
     public function getSampleContactsByClientF($clientId)
@@ -413,7 +432,7 @@ class SampleRequestController extends Controller
     $quantities = $request->input('Quantity'); 
     $remarks = $request->input('quantity_remarks'); 
     $userRole = auth()->user()->role->name;
-    $isManager = $userRole == 'International Sales Manager' || $userRole == 'Local Sales Manager';
+    $isManager = $userRole == 'Staff - L2';
 
     foreach ($quantities as $key => $quantity) {
         $isValid = true;
@@ -819,8 +838,6 @@ if ($deptCode) {
         $srf = SampleRequest::findOrFail($id);
 
         View::share('sample_requests', $srf);
-
-        // $cotts = Cott::all();
         $pdf = PDF::loadView('sample_requests.print', [
             'sample_requests' => $srf,
         ])->setPaper('a4', 'portrait');

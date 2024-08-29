@@ -172,6 +172,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
+    $(document).ready(function() {
+        $(".table").tablesorter({
+            theme : "bootstrap",
+        })
+    })
     function confirmDelete(id) {
         Swal.fire({
             title: 'Are you sure?',
@@ -209,6 +214,8 @@
             }
         });
     }   
+    
+    
     
 </script>
 @if(auth()->user()->role->type == 'LS')
