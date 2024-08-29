@@ -42,13 +42,25 @@
                     </div>
                     <div class="form-group">
                         <label>Primary Sales Person:</label>
-                        <select class="form-control js-example-basic-single" name="PrimarySalesPerson" style="position: relative !important" title="Select PrimarySalesPerson" required>
-                            <option value="" disabled selected>Primary Sales Person</option>
+                        <select 
+                            class="form-control js-example-basic-single" 
+                            name="PrimarySalesPerson" 
+                            style="position: relative !important" 
+                            title="Select PrimarySalesPerson" 
+                            required 
+                            @if (!(auth()->user()->role->description == 'International Sales - Supervisor' || auth()->user()->role->description == 'Local Sales - Supervisor')) 
+                                disabled 
+                            @endif
+                        >
+                            @if ((auth()->user()->role->description == 'International Sales - Supervisor') || (auth()->user()->role->description == 'Local Sales - Supervisor'))
+                                <option value="" disabled selected>Primary Sales Person</option>
+                            @endif
                             @foreach ($primarySalesPersons as $salesPerson)
                                 <option value="{{ $salesPerson->user_id }}"{{ old('PrimarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }} >{{ $salesPerson->full_name }}</option>
                             @endforeach
                         </select>
                     </div>
+                    
                     <div class="form-group">
                         <label>Secondary Sales Person:</label>
                         <select class="form-control js-example-basic-single" name="SecondarySalesPerson"  style="position: relative !important" title="Select SecondarySalesPerson" required>
@@ -126,7 +138,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Product Type:</label>
-                    <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type">
+                    <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type" required>
                         <option value="" disabled {{ old('ProductType') === null ? 'selected' : '' }}>Select Product Type</option>
                         <option value="1" {{ old('ProductType') == '1' ? 'selected' : '' }}>Pure</option>
                         <option value="2" {{ old('ProductType') == '2' ? 'selected' : '' }}>Blend</option>
@@ -174,7 +186,7 @@
                     @foreach(old('Quantity', ['']) as $index => $quantity)
                     <div class="form-group">
                         <label for="Quantity">Quantity</label>
-                        <input type="number" class="form-control" name="Quantity[]" value="{{ $quantity }}">
+                        <input type="number" class="form-control" name="Quantity[]" value="{{ $quantity !== '' ? $quantity : 0 }}">
                     </div>
                     @endforeach
                 </div>
@@ -216,7 +228,7 @@
             @endforeach
         </div>
         <div class="col-lg-12">
-            <button type="button" class="btn btn-primary" id="addProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
+            <button type="button" class="btn btn-primary addProductRowBtn" id="addProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
             <button type="button" class="btn btn-info duplicateProductForm"  style="float: left; margin:5px;">Duplicate</button>
         </div>
     </div>

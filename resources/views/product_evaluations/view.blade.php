@@ -110,6 +110,7 @@
                         @endif
                     
                     @elseif(authCheckIfItsRndStaff(auth()->user()->role))
+                    
                     {{-- RND Staff --}}
                     
                     @if(rndPersonnel($requestEvaluation->rpePersonnel, auth()->user()->id))
@@ -136,14 +137,6 @@
                                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
                                     <i class="ti-control-pause"></i>&nbsp; Pause
                                 </button>
-
-                                <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
-                                    @csrf
-
-                                    <button type="button" class="btn btn-success initialReviewBtn">
-                                        <i class="ti-check"></i>&nbsp; Submit
-                                    </button>
-                                </form>
                             @endif
 
                             @if($requestEvaluation->Progress == 55)
@@ -156,7 +149,19 @@
                                 </form>
                             @endif
 
-                            @if($requestEvaluation->Progress == 57)
+                            @if(rndPersonnel($requestEvaluation->rpePersonnel, auth()->user()->id))
+                                @if($requestEvaluation->Progress == 50)
+                                <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                    @csrf
+
+                                    <button type="button" class="btn btn-success initialReviewBtn">
+                                        <i class="ti-check"></i>&nbsp; Submit
+                                    </button>
+                                </form>
+                                @endif
+                            @endif
+
+                            {{-- @if($requestEvaluation->Progress == 57)
                                 <form method="POST" action="{{url('final_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
                                     @csrf 
 
@@ -174,7 +179,7 @@
                                         <i class="ti-pencil-alt"></i>&nbsp; Completed
                                     </button>
                                 </form>
-                            @endif
+                            @endif --}}
                             
                         @endif
                     @endif
@@ -182,6 +187,13 @@
                     {{-- RND and Sales Manager and Supervisor --}}
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                             
+                        @if(authCheckIfItsRnd(auth()->user()->department_id))
+                             @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 20 && $requestEvaluation->Progress != 60)
+                                <button type="button" class="btn btn-info returnToSales"  data-id="{{ $requestEvaluation->id }}" >
+                                    <i class="ti-control-left">&nbsp;</i>Return To Sales
+                                </button>
+                            @endif
+                        @endif
                         @if(authCheckIfItsSales(auth()->user()->department_id))
                             @if($requestEvaluation->Status == 10)
                                 <button type="button" class="btn btn-warning editBtn" data-toggle="modal" data-target="#editRpe{{$requestEvaluation->id}}" data-secondarysales="{{$requestEvaluation->SecondarySalesPersonId}}">
@@ -1129,6 +1141,42 @@
                 }
             });
         })
+
+        $(".returnToSales").on('click', function() {
+            var rpeId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to return this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('ReturnToSales_rpe') }}/" + rpeId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
 
         $('.salesAccept').on('click', function() {
             var form = $(this).closest('form')
