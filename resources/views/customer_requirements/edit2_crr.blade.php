@@ -80,7 +80,11 @@
                                     @endforeach
                                 </select> --}}
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{$crr->PrimarySalesPersonId}}">
+                                @if($crr->primarySalesById)
                                 <input type="text" class="form-control" value="{{$crr->primarySalesById->full_name}}" readonly>
+                                @elseif($crr->primarySales)
+                                <input type="text" class="form-control" value="{{$crr->primarySales->full_name}}" readonly>
+                                @endif
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -114,7 +118,11 @@
                                     @endforeach
                                 </select> --}}
                                 <input type="hidden" name="SecondarySalesPersonId" value="{{$crr->SecondarySalesPersonId}}">
+                                @if($crr->secondarySalesById)
                                 <input type="text" class="form-control" value="{{$crr->secondarySalesById->full_name}}" readonly>
+                                @elseif($crr->secondarySales)
+                                <input type="text" class="form-control" value="{{$crr->secondarySales->full_name}}" readonly>
+                                @endif
                             </div>
                         </div>
                         <div class="col-lg-6">
