@@ -310,7 +310,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     @if(session('error'))
-        var isManager = @json(auth()->user()->role->name == 'Staff - L2');
+        var isManager = @json(auth()->user()->role->name == 'Staff L2');
         var errorMessage = @json(session('error'));
         var formType = @json(session('formType')); 
 

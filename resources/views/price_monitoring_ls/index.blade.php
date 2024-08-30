@@ -28,7 +28,7 @@
                     <div class="col-md-5">
                         <div class="search">
                             <i class="ti ti-search"></i>
-                            <input type="text" class="form-control" placeholder="Search User" name="search" value="{{$search}}"> 
+                            <input type="text" class="form-control" placeholder="Search Prices Request" name="search" value="{{$search}}"> 
                             <button class="btn btn-sm btn-info">Search</button>
                         </div>
                     </div>

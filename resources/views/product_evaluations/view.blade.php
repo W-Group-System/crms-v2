@@ -201,13 +201,19 @@
                                 </button>
 
                                 @if($requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 40 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && $requestEvaluation->Progress != 70)
-                                <form method="POST" class="d-inline-block" action="{{url('accept_rpe/'.$requestEvaluation->id)}}">
+                                <button type="button" class="btn btn-md btn-success"
+                                    data-target="#approveRpe{{ $requestEvaluation->id }}" 
+                                    data-toggle="modal" 
+                                    title='Approve RPE'>
+                                    <i class="ti ti-check-box">&nbsp;</i>Approve
+                                </button>
+                                {{-- <form method="POST" class="d-inline-block" action="{{url('accept_rpe/'.$requestEvaluation->id)}}">
                                     @csrf 
 
                                     <button type="button" class="btn btn-success acceptBtn">
-                                        <i class="ti ti-check-box"></i>&nbsp;Accept
+                                        <i class="ti ti-check-box"></i>&nbsp;Approve
                                     </button>
-                                </form>
+                                </form> --}}
                                 @endif
                             @endif
 
@@ -478,7 +484,7 @@
                 <p class="col-sm-3 col-form-label"></p>
             </div>
             <br>
-            <div class="form-header">
+            {{-- <div class="form-header">
                 <span class="header-label"><b>Approver Remarks</b></span>
                 <hr class="form-divider">
                 <p>
@@ -497,8 +503,34 @@
                     <p class="col-sm-12 col-form-label" style="margin-left: 30px;">{{ $rpeTransactionApproval->Remarks  }}</p>
                 </div>
             </div>
-            @endforeach
-            <br>
+            @endforeach --}}
+            <div class="form-header">
+                <span class="header-label"><b>Approver Remarks</b></span>
+                <hr class="form-divider">
+            </div>
+            <div class="group-form">
+                <div class="form-group row">
+                    <label class="col-sm-12 col-form-label">
+                        @if($requestEvaluation->rpeTransactionApprovals->isEmpty())
+                            @if($requestEvaluation->approver)
+                            <b>{{$requestEvaluation->approver->full_name}} :</b> {{$requestEvaluation->AcceptRemarks}}
+                            @else
+                            <p>No approver remarks yet</p>
+                            @endif
+                        @else
+                        @foreach ($requestEvaluation->rpeTransactionApprovals as $transactionApproval)
+                                @if($transactionApproval->userByUserId)
+                                    <b>{{$transactionApproval->userByUserId->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @elseif($transactionApproval->userById)
+                                    <b>{{$transactionApproval->userById->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @endif
+                        @endforeach
+                        @endif
+                    </label>
+                </div>
+            </div>
             <div class="form-header">
                 <span class="header-label"><b>Evaluation Details</b></span>
                 <hr class="form-divider">
@@ -1224,8 +1256,9 @@
     </script>
 @include('product_evaluations.create_supplementary')
 @include('product_evaluations.assign_personnel')
-{{-- @include('product_evaluations.create_activity') --}}
+@include('product_evaluations.create_activity')
 @include('product_evaluations.upload_rpe_file')
+@include('product_evaluations.rpe_approval')
 
 {{-- @foreach ($RpeSupplementary as $supplementary) --}}
 {{-- @endforeach --}}

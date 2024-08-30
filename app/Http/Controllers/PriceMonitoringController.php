@@ -152,7 +152,7 @@ class PriceMonitoringController extends Controller
                 'IsalesMargin' => $request->input('Margin'),
                 'IsalesMarginPercentage' => $request->input('MarginPercent'),
         ]);
-                    return redirect()->back()->with('success', 'Base prices updated successfully.');
+                    return redirect()->back()->with('success', 'Price updated successfully.');
     }
 
     public function update(Request $request, $id)
@@ -462,7 +462,7 @@ class PriceMonitoringController extends Controller
 
         ]);
     }
-                    return redirect()->back()->with('success', 'Base prices updated successfully.');
+                    return redirect()->back()->with('success', 'Prices updated successfully.');
     }
 
     public function LocalSalesUpdate(Request $request, $id)
