@@ -99,7 +99,7 @@
                             @endif --}}
 
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
-                                <i class="ti ti-check-box"></i>&nbsp;Accept
+                                <i class="ti ti-check-box"></i>&nbsp;Approve
                             </button>
                         @endif
                         @endif

@@ -21,7 +21,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-info" name="action" value="approved_to_{{$crr->RefCode}}">Approve to {{$crr->RefCode}}</button>
-                        <button type="submit" class="btn btn-success" name="action" value="approved_to_sales">Approve to Sales</button>
+                        <button type="submit" class="btn btn-success" name="action" value="approved_to_sales">Submit</button>
                     </div>
                 </form>
             </div>
