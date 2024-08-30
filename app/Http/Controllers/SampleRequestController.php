@@ -45,14 +45,14 @@ class SampleRequestController extends Controller
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
-        if ($role->name == 'Staff - L2' ) {
+        if ($role->name == 'Staff L2' ) {
             $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApprovers->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApproverById->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
         $productCodes = Product::where('status', '4')->get();
         $search = $request->input('search');
@@ -170,7 +170,7 @@ class SampleRequestController extends Controller
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
         $productApplications = ProductApplication::all(); 
         $productCodes = Product::where('status', '4')->get();
@@ -432,7 +432,7 @@ class SampleRequestController extends Controller
     $quantities = $request->input('Quantity'); 
     $remarks = $request->input('quantity_remarks'); 
     $userRole = auth()->user()->role->name;
-    $isManager = $userRole == 'Staff - L2';
+    $isManager = $userRole == 'Staff L2';
 
     foreach ($quantities as $key => $quantity) {
         $isValid = true;
@@ -550,7 +550,7 @@ if ($deptCode) {
     $quantities = $request->input('Quantity');        
     $remarks = $request->input('quantity_remarks'); 
     $userRole = auth()->user()->role->name;
-    $isManager = $userRole == 'International Sales Manager' || $userRole == 'Local Sales Manager';
+    $isManager = $userRole == 'Staff L2';
 
     foreach ($quantities as $key => $quantity) {
         $isValid = true;

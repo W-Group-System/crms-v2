@@ -78,6 +78,11 @@ class SampleRequest extends Model implements Auditable
 
     public function srfTransactionApprovals()
     {
-        return $this->hasMany(TransactionApproval::class,'TransactionId','Id')->where('Type', 30);
+        return $this->hasMany(TransactionApproval::class,'TransactionId','Id')->where('Type', 30)->where('RemarksType', 'approved');
     }
+    public function approver()
+    {
+        return $this->belongsTo(User::class,'ApprovedBy','Id');
+    }
+    
 }

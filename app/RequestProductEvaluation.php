@@ -65,4 +65,12 @@ class RequestProductEvaluation extends Model
     {
         return $this->hasMany(RpeDetail::class,'RequestProductEvaluationId','id');
     }
+    public function rpeTransactionApprovals()
+    {
+        return $this->hasMany(TransactionApproval::class,'TransactionId','id')->where('Type', 20)->where('RemarksType', 'approved');
+    }
+    public function approver()
+    {
+        return $this->belongsTo(User::class,'ApprovedBy','Id');
+    }
 }

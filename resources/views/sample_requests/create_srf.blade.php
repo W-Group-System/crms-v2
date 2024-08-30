@@ -40,26 +40,44 @@
                         <label for="DateStarted">Date Started (MM/DD/YYYY):</label>
                         <input type="date" class="form-control" name="DateStarted" value="" placeholder="" readonly>
                     </div>
+
+                    @if (auth()->user()->role->name == 'Staff L2')
                     <div class="form-group">
-                        <label>Primary Sales Person:</label>
+                        <label>Primary Salesperson:</label>
+                        <select  class="form-control js-example-basic-single" name="PrimarySalesPerson" style="position: relative !important" title="Select PrimarySalesPerson" required >
+                            <option value="" disabled selected>Primary Sales Person</option>
+                            @foreach ($primarySalesPersons as $salesPerson)
+                                <option value="{{ $salesPerson->user_id }}"{{ old('PrimarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }} >{{ $salesPerson->full_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @else
+                    <div class="form-group">
+                        <label>Primary Salesperson:</label>
+                        <input type="text" class="form-control form-control-sm" value="{{ old('PrimarySalesPerson', auth()->user()->full_name) }}" readonly>
+                        <input type="hidden" name="PrimarySalesPerson" value="{{ old('PrimarySalesPerson', auth()->user()->user_id) }}">
+                    </div>
+                    @endif
+                    {{-- <div class="form-group">
+                        <label>Primary Salesperson:</label>
                         <select 
                             class="form-control js-example-basic-single" 
                             name="PrimarySalesPerson" 
                             style="position: relative !important" 
                             title="Select PrimarySalesPerson" 
                             required 
-                            @if (!(auth()->user()->role->description == 'International Sales - Supervisor' || auth()->user()->role->description == 'Local Sales - Supervisor')) 
+                            @if (!(auth()->user()->role->name == 'Staff L2')) 
                                 disabled 
                             @endif
                         >
-                            @if ((auth()->user()->role->description == 'International Sales - Supervisor') || (auth()->user()->role->description == 'Local Sales - Supervisor'))
+                            @if ((auth()->user()->role->name == 'Staff L2'))
                                 <option value="" disabled selected>Primary Sales Person</option>
                             @endif
                             @foreach ($primarySalesPersons as $salesPerson)
                                 <option value="{{ $salesPerson->user_id }}"{{ old('PrimarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }} >{{ $salesPerson->full_name }}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
                     
                     <div class="form-group">
                         <label>Secondary Sales Person:</label>
@@ -193,7 +211,7 @@
                 <div class="col-md-5">
                     <div class="form-group">
                         <label>Unit</label>
-                        <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit">
+                        <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit" required>
                             <option value="1" {{ old('UnitOfMeasure') == '1' ? 'selected' : '' }}>Grams</option>
                             <option value="2" {{ old('UnitOfMeasure') == '2' ? 'selected' : '' }}>Kilograms</option>
                         </select>

@@ -318,7 +318,10 @@
                 <div class="group-form">
                 <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Client Name:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->client)->Name  }}</p>
+                    <p class="col-sm-3 col-form-label">
+                        <a href="{{ url('view_client/' . $sampleRequest->client->id) }}">
+                            {{ optional($sampleRequest->client)->Name  }}</p>
+                        </a>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Contact:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->ContactName}}</p>
                 </div>
@@ -533,7 +536,7 @@
                             @elseif ($requestProducts->Disposition == '20')
                                 Rejected
                             @else
-                                {{ $requestProducts->Disposition }}
+                                NA
                             @endif
                         </p>
                         <p class="offset-sm-2 col-sm-2 col-form-label"><b>Disposition Remarks</b></p>
@@ -543,11 +546,34 @@
                 <br>
             @endforeach
             <div class="form-header">
-                <span class="header-label"><b>Dispatch Details</b></span>
+                <span class="header-label"><b>Approver Remarks</b></span>
                 <hr class="form-divider">
             </div>
+            <div class="group-form">
+                <div class="form-group row">
+                    <label class="col-sm-12 col-form-label">
+                        @if($sampleRequest->srfTransactionApprovals->isEmpty())
+                            @if($sampleRequest->approver)
+                            <b>{{$sampleRequest->approver->full_name}} :</b> {{$sampleRequest->AcceptRemarks}}
+                            @else
+                            <p>No approver remarks yet</p>
+                            @endif
+                        @else
+                        @foreach ($sampleRequest->srfTransactionApprovals as $transactionApproval)
+                                @if($transactionApproval->userByUserId)
+                                    <b>{{$transactionApproval->userByUserId->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @elseif($transactionApproval->userById)
+                                    <b>{{$transactionApproval->userById->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @endif
+                        @endforeach
+                        @endif
+                    </label>
+                </div>
+            </div>
             <div class="form-header">
-                <span class="header-label"><b>Approver Remarks</b></span>
+                <span class="header-label"><b>Dispatch Details</b></span>
                 <hr class="form-divider">
             </div>
             <div class="group-form">

@@ -63,14 +63,14 @@ class RequestProductEvaluationController extends Controller
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
-        if (($role->description == 'International Sales - Supervisor') || ($role->description == 'Local Sales - Supervisor')) {
+        if ($role->name == 'Staff L2' ) {
             $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
             $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
         $price_currencies = PriceCurrency::all();
         $project_names = ProjectName::all();
@@ -141,7 +141,7 @@ class RequestProductEvaluationController extends Controller
             'Status' =>'10',
             'Progress' => '10',
         ]);
-        return redirect()->back()->with('success', 'Base prices updated successfully.');
+        return redirect()->back()->with('success', 'Price updated successfully.');
     }
     public function update(Request $request, $id)
     {
@@ -263,7 +263,7 @@ class RequestProductEvaluationController extends Controller
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
         $price_currencies = PriceCurrency::all();
         $project_names = ProjectName::all();
@@ -524,4 +524,31 @@ class RequestProductEvaluationController extends Controller
         Alert::success('Successfully return to sales')->persistent('Dismiss');
         return back();
     }
+
+    public function approveRpeSales($id)
+    {
+        $approveRpeSales = RequestProductEvaluation::find($id);
+        if ($approveRpeSales) {
+            $buttonClicked = request()->input('submitbutton');    
+            if ($buttonClicked === 'Approve to R&D') {
+                $approveRpeSales->Progress = 30; 
+
+                $transactionApproval = new TransactionApproval();
+                $transactionApproval->Type = '20';
+                $transactionApproval->TransactionId = $id;
+                $transactionApproval->UserId = Auth::user()->id;
+                $transactionApproval->Remarks = request()->input('Remarks');
+                $transactionApproval->RemarksType = 'approved';
+                
+                $transactionApproval->save(); 
+            } elseif ($buttonClicked === 'Approve to QCD') {
+                $approveRpeSales->Progress = 80;
+                $approveRpeSales->InternalRemarks = request()->input('submitbutton'); 
+            }
+            $approveRpeSales->save();
+
+            Alert::success('Successfully Saved')->persistent('Dismiss');
+            return back();
+        } 
+    }    
 }

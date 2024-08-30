@@ -231,6 +231,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('complete_rpe/{id}', 'RequestProductEvaluationController@completeRpe');
         Route::post('sales_accept_rpe/{id}', 'RequestProductEvaluationController@salesAcceptRpe');
         Route::post('ReturnToSales_rpe/{id}', 'RequestProductEvaluationController@ReturnToSalesRpe');
+        Route::post('ApproveRpe/{id}', 'RequestProductEvaluationController@approveRpeSales');
 
         // Sample Request 
         Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
