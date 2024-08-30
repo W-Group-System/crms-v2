@@ -401,7 +401,7 @@
             </div>
             <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>Date Required :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DueDate }}</p>
+                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DueDate ?? 'NA'}}</p>
             </div>
             <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>Priority :</b></p>
@@ -540,7 +540,7 @@
                 <p class="col-sm-2 col-form-label"><b>DDW Number:</b></p>
                 <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DdwNumber  }}</p>
                 <p class="offset-sm-2 col-sm-2 col-form-label"><b>Date Received:</b></p>
-                <p class="col-sm-3 col-form-label">{{ date('M d, Y', strtotime($requestEvaluation->DateReceived)) }}</p>
+                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DateReceived ? date('M d, Y', strtotime($requestEvaluation->DateReceived)) : 'NA' }}</p>
             </div>
              <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>RPE Recommendation:</b></p>
