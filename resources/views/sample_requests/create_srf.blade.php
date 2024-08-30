@@ -43,7 +43,7 @@
 
                     @if (auth()->user()->role->name == 'Staff L2')
                     <div class="form-group">
-                        <label>Primary Salesperson:</label>
+                        <label>Primary Sales Person:</label>
                         <select  class="form-control js-example-basic-single" name="PrimarySalesPerson" style="position: relative !important" title="Select PrimarySalesPerson" required >
                             <option value="" disabled selected>Primary Sales Person</option>
                             @foreach ($primarySalesPersons as $salesPerson)
@@ -53,7 +53,7 @@
                     </div>
                     @else
                     <div class="form-group">
-                        <label>Primary Salesperson:</label>
+                        <label>Primary Sales Person:</label>
                         <input type="text" class="form-control form-control-sm" value="{{ old('PrimarySalesPerson', auth()->user()->full_name) }}" readonly>
                         <input type="hidden" name="PrimarySalesPerson" value="{{ old('PrimarySalesPerson', auth()->user()->user_id) }}">
                     </div>

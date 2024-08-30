@@ -130,7 +130,7 @@ class RequestProductEvaluationController extends Controller
             'TargetRawPrice' => $request->input('TargetRawPrice'),
             'ProjectNameId' => $request->input('ProjectNameId'),
             'PrimarySalesPersonId' => $request->input('PrimarySalesPersonId'),
-            'SecondarySalesPersonId' => $request->input('SecondarySalesPersonId'),
+            'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
             'Priority' => $request->input('Priority'),
             'AttentionTo' => $request->input('AttentionTo'),
             'UnitOfMeasureId' => $request->input('UnitOfMeasureId'),
