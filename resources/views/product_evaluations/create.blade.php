@@ -85,7 +85,7 @@
                                         <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select> --}}
-                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->user_id}}">
                                 <input type="text" class="form-control" value="{{auth()->user()->full_name}}" disabled>
                             </div>
                         </div>

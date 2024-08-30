@@ -141,7 +141,7 @@ class RequestProductEvaluationController extends Controller
             'Status' =>'10',
             'Progress' => '10',
         ]);
-        return redirect()->back()->with('success', 'Price updated successfully.');
+        return redirect()->back()->with('success', 'RPE added successfully.');
     }
     public function update(Request $request, $id)
     {
