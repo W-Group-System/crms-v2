@@ -410,7 +410,7 @@
                                             <td>Sample Request</td>
                                             <td>
                                                 <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
-                                                    {{$item->sampleRequest->SrfNumber}}
+                                                    {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
                                             </td>
                                         </tr>

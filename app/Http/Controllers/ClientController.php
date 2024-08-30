@@ -24,22 +24,23 @@ class ClientController extends Controller
 {
     // Current List
     public function index(Request $request)
-    {   
-        // $clients = Client::with(['industry'])->where('Status', '2')->orderBy('Id', 'desc')->get();
-        // if(request()->ajax())   
-        // {
-        //     return datatables()->of($clients)
-        //             ->addColumn('action', function ($data) {
-        //                 $viewButton = '<a type="button" href="' . route("client.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
-        //                 $editButton = '<a type="button" href="' . route("client.edit", ["id" => $data->id]) . '" name="edit" id="' . $data->id . '" class="edit btn btn-primary">Edit</a>';
-        //                 return $viewButton . '&nbsp;&nbsp;' . $editButton;
-        //             })
-        //             ->rawColumns(['action'])
-        //             ->make(true);
-        // }
-        // return view('clients.index', compact('clients'));
+    {
         $request->session()->put('last_client_page', url()->full());
         $search = $request->input('search');
+        $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
+        $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
+        $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
+
+        // Validate sort and direction parameters
+        $validSorts = ['Name', 'BuyerCode', 'Type', 'ClientIndustryId', 'PrimaryAccountManagerId'];
+        if (!in_array($sort, $validSorts)) {
+            $sort = 'Name';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
+
         // Map search terms to type values
         $typeMap = [
             'Local' => '1',
@@ -51,6 +52,7 @@ class ClientController extends Controller
         // Default to all types if no specific type is searched
         $typeSearch = $typeMap[$search] ?? null;
 
+        // Build the query with relationships
         $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
             ->where('Status', '2')  // Filter by status
             ->where(function ($query) use ($search, $typeSearch) {
@@ -75,14 +77,20 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
-            ->paginate(10);  // Paginate results with 10 items per page
+            ->orderBy($sort, $direction);
 
-        // Return view with search term and paginated client data
-        return view('clients.index', [
-            'search' => $search,
-            'clients' => $clients
-        ]);
+        if ($fetchAll) {
+            $currentClient = $clients->get(); // Fetch all results
+            return response()->json($currentClient); // Return JSON response for copying
+        } else {
+            $currentClient = $clients->paginate($entries); // Default pagination
+            return view('clients.index', [
+                'search' => $search,
+                'currentClient' => $currentClient,
+                'fetchAll' => $fetchAll,
+                'entries' => $entries
+            ]);
+        }
     }
 
     // Prospect List

@@ -409,7 +409,7 @@
                                             <td>Sample Request</td>
                                             <td>
                                                 <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
-                                                    {{$item->sampleRequest->SrfNumber}}
+                                                    {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
                                             </td>
                                         </tr>
@@ -439,24 +439,28 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($ic->products->status == 1)
-                                                <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
-                                            @elseif($ic->products->status == 2)
-                                                <a href="{{url('view_new_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
-                                            @elseif($ic->products->status == 4)
-                                                <a href="{{url('view_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
-                                            @elseif($ic->products->status == 5)
-                                                <a href="{{url('view_archive_products/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                            @if($ic->products)
+                                                @if($ic->products->status == 1)
+                                                    <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                                @elseif($ic->products->status == 2)
+                                                    <a href="{{url('view_new_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                                @elseif($ic->products->status == 4)
+                                                    <a href="{{url('view_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                                @elseif($ic->products->status == 5)
+                                                    <a href="{{url('view_archive_products/'.$ic->products->id)}}">{{$ic->products->code}}</a>
+                                                @endif
                                             @endif
                                         </td>
                                         <td>
-                                            @if($ic->products->userByUserId)
-                                                {{$ic->products->userByUserId->full_name}}
-                                            @else
-                                                {{$ic->products->userById->full_name}}
+                                            @if($ic->products)
+                                                @if($ic->products->userByUserId)
+                                                    {{$ic->products->userByUserId->full_name}}
+                                                @else
+                                                    {{$ic->products->userById->full_name}}
+                                                @endif
                                             @endif
                                         </td>
-                                        <td>{{date('M d, Y', strtotime($ic->products->created_at))}}</td>
+                                        <td>{{date('M d, Y', strtotime(optional($ic->products)->created_at))}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

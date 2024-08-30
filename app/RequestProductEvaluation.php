@@ -57,6 +57,12 @@ class RequestProductEvaluation extends Model
     {
         return $this->belongsTo(PriceCurrency::class, 'CurrencyId', 'id');
     }
+    
+    public function progresses()
+    {
+        return $this->belongsTo(SrfProgress::class, 'Progress', 'id');
+    }
+
     public function rpePersonnel()
     {
         return $this->hasMany(RpePersonnel::class,'RequestProductEvaluationId','id');

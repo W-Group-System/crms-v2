@@ -45,6 +45,7 @@ class SampleRequestController extends Controller
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+
         if ($role->name == 'Staff L2' ) {
             $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
