@@ -104,7 +104,7 @@
                                     <i class="ti-power-off text-primary"></i>
                                     Logout
                                 </a> -->
-                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="logout(); show();">
                                 <i class="ti-power-off text-primary"></i>
                                     {{ __('Logout') }}
                                 </a>
@@ -1157,6 +1157,10 @@
         <script>
             function show() {
                 document.getElementById("loader").style.display = "block";
+            }
+            function logout() {
+                event.preventDefault();
+                document.getElementById('logout-form').submit();
             }
         </script>
         <script src="{{ asset('js/vendor.bundle.base.js') }}"></script>

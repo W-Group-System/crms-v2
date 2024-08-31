@@ -24,7 +24,21 @@
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
     </head>
+    <style>
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url("{{ asset('images/loading.gif') }}") 50% 50% no-repeat white;
+            opacity: .8;
+            background-size: 120px 120px;
+        }  
+    </style>
     <body>
+        <div class="loader" id="loader" style="display: none;"></div>
         <div id="app">
             <!-- <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
                 <div class="container">
@@ -81,5 +95,10 @@
         <script src="{{ asset('js/template.js') }}"></script>
         <script src="{{ asset('js/settings.js') }}"></script>
         <script src="{{ asset('js/todolist.js') }}"></script>
+        <script>
+            function show() {
+                document.getElementById("loader").style.display = "block";
+            }
+        </script>
     </body>
 </html>
