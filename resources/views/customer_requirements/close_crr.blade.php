@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('close_remarks/'.$crr->id) }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('close_remarks/'.$crr->id) }}" onsubmit="show()">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">

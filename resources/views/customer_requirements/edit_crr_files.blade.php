@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h5 class="modal-title">Edit Files</h5>
             </div>
-            <form method="POST" action="{{url('update_crr_file/'.$files->Id)}}" enctype="multipart/form-data">
+            <form method="POST" action="{{url('update_crr_file/'.$files->Id)}}" enctype="multipart/form-data" onsubmit="show()">
                 @csrf 
 
                 <div class="modal-body">

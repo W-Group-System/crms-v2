@@ -54,6 +54,17 @@
         {
             background-color: white !important;
         }
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url("{{ asset('images/loading.gif') }}") 50% 50% no-repeat white;
+            opacity: .8;
+            background-size: 120px 120px;
+        }   
     </style>
     @yield('css')
     @php
@@ -61,6 +72,8 @@
         $department = auth()->user()->department_id;
     @endphp
     <body>
+        <div id="loader" style="display:none;" class="loader"></div>
+
         <div class="container-scroller">
             <!-- partial:partials/_navbar.html -->
             <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
@@ -1141,6 +1154,11 @@
             }
         </style>
         @include('sweetalert::alert')
+        <script>
+            function show() {
+                document.getElementById("loader").style.display = "block";
+            }
+        </script>
         <script src="{{ asset('js/vendor.bundle.base.js') }}"></script>
         <script src="{{ asset('js/Chart.min.js') }}"></script>
         <script src="{{ asset('js/jquery.dataTables.js') }}"></script>
