@@ -247,9 +247,9 @@
                                     @if(viewModule('Sample Request Form', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request') }}">Sample Request Form</a></li>
                                     @endif
-                                    @if(viewModule('Price Monitoring', $department, $role) == "yes")
+                                    {{-- @if(viewModule('Price Monitoring', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
-                                    @endif
+                                    @endif --}}
                                     @if(viewModule('Price Monitoring', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring_ls') }}">Price Monitoring</a></li>
                                     @endif

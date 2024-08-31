@@ -33,7 +33,7 @@
                                 <label>Priority</label>
                                 <select class="form-control js-example-basic-single" name="Priority" id="Priority" style="position: relative !important" title="Select Priority">
                                     <option value="" disabled selected>Select Priority</option>
-                                    <option value="1">IC Application</option>
+                                    <!-- <option value="1">IC Application</option> -->
                                     <option value="3">Second Priority</option>
                                     <option value="5">First Priority</option>
                                 </select>
