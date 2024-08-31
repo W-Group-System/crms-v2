@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('new_customer_requirement') }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('new_customer_requirement') }}" onsubmit="show()">
                     @csrf
                     <div class="row">
                         {{-- <div class="col-lg-6">
@@ -69,8 +69,9 @@
                                         <label>Unit</label>
                                         <select class="form-control js-example-basic-single" name="UnitOfMeasureId" id="UnitOfMeasureId" style="position: relative !important" title="Select Unit">
                                             <option value="" disabled selected>Select Unit</option>
-                                            <option value="1">Grams</option>
-                                            <option value="2">Kilograms</option>
+                                            @foreach ($unitOfMeasure as $unit)
+                                                <option value="{{$unit->Id}}">{{$unit->Name}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>

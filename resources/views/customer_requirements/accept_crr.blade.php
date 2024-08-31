@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" action="{{ url('accept_crr/'.$crr->id) }}">
+                <form method="POST" action="{{ url('accept_crr/'.$crr->id) }}" onsubmit="show()">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">
@@ -21,7 +21,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-info" name="action" value="approved_to_{{$crr->RefCode}}">Approve to {{$crr->RefCode}}</button>
-                        <button type="submit" class="btn btn-success" name="action" value="approved_to_sales">Submit</button>
+                        <button type="submit" class="btn btn-success" name="action" value="approved_to_sales">Approve to Sales</button>
                     </div>
                 </form>
             </div>

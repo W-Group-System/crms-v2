@@ -1,4 +1,4 @@
-<div class="modal fade" id="editCrr{{$crr->id}}" tabindex="-1" role="dialog">
+<div class="modal fade" id="editCrr{{$crr->id}}" tabindex="-1" role="dialog" onsubmit="show()">
 	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -63,8 +63,11 @@
                                         <label>Unit</label>
                                         <select class="form-control js-example-basic-single" name="UnitOfMeasureId" style="position: relative !important" title="Select Unit">
                                             <option value="" disabled selected>Select Unit</option>
-                                            <option value="1" @if($crr->UnitOfMeasureId == 1) selected @endif>Grams</option>
-                                            <option value="2" @if($crr->UnitOfMeasureId == 2) selected @endif>Kilograms</option>
+                                            {{-- <option value="1" @if($crr->UnitOfMeasureId == 1) selected @endif>Grams</option>
+                                            <option value="2" @if($crr->UnitOfMeasureId == 2) selected @endif>Kilograms</option> --}}
+                                            @foreach ($unitOfMeasure as $unit)
+                                                <option value="{{$unit->Id}}" @if($unit->Id == $crr->UnitOfMeasureId) selected @endif>{{$unit->Name}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
