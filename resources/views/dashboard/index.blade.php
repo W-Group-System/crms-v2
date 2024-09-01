@@ -65,7 +65,6 @@
                         <p>R&D Completed</p>
                         <h5 class="text-primary font-weight-medium">{{ $crrRnDCompleted ?? '0' }}</h5>
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -76,7 +75,7 @@
                     <div class="d-flex justify-content-between">
                         <div class="mb-4 mt-2">
                             <h3 class="text-primary fs-30 font-weight-medium">
-                                38
+                                {{ $totalRPECount ?? '0'}}
                                 <i class="ti ti-package"></i>
                             </h3>
                         </div>
@@ -86,48 +85,57 @@
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Cancelled</p>
-                        <h5 class="text-primary font-weight-medium">0</h5>
+                        <h5 class="text-primary font-weight-medium">
+                            <!-- <a href="{{ route('customer_requirement.index', ['status' => 50]) }}">
+                                {{ $crrCancelled ?? '0' }}
+                            </a> -->
+                            {{ $rpeCancelled ?? '0' }}
+                        </h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>For Sales Approval</p>
-                        <h5 class="text-primary font-weight-medium">12</h5>
+                        <h5 class="text-primary font-weight-medium">{{ $rpeSalesApproval ?? '0' }}</h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
-                        <p>QCD/R&D Ongoing</p>
-                        <h5 class="text-primary font-weight-medium">10</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>QCD/R&D Pending</p>
-                        <h5 class="text-primary font-weight-medium">5</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>QCD/R&D Initial Review</p>
-                        <h5 class="text-primary font-weight-medium">1</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>QCD/R&D Final Review</p>
-                        <h5 class="text-primary font-weight-medium">0</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>R&D Completed</p>
-                        <h5 class="text-primary font-weight-medium">0</h5>
+                        <p>Sales Approved</p>
+                        <h5 class="text-primary font-weight-medium">{{ $rpeSalesApproved ?? '0' }}</h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Sales Accepted</p>
-                        <h5 class="text-primary font-weight-medium">0</h5>
+                        <h5 class="text-primary font-weight-medium">{{ $rpeSalesAccepted ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>QCD/R&D Ongoing</p>
+                        <h5 class="text-primary font-weight-medium">{{ $rpeRnDOngoing ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>QCD/R&D Pending</p>
+                        <h5 class="text-primary font-weight-medium">{{ $rpeRnDPending ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>QCD/R&D Initial Review</p>
+                        <h5 class="text-primary font-weight-medium">{{ $rpeRnDInitial ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>QCD/R&D Final Review</p>
+                        <h5 class="text-primary font-weight-medium">{{ $rpeRnDFinal ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>R&D Completed</p>
+                        <h5 class="text-primary font-weight-medium">{{ $rpeRnDCompleted ?? '0' }}</h5>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-4 grid-margin stretch-card">
-            <div class="card">
+        <div class="card">
                 <div class="card-body">
-                    <p class="card-title">Sample Request Form</p>
+                    <p class="card-title">Sample Request</p>
                     <div class="d-flex justify-content-between">
                         <div class="mb-4 mt-2">
                             <h3 class="text-primary fs-30 font-weight-medium">
-                                58
-                                <i class="ti ti-file"></i>
+                                {{ $totalSRFCount ?? '0'}}
+                                <i class="ti ti-package"></i>
                             </h3>
                         </div>
                         <div class="mt-3">
@@ -136,35 +144,44 @@
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Cancelled</p>
-                        <h5 class="text-primary font-weight-medium">20</h5>
+                        <h5 class="text-primary font-weight-medium">
+                            <!-- <a href="{{ route('customer_requirement.index', ['status' => 50]) }}">
+                                {{ $crrCancelled ?? '0' }}
+                            </a> -->
+                            {{ $srfCancelled ?? '0' }}
+                        </h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>For Sales Approval</p>
-                        <h5 class="text-primary font-weight-medium">12</h5>
+                        <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
-                        <p>QCD/R&D Ongoing</p>
-                        <h5 class="text-primary font-weight-medium">10</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>QCD/R&D Pending</p>
-                        <h5 class="text-primary font-weight-medium">5</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>QCD/R&D Initial Review</p>
-                        <h5 class="text-primary font-weight-medium">1</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>QCD/R&D Final Review</p>
-                        <h5 class="text-primary font-weight-medium">0</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>R&D Completed</p>
-                        <h5 class="text-primary font-weight-medium">0</h5>
+                        <p>Sales Approved</p>
+                        <h5 class="text-primary font-weight-medium">{{ $srfSalesApproved ?? '0' }}</h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Sales Accepted</p>
-                        <h5 class="text-primary font-weight-medium">0</h5>
+                        <h5 class="text-primary font-weight-medium">{{ $srfSalesAccepted ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>QCD/R&D Ongoing</p>
+                        <h5 class="text-primary font-weight-medium">{{ $srfRnDOngoing ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>QCD/R&D Pending</p>
+                        <h5 class="text-primary font-weight-medium">{{ $srfRnDPending ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>QCD/R&D Initial Review</p>
+                        <h5 class="text-primary font-weight-medium">{{ $srfRnDInitial ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>QCD/R&D Final Review</p>
+                        <h5 class="text-primary font-weight-medium">{{ $srfRnDFinal ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>R&D Completed</p>
+                        <h5 class="text-primary font-weight-medium">{{ $srfRnDCompleted ?? '0' }}</h5>
                     </div>
                 </div>
             </div>
