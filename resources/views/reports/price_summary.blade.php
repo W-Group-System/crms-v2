@@ -418,7 +418,7 @@
                             ProductRmc: item.ProductRmc,
                             OfferedPrice: item.IsalesOfferedPrice || '',
                             ShipmentTerm: item.ShipmentTerm || '',
-                            PaymentTerm: item.paymentterms?.Name || '',
+                            PaymentTerm: item.paymentterms?.Name || 'N/A',
                             QuantityRequired: item.QuantityRequired || '',
                             Margin: item.IsalesMargin || '',
                             MarginPercentage: item.IsalesMarginPercentage || '',
