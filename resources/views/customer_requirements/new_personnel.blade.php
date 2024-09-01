@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" action="{{ url('add_personnel') }}">
+                <form method="POST" action="{{ url('add_personnel') }}" onsubmit="show()">
                     @csrf
                     <input type="hidden" name="customer_requirement_id" value="{{$crr->id}}">
                     <input type="hidden" name="user_id" value="{{auth()->user()->id}}">

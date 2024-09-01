@@ -363,13 +363,13 @@
                     // Add the table body from the fetched data
                     $(data).each(function(index, item) {
                         tableData += (item.DateRequested ? formatDate(item.DateRequested) : '') + '\t' +
-                                    (item.primary_sales_person.full_name || '') + '\t' +
+                                    (item.primary_sales_person?.full_name || '') + '\t' +
                                     (item.client.name || '') + '\t' +
                                     (item.code || '') + '\t' +
                                     (item.ProductRmc || '') + '\t' +
                                     (item.IsalesOfferedPrice || '') + '\t' +
                                     (item.ShipmentTerm || '') + '\t' +
-                                    (item.paymentterms.Name || '') + '\t' +
+                                    (item.paymentterms?.Name || '') + '\t' +
                                     (item.QuantityRequired || '') + '\t' +
                                     (item.IsalesMargin || '') + '\t' +
                                     (item.IsalesMarginPercentage || '') + '\t' +

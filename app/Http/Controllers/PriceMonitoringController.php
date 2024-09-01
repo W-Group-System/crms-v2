@@ -70,14 +70,15 @@ class PriceMonitoringController extends Controller
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
-        if (($role->description == 'International Sales - Supervisor') || ($role->description == 'Local Sales - Supervisor')) {
+        if ($role->name == 'Staff L2') {
             $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            // $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApproverById->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
         $products = Product::where('status', '4')->get();
         $payment_terms = PaymentTerms::all();
@@ -152,7 +153,7 @@ class PriceMonitoringController extends Controller
                 'IsalesMargin' => $request->input('Margin'),
                 'IsalesMarginPercentage' => $request->input('MarginPercent'),
         ]);
-                    return redirect()->back()->with('success', 'Base prices updated successfully.');
+                    return redirect()->back()->with('success', 'Price updated successfully.');
     }
 
     public function update(Request $request, $id)
@@ -462,7 +463,7 @@ class PriceMonitoringController extends Controller
 
         ]);
     }
-                    return redirect()->back()->with('success', 'Base prices updated successfully.');
+                    return redirect()->back()->with('success', 'Prices updated successfully.');
     }
 
     public function LocalSalesUpdate(Request $request, $id)

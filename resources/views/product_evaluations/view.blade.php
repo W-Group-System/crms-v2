@@ -110,6 +110,7 @@
                         @endif
                     
                     @elseif(authCheckIfItsRndStaff(auth()->user()->role))
+                    
                     {{-- RND Staff --}}
                     
                     @if(rndPersonnel($requestEvaluation->rpePersonnel, auth()->user()->id))
@@ -136,14 +137,6 @@
                                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#pauseModal{{$requestEvaluation->id}}">
                                     <i class="ti-control-pause"></i>&nbsp; Pause
                                 </button>
-
-                                <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
-                                    @csrf
-
-                                    <button type="button" class="btn btn-success initialReviewBtn">
-                                        <i class="ti-check"></i>&nbsp; Submit
-                                    </button>
-                                </form>
                             @endif
 
                             @if($requestEvaluation->Progress == 55)
@@ -156,7 +149,19 @@
                                 </form>
                             @endif
 
-                            @if($requestEvaluation->Progress == 57)
+                            @if(rndPersonnel($requestEvaluation->rpePersonnel, auth()->user()->id))
+                                @if($requestEvaluation->Progress == 50)
+                                <form method="POST" action="{{url('initial_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
+                                    @csrf
+
+                                    <button type="button" class="btn btn-success initialReviewBtn">
+                                        <i class="ti-check"></i>&nbsp; Submit
+                                    </button>
+                                </form>
+                                @endif
+                            @endif
+
+                            {{-- @if($requestEvaluation->Progress == 57)
                                 <form method="POST" action="{{url('final_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
                                     @csrf 
 
@@ -174,7 +179,7 @@
                                         <i class="ti-pencil-alt"></i>&nbsp; Completed
                                     </button>
                                 </form>
-                            @endif
+                            @endif --}}
                             
                         @endif
                     @endif
@@ -182,6 +187,13 @@
                     {{-- RND and Sales Manager and Supervisor --}}
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                             
+                        @if(authCheckIfItsRnd(auth()->user()->department_id))
+                             @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 20 && $requestEvaluation->Progress != 60)
+                                <button type="button" class="btn btn-info returnToSales"  data-id="{{ $requestEvaluation->id }}" >
+                                    <i class="ti-control-left">&nbsp;</i>Return To Sales
+                                </button>
+                            @endif
+                        @endif
                         @if(authCheckIfItsSales(auth()->user()->department_id))
                             @if($requestEvaluation->Status == 10)
                                 <button type="button" class="btn btn-warning editBtn" data-toggle="modal" data-target="#editRpe{{$requestEvaluation->id}}" data-secondarysales="{{$requestEvaluation->SecondarySalesPersonId}}">
@@ -189,13 +201,19 @@
                                 </button>
 
                                 @if($requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 40 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && $requestEvaluation->Progress != 70)
-                                <form method="POST" class="d-inline-block" action="{{url('accept_rpe/'.$requestEvaluation->id)}}">
+                                <button type="button" class="btn btn-md btn-success"
+                                    data-target="#approveRpe{{ $requestEvaluation->id }}" 
+                                    data-toggle="modal" 
+                                    title='Approve RPE'>
+                                    <i class="ti ti-check-box">&nbsp;</i>Approve
+                                </button>
+                                {{-- <form method="POST" class="d-inline-block" action="{{url('accept_rpe/'.$requestEvaluation->id)}}">
                                     @csrf 
 
                                     <button type="button" class="btn btn-success acceptBtn">
-                                        <i class="ti ti-check-box"></i>&nbsp;Accept
+                                        <i class="ti ti-check-box"></i>&nbsp;Approve
                                     </button>
-                                </form>
+                                </form> --}}
                                 @endif
                             @endif
 
@@ -383,7 +401,7 @@
             </div>
             <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>Date Required :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DueDate }}</p>
+                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DueDate ?? 'NA'}}</p>
             </div>
             <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>Priority :</b></p>
@@ -466,7 +484,7 @@
                 <p class="col-sm-3 col-form-label"></p>
             </div>
             <br>
-            <div class="form-header">
+            {{-- <div class="form-header">
                 <span class="header-label"><b>Approver Remarks</b></span>
                 <hr class="form-divider">
                 <p>
@@ -485,8 +503,34 @@
                     <p class="col-sm-12 col-form-label" style="margin-left: 30px;">{{ $rpeTransactionApproval->Remarks  }}</p>
                 </div>
             </div>
-            @endforeach
-            <br>
+            @endforeach --}}
+            <div class="form-header">
+                <span class="header-label"><b>Approver Remarks</b></span>
+                <hr class="form-divider">
+            </div>
+            <div class="group-form">
+                <div class="form-group row">
+                    <label class="col-sm-12 col-form-label">
+                        @if($requestEvaluation->rpeTransactionApprovals->isEmpty())
+                            @if($requestEvaluation->approver)
+                            <b>{{$requestEvaluation->approver->full_name}} :</b> {{$requestEvaluation->AcceptRemarks}}
+                            @else
+                            <p>No approver remarks yet</p>
+                            @endif
+                        @else
+                        @foreach ($requestEvaluation->rpeTransactionApprovals as $transactionApproval)
+                                @if($transactionApproval->userByUserId)
+                                    <b>{{$transactionApproval->userByUserId->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @elseif($transactionApproval->userById)
+                                    <b>{{$transactionApproval->userById->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @endif
+                        @endforeach
+                        @endif
+                    </label>
+                </div>
+            </div>
             <div class="form-header">
                 <span class="header-label"><b>Evaluation Details</b></span>
                 <hr class="form-divider">
@@ -496,7 +540,7 @@
                 <p class="col-sm-2 col-form-label"><b>DDW Number:</b></p>
                 <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DdwNumber  }}</p>
                 <p class="offset-sm-2 col-sm-2 col-form-label"><b>Date Received:</b></p>
-                <p class="col-sm-3 col-form-label">{{ date('M d, Y', strtotime($requestEvaluation->DateReceived)) }}</p>
+                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DateReceived ? date('M d, Y', strtotime($requestEvaluation->DateReceived)) : 'NA' }}</p>
             </div>
              <div class="form-group row">
                 <p class="col-sm-2 col-form-label"><b>RPE Recommendation:</b></p>
@@ -1130,6 +1174,42 @@
             });
         })
 
+        $(".returnToSales").on('click', function() {
+            var rpeId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to return this request!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('ReturnToSales_rpe') }}/" + rpeId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
         $('.salesAccept').on('click', function() {
             var form = $(this).closest('form')
 
@@ -1178,6 +1258,7 @@
 @include('product_evaluations.assign_personnel')
 {{-- @include('product_evaluations.create_activity') --}}
 @include('product_evaluations.upload_rpe_file')
+@include('product_evaluations.rpe_approval')
 
 {{-- @foreach ($RpeSupplementary as $supplementary) --}}
 {{-- @endforeach --}}

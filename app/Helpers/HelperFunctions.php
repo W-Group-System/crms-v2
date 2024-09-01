@@ -208,7 +208,7 @@ function checkRolesIfHaveApprove($module, $department, $role)
 
 function checkIfHaveFiles($role)
 {
-    if (($role->department_id == 5 || $role->department_id == 38) && $role->name == "Department Admin")
+    if (($role->department_id == 5 || $role->department_id == 38 || $role->department_id == 15) && ($role->name == "Department Admin" || $role->name == "Staff L2" || $role->name == "Staff L1"))
     {
         return "yes";
     }
@@ -292,7 +292,7 @@ function authCheckIfItsSales($department)
 
 function authCheckIfItsRnd($department)
 {
-    if ($department == 15)
+    if ($department == 15 || $department == 42)
     {
         return true;
     }
@@ -339,10 +339,17 @@ function checkIfItsSalesDept($department)
 
 function rndManager($role)
 {
-    if ($role->department_id == 15 || $role->id == 14 || $role->department_id == 42)
+    if (($role->department_id == 15 || $role->id == 14 || $role->department_id == 42) &&( $role->name == "Department Admin" || $role->name == "Staff L2"))
     {
         return true;
     }
     // dd($role);
     return false;
+}
+
+function getUserApprover($approver)
+{
+    $user = User::whereIn('id', ($approver->pluck('UserId')))->orWhere('id', auth()->user()->id)->get();
+    
+    return $user;
 }

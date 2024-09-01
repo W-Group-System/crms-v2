@@ -417,7 +417,7 @@
                                             <td>Sample Request</td>
                                             <td>
                                                 <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
-                                                    {{$item->sampleRequest->SrfNumber}}
+                                                    {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
                                             </td>
                                         </tr>
@@ -464,7 +464,7 @@
                                                 @endif
                                             @endif
                                         </td>
-                                        <td>{{date('M d, Y', strtotime($ic->products->created_at))}}</td>
+                                        <td>{{date('M d, Y', strtotime(optional($ic->products)->created_at))}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

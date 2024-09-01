@@ -173,6 +173,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('return_to_sales/{id}', 'CustomerRequirementController@returnToSales');
     Route::post('return_to_rnd/{id}', 'CustomerRequirementController@returnToRnd');
     Route::post('sales_accepted/{id}', 'CustomerRequirementController@salesAccepted');
+    Route::get('print_crr', 'CustomerRequirementController@printCrr');
 
     # Crr Supplementary Details
     Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');
@@ -229,6 +230,8 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('final_review_rpe/{id}', 'RequestProductEvaluationController@finalReview');
     Route::post('complete_rpe/{id}', 'RequestProductEvaluationController@completeRpe');
     Route::post('sales_accept_rpe/{id}', 'RequestProductEvaluationController@salesAcceptRpe');
+    Route::post('ReturnToSales_rpe/{id}', 'RequestProductEvaluationController@ReturnToSalesRpe');
+    Route::post('ApproveRpe/{id}', 'RequestProductEvaluationController@approveRpeSales');
 
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
@@ -270,6 +273,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('AcceptSrf/{id}', 'SampleRequestController@AcceptSrf');
     Route::post('OpenStatus/{id}', 'SampleRequestController@OpenStatus');
     Route::post('CompleteSrf/{id}', 'SampleRequestController@CompleteSrf');
+    Route::get('print_srf/{id}', 'SampleRequestController@print_srf');
 
     Route::get('sample_contacts-by-client-f/{clientId}', [SampleRequestController::class, 'getSampleContactsByClientF']);
     Route::get('sample_get-last-increment-f/{year}/{clientCode}', [SampleRequestController::class, 'getSampleLastIncrementF']);

@@ -53,10 +53,9 @@ class User extends Authenticatable
         ->where('isDeleted', 0)
         ->where('Type', 2);
     }
-
-    public function salesApprovers()
+    public function getSalesApprover()
     {
-        return $this->hasMany(SalesApprovers::class, 'UserId', 'id');
+        return $this->hasMany(SalesApprovers::class, 'SalesApproverId', 'id');
     }
     public function rndUsers()
     {

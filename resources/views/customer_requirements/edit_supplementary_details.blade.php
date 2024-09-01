@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" action="{{ url('update_supplementary/'.$details->Id) }}">
+                <form method="POST" action="{{ url('update_supplementary/'.$details->Id) }}" onsubmit="show()">
                     @csrf
                     <input type="hidden" name="customer_requirement_id" value="{{$crr->id}}">
                     <input type="hidden" name="user_id" value="{{auth()->user()->id}}">
