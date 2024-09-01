@@ -78,12 +78,12 @@
                                 <label>Primary Responsible</label>
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{ $requestEvaluation->primarySalesPerson->id }}" />
                                 <input type="text" class="form-control form-control-sm" value="{{ optional($requestEvaluation->primarySalesPerson)->full_name }}" readonly>
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                {{-- <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->user_id }}" @if ($requestEvaluation->primarySalesPerson->id ==  $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
                         </div>
                         <div class="col-lg-6">

@@ -5,8 +5,9 @@ namespace App\Exports;
 use App\CustomerRequirement;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class CustomerRequirementExport implements FromCollection, WithHeadings
+class CustomerRequirementExport implements FromCollection, WithHeadings, WithMapping
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -25,31 +26,137 @@ class CustomerRequirementExport implements FromCollection, WithHeadings
         $openStatus = $this->open;
         $closeStatus = $this->close;
 
-        return CustomerRequirement::select('CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Recommendation', 'Status', 'Progress')
-            ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
-                $query->whereIn('Status', [$openStatus, $closeStatus]);
-            })
-            ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
-                $query->where('Status', $openStatus);
-            })
-            ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
-                $query->where('Status', $closeStatus);
-            })
-            ->latest()
-            ->get();
+        if(auth()->user()->role->type == "IS")
+        {
+            return CustomerRequirement::select('CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Competitor', 'PrimarySalesPersonId', 'DetailsOfRequirement', 'Recommendation', 'DateReceived', 'Status', 'Progress')
+                ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
+                    $query->whereIn('Status', [$openStatus, $closeStatus]);
+                })
+                ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
+                    $query->where('Status', $openStatus);
+                })
+                ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
+                    $query->where('Status', $closeStatus);
+                })
+                ->latest()
+                ->get();
+        }
+
+        if(auth()->user()->role->type == "LS")
+        {
+            return CustomerRequirement::select('CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Recommendation', 'Status', 'Progress')
+                ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
+                    $query->whereIn('Status', [$openStatus, $closeStatus]);
+                })
+                ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
+                    $query->where('Status', $openStatus);
+                })
+                ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
+                    $query->where('Status', $closeStatus);
+                })
+                ->latest()
+                ->get();
+        }
+
     }
 
     public function headings(): array
     {
-        return [
-            'CRR #',
-            'DateCreated',
-            'Due Date',
-            'Client Name',
-            'Application',
-            'Recommendation',
-            'Status',
-            'Progress'
-        ];
+        if(auth()->user()->role->type == "IS")
+        {
+            return [
+                'CRR #',
+                'DateCreated',
+                'Due Date',
+                'Client Name',
+                'Application',
+                'Competitor',
+                'Primary Sales Person',
+                'Details of Requirement',
+                'Recommendation',
+                'DateReceived',
+                'Days Late',
+                'Nature of Request',
+                'Status',
+                'Progress'
+            ];
+        }
+
+        if(auth()->user()->role->type == "LS")
+        {
+            return [
+                'CRR #',
+                'DateCreated',
+                'Due Date',
+                'Client Name',
+                'Application',
+                'Recommendation',
+                'Status',
+                'Progress'
+            ];
+        }
+    }
+
+
+    public function map($row): array
+    {
+        $primarySales = "";
+        if ($row->primarySales)
+        {
+            $primarySales = $row->primarySales->full_name;
+        }
+        elseif($row->primarySalesById)
+        {
+            $primarySales = $row->primarySalesById->full_name;
+        }
+
+        $status = "";
+        if ($row->Status == 10)
+        {
+            $status = "Open";
+        }
+        elseif($row->Status == 30)
+        {
+            $status = "Closed";
+        }
+        elseif($row->Status == 50)
+        {
+            $status = "Cancelled";
+        }
+
+        if(auth()->user()->role->type == "IS")
+        {
+            return [
+                $row->CrrNumber,
+                $row->DateCreated,
+                $row->DueDate,
+                optional($row->client)->Name,
+                optional($row->product_application)->Name,
+                $row->Competitor,
+                $primarySales,
+                $row->DetailsOfRequirement,
+                $row->Recommendation,
+                $row->DateReceived,
+                '',
+                // optional($row->crrNature->natureOfRequest)->Name,
+                '',
+                $status,
+                optional($row->progressStatus)->Name
+            ];
+        }
+
+        if(auth()->user()->role->type == "LS")
+        {
+            return [
+                $row->CrrNumber,
+                $row->DateCreated,
+                $row->DueDate,
+                optional($row->client)->Name,
+                optional($row->product_application)->Name,
+                $row->Recommendation,
+                $status,
+                optional($row->progressStatus)->Name
+            ];
+        }
     }
 }

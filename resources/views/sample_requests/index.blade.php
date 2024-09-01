@@ -21,8 +21,22 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Sample Request List
+            @if(checkRolesIfHaveCreate('Sample Request Form', auth()->user()->department_id, auth()->user()->role_id) == "yes")
             <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formSampleRequest">Add Sample Request</button>
+            @endif
             </h4>
+            <div class="form-group">
+                <form method="GET" >
+                    <label>Show : </label>
+                    <label class="checkbox-inline">
+                        <input name="open" class="sample_request_status" type="checkbox" value="10" @if($open == 10) checked @endif> Open
+                    </label>
+                    <label class="checkbox-inline">
+                        <input name="close" class="sample_request_status" type="checkbox" value="30" @if($close == 30) checked @endif> Closed
+                    </label>
+                    <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
+                </form>
+            </div>
             <div class="row">
                 <div class="col-lg-6">
                     <span>Show</span>
@@ -39,7 +53,7 @@
                 <div class="col-lg-6">
                 <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                     <div class="row height d-flex justify-content-end align-items-end">
-                        <div class="col-md-5">
+                        <div class="col-md-8">
                             <div class="search">
                                 <i class="ti ti-search"></i>
                                 <input type="text" class="form-control" placeholder="Search Sample Request" name="search" value="{{$search}}"> 
@@ -57,62 +71,13 @@
                     <thead>
                         <tr>
                             <th>Action</th>
-                            <th>SRF #
-                                <a href="{{ route('sample_request.index', [
-                                    'sort' => 'SrfNumber', 
-                                    'direction' => request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'desc' : 'asc'
-                                ]) }}">
-                                    <i class="ti ti-arrow-{{ request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
-                            </th>
-                            <th>Date Requested
-                                <a href="{{ route('sample_request.index', [
-                                    'sort' => 'DateRequested', 
-                                    'direction' => request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'desc' : 'asc'
-                                ]) }}">
-                                    <i class="ti ti-arrow-{{ request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
-                            </th>
-                            <th>Date Required
-                                <a href="{{ route('sample_request.index', [
-                                    'sort' => 'DateRequired', 
-                                    'direction' => request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'desc' : 'asc'
-                                ]) }}">
-                                    <i class="ti ti-arrow-{{ request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
-                            </th>
-                            <th>Client Name
-                                <a href="{{ route('sample_request.index', [
-                                    'sort' => 'ClientId', 
-                                    'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc'
-                                ]) }}">
-                                    <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
-                            </th>
-                            <th>Application
-                                <a href="{{ route('sample_request.index', [
-                                    'sort' => 'ApplicationId', 
-                                    'direction' => request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'desc' : 'asc'
-                                ]) }}">
-                                    <i class="ti ti-arrow-{{ request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
-                            </th>
-                            <th>Status
-                                <a href="{{ route('sample_request.index', [
-                                    'sort' => 'Status', 
-                                    'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc'
-                                ]) }}">
-                                    <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
-                            </th>
-                            <th>Progress
-                                <a href="{{ route('sample_request.index', [
-                                    'sort' => 'Progress', 
-                                    'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc'
-                                ]) }}">
-                                    <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
-                            </th>
+                            <th>SRF # </th>
+                            <th>Date Requested</th>
+                            <th>Date Required</th>
+                            <th>Client Name</th>
+                            <th>Application </th>
+                            <th>Status</th>
+                            <th>Progress </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -120,8 +85,11 @@
                         <tr>
                             <td align="center">
                                 <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
+                                @php
+                                    $user = auth()->user();
+                                @endphp
                                 <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-warning btn-outline"
-                                    data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
+                                    data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF' @if($user->id != $srf->PrimarySalesPersonId && $user->user_id != $srf->PrimarySalesPersonId) disabled @endif>
                                     <i class="ti-pencil"></i>
                                 </button>    
                             </td>
@@ -342,7 +310,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     @if(session('error'))
-        var isManager = @json(auth()->user()->role->description == 'International Sales - Supervisor' || auth()->user()->role->description == 'Local Sales - Supervisor');
+        var isManager = @json(auth()->user()->role->name == 'Staff L2');
         var errorMessage = @json(session('error'));
         var formType = @json(session('formType')); 
 
@@ -396,6 +364,11 @@
             confirmButtonText: 'OK'
         });
     @endif
+
+    $(".table").tablesorter({
+            theme : "bootstrap",
+        })
+
     $("[name='entries']").on('change', function() {
             $(this).closest('form').submit()
         })

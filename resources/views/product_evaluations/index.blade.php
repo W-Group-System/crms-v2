@@ -288,6 +288,9 @@
                 }
             })
         }
+        $(".table").tablesorter({
+            theme : "bootstrap",
+        })
     })
 </script>
 @include('product_evaluations.create')

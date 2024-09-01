@@ -2,13 +2,13 @@
 	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="addCustomerRequirentLabel">Add New Customer Requiremnt</h5>
+				<h5 class="modal-title" id="addCustomerRequirentLabel">Add New Customer Requirement</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('new_customer_requirement') }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('new_customer_requirement') }}" onsubmit="show()">
                     @csrf
                     <div class="row">
                         {{-- <div class="col-lg-6">
@@ -69,8 +69,9 @@
                                         <label>Unit</label>
                                         <select class="form-control js-example-basic-single" name="UnitOfMeasureId" id="UnitOfMeasureId" style="position: relative !important" title="Select Unit">
                                             <option value="" disabled selected>Select Unit</option>
-                                            <option value="1">Grams</option>
-                                            <option value="2">Kilograms</option>
+                                            @foreach ($unitOfMeasure as $unit)
+                                                <option value="{{$unit->Id}}">{{$unit->Name}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -85,8 +86,20 @@
                                         <option value="{{ $user->id }}" @if($user->id == auth()->user()->id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select> --}}
-                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
-                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @if(auth()->user()->role->name == "Staff L1")
+                                    <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                    <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @elseif(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
+                                    @php
+                                        $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                    @endphp
+                                    <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                        <option value="" disabled selected>Select Sales Person</option>
+                                        @foreach($subordinates as $subordinate)
+                                            <option value="{{ $subordinate->id }}" >{{ $subordinate->full_name }}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
                             </div>
                         </div>
                         <div class="col-lg-6">

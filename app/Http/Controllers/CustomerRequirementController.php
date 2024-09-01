@@ -19,11 +19,14 @@ use App\FileCrr;
 use App\ProductApplication;
 use App\SalesApprovers;
 use App\SalesUser;
+use App\TransactionApproval;
 use App\TransactionLogs;
+use App\UnitOfMeasure;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use Collective\Html\FormFacade as Form;
+use Illuminate\Support\Facades\App;
 
 class CustomerRequirementController extends Controller
 {
@@ -69,6 +72,9 @@ class CustomerRequirementController extends Controller
             })
             ->when($search, function ($query) use ($search) {
                 $query->where(function($query) use ($search) {
+            ->where(function ($query) use ($search){
+                if ($search != null)
+                {
                     $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
                     ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
                     ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
@@ -78,14 +84,14 @@ class CustomerRequirementController extends Controller
                     ->orWhereHas('product_application', function ($q) use ($search) {
                         $q->where('name', 'LIKE', '%' . $search . '%');
                     })
-                    ->orWhereHas('primarySales', function($query) use ($search) {
+                    ->orWhereHas('primarySales', function($query)use($search) {
                         $query->where('full_name', 'LIKE', '%'.$search.'%');
                     })
-                    ->orWhereHas('primarySalesById', function($query) use ($search) {
+                    ->orWhereHas('primarySalesById', function($query)use($search) {
                         $query->where('full_name', 'LIKE', '%'.$search.'%');
                     })
                     ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
-                });
+                }
             })
             ->when($role->type, function($q) use ($role) {
                 if ($role->type == "IS") {
@@ -99,7 +105,26 @@ class CustomerRequirementController extends Controller
 
         // Fetch related data for filters and dropdowns
         $product_applications = ProductApplication::all();
-        $clients = Client::all();
+        $clients = Client::where(function($query) {
+                if (auth()->user()->role->name == "Department Admin")
+                {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                }
+                if (auth()->user()->role->name == "Staff L1")
+                {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                }
+            })
+            ->where(function($query) {
+                if (auth()->user()->role->name == "Staff L2")
+                {
+                    $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                }
+            })
+            ->get();
         $users = User::all();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
@@ -109,6 +134,7 @@ class CustomerRequirementController extends Controller
         $close = $request->close;
         $entries = $request->entries;
         $refCode = $this->refCode();
+        $unitOfMeasure = UnitOfMeasure::get();
 
         // Return view with all necessary data
         return view('customer_requirements.index', compact(
@@ -124,6 +150,7 @@ class CustomerRequirementController extends Controller
             'entries', 
             'refCode'
         ));
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure')); 
     }
 
     // Store
@@ -204,6 +231,12 @@ class CustomerRequirementController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'NatureOfRequestId' => 'required'
+        ], [
+            'NatureOfRequestId.required' => 'The Nature of Request is required.'
+        ]);
+
         $customerRequirements = CustomerRequirement::findOrFail($id);
         // $customerRequirements->DateCreated = date('Y-m-d');
         $customerRequirements->ClientId = $request->ClientId;
@@ -243,7 +276,26 @@ class CustomerRequirementController extends Controller
     public function view($id)
     {
         $customerRequirement = CustomerRequirement::with('client', 'product_application', 'progressStatus', 'crrNature', 'primarySales', 'secondarySales', 'priority', 'crrDetails')->findOrFail($id);
-        $client = Client::get();
+        $client = Client::where(function($query) {
+                if (auth()->user()->role->name == "Department Admin")
+                {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                }
+                if (auth()->user()->role->name == "Staff L1")
+                {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                }
+            })
+            ->where(function($query) {
+                if (auth()->user()->role->name == "Staff L2")
+                {
+                    $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                }
+            })
+            ->get();
         $user = User::where('is_active', 1)->get();
         $currentUser = Auth::user();
         $product_applications = ProductApplication::get();
@@ -251,6 +303,7 @@ class CustomerRequirementController extends Controller
         $nature_requests = NatureRequest::all();
         $rnd_personnel = User::whereIn('department_id', [15, 42])->whereNotIn('id', [auth()->user()->id])->get();
         $refCode = $this->refCode();
+        $unitOfMeasure = UnitOfMeasure::get();
 
         return view('customer_requirements.view_crr',
             array(
@@ -262,7 +315,8 @@ class CustomerRequirementController extends Controller
                 'price_currencies' => $price_currencies,
                 'nature_requests' => $nature_requests,
                 'rnd_personnel' => $rnd_personnel,
-                'refCode' => $refCode
+                'refCode' => $refCode,
+                'unitOfMeasure' => $unitOfMeasure
             )
         );
     }
@@ -401,13 +455,14 @@ class CustomerRequirementController extends Controller
         $customerRequirement->Status = 30;
         $customerRequirement->save();
 
-        $transactionLogs = new TransactionLogs;
-        $transactionLogs->Type = 10;
-        $transactionLogs->TransactionId = $customerRequirement->id;
-        $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-        $transactionLogs->UserId = auth()->user()->id;
-        $transactionLogs->Details = $request->close_remarks;
-        $transactionLogs->save();
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $customerRequirement->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 20;
+        $transactionApproval->Remarks = $request->close_remarks;
+        $transactionApproval->RemarksType = "closed";
+        $transactionApproval->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
@@ -416,17 +471,18 @@ class CustomerRequirementController extends Controller
     public function cancelRemarks(Request $request, $id)
     {
         $customerRequirement = CustomerRequirement::findOrFail($id);
-        $customerRequirement->CancelRemarks = $request->cancel_remarks;
+        // $customerRequirement->CancelRemarks = $request->cancel_remarks;
         $customerRequirement->Status = 50;
         $customerRequirement->save();
 
-        $transactionLogs = new TransactionLogs;
-        $transactionLogs->Type = 10;
-        $transactionLogs->TransactionId = $customerRequirement->id;
-        $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-        $transactionLogs->UserId = auth()->user()->id;
-        $transactionLogs->Details = $request->cancel_remarks;
-        $transactionLogs->save();
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $customerRequirement->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 0;
+        $transactionApproval->Remarks = $request->cancel_remarks;
+        $transactionApproval->RemarksType = "cancelled";
+        $transactionApproval->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
@@ -439,50 +495,53 @@ class CustomerRequirementController extends Controller
         if ($request->action == "approved_to_sales")
         {
             $crr->Progress = 20;
-            $crr->AcceptRemarks = $request->accept_remarks;
+            // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
 
-            $transactionLogs = new TransactionLogs;
-            $transactionLogs->Type = 10;
-            $transactionLogs->TransactionId = $crr->id;
-            $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-            $transactionLogs->UserId = auth()->user()->id;
-            $transactionLogs->Details = $request->accept_remarks;
-            $transactionLogs->save();
+            $transactionApproval = new TransactionApproval;
+            $transactionApproval->Type = 10;
+            $transactionApproval->TransactionId = $crr->id;
+            $transactionApproval->UserId = auth()->user()->id;
+            $transactionApproval->Status = 10;
+            $transactionApproval->Remarks = $request->accept_remarks;
+            $transactionApproval->RemarksType = "accept";
+            $transactionApproval->save();
         }
         elseif($request->action == "approved_to_RND")
         {
             $crr->Progress = 30;
-            $crr->AcceptRemarks = $request->accept_remarks;
+            // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
 
-            $transactionLogs = new TransactionLogs;
-            $transactionLogs->Type = 10;
-            $transactionLogs->TransactionId = $crr->id;
-            $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-            $transactionLogs->UserId = auth()->user()->id;
-            $transactionLogs->Details = $request->accept_remarks;
-            $transactionLogs->save();
+            $transactionApproval = new TransactionApproval;
+            $transactionApproval->Type = 10;
+            $transactionApproval->TransactionId = $crr->id;
+            $transactionApproval->UserId = auth()->user()->id;
+            $transactionApproval->Status = 10;
+            $transactionApproval->Remarks = $request->accept_remarks;
+            $transactionApproval->RemarksType = "accept";
+            $transactionApproval->save();
         }
         elseif($request->action == "approved_to_QCD-MRDC")
         {
             $crr->Progress = 30;
-            $crr->AcceptRemarks = $request->accept_remarks;
+            // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
 
-            $transactionLogs = new TransactionLogs;
-            $transactionLogs->Type = 10;
-            $transactionLogs->TransactionId = $crr->id;
-            $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-            $transactionLogs->UserId = auth()->user()->id;
-            $transactionLogs->Details = $request->accept_remarks;
-            $transactionLogs->save();
+            $transactionApproval = new TransactionApproval;
+            $transactionApproval->Type = 10;
+            $transactionApproval->TransactionId = $crr->id;
+            $transactionApproval->UserId = auth()->user()->id;
+            $transactionApproval->Status = 10;
+            $transactionApproval->Remarks = $request->accept_remarks;
+            $transactionApproval->RemarksType = "accept";
+            $transactionApproval->save();
         }
 
-        Alert::success('Approved to RND')->persistent('Dismiss');
+        Alert::success('Successfully Approved')->persistent('Dismiss');
         return back();
     }
 
@@ -491,6 +550,15 @@ class CustomerRequirementController extends Controller
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Status = 10;
         $crr->save();
+
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $crr->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 40;
+        $transactionApproval->Remarks = $request->open_remarks;
+        $transactionApproval->RemarksType = "open";
+        $transactionApproval->save();
 
         Alert::success('The status are now open')->persistent('Dismiss');
         return back();
@@ -503,7 +571,7 @@ class CustomerRequirementController extends Controller
         $crr->DateReceived = date('Y-m-d h:i:s');
         $crr->save();
 
-        Alert::success('The status are now received')->persistent('Dismiss');
+        Alert::success('Successfully received')->persistent('Dismiss');
         return back();
     }
 
@@ -512,6 +580,21 @@ class CustomerRequirementController extends Controller
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 50;
         $crr->save();
+
+        if ($request->has('action'))
+        {
+            if($request->action == "continue")
+            {
+                $transactionApproval = new TransactionApproval;
+                $transactionApproval->Type = 10;
+                $transactionApproval->TransactionId = $crr->id;
+                $transactionApproval->UserId = auth()->user()->id;
+                $transactionApproval->Status = 50;
+                $transactionApproval->Remarks = $request->open_remarks;
+                $transactionApproval->RemarksType = "continue";
+                $transactionApproval->save();        
+            }
+        }
 
         Alert::success('Successfully Start')->persistent('Dismiss');
         return back();
@@ -523,13 +606,14 @@ class CustomerRequirementController extends Controller
         $crr->Progress = 55;
         $crr->save();
 
-        $transactionLogs = new TransactionLogs;
-        $transactionLogs->Type = 10;
-        $transactionLogs->TransactionId = $crr->id;
-        $transactionLogs->ActionDate = date('Y-m-d h:i:s');
-        $transactionLogs->UserId = auth()->user()->id;
-        $transactionLogs->Details = $request->pause_remarks;
-        $transactionLogs->save();
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $crr->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 20;
+        $transactionApproval->Remarks = $request->pause_remarks;
+        $transactionApproval->RemarksType = "paused";
+        $transactionApproval->save();
 
         Alert::success('Successfully Paused')->persistent('Dismiss');
         return back();
@@ -655,11 +739,20 @@ class CustomerRequirementController extends Controller
         return "";
     }
 
-    public function returnToSales($id)
+    public function returnToSales(Request $request, $id)
     {
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 10;
-        $crr->save(); 
+        $crr->save();
+
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $crr->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 30;
+        $transactionApproval->Remarks = $request->return_to_sales_remarks;
+        $transactionApproval->RemarksType = "returned";
+        $transactionApproval->save();
 
         Alert::success('Successfully return to sales')->persistent('Dismiss');
         return back();
@@ -683,5 +776,13 @@ class CustomerRequirementController extends Controller
 
         Alert::success('Sales Accepted')->persistent('Dismiss');
         return back();
+    }
+
+    public function printCrr()
+    {
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('customer_requirements.crr_pdf');
+
+        return $pdf->stream();
     }
 }
