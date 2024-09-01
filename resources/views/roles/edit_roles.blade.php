@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_role" enctype="multipart/form-data" action="{{url('update_role/'.$role->id)}}">
+                <form method="POST" id="form_role" enctype="multipart/form-data" action="{{url('update_role/'.$role->id)}}" onsubmit="show()">
                     @csrf
                     <div class="form-group">
                         <label for="department">Department</label>
@@ -21,7 +21,13 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value="{{$role->name}}" required>
+                        {{-- <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value="{{$role->name}}" required> --}}
+                        <select class="form-control js-example-basic-single" name="name" required>
+                            <option disabled selected value>-Select Name-</option>
+                            <option value="Staff L1" @if($role->name == "Staff L1") selected @endif>Staff L1</option>
+                            <option value="Staff L2" @if($role->name == "Staff L2") selected @endif>Staff L2</option>
+                            <option value="Department Admin" @if($role->name == "Department Admin") selected @endif>Department Admin</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
