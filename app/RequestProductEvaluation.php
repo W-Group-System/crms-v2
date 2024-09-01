@@ -2,11 +2,15 @@
 
 namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Audit;
 
-class RequestProductEvaluation extends Model
+class RequestProductEvaluation extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
+
     protected $table = "requestproductevaluations";
 
     // const UPDATED_AT = "ModifiedDate";

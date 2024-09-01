@@ -197,7 +197,7 @@ class RequestProductEvaluationController extends Controller
         ->where('Type', '20')
         ->get();
         
-        $transactionLogs = TransactionLogs::where('Type', '30')
+        $transactionLogs = TransactionLogs::where('Type', '20')
         ->where('TransactionId', $rpeNumber)
         ->get();
 

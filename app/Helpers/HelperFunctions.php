@@ -290,6 +290,16 @@ function authCheckIfItsSales($department)
     return false;
 }
 
+function authCheckIfItsSalesManager($role)
+{
+    if ($role == 21)
+    {
+        return true;
+    }
+    
+    return false;
+}
+
 function authCheckIfItsRnd($department)
 {
     if ($department == 15)

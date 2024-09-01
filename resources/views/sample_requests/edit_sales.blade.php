@@ -1,4 +1,4 @@
-<div class="modal fade" id="salesEdit{{$sampleRequest->Id }}" tabindex="-1" role="dialog" aria-labelledby="editSrf" aria-hidden="true">
+<div class="modal fade" id="salesEdit{{$sampleRequest->Id}}" tabindex="-1" role="dialog" aria-labelledby="editSrf" aria-hidden="true">
     <div class="modal-dialog modal-md">
       <div class="modal-content">
         <div class="modal-header">
