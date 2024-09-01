@@ -29,66 +29,101 @@ class CustomerRequirementController extends Controller
 {
     // List
     public function index(Request $request)
-    {   
+    {
         $search = $request->input('search');
         $sort = $request->get('sort', 'id');
         $direction = $request->get('direction', 'desc');
         $role = auth()->user()->role;
-        
+        $status = $request->query('status'); // Get the status from the query parameters
+
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id; 
+        // dd($userByUser);
+        // Fetch customer requirements with applied filters
         $customer_requirements = CustomerRequirement::with(['client', 'product_application'])
-            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+            ->when($status, function($query) use ($status, $userId, $userByUser) {
+                if ($status == '50') {
+                    // When filtering by '50', include all cancelled status records
+                    $query->where(function ($query) use ($userId, $userByUser) {
+                        $query->where('Status', '50')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                    });
+                } else {
+                    // Apply status filter if it's not '50'
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);
             })
-            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+            ->when($request->has('open') && !$request->has('close'), function($query) use ($request) {
                 $query->where('Status', $request->open);
             })
-            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+            ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
                 $query->where('Status', $request->close);
             })
-            ->when($search, function ($query) use ($search){
-                $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
-                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
-                ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
-                ->orWhereHas('client', function ($q) use ($search) {
-                    $q->where('name', 'LIKE', '%' . $search . '%');
-                })
-                ->orWhereHas('product_application', function ($q) use ($search) {
-                    $q->where('name', 'LIKE', '%' . $search . '%');
-                })
-                ->orWhereHas('primarySales', function($query)use($search) {
-                    $query->where('full_name', 'LIKE', '%'.$search.'%');
-                })
-                ->orWhereHas('primarySalesById', function($query)use($search) {
-                    $query->where('full_name', 'LIKE', '%'.$search.'%');
-                })
-                ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
+            ->when($search, function ($query) use ($search) {
+                $query->where(function($query) use ($search) {
+                    $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                    ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('client', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('product_application', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('primarySales', function($query) use ($search) {
+                        $query->where('full_name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('primarySalesById', function($query) use ($search) {
+                        $query->where('full_name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
+                });
             })
-            // ->orderBy('id', 'desc')
-            ->when($role->type, function($q)use($role) {
-                if ($role->type == "IS")
-                {
+            ->when($role->type, function($q) use ($role) {
+                if ($role->type == "IS") {
                     $q->where('CrrNumber', 'LIKE', "%CRR-IS%");
-                }
-                elseif ($role->type == "LS")
-                {
+                } elseif ($role->type == "LS") {
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
                 }
             })
-            // ->where('CrrNumber', 'LIKE', "%CRR-IS%")
             ->orderBy($sort, $direction)
             ->paginate($request->entries ?? 10);
-            
+
+        // Fetch related data for filters and dropdowns
         $product_applications = ProductApplication::all();
         $clients = Client::all();
         $users = User::all();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
+
+        // Fetch request parameters for view
         $open = $request->open;
         $close = $request->close;
         $entries = $request->entries;
         $refCode = $this->refCode();
 
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode')); 
+        // Return view with all necessary data
+        return view('customer_requirements.index', compact(
+            'customer_requirements', 
+            'clients', 
+            'product_applications', 
+            'users', 
+            'price_currencies', 
+            'nature_requests', 
+            'search', 
+            'open', 
+            'close', 
+            'entries', 
+            'refCode'
+        ));
     }
 
     // Store

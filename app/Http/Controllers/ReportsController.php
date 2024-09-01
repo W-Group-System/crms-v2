@@ -78,7 +78,7 @@ class ReportsController extends Controller
                     $query->orderBy($sort, $direction);
                 }
             });
-        // dd($query->take(1));
+        
         $priceRequests = $query->get();   
         // dd($priceRequests->take(1));
         // Apply Filters

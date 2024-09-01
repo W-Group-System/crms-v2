@@ -20,7 +20,7 @@ Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'inactive_users'], function() {
-    Route::get('/', 'DashboardController@index');
+    Route::get('/', 'HomeController@index');
     Route::get('/dashboard','DashboardController@index');
 
     // change password

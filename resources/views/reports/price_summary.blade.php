@@ -412,13 +412,13 @@
                         var wb = XLSX.utils.book_new();
                         var ws = XLSX.utils.json_to_sheet(data.map(item => ({
                             DateRequested: formatDate(item.DateRequested),
-                            PrimarySalesPerson: item.primary_sales_person.full_name || 'N/A',
+                            PrimarySalesPerson: item.primary_sales_person?.full_name || 'N/A',
                             Client: item.client.name || 'N/A',
                             ProductCode: item.products?.map(product => product.code).join(', ') || 'N/A', // Handle products as an array
                             ProductRmc: item.ProductRmc,
                             OfferedPrice: item.IsalesOfferedPrice || '',
                             ShipmentTerm: item.ShipmentTerm || '',
-                            PaymentTerm: item.paymentterms.Name || '',
+                            PaymentTerm: item.paymentterms?.Name || 'N/A',
                             QuantityRequired: item.QuantityRequired || '',
                             Margin: item.IsalesMargin || '',
                             MarginPercentage: item.IsalesMarginPercentage || '',

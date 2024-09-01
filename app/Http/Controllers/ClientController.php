@@ -9,6 +9,7 @@ use App\PaymentTerms;
 use App\Region;
 use App\Area;
 use App\BusinessType;
+use App\SalesApprovers;
 use App\Contact;
 use App\FileClient;
 use App\Industry;
@@ -18,6 +19,7 @@ use App\Exports\ArchivedClientExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -29,6 +31,7 @@ class ClientController extends Controller
         $search = $request->input('search');
         $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
         $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $role = auth()->user()->role;
         $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
         $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
 
@@ -77,6 +80,13 @@ class ClientController extends Controller
                         });
                 }
             })
+            ->when($role->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('Type', '2');
+                } elseif ($role->type == "LS") {
+                    $q->where('Type', '1');
+                }
+            })
             ->orderBy($sort, $direction);
 
         if ($fetchAll) {
@@ -101,6 +111,7 @@ class ClientController extends Controller
         $search = $request->input('search');
         $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
         $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $role = auth()->user()->role;
         $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
         $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
 
@@ -148,6 +159,13 @@ class ClientController extends Controller
                         });
                 }
             })
+            ->when($role->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('Type', '2');
+                } elseif ($role->type == "LS") {
+                    $q->where('Type', '1');
+                }
+            })
             ->orderBy($sort, $direction);
 
         if ($fetchAll) {
@@ -172,6 +190,7 @@ class ClientController extends Controller
         $search = $request->input('search');
         $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
         $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $role = auth()->user()->role;
         $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
         $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
 
@@ -218,6 +237,13 @@ class ClientController extends Controller
                         });
                 }
             })
+            ->when($role->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('Type', '2');
+                } elseif ($role->type == "LS") {
+                    $q->where('Type', '1');
+                }
+            })
             ->orderBy($sort, $direction);
         
         if ($fetchAll) {
@@ -239,9 +265,9 @@ class ClientController extends Controller
     {
         $data = [
             'clients'           => Client::all(),
-            'users'             => User::whereHas('role', function($query) {
-                                    $query->where('type', ['IS', 'LS']); // Replace 'RoleName' with the actual role name
-                                })->get(),
+            'users'             => User::whereHas('role', function ($query) {
+                                        $query->whereIn('type', ['IS', 'LS']); // Use whereIn for an array of types
+                                    })->get(),
             'payment_terms'     => PaymentTerms::all(),
             'regions'           => Region::all(),
             'countries'         => Country::all(),
@@ -251,7 +277,24 @@ class ClientController extends Controller
             'buyerCode'         => 'BCODE-' . now()->format('Ymd-His'),
         ];
         
-        return view('clients.create', $data);
+        $loggedInUser = Auth::user(); 
+        $role = $loggedInUser->role;
+        $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        
+        if ($role->description == 'International Sales - Supervisor' || $role->description == 'Local Sales - Supervisor') {
+            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+        } else {
+            $primarySalesPersons = User::where('id', $loggedInUser->id)->with($withRelation)->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+        }
+        
+        // Pass the data, primarySalesPersons, and secondarySalesPersons to the view
+        return view('clients.create', array_merge($data, [
+            'primarySalesPersons' => $primarySalesPersons,
+            'secondarySalesPersons' => $secondarySalesPersons,
+        ]));
     }
 
     public function getRegions(Request $request)
