@@ -119,7 +119,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_role" enctype="multipart/form-data" action="{{url('new_role')}}">
+                <form method="POST" id="form_role" enctype="multipart/form-data" action="{{url('new_role')}}" onsubmit="show()">
                     @csrf
                     <div class="form-group">
                         <label for="department">Department</label>
@@ -132,7 +132,13 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" required>
+                        {{-- <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" required> --}}
+                        <select class="form-control js-example-basic-single" name="name" required>
+                            <option disabled selected value>-Select Name-</option>
+                            <option value="Staff L1">Staff L1</option>
+                            <option value="Staff L2">Staff L2</option>
+                            <option value="Department Admin">Department Admin</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>

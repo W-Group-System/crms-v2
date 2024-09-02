@@ -1266,6 +1266,7 @@
     </script>
 @include('product_evaluations.create_supplementary')
 @include('product_evaluations.assign_personnel')
+{{-- @include('product_evaluations.create_activity') --}}
 @include('product_evaluations.upload_rpe_file')
 @include('product_evaluations.rpe_approval')
 

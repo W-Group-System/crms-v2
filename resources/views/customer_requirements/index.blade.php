@@ -3,10 +3,11 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
+            @include('components.error')
             @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Customer Requirement List
-            <button type="button" class="btn btn-md btn-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement" class="btn btn-md btn-primary">Add Customer Requirement</button>
+            <button type="button" class="btn btn-md btn-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement" class="btn btn-md btn-primary">New</button>
             </h4>
             @else
             <h4 class="card-title d-flex justify-content-between align-items-center">Customer Requirement List</h4>
@@ -64,7 +65,7 @@
                 </div>
             </div>
 
-            <div class="table-responsive">
+            <div class="table-responsive" style="overflow: scroll; height: 50vh;">
                 <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%">
                     @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == null)
                     <thead>
@@ -151,7 +152,7 @@
                                     data-target="#editCrr-{{ $customerRequirement->id }}" data-toggle="modal" title='Edit' @if($user->id != $customerRequirement->PrimarySalesPersonId && $user->user_id != $customerRequirement->PrimarySalesPersonId) disabled @endif>
                                     <i class="ti-pencil"></i>
                                 </button>  
-                                <form method="POST" action="{{url('delete_crr/'.$customerRequirement->id)}}" class="d-inline-block">
+                                <form method="POST" action="{{url('delete_crr/'.$customerRequirement->id)}}" class="d-inline-block" onsubmit="show()">
                                     @csrf
                                     <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $customerRequirement->Id }}" @if($user->id != $customerRequirement->PrimarySalesPersonId && $user->user_id != $customerRequirement->PrimarySalesPersonId) disabled @endif>
                                         <i class="ti-trash"></i>
@@ -311,8 +312,6 @@
                                 <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements" target="_blank">
                                     <i class="ti-eye"></i>
                                 </a>
-                                {{-- @if(auth()->user()->id == $customerRequirement->PrimarySalesPersonId || auth()->user()->user_id == $customerRequirement->PrimarySalesPersonId)
-                                @endif --}}
                                 @php
                                     $user = auth()->user();
                                 @endphp
@@ -320,7 +319,7 @@
                                     data-target="#editCrr-{{ $customerRequirement->id }}" data-toggle="modal" title='Edit' @if($user->id != $customerRequirement->PrimarySalesPersonId && $user->user_id != $customerRequirement->PrimarySalesPersonId) disabled @endif>
                                     <i class="ti-pencil"></i>
                                 </button>  
-                                <form method="POST" action="{{url('delete_crr/'.$customerRequirement->id)}}" class="d-inline-block">
+                                <form method="POST" action="{{url('delete_crr/'.$customerRequirement->id)}}" class="d-inline-block" onsubmit="show()">
                                     @csrf
                                     <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $customerRequirement->Id }}" @if($user->id != $customerRequirement->PrimarySalesPersonId && $user->user_id != $customerRequirement->PrimarySalesPersonId) disabled @endif>
                                         <i class="ti-trash"></i>
@@ -409,7 +408,7 @@
 <script>
     $(document).ready(function() {
         $('.natureRequestSelect').select2({
-            width: "92%"
+            width: "85%"
         });
 
         $('.addRow').on('click', function() {

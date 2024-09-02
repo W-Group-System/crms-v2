@@ -349,13 +349,17 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Handle success message display
-                        $('#form_result').html('<div class="alert alert-success">' + response.success + '</div>').show();
-                        // Additional reset or actions on success
-                        $('#form_client')[0].reset();
-                        $('html, body').animate({
-                            scrollTop: $('#form_client').offset().top
-                        }, 1000);
+                        // Display a Swal success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.success,
+                            timer: 1500, // Auto-close after 2 seconds
+                            showConfirmButton: false
+                        }).then((result) => {
+                            $('#form_client')[0].reset();
+                            location.reload();
+                        });
                     } else if (response.errors) {
                         // Handle validation errors display
                         var errorsHtml = '<div class="alert alert-danger" style="border-color: red;"><ul>';
@@ -392,6 +396,7 @@
                 }
             });
         });
+
     });
 </script>
 @endsection

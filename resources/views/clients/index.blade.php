@@ -95,7 +95,11 @@
                                 </td>
                                 <td>{{$client->industry->Name ?? 'N/A'}}</td>
                                 <td>{{$client->BuyerCode ?? 'N/A'}}</td>
-                                <td>{{$client->Name ?? 'N/A'}}</td>
+                                <td>
+                                    <a href="javascript:void(0);" onclick="viewClient({{ $client->id }})">
+                                        {{ $client->Name ?? 'N/A' }}
+                                    </a>
+                                </td>
                                 <td>
                                     {{ $client->userByUserId->full_name ?? $client->userById->full_name ?? 'N/A' }} / 
                                     {{ $client->userByUserId2->full_name ?? $client->userById2->full_name ?? 'N/A' }}
@@ -321,6 +325,7 @@
             });
         });
     });
+
     function viewClient(clientId) {
         window.location.href = "{{ url('view_client') }}/" + clientId;
     }
