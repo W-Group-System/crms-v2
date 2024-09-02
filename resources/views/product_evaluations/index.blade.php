@@ -172,7 +172,25 @@
                                 <td>{{ $productEvaluation->DueDate }}</td>
                                 <td>{{ optional($productEvaluation->client)->Name }}</td>
                                 <td>{{ optional($productEvaluation->product_application)->Name }}</td>
-                                <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td>
+                                {{-- <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td> --}}
+                                <td>
+                                    @php
+                                        $rpeResult = $productEvaluation->RpeResult;
+                                        $pattern = '/\[(.*?)\]/';
+                                    
+                                        $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
+                                            $code = $matches[1];
+                                            $productId = getProductIdByCode($code);
+                                            
+                                            if ($productId != null) {
+                                                return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
+                                            }
+                                            return $matches[0];
+                                        }, $rpeResult);
+                                    @endphp  
+
+                                    {!! nl2br($rpeResultLinked) !!}
+                                </td>
                                 <td>
                                     @if($productEvaluation->Status == 10)
                                             Open
