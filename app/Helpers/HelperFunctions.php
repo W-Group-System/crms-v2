@@ -133,7 +133,7 @@ function customerRequirements($product)
 
 function getProductIdByCode($code)
 {
-    $product = Product::where('code', $code)->first();
+    $product = Product::where('code', $code)->where('status', 4)->first();
     
     return $product ? $product->id : null;
 }

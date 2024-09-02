@@ -239,7 +239,7 @@ class RequestProductEvaluationController extends Controller
         $mappedLogs = $transactionLogs->map(function ($log) {
             return (object) [
                 'CreatedDate' => $log->ActionDate,
-                'full_name' => $log->historyUser->full_name,
+                'full_name' => optional($log->historyUser)->full_name,
                 'Details' => $log->Details,
             ];
         });
