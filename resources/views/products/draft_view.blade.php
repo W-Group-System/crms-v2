@@ -11,18 +11,18 @@
                 <div class="col-lg-6" align="right">
                     <a href="{{ url('/draft_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
-                    <form method="POST" class="d-inline-block" id="archiveForm">
+                    {{-- <form method="POST" class="d-inline-block" id="archiveForm">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
                         <button type="submit" class="btn btn-md btn-secondary submit_approval" name="action" value="New" title="Submit to archive products">Archive</button>
-                    </form>
+                    </form> --}}
 
                     <form method="POST" action="{{url('/add_to_new_products')}}" class="d-inline-block">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="New" title="Submit to new products">New</button>
+                        <button type="button" class="btn btn-md btn-primary" id="moveToNew" name="action" value="New">Move to New</button>
                     </form>
                 </div>
             </div>
@@ -102,9 +102,9 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                     <a class="nav-link" id="pds-tab" data-toggle="tab" href="#pds" role="tab" aria-controls="pds" aria-selected="false">PDS</a>
                 </li>
@@ -184,10 +184,10 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+                {{-- <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     @include('components.error')
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">Add</button>
+                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">New</button>
                         <button class="btn btn-warning btn-md mb-2" type="button" data-toggle="modal" data-target="#updateAll" title="Update All">
                             Update All
                         </button>
@@ -235,10 +235,10 @@
                     @foreach ($data->productSpecification as $ps)
                         @include('products.edit_specification')
                     @endforeach
-                </div>
+                </div> --}}
                 <div class="tab-pane fade" id="pds" role="tabpanel" aria-labelledby="pds-tab">
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
+                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">New</button>
                     </div>
                     @include('products.add_pds')
                     
@@ -286,7 +286,7 @@
                 </div>
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
+                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">New</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
                     </div>
                     @include('products.add_file')
@@ -309,9 +309,7 @@
                                         <tr>
                                             <td>{{$pf->Name}}</td>
                                             <td>
-                                                @if($pf->IsConfidential == 0)
-                                                    {{$pf->Description}}
-                                                @endif
+                                                {{$pf->Description}}
                                             </td>
                                             <td>
                                                 @if($pf->IsConfidential == 0)
@@ -322,11 +320,11 @@
                                             </td>
                                             <td>
                                                 @if($pf->IsConfidential == 0)
-                                                <a href="{{$pf->Path}}" class="btn btn-sm btn-info" target="_blank">
+                                                <a href="{{url($pf->Path)}}" class="btn btn-sm btn-info" target="_blank">
                                                     <i class="ti-eye"></i>
                                                 </a>
                                                 @elseif($pf->IsConfidential == 1)
-                                                <a href="{{$pf->Path}}" class="btn btn-sm btn-info" target="_blank">
+                                                <a href="{{url($pf->Path)}}" class="btn btn-sm btn-info" target="_blank">
                                                     <i class="mdi mdi-eye-off-outline"></i>
                                                 </a>
                                                 @endif
@@ -377,6 +375,7 @@
                                 <tr>
                                     <th>Type</th>
                                     <th>Transaction</th>
+                                    <th>Disposition Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -389,6 +388,7 @@
                                                     {{$cr->CrrNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -401,6 +401,7 @@
                                                     {{$rps->RpeNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -412,6 +413,13 @@
                                                 <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
+                                            </td>
+                                            <td>
+                                                @if($item->DispositionRejectionDescription == null)
+                                                N/A
+                                                @else
+                                                {{$item->DispositionRejectionDescription}}
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -536,52 +544,59 @@
                 {{csrf_field()}}
                 
                 <div class="modal-body">
-                    <div class="table-responsive">
-                        <span id="totalPercentage">{{$percentage ?? 0.00}}</span>
-
-                        <table class="table table-striped table-bordered table-hover" id="rawMaterialsTable">
-                            <thead>
-                                <tr>
-                                    <th>Materials</th>
-                                    <th>Percentage</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                    $percentage = 0;
-                                @endphp
-
-                                @foreach ($rawMaterials as $rm)
-                                <tr>
-                                    <td>{{$rm->Name}}</td>
-                                    <td>
-                                        <input type="hidden" name="raw_materials[]" value="{{$rm->id}}">
-
+                    <div class="card border border-1 border-primary rounded-0 rounded-bottom" style="height: 70vh; overflow-y:auto;">
+                        <div class="card-header bg-primary text-white">
+                            Raw Materials Percentage
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <span id="totalPercentage">{{$percentage ?? 0.00}}</span>
+        
+                                <table class="table table-striped table-bordered table-hover" id="rawMaterialsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Materials</th>
+                                            <th>Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         @php
-                                            $composition_found = false;
+                                            $percentage = 0;
                                         @endphp
-
-                                        @foreach ($data->productMaterialComposition as $rawMats)
-                                            @if($rawMats->MaterialId == $rm->id)
-                                                <input type="number" name="percentage[]" class="form-control percentageVal" value="{{$rawMats->Percentage}}">
+        
+                                        @foreach ($rawMaterials as $rm)
+                                        <tr>
+                                            <td>{{$rm->Name}}</td>
+                                            <td>
+                                                <input type="hidden" name="raw_materials[]" value="{{$rm->id}}">
+        
                                                 @php
-                                                    $composition_found = true;
-                                                    $percentage += $rawMats->Percentage;
+                                                    $composition_found = false;
                                                 @endphp
-                                                @break
-                                            @endif
+        
+                                                @foreach ($data->productMaterialComposition as $rawMats)
+                                                    @if($rawMats->MaterialId == $rm->id)
+                                                        <input type="number" name="percentage[]" class="form-control percentageVal" value="{{$rawMats->Percentage}}">
+                                                        @php
+                                                            $composition_found = true;
+                                                            $percentage += $rawMats->Percentage;
+                                                        @endphp
+                                                        @break
+                                                    @endif
+                                                @endforeach
+        
+                                                @if(!$composition_found)
+                                                <input type="number" name="percentage[]" class="form-control percentageVal">
+                                                @endif
+        
+                                            </td>
+                                        </tr>
                                         @endforeach
-
-                                        @if(!$composition_found)
-                                        <input type="number" name="percentage[]" class="form-control percentageVal">
-                                        @endif
-
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
+                                    </tbody>
+                                </table>
+        
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -606,14 +621,14 @@
         document.getElementById('totalPercentage').innerText = percentage
 
         new DataTable('.tables', {
-            destroy: true,
+            destroy: false,
             processing: true,
             pageLength: 10,
             ordering: false
         });
 
         var rawMatsTable = $("#rawMaterialsTable").DataTable({
-            destroy: true,
+            destroy: false,
             processing: true,
             ordering: false,
             paginate: false
@@ -915,40 +930,54 @@
 
             $("#filename").val(filename);
         })
+        
+        $(document).on('change', '[name="files[]"]', function(e) {
+            var filename = e.target.files[0].name;
+
+            $(this).closest('.row').find('[name="name[]"]').val(filename);
+        })
 
         $(".addBtnFiles").on('click', function()
         {
             var newRow = `
-                <fieldset class="border border-primary p-3 mb-3">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <label>Name :</label>
-                            <input type="text" name="name[]" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-lg-6">
-                            <label>Client :</label>
-                            <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
-                                <option value="">-Client-</option>
-                                @foreach ($client as $c)
-                                    <option value="{{$c->id}}">{{$c->Name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-lg-6">
-                            <label>Description :</label>
-                            <input type="text" name="description[]" class="form-control form-control-sm" required> 
-                        </div>
-                        <div class="col-lg-6">
-                            <label>Is Confidential :</label>
-                            <input type="checkbox" name="is_confidential[]"> 
-                        </div>
-                        <div class="col-lg-6">
-                            <label>File :</label>
-                            <input type="file" name="files[]" id="file" class="form-control form-control-sm" required>
-                            <input type="hidden" name="files[]">
-                        </div>
+                <div class="row">
+                    <div class="col-lg-10">
+                        <fieldset class="border border-primary p-3 mb-3">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Name :</label>
+                                    <input type="text" name="name[]" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Client :</label>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                        <option value="">-Client-</option>
+                                        @foreach ($client as $c)
+                                            <option value="{{$c->id}}">{{$c->Name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Description :</label>
+                                    <textarea name="description[]" class="form-control" cols="30" rows="10"></textarea>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Is Confidential :</label>
+                                    <input type="checkbox" name="is_confidential[]"> 
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>File :</label>
+                                    <input type="file" name="files[]" id="file" class="form-control form-control-sm" >
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
-                </fieldset>
+                    <div class="col-lg-2">
+                        <button class="btn btn-sm btn-danger mb-3 removeBtnFiles" type="button" >
+                            <i class="ti-minus"></i>
+                        </button>
+                    </div>
+                </div>
             `
 
             var row = $(newRow);
@@ -956,10 +985,9 @@
             row.find('.js-example-basic-single').select2();
         })
 
-        $(".removeBtnFiles").on('click', function()
+        $(document).on('click', '.removeBtnFiles', function()
         {
-            $('.product_files_container').children().last().remove();
-            
+            $(this).closest('.row').remove();
         })
 
         $("#archiveForm").on('submit', function(e) {
@@ -1046,6 +1074,24 @@
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        })
+
+        $('#moveToNew').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Move to New"
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

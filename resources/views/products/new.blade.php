@@ -54,9 +54,9 @@
                         @foreach ($products as $product)
                             <tr>
                                 <td>
-                                    <a href="{{url('view_new_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product">
+                                    {{-- <a href="{{url('view_new_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product">
                                         <i class="ti-eye"></i>
-                                    </a>
+                                    </a> --}}
 
                                     <button class="btn btn-warning btn-sm" type="button" title="Edit" data-toggle="modal" data-target="#formProduct-{{$product->id}}">
                                         <i class="ti-pencil"></i>
@@ -71,18 +71,20 @@
                                         </button>
                                     </form> --}}
 
-                                    <form method="POST" class="d-inline-block" action="{{url('add_to_current_products')}}">
+                                    {{-- <form method="POST" class="d-inline-block" action="{{url('add_to_current_products')}}">
                                         @csrf
                                         
                                         <input type="hidden" name="id" value="{{$product->id}}">
                                         <button class="btn btn-success btn-sm currentProducts" type="button" title="Move to current products">
                                             <i class="ti-plus"></i>
                                         </button>
-                                    </form>
+                                    </form> --}}
 
                                 </td>
                                 <td>{{$product->ddw_number}}</td>
-                                <td>{{$product->code}}</td>
+                                <td>
+                                    <a href="{{url('view_new_product/'.$product->id)}}">{{$product->code}}</a>
+                                </td>
                                 <td>
                                     @if($product->userByUserId)
                                         {{$product->userByUserId->full_name}}

@@ -54,18 +54,18 @@
                         @foreach ($products as $product)
                             <tr>
                                 <td>
-                                    <a href="{{url('view_archive_products/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
+                                    {{-- <a href="{{url('view_archive_products/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
                                         <i class="ti-eye"></i>
-                                    </a>
+                                    </a> --}}
     
-                                    <form method="POST" action="{{url('add_to_draft_products')}}" class="d-inline-block">
+                                    {{-- <form method="POST" action="{{url('add_to_draft_products')}}" class="d-inline-block">
                                         {{csrf_field()}}
 
                                         <input type="hidden" name="id" value="{{$product->id}}">
                                         <button class="btn btn-sm btn-success draftProduct" type="button" title="Add draft products" data-id="{{$product->id}}">
                                             <i class="ti-plus"></i>
                                         </button>
-                                    </form>
+                                    </form> --}}
 
                                     <form method="POST" class="d-inline-block" action="{{url('delete_product')}}">
                                         {{csrf_field()}}
@@ -78,7 +78,9 @@
                                     
                                 </td>
                                 <td>{{$product->ddw_number}}</td>
-                                <td>{{$product->code}}</td>
+                                <td>
+                                    <a href="{{url('view_archive_products/'.$product->id)}}">{{$product->code}}</a>
+                                </td>
                                 <td>
                                     @if($product->userByUserId)
                                         {{$product->userByUserId->full_name}}
