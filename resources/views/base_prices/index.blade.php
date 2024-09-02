@@ -36,7 +36,7 @@
                                 <i class="ti-eye"></i>
                             </button>    
                         </td>
-                        <td>{{ $currentBase->productMaterial->Name }}</td>
+                        <td>{{ optional($currentBase->productMaterial)->Name }}</td>
                         <td>{{ $currentBase->Price }}</td>
                         <td>{{ optional($currentBase->userApproved)->full_name }}</td>
                         <td>{{ $currentBase->EffectiveDate }}</td>

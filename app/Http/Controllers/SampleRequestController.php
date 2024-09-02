@@ -429,170 +429,80 @@ class SampleRequestController extends Controller
 
     public function store(Request $request)
 {
-    $refCode = $request->input('RefCode');
-    $quantities = $request->input('Quantity'); 
-    $remarks = $request->input('quantity_remarks'); 
-    $userRole = auth()->user()->role->name;
-    $isManager = $userRole == 'Staff L2';
-
-    foreach ($quantities as $key => $quantity) {
-        $isValid = true;
-        $unitOfMeasure = $request->input('UnitOfMeasure')[$key];
-
-        if ($refCode == 2) {
-            if ($quantity < 1000 && $unitOfMeasure == 1) {
-                $isValid = false;
-            } elseif ($quantity < 1 && $unitOfMeasure == 2) {
-                $isValid = false;
-            }
-        }
-
-        if ($refCode == 1) {
-            if ($quantity > 999 && $unitOfMeasure == 1) {
-                $isValid = false;
-            } elseif ($quantity >= 1 && $unitOfMeasure == 2) {
-                $isValid = false;
-            }
-        }
-
-        if (!$isValid) {
-            if ($isManager) {
-                if (!$remarks) {
-                    return redirect()->back()->with([
-                        'error' => 'Quantity validation failed. Please provide remarks to bypass validation.',
-                        'formType' => 'create'
-                    ])->withInput();
-                }
-            } else {
-                return redirect()->back()->with([
-                    'error' => 'Quantity validation failed.',
-                    'formType' => 'create'
-                ])->withInput();
-            }
-            break; 
-        }
-    }
    $srfNumber = null;
-$currentYear = date('y');
-$deptCode = '';
+    $currentYear = date('y');
+    $deptCode = '';
 
-if (auth()->user()->role->type == 'LS') {
-    $deptCode = 'LS';
-} elseif (auth()->user()->role->type == 'IS') {
-    $deptCode = 'IS';
-}
-
-if ($deptCode) {
-    $checkSrf = SampleRequest::select('SrfNumber')
-        ->where('SrfNumber', 'LIKE', "SRF-$deptCode-$currentYear%")
-        ->orderBy('SrfNumber', 'desc')
-        ->first();
-
-    if ($checkSrf) {
-        $count = (int)substr($checkSrf->SrfNumber, -4);
-    } else {
-        $count = 0; 
+    if (auth()->user()->role->type == 'LS') {
+        $deptCode = 'LS';
+    } elseif (auth()->user()->role->type == 'IS') {
+        $deptCode = 'IS';
     }
 
-    $totalCount = str_pad($count + 1, 4, '0', STR_PAD_LEFT); 
-    $srfNumber = 'SRF' . '-' . $deptCode . '-' . $currentYear . '-' . $totalCount;
-}
+    if ($deptCode) {
+        $checkSrf = SampleRequest::select('SrfNumber')
+            ->where('SrfNumber', 'LIKE', "SRF-$deptCode-$currentYear%")
+            ->orderBy('SrfNumber', 'desc')
+            ->first();
+
+        if ($checkSrf) {
+            $count = (int)substr($checkSrf->SrfNumber, -4);
+        } else {
+            $count = 0; 
+        }
+
+        $totalCount = str_pad($count + 1, 4, '0', STR_PAD_LEFT); 
+        $srfNumber = 'SRF' . '-' . $deptCode . '-' . $currentYear . '-' . $totalCount;
+    }
 
 
-    $samplerequest = SampleRequest::create([
-        'SrfNumber' => $srfNumber,
-        'DateRequested' => $request->input('DateRequested'),
-        'DateRequired' => $request->input('DateRequired'),
-        'DateStarted' => $request->input('DateStarted'),
-        'PrimarySalesPersonId' => $request->input('PrimarySalesPerson'),
-        'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
-        'SoNumber' => $request->input('SoNumber'),
-        'RefCode' => $request->input('RefCode'),
-        'Status' => '10',
-        'Progress' => '10',
-        'SrfType' => $request->input('SrfType'),
-        'ClientId' => $request->input('ClientId'),
-        'ContactId' => $request->input('ClientContactId'),
-        'InternalRemarks' => $request->input('Remarks'),
-        'Courier' => $request->input('Courier'),
-        'AwbNumber' => $request->input('AwbNumber'),
-        'DateDispatched' => $request->input('DateDispatched'),
-        'DateSampleReceived' => $request->input('DateSampleReceived'),
-        'DeliveryRemarks' => $request->input('DeliveryRemarks'),
-        'Note' => $request->input('Note'),
-    ]);
-
-
-    foreach ($request->input('ProductCode', []) as $key => $value) {
-        SampleRequestProduct::create([
-            'SampleRequestId' => $samplerequest->Id,
-            'ProductType' => $request->input('ProductType')[$key],
-            'ApplicationId' => $request->input('ApplicationId')[$key],
-            'ProductCode' => $request->input('ProductCode')[$key],
-            'ProductDescription' => $request->input('ProductDescription')[$key],
-            'NumberOfPackages' => $request->input('NumberOfPackages')[$key],
-            'Quantity' => $request->input('Quantity')[$key],
-            'UnitOfMeasureId' => $request->input('UnitOfMeasure')[$key],
-            'ProductIndex' => $key + 1,
-            'Label' => $request->input('Label')[$key],
-            'RpeNumber' => $request->input('RpeNumber')[$key],
-            'CrrNumber' => $request->input('CrrNumber')[$key],
-            'quantity_remarks' => $remarks,
-            'Remarks' => $request->input('RemarksProduct')[$key],
+        $samplerequest = SampleRequest::create([
+            'SrfNumber' => $srfNumber,
+            'DateRequested' => $request->input('DateRequested'),
+            'DateRequired' => $request->input('DateRequired'),
+            'DateStarted' => $request->input('DateStarted'),
+            'PrimarySalesPersonId' => $request->input('PrimarySalesPerson'),
+            'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
+            'SoNumber' => $request->input('SoNumber'),
+            'RefCode' => $request->input('RefCode'),
+            'Status' => '10',
+            'Progress' => '10',
+            'SrfType' => $request->input('SrfType'),
+            'ClientId' => $request->input('ClientId'),
+            'ContactId' => $request->input('ClientContactId'),
+            'InternalRemarks' => $request->input('Remarks'),
+            'Courier' => $request->input('Courier'),
+            'AwbNumber' => $request->input('AwbNumber'),
+            'DateDispatched' => $request->input('DateDispatched'),
+            'DateSampleReceived' => $request->input('DateSampleReceived'),
+            'DeliveryRemarks' => $request->input('DeliveryRemarks'),
+            'Note' => $request->input('Note'),
         ]);
-    }
 
-    return redirect()->route('sample_request.index')->with('success', 'Sample Request created successfully.');
+
+        foreach ($request->input('ProductCode', []) as $key => $value) {
+            SampleRequestProduct::create([
+                'SampleRequestId' => $samplerequest->Id,
+                'ProductType' => $request->input('ProductType')[$key],
+                'ApplicationId' => $request->input('ApplicationId')[$key],
+                'ProductCode' => $request->input('ProductCode')[$key],
+                'ProductDescription' => $request->input('ProductDescription')[$key],
+                'NumberOfPackages' => $request->input('NumberOfPackages')[$key],
+                'Quantity' => $request->input('Quantity')[$key],
+                'UnitOfMeasureId' => $request->input('UnitOfMeasure')[$key],
+                'ProductIndex' => $key + 1,
+                'Label' => $request->input('Label')[$key],
+                'RpeNumber' => $request->input('RpeNumber')[$key],
+                'CrrNumber' => $request->input('CrrNumber')[$key],
+                'Remarks' => $request->input('RemarksProduct')[$key],
+            ]);
+        }
+
+        return redirect()->route('sample_request.index')->with('success', 'Sample Request created successfully.');
 }
     public function update(Request $request, $id)
 {
     $srf = SampleRequest::with('requestProducts')->findOrFail($id);
-    $refCode = $request->input('RefCode');
-    $quantities = $request->input('Quantity');        
-    $remarks = $request->input('quantity_remarks'); 
-    $userRole = auth()->user()->role->name;
-    $isManager = $userRole == 'Staff L2';
-
-    foreach ($quantities as $key => $quantity) {
-        $isValid = true;
-        $unitOfMeasure = $request->input('UnitOfMeasure')[$key]; 
-
-        if ($refCode == 2) {
-            if ($quantity < 1000 && $unitOfMeasure == 1) {
-                $isValid = false;
-            } elseif ($quantity < 1 && $unitOfMeasure == 2) {
-                $isValid = false;
-            }
-        }
-
-        if ($refCode == 1) {
-            if ($quantity > 999 && $unitOfMeasure == 1) {
-                $isValid = false;
-            } elseif ($quantity >= 1 && $unitOfMeasure == 2) {
-                $isValid = false;
-            }
-        }
-
-        if (!$isValid) {
-            if ($isManager) {
-                if (!$remarks) {
-                    return redirect()->back()->with([
-                        'error' => 'Quantity validation failed. Please provide remarks to bypass validation.',
-                        'formType' => 'update',
-                        'srfId' => $id
-                    ])->withInput();
-                }
-            } else {
-                return redirect()->back()->with([
-                    'error' => 'Quantity validation failed.',
-                    'formType' => 'update',
-                    'srfId' => $id
-                ])->withInput();
-            }
-            break;
-        }
-    }
-
     $srf->DateRequired = $request->input('DateRequired');
     $srf->DateStarted = $request->input('DateStarted');
     $srf->PrimarySalesPersonId = $request->input('PrimarySalesPerson');
@@ -628,7 +538,6 @@ if ($deptCode) {
                 'Label' => $request->input('Label.' . $key),
                 'RpeNumber' => $request->input('RpeNumber.' . $key),
                 'CrrNumber' => $request->input('CrrNumber.' . $key),
-                'quantity_remarks' => $remarks,
                 'Remarks' => $request->input('RemarksProduct.' . $key),
                 'Disposition' => $request->input('Disposition.' . $key),
                 'DispositionRejectionDescription' => $request->input('DispositionRejectionDescription.' . $key),
@@ -770,6 +679,16 @@ if ($deptCode) {
         Alert::success('Successfully return to rnd')->persistent('Dismiss');
         return back();
     }
+
+    public function initialQuantity($id)
+    {
+        $sampleRequest = SampleRequest::findOrFail($id);
+        $sampleRequest->Progress = 11;
+        $sampleRequest->save(); 
+
+        Alert::success('Successfully return to rnd')->persistent('Dismiss');
+        return back();
+    }
     public function submitSrf(Request $request, $id)
     {
         $srf = SampleRequest::findOrFail($id);
@@ -845,5 +764,21 @@ if ($deptCode) {
     
         return $pdf->stream('print.pdf');
     }
+    public function editDisposition(Request $request, $sampleRequestId)
+{
+    $sampleRequest = SampleRequest::find($sampleRequestId);
+
+    foreach ($sampleRequest->requestProducts as $product) {
+        if (isset($request->Disposition[$product->id])) {
+            $product->Disposition = $request->Disposition[$product->id];
+            $product->DispositionRejectionDescription = $request->DispositionRejectionDescription[$product->id];
+            $product->save();
+        }
+    }
+
+    return redirect()->back()->with('success', 'Dispositions updated successfully.');
+}
+
+
 }    
 

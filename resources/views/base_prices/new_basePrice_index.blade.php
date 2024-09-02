@@ -22,9 +22,14 @@
                     </div>
                 </div>
             </form>
+            <div class="card-title d-flex justify-content-start mt-3">
+                <button type="button" id="bulk_approve" class="btn btn-sm btn-success mr-2">Bulk Approve</button>
+                <button type="button" id="bulk_delete" class="btn btn-sm btn-danger">Bulk Delete</button>
+            </div>
             <table class="table table-striped table-bordered table-hover" id="base_price_table" width="100%">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="select_all"> Select All</th>
                         <th width="20%">Action</th>
                         <th width="20%">Material</th>
                         <th width="20%">Price</th>
@@ -35,6 +40,7 @@
                 <tbody>
                     @foreach ( $newBasePrice as $newBase)
                     <tr>
+                        <td><input type="checkbox" class="item-checkbox" value="{{ $newBase->Id }}"></td>
                         <td align="center">
                             <button type="button" class="btn btn-sm btn-warning"
                                 data-target="#editBase{{ $newBase->Id }}" data-toggle="modal" title='Edit New Base Price'>
@@ -123,11 +129,10 @@
             var id = $(this).data('id'); 
             Swal.fire({
                 title: "Do you want to approve this base price?",
-                showDenyButton: true,
+                // showDenyButton: true,
                 showCancelButton: true,
                 icon: "info",
                 confirmButtonText: "Approve",
-                denyButtonText: `Disapprove`
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -135,7 +140,6 @@
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}', 
-                            status: 'approved' 
                         },
                         success: function(response) {
                             Swal.fire("Base price approved!", "", "success");
@@ -146,24 +150,7 @@
                             console.error(xhr.responseText);
                         }
                     });
-                } else if (result.isDenied) {
-                    $.ajax({
-                        url: 'approveNewBasePrice/' + id, 
-                        type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}', 
-                            status: 'disapproved' 
-                        },
-                        success: function(response) {
-                            Swal.fire("Base price disapproved!", "", "success");
-                            location.reload()
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire("Error approving base price", "", "error");
-                            console.error(xhr.responseText);
-                        }
-                    });
-                }
+                } 
             });
         });
 
@@ -192,6 +179,89 @@
             });
         }
     });
+
+    $(document).ready(function() {
+    $('#select_all').click(function() {
+        var isChecked = $(this).prop('checked');
+        $('.item-checkbox').prop('checked', isChecked);
+    });
+
+    $('#bulk_approve').click(function() {
+        var selectedIds = getSelectedIds();
+        if (selectedIds.length === 0) {
+            Swal.fire("No items selected", "", "info");
+            return;
+        }
+        Swal.fire({
+            title: "Approve selected base prices?",
+            showCancelButton: true,
+            icon: "info",
+            confirmButtonText: "Approve",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'bulkApproveNewBasePrice',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        ids: selectedIds,
+                    },
+                    success: function(response) {
+                        Swal.fire("Base prices approved!", "", "success");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire("Error approving base prices", "", "error");
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+
+    $('#bulk_delete').click(function() {
+        var selectedIds = getSelectedIds();
+        if (selectedIds.length === 0) {
+            Swal.fire("No items selected", "", "info");
+            return;
+        }
+        Swal.fire({
+            title: "Are you sure you want to delete selected base prices?",
+            text: "This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'bulkDeleteBasePrice',
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        ids: selectedIds
+                    },
+                    success: function(response) {
+                        Swal.fire("Base prices deleted!", "", "success");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire("Error deleting base prices", "", "error");
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+
+    function getSelectedIds() {
+        return $('.item-checkbox:checked').map(function() {
+            return $(this).val();
+        }).get();
+    }
+});
+
     });
 </script>
 @include('base_prices.create_new_base_price')

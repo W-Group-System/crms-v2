@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <select class="form-control js-example-basic-single" name="PrimarySalesPerson" style="position: relative !important" title="Select PrimarySalesPerson" >
                             <option value="" disabled selected>Primary Sales Person</option>
                             @foreach ($primarySalesPersons as $salesPerson)
-                                <option vvalue="{{ $salesPerson->user_id }}" 
+                                <option value="{{ $salesPerson->user_id }}" 
                                     @if (old('PrimarySalesPerson', $product->sampleRequest->PrimarySalesPersonId) == $salesPerson->user_id) 
                                         selected 
                                     @endif>{{ $salesPerson->full_name }}</option>
@@ -1151,6 +1151,24 @@ document.addEventListener('DOMContentLoaded', function() {
             sampleReceivedInput.setAttribute('min', today);
         }
     }
+    
+    $('#edit_is{{ $product->sampleRequest->Id }}').on('hide.bs.modal', function () {
+    var form = $(this).find('form')[0];
+    form.reset();
+
+    $(this).find('select').each(function () {
+        var originalValue = $(this).data('original-value');
+        $(this).val(originalValue).trigger('change');
+    });
+});
+
+$('#edit_is{{ $product->sampleRequest->Id }}').on('show.bs.modal', function () {
+    $(this).find('select').each(function () {
+        var currentValue = $(this).val();
+        $(this).data('original-value', currentValue);
+    });
+});
+
 });
 
 </script>
