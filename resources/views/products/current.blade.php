@@ -7,7 +7,7 @@
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-start align-items-start">
                     <div class="col-md-3">
-                        Application Filter :
+                        <label>Application Filter :</label>
                         <select data-placeholder="Choose Application" name="application_filter" class="form-control form-control-sm js-example-basic-single">
                             <option value="">-Application-</option>
                             @foreach ($application as $a)
@@ -16,7 +16,7 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        Material Filter :
+                        <label>Material Filter :</label>
                         <select data-placeholder="Choose Material" name="material_filter" class="form-control form-control-sm js-example-basic-single">
                             <option value="">-Material-</option>
                             @foreach ($raw_material as $r)
@@ -70,7 +70,7 @@
                 <table class="table table-striped table-bordered table-hover table-bordered" id="product_table" width="100%">
                     <thead>
                         <tr>
-                            <th width="10%">Action</th>
+                            {{-- <th width="10%">Action</th> --}}
                             <th width="30%">Code</th>
                             <th width="30%">Created By</th>
                             <th width="20%">Date Created</th>
@@ -81,7 +81,7 @@
                         @if(count($products) > 0)
                         @foreach ($products as $product)
                             <tr>
-                                <td>
+                                {{-- <td>
                                     <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
                                         <i class="ti-eye"></i>
                                     </a>
@@ -94,8 +94,10 @@
                                             <i class="ti-archive"></i>
                                         </button>
                                     </form>
+                                </td> --}}
+                                <td>
+                                    <a href="{{url('view_product/'.$product->id)}}">{{$product->code}}</a>
                                 </td>
-                                <td>{{$product->code}}</td>
                                 <td>
                                     @if($product->userByUserId)
                                         {{$product->userByUserId->full_name}}

@@ -14,20 +14,28 @@
                 <div class="modal-body" style="padding: 20px">
                     <div class="row">
                         <div class="col-lg-12">
-                            Parameter :
-                            <input type="text" name="parameter" class="form-control form-control-sm" placeholder="Enter parameter" required>
+                            <div class="form-group mb-2">
+                                <label>Parameter</label>
+                                <input type="text" name="parameter" class="form-control form-control-sm" placeholder="Enter parameter" required>
+                            </div>
                         </div>
                         <div class="col-lg-12">
-                            Specification :
-                            <input type="text" name="specification" class="form-control form-control-sm" placeholder="Enter specification" required>
+                            <div class="form-group mb-2">
+                                <label>Specification</label>
+                                <input type="text" name="specification" class="form-control form-control-sm" placeholder="Enter specification" required>
+                            </div>
                         </div>
                         <div class="col-lg-12">
-                            Testing Condition :
-                            <input type="text" name="testing_condition" class="form-control form-control-sm" placeholder="Enter testing condition" required>
+                            <div class="form-group mb-2">
+                                <label>Testing Condition</label>
+                                <input type="text" name="testing_condition" class="form-control form-control-sm" placeholder="Enter testing condition" required>
+                            </div>
                         </div>
                         <div class="col-lg-12">
-                            Remarks :
-                            <textarea name="remarks" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter remarks" required></textarea>
+                            <div class="form-group mb-2">
+                                <label>Remarks</label>
+                                <textarea name="remarks" class="form-control form-control-sm" cols="30" rows="10" placeholder="Enter remarks" required></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>

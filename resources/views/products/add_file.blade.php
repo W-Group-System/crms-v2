@@ -13,16 +13,17 @@
                 <input type="hidden" name="product_id" value="{{$data->id}}">
                 <div class="modal-body" style="padding: 20px">
                     <div class="row">
-                        <div class="col-lg-12">
-                            Name :
+                        <div class="col-lg-12 mb-3">
+                            <label>Name</label>
                             <input type="text" name="name" id="filename" class="form-control form-control-sm" placeholder="Enter name" required>
                         </div>
-                        <div class="col-lg-12">
-                            Description :
-                            <input type="text" name="description" class="form-control form-control-sm" placeholder="Enter description" required>
+                        <div class="col-lg-12 mb-3">
+                            <label>Description</label>
+                            {{-- <input type="text" name="description" class="form-control form-control-sm" placeholder="Enter description" required> --}}
+                            <textarea name="description" class="form-control" cols="30" rows="10" placeholder="Enter description" required></textarea>
                         </div>
-                        <div class="col-lg-12">
-                            Client :
+                        <div class="col-lg-12 mb-3">
+                            <label>Client</label>
                             <select name="client" class="js-example-basic-single form-control form-control-sm" required>
                                 <option value="">-Client-</option>
                                 @foreach ($client as $c)
@@ -30,12 +31,19 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-lg-12">
-                            Is Confidential :
+                        @if(auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                        <div class="col-lg-12 mb-3">
+                            <label>Is Confidential</label>
                             <input type="checkbox" name="is_confidential">
                         </div>
-                        <div class="col-lg-12">
-                            Upload a file :
+                        @else
+                        <div class="col-lg-12 mb-3">
+                            <label>Is Confidential</label>
+                            <input type="checkbox" name="is_confidential" checked readonly>
+                        </div>
+                        @endif
+                        <div class="col-lg-12 mb-3">
+                            <label>Upload a file</label>
                             <input type="file" name="file" id="file" class="form-control form-control-sm" required>
                         </div>
                     </div>
