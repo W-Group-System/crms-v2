@@ -134,20 +134,20 @@ class CustomerRequirementController extends Controller
         $refCode = $this->refCode();
         $unitOfMeasure = UnitOfMeasure::get();
 
-        // Return view with all necessary data
-        return view('customer_requirements.index', compact(
-            'customer_requirements', 
-            'clients', 
-            'product_applications', 
-            'users', 
-            'price_currencies', 
-            'nature_requests', 
-            'search', 
-            'open', 
-            'close', 
-            'entries', 
-            'refCode'
-        ));
+        // // Return view with all necessary data
+        // return view('customer_requirements.index', compact(
+        //     'customer_requirements', 
+        //     'clients', 
+        //     'product_applications', 
+        //     'users', 
+        //     'price_currencies', 
+        //     'nature_requests', 
+        //     'search', 
+        //     'open', 
+        //     'close', 
+        //     'entries', 
+        //     'refCode'
+        // ));
         return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure')); 
     }
 
