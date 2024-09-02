@@ -76,7 +76,7 @@
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Approved By:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $approveUsers->full_name }}</label>
+                    <label class="col-sm-3 col-form-label">{{ $approveUsers->full_name ?? '' }}</label>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label"><b>Date Approved:</b></label>
