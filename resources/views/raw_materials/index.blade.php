@@ -8,7 +8,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Raw Material List
-            <button type="button" class="btn btn-primary" data-toggle="modal" id="addBtn" data-target="#formRawMaterial">Add Raw Material</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" id="addBtn" data-target="#formRawMaterial">New</button>
             </h4>
             @include('components.error')
             
@@ -47,7 +47,7 @@
 
             <div class="table-responsive">
                 
-                <table class="table table-striped table-bordered table-hover" id="raw_material_table">
+                <table class="table table-striped table-bordered table-hover" id="raw_material_table" >
                     <thead>
                         <tr>
                             <th width="10%">Action</th>
@@ -68,7 +68,7 @@
                                         <i class="ti-pencil"></i>
                                     </button>
     
-                                    <form method="POST" class="d-inline-block" action="{{url('delete_raw_materials/'.$rm->id)}}">
+                                    <form method="POST" class="d-inline-block" action="{{url('delete_raw_materials/'.$rm->id)}}" onsubmit="show()">
                                         @csrf
 
                                         <button type="button" class="btn btn-sm btn-danger deleteBtn" data-id="{{$rm->id}}">
@@ -124,7 +124,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_raw_material" action="{{url('add_raw_material')}}">
+                <form method="POST" id="form_raw_material" action="{{url('add_raw_material')}}" onsubmit="show()">
                     {{-- <span id="form_result"></span> --}}
                     @csrf
                     <div class="form-group">
