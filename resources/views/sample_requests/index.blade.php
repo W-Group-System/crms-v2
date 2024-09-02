@@ -309,54 +309,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    @if(session('error'))
-        var isManager = @json(auth()->user()->role->name == 'Staff - L2');
-        var errorMessage = @json(session('error'));
-        var formType = @json(session('formType')); 
-
-        if (isManager) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: errorMessage,
-                showCancelButton: true,
-                confirmButtonText: 'Proceed',
-                cancelButtonText: 'Cancel',
-                input: 'textarea',
-                inputPlaceholder: 'Enter remarks...',
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'You need to write something!';
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    var remarks = result.value;
-                    var form;
-
-                    if (formType === 'create') {
-                        form = document.getElementById('create_srf_form');
-                    } else if (formType === 'update') {
-                        var srfId = @json(session('srfId'));
-                        form = document.getElementById('edit_sample_request' + srfId);
-                    }
-
-                    if (form) {
-                        var input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'quantity_remarks';
-                        input.value = remarks;
-                        form.appendChild(input);
-                        form.submit();
-                    }
-                }
-            });
-        } else {
-            $('#formSampleRequest').modal('show');
-            var $errorMessage = $('#formSampleRequest .error-message');
-            $errorMessage.text(errorMessage).show();
-        }
-    @elseif(session('success'))
+   
+    @if(session('success'))
         Swal.fire({
             icon: 'success',
             title: 'Success',

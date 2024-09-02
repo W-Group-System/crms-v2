@@ -619,7 +619,7 @@
 
     </script>
 @include('price_monitoring.upload_prf_file')
-@include('price_monitoring_ls.create_activity')
+{{-- @include('price_monitoring_ls.create_activity') --}}
 @foreach ($prfFileUploads as $fileupload)
 @include('price_monitoring.edit_prfFiles')
 @endforeach

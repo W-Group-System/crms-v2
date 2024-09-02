@@ -32,12 +32,14 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control js-example-basic-single" name="Currency[]" style="position: relative !important" title="Select Currency" required>
-                                            <option value="" disabled selected>Select Currency</option>
+                                        <select class="form-control js-example-basic-single" name="CurrencyReadonly" style="position: relative !important" title="Currency" disabled>
                                             @foreach ($productCurrency as $currency)
-                                                <option value="{{ $currency->id }}" >{{ $currency->Name }}</option>
+                                                <option value="{{ $currency->id }}" {{ $currency->Name == 'USD' ? 'selected' : '' }}>
+                                                    {{ $currency->Name }}
+                                                </option>
                                             @endforeach
                                         </select>
+                                        <input type="hidden" name="Currency[]" value="{{ $productCurrency->firstWhere('Name', 'USD')->id ?? '' }}">
                                     </td>
                                     <td>
                                         <input type="number" class="form-control" name="Price[]" value="0" placeholder="" required>

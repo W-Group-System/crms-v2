@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h5 class="modal-title">Add Files</h5>
             </div>
-            <form method="POST" action="{{url('add_crr_file')}}" enctype="multipart/form-data">
+            <form method="POST" action="{{url('add_crr_file')}}" enctype="multipart/form-data" onsubmit="show()">
                 @csrf 
                 <input type="hidden" name="customer_requirements_id" value="{{$crr->id}}">
                 <div class="modal-body">

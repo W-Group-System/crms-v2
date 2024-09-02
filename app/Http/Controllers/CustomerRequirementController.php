@@ -21,6 +21,7 @@ use App\SalesApprovers;
 use App\SalesUser;
 use App\TransactionApproval;
 use App\TransactionLogs;
+use App\UnitOfMeasure;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -31,66 +32,123 @@ class CustomerRequirementController extends Controller
 {
     // List
     public function index(Request $request)
-    {   
+    {
         $search = $request->input('search');
         $sort = $request->get('sort', 'id');
         $direction = $request->get('direction', 'desc');
         $role = auth()->user()->role;
-        
+        $status = $request->query('status'); // Get the status from the query parameters
+
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id; 
+        // dd($userByUser);
+        // Fetch customer requirements with applied filters
         $customer_requirements = CustomerRequirement::with(['client', 'product_application'])
-            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+            ->when($status, function($query) use ($status, $userId, $userByUser) {
+                if ($status == '50') {
+                    // When filtering by '50', include all cancelled status records
+                    $query->where(function ($query) use ($userId, $userByUser) {
+                        $query->where('Status', '50')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                    });
+                } else {
+                    // Apply status filter if it's not '50'
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);
             })
-            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+            ->when($request->has('open') && !$request->has('close'), function($query) use ($request) {
                 $query->where('Status', $request->open);
             })
-            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+            ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
                 $query->where('Status', $request->close);
             })
-            ->when($search, function ($query) use ($search){
-                $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
-                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
-                ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
-                ->orWhereHas('client', function ($q) use ($search) {
-                    $q->where('name', 'LIKE', '%' . $search . '%');
-                })
-                ->orWhereHas('product_application', function ($q) use ($search) {
-                    $q->where('name', 'LIKE', '%' . $search . '%');
-                })
-                ->orWhereHas('primarySales', function($query)use($search) {
-                    $query->where('full_name', 'LIKE', '%'.$search.'%');
-                })
-                ->orWhereHas('primarySalesById', function($query)use($search) {
-                    $query->where('full_name', 'LIKE', '%'.$search.'%');
-                })
-                ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
-            })
-            // ->orderBy('id', 'desc')
-            ->when($role->type, function($q)use($role) {
-                if ($role->type == "IS")
+            ->where(function ($query) use ($search){
+                if ($search != null)
                 {
-                    $q->where('CrrNumber', 'LIKE', "%CRR-IS%");
+                    $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                    ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('client', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('product_application', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('primarySales', function($query)use($search) {
+                        $query->where('full_name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('primarySalesById', function($query)use($search) {
+                        $query->where('full_name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
                 }
-                elseif ($role->type == "LS")
-                {
+            })
+            ->when($role->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('CrrNumber', 'LIKE', "%CRR-IS%");
+                } elseif ($role->type == "LS") {
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
                 }
             })
-            // ->where('CrrNumber', 'LIKE', "%CRR-IS%")
             ->orderBy($sort, $direction)
             ->paginate($request->entries ?? 10);
-            
+
+        // Fetch related data for filters and dropdowns
         $product_applications = ProductApplication::all();
-        $clients = Client::all();
+        $clients = Client::where(function($query) {
+                if (auth()->user()->role->name == "Department Admin")
+                {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                }
+                if (auth()->user()->role->name == "Staff L1")
+                {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                }
+            })
+            ->where(function($query) {
+                if (auth()->user()->role->name == "Staff L2")
+                {
+                    $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                }
+            })
+            ->get();
         $users = User::all();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
+
+        // Fetch request parameters for view
         $open = $request->open;
         $close = $request->close;
         $entries = $request->entries;
         $refCode = $this->refCode();
+        $unitOfMeasure = UnitOfMeasure::get();
 
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode')); 
+        // // Return view with all necessary data
+        // return view('customer_requirements.index', compact(
+        //     'customer_requirements', 
+        //     'clients', 
+        //     'product_applications', 
+        //     'users', 
+        //     'price_currencies', 
+        //     'nature_requests', 
+        //     'search', 
+        //     'open', 
+        //     'close', 
+        //     'entries', 
+        //     'refCode'
+        // ));
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure')); 
     }
 
     // Store
@@ -171,6 +229,12 @@ class CustomerRequirementController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'NatureOfRequestId' => 'required'
+        ], [
+            'NatureOfRequestId.required' => 'The Nature of Request is required.'
+        ]);
+
         $customerRequirements = CustomerRequirement::findOrFail($id);
         // $customerRequirements->DateCreated = date('Y-m-d');
         $customerRequirements->ClientId = $request->ClientId;
@@ -210,7 +274,26 @@ class CustomerRequirementController extends Controller
     public function view($id)
     {
         $customerRequirement = CustomerRequirement::with('client', 'product_application', 'progressStatus', 'crrNature', 'primarySales', 'secondarySales', 'priority', 'crrDetails')->findOrFail($id);
-        $client = Client::get();
+        $client = Client::where(function($query) {
+                if (auth()->user()->role->name == "Department Admin")
+                {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                }
+                if (auth()->user()->role->name == "Staff L1")
+                {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                }
+            })
+            ->where(function($query) {
+                if (auth()->user()->role->name == "Staff L2")
+                {
+                    $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                }
+            })
+            ->get();
         $user = User::where('is_active', 1)->get();
         $currentUser = Auth::user();
         $product_applications = ProductApplication::get();
@@ -218,6 +301,7 @@ class CustomerRequirementController extends Controller
         $nature_requests = NatureRequest::all();
         $rnd_personnel = User::whereIn('department_id', [15, 42])->whereNotIn('id', [auth()->user()->id])->get();
         $refCode = $this->refCode();
+        $unitOfMeasure = UnitOfMeasure::get();
 
         return view('customer_requirements.view_crr',
             array(
@@ -229,7 +313,8 @@ class CustomerRequirementController extends Controller
                 'price_currencies' => $price_currencies,
                 'nature_requests' => $nature_requests,
                 'rnd_personnel' => $rnd_personnel,
-                'refCode' => $refCode
+                'refCode' => $refCode,
+                'unitOfMeasure' => $unitOfMeasure
             )
         );
     }
@@ -464,6 +549,15 @@ class CustomerRequirementController extends Controller
         $crr->Status = 10;
         $crr->save();
 
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $crr->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 40;
+        $transactionApproval->Remarks = $request->open_remarks;
+        $transactionApproval->RemarksType = "open";
+        $transactionApproval->save();
+
         Alert::success('The status are now open')->persistent('Dismiss');
         return back();
     }
@@ -475,7 +569,7 @@ class CustomerRequirementController extends Controller
         $crr->DateReceived = date('Y-m-d h:i:s');
         $crr->save();
 
-        Alert::success('The status are now received')->persistent('Dismiss');
+        Alert::success('Successfully received')->persistent('Dismiss');
         return back();
     }
 
@@ -484,6 +578,21 @@ class CustomerRequirementController extends Controller
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 50;
         $crr->save();
+
+        if ($request->has('action'))
+        {
+            if($request->action == "continue")
+            {
+                $transactionApproval = new TransactionApproval;
+                $transactionApproval->Type = 10;
+                $transactionApproval->TransactionId = $crr->id;
+                $transactionApproval->UserId = auth()->user()->id;
+                $transactionApproval->Status = 50;
+                $transactionApproval->Remarks = $request->open_remarks;
+                $transactionApproval->RemarksType = "continue";
+                $transactionApproval->save();        
+            }
+        }
 
         Alert::success('Successfully Start')->persistent('Dismiss');
         return back();
@@ -628,11 +737,20 @@ class CustomerRequirementController extends Controller
         return "";
     }
 
-    public function returnToSales($id)
+    public function returnToSales(Request $request, $id)
     {
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 10;
-        $crr->save(); 
+        $crr->save();
+
+        $transactionApproval = new TransactionApproval;
+        $transactionApproval->Type = 10;
+        $transactionApproval->TransactionId = $crr->id;
+        $transactionApproval->UserId = auth()->user()->id;
+        $transactionApproval->Status = 30;
+        $transactionApproval->Remarks = $request->return_to_sales_remarks;
+        $transactionApproval->RemarksType = "returned";
+        $transactionApproval->save();
 
         Alert::success('Successfully return to sales')->persistent('Dismiss');
         return back();

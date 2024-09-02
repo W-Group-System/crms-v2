@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" action="{{ url('accept_crr/'.$crr->id) }}">
+                <form method="POST" action="{{ url('accept_crr/'.$crr->id) }}" onsubmit="show()">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">

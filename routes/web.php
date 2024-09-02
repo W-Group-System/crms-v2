@@ -231,6 +231,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('complete_rpe/{id}', 'RequestProductEvaluationController@completeRpe');
     Route::post('sales_accept_rpe/{id}', 'RequestProductEvaluationController@salesAcceptRpe');
     Route::post('ReturnToSales_rpe/{id}', 'RequestProductEvaluationController@ReturnToSalesRpe');
+    Route::post('ApproveRpe/{id}', 'RequestProductEvaluationController@approveRpeSales');
 
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
@@ -273,6 +274,8 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('OpenStatus/{id}', 'SampleRequestController@OpenStatus');
     Route::post('CompleteSrf/{id}', 'SampleRequestController@CompleteSrf');
     Route::get('print_srf/{id}', 'SampleRequestController@print_srf');
+    Route::post('editDisposition/{id}', 'SampleRequestController@editDisposition');
+    Route::post('initialQuantity/{id}', 'SampleRequestController@initialQuantity');
 
     Route::get('sample_contacts-by-client-f/{clientId}', [SampleRequestController::class, 'getSampleContactsByClientF']);
     Route::get('sample_get-last-increment-f/{year}/{clientCode}', [SampleRequestController::class, 'getSampleLastIncrementF']);
@@ -425,6 +428,10 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('editNewBase/{id}', 'BasePriceController@updateBasePrice');
     Route::post('approveNewBasePrice/{id}', 'BasePriceController@editApproved');
     Route::delete('base-price/{id}', 'BasePriceController@destroy');
+    Route::post('/bulkApproveNewBasePrice', 'BasePriceController@bulkApprove');
+    Route::delete('/bulkDeleteBasePrice', 'BasePriceController@bulkDelete');
+
+
 
     // Price Request Fixed Cost
     Route::get('/fixed_cost', 'PriceFixedCostController@index')->name('fixed_cost.index');

@@ -33,7 +33,6 @@
                                 <label>Priority</label>
                                 <select class="form-control js-example-basic-single" name="Priority" style="position: relative !important" title="Select Priority">
                                     <option value="" disabled selected>Select Priority</option>
-                                    <option value="1" @if ( $productEvaluation->Priority == "1") selected @endif>IC Application</option>
                                     <option value="3" @if ( $productEvaluation->Priority == "3") selected @endif>Second Priority</option>
                                     <option value="5" @if ( $productEvaluation->Priority == "5") selected @endif>First Priority</option>
                                 </select>
@@ -129,12 +128,9 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label>Attention To:</label>
-                                <select class="form-control js-example-basic-single" name="AttentionTo" style="position: relative !important" title="Select Attention To">
-                                    <option value="" disabled selected>Select</option>
-                                    <option value="1" @if ( $productEvaluation->AttentionTo == "1") selected @endif>RND</option>
-                                    <option value="2" @if ( $productEvaluation->AttentionTo == "2") selected @endif>QCD</option>
-                                </select>
+                                <label for="name">Attention To:</label>
+                                <input type="hidden" class="form-control" name="AttentionTo"  value="{{$productEvaluation->AttentionTo}}">
+                                <input type="text" class="form-control" value="RND" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -163,7 +159,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Objective for RPE Project</label>
-                                <textarea type="text" class="form-control" name="ObjectiveForRpeProject">{{ $productEvaluation->ObjectiveForRpeProject }}</textarea>
+                                <textarea class="form-control" name="ObjectiveForRpeProject" rows="4">{{ $productEvaluation->ObjectiveForRpeProject }}</textarea>
                             </div>
                         </div>
                         {{-- <div class="col-lg-6"></div>

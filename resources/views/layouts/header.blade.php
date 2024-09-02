@@ -54,6 +54,17 @@
         {
             background-color: white !important;
         }
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url("{{ asset('images/loading.gif') }}") 50% 50% no-repeat white;
+            opacity: .8;
+            background-size: 120px 120px;
+        }   
     </style>
     @yield('css')
     @php
@@ -61,12 +72,14 @@
         $department = auth()->user()->department_id;
     @endphp
     <body>
+        <div id="loader" style="display:none;" class="loader"></div>
+
         <div class="container-scroller">
             <!-- partial:partials/_navbar.html -->
             <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
                 <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                    <a class="navbar-brand brand-logo mr-5" href="index.html"><img src="{{ asset('/images/crms2.png')}}" class="mr-2" alt="logo"/></a>
-                    <a class="navbar-brand brand-logo-mini" href="index.html"><img src="{{ asset('/images/crms2.png')}}" alt="logo"/></a>
+                    <a class="navbar-brand brand-logo mr-5" href="{{ url('/') }}"><img src="{{ asset('/images/crms2.png')}}" class="mr-2" alt="logo"/></a>
+                    <a class="navbar-brand brand-logo-mini" href="{{ url('/') }}"><img src="{{ asset('/images/crms2.png')}}" alt="logo"/></a>
                 </div>
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
                     <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -91,7 +104,7 @@
                                     <i class="ti-power-off text-primary"></i>
                                     Logout
                                 </a> -->
-                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="logout(); show();">
                                 <i class="ti-power-off text-primary"></i>
                                     {{ __('Logout') }}
                                 </a>
@@ -247,9 +260,9 @@
                                     @if(viewModule('Sample Request Form', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request') }}">Sample Request Form</a></li>
                                     @endif
-                                    @if(viewModule('Price Monitoring', $department, $role) == "yes")
+                                    {{-- @if(viewModule('Price Monitoring', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
-                                    @endif
+                                    @endif --}}
                                     @if(viewModule('Price Monitoring', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring_ls') }}">Price Monitoring</a></li>
                                     @endif
@@ -1141,6 +1154,15 @@
             }
         </style>
         @include('sweetalert::alert')
+        <script>
+            function show() {
+                document.getElementById("loader").style.display = "block";
+            }
+            function logout() {
+                event.preventDefault();
+                document.getElementById('logout-form').submit();
+            }
+        </script>
         <script src="{{ asset('js/vendor.bundle.base.js') }}"></script>
         <script src="{{ asset('js/Chart.min.js') }}"></script>
         <script src="{{ asset('js/jquery.dataTables.js') }}"></script>

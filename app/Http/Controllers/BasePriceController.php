@@ -189,6 +189,24 @@ class BasePriceController extends Controller
         }
     }
 
+    public function bulkApprove(Request $request)
+    {
+        $ids = $request->input('ids');
+    
+        try {
+            BasePrice::whereIn('Id', $ids)->update([
+                'Status' => 3,
+                'ApprovedBy' => auth()->user()->user_id,
+                'EffectiveDate' => now(),
+                'updated_at' => now()
+            ]);
+    
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+    
     public function destroy($id)
     {
         try {
@@ -199,4 +217,18 @@ class BasePriceController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to delete base price.'], 500);
         }
     }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        try {
+            BasePrice::whereIn('Id', $ids)->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
 }

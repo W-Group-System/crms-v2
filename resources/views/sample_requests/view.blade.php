@@ -82,7 +82,6 @@
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
                     </button> --}}
-
                     @if(authCheckIfItsRndStaff(auth()->user()->role))
                         @if(rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->id) || rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->user_id))
                             @if($sampleRequest->Progress == 35)
@@ -118,12 +117,14 @@
 
                     @if(auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId)
                             @if(auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'LS')
+                            @if(empty($sampleRequest->Courier) && empty($sampleRequest->AwbNumber) && empty($sampleRequest->DateDispatched) && empty($sampleRequest->DateSampleReceived))
                             <button type="button" class="btn btn-warning"
-                                data-target="#salesEdit{{ $sampleRequest->Id }}" 
+                                data-target="#salesEdit{{$sampleRequest->Id}}" 
                                 data-toggle="modal" 
                                 title='Update SRF'>
                                 <i class="ti ti-pencil">&nbsp;</i>Update
                             </button>
+                            @endif
                             @endif
                         {{-- @endif --}}
 
@@ -153,8 +154,14 @@
                         @endif
                         
                         @if($sampleRequest->Status == 30)
-                            <button type="button" class="btn btn-success openStatus" data-id="{{ $sampleRequest->Id }}">
+                            <!-- <button type="button" class="btn btn-success openStatus" data-id="{{ $sampleRequest->Id }}">
                                 <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                            </button> -->
+                            <button type="button" class="btn btn-success"
+                                data-target="#updateDisposition{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                title='Open SRF'>
+                                <i class="mdi mdi-open-in-new">&nbsp;</i>Update Disposition
                             </button>
                         @endif
                         
@@ -201,14 +208,68 @@
                             (checkIfItsApprover(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, "SRF") == "yes") && 
                             $sampleRequest->Progress == 10
                         )
-                            <button type="button" class="btn btn-md btn-success"
-                                data-target="#approveSrf{{ $sampleRequest->Id }}" 
-                                data-toggle="modal" 
-                                title='Approve SRF'>
-                                <i class="ti ti-check-box">&nbsp;</i>Approve
-                            </button>
+
+                            @if (auth()->user()->role->type == 'LS')
+                                @php
+                                    $showApproveButton = false;
+                                @endphp
+
+                                @foreach ($sampleRequest->requestProducts as $requestProduct)
+                                    @if (
+                                        ($requestProduct->Quantity > '999' && $requestProduct->UnitOfMeasureId == '1') || 
+                                        ($requestProduct->Quantity > '1' && $requestProduct->UnitOfMeasureId == '2')
+                                    )
+                                        @php
+                                            $showApproveButton = true;
+                                            break;
+                                        @endphp
+                                    @endif
+                                    {{$requestProduct->Quantity }}
+                                @endforeach
+
+                                @if ($showApproveButton)
+                                    <button type="button" class="btn btn-info quantityInitial"  data-id="{{ $sampleRequest->Id }}" >
+                                        <i class="ti-control-left">&nbsp;</i>Approve To Manager
+                                    </button>
+                                    <!-- <button type="button" class="btn btn-md btn-success"
+                                            data-target="#quantityInitial{{ $sampleRequest->Id }}" 
+                                            data-toggle="modal" 
+                                            title='Approve SRF'>
+                                            <i class="ti ti-check-box">&nbsp;</i>Approve
+                                    </button> -->
+                                @else
+                                    <button type="button" class="btn btn-md btn-success"
+                                            data-target="#approveSrf{{ $sampleRequest->Id }}" 
+                                            data-toggle="modal" 
+                                            title='Approve SRF'>
+                                            <i class="ti ti-check-box">&nbsp;</i>Approve
+                                    </button>
+                                @endif
+                            @else
+                                    <button type="button" class="btn btn-md btn-success"
+                                            data-target="#approveSrf{{ $sampleRequest->Id }}" 
+                                            data-toggle="modal" 
+                                            title='Approve SRF'>
+                                            <i class="ti ti-check-box">&nbsp;</i>Approve
+                                    </button>
+                            @endif
+
                         @endif
                         
+                        @if (auth()->user()->role->type == 'LS')
+                        @if(authCheckIfItsSalesManager(auth()->user()->role_id))
+                            @if (
+                                $sampleRequest->Progress == 11
+                            )
+                                <button type="button" class="btn btn-md btn-success"
+                                        data-target="#approveSrf{{ $sampleRequest->Id }}" 
+                                        data-toggle="modal" 
+                                        title='Approve SRF'>
+                                        <i class="ti ti-check-box">&nbsp;</i>Approve
+                                </button>
+                            @endif
+                            @endif
+                        @endif
                         @if(authCheckIfItsSales(auth()->user()->department_id))
 
                             @if(($sampleRequest->Progress == 60 || $sampleRequest->Progress == 70) && $sampleRequest->Status == 10)
@@ -224,9 +285,12 @@
                             @endif
 
                             @if($sampleRequest->Status == 30)
-                                <button type="button" class="btn btn-success openStatus" data-id="{{ $sampleRequest->Id }}">
-                                    <i class="mdi mdi-open-in-new"></i>&nbsp;Open
-                                </button>
+                            <button type="button" class="btn btn-success"
+                                data-target="#updateDisposition{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                title='Open SRF'>
+                                <i class="mdi mdi-open-in-new">&nbsp;</i>Update Disposition
+                            </button>
                             @endif
 
                             @if($sampleRequest->Status == 10)
@@ -318,7 +382,10 @@
                 <div class="group-form">
                 <div class="form-group row">
                     <p class="col-sm-2 col-form-label"><b>Client Name:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->client)->Name  }}</p>
+                    <p class="col-sm-3 col-form-label">
+                        <a href="{{ url('view_client/' . $sampleRequest->client->id) }}">
+                            {{ optional($sampleRequest->client)->Name  }}</p>
+                        </a>
                     <p class="offset-sm-2 col-sm-2 col-form-label"><b>Contact:</b></p>
                     <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->ContactName}}</p>
                 </div>
@@ -533,7 +600,7 @@
                             @elseif ($requestProducts->Disposition == '20')
                                 Rejected
                             @else
-                                {{ $requestProducts->Disposition }}
+                                NA
                             @endif
                         </p>
                         <p class="offset-sm-2 col-sm-2 col-form-label"><b>Disposition Remarks</b></p>
@@ -543,11 +610,34 @@
                 <br>
             @endforeach
             <div class="form-header">
-                <span class="header-label"><b>Dispatch Details</b></span>
+                <span class="header-label"><b>Approver Remarks</b></span>
                 <hr class="form-divider">
             </div>
+            <div class="group-form">
+                <div class="form-group row">
+                    <label class="col-sm-12 col-form-label">
+                        @if($sampleRequest->srfTransactionApprovals->isEmpty())
+                            @if($sampleRequest->approver)
+                            <b>{{$sampleRequest->approver->full_name}} :</b> {{$sampleRequest->AcceptRemarks}}
+                            @else
+                            <p>No approver remarks yet</p>
+                            @endif
+                        @else
+                        @foreach ($sampleRequest->srfTransactionApprovals as $transactionApproval)
+                                @if($transactionApproval->userByUserId)
+                                    <b>{{$transactionApproval->userByUserId->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @elseif($transactionApproval->userById)
+                                    <b>{{$transactionApproval->userById->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @endif
+                        @endforeach
+                        @endif
+                    </label>
+                </div>
+            </div>
             <div class="form-header">
-                <span class="header-label"><b>Approver Remarks</b></span>
+                <span class="header-label"><b>Dispatch Details</b></span>
                 <hr class="form-divider">
             </div>
             <div class="group-form">
@@ -1104,6 +1194,42 @@
             });
         });
 
+        $(".quantityInitial").on('click', function() {
+            var srfId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Approve this request",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url('initialQuantity') }}/" + srfId,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
         $(".salesAccepted").on('click', function() {
             var srfId = $(this).data('id');
 
@@ -1264,54 +1390,7 @@
         });
     });
     document.addEventListener('DOMContentLoaded', function () {
-    @if(session('error'))
-        var isManager = @json(auth()->user()->role->description == 'International Sales - Supervisor' || auth()->user()->role->description == 'Local Sales - Supervisor');
-        var errorMessage = @json(session('error'));
-        var formType = @json(session('formType')); 
-
-        if (isManager) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: errorMessage,
-                showCancelButton: true,
-                confirmButtonText: 'Proceed',
-                cancelButtonText: 'Cancel',
-                input: 'textarea',
-                inputPlaceholder: 'Enter remarks...',
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'You need to write something!';
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    var remarks = result.value;
-                    var form;
-
-                    if (formType === 'create') {
-                        form = document.getElementById('create_srf_form');
-                    } else if (formType === 'update') {
-                        var srfId = @json(session('srfId'));
-                        form = document.getElementById('edit_sample_request' + srfId);
-                    }
-
-                    if (form) {
-                        var input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'quantity_remarks';
-                        input.value = remarks;
-                        form.appendChild(input);
-                        form.submit();
-                    }
-                }
-            });
-        } else {
-            $('#formSampleRequest').modal('show');
-            var $errorMessage = $('#formSampleRequest .error-message');
-            $errorMessage.text(errorMessage).show();
-        }
-    @elseif(session('success'))
+    @if(session('success'))
         Swal.fire({
             icon: 'success',
             title: 'Success',
@@ -1325,7 +1404,6 @@
 @include('sample_requests.assign_personnel')
 @include('sample_requests.upload_srf_file')
 @include('sample_requests.create_raw_materials')
-@include('sample_requests.create_activity')
 
 @include('sample_requests.srf_start')
 @include('sample_requests.srf_pause')
@@ -1334,6 +1412,7 @@
 @include('sample_requests.cancel_srf')
 @include('sample_requests.close_srf')
 @include('sample_requests.edit_sales')
+@include('sample_requests.update_disposition')
 {{-- @include('sample_requests.srf_receive') --}}
 
 

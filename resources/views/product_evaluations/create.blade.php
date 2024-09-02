@@ -33,7 +33,6 @@
                                 <label>Priority</label>
                                 <select class="form-control js-example-basic-single" name="Priority" id="Priority" style="position: relative !important" title="Select Priority">
                                     <option value="" disabled selected>Select Priority</option>
-                                    <option value="1">IC Application</option>
                                     <option value="3">Second Priority</option>
                                     <option value="5">First Priority</option>
                                 </select>
@@ -85,7 +84,7 @@
                                         <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select> --}}
-                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->user_id}}">
                                 <input type="text" class="form-control" value="{{auth()->user()->full_name}}" disabled>
                             </div>
                         </div>
@@ -113,10 +112,10 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPerson" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($secondarySalesPersons as $user)
-                                        <option value="{{ $user->id }}">{{ $user->full_name }}</option>
+                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -129,12 +128,9 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label>Attention To:</label>
-                        <select class="form-control js-example-basic-single" name="AttentionTo" id="AttentionTo" style="position: relative !important" title="Select Ref Code">
-                            <option value="" disabled selected>Select</option>
-                            <option value="1">RND</option>
-                            <option value="2">QCD</option>
-                        </select>
+                                <label for="name">Attention To:</label>
+                                <input type="hidden" class="form-control" name="AttentionTo"  value="1">
+                                <input type="text" class="form-control" value="RND" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -163,7 +159,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Objective for RPE Project</label>
-                                <input type="text" class="form-control" id="Objective" name="ObjectiveForRpeProject" placeholder="Enter Objective">
+                                <textarea class="form-control" id="Objective" name="ObjectiveForRpeProject" placeholder="Enter Objective" rows="4"></textarea>
                             </div>
                         </div>
                     </div>

@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" action="{{url('update_crr/'.$crr->id)}}">
+                <form method="POST" action="{{url('update_crr/'.$crr->id)}}" onsubmit="show()">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">
@@ -20,7 +20,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Date Received :</label>
-                                <input type="date" name="date_received" class="form-control" value="{{date('Y-m-d', strtotime($crr->DateReceived))}}" readonly>
+                                <input type="date" name="date_received" class="form-control" @if($crr->DateReceived != null) value="{{date('Y-m-d', strtotime($crr->DateReceived))}}" @endif readonly>
                             </div>
                         </div>
                         <div class="col-lg-12">

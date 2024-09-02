@@ -201,13 +201,19 @@
                                 </button>
 
                                 @if($requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 40 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && $requestEvaluation->Progress != 70)
-                                <form method="POST" class="d-inline-block" action="{{url('accept_rpe/'.$requestEvaluation->id)}}">
+                                <button type="button" class="btn btn-md btn-success"
+                                    data-target="#approveRpe{{ $requestEvaluation->id }}" 
+                                    data-toggle="modal" 
+                                    title='Approve RPE'>
+                                    <i class="ti ti-check-box">&nbsp;</i>Approve
+                                </button>
+                                {{-- <form method="POST" class="d-inline-block" action="{{url('accept_rpe/'.$requestEvaluation->id)}}">
                                     @csrf 
 
                                     <button type="button" class="btn btn-success acceptBtn">
-                                        <i class="ti ti-check-box"></i>&nbsp;Accept
+                                        <i class="ti ti-check-box"></i>&nbsp;Approve
                                     </button>
-                                </form>
+                                </form> --}}
                                 @endif
                             @endif
 
@@ -338,36 +344,36 @@
                 </div>
                 <div class="group-form">
                 <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Client Name:</b></p>
-                    <p class="col-sm-3 col-form-label">
+                    <p class="col-sm-3 col-form-label"><b>Client Name :</b></p>
+                    <p class="col-sm-3">
                         <a href="{{ url('view_client/' . $requestEvaluation->client->id) }}">
                             {{ $requestEvaluation->client->Name }}
                         </a>
                     </p>
                 </div>
                  <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Client Trade Name:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ $requestEvaluation->client->TradeName }}</p>
+                    <p class="col-sm-3 col-form-label"><b>Client Trade Name :</b></p>
+                    <p class="col-sm-3">{{ $requestEvaluation->client->TradeName }}</p>
                 </div>
-                <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Region:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ $requestEvaluation->client->clientregion->Name }}</p>
+                <div class="form-group row mb-2">
+                    <p class="col-sm-3 col-form-label"><b>Region :</b></p>
+                    <p class="col-sm-3">{{ $requestEvaluation->client->clientregion->Name }}</p>
                 </div>
-                <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Country:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($requestEvaluation->client->clientcountry)->Name }}</p>
+                <div class="form-group row mb-2">
+                    <p class="col-sm-3 col-form-label"><b>Country :</b></p>
+                    <p class="col-sm-3">{{ optional($requestEvaluation->client->clientcountry)->Name }}</p>
                 </div>
             </div>
             <div class="form-header">
-                <span class="header-label"><b>Request Details</b></span>
+                <span class="header-label"><b>Request Details :</b></span>
                 <hr class="form-divider">
             </div>
             <div class="group-form">
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>RPE #:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->RpeNumber }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Primary Sales Person:</b></p>
-                <p class="col-sm-3 col-form-label">
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>RPE # :</b></p>
+                <p class="col-sm-3">{{ $requestEvaluation->RpeNumber }}</p>
+                <p class="col-sm-3 col-form-label"><b>Primary Sales Person :</b></p>
+                <p class="col-sm-3 ">
                     @if($requestEvaluation->primarySalesPerson)
                     {{ optional($requestEvaluation->primarySalesPerson)->full_name}}
                     @elseif($requestEvaluation->primarySalesPersonById)
@@ -375,17 +381,17 @@
                     @endif
                 </p>
             </div>
-             <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Date Requested :</b></p>
-                <p class="col-sm-3 col-form-label">
+             <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>Date Requested :</b></p>
+                <p class="col-sm-3">
                     @if($requestEvaluation->CreatedDate != null)
                     {{ date('M d, Y h:i A', strtotime($requestEvaluation->CreatedDate)) }}
                     @else
                     {{ date('M d, Y h:i A', strtotime($requestEvaluation->created_at)) }}
                     @endif
                 </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Secondary Sales Person:</b></p>
-                <p class="col-sm-3 col-form-label">
+                <p class="col-sm-3 col-form-label"><b>Secondary Sales Person:</b></p>
+                <p class="col-sm-3">
                     @if($requestEvaluation->secondarySalesPerson)
                     {{ optional($requestEvaluation->secondarySalesPerson)->full_name}}
                     @elseif($requestEvaluation->secondarySalesPersonById)
@@ -393,13 +399,13 @@
                     @endif
                 </p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Date Required :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DueDate }}</p>
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>Date Required :</b></p>
+                <p class="col-sm-3 ">{{ $requestEvaluation->DueDate ?? 'NA'}}</p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Priority :</b></p>
-                <p class="col-sm-3 col-form-label">
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>Priority :</b></p>
+                <p class="col-sm-3 ">
                     @if($requestEvaluation->Priority == 1)
                         IC Application
                     @elseif($requestEvaluation->Priority == 3)
@@ -410,8 +416,8 @@
                         {{ $requestEvaluation->Priority }}
                     @endif
                 </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Attention To:</b></p>
-                <p class="col-sm-3 col-form-label">
+                <p class="col-sm-3 col-form-label"><b>Attention To :</b></p>
+                <p class="col-sm-3">
                     @if($requestEvaluation->AttentionTo == 1)
                         RND
                     @elseif($requestEvaluation->AttentionTo == 2)
@@ -420,11 +426,11 @@
                         {{ $requestEvaluation->AttentionTo }}
                     @endif</p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
+            <div class="form-group row mb-2">
                 <p class="col-sm-3 col-form-label"></p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Status:</b></p>
-                <p class="col-sm-3 col-form-label">
+                <p class="col-sm-3 col-form-label"></p>
+                <p class="col-sm-3 col-form-label"><b>Status :</b></p>
+                <p class="col-sm-3">
                     @if($requestEvaluation->Status == 10)
                         Open
                     @elseif($requestEvaluation->Status == 30)
@@ -436,49 +442,49 @@
                     @endif
                 </p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
+            <div class="form-group row mb-2">
                 <p class="col-sm-3 col-form-label"></p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Progress:</b></p>
-                <p class="col-sm-3 col-form-label">{{ optional($requestEvaluation->progressStatus)->name  }}</p>
+                <p class="col-sm-3 col-form-label"></p>
+                <p class="col-sm-3 col-form-label"><b>Progress :</b></p>
+                <p class="col-sm-3 ">{{ optional($requestEvaluation->progressStatus)->name  }}</p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Project Name</b></p>
-                <p class="col-sm-3 col-form-label">{{ optional($requestEvaluation->projectName)->Name  }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Sample Name:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->SampleName  }}</p>
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>Project Name :</b></p>
+                <p class="col-sm-3">{{ optional($requestEvaluation->projectName)->Name  }}</p>
+                <p class="col-sm-3 col-form-label"><b>Sample Name :</b></p>
+                <p class="col-sm-3">{{ $requestEvaluation->SampleName  }}</p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Application</b></p>
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>Application</b></p>
                 <p class="col-sm-3 col-form-label">{{ optional($requestEvaluation->product_application)->Name  }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Manufacturer:</b></p>
+                <p class="col-sm-3 col-form-label"><b>Manufacturer:</b></p>
                 <p class="col-sm-3 col-form-label">{{ $requestEvaluation->Manufacturer  }}</p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Potential Volume :                </b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->PotentialVolume }} 
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>Potential Volume :                </b></p>
+                <p class="col-sm-3 ">{{ $requestEvaluation->PotentialVolume }} 
                     @if ($requestEvaluation->UnitOfMeasureId == 1)
                         g
                     @elseif ($requestEvaluation->UnitOfMeasureId == 2)
                         kg
                     @endif
                 </p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Supplier :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->Supplier  }}</p>
+                <p class="col-sm-3 col-form-label"><b>Supplier :</b></p>
+                <p class="col-sm-3 ">{{ $requestEvaluation->Supplier  }}</p>
             </div>
             
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Target Raw Price</b></p>
-                <p class="col-sm-3 col-form-label">{{ optional($requestEvaluation->priceCurrency)->Name  }} {{ $requestEvaluation->TargetRawPrice  }}</p>
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>Target Raw Price :</b></p>
+                <p class="col-sm-3">{{ optional($requestEvaluation->priceCurrency)->Name  }} {{ $requestEvaluation->TargetRawPrice  }}</p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Objective for RPE Project</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->ObjectiveForRpeProject }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"></p>
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>Objective for RPE Project :</b></p>
+                <p class="col-sm-3">{{ $requestEvaluation->ObjectiveForRpeProject }}</p>
+                <p class="col-sm-3 col-form-label"></p>
                 <p class="col-sm-3 col-form-label"></p>
             </div>
             <br>
-            <div class="form-header">
+            {{-- <div class="form-header">
                 <span class="header-label"><b>Approver Remarks</b></span>
                 <hr class="form-divider">
                 <p>
@@ -497,21 +503,57 @@
                     <p class="col-sm-12 col-form-label" style="margin-left: 30px;">{{ $rpeTransactionApproval->Remarks  }}</p>
                 </div>
             </div>
-            @endforeach
-            <br>
+            @endforeach --}}
+            <div class="form-header">
+                <span class="header-label"><b>Approver Remarks</b></span>
+                <hr class="form-divider">
+            </div>
+            <div class="group-form">
+                <div class="form-group row mb-2">
+                    <label class="col-sm-12 col-form-label">
+                        @if($requestEvaluation->rpeTransactionApprovals->isEmpty())
+                            @if($requestEvaluation->approver)
+                            <b>{{$requestEvaluation->approver->full_name}} :</b> {{$requestEvaluation->AcceptRemarks}}
+                            @else
+                            <p>No approver remarks yet</p>
+                            @endif
+                        @else
+                        @php
+                            $latestApproval = $requestEvaluation->rpeTransactionApprovals->last();
+                        @endphp
+                        @if($latestApproval->userByUserId)
+                            <b>{{$latestApproval->userByUserId->full_name}} :</b>
+                            <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
+                        @elseif($latestApproval->userById)
+                            <b>{{$latestApproval->userById->full_name}} :</b>
+                            <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
+                        @endif
+                        <!-- @foreach ($requestEvaluation->rpeTransactionApprovals as $transactionApproval)
+                                @if($transactionApproval->userByUserId)
+                                    <b>{{$transactionApproval->userByUserId->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @elseif($transactionApproval->userById)
+                                    <b>{{$transactionApproval->userById->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
+                                @endif
+                        @endforeach -->
+                        @endif
+                    </label>
+                </div>
+            </div>
             <div class="form-header">
                 <span class="header-label"><b>Evaluation Details</b></span>
                 <hr class="form-divider">
             </div>
             <div class="group-form">
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>DDW Number:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DdwNumber  }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Date Received:</b></p>
-                <p class="col-sm-3 col-form-label">{{ date('M d, Y', strtotime($requestEvaluation->DateReceived)) }}</p>
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>DDW Number :</b></p>
+                <p class="col-sm-3">{{ $requestEvaluation->DdwNumber  }}</p>
+                <p class="col-sm-3 col-form-label"><b>Date Received :</b></p>
+                <p class="col-sm-3 ">{{ $requestEvaluation->DateReceived ? date('M d, Y', strtotime($requestEvaluation->DateReceived)) : 'NA' }}</p>
             </div>
-             <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>RPE Recommendation:</b></p>
+             <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b>RPE Recommendation :</b></p>
                 @php
                 $rpeResult = $requestEvaluation->RpeResult;
                 $pattern = '/\[(.*?)\]/';
@@ -528,25 +570,25 @@
                 @endphp            
                 
                 <p class="col-sm-3 col-form-label">{!! $rpeResultLinked !!}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Date Started:</b></p>
+                <p class="col-sm-3 col-form-label"><b>Date Started :</b></p>
                 <p class="col-sm-3 col-form-label">{{ date('M d, Y', strtotime($requestEvaluation->DateStarted)) }}</p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b></b></p>
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b></b></p>
                 <p class="col-sm-3 col-form-label"></p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Date Completed:</b></p>
+                <p class="col-sm-3 col-form-label"><b>Date Completed :</b></p>
                 <p class="col-sm-3 col-form-label">{{ $requestEvaluation->DateCompleted}}</p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b></b></p>
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b></b></p>
                 <p class="col-sm-3 col-form-label"></p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Lead Time:</b></p>
+                <p class="col-sm-3 col-form-label"><b>Lead Time :</b></p>
                 <p class="col-sm-3 col-form-label"></p>
             </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b></b></p>
+            <div class="form-group row mb-2">
+                <p class="col-sm-3 col-form-label"><b></b></p>
                 <p class="col-sm-3 col-form-label"></p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Delayed :</b></p>
+                <p class="col-sm-3 col-form-label"><b>Delayed :</b></p>
                 <p class="col-sm-3 col-form-label"></p>
             </div>
         </div>
@@ -1225,6 +1267,7 @@
 @include('product_evaluations.assign_personnel')
 {{-- @include('product_evaluations.create_activity') --}}
 @include('product_evaluations.upload_rpe_file')
+@include('product_evaluations.rpe_approval')
 
 {{-- @foreach ($RpeSupplementary as $supplementary) --}}
 {{-- @endforeach --}}
