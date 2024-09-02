@@ -70,8 +70,6 @@ class CustomerRequirementController extends Controller
             ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
                 $query->where('Status', $request->close);
             })
-            ->when($search, function ($query) use ($search) {
-                $query->where(function($query) use ($search) {
             ->where(function ($query) use ($search){
                 if ($search != null)
                 {
