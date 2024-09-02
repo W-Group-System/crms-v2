@@ -287,7 +287,7 @@ class ClientController extends Controller
             $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
         } else {
             $primarySalesPersons = User::where('id', $loggedInUser->id)->with($withRelation)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApprovers->pluck('SalesApproverId'))->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
         
         // Pass the data, primarySalesPersons, and secondarySalesPersons to the view
