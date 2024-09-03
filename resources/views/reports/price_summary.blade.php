@@ -7,10 +7,21 @@
             Price Request Summary
             </h4>
             <div class="row height d-flex ">
-                <div class="col-md-5 mt-2 mb-2">
+                <div class="col-md-6 mt-2 mb-2">
+                    <!-- <a href="#" id="copy_transaction_btn" class="btn btn-md btn-info" style="margin-top: 2em">Copy</a> -->
                     <a href="#" id="copy_price_btn" class="btn btn-md btn-info mb-1">Copy</a>
                     <a href="#" id="excel_price_btn" class="btn btn-md btn-success mb-1">Excel</a>
                 </div>
+                <form class="form-inline col-md-6" action="" method="GET">
+                    <div class="col-md-6 mt-2 mb-2">
+                        <label style="align-items: start;justify-content: left;">From (DD/MM/YYYY):</label>
+                        <input type="date" class="form-control" name="from" id="from"  onchange="this.form.submit();" style="width: 100%;">
+                    </div>
+                    <div class="col-md-6 mt-2 mb-2">
+                        <label style="align-items: start;justify-content: left;">To (DD/MM/YYYY):</label>
+                        <input type="date" class="form-control" name="to" id="to"  onchange="this.form.submit();" style="width: 100%;">
+                    </div>
+                </form>                
             </div>
             <div class="row">
                 <div class="col-lg-6">
@@ -65,6 +76,12 @@
                                     'direction' => request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                PRF #
+                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'PrfNumber', 'direction' => request('sort') == 'PrfNumber' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'PrfNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a>
                             </th>
                             <th>
@@ -152,10 +169,11 @@
                             @foreach($priceRequests as $price_request)
                                 <tr>
                                     <td>{{date('M. d, Y', strtotime($price_request->DateRequested))}}</td>
+                                    <td>{{ $price_request->PrfNumber }} </td>
                                     <td>{{ $price_request->primarySalesPerson->full_name ?? $price_request->userById->full_name ?? 'N/A' }} </td>
                                     <td>{{ $price_request->client->name ?? 'N/A' }} </td>
                                     <td>{{ $price_request->code }}</td>
-                                    <td>{{ $price_request->ProductRmc ?? 'N/A' }}</td>
+                                    <td>{{ $price_request->ProductRmc }}</td>
                                     <td>{{ $price_request->IsalesOfferedPrice ?? 'N/A' }}</td>
                                     <td>{{ $price_request->ShipmentTerm ?? 'N/A' }}</td>
                                     <td>{{ $price_request->paymentterms->Name ?? 'N/A' }}</td>
@@ -186,6 +204,14 @@
                                     <option value="">Select Date</option>
                                     @foreach($allDates as $date)
                                         <option value="{{ $date }}" {{ request('filter_date') == $date ? 'selected' : '' }}>{{ $date }}</option>
+                                    @endforeach
+                                </select>
+                            </th>
+                            <th>
+                                <select id="filter-prf" class="form-control js-example-basic-single">
+                                    <option value="">Select Account Manager</option>
+                                    @foreach($allPrf as $prf)
+                                        <option value="{{ $prf }}" {{ request('filter_prf') == $prf ? 'selected' : '' }}>{{ $prf }}</option>
                                     @endforeach
                                 </select>
                             </th>
@@ -437,9 +463,10 @@
             });
         });
 
-        $('#filter-date, #filter-account-manager, #filter-client, #filter-product, #filter-rmc, #filter-shipment, #filter-payment, #filter-accepted, #filter-quantity, #filter-offered, #filter-margin, #filter-percent-margin, #filter-total-margin').on('change', function() {
+        $('#filter-date, #filter-account-manager, #filter-client, #filter-product, #filter-rmc, #filter-shipment, #filter-payment, #filter-accepted, #filter-quantity, #filter-offered, #filter-margin, #filter-percent-margin, #filter-total-margin, #filter-prf').on('change', function() {
             var filters = {
                 filter_date: $('#filter-date').val(),
+                filter_prf: $('#filter-prf').val(),
                 filter_account_manager: $('#filter-account-manager').val(),
                 filter_client: $('#filter-client').val(),
                 filter_product: $('#filter-product').val(),

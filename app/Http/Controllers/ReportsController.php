@@ -104,6 +104,7 @@ class ReportsController extends Controller
 
             // Use these optimized queries
             $allDates = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('DateRequested')->unique()->sort()->values();
+            $allPrf = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('PrfNumber')->unique()->sort()->values();
             $allPrimarySalesPersons = User::whereIn('users.user_id', PriceMonitoring::pluck('PrimarySalesPersonId')->unique())
                 ->pluck('full_name', 'users.user_id')
                 ->sort();
@@ -150,7 +151,7 @@ class ReportsController extends Controller
             return view('reports.price_summary', compact(
                 'search', 'priceRequests', 'entries', 'fetchAll', 'sort', 'direction',
                 'allPrimarySalesPersons', 'allProductRmc', 'allDates', 'allClients',
-                'allShipments', 'allPayments', 'allQuantity', 'allAccepted', 'allRemarks', 'allProducts', 'allOfferedPrice', 'allMargin', 'allPercentMargin', 'totalMargins'
+                'allShipments', 'allPayments', 'allQuantity', 'allAccepted', 'allRemarks', 'allProducts', 'allOfferedPrice', 'allMargin', 'allPercentMargin', 'totalMargins', 'allPrf'
             ));
         }
     }
