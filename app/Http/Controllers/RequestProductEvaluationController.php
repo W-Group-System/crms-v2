@@ -32,33 +32,53 @@ class RequestProductEvaluationController extends Controller
         $search = $request->input('search');
         $open = $request->open;
         $close = $request->close;
+        $progress = $request->query('progress'); // Get the status from the query parameters
+
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id; 
+
         $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application'])
-        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
-            $query->whereIn('Status', [$request->open, $request->close]);
-        })
-        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
-            $query->where('Status', $request->open);
-        })
-        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
-            $query->where('Status', $request->close);
-        })
-        ->where(function ($query) use ($search){
-            $query->where('RpeNumber', 'LIKE', '%' . $search . '%')
-            ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
-            ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
-            ->orWhereHas('client', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '10') {
+                    // When filtering by '10', include all relevant progress status records
+                    $query->where('Progress', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    // Apply progress filter if it's not '10'
+                    $query->where('Progress', $progress);
+                }
             })
-            ->orWhereHas('product_application', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
+            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+                $query->whereIn('Status', [$request->open, $request->close]);
             })
-            ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
-        })
-        ->orderBy('id', 'desc')->paginate($request->entries ?? 10);
+            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+                $query->where('Status', $request->open);
+            })
+            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+                $query->where('Status', $request->close);
+            })
+            ->where(function ($query) use ($search){
+                $query->where('RpeNumber', 'LIKE', '%' . $search . '%')
+                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%');
+                })
+                ->orWhereHas('product_application', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%');
+                })
+                ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
+            })
+            ->orderBy('id', 'desc')->paginate($request->entries ?? 10);
 
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
-        ->get();
+            ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+            ->get();
         // $users = User::all();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
