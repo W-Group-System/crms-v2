@@ -18,7 +18,6 @@ use App\Http\Controllers\PriceMonitoringController;
 */
 Auth::routes();
 
-// Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/', 'DashboardController@index');
     Route::get('/dashboard','DashboardController@index');
