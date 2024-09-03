@@ -97,10 +97,9 @@ class CustomerRequirementController extends Controller
                 } elseif ($role->type == "LS") {
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
                 }
-            })
-            ->orderBy($sort, $direction)
-            ->paginate($request->entries ?? 10);
-
+            })->orderBy($sort, $direction)
+              ->paginate($request->entries ?? 10);
+            
         // Fetch related data for filters and dropdowns
         $product_applications = ProductApplication::all();
         $clients = Client::where(function($query) {
@@ -326,7 +325,7 @@ class CustomerRequirementController extends Controller
 
         if($request->has('is_for_review'))
         {
-            $crrFile->IsForReview = 1;
+            $crrFile->IsConfidential = 1;
         }
         else
         {

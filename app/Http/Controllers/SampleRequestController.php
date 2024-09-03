@@ -34,9 +34,9 @@ class SampleRequestController extends Controller
 {
     public function index(Request $request)
     {   
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
-        ->get();
+        // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        // ->get();
         $contacts = Contact::all();
         $categories = IssueCategory::all();
         $departments = ConcernDepartment::all(); 
@@ -45,15 +45,29 @@ class SampleRequestController extends Controller
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
 
         if ($role->name == 'Staff L2' ) {
-            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
             $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApproverById->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
             $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
+        }
+
+        if ($loggedInUser->role->name == "Staff L1") {
+            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
+                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
+                ->get();
+        } elseif ($loggedInUser->role->name == "Staff L2" || $loggedInUser->role->name == "Department Admin") {
+            $subordinateIds = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            
+            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
+                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
+                ->orWhereIn('PrimaryAccountManagerId', $subordinateIds)
+                ->orWhereIn('SecondaryAccountManagerId', $subordinateIds)
+                ->get();
         }
         $productCodes = Product::where('status', '4')->get();
         $search = $request->input('search');
@@ -62,7 +76,7 @@ class SampleRequestController extends Controller
         $entries = $request->entries;
         $open = $request->open;
         $close = $request->close;
-        $sampleRequests = SampleRequest::with('requestProducts') 
+        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
         ->when($request->has('open') && $request->has('close'), function($query)use($request) {
             $query->whereIn('Status', [$request->open, $request->close]);
         })
@@ -80,7 +94,12 @@ class SampleRequestController extends Controller
             //     $q->where('name', 'LIKE', '%' . $search . '%');
             // });
         })
-        ->where('SrfNumber', 'LIKE', '%' . 'SRF-LS' . '%')
+        ->when(auth()->user()->role->type == 'LS', function($query) {
+            $query->where('SrfNumber', 'LIKE', '%' . 'SRF-LS' . '%');
+        })
+        ->when(auth()->user()->role->type == 'IS', function($query) {
+            $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
+        })
         ->orderBy($sort, $direction)
         ->paginate($request->entries ?? 10);
 
@@ -146,7 +165,7 @@ class SampleRequestController extends Controller
 
     public function view($id)
     {
-        $sampleRequest = SampleRequest::with('requestProducts')->findOrFail($id);
+        $sampleRequest = SampleRequest::with(['requestProducts', 'salesSrfFiles'])->findOrFail($id);
         $scrfNumber = $sampleRequest->Id;
         $SampletNumber = $sampleRequest->SrfNumber;
 
@@ -157,7 +176,7 @@ class SampleRequestController extends Controller
         $SrfMaterials = SrfRawMaterial::where('SampleRequestId', $scrfNumber)->get();
         $rndPersonnel = User::whereHas('rndUsers')->get();
         $srfProgress = SrfProgress::all();
-        $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)->get();
+        $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)->where('userType', 'RND')->get();
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
         ->get();
@@ -346,6 +365,8 @@ class SampleRequestController extends Controller
         $files = $request->file('srf_file');
         $names = $request->input('name');
         $srfId = $request->input('srf_id');
+        $isConfidential = $request->input('is_confidential') ? 1 : 0;
+        $isForReview = $request->input('is_for_review') ? 1 : 0;
         
         if ($files) {
             foreach ($files as $index => $file) {
@@ -357,6 +378,9 @@ class SampleRequestController extends Controller
             $uploadedFile->SampleRequestId = $srfId;
             $uploadedFile->Name = $name;
             $uploadedFile->Path = $fileUrl;
+            $uploadedFile->IsConfidential = $isConfidential;
+            $uploadedFile->IsForReview = $isForReview;
+            $uploadedFile->userType = 'RND';
             $uploadedFile->save();
             }
         }
@@ -379,6 +403,10 @@ class SampleRequestController extends Controller
             $srfFile->Path = $fileUrl;
         }
 
+        if (authCheckIfItsRnd(auth()->user()->department_id) && !authCheckIfItsRndStaff(auth()->user()->role)) {
+            $srfFile->IsConfidential = $request->has('is_confidential') ? 1 : 0;
+            $srfFile->IsForReview = $request->has('is_for_review') ? 1 : 0;
+        }
         $srfFile->save();
 
         return redirect()->back()->with('success', 'File updated successfully');
@@ -498,6 +526,29 @@ class SampleRequestController extends Controller
             ]);
         }
 
+                $files = $request->file('srf_file');
+                $names = $request->input('name');
+                $srfId =  $samplerequest->Id;
+                
+                if ($files) {
+                    foreach ($files as $index => $file) {
+                    $name = $names[$index];
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs('public/srfFiles', $fileName);
+                    $fileUrl = '/storage/srfFiles/' . $fileName;       
+                    $uploadedFile = new SrfFile();
+                    $uploadedFile->SampleRequestId = $srfId;
+                    $uploadedFile->Name = $name;
+                    $uploadedFile->Path = $fileUrl;
+                    if ((auth()->user()->department_id == 5) || (auth()->user()->department_id == 38)) {
+                        $uploadedFile->userType = 'Sales';
+                    } elseif ((auth()->user()->department_id == 15) || (auth()->user()->department_id == 42)) {
+                        $uploadedFile->userType = 'RND';
+                    }
+                    $uploadedFile->save();
+                    }
+                }
+
         return redirect()->route('sample_request.index')->with('success', 'Sample Request created successfully.');
 }
     public function update(Request $request, $id)
@@ -552,6 +603,7 @@ class SampleRequestController extends Controller
     public function approveSrfSales($id)
     {
         $approveSrfSales = SampleRequest::find($id);
+        $approveSrfSales->sales_approved_date = Carbon::now();
         if ($approveSrfSales) {
             $buttonClicked = request()->input('submitbutton');    
             if ($buttonClicked === 'Approve to R&D') {
@@ -660,6 +712,22 @@ class SampleRequestController extends Controller
         Alert::success('Successfully Closed')->persistent('Dismiss');
         return back();
     }
+    public function ReturnToSalesSRF(Request $request, $id)
+    {
+        $sampleRequest = SampleRequest::findOrFail($id);
+        $sampleRequest->Progress = 10;
+        $sampleRequest->save();
+
+        $transactionApproval = new TransactionApproval();
+        $transactionApproval->Type = '30';
+        $transactionApproval->TransactionId = $id;
+        $transactionApproval->UserId = Auth::user()->id;
+        $transactionApproval->Remarks = request()->input('return_to_sales_remarks');
+        $transactionApproval->RemarksType = 'return to sales';
+        $transactionApproval->save(); 
+        Alert::success('Successfully Returned')->persistent('Dismiss');
+        return back();
+    }
     public function ReturnToSales($id)
     {
         $sampleRequest = SampleRequest::findOrFail($id);
@@ -733,12 +801,24 @@ class SampleRequestController extends Controller
     public function CompleteSrf(Request $request, $id)
     {
         $srf = SampleRequest::findOrFail($id);
+
+        $hasFilesForReview = $srf->rndSrfFiles()->where('IsForReview', 1)->exists();
+
+        if ($hasFilesForReview) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cannot complete request as there are files still under review.'
+            ], 400);
+        }
+
         $srf->Progress = 60;
         $srf->DateCompleted = date('Y-m-d h:i:s');
         $srf->save();
 
-        Alert::success('Successfully Completed')->persistent('Dismiss');
-        return back();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Successfully Completed'
+        ], 200); 
     }
 
 
