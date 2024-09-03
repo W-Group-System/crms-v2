@@ -16,7 +16,12 @@ class DashboardController extends Controller
     public function index()
     {
         $userId = Auth::id(); 
-        $userByUser = Auth::user()->user_id; 
+        $userByUser = optional(Auth::user())->user_id; // Safely access user_id
+
+        if (!$userId && !$userByUser) {
+            // Handle case where there is no authenticated user
+            return redirect()->route('login'); // Or handle it in another appropriate way
+        }
 
         // Activities
         // Get the count of open activities
