@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Evaluation List
-            <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">Add Product Evaluation</button>
+            <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
             </h4>
             <div class="form-group">
                 <form method="GET" >
@@ -46,7 +46,7 @@
                     </form>
                 </div>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive" style="overflow: scroll; height: 50vh;">
                 <table class="table table-striped table-bordered table-hover" id="product_evaluation_table">
                     @if(auth()->user()->role->type == "IS")
                         <thead>
@@ -228,6 +228,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
 
+@include('product_evaluations.create')
+@foreach ( $request_product_evaluations as $productEvaluation )
+@include('product_evaluations.edit')
+@endforeach
 
 <script>
     function confirmDelete(id) {
@@ -280,8 +284,9 @@
         })
 
         $(".editBtn").on('click', function() {
-            var secondarySales = $(this).data('secondarysales');
             var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            
+            var secondarySales = $(this).data('secondarysales');
 
             refreshSecondaryApprovers(primarySales,secondarySales)
         })
@@ -311,8 +316,4 @@
         })
     })
 </script>
-@include('product_evaluations.create')
-@foreach ( $request_product_evaluations as $productEvaluation )
-@include('product_evaluations.edit')
-@endforeach
 @endsection

@@ -113,10 +113,9 @@ class CustomerRequirementController extends Controller
                 } elseif ($role->type == "LS") {
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
                 }
-            })
-            ->orderBy($sort, $direction)
-            ->paginate($request->entries ?? 10);
-
+            })->orderBy($sort, $direction)
+              ->paginate($request->entries ?? 10);
+            
         // Fetch related data for filters and dropdowns
         $product_applications = ProductApplication::all();
         $clients = Client::where(function($query) {
@@ -342,7 +341,7 @@ class CustomerRequirementController extends Controller
 
         if($request->has('is_for_review'))
         {
-            $crrFile->IsForReview = 1;
+            $crrFile->IsConfidential = 1;
         }
         else
         {
@@ -358,6 +357,48 @@ class CustomerRequirementController extends Controller
         $crrFile->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    
+    public function multipleUploadFiles(Request $request)
+    {
+        $request->validate([
+            'crr_file[]' => 'mimes:pdf,docx,xlsx'
+        ]);
+
+        $attachments = $request->file('crr_file');
+        foreach($attachments as $key=>$attachment)
+        {
+            $name = time().'_'.$attachment->getClientOriginalName();
+            $attachment->move(public_path('crr_files'), $name);
+            $file_name = '/crr_files/'.$name;
+
+            $fileCrr = new FileCrr;
+            $fileCrr->CustomerRequirementId = $request->customer_requirement_id;
+            $fileCrr->Name = $request->file_name[$key];
+            if ($request->has('is_confidential'))
+            {
+                $fileCrr->IsConfidential = 1;
+            }
+            else
+            {
+                $fileCrr->IsConfidential = 0;
+            }
+            if ($request->has('is_for_review'))
+            { 
+                $fileCrr->IsForReview = 1;
+            }
+            else
+            {
+                $fileCrr->IsForReview = 0;
+            }
+
+            $fileCrr->Path = $file_name;
+            $fileCrr->save();
+        }
+
+        Alert::success('Successfully Uploaded')->persistent('Dismiss');
         return back();
     }
 
@@ -514,6 +555,7 @@ class CustomerRequirementController extends Controller
             $crr->Progress = 30;
             // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
+            $crr->SalesApprovedDate = date('Y-m-d');
             $crr->save();
 
             $transactionApproval = new TransactionApproval;
@@ -530,6 +572,7 @@ class CustomerRequirementController extends Controller
             $crr->Progress = 30;
             // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
+            $crr->SalesApprovedDate = date('Y-m-d');
             $crr->save();
 
             $transactionApproval = new TransactionApproval;
@@ -643,11 +686,23 @@ class CustomerRequirementController extends Controller
     public function completeCrr(Request $request, $id)
     {
         $crr = CustomerRequirement::findOrFail($id);
-        $crr->Progress = 60;
-        $crr->DateCompleted = date('Y-m-d h:i:s');
-        $crr->save();
+        $files = $crr->crrFiles->every(function($value, $key) {
+            return $value->IsForReview == 0;
+        });
+        
+        if ($files)
+        {
+            $crr->Progress = 60;
+            $crr->DateCompleted = date('Y-m-d h:i:s');
+            $crr->save();
+    
+            Alert::success('Successfully Completed')->persistent('Dismiss');
+        }
+        else
+        {
+            Alert::error('Error! Some files are still in review');
+        }
 
-        Alert::success('Successfully Completed')->persistent('Dismiss');
         return back();
     }
 
@@ -717,7 +772,7 @@ class CustomerRequirementController extends Controller
     
     public function refreshUserApprover(Request $request)
     {
-        $user = User::where('id', $request->ps)->first();
+        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
         
         if ($user != null)
         {

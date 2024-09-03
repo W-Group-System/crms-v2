@@ -29,96 +29,131 @@
                 $customerRequirements = customerRequirements($data->code);
                 $productRps = productRps($data->code);
             @endphp
-            <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ isset($data->ddw_number ) ? $data->ddw_number : ''}}</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials Cost:</b></label>
-                    <label class="col-sm-2 col-form-label"><strong>USD</strong> {{number_format($rmc, 2)}}</label>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>DDW Number:</b></p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Code:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->code }}</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>EUR</strong> {{usdToEur($rmc)}}</label>
+                <div class="col-md-3">
+                    @if($data->ddw_number != null)
+                    <p class="mb-0">{{$data->ddw_number}}</p>
+                    @else
+                    <p>N/A</p>
+                    @endif
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Type:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->type == 1 ? 'Pure' : 'Blend' }}</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>PHP</strong> {{usdToPhp($rmc)}}</label>
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Raw Materials Cost:</b></p>
                 </div>
-                <div class="form-group row" style="margin-top: 20px">
-                    <label class="col-sm-2 col-form-label"><b>Reference Number:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->reference_no }}</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"></label>
+                <div class="col-md-3">
+                    <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p>
+                    <p class="mb-0"><strong>EUR</strong> {{usdToEur($rmc)}}</p>
+                    <p class="mb-0"><strong>PHP</strong> {{usdToPhp($rmc)}}</p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Product Origin:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->product_origin }}</label>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Code:</b></p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Application:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $product_applications ? $product_applications->Name : 'N/A' }}</label>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $data->code }}</p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Subcategory:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $product_subcategories ? $product_subcategories->Name : 'N/A' }}</label>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Type:</b></p>
                 </div>
-                <div class="form-group row" style="margin-top: 20px">
-                    <label class="col-sm-2 col-form-label"><b>Created By:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $userAccounts->full_name }}</label>
+                <div class="col-md-3">
+                    @if($data->type == 1)
+                    <p class="mb-0">Pure</p>
+                    @else
+                    <p class="mb-0">Blend</p>
+                    @endif
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Date Created:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->created_at->format('Y-m-d') }}</label>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Reference Number:</b></p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Approved By:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $approveUsers->full_name ?? '' }}</label>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $data->reference_no }}</p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Date Approved:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->date_approved }}</label>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Product Origin:</b></p>
                 </div>
-                <div class="form-group row" style="margin-top: 20px">
-                    <label class="col-sm-2 col-form-label"><b>Status:</b></label>
-                    @php
-                        $statusLabels = [
-                            1 => 'Draft',
-                            2 => 'New',
-                            4 => 'Current',
-                            5 => 'Archived',
-                        ];
-                    @endphp
-                    <label class="col-sm-3 col-form-label"> {{ $statusLabels[$data->status] ?? 'N/A' }}</label>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $data->product_origin }}</p>
                 </div>
-            </form>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Application:</b></p>
+                </div>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $product_applications ? $product_applications->Name : 'N/A' }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Subcategory:</b></p>
+                </div>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $product_subcategories ? $product_subcategories->Name : 'N/A' }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2"><p class="mb-0"><b>Created By:</b></p></div>
+                <div class="col-md-3"><p class="mb-0">{{ $userAccounts->full_name }}</p></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2 col-form-label"><p class="mb-0"><b>Date Created:</b></p></div>
+                <div class="col-sm-3 col-form-label"><p class="mb-0">{{ $data->created_at->format('Y-m-d') }}</p></div>
+            </div>
+            <div class="row">
+                <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
+                <div class="col-md-3"><p class="mb-0">{{ $approveUsers->full_name ?? '' }}</p></div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 col-form-label"><p class="mb-0"><b>Date Approved:</b></p></div>
+                <div class="col-md-3 col-form-label"><p class="mb-0">{{ $data->date_approved != null ? $data->date_approved : 'N/A' }}</p></div>
+            </div>
+            <div class="row mb-5">
+                <div class="col-md-2"><p class="mb-0"><b>Status:</b></p></div>
+                @php
+                    $statusLabels = [
+                        1 => 'Draft',
+                        2 => 'New',
+                        4 => 'Current',
+                        5 => 'Archived',
+                    ];
+                @endphp
+                <div class="col-md-3"><p class="mb-0"> {{ $statusLabels[$data->status] ?? 'N/A' }}</p></div>
+            </div>
+
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
+                    <a class="nav-link active p-2" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
                 </li> --}}
                 <li class="nav-item">
-                    <a class="nav-link" id="pds-tab" data-toggle="tab" href="#pds" role="tab" aria-controls="pds" aria-selected="false">PDS</a>
+                    <a class="nav-link p-2" id="pds-tab" data-toggle="tab" href="#pds" role="tab" aria-controls="pds" aria-selected="false">PDS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">Files</a>
+                    <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
+                    <a class="nav-link p-2" id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
+                    <a class="nav-link p-2" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
+                    <a class="nav-link p-2" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="historical-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
+                    <a class="nav-link p-2" id="historical-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -130,7 +165,9 @@
                             <thead>
                                 <tr>
                                     <th>Material</th>
+                                    @if(!authCheckIfItsSales(auth()->user()->department_id))
                                     <th>%</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -139,9 +176,11 @@
                                         <td>
                                             {{$pmc->rawMaterials->Name}}
                                         </td>
+                                        @if(!authCheckIfItsSales(auth()->user()->department_id))
                                         <td>
                                             {{$pmc->Percentage}}%
                                         </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             </tbody>
