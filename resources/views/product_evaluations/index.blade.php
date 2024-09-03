@@ -228,6 +228,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
 
+@include('product_evaluations.create')
+@foreach ( $request_product_evaluations as $productEvaluation )
+@include('product_evaluations.edit')
+@endforeach
 
 <script>
     function confirmDelete(id) {
@@ -280,8 +284,9 @@
         })
 
         $(".editBtn").on('click', function() {
-            var secondarySales = $(this).data('secondarysales');
             var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            
+            var secondarySales = $(this).data('secondarysales');
 
             refreshSecondaryApprovers(primarySales,secondarySales)
         })
@@ -311,8 +316,4 @@
         })
     })
 </script>
-@include('product_evaluations.create')
-@foreach ( $request_product_evaluations as $productEvaluation )
-@include('product_evaluations.edit')
-@endforeach
 @endsection
