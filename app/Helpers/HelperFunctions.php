@@ -86,6 +86,7 @@ function usdToPhp($cost)
     $currencyExchangeRates = CurrencyExchange::whereHas('fromCurrency', function($q) {
         $q->where('FromCurrencyId', 2)->where('ToCurrencyId', 3);
     })
+    ->orderBy('EffectiveDate', 'desc')
     ->first();
 
     $exchangeRate = ($currencyExchangeRates != null) ? $currencyExchangeRates->ExchangeRate : 1;
@@ -363,3 +364,8 @@ function getUserApprover($approver)
     
     return $user;
 }
+function getHistoricalPrices($materialId) {
+    return BasePrice::where('MaterialId', $materialId)
+                                    ->orderBy('EffectiveDate', 'desc')
+                                    ->get();
+    }
