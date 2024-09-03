@@ -489,16 +489,16 @@
                 <hr class="form-divider">
                 <p>
                     @if($requestEvaluation->secondarySalesPerson)
-                    {{$requestEvaluation->secondarySalesPerson->full_name}} :
+                    {{optional($requestEvaluation->secondarySalesPerson)->full_name}} :
                     @elseif($requestEvaluation->secondarySalesPersonById)
-                    {{$requestEvaluation->secondarySalesPersonById->full_name}} :
+                    {{optional($requestEvaluation->secondarySalesPersonById)->full_name}} :
                     @endif
                 </p>
             </div>
             @foreach ( $rpeTransactionApprovals as $rpeTransactionApproval )
             <div class="group-form">
-                <div class="form-group row mb-2">
-                    <p class="col-sm-12 col-form-label"><b>{{ $rpeTransactionApproval->approverRPE->full_name  }}:</b></p>
+                <div class="form-group row">
+                    <p class="col-sm-12 col-form-label"><b>{{ optional($rpeTransactionApproval->approverRPE)->full_name  }}:</b></p>
                     <br><br>
                     <p class="col-sm-12 col-form-label" style="margin-left: 30px;">{{ $rpeTransactionApproval->Remarks  }}</p>
                 </div>
@@ -555,15 +555,14 @@
              <div class="form-group row mb-2">
                 <p class="col-sm-3 col-form-label"><b>RPE Recommendation :</b></p>
                 @php
-                use App\Helpers\Helpers;
-            
                 $rpeResult = $requestEvaluation->RpeResult;
                 $pattern = '/\[(.*?)\]/';
             
                 $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
                     $code = $matches[1];
-                    $productId = Helpers::getProductIdByCode($code);
-                    if ($productId) {
+                    $productId = getProductIdByCode($code);
+                    // dd($matches);
+                    if ($productId != null) {
                         return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
                     }
                     return $matches[0];

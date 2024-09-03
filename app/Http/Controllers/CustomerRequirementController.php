@@ -70,8 +70,6 @@ class CustomerRequirementController extends Controller
             ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
                 $query->where('Status', $request->close);
             })
-            ->when($search, function ($query) use ($search) {
-                $query->where(function($query) use ($search) {
             ->where(function ($query) use ($search){
                 if ($search != null)
                 {
@@ -136,20 +134,20 @@ class CustomerRequirementController extends Controller
         $refCode = $this->refCode();
         $unitOfMeasure = UnitOfMeasure::get();
 
-        // Return view with all necessary data
-        return view('customer_requirements.index', compact(
-            'customer_requirements', 
-            'clients', 
-            'product_applications', 
-            'users', 
-            'price_currencies', 
-            'nature_requests', 
-            'search', 
-            'open', 
-            'close', 
-            'entries', 
-            'refCode'
-        ));
+        // // Return view with all necessary data
+        // return view('customer_requirements.index', compact(
+        //     'customer_requirements', 
+        //     'clients', 
+        //     'product_applications', 
+        //     'users', 
+        //     'price_currencies', 
+        //     'nature_requests', 
+        //     'search', 
+        //     'open', 
+        //     'close', 
+        //     'entries', 
+        //     'refCode'
+        // ));
         return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure')); 
     }
 

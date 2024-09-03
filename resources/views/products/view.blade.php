@@ -12,13 +12,13 @@
                     <a href="{{ url('/current_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
-                    <form method="POST" action="{{url('add_to_archive_products')}}" class="d-inline-block">
-                        {{csrf_field()}}
+                        <form method="POST" action="{{url('add_to_archive_products')}}" class="d-inline-block">
+                            {{csrf_field()}}
 
-                        <input type="hidden" name="id" value="{{$data->id}}">
-                        
-                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Archive" title="Submit to archive products">Archive</button>
-                    </form>
+                            <input type="hidden" name="id" value="{{$data->id}}">
+                            
+                            <button type="button" class="btn btn-md btn-primary" id="archiveBtn" name="action" value="Archive">Move to Archive</button>
+                        </form>
                     @endif
                    
                 </div>
@@ -99,9 +99,9 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                     <a class="nav-link" id="pds-tab" data-toggle="tab" href="#pds" role="tab" aria-controls="pds" aria-selected="false">PDS</a>
                 </li>
@@ -124,42 +124,6 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade active show" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @include('components.error')
-                    {{-- <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
-                        {{csrf_field()}}
-
-                        <div class="col-lg-12" align="right">
-                            <button type="submit" class="btn btn-md btn-primary submit_approval">Update</button>
-                        </div>
-    
-                        <button type="button" class="btn btn-sm btn-success mb-4" id="addBtn">
-                            <i class="ti-plus"></i>
-                        </button>
-
-                        <table class="table table-striped table-bordered table-hover" id="material_table" width="100%">
-                            <tbody class="tbodyRawMaterials">
-                                @foreach ($data->productMaterialComposition as $pmc)
-                                    <tr>
-                                        <td>
-                                            <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
-                                                <option value="">- Raw Materials -</option>
-                                                @foreach ($rawMaterials as $rm)
-                                                    <option value="{{$rm->id}}" @if($pmc->MaterialId == $rm->id) selected @endif>{{$rm->Name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$pmc->Percentage}}" max="100" required>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-danger removeRawMat" type="button">
-                                                <i class="ti-minus"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </form> --}}
                     
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped tables">
@@ -184,7 +148,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade " id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+                {{-- <div class="tab-pane fade " id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     @include('components.error')
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">Add</button>
@@ -236,7 +200,7 @@
                     @foreach ($data->productSpecification as $ps)
                         @include('products.edit_specification')
                     @endforeach
-                </div>
+                </div> --}}
                 <div class="tab-pane fade" id="pds" role="tabpanel" aria-labelledby="pds-tab">
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
@@ -323,11 +287,11 @@
                                             </td>
                                             <td>
                                                 @if($pf->IsConfidential == 0)
-                                                <a href=" {{ asset($pf->Path) }}" class="btn btn-sm btn-info" target="_blank">
+                                                <a href="{{url($pf->Path)}}" class="btn btn-sm btn-info" target="_blank">
                                                     <i class="ti-eye"></i>
                                                 </a>
                                                 @elseif($pf->IsConfidential == 1)
-                                                <a href=" {{ asset($pf->Path) }}" class="btn btn-sm btn-info" target="_blank">
+                                                <a href="{{url($pf->Path)}}" class="btn btn-sm btn-info" target="_blank">
                                                     <i class="mdi mdi-eye-off-outline"></i>
                                                 </a>
                                                 @endif
@@ -781,39 +745,53 @@
             $("#filename").val(filename);
         })
 
+        $(document).on('change', '[name="files[]"]', function(e) {
+            var filename = e.target.files[0].name;
+
+            $(this).closest('.row').find('[name="name[]"]').val(filename);
+        })
+
         $(".addBtnFiles").on('click', function()
         {
             var newRow = `
-                <fieldset class="border border-primary p-3 mb-3">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <label>Name :</label>
-                            <input type="text" name="name[]" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-lg-6">
-                            <label>Client :</label>
-                            <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
-                                <option value="">-Client-</option>
-                                @foreach ($client as $c)
-                                    <option value="{{$c->id}}">{{$c->Name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-lg-6">
-                            <label>Description :</label>
-                            <input type="text" name="description[]" class="form-control form-control-sm" required> 
-                        </div>
-                        <div class="col-lg-6">
-                            <label>Is Confidential :</label>
-                            <input type="checkbox" name="is_confidential[]"> 
-                        </div>
-                        <div class="col-lg-6">
-                            <label>File :</label>
-                            <input type="file" name="files[]" id="file" class="form-control form-control-sm" required>
-                            <input type="hidden" name="files[]">
-                        </div>
+                <div class="row">
+                    <div class="col-lg-10">
+                        <fieldset class="border border-primary p-3 mb-3">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Name :</label>
+                                    <input type="text" name="name[]" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Client :</label>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                        <option value="">-Client-</option>
+                                        @foreach ($client as $c)
+                                            <option value="{{$c->id}}">{{$c->Name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Description :</label>
+                                    <textarea name="description[]" class="form-control" cols="30" rows="10"></textarea>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Is Confidential :</label>
+                                    <input type="checkbox" name="is_confidential[]"> 
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>File :</label>
+                                    <input type="file" name="files[]" id="file" class="form-control form-control-sm" >
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
-                </fieldset>
+                    <div class="col-lg-2">
+                        <button class="btn btn-sm btn-danger mb-3 removeBtnFiles" type="button" >
+                            <i class="ti-minus"></i>
+                        </button>
+                    </div>
+                </div>
             `
 
             var row = $(newRow);
@@ -821,9 +799,10 @@
             row.find('.js-example-basic-single').select2();
         })
 
-        $(".removeBtnFiles").on('click', function()
+        $(document).on('click', '.removeBtnFiles', function()
         {
-            $('.product_files_container').children().last().remove();
+            // $('.product_files_container').children().last().remove();
+            $(this).closest('.row').remove()
             
         })
 
@@ -878,6 +857,24 @@
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Yes, delete it!"
                 }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        })
+
+        $('#archiveBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Move to Archived"
+            }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
                 }

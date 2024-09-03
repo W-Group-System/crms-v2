@@ -19,7 +19,8 @@
                         </div>
                         <div class="col-lg-12">
                             Description :
-                            <input type="text" name="description" class="form-control form-control-sm" placeholder="Enter description" value="{{$pf->Description}}" required>
+                            {{-- <input type="text" name="description" class="form-control form-control-sm" placeholder="Enter description" value="{{$pf->Description}}" required> --}}
+                            <textarea name="description" class="form-control" cols="30" rows="10" placeholder="Enter description" required>{{$pf->Description}}</textarea>
                         </div>
                         <div class="col-lg-12">
                             Client :
