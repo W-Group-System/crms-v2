@@ -27,10 +27,10 @@
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Cancelled</p>
                         <h5 class="text-primary font-weight-medium">
-                            <!-- <a href="{{ route('customer_requirement.index', ['status' => 50]) }}">
+                            <a href="{{ route('customer_requirement.index', ['status' => 50]) }}">
                                 {{ $crrCancelled ?? '0' }}
-                            </a> -->
-                            {{ $crrCancelled ?? '0' }}
+                            </a>
+                            <!-- {{ $crrCancelled ?? '0' }} -->
                         </h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
