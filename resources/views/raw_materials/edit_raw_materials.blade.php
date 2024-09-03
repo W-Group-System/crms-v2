@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_raw_material" action="{{url('raw_materials_update/'.$rm->id)}}">
+                <form method="POST" id="form_raw_material" action="{{url('raw_materials_update/'.$rm->id)}}" onsubmit="show()">
                     
                     @csrf
                     <div class="form-group">
