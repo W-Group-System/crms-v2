@@ -53,6 +53,7 @@ function usdToEur($cost)
         {
             $q->where('FromCurrencyId', 2)->where('ToCurrencyId', 1);
         })
+        ->orderBy('EffectiveDate', 'desc')
         ->first();
 
     if ($currencyExchangeRates != null){
