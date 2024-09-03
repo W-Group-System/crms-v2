@@ -60,7 +60,7 @@ function usdToEur($cost)
 
         $eur = $currencyExchangeRates->ExchangeRate * $cost;
 
-        return round($eur, 2);
+        return $eur;
     }
     
 }
@@ -94,7 +94,7 @@ function usdToPhp($cost)
 
     $php = $exchangeRate * $cost;
 
-    return round($php, 2);
+    return $php;
 }
 
 function identicalComposition($materials, $product_id)
