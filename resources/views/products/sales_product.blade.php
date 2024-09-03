@@ -70,7 +70,7 @@
                 <table class="table table-striped table-bordered table-hover table-bordered" id="product_table" width="100%">
                     <thead>
                         <tr>
-                            <th width="10%">Action</th>
+                            {{-- <th width="10%">Action</th> --}}
                             <th width="30%">Code</th>
                             <th width="20%">Date Created</th>
                             <th width="30%">Application</th>
@@ -89,21 +89,24 @@
                                 $php = usdToPhp($usd);
                             @endphp
                             <tr>
-                                <td>
+                                {{-- <td>
                                     <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
                                         <i class="ti-eye"></i>
                                     </a>
 
-                                    {{-- <form action="{{url('add_to_archive_products')}}" class="d-inline-block" method="post">
+                                    <form action="{{url('add_to_archive_products')}}" class="d-inline-block" method="post">
                                         @csrf
                                         <input type="hidden" name="id" value="{{$product->id}}">
 
                                         <button class="btn btn-secondary btn-sm archiveProducts" type="button" title="Archived">
                                             <i class="ti-archive"></i>
                                         </button>
-                                    </form> --}}
-                                </td>
-                                <td>{{$product->code}}</td>
+                                    </form>
+                                </td> --}}
+                                <td>
+                                    <a href="{{url('view_product/'.$product->id)}}" target="_blank">
+                                        {{$product->code}}</td>
+                                    </a>
                                 <td>
                                     {{date('M d, Y', strtotime($product->created_at))}}
                                 </td>

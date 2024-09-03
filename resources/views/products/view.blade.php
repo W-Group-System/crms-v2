@@ -130,7 +130,9 @@
                             <thead>
                                 <tr>
                                     <th>Material</th>
+                                    @if(!authCheckIfItsSales(auth()->user()->department_id))
                                     <th>%</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -139,9 +141,11 @@
                                         <td>
                                             {{$pmc->rawMaterials->Name}}
                                         </td>
+                                        @if(!authCheckIfItsSales(auth()->user()->department_id))
                                         <td>
                                             {{$pmc->Percentage}}%
                                         </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             </tbody>
