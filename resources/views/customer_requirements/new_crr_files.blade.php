@@ -22,7 +22,7 @@
                         <div class="col-lg-12 mb-3">
                             <div class="form-group">
                                 <label>Is For Review :</label>
-                                <input type="checkbox" name="is_for_review" checked>
+                                <input type="checkbox" name="is_for_review" @if(auth()->user()->role->name == "Staff L1")  onclick="return false;" checked @endif>
                             </div>
                         </div>
                         <div class="col-lg-12 mb-3">

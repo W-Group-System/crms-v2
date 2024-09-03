@@ -11,12 +11,10 @@
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
 
-                    @if(authCheckIfItsSales(auth()->user()->department_id))
                     <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_crr')}}" target="_blank">
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
                     </a>
-                    @endif
 
                     @if(authCheckIfItsRndStaff(auth()->user()->role))
                         @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
@@ -121,7 +119,7 @@
                         @endif
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                     
-                        @if($crr->Progress != 30 && $crr->Progress != 10 && $crr->Progress != 20)
+                        @if($crr->Progress != 30 && $crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60)
                             @if(auth()->user()->department_id == 15 || auth()->user()->department_id == 42)
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
@@ -438,6 +436,18 @@
                     <div class="col-sm-3">
                         <p class="mb-0">{{$crr->PotentialVolume}} {{optional($crr->unitOfMeasure)->Symbol}}</p>
                     </div>
+                    <div class="col-sm-3">
+                        <p><b>Sales Approved Date :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p>
+                            @if($crr->SalesApprovedDate != null)
+                            {{date('Y-m-d', strtotime($crr->SalesApprovedDate))}}
+                            @else
+                            <p>N/A</p>
+                            @endif
+                        </p>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-3"><p class="mb-0"><b>Target Price :</b></p></div>
@@ -561,7 +571,7 @@
                 <div class="tab-pane fade show active" id="supplementary_details" role="tabpanel" aria-labelledby="supplementary_details">
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         @if($crr->Progress != 60)
-                        <button type="button" class="btn btn-outline-primary float-right mb-3" data-toggle="modal" data-target="#addSupplementary">
+                        <button type="button" class="btn btn-outline-primary btn-sm float-right mb-3" data-toggle="modal" data-target="#addSupplementary">
                             New
                         </button>
                         @include('customer_requirements.add_supplementary_details')
@@ -620,7 +630,7 @@
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         @if(rndManager(auth()->user()->role))
                             @if($crr->Progress != 55 && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81 && rndManager(auth()->user()->role))
-                            <button type="button" class="btn btn-outline-primary float-right mb-3" data-toggle="modal" data-target="#addPersonnel">
+                            <button type="button" class="btn btn-outline-primary btn-sm float-right mb-3" data-toggle="modal" data-target="#addPersonnel">
                                 New
                             </button>
                             @include('customer_requirements.new_personnel')
@@ -743,9 +753,15 @@
                 @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <div class="tab-pane fade " id="files" role="tabpanel" aria-labelledby="files-tab">
                     @if(checkIfHaveFiles(auth()->user()->role) == "yes")
-                    <button type="button" class="btn btn-outline-primary mb-3 float-right" data-toggle="modal" data-target="#addCrrFiles">
-                        New
-                    </button>
+                    <div align="right">
+                        <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addCrrFiles">
+                            New
+                        </button>
+    
+                        <button type="button" class="btn btn-outline-warning btn-sm mb-3" data-toggle="modal" data-target="#uploadMultipleFiles">
+                            Upload Multiple Files
+                        </button>
+                    </div>
                     @endif
 
                     @include('customer_requirements.new_crr_files')
@@ -756,6 +772,7 @@
                                 <tr>
                                     <th>Action</th>
                                     <th>Name</th>
+                                    <th>Status</th>
                                     <th>File</th>
                                 </tr>
                             </thead>
@@ -788,8 +805,15 @@
                                             {{$files->Name}}
                                         </td>
                                         <td>
-                                            <a href="{{url($files->Path)}}" target="_blank" class="btn btn-sm btn-info" title="View a file">
-                                                <i class="ti-eye"></i>
+                                            @if($files->IsForReview == 1)
+                                                <div class="badge badge-warning">In-Review</div>
+                                            @elseif($files->IsForReview == 0)
+                                                <div class="badge badge-success">Approved</div>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{url($files->Path)}}" target="_blank">
+                                                File Link
                                             </a>
                                         </td>
                                     </tr>
@@ -888,6 +912,10 @@
 @include('customer_requirements.return_to_sales_remarks')
 @include('customer_requirements.open_remarks')
 @include('customer_requirements.continue_remarks')
+
+{{-- @foreach ($crr->crrFiles as $files)
+@endforeach --}}
+@include('customer_requirements.add_all_files')
 
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
@@ -1296,6 +1324,57 @@
                     form.submit()
                 }
             });
+        })
+
+        $('.addMultipleFilesBtn').on('click', function() {
+            var newRow = `
+                <div class="col-md-6 mb-3">
+                    <div class="card border border-1 border-primary">
+                        <div class="card-header bg-primary" style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
+                            <h5 class="card-title text-white">Upload Files
+                                <button type="button" class="btn btn-danger btn-sm float-right closeMultipleFilesBtn">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="col-md-12 mb-3">
+                                <label>Name</label>
+                                <input type="text" name="file_name[]" class="form-control crrFileName" placeholder="Enter name" required>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <div class="form-group">
+                                    <label>Is Confidential</label>
+                                    <input type="checkbox" name="is_confidential[]" @if($files->IsConfidential == 1) checked @endif>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <div class="form-group">
+                                    <label>Is For Review</label>
+                                    <input type="checkbox" name="is_for_review[]" @if($files->IsForReview == 1) checked @endif @if(auth()->user()->role->name == "Staff L1")  onclick="return false;" @endif>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label>Browser File</label>
+                                <input type="file" name="crr_file[]" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+
+            $("#multipleFilesContainer .row").append(newRow);
+        })
+
+        $(document).on('click', '.closeMultipleFilesBtn', function() {
+            
+            $(this).closest('.col-md-6').remove()
+        })
+
+        $(document).on('change', '[name="crr_file[]"]', function(e) {
+            var filename = e.target.files[0].name;
+
+            $(this).closest('.col-md-6').find('[name="file_name[]"]').val(filename);
         })
     })
 </script>
