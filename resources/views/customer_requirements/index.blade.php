@@ -498,8 +498,9 @@
             refreshSecondaryApprovers(primarySales)
         })
 
-        $(".editBtn").on('click', function() {
+        $('.editBtn').on('click', function() {
             var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            
             var secondarySales = $(this).data('secondarysales');
 
             $.ajax({
