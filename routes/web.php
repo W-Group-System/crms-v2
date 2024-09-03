@@ -195,7 +195,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('delete_crr_file/{id}', 'CustomerRequirementController@deleteCrrFile');
 
     // Product Evaluation
-    Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
+    // Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
 
     // Request Product Evaluation
     Route::get('/request_product_evaluation', 'RequestProductEvaluationController@index')->name('product_evaluation.index');
