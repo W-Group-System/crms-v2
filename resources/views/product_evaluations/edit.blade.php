@@ -87,7 +87,7 @@
                                 </select>
                                 @else 
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{$productEvaluation->PrimarySalesPersonId}}">
-                                <input type="text" class="form-control" value="{{$productEvaluation->primarySalesPerson->full_name}}" disabled>
+                                <input type="text" class="form-control" value="{{optional($productEvaluation->primarySalesPerson)->full_name}}" readonly>
                                 @endif
                             </div>
                         </div>

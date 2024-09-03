@@ -756,7 +756,7 @@ class CustomerRequirementController extends Controller
     
     public function refreshUserApprover(Request $request)
     {
-        $user = User::where('id', $request->ps)->first();
+        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
         
         if ($user != null)
         {
