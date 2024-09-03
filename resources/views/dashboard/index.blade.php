@@ -241,7 +241,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 grid-margin stretch-card">
+        <!-- <div class="col-md-4 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
                     <p class="card-title">For Approval</p>
@@ -270,7 +270,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- <div class="row">

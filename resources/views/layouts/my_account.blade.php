@@ -15,7 +15,7 @@
                 <div class="form-group row mb-2">
                     <label class="col-sm-2 col-form-label"><b>System Role</b></label>
                     <div class="col-sm-10">
-                        <label>{{auth()->user()->role->name}}</label>
+                        <label>{{ auth()->user()->role->name ?? 'No Role Assigned' }}</label>
                     </div>
                 </div>
                 <div class="form-group row mb-2">
