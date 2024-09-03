@@ -270,18 +270,18 @@
 
                 <div class="row mb-0">
                     <div class="col-sm-3">
-                        <p><b>Client :</b></p>
+                        <p class="mb-0"><b>Client :</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p><a href="{{url('view_client/'.$crr->ClientId)}}" >{{optional($crr->client)->Name}}</a></p>
+                        <p class="mb-0"><a href="{{url('view_client/'.$crr->ClientId)}}" >{{optional($crr->client)->Name}}</a></p>
                     </div>
                 </div>
                 <div class="row mb-0">
                     <div class="col-sm-3">
-                        <p><b>Client Trade Name :</b></p>
+                        <p class="mb-0"><b>Client Trade Name :</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p>
+                        <p class="mb-0">
                             @if($crr->client)
                             {{$crr->client->TradeName}}
                             @endif
@@ -289,15 +289,15 @@
                     </div>
                 </div>
                 <div class="row mb-0">
-                    <p class="col-sm-3"><b>Region :</b></p>
+                    <p class="col-sm-3 mb-0"><b>Region :</b></p>
                     <div class="col-sm-3">
-                        <p>{{optional($crr->client->clientregion)->Name}}</p>
+                        <p class="mb-0">{{optional($crr->client->clientregion)->Name}}</p>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <p class="col-sm-3"><b>Country :</b></p>
+                    <p class="col-sm-3 mb-0"><b>Country :</b></p>
                     <div class="col-sm-3">
-                        <p>{{optional($crr->client->clientcountry)->Name}}</p>
+                        <p class="mb-0">{{optional($crr->client->clientcountry)->Name}}</p>
                     </div>
                 </div>
             </div>
@@ -307,16 +307,16 @@
 
                 <div class="row mb-0">
                     <div class="col-sm-3">
-                        <p><b>CRR # :</b></p>
+                        <p class="mb-0"><b>CRR # :</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p>{{$crr->CrrNumber}}</p>
+                        <p class="mb-0">{{$crr->CrrNumber}}</p>
                     </div>
                     <div class="col-sm-3">
-                        <p><b>Primary Sales Person :</b></p>
+                        <p class="mb-0"><b>Primary Sales Person :</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p>
+                        <p class="mb-0">
                             @if($crr->primarySales)
                             {{$crr->primarySales->full_name}}
                             @elseif($crr->primarySalesById)
@@ -327,16 +327,16 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-3">
-                        <p><b>Date Created :</b></p>
+                        <p class="mb-0"><b>Date Created :</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p>{{date('Y-m-d H:i A', strtotime($crr->DateCreated))}}</p>
+                        <p class="mb-0">{{date('Y-m-d H:i A', strtotime($crr->DateCreated))}}</p>
                     </div>
                     <div class="col-sm-3">
-                        <p><b>Secondary Sales Person :</b></p>
+                        <p class="mb-0"><b>Secondary Sales Person :</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p>
+                        <p class="mb-0">
                             @if($crr->secondarySales)
                             {{$crr->secondarySales->full_name}}
                             @elseif($crr->secondarySalesById)
@@ -347,10 +347,10 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-3">
-                        <p><b>Priority :</b></p>
+                        <p class="mb-0"><b>Priority :</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p>
+                        <p class="mb-0">
                             @if($crr->Priority == 1)
                             Low
                             @elseif($crr->Priority == 3)
@@ -361,10 +361,10 @@
                         </p>
                     </div>
                     <div class="col-sm-3">
-                        <p><b>Status :</b></p>
+                        <p class="mb-0"><b>Status :</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p>
+                        <p class="mb-0">
                             @if($crr->Status == 10)
                             Open
                             @elseif($crr->Status == 30)
@@ -376,40 +376,40 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3"><p><b>Due Date :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Due Date :</b></p></div>
                     <div class="col-sm-3">
-                        <p>{{date('Y-m-d', strtotime($crr->DueDate))}}</p>
+                        <p class="mb-0">{{date('Y-m-d', strtotime($crr->DueDate))}}</p>
                     </div>
-                    <div class="col-sm-3"><p><b>Progress :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Progress :</b></p></div>
                     <div class="col-sm-3">
-                        <p>{{optional($crr->progressStatus)->name}}</p>
+                        <p class="mb-0">{{optional($crr->progressStatus)->name}}</p>
                     </div>
                 </div>
                 <div class="row">
-                    <label class="col-sm-3"><p><b>Application : </b></p></label>
+                    <label class="col-sm-3"><p class="mb-0"><b>Application : </b></p></label>
                     <div class="col-sm-3">
-                        <p>{{optional($crr->product_application)->Name}}</p>
+                        <p class="mb-0">{{optional($crr->product_application)->Name}}</p>
                     </div>
-                    <div class="col-sm-3"><p><b>Nature of Request :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Nature of Request :</b></p></div>
                     <div class="col-sm-3">
                         @if($crr->crrNature)
                             @foreach ($crr->crrNature as $natureOfRequests)
-                                <p>{{optional($natureOfRequests->natureOfRequest)->Name}}</p>
+                                <p class="mb-0">{{optional($natureOfRequests->natureOfRequest)->Name}}</p>
                             @endforeach
                         @endif
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3"><p><b>Competitor :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Competitor :</b></p></div>
                     <div class="col-sm-3">
-                        <p>{{$crr->Competitor}}</p>
+                        <p class="mb-0">{{$crr->Competitor}}</p>
                     </div>
-                    <div class="col-sm-3"><p><b>REF CRR Number :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>REF CRR Number :</b></p></div>
                     <div class="col-sm-3">
                         @php
                             $id = linkToCrr($crr->RefCrrNumber);
                         @endphp
-                        <p>
+                        <p class="mb-0">
                             <a href="{{url('view_customer_requirement/'.$id)}}">
                                 {{$crr->RefCrrNumber}}
                             </a>
@@ -417,16 +417,16 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3"><p><b>Competitor Price :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Competitor Price :</b></p></div>
                     <div class="col-sm-3">
-                        <p>{{$crr->CompetitorPrice}}</p>
+                        <p class="mb-0">{{$crr->CompetitorPrice}}</p>
                     </div>
-                    <div class="col-sm-3"><p><b>REF RPE Number :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>REF RPE Number :</b></p></div>
                     <div class="col-sm-3">
                         @php
                             $id = linkToRpe($crr->RefRpeNumber);
                         @endphp
-                        <p>
+                        <p class="mb-0">
                             <a href="{{url('product_evaluation/view/'.$id)}}" target="_blank">
                                 {{$crr->RefRpeNumber}}
                             </a>
@@ -434,21 +434,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3"><p><b>Potential Volume :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Potential Volume :</b></p></div>
                     <div class="col-sm-3">
-                        <p>{{$crr->PotentialVolume}} {{optional($crr->unitOfMeasure)->Symbol}}</p>
+                        <p class="mb-0">{{$crr->PotentialVolume}} {{optional($crr->unitOfMeasure)->Symbol}}</p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3"><p><b>Target Price :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Target Price :</b></p></div>
                     <div class="col-sm-3">
-                        <p>{{$crr->TargetPrice}} {{optional($crr->price)->Name}}</p>
+                        <p class="mb-0">{{$crr->TargetPrice}} {{optional($crr->price)->Name}}</p>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-sm-3"><p><b>Details of Requirement :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Details of Requirement :</b></p></div>
                     <div class="col-sm-3">
-                        <p>{{$crr->DetailsOfRequirement}}</p>
+                        <p class="mb-0">{{$crr->DetailsOfRequirement}}</p>
                     </div>
                 </div>
             </div>
@@ -462,10 +462,10 @@
                                 $acceptRemarks = $crr->crrTransactionApprovals->sortByDesc('Id')->firstWhere('RemarksType', 'accept');
                             @endphp
                             @if($acceptRemarks != null)
-                            <p><b>{{$crr->approver->full_name}} :</b> {{$acceptRemarks->Remarks}}</p>
+                            <p class="mb-0"><b>{{$crr->approver->full_name}} :</b> {{$acceptRemarks->Remarks}}</p>
                             @endif
                         @else
-                            <p>No approver remarks yet</p>
+                            <p class="mb-0">No approver remarks yet</p>
                         @endif
                     </label>
                 </div>
@@ -475,15 +475,15 @@
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
 
                 <div class="row">
-                    <div class="col-sm-3"><p><b>DDW Number : </b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>DDW Number : </b></p></div>
                     <div class="col-sm-3">
-                        <p>@if($crr->DdwNumber != null){{$crr->DdwNumber}}@else N/A @endif</p>
+                        <p class="mb-0">@if($crr->DdwNumber != null){{$crr->DdwNumber}}@else N/A @endif</p>
                     </div>
-                    <div class="col-sm-3"><p><b>Date Received :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Date Received :</b></p></div>
                     <div class="col-sm-3">
-                        <p>
+                        <p class="mb-0">
                             @if($crr->DateReceived != null)
-                            {{date('M d Y', strtotime($crr->DateReceived))}}
+                            {{date('Y-m-d', strtotime($crr->DateReceived))}}
                             @else
                             N/A
                             @endif
@@ -491,9 +491,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3"><p><b>Recommendation : </b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Recommendation : </b></p></div>
                     <div class="col-sm-3">
-                        <p>
+                        <p class="mb-0">
                             @if($crr->Recommendation != null)
                             {!! nl2br(e($crr->Recommendation)) !!}
                             @else
@@ -501,11 +501,11 @@
                             @endif
                         </p>
                     </div>
-                    <div class="col-sm-3"><p><b>Date Completed :</b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Date Completed :</b></p></div>
                     <div class="col-sm-3">
-                        <p>
+                        <p class="mb-0">
                             @if($crr->DateCompleted != null)
-                            {{date('M d Y', strtotime($crr->DateCompleted))}}
+                            {{date('Y-m-d', strtotime($crr->DateCompleted))}}
                             @else
                             N/A
                             @endif
@@ -513,7 +513,7 @@
                     </div>
                 </div>
                 <div class="form-group row mb-3">
-                    <div class="col-sm-3"><p><b>Days Late : </b></p></div>
+                    <div class="col-sm-3"><p class="mb-0"><b>Days Late : </b></p></div>
                     <div class="col-sm-3">
                         @php
                             $today = new DateTime();
@@ -529,7 +529,7 @@
                             } 
                             
                         @endphp
-                        <p>
+                        <p class="mb-0">
                             {{$days_late .' day' .$s}}
                         </p>
                     </div>
@@ -537,24 +537,24 @@
             </div>
             <ul class="nav nav-tabs viewTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="supplementary_details-tab" data-toggle="tab" href="#supplementary_details" role="tab" aria-controls="supplementary_details" aria-selected="true">Supplementary Details</a>
+                    <a class="nav-link active p-2" id="supplementary_details-tab" data-toggle="tab" href="#supplementary_details" role="tab" aria-controls="supplementary_details" aria-selected="true">Supplementary Details</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="assigned-tab" data-toggle="tab" href="#assigned" role="tab" aria-controls="assigned" aria-selected="false">Assigned R&D Personnel</a>
+                    <a class="nav-link p-2" id="assigned-tab" data-toggle="tab" href="#assigned" role="tab" aria-controls="assigned" aria-selected="false">Assigned R&D Personnel</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li> --}}
                 @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <li class="nav-item">
-                    <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
+                    <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
                 @endif
                 <li class="nav-item">
-                    <a class="nav-link " id="approvals-tab" data-toggle="tab" href="#approvals" role="tab" aria-controls="approvals" aria-selected="false">Transaction Remarks</a>
+                    <a class="nav-link p-2" id="approvals-tab" data-toggle="tab" href="#approvals" role="tab" aria-controls="approvals" aria-selected="false">Transaction Remarks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
+                    <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
