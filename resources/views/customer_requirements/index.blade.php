@@ -64,7 +64,6 @@
                     </form>
                 </div>
             </div>
-
             <div class="table-responsive" style="overflow: scroll; height: 50vh;">
                 <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%">
                     @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == null)

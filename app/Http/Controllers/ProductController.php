@@ -37,8 +37,10 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->where('status', 4)
-            ->when($request->search, function($q)use($request){
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+            ->where(function($q)use($request){
+                if ($request->search != null)
+                {
+                    $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
                     ->orWhereHas('userByUserId', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
@@ -46,6 +48,7 @@ class ProductController extends Controller
                     ->orWhereHas('userById', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
+                }
             })
             ->when($request->application_filter, function($q)use($request) {
                 $q->where('application_id', $request->application_filter);
@@ -79,8 +82,10 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->where('status', 2)
-            ->when($request->search, function($q)use($request){
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+            ->where(function($q)use($request){
+                if ($request->search != null)
+                {
+                    $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
                     ->orWhereHas('userByUserId', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
@@ -88,6 +93,7 @@ class ProductController extends Controller
                     ->orWhereHas('userById', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
+                }
             }) 
             ->orderBy('updated_at', 'desc')
             ->paginate($request->entries ?? 10);
@@ -113,8 +119,10 @@ class ProductController extends Controller
 
         $products = Product::where('status', 1)
             ->with(['userById', 'userByUserId'])
-            ->when($request->search, function($q)use($request) {
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+            ->where(function($q)use($request) {
+                if ($request->search != null)
+                {
+                    $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
                     ->orWhereHas('userByUserId', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
@@ -122,6 +130,7 @@ class ProductController extends Controller
                     ->orWhereHas('userById', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
+                }
             })
             ->orderBy('id', 'desc')
             ->paginate($request->entries ?? 10);
@@ -138,8 +147,10 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->where('status', 5)
-            ->when($request->search, function($q)use($request) {
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+            ->where(function($q)use($request) {
+                if ($request->search != null)
+                {
+                    $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
                     ->orWhereHas('userByUserId', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
@@ -147,6 +158,7 @@ class ProductController extends Controller
                     ->orWhereHas('userById', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
+                }
             })
             ->orderBy('updated_at', 'desc')
             ->paginate($request->entries ?? 10);
@@ -342,6 +354,14 @@ class ProductController extends Controller
 
     public function addToCurrentProducts(Request $request)
     {
+        $productMaterialComposition = ProductMaterialsComposition::where('ProductId', $request->id)->get();
+
+        if ($productMaterialComposition->isEmpty())
+        {
+            Alert::error('Error! Unable to move products into current');
+            return back();
+        }
+
         $product = Product::findOrFail($request->id);
         $product->status = 4;
         $product->save();
@@ -724,40 +744,29 @@ class ProductController extends Controller
 
     public function updateAllFiles(Request $request)
     {
-        $productFiles = ProductFiles::where('ProductId', $request->product_id)->delete();
-
-        if($request->description)
+        if ($request->has('files'))
         {
-            foreach($request->description as $key=>$description)
+            $productFiles = ProductFiles::where('ProductId', $request->product_id)->delete();
+
+            $attachments = $request->file('files');
+            foreach($attachments as $key=>$attachment)
             {
                 $productFiles = new ProductFiles;
                 $productFiles->ProductId = $request->product_id;
                 $productFiles->Name = $request->name[$key];
                 $productFiles->ClientId = $request->client[$key];
-                $productFiles->Description = $description;
-                
-                if ($request->hasFile('files') && isset($request->file('files')[$key]))
-                {
-                    $files = $request->file('files');
-                    foreach($files as $file)
-                    {
-                        $fileName = time().'_'.$file->getClientOriginalName();
-                        $file->move(public_path().'/attachments/', $fileName);
-    
-                        $productFiles->Path = "/attachments/" . $fileName;
-                    }
-                }
-                else 
-                {
-                    $productFiles->Path = $request->product_files[$key] ?? null;
-                }
+                $productFiles->Description = $request->description[$key];
 
+                $name = time().'-'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('attachments'), $name);
+
+                $productFiles->path = '/attachments/'.$name;
                 $productFiles->save();
             }
-        }
 
-        Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+            Alert::success('Successfully Saved')->persistent('Dismiss');
+            return back();
+        }
     }
 
     public function viewDraft($id)

@@ -41,7 +41,7 @@
                     </div>
                     <div class="form-group">
                         <label>Application Subcategory</label>
-                        <select class="form-control js-example-basic-single" name="application_subcategory_id" style="position: relative !important" title="Select Subcategory" required>
+                        <select class="form-control js-example-basic-single" name="application_subcategory_id" style="position: relative !important" title="Select Subcategory">
                             <option value="" disabled selected>Select Subcategory</option>
                             @foreach($product_subcategories as $product_subcategory)
                                 <option value="{{ $product_subcategory->id }}" @if($product_subcategory->id == $p->application_subcategory_id) selected @endif>{{ $product_subcategory->Name }}</option>

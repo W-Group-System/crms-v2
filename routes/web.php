@@ -18,9 +18,8 @@ use App\Http\Controllers\PriceMonitoringController;
 */
 Auth::routes();
 
-// Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'inactive_users'], function() {
-    Route::get('/', 'HomeController@index');
+    Route::get('/', 'DashboardController@index');
     Route::get('/dashboard','DashboardController@index');
 
     // change password
@@ -174,6 +173,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('return_to_rnd/{id}', 'CustomerRequirementController@returnToRnd');
     Route::post('sales_accepted/{id}', 'CustomerRequirementController@salesAccepted');
     Route::get('print_crr', 'CustomerRequirementController@printCrr');
+    Route::post('multipleUploadFiles', 'CustomerRequirementController@multipleUploadFiles');
 
     # Crr Supplementary Details
     Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');

@@ -70,28 +70,28 @@ class CustomerRequirementController extends Controller
             ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
                 $query->where('Status', $request->close);
             })
-            ->when($search, function ($query) use ($search) {
-                $query->where(function($query) use ($search) {
-                    if ($search != null) {
-                        $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
-                            ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
-                            ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
-                            ->orWhereHas('client', function ($q) use ($search) {
-                                $q->where('name', 'LIKE', '%' . $search . '%');
-                            })
-                            ->orWhereHas('product_application', function ($q) use ($search) {
-                                $q->where('name', 'LIKE', '%' . $search . '%');
-                            })
-                            ->orWhereHas('primarySales', function($query) use ($search) {
-                                $query->where('full_name', 'LIKE', '%'.$search.'%');
-                            })
-                            ->orWhereHas('primarySalesById', function($query) use ($search) {
-                                $query->where('full_name', 'LIKE', '%'.$search.'%');
-                            })
-                            ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
-                    }
-                });
-            })->when($role->type, function($q) use ($role) {
+            ->where(function ($query) use ($search){
+                if ($search != null)
+                {
+                    $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                    ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('client', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('product_application', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('primarySales', function($query)use($search) {
+                        $query->where('full_name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('primarySalesById', function($query)use($search) {
+                        $query->where('full_name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
+                }
+            })
+            ->when($role->type, function($q) use ($role) {
                 if ($role->type == "IS") {
                     $q->where('CrrNumber', 'LIKE', "%CRR-IS%");
                 } elseif ($role->type == "LS") {
@@ -134,20 +134,6 @@ class CustomerRequirementController extends Controller
         $unitOfMeasure = UnitOfMeasure::get();
 
         // Return view with all necessary data
-        // return view('customer_requirements.index', compact(
-        //     'customer_requirements', 
-        //     'clients', 
-        //     'product_applications', 
-        //     'users', 
-        //     'price_currencies', 
-        //     'nature_requests', 
-        //     'search', 
-        //     'open', 
-        //     'close', 
-        //     'entries', 
-        //     'refCode',
-        //     'unitOfMeasure'
-        // ));
         return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure')); 
     }
 
@@ -358,6 +344,48 @@ class CustomerRequirementController extends Controller
         return back();
     }
 
+    
+    public function multipleUploadFiles(Request $request)
+    {
+        $request->validate([
+            'crr_file[]' => 'mimes:pdf,docx,xlsx'
+        ]);
+
+        $attachments = $request->file('crr_file');
+        foreach($attachments as $key=>$attachment)
+        {
+            $name = time().'_'.$attachment->getClientOriginalName();
+            $attachment->move(public_path('crr_files'), $name);
+            $file_name = '/crr_files/'.$name;
+
+            $fileCrr = new FileCrr;
+            $fileCrr->CustomerRequirementId = $request->customer_requirement_id;
+            $fileCrr->Name = $request->file_name[$key];
+            if ($request->has('is_confidential'))
+            {
+                $fileCrr->IsConfidential = 1;
+            }
+            else
+            {
+                $fileCrr->IsConfidential = 0;
+            }
+            if ($request->has('is_for_review'))
+            { 
+                $fileCrr->IsForReview = 1;
+            }
+            else
+            {
+                $fileCrr->IsForReview = 0;
+            }
+
+            $fileCrr->Path = $file_name;
+            $fileCrr->save();
+        }
+
+        Alert::success('Successfully Uploaded')->persistent('Dismiss');
+        return back();
+    }
+
     public function updateCrrFile(Request $request, $id)
     {
         $crrFile = FileCrr::findOrFail($id);
@@ -511,6 +539,7 @@ class CustomerRequirementController extends Controller
             $crr->Progress = 30;
             // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
+            $crr->SalesApprovedDate = date('Y-m-d');
             $crr->save();
 
             $transactionApproval = new TransactionApproval;
@@ -527,6 +556,7 @@ class CustomerRequirementController extends Controller
             $crr->Progress = 30;
             // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
+            $crr->SalesApprovedDate = date('Y-m-d');
             $crr->save();
 
             $transactionApproval = new TransactionApproval;
@@ -640,11 +670,23 @@ class CustomerRequirementController extends Controller
     public function completeCrr(Request $request, $id)
     {
         $crr = CustomerRequirement::findOrFail($id);
-        $crr->Progress = 60;
-        $crr->DateCompleted = date('Y-m-d h:i:s');
-        $crr->save();
+        $files = $crr->crrFiles->every(function($value, $key) {
+            return $value->IsForReview == 0;
+        });
+        
+        if ($files)
+        {
+            $crr->Progress = 60;
+            $crr->DateCompleted = date('Y-m-d h:i:s');
+            $crr->save();
+    
+            Alert::success('Successfully Completed')->persistent('Dismiss');
+        }
+        else
+        {
+            Alert::error('Error! Some files are still in review');
+        }
 
-        Alert::success('Successfully Completed')->persistent('Dismiss');
         return back();
     }
 
