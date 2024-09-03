@@ -266,7 +266,9 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('RndUpdate/{id}', 'SampleRequestController@RndUpdate');
     Route::post('CancelRemarks/{id}', 'SampleRequestController@CancelRemarks');
     Route::post('CloseRemarks/{id}', 'SampleRequestController@CloseRemarks');
-    Route::post('ReturnToSales/{id}', 'SampleRequestController@ReturnToSales');
+    // Route::post('ReturnToSales/{id}', 'SampleRequestController@ReturnToSales');
+    Route::post('ReturnToSalesSRF/{id}', 'SampleRequestController@ReturnToSalesSRF');
+
     Route::post('ReturnToRnd/{id}', 'SampleRequestController@ReturnToRnd');
     Route::post('ReturnToSpecialist/{id}', 'SampleRequestController@ReturnToSpecialist');
     Route::post('SubmitSrf/{id}', 'SampleRequestController@SubmitSrf');

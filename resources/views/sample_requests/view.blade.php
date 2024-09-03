@@ -165,7 +165,7 @@
                             </button>
                         @endif
                         
-                        @if($sampleRequest->Status == 10)
+                        @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
                             <button type="button" class="btn btn-primary"
                                 data-target="#closeSrf{{ $sampleRequest->Id }}" 
                                 data-toggle="modal" 
@@ -187,8 +187,11 @@
 
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
-                             @if($sampleRequest->Progress != 10 && $sampleRequest->Progress != 20 && $sampleRequest->Progress != 60)
-                                <button type="button" class="btn btn-info returnToSales"  data-id="{{ $sampleRequest->Id }}" >
+                             @if($sampleRequest->Progress != 10 && $sampleRequest->Progress != 20 && $sampleRequest->Progress != 60 && $sampleRequest->Progress != 35 && $sampleRequest->Progress != 50 && $sampleRequest->Progress != 57)
+                                <button type="button" class="btn btn-info"
+                                    data-target="#returnToSales{{ $sampleRequest->Id }}" 
+                                    data-toggle="modal" 
+                                    title='Return To Sales SRF'>
                                     <i class="ti-control-left">&nbsp;</i>Return To Sales
                                 </button>
                             @endif
@@ -272,7 +275,7 @@
                         @endif
                         @if(authCheckIfItsSales(auth()->user()->department_id))
 
-                            @if(($sampleRequest->Progress == 60 || $sampleRequest->Progress == 70) && $sampleRequest->Status == 10)
+                            @if($sampleRequest->Progress == 60  && $sampleRequest->Status == 10)
                                 <button type="button" class="btn btn-info returnToRnd" data-id="{{ $sampleRequest->Id }}">
                                     <i class="ti ti-check-box"></i>&nbsp;Return to RND
                                 </button>
@@ -293,7 +296,7 @@
                             </button>
                             @endif
 
-                            @if($sampleRequest->Status == 10)
+                            @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
                                 <button type="button" class="btn btn-primary"
                                     data-target="#closeSrf{{ $sampleRequest->Id }}" 
                                     data-toggle="modal" 
@@ -374,145 +377,262 @@
                      --}}
                 </div>
             </div>
-            <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
-                <div class="form-header">
-                    <span class="header-label"><b>Customer Details</b></span>
-                    <hr class="form-divider">
+                <div class="col-md-12">
+                    <label><strong>Customer Details</strong></label>
+                    <hr style="margin-top: 0px; color: black; border-top-color: black;">
+                
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Client Name :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><a href="{{ url('view_client/' . $sampleRequest->client->id) }}">
+                                {{ optional($sampleRequest->client)->Name  }}</p>
+                            </a></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Contact :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional($sampleRequest->clientContact)->ContactName}}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Client Trade Name :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional($sampleRequest->client)->trade_name }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Telephone :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional($sampleRequest->clientContact)->PrimaryTelephone}}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Region :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional(optional($sampleRequest->client)->clientregion)->Name }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Mobile :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional($sampleRequest->clientContact)->PrimaryMobile}}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Country :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional(optional($sampleRequest->client)->clientcountry)->Name }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Email :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional($sampleRequest->clientContact)->EmailAddress}}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b></b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Skype :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional($sampleRequest->clientContact)->Skype}}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="group-form">
-                <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Client Name:</b></p>
-                    <p class="col-sm-3 col-form-label">
-                        <a href="{{ url('view_client/' . $sampleRequest->client->id) }}">
-                            {{ optional($sampleRequest->client)->Name  }}</p>
-                        </a>
-                    <p class="offset-sm-2 col-sm-2 col-form-label"><b>Contact:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->ContactName}}</p>
+                <div class="col-md-12">
+                    <label><strong>Request Details</strong></label>
+                    <hr style="margin-top: 0px; color: black; border-top-color: black;">
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>SRF # :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $sampleRequest->SrfNumber }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Primary Sales Person :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional($sampleRequest->primarySalesPerson)->full_name}}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Date Requested :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $sampleRequest->DateRequested }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Secondary Sales Person :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional($sampleRequest->secondarySalesPerson)->full_name}}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Date Required :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $sampleRequest->DateRequired }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b></b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p></p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Date Started :</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $sampleRequest->DateStarted }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Status</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>@if($sampleRequest->Status == 10)
+                                Open
+                            @elseif($sampleRequest->Status == 30)
+                                Closed
+                            @elseif($sampleRequest->Status == 50)
+                                Cancelled
+                            @else
+                                {{ $sampleRequest->Status }}
+                            @endif</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b></b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Progress:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ optional($sampleRequest->progressStatus)->name }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>REF CODE</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>
+                                @if($sampleRequest->RefCode == 1)
+                                    RND
+                                @elseif($sampleRequest->RefCode == 2)
+                                    QCD
+                                @else
+                                    {{ $sampleRequest->RefCode }}
+                                @endif
+                            </p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p></p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Type</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>
+                                @if($sampleRequest->SrfType == 1)
+                                    Regular
+                                @elseif($sampleRequest->SrfType == 2)
+                                    PSS
+                                @elseif($sampleRequest->SrfType == 3)
+                                    CSS
+                                @else
+                                    {{ $sampleRequest->SrfType }}
+                                @endif
+                            </p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b></b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p></p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <p><b>Remarks</b></p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p>{{ $sampleRequest->InternalRemarks }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p></p>
+                        </div>
+                    </div>
                 </div>
-                 <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Client Trade Name:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->client)->trade_name }}</p>
-                    <p class="offset-sm-2 col-sm-2 col-form-label"><b>Telephone:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->PrimaryTelephone}}</p>
+                <div class="col-md-12">
+                    <label><strong>Sales Files</strong></label>
+                    <hr style="margin-top: 0px; color: black; border-top-color: black;">
+                    <div class="row mb-0">
+                        @foreach ($sampleRequest->salesSrfFiles as $file)
+                            @if ($file->Path)
+                                <div class="col-sm-12">
+                                    <p class="file-link" style="margin-top: 5px;">
+                                        <a href="{{ url($file->Path) }}" target="_blank">{{ $file->Name }}</a>
+                                    </p>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    
                 </div>
-                <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Region:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional(optional($sampleRequest->client)->clientregion)->Name }}</p>
-                    <p class="offset-sm-2 col-sm-2 col-form-label"><b>Mobile:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->PrimaryMobile}}</p>
-                </div>
-                <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b>Country:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional(optional($sampleRequest->client)->clientcountry)->Name }}</p>
-                    <p class="offset-sm-2 col-sm-2 col-form-label"><b>Email:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->EmailAddress}}</p>
-                </div>
-                <div class="form-group row">
-                    <p class="col-sm-2 col-form-label"><b></b></p>
-                    <p class="col-sm-3 col-form-label"></p>
-                    <p class="offset-sm-2 col-sm-2 col-form-label"><b>Skype:</b></p>
-                    <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->clientContact)->Skype}}</p>
-                </div>
-            </div>
-            <div class="form-header">
-                <span class="header-label"><b>Request Details</b></span>
-                <hr class="form-divider">
-            </div>
             <div class="group-form">
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>SRF #:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->SrfNumber }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Primary Sales Person:</b></p>
-                <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->primarySalesPerson)->full_name}}</p>
-            </div>
-             <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Date Requested :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->DateRequested }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Secondary Sales Person:</b></p>
-                <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->secondarySalesPerson)->full_name}}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Date Required :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->DateRequired }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b></b></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Date Started :</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->DateStarted }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Status:</b></p>
-                <p class="col-sm-3 col-form-label">
-                    @if($sampleRequest->Status == 10)
-                        Open
-                    @elseif($sampleRequest->Status == 30)
-                        Closed
-                    @elseif($sampleRequest->Status == 50)
-                        Cancelled
-                    @else
-                        {{ $sampleRequest->Status }}
-                    @endif</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"></p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Progress:</b></p>
-                <p class="col-sm-3 col-form-label">{{ optional($sampleRequest->progressStatus)->name  }}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>REF CODE</b></p>
-                <p class="col-sm-3 col-form-label">
-                    @if($sampleRequest->RefCode == 1)
-                        RND
-                    @elseif($sampleRequest->RefCode == 2)
-                        QCD
-                    @else
-                        {{ $sampleRequest->RefCode }}
-                    @endif
-                </p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Type</b></p>
-                <p class="col-sm-3 col-form-label">
-                    @if($sampleRequest->SrfType == 1)
-                        Regular
-                    @elseif($sampleRequest->SrfType == 2)
-                        PSS
-                    @elseif($sampleRequest->SrfType == 3)
-                        CSS
-                    @else
-                    {{ $sampleRequest->SrfType }}
-                    @endif
-                </p>
-            </div>
             
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b></b></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Remarks</b></p>
-                <p >{{ $sampleRequest->InternalRemarks }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"></p>
-                <p class="col-sm-3 col-form-label"></p>
-            </div>
+                   
             <br>
             @foreach ( $sampleRequest->requestProducts as $requestProducts)
                 <div class="border">
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Index:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $sampleRequest->SrfNumber}}-{{ $requestProducts->ProductIndex }}</p>
+                        <p class="col-sm-3 col-form-label"><b>Index:</b></p>
+                        <p class="col-sm-3">{{ $sampleRequest->SrfNumber}}-{{ $requestProducts->ProductIndex }}</p>
                     </div>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b></b></p>
-                        <p class="col-sm-3 col-form-label"></p>
+                        <p class="col-sm-3 col-form-label"><b></b></p>
+                        <p class="col-sm-3"></p>
                     </div>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Product Type:</b></p>
-                        <p class="col-sm-3 col-form-label">
+                        <p class="col-sm-3 col-form-label"><b>Product Type:</b></p>
+                        <p class="col-sm-3">
                             @if($requestProducts->ProductType == 1)
                                 Pure
                             @elseif($requestProducts->ProductType == 2)
@@ -521,8 +641,8 @@
                             {{ $requestProducts->ProductType }}
                             @endif
                         </p>
-                        <p class="offset-sm-2 col-sm-2 col-form-label"><b>RPE Number:</b></p>
-                        <p class="col-sm-3 col-form-label">
+                        <p class="col-sm-3 col-form-label"><b>RPE Number:</b></p>
+                        <p class="col-sm-3">
                             @php
                                     $rpeNumber = $requestProducts->RpeNumber;
                                     $rpeId = getRpeIdByNumber($rpeNumber);
@@ -535,10 +655,10 @@
                         </p>
                     </div>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Application:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->productApplicationsId->Name }}</p>
-                        <p class="offset-sm-2 col-sm-2 col-form-label"><b>CRR Number:</b></p>
-                        <p class="col-sm-3 col-form-label">
+                        <p class="col-sm-3 col-form-label"><b>Application:</b></p>
+                        <p class="col-sm-3">{{ $requestProducts->productApplicationsId->Name }}</p>
+                        <p class="col-sm-3 col-form-label"><b>CRR Number:</b></p>
+                        <p class="col-sm-3">
                             @php
                                     $crrNumber = $requestProducts->CrrNumber;
                                     $crr = getCrrIdByNumber($crrNumber);
@@ -551,8 +671,8 @@
                         </p>
                     </div>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Product Code:</b></p>
-                        <p class="col-sm-3 col-form-label">
+                        <p class="col-sm-3 col-form-label"><b>Product Code:</b></p>
+                        <p class="col-sm-3">
                             @php
                                     $prodCode = $requestProducts->ProductCode;
                                     $productId = getProductIdByCode($prodCode);
@@ -564,16 +684,16 @@
                                 @endphp</p>
                     </div>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Product Description:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->ProductDescription }}</p>
+                        <p class="col-sm-3 col-form-label"><b>Product Description:</b></p>
+                        <p class="col-sm-3">{{ $requestProducts->ProductDescription }}</p>
                     </div>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Number of Packages:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->NumberOfPackages }}</p>
+                        <p class="col-sm-3 col-form-label"><b>Number of Packages:</b></p>
+                        <p class="col-sm-3">{{ $requestProducts->NumberOfPackages }}</p>
                     </div>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Quantity:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->Quantity }} 
+                        <p class="col-sm-3 col-form-label"><b>Quantity:</b></p>
+                        <p class="col-sm-3">{{ $requestProducts->Quantity }} 
                             @if ( $requestProducts->UnitOfMeasureId == 1)
                             g
                             @elseif ($requestProducts->UnitOfMeasureId == 2)
@@ -582,17 +702,17 @@
                            </p>
                     </div>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Label:</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->Label }}</p>
+                        <p class="col-sm-3 col-form-label"><b>Label:</b></p>
+                        <p class="col-sm-3">{{ $requestProducts->Label }}</p>
                     </div>
                     <br>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Remarks</b></p>
+                        <p class="col-sm-3 col-form-label"><b>Remarks</b></p>
                         <p class="col-sm-8 col-form-label">{{ $requestProducts->Remarks }}</p>
                     </div>
                     <div class="form-group row">
-                        <p class="col-sm-2 col-form-label"><b>Disposition:</b></p>
-                        <p class="col-sm-3 col-form-label">
+                        <p class="col-sm-3 col-form-label"><b>Disposition:</b></p>
+                        <p class="col-sm-3">
                             @if ($requestProducts->Disposition == '1')
                                 No Feedback
                             @elseif ($requestProducts->Disposition == '10')
@@ -603,8 +723,8 @@
                                 NA
                             @endif
                         </p>
-                        <p class="offset-sm-2 col-sm-2 col-form-label"><b>Disposition Remarks</b></p>
-                        <p class="col-sm-3 col-form-label">{{ $requestProducts->DispositionRejectionDescription}}</p>
+                        <p class="col-sm-3 col-form-label"><b>Disposition Remarks</b></p>
+                        <p class="col-sm-3">{{ $requestProducts->DispositionRejectionDescription}}</p>
                     </div>
                 </div>
                 <br>
@@ -623,15 +743,18 @@
                             <p>No approver remarks yet</p>
                             @endif
                         @else
-                        @foreach ($sampleRequest->srfTransactionApprovals as $transactionApproval)
-                                @if($transactionApproval->userByUserId)
-                                    <b>{{$transactionApproval->userByUserId->full_name}} :</b>
-                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
-                                @elseif($transactionApproval->userById)
-                                    <b>{{$transactionApproval->userById->full_name}} :</b>
-                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
-                                @endif
-                        @endforeach
+                            @php
+                                $latestApproval = $sampleRequest->srfTransactionApprovals->where('RemarksType', 'approved')->last();
+                            @endphp
+                            @if($latestApproval->userByUserId)
+                                <b>{{$latestApproval->userByUserId->full_name}} :</b>
+                                <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
+                            @elseif($latestApproval->userById)
+                                <b>{{$latestApproval->userById->full_name}} :</b>
+                                <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
+                            @else
+                            <p>No approver remarks yet</p>
+                            @endif
                         @endif
                     </label>
                 </div>
@@ -642,30 +765,29 @@
             </div>
             <div class="group-form">
             <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Courier:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->Courier  }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Late:</b></p>
-                <p class="col-sm-3 col-form-label"></p>
+                <p class="col-sm-3 col-form-label"><b>Courier:</b></p>
+                <p class="col-sm-3">{{ $sampleRequest->Courier  }}</p>
+                <p class="col-sm-3 col-form-label"><b>Late:</b></p>
+                <p class="col-sm-3"></p>
             </div>
              <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>AWB Number:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->AwbNumber }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Delivery Remarks:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->DeliveryRemarks}}</p>
+                <p class="col-sm-3 col-form-label"><b>AWB Number:</b></p>
+                <p class="col-sm-3">{{ $sampleRequest->AwbNumber }}</p>
+                <p class="col-sm-3 col-form-label"><b>Delivery Remarks:</b></p>
+                <p class="col-sm-3">{{ $sampleRequest->DeliveryRemarks}}</p>
             </div>
             <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Date Dispatched:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->DateDispatched }}</p>
-                <p class="offset-sm-2 col-sm-2 col-form-label"><b>Note:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->Note}}</p>
+                <p class="col-sm-3 col-form-label"><b>Date Dispatched:</b></p>
+                <p class="col-sm-3">{{ $sampleRequest->DateDispatched }}</p>
+                <p class="col-sm-3 col-form-label"><b>Note:</b></p>
+                <p class="col-sm-3">{{ $sampleRequest->Note}}</p>
             </div>
             <div class="form-group row">
-                <p class="col-sm-2 col-form-label"><b>Date Sample Received:</b></p>
-                <p class="col-sm-3 col-form-label">{{ $sampleRequest->DateSampleReceived }}</p>
+                <p class="col-sm-3 col-form-label"><b>Date Sample Received:</b></p>
+                <p class="col-sm-3">{{ $sampleRequest->DateSampleReceived }}</p>
             </div>
         </div>
-        </div>
-            </form>          
+        </div>        
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="supplementary-tab" data-toggle="tab" href="#supplementary" role="tab" aria-controls="supplementary" aria-selected="true">Supplementary Details</a>
@@ -673,9 +795,9 @@
                 <li class="nav-item">
                     <a class="nav-link" id="srfPersonnel-tab" data-toggle="tab" href="#srfPersonnel" role="tab" aria-controls="srfPersonnel" aria-selected="true">Assigned R&D Personnel</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                     <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
@@ -790,7 +912,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
+                {{-- <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities-tab">
                     <div class="d-flex">
                         @if(checkIfItsSalesDept(auth()->user()->department_id))
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Create Activity"  data-toggle="modal" data-target="#createSrfActivity">
@@ -849,7 +971,8 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> --}}
+                @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
                         @if(checkIfHaveFiles(auth()->user()->role) == "yes")
@@ -881,7 +1004,14 @@
                                             </button> 
                                             @endif
                                         </td>
-                                        <td>{{ $fileupload->Name }}</td>
+                                        <td>
+                                            @if($fileupload->IsForReview)
+                                                <i class="ti-pencil-alt text-danger"></i>
+                                            @endif
+                                            @if($fileupload->IsConfidential)
+                                                <i class="mdi mdi-eye-off-outline text-danger"></i>
+                                            @endif
+                                            {{ $fileupload->Name }}</td>
                                         <td>
                                             @if ($fileupload->Path)
                                             <a href="{{ url($fileupload->Path) }}" target="_blank">View File</a>
@@ -893,6 +1023,7 @@
                         </table>
                     </div>
                 </div>
+                @endif
                 <div class="tab-pane fade" id="raw_materials" role="tabpanel" aria-labelledby="raw-materials-tab">
                     <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Raw Material"  data-toggle="modal" data-target="#addRawMaterial">
@@ -1323,20 +1454,37 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: response.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(function() {
-                                location.reload();
-                            });
-                        }
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: response.message,
+                            showConfirmButton: true
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: xhr.responseJSON.message || 'Something went wrong!',
+                        showConfirmButton: true
                     });
                 }
             });
-        });
+        }
+    });
+});
 
         $(".openStatus").on('click', function() {
             var srfId = $(this).data('id');
@@ -1389,16 +1537,7 @@
             order: []
         });
     });
-    document.addEventListener('DOMContentLoaded', function () {
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: "{{ session('success') }}",
-            confirmButtonText: 'OK'
-        });
-    @endif
-});
+
     </script>
 @include('sample_requests.create_supplementary')
 @include('sample_requests.assign_personnel')
@@ -1411,6 +1550,7 @@
 @include('sample_requests.srf_approval')
 @include('sample_requests.cancel_srf')
 @include('sample_requests.close_srf')
+@include('sample_requests.return_to_sales')
 @include('sample_requests.edit_sales')
 @include('sample_requests.update_disposition')
 {{-- @include('sample_requests.srf_receive') --}}

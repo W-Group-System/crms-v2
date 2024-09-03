@@ -83,4 +83,8 @@ class RequestProductEvaluation extends Model implements Auditable
     {
         return $this->belongsTo(User::class,'ApprovedBy','Id');
     }
+    public function rndRpeFiles()
+    {
+        return $this->hasMany(RpeFile::class, 'RequestProductEvaluationId', 'id')->where('userType', 'RND');
+    }
 }

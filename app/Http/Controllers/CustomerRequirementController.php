@@ -72,37 +72,34 @@ class CustomerRequirementController extends Controller
             })
             ->when($search, function ($query) use ($search) {
                 $query->where(function($query) use ($search) {
-            ->where(function ($query) use ($search){
-                if ($search != null)
-                {
-                    $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
-                    ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
-                    ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('client', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('product_application', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('primarySales', function($query)use($search) {
-                        $query->where('full_name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhereHas('primarySalesById', function($query)use($search) {
-                        $query->where('full_name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
-                }
-            })
-            ->when($role->type, function($q) use ($role) {
+                    if ($search != null) {
+                        $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                            ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                            ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                            ->orWhereHas('client', function ($q) use ($search) {
+                                $q->where('name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhereHas('product_application', function ($q) use ($search) {
+                                $q->where('name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhereHas('primarySales', function($query) use ($search) {
+                                $query->where('full_name', 'LIKE', '%'.$search.'%');
+                            })
+                            ->orWhereHas('primarySalesById', function($query) use ($search) {
+                                $query->where('full_name', 'LIKE', '%'.$search.'%');
+                            })
+                            ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
+                    }
+                });
+            })->when($role->type, function($q) use ($role) {
                 if ($role->type == "IS") {
                     $q->where('CrrNumber', 'LIKE', "%CRR-IS%");
                 } elseif ($role->type == "LS") {
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
                 }
-            })
-            ->orderBy($sort, $direction)
-            ->paginate($request->entries ?? 10);
-
+            })->orderBy($sort, $direction)
+              ->paginate($request->entries ?? 10);
+            
         // Fetch related data for filters and dropdowns
         $product_applications = ProductApplication::all();
         $clients = Client::where(function($query) {
@@ -137,19 +134,20 @@ class CustomerRequirementController extends Controller
         $unitOfMeasure = UnitOfMeasure::get();
 
         // Return view with all necessary data
-        return view('customer_requirements.index', compact(
-            'customer_requirements', 
-            'clients', 
-            'product_applications', 
-            'users', 
-            'price_currencies', 
-            'nature_requests', 
-            'search', 
-            'open', 
-            'close', 
-            'entries', 
-            'refCode'
-        ));
+        // return view('customer_requirements.index', compact(
+        //     'customer_requirements', 
+        //     'clients', 
+        //     'product_applications', 
+        //     'users', 
+        //     'price_currencies', 
+        //     'nature_requests', 
+        //     'search', 
+        //     'open', 
+        //     'close', 
+        //     'entries', 
+        //     'refCode',
+        //     'unitOfMeasure'
+        // ));
         return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure')); 
     }
 
@@ -341,7 +339,7 @@ class CustomerRequirementController extends Controller
 
         if($request->has('is_for_review'))
         {
-            $crrFile->IsForReview = 1;
+            $crrFile->IsConfidential = 1;
         }
         else
         {
