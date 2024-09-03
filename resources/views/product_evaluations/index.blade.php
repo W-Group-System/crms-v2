@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Evaluation List
-            <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">Add Product Evaluation</button>
+            <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
             </h4>
             <div class="form-group">
                 <form method="GET" >
@@ -46,7 +46,7 @@
                     </form>
                 </div>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive" style="overflow: scroll; height: 50vh;">
                 <table class="table table-striped table-bordered table-hover" id="product_evaluation_table">
                     @if(auth()->user()->role->type == "IS")
                         <thead>

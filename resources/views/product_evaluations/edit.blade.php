@@ -78,14 +78,17 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                {{-- <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                @if(auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($primarySalesPersons as $user)
                                         <option value="{{ $user->user_id }}" @if ( $productEvaluation->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select> --}}
-                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
-                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" disabled>
+                                </select>
+                                @else 
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{$productEvaluation->PrimarySalesPersonId}}">
+                                <input type="text" class="form-control" value="{{$productEvaluation->primarySalesPerson->full_name}}" disabled>
+                                @endif
                             </div>
                         </div>
                         <div class="col-lg-6">
