@@ -1345,13 +1345,13 @@
                             <div class="col-md-12 mb-3">
                                 <div class="form-group">
                                     <label>Is Confidential</label>
-                                    <input type="checkbox" name="is_confidential[]" @if($files->IsConfidential == 1) checked @endif>
+                                    <input type="checkbox" name="is_confidential[]" checked>
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <div class="form-group">
                                     <label>Is For Review</label>
-                                    <input type="checkbox" name="is_for_review[]" @if($files->IsForReview == 1) checked @endif @if(auth()->user()->role->name == "Staff L1")  onclick="return false;" @endif>
+                                    <input type="checkbox" name="is_for_review[]" @if(auth()->user()->role->name == "Staff L1")  onclick="return false;" @endif>
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3">
