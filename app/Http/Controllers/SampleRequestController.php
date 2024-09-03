@@ -76,32 +76,53 @@ class SampleRequestController extends Controller
         $entries = $request->entries;
         $open = $request->open;
         $close = $request->close;
+        $progress = $request->query('progress'); // Get the status from the query parameters
+
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id; 
+
         $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
-        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
-            $query->whereIn('Status', [$request->open, $request->close]);
-        })
-        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
-            $query->where('Status', $request->open);
-        })
-        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
-            $query->where('Status', $request->close);
-        })
-        ->where(function ($query) use ($search){
-            $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
-            ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-            ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
-            // ->orWhereHas('client', function ($q) use ($search) {
-            //     $q->where('name', 'LIKE', '%' . $search . '%');
-            // });
-        })
-        ->when(auth()->user()->role->type == 'LS', function($query) {
-            $query->where('SrfNumber', 'LIKE', '%' . 'SRF-LS' . '%');
-        })
-        ->when(auth()->user()->role->type == 'IS', function($query) {
-            $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
-        })
-        ->orderBy($sort, $direction)
-        ->paginate($request->entries ?? 10);
+          ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '10') {
+                    // When filtering by '10', include all relevant progress status records
+                    $query->where('Progress', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    // Apply progress filter if it's not '10'
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+                $query->whereIn('Status', [$request->open, $request->close]);
+            })
+            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+                $query->where('Status', $request->open);
+            })
+            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+                $query->where('Status', $request->close);
+            })
+            ->where(function ($query) use ($search){
+                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+                // ->orWhereHas('client', function ($q) use ($search) {
+                //     $q->where('name', 'LIKE', '%' . $search . '%');
+                // });
+            })
+            ->when(auth()->user()->role->type == 'LS', function($query) {
+                $query->where('SrfNumber', 'LIKE', '%' . 'SRF-LS' . '%');
+            })
+            ->when(auth()->user()->role->type == 'IS', function($query) {
+                $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
+            })
+              ->orderBy($sort, $direction)
+              ->paginate($request->entries ?? 10);
+
 
         $openStatus = request('open');
         $closeStatus = request('close');

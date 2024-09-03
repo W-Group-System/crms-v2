@@ -38,6 +38,7 @@ class CustomerRequirementController extends Controller
         $direction = $request->get('direction', 'desc');
         $role = auth()->user()->role;
         $status = $request->query('status'); // Get the status from the query parameters
+        $progress = $request->query('progress'); // Get the status from the query parameters
 
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
@@ -59,6 +60,21 @@ class CustomerRequirementController extends Controller
                 } else {
                     // Apply status filter if it's not '50'
                     $query->where('Status', $status);
+                }
+            })
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '10') {
+                    // When filtering by '10', include all relevant progress status records
+                    $query->where('Progress', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    // Apply progress filter if it's not '10'
+                    $query->where('Progress', $progress);
                 }
             })
             ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
