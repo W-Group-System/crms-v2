@@ -91,9 +91,15 @@
                         <div class="form-group">
                             <label>Type</label>
                             <select class="form-control js-example-basic-single" name="Type" id="Type" style="position: relative !important" title="Select Type" >
-                                <option value="" disabled selected>Select Type</option>
-                                <option value="1">Local</option>
-                                <option value="2">International</option>
+                                @if(optional($role)->type == 'LS')
+                                    <option value="1" selected>Local</option>
+                                @elseif(optional($role)->type == 'IS')
+                                    <option value="2" selected>International</option>    
+                                @else
+                                    <option value="" disabled selected>Select Type</option>
+                                    <option value="1">Local</option>
+                                    <option value="2">International</option>
+                                @endif
                             </select>
                         </div>
                     </div>
@@ -248,6 +254,13 @@
             $(this).closest('.form-group').remove();
         });
 
+        var selectedType = $('#Type').val();
+        var selectedRegionId = $('#ClientRegionId').data('selected');
+
+        if (selectedType) {
+            populateRegions(selectedType, selectedRegionId);
+        }
+
         $('#Type').on('change', function() {
             var selectedType = $(this).val();
             var $regionSelect = $('#ClientRegionId');
@@ -269,8 +282,7 @@
             populateAreas(selectedRegionId); // Populate areas based on selectedRegionId
         });
 
-        // Function to populate regions based on type
-        function populateRegions(type) {
+        function populateRegions(type, selectedRegionId = null) {
             var $regionSelect = $('#ClientRegionId');
 
             // Clear existing options
@@ -284,9 +296,11 @@
                 dataType: 'json',
                 success: function(response) {
                     // Populate the select box with options
-                    $regionSelect.append('<option value="" disabled selected>Select Region</option>');
+                    $regionSelect.append('<option value="" disabled>Select Region</option>');
                     $.each(response, function(index, region) {
-                        $regionSelect.append('<option value="' + region.id + '">' + region.name + '</option>');
+                        $regionSelect.append('<option value="' + region.id + '"' + 
+                            (selectedRegionId && selectedRegionId == region.id ? ' selected' : '') +
+                            '>' + region.name + '</option>');
                     });
 
                     // Enable the select box and show the region select group
@@ -299,6 +313,7 @@
                 }
             });
         }
+
         function populateAreas(regionId) {
             var $areaSelect = $('#ClientAreaId');
 
@@ -328,6 +343,7 @@
                 }
             });
         }
+
         $('#form_client').on('submit', function(event) {
             event.preventDefault();
 
@@ -398,5 +414,6 @@
         });
 
     });
+
 </script>
 @endsection
