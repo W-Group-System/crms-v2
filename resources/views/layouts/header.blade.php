@@ -27,6 +27,7 @@
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
         <link rel="stylesheet" href="{{asset('css/theme.bootstrap_4.min.css')}}">
+        <link rel="icon" href="{{asset('images/wgroup.png')}}" type="image/x-icon">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
