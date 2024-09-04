@@ -487,7 +487,7 @@
                                     @foreach ($data->productEventLogs as $logs)
                                         <tr>
                                             <td>{{date('M d Y', strtotime($logs->TimeStamp))}}</td>
-                                            <td>{{$logs->userByUserId->full_name}}</td>
+                                            <td>{{optional($logs->userByUserId)->full_name}}</td>
                                             <td>{{$logs->Details}}</td>
                                         </tr>
                                     @endforeach
