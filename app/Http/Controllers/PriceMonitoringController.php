@@ -15,6 +15,7 @@ use App\SrfFile;
 use App\TransactionLogs;
 use App\Contact;
 use App\Helpers\Helpers;
+use App\PrfProgress;
 use App\PriceRequestGae;
 use App\ProductApplication;
 use App\User;
@@ -530,6 +531,7 @@ class PriceMonitoringController extends Controller
         $pricegaes = PriceRequestGae::get();
         $payment_terms = PaymentTerms::all();
         $clientId = $price_monitorings->ClientId;
+        $progresses = PrfProgress::all();
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
         ->get();
@@ -661,6 +663,22 @@ public function ClosePrf( Request $request , $id)
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
         }    
+
+        public function ApproveManagerPrf(Request $request, $id)
+    {
+        $approvePrf = PriceMonitoring::find( $id);    
+        if ($approvePrf) {
+            $approvePrf->ApprovalRemarks = $request->input('Remarks');
+            $approvePrf->Progress = '40'; 
+
+
+        }
+            $approvePrf->save();
+
+            Alert::success('Successfully Saved')->persistent('Dismiss');
+            return back();
+        }   
+        
 
         public function ReopenPrf(Request $request, $id)
         {

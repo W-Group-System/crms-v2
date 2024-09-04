@@ -228,6 +228,16 @@ function checkIfItsManagerOrSupervisor($role)
     return "no";
 }
 
+function checkIfItsSalesManager($role)
+{
+    if (($role->department_id == 5 || $role->department_id == 38) && ($role->name == "Department Admin"))
+    {
+        return "yes";
+    }
+    
+    return "no";
+}
+
 function checkIfItsApprover($user_id, $primary_sales_person, $type)
 {
     if ($type == "CRR")

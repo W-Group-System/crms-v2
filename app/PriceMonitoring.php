@@ -35,7 +35,7 @@ class PriceMonitoring extends Model implements Auditable
     }
     public function progressStatus()
     {
-        return $this->belongsTo(SrfProgress::class, 'Progress', 'id');
+        return $this->belongsTo(PrfProgress::class, 'Progress', 'id');
     }
     
     public function requestPriceProducts()

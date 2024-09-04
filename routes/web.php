@@ -313,6 +313,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::delete('price_monitorings/view/activity-delete/{id}', 'PriceMonitoringController@deleteActivity');
 
     Route::post('ApprovePrf/{id}', 'PriceMonitoringController@ApprovePrf');
+    Route::post('ApproveManagerPrf/{id}', 'PriceMonitoringController@ApproveManagerPrf');
     Route::post('ReopenPrf/{id}', 'PriceMonitoringController@ReopenPrf');        
 
     // Customer Complaint 
