@@ -53,13 +53,14 @@ function usdToEur($cost)
         {
             $q->where('FromCurrencyId', 2)->where('ToCurrencyId', 1);
         })
+        ->orderBy('EffectiveDate', 'desc')
         ->first();
 
     if ($currencyExchangeRates != null){
 
         $eur = $currencyExchangeRates->ExchangeRate * $cost;
 
-        return round($eur, 2);
+        return $eur;
     }
     
 }
@@ -86,13 +87,14 @@ function usdToPhp($cost)
     $currencyExchangeRates = CurrencyExchange::whereHas('fromCurrency', function($q) {
         $q->where('FromCurrencyId', 2)->where('ToCurrencyId', 3);
     })
+    ->orderBy('EffectiveDate', 'desc')
     ->first();
 
     $exchangeRate = ($currencyExchangeRates != null) ? $currencyExchangeRates->ExchangeRate : 1;
 
     $php = $exchangeRate * $cost;
 
-    return round($php, 2);
+    return $php;
 }
 
 function identicalComposition($materials, $product_id)
@@ -133,7 +135,7 @@ function customerRequirements($product)
 
 function getProductIdByCode($code)
 {
-    $product = Product::where('code', $code)->first();
+    $product = Product::where('code', $code)->where('status', 4)->first();
     
     return $product ? $product->id : null;
 }
@@ -363,3 +365,8 @@ function getUserApprover($approver)
     
     return $user;
 }
+function getHistoricalPrices($materialId) {
+    return BasePrice::where('MaterialId', $materialId)
+                                    ->orderBy('EffectiveDate', 'desc')
+                                    ->get();
+    }

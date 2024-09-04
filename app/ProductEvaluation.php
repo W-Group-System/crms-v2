@@ -18,4 +18,9 @@ class ProductEvaluation extends Model
     {
         return $this->belongsTo(ProductApplication::class, 'application_id', 'id');
     }
+
+    public function primarySalesPerson()
+    {
+        return $this->belongsTo(User::class,'PrimarySalesPersonId','id');
+    }
 }

@@ -32,32 +32,67 @@ class RequestProductEvaluationController extends Controller
         $search = $request->input('search');
         $open = $request->open;
         $close = $request->close;
-        $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application'])
-        ->when($request->has('open') && $request->has('close'), function($query)use($request) {
-            $query->whereIn('Status', [$request->open, $request->close]);
-        })
-        ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
-            $query->where('Status', $request->open);
-        })
-        ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
-            $query->where('Status', $request->close);
-        })
-        ->where(function ($query) use ($search){
-            $query->where('RpeNumber', 'LIKE', '%' . $search . '%')
-            ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
-            ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
-            ->orWhereHas('client', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
-            })
-            ->orWhereHas('product_application', function ($q) use ($search) {
-                $q->where('name', 'LIKE', '%' . $search . '%');
-            })
-            ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
-        })
-        ->orderBy('id', 'desc')->paginate($request->entries ?? 10);
+        $progress = $request->query('progress'); // Get the status from the query parameters
 
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id; 
+
+        $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application'])
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '10') {
+                    // When filtering by '10', include all relevant progress status records
+                    $query->where('Progress', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    // Apply progress filter if it's not '10'
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+                $query->whereIn('Status', [$request->open, $request->close]);
+            })
+            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+                $query->where('Status', $request->open);
+            })
+            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+                $query->where('Status', $request->close);
+            })
+            ->orWhere('RpeResult', 'LIKE', '%' . $search . '%')
+            ->when(auth()->user()->role->type == 'LS', function($query) {
+                $query->where('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
+            })
+            ->when(auth()->user()->role->type == 'IS', function($query) {
+                $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%');
+            })
+            ->orderBy('id', 'desc')->paginate($request->entries ?? 10);
+
+        // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        // ->get();
+        $clients = Client::where(function($query) {
+            if (auth()->user()->role->name == "Department Admin")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L1")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
+        ->where(function($query) {
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
         ->get();
         // $users = User::all();
         $loggedInUser = Auth::user(); 
@@ -188,7 +223,7 @@ class RequestProductEvaluationController extends Controller
         $rndPersonnel = User::where('is_active', 1)->where('department_id', 15)->whereNotIn('id', [auth()->user()->id])->get();
         // $rndPersonnel = User::whereHas('rndUsers')->get();
         $activities = Activity::where('TransactionNumber', $RequestNumber)->get();
-        $rpeFileUploads = RpeFile::where('RequestProductEvaluationId', $rpeNumber)->get();
+        $rpeFileUploads = RpeFile::where('RequestProductEvaluationId', $rpeNumber)->where('userType', 'RND')->get();
         $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
         ->get();
@@ -239,7 +274,7 @@ class RequestProductEvaluationController extends Controller
         $mappedLogs = $transactionLogs->map(function ($log) {
             return (object) [
                 'CreatedDate' => $log->ActionDate,
-                'full_name' => $log->historyUser->full_name,
+                'full_name' => optional($log->historyUser)->full_name,
                 'Details' => $log->Details,
             ];
         });
@@ -354,6 +389,8 @@ class RequestProductEvaluationController extends Controller
         $files = $request->file('rpe_file');
         $names = $request->input('name');
         $rpeId = $request->input('rpe_id');
+        $isConfidential = $request->input('is_confidential') ? 1 : 0;
+        $isForReview = $request->input('is_for_review') ? 1 : 0;
         
         if ($files) {
             foreach ($files as $index => $file) {
@@ -365,6 +402,9 @@ class RequestProductEvaluationController extends Controller
             $uploadedFile->RequestProductEvaluationId = $rpeId;
             $uploadedFile->Name = $name;
             $uploadedFile->Path = $fileUrl;
+            $uploadedFile->IsConfidential = $isConfidential;
+            $uploadedFile->IsForReview = $isForReview;
+            $uploadedFile->userType = 'RND';
             $uploadedFile->save();
             }
         }
@@ -385,6 +425,11 @@ class RequestProductEvaluationController extends Controller
             $fileUrl = '/storage/rpeFiles/' . $fileName;
 
             $rpeFile->Path = $fileUrl;
+        }
+
+        if (authCheckIfItsRnd(auth()->user()->department_id) && !authCheckIfItsRndStaff(auth()->user()->role)) {
+            $rpeFile->IsConfidential = $request->has('is_confidential') ? 1 : 0;
+            $rpeFile->IsForReview = $request->has('is_for_review') ? 1 : 0;
         }
 
         $rpeFile->save();
@@ -497,6 +542,12 @@ class RequestProductEvaluationController extends Controller
     public function completeRpe($id)
     {
         $rpeList = RequestProductEvaluation::find($id);
+        $hasFilesForReview = $rpeList->rndRpeFiles()->where('IsForReview', 1)->exists();
+
+        if ($hasFilesForReview) {
+            Alert::error('Cannot complete request as there are files still under review.')->persistent('Dismiss');
+            return back(); 
+        }
         $rpeList->Progress = 60;
         $rpeList->DateCompleted = date('Y-m-d');
         $rpeList->save();
@@ -521,6 +572,13 @@ class RequestProductEvaluationController extends Controller
         $rpeList->Progress = 10;
         $rpeList->save(); 
 
+        $transactionApproval = new TransactionApproval();
+        $transactionApproval->Type = '20';
+        $transactionApproval->TransactionId = $id;
+        $transactionApproval->UserId = Auth::user()->id;
+        $transactionApproval->Remarks = request()->input('return_to_sales_remarks');
+        $transactionApproval->RemarksType = 'return to sales';
+        $transactionApproval->save(); 
         Alert::success('Successfully return to sales')->persistent('Dismiss');
         return back();
     }
@@ -528,6 +586,7 @@ class RequestProductEvaluationController extends Controller
     public function approveRpeSales($id)
     {
         $approveRpeSales = RequestProductEvaluation::find($id);
+        $approveRpeSales->sales_approved_date = Carbon::now();
         if ($approveRpeSales) {
             $buttonClicked = request()->input('submitbutton');    
             if ($buttonClicked === 'Approve to R&D') {

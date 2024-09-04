@@ -16,7 +16,13 @@ class DashboardController extends Controller
     public function index()
     {
         $userId = Auth::id(); 
-        $userByUser = Auth::user()->user_id; 
+        $userByUser = optional(Auth::user())->user_id; // Safely access user_id
+        $role = optional(Auth::user())->role;
+        
+        if (!$userId && !$userByUser && !$role) {
+            // Handle case where there is no authenticated user
+            return redirect()->route('login'); // Or handle it in another appropriate way
+        }
 
         // Activities
         // Get the count of open activities
@@ -125,6 +131,21 @@ class DashboardController extends Controller
 
         $totalCustomerServiceCount = $customerComplaintsCount + $customerFeedbackCount;
 
+        // Approval
+        function countCrrApproval($userId, $userByUser, $field, $value) {
+            return CustomerRequirement::where(function($query) use ($userId, $userByUser) {
+                    $query->where('PrimarySalesPersonId', $userId)
+                        ->orWhere('SecondarySalesPersonId', $userId)
+                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                })
+                ->where($field, $value)
+                ->count();
+        }
+        $srfCancelled = countSampleRequest($userId, $userByUser, 'Status', '50');
+
+        $totalApproval = $crrSalesApproval + $rpeSalesApproval + $srfSalesApproval;
+
         return view('dashboard.index', compact(
             'totalActivitiesCount', 'openActivitiesCount', 'closedActivitiesCount', 
             'totalCRRCount', 'crrCancelled', 'crrSalesAccepted', 'crrSalesApproval', 
@@ -132,7 +153,7 @@ class DashboardController extends Controller
             'crrRnDFinal', 'crrRnDCompleted', 'totalCustomerServiceCount', 
             'customerComplaintsCount', 'customerFeedbackCount', 'totalRPECount', 'rpeCancelled', 'rpeSalesApproval',
             'rpeSalesApproved', 'rpeSalesAccepted', 'rpeRnDOngoing', 'rpeRnDPending', 'rpeRnDInitial', 'rpeRnDFinal', 'rpeRnDCompleted', 'totalSRFCount', 'srfCancelled', 'srfSalesApproval',
-            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted'
+            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role'
         ));
     }
 }

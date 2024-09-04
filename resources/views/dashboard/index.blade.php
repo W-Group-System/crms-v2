@@ -30,7 +30,6 @@
                             <a href="{{ route('customer_requirement.index', ['status' => 50]) }}">
                                 {{ $crrCancelled ?? '0' }}
                             </a>
-                            <!-- {{ $crrCancelled ?? '0' }} -->
                         </h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
@@ -241,6 +240,7 @@
                 </div>
             </div>
         </div>
+        @if(optional($role)->type == 'IS' || optional($role)->type == 'LS')
         <div class="col-md-4 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
@@ -248,7 +248,7 @@
                     <div class="d-flex justify-content-between">
                         <div class="mb-4 mt-2">
                             <h3 class="text-primary fs-30 font-weight-medium">
-                                58
+                                {{ $totalApproval ?? '0' }}
                                 <i class="ti ti-check-box"></i>
                             </h3>
                         </div>
@@ -258,19 +258,33 @@
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>CRR</p>
-                        <h5 class="text-primary font-weight-medium">2</h5>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
+                                {{ $crrSalesApproval ?? '0' }}
+                            </a>
+                        </h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>RPE</p>
-                        <h5 class="text-primary font-weight-medium">5</h5>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
+                                {{ $rpeSalesApproval ?? '0' }}
+                            </a>
+                        </h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>SRF</p>
-                        <h5 class="text-primary font-weight-medium">6</h5>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
+                                {{ $srfSalesApproval ?? '0' }}
+                            </a>
+                        </h5>
+                        <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
                     </div>
                 </div>
             </div>
         </div>
+        @endif
     </div>
 
     <!-- <div class="row">

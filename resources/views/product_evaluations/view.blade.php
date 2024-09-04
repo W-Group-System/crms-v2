@@ -188,8 +188,11 @@
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                             
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
-                             @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 20 && $requestEvaluation->Progress != 60)
-                                <button type="button" class="btn btn-info returnToSales"  data-id="{{ $requestEvaluation->id }}" >
+                             @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 20 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 57)
+                                <button type="button" class="btn btn-info"
+                                    data-target="#returnToSales{{  $requestEvaluation->id }}" 
+                                    data-toggle="modal" 
+                                    title='Return To Sales SRF'>
                                     <i class="ti-control-left">&nbsp;</i>Return To Sales
                                 </button>
                             @endif
@@ -489,16 +492,16 @@
                 <hr class="form-divider">
                 <p>
                     @if($requestEvaluation->secondarySalesPerson)
-                    {{$requestEvaluation->secondarySalesPerson->full_name}} :
+                    {{optional($requestEvaluation->secondarySalesPerson)->full_name}} :
                     @elseif($requestEvaluation->secondarySalesPersonById)
-                    {{$requestEvaluation->secondarySalesPersonById->full_name}} :
+                    {{optional($requestEvaluation->secondarySalesPersonById)->full_name}} :
                     @endif
                 </p>
             </div>
             @foreach ( $rpeTransactionApprovals as $rpeTransactionApproval )
             <div class="group-form">
-                <div class="form-group row mb-2">
-                    <p class="col-sm-12 col-form-label"><b>{{ $rpeTransactionApproval->approverRPE->full_name  }}:</b></p>
+                <div class="form-group row">
+                    <p class="col-sm-12 col-form-label"><b>{{ optional($rpeTransactionApproval->approverRPE)->full_name  }}:</b></p>
                     <br><br>
                     <p class="col-sm-12 col-form-label" style="margin-left: 30px;">{{ $rpeTransactionApproval->Remarks  }}</p>
                 </div>
@@ -555,15 +558,14 @@
              <div class="form-group row mb-2">
                 <p class="col-sm-3 col-form-label"><b>RPE Recommendation :</b></p>
                 @php
-                use App\Helpers\Helpers;
-            
                 $rpeResult = $requestEvaluation->RpeResult;
                 $pattern = '/\[(.*?)\]/';
             
                 $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
                     $code = $matches[1];
-                    $productId = Helpers::getProductIdByCode($code);
-                    if ($productId) {
+                    $productId = getProductIdByCode($code);
+                    // dd($matches);
+                    if ($productId != null) {
                         return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
                     }
                     return $matches[0];
@@ -773,6 +775,7 @@
                         </table>
                     </div>
                 </div>
+                @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Upload File"  data-toggle="modal" data-target="#uploadFile">
@@ -792,15 +795,23 @@
                                 @foreach ($rpeFileUploads as $fileupload)
                                     <tr>
                                         <td align="center">
-                                            <button type="button"  class="btn btn-sm btn-warning btn-outline"
-                                                data-target="#editRpeFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
-                                                <i class="ti-pencil"></i>
-                                            </button>   
-                                            <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $fileupload->Id }}, 'fileupload')" title='Delete fileupload'>
-                                                <i class="ti-trash"></i>
-                                            </button> 
+                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes")
+                                                <button type="button"  class="btn btn-sm btn-warning btn-outline"
+                                                    data-target="#editRpeFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
+                                                    <i class="ti-pencil"></i>
+                                                </button>   
+                                                <button type="button" class="btn btn-sm btn-danger btn-outline" onclick="confirmDelete({{ $fileupload->Id }}, 'fileupload')" title='Delete fileupload'>
+                                                    <i class="ti-trash"></i>
+                                                </button> 
+                                            @endif
                                         </td>
-                                        <td>{{ $fileupload->Name }}</td>
+                                        <td>
+                                            @if($fileupload->IsForReview)
+                                                <i class="ti-pencil-alt text-danger"></i>
+                                            @endif
+                                            @if($fileupload->IsConfidential)
+                                                <i class="mdi mdi-eye-off-outline text-danger"></i>
+                                            @endif{{ $fileupload->Name }}</td>
                                         <td>
                                             @if ($fileupload->Path)
                                             <a href="{{ url($fileupload->Path) }}" target="_blank">View File</a>
@@ -812,6 +823,7 @@
                         </table>
                     </div>
                 </div>
+                @endif
                
                 <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
                     <div class="table-responsive">
@@ -1184,41 +1196,41 @@
             });
         })
 
-        $(".returnToSales").on('click', function() {
-            var rpeId = $(this).data('id');
+        // $(".returnToSales").on('click', function() {
+        //     var rpeId = $(this).data('id');
 
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You want to return this request!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ url('ReturnToSales_rpe') }}/" + rpeId,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: response.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(function() {
-                                location.reload();
-                            });
-                        }
-                    });
-                }
-            });
-        });
+        //     Swal.fire({
+        //         title: 'Are you sure?',
+        //         text: "You want to return this request!",
+        //         icon: 'warning',
+        //         showCancelButton: true,
+        //         confirmButtonColor: '#3085d6',
+        //         cancelButtonColor: '#d33',
+        //         confirmButtonText: 'Yes',
+        //         reverseButtons: true
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             $.ajax({
+        //                 type: "POST",
+        //                 url: "{{ url('ReturnToSales_rpe') }}/" + rpeId,
+        //                 headers: {
+        //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //                 },
+        //                 success: function(response) {
+        //                     Swal.fire({
+        //                         icon: 'success',
+        //                         title: 'Success!',
+        //                         text: response.message,
+        //                         showConfirmButton: false,
+        //                         timer: 1500
+        //                     }).then(function() {
+        //                         location.reload();
+        //                     });
+        //                 }
+        //             });
+        //         }
+        //     });
+        // });
 
         $('.salesAccept').on('click', function() {
             var form = $(this).closest('form')
@@ -1266,6 +1278,7 @@
     </script>
 @include('product_evaluations.create_supplementary')
 @include('product_evaluations.assign_personnel')
+@include('product_evaluations.return_to_sales')
 {{-- @include('product_evaluations.create_activity') --}}
 @include('product_evaluations.upload_rpe_file')
 @include('product_evaluations.rpe_approval')

@@ -18,9 +18,8 @@ use App\Http\Controllers\PriceMonitoringController;
 */
 Auth::routes();
 
-// Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'inactive_users'], function() {
-    Route::get('/', 'HomeController@index');
+    Route::get('/', 'DashboardController@index');
     Route::get('/dashboard','DashboardController@index');
 
     // change password
@@ -174,6 +173,9 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('return_to_rnd/{id}', 'CustomerRequirementController@returnToRnd');
     Route::post('sales_accepted/{id}', 'CustomerRequirementController@salesAccepted');
     Route::get('print_crr', 'CustomerRequirementController@printCrr');
+    Route::post('multipleUploadFiles', 'CustomerRequirementController@multipleUploadFiles');
+    Route::post('update_sales_files/{id}', 'CustomerRequirementController@updateSalesFiles');
+    Route::post('delete_sales_files', 'CustomerRequirementController@deleteSalesFiles');
 
     # Crr Supplementary Details
     Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');
@@ -194,7 +196,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('delete_crr_file/{id}', 'CustomerRequirementController@deleteCrrFile');
 
     // Product Evaluation
-    Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
+    // Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
 
     // Request Product Evaluation
     Route::get('/request_product_evaluation', 'RequestProductEvaluationController@index')->name('product_evaluation.index');
@@ -266,7 +268,9 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('RndUpdate/{id}', 'SampleRequestController@RndUpdate');
     Route::post('CancelRemarks/{id}', 'SampleRequestController@CancelRemarks');
     Route::post('CloseRemarks/{id}', 'SampleRequestController@CloseRemarks');
-    Route::post('ReturnToSales/{id}', 'SampleRequestController@ReturnToSales');
+    // Route::post('ReturnToSales/{id}', 'SampleRequestController@ReturnToSales');
+    Route::post('ReturnToSalesSRF/{id}', 'SampleRequestController@ReturnToSalesSRF');
+
     Route::post('ReturnToRnd/{id}', 'SampleRequestController@ReturnToRnd');
     Route::post('ReturnToSpecialist/{id}', 'SampleRequestController@ReturnToSpecialist');
     Route::post('SubmitSrf/{id}', 'SampleRequestController@SubmitSrf');
