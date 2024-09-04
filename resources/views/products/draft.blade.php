@@ -230,6 +230,83 @@
         $("[name='entries']").on('change', function() {
             $(this).closest('form').submit()
         })
+
+        $('#form_product').on('submit', function(e) {
+            e.preventDefault()
+
+            var form = $(this).serializeArray()
+            var action = $(this).attr('action')
+
+            $.ajax({
+                type: "POST",
+                url: action,
+                data: form,
+                beforeSend: function()
+                {
+                    show()
+                },
+                success: function(res)
+                {
+                    hide()
+                    if(res.status == 0)
+                    {
+                        html = '<div class="alert alert-danger">';
+                        html += '<p>' + res.error + '</p>';
+                        html += '</div>';
+
+                        $('#form_result').html(html);
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            title: res.message,
+                            icon: "success"
+                        }).then(() => {
+                            location.reload()
+                        })
+                    }
+                }
+            })
+        })
+
+        $(".edit_form_product").on('submit', function(e) {
+            e.preventDefault()
+
+            var form = $(this).serializeArray()
+            var action = $(this).attr('action')
+
+            $.ajax({
+                type: "POST",
+                url: action,
+                data: form,
+                beforeSend: function()
+                {
+                    show()
+                },
+                success: function(res)
+                {
+                    hide()
+
+                    if(res.status == 0)
+                    {
+                        html = '<div class="alert alert-danger">';
+                        html += '<p>' + res.error + '</p>';
+                        html += '</div>';
+
+                        $('#update_form_result').html(html);
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            title: res.message,
+                            icon: "success"
+                        }).then(() => {
+                            location.reload()
+                        })
+                    }
+                }
+            })
+        })
     })
 </script>
 @endsection
