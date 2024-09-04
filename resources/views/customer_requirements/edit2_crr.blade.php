@@ -114,18 +114,12 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                {{-- <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $crr->SecondarySalesPersonId || $user->id == $crr->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select> --}}
-                                <input type="hidden" name="SecondarySalesPersonId" value="{{$crr->SecondarySalesPersonId}}">
-                                @if($crr->secondarySalesById)
-                                <input type="text" class="form-control" value="{{$crr->secondarySalesById->full_name}}" readonly>
-                                @elseif($crr->secondarySales)
-                                <input type="text" class="form-control" value="{{$crr->secondarySales->full_name}}" readonly>
-                                @endif
+                                </select>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -193,7 +187,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-12">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                <input type="file" name="sales_upload_crr[]" class="form-control" multiple required>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Details of Requirement</label>
                                 <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" rows="7">{{$crr->DetailsOfRequirement}}</textarea>

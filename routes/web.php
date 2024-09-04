@@ -174,6 +174,8 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('sales_accepted/{id}', 'CustomerRequirementController@salesAccepted');
     Route::get('print_crr', 'CustomerRequirementController@printCrr');
     Route::post('multipleUploadFiles', 'CustomerRequirementController@multipleUploadFiles');
+    Route::post('update_sales_files/{id}', 'CustomerRequirementController@updateSalesFiles');
+    Route::post('delete_sales_files', 'CustomerRequirementController@deleteSalesFiles');
 
     # Crr Supplementary Details
     Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');

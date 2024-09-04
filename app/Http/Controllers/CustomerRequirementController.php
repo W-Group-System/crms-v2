@@ -122,18 +122,22 @@ class CustomerRequirementController extends Controller
                 if (auth()->user()->role->name == "Department Admin")
                 {
                     $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                        ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                }
+                if (auth()->user()->role->name == "Staff L2")
+                {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                        ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
                 }
                 if (auth()->user()->role->name == "Staff L1")
                 {
                     $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
-                }
-            })
-            ->where(function($query) {
-                if (auth()->user()->role->name == "Staff L2")
-                {
-                    $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                        ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
                         ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
                 }
             })
@@ -223,6 +227,33 @@ class CustomerRequirementController extends Controller
                             ]);
                         }
         }
+
+        if ($request->has('sales_upload_crr'))
+        {
+            $attachments = $request->file('sales_upload_crr');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('crr_files'), $name);
+                $path = '/crr_files/'.$name;
+
+                $crrFiles = new FileCrr;
+                $crrFiles->Name = $name;
+                $crrFiles->Path = $path;
+                $crrFiles->CustomerRequirementId = $customerRequirementData['id'];
+
+                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                {
+                    $crrFiles->UserType = auth()->user()->role->type;
+                }
+                if (auth()->user()->role->type == "RND")
+                {
+                    $crrFiles->UserType = auth()->user()->role->type;
+                }
+                
+                $crrFiles->save();
+            }
+        }
         
         Alert::success('Successfully Save')->persistent('Dismiss');
         return back();
@@ -267,7 +298,35 @@ class CustomerRequirementController extends Controller
                 $crrNature->save();
             }
         }
+        
         $customerRequirements->save();
+
+        if ($request->has('sales_upload_crr'))
+        {
+            $attachments = $request->file('sales_upload_crr');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('crr_files'), $name);
+                $path = '/crr_files/'.$name;
+
+                $crrFiles = new FileCrr;
+                $crrFiles->Name = $name;
+                $crrFiles->Path = $path;
+                $crrFiles->CustomerRequirementId = $id;
+                
+                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                {
+                    $crrFiles->UserType = auth()->user()->role->type;
+                }
+                if (auth()->user()->role->type == "RND")
+                {
+                    $crrFiles->UserType = auth()->user()->role->type;
+                }
+                
+                $crrFiles->save();
+            }
+        }
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
@@ -276,26 +335,30 @@ class CustomerRequirementController extends Controller
     public function view($id)
     {
         $customerRequirement = CustomerRequirement::with('client', 'product_application', 'progressStatus', 'crrNature', 'primarySales', 'secondarySales', 'priority', 'crrDetails')->findOrFail($id);
-        $client = Client::where(function($query) {
-                if (auth()->user()->role->name == "Department Admin")
-                {
-                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
-                }
-                if (auth()->user()->role->name == "Staff L1")
-                {
-                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                        ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
-                }
-            })
-            ->where(function($query) {
-                if (auth()->user()->role->name == "Staff L2")
-                {
-                    $query->where('SecondaryAccountManagerId', auth()->user()->id)
-                        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-                }
-            })
-            ->get();
+        $clients = Client::where(function($query) {
+            if (auth()->user()->role->name == "Department Admin")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L1")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
+        ->get();
         $user = User::where('is_active', 1)->get();
         $currentUser = Auth::user();
         $product_applications = ProductApplication::get();
@@ -308,7 +371,7 @@ class CustomerRequirementController extends Controller
         return view('customer_requirements.view_crr',
             array(
                 'crr' => $customerRequirement,
-                'clients' => $client,
+                'clients' => $clients,
                 'users' => $user,
                 'currentUser' => $currentUser,
                 'product_applications' => $product_applications,
@@ -841,4 +904,32 @@ class CustomerRequirementController extends Controller
 
         return $pdf->stream();
     }
+
+    public function updateSalesFiles(Request $request, $id)
+    {
+        $attachments = $request->file('file');
+        $name = time().'_'.$attachments->getClientOriginalName();
+        $attachments->move(public_path('crr_files'), $name);
+        $path = '/crr_files/'.$name;
+
+        $files = FileCrr::findOrFail($id);
+        $files->Name = $name;
+        $files->Path = $path;
+        if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+        {
+            $files->UserType = auth()->user()->role->type;
+        }
+
+        $files->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function deleteSalesFiles(Request $request)
+    {
+        $crrFile = FileCrr::findOrFail($request->id);
+        $crrFile->delete();
+    }
 }
+

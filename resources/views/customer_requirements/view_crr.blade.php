@@ -462,6 +462,37 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-12 mb-3">
+                <label><strong>Sales Files</strong></label>
+                <hr style="margin-top: 0px; color: black; border-top-color: black;">
+
+                @if($crr->crrFiles->isNotEmpty())
+                @foreach ($crr->crrFiles->whereIn('UserType', ['IS', 'LS']) as $key=>$file)
+                    <small>
+                        <span>{{$key+1}}. </span>
+                        <a href="{{url($file->Path)}}"  target="_blank">{{$file->Name}}</a>
+                    </small>
+                    &nbsp;
+                    <a href="#" class="text-warning" data-toggle="modal" data-target="#editSalesFiles{{$file->Id}}">
+                        <i class="ti-pencil-alt"></i>
+                    </a>
+
+                    <a href="#" class="text-danger deleteFilesBtn" data-id="{{$file->Id}}">
+                        <i class="ti-trash"></i>
+                    </a>
+
+                    {{-- <form method="POST" action="{{url('delete_sales_files')}}" class="d-inline-block" id="deleteSalesForm" style="display: none;">
+                        @csrf
+                        
+                    </form> --}}
+                    <br>
+
+                    @include('customer_requirements.edit_sales_files')
+                @endforeach
+                @else
+                <p>N/A</p>
+                @endif
+            </div>
             <div class="col-md-12">
                 <label><strong>Approver Remarks</strong></label>
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
@@ -773,7 +804,7 @@
                                     <th>File</th>
                                 </tr>
                             </thead>
-                            @foreach ($crr->crrFiles as $files)
+                            @foreach ($crr->crrFiles->whereNotIn('UserType', ['IS', 'LS']) as $files)
                                 @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $files->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                 <tbody>
                                     <tr>
@@ -1373,6 +1404,42 @@
             var filename = e.target.files[0].name;
 
             $(this).closest('.col-md-6').find('[name="file_name[]"]').val(filename);
+        })
+
+        $('.deleteFilesBtn').on('click', function() {
+            var id = $(this).data('id');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Delete"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url('delete_sales_files')}}",
+                        data: {
+                            id: id
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function()
+                        {
+                            Swal.fire({
+                                title: "Successfully Deleted",
+                                icon: "success"
+                            }).then(() => {
+                                location.reload();
+                            })
+                        }
+                    })
+                }
+            });
         })
     })
 </script>
