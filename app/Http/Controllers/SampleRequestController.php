@@ -58,6 +58,7 @@ class SampleRequestController extends Controller
 
         if ($loggedInUser->role->name == "Staff L1") {
             $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
+                ->orwhere('PrimaryAccountManagerId', $loggedInUser->id)
                 ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
                 ->get();
         } elseif ($loggedInUser->role->name == "Staff L2" || $loggedInUser->role->name == "Department Admin") {
@@ -68,7 +69,7 @@ class SampleRequestController extends Controller
                 ->orWhereIn('PrimaryAccountManagerId', $subordinateIds)
                 ->orWhereIn('SecondaryAccountManagerId', $subordinateIds)
                 ->get();
-        }
+        } 
         $productCodes = Product::where('status', '4')->get();
         $search = $request->input('search');
         $sort = $request->get('sort', 'Id');

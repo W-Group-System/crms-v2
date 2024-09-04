@@ -129,10 +129,11 @@
             var id = $(this).data('id'); 
             Swal.fire({
                 title: "Do you want to approve this base price?",
-                // showDenyButton: true,
-                showCancelButton: true,
+                showDenyButton: true,
+                // showCancelButton: true,
                 icon: "info",
                 confirmButtonText: "Approve",
+                // denyButtonText: `Disapprove`
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -140,6 +141,7 @@
                         type: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}', 
+                            status: 'approved' 
                         },
                         success: function(response) {
                             Swal.fire("Base price approved!", "", "success");
@@ -155,30 +157,53 @@
         });
 
         $('.delete-btn').on('click', function() {
-        var id = $(this).data('id');
-        var $row = $(this).closest('tr'); 
+    var id = $(this).data('id');
+    var $row = $(this).closest('tr'); 
 
-        if (confirm('Are you sure you want to delete this base price?')) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
             $.ajax({
                 url: 'base-price/' + id,
                 type: 'DELETE',
                 data: {
-                    _token: '{{ csrf_token() }}'  
+                    _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
                     if (response.success) {
-                        $row.remove();  
-                        alert(response.message);
+                        $row.remove();
+                        Swal.fire(
+                            'Deleted!',
+                            response.message,
+                            'success'
+                        );
                     } else {
-                        alert(response.message);
+                        Swal.fire(
+                            'Error!',
+                            response.message,
+                            'error'
+                        );
                     }
                 },
                 error: function(xhr) {
-                    alert('An error occurred while deleting the base price.');
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while deleting the base price.',
+                        'error'
+                    );
                 }
             });
         }
     });
+});
+
 
     $(document).ready(function() {
     $('#select_all').click(function() {
