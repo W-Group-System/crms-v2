@@ -27,6 +27,7 @@
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
         <link rel="stylesheet" href="{{asset('css/theme.bootstrap_4.min.css')}}">
+        <link rel="icon" href="{{asset('images/wgroup.png')}}" type="image/x-icon">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
@@ -1157,6 +1158,10 @@
         <script>
             function show() {
                 document.getElementById("loader").style.display = "block";
+            }
+            function hide()
+            {
+                document.getElementById("loader").style.display = "none";
             }
             function logout() {
                 event.preventDefault();

@@ -29,7 +29,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
-
+use Illuminate\Support\Str;
 class ProductController extends Controller
 {
     // Current List
@@ -175,41 +175,54 @@ class ProductController extends Controller
     // Store
     public function store(Request $request)
     {
-        $rules = array(
-            'code'              =>  'required',
-            'type'              =>  'required',
-            'application_id'    =>  'required'
-        );
-
-        $customMessages = [
-            'application_id.required'   =>  'The application field is required.',
-            'code.required'             =>  'The product code field is required'            
-        ];
-
-        $error = Validator::make($request->all(), $rules, $customMessages);
-
-        if($error->fails())
+        $series_number = 0;
+        if(preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $request->code, $matches))
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            $series_number = $matches[2];
         }
 
-        $form_data = array(
-            'ddw_number'                    =>  $request->ddw_number,
-            'code'                          =>  $request->code,
-            'reference_no'                  =>  $request->reference_no,
-            'type'                          =>  $request->type,
-            'application_id'                =>  $request->application_id,
-            'application_subcategory_id'    =>  $request->application_subcategory_id,
-            'product_origin'                =>  $request->product_origin,
-            'created_by'                    =>  auth()->user()->id,
-            'status'                        =>  '1'
-        );
+        if ($series_number == 0)
+        {
+            $product = new Product;
+            $product->ddw_number = $request->ddw_number;
+            $product->code = $request->code;
+            $product->reference_no = $request->reference_no;
+            $product->type = $request->type;
+            $product->application_id = $request->application_id;
+            $product->application_subcategory_id = $request->application_subcategory_id;
+            $product->product_origin = $request->product_origin;
+            $product->created_by = $request->created_by;
+            $product->status = $request->status;
+            $product->save();
 
-        Product::create($form_data);
-
-        // return response()->json(['success' => 'Data Added Successfully.']);
-        Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+            return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
+        }
+        else
+        {
+            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->first();
+            
+            if ($products == null)
+            {
+                $product = new Product;
+                $product->ddw_number = $request->ddw_number;
+                $product->code = $request->code;
+                $product->reference_no = $request->reference_no;
+                $product->type = $request->type;
+                $product->application_id = $request->application_id;
+                $product->application_subcategory_id = $request->application_subcategory_id;
+                $product->product_origin = $request->product_origin;
+                $product->created_by = $request->created_by;
+                $product->status = $request->status;
+                $product->save();
+    
+                return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
+            }
+            else
+            {
+                return response()->json(['status' => 0, 'error' => 'The number series is existing.']);
+            }
+        }
+        
     }
 
     // Edit
@@ -225,18 +238,52 @@ class ProductController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $product->ddw_number = $request->ddw_number;
-        $product->code = $request->code;
-        $product->reference_no = $request->reference_no;
-        $product->type = $request->type;
-        $product->application_id = $request->application_id;
-        $product->application_subcategory_id = $request->application_subcategory_id;
-        $product->product_origin = $request->product_origin;
-        $product->save();
+        $series_number = 0;
+        if(preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $request->code, $matches))
+        {
+            $series_number = $matches[2];
+        }
 
-        Alert::success('Successfully Updated.')->persistent('Dismiss');
-        return back();
+        if($series_number == 0)
+        {
+            $product = Product::findOrFail($id);
+            $product->ddw_number = $request->ddw_number;
+            $product->code = $request->code;
+            $product->reference_no = $request->reference_no;
+            $product->type = $request->type;
+            $product->application_id = $request->application_id;
+            $product->application_subcategory_id = $request->application_subcategory_id;
+            $product->product_origin = $request->product_origin;
+            $product->save();
+
+            return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
+        }
+        else
+        {
+            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->first();
+    
+            if ($products == null)
+            {
+                $product = Product::findOrFail($id);
+                $product->ddw_number = $request->ddw_number;
+                $product->code = $request->code;
+                $product->reference_no = $request->reference_no;
+                $product->type = $request->type;
+                $product->application_id = $request->application_id;
+                $product->application_subcategory_id = $request->application_subcategory_id;
+                $product->product_origin = $request->product_origin;
+                $product->save();
+    
+                return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
+            }
+            else
+            {
+                return response()->json(['status' => 0, 'error' => 'The number series is existing.']);
+            }
+        }
+
+        // Alert::success('Successfully Updated.')->persistent('Dismiss');
+        // return back();
     }
 
     // View
