@@ -16,13 +16,13 @@
                         <div class="col-lg-12 mb-3">
                             <div class="form-group">
                                 <label>Is Confidential :</label>
-                                <input type="checkbox" name="is_confidential" checked>
+                                <input type="checkbox" name="is_confidential">
                             </div>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <div class="form-group">
                                 <label>Is For Review :</label>
-                                <input type="checkbox" name="is_for_review" @if(auth()->user()->role->name == "Staff L1")  onclick="return false;" checked @endif>
+                                <input type="checkbox" name="is_for_review">
                             </div>
                         </div>
                         <div class="col-lg-12 mb-3">

@@ -458,7 +458,7 @@
                 <div class="row mb-3">
                     <div class="col-sm-3"><p class="mb-0"><b>Details of Requirement :</b></p></div>
                     <div class="col-sm-3">
-                        <p class="mb-0">{{$crr->DetailsOfRequirement}}</p>
+                        <p class="mb-0">{!! nl2br(e($crr->DetailsOfRequirement)) !!}</p>
                     </div>
                 </div>
             </div>
@@ -555,11 +555,9 @@
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li> --}}
-                @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <li class="nav-item">
                     <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
-                @endif
                 <li class="nav-item">
                     <a class="nav-link p-2" id="approvals-tab" data-toggle="tab" href="#approvals" role="tab" aria-controls="approvals" aria-selected="false">Transaction Remarks</a>
                 </li>
@@ -750,7 +748,6 @@
                         </table>
                     </div>
                 </div> --}}
-                @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <div class="tab-pane fade " id="files" role="tabpanel" aria-labelledby="files-tab">
                     @if(checkIfHaveFiles(auth()->user()->role) == "yes")
                     <div align="right">
@@ -777,6 +774,7 @@
                                 </tr>
                             </thead>
                             @foreach ($crr->crrFiles as $files)
+                                @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $files->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                 <tbody>
                                     <tr>
                                         <td>
@@ -813,18 +811,18 @@
                                         </td>
                                         <td>
                                             <a href="{{url($files->Path)}}" target="_blank">
-                                                File Link
+                                                <i class="ti-file"></i>
                                             </a>
                                         </td>
                                     </tr>
                                 </tbody>
 
                                 @include('customer_requirements.edit_crr_files')
+                                @endif
                             @endforeach
                         </table>
                     </div>
                 </div>
-                @endif
                 <div class="tab-pane fade" id="approvals" role="tabpanel" aria-labelledby="approvals-tab">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover tables" width="100%">

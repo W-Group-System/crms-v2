@@ -196,7 +196,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="name">Details of Requirement</label>
-                                <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" rows="7">{!! nl2br(e($crr->DetailsOfRequirement)) !!}</textarea>
+                                <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" rows="7">{{$crr->DetailsOfRequirement}}</textarea>
                             </div>
                         </div>
                     </div>
