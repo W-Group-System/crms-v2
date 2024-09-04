@@ -62,16 +62,14 @@ class RequestProductEvaluationController extends Controller
             ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
                 $query->where('Status', $request->close);
             })
-
-            ->orWhere('RpeResult', 'LIKE', '%' . $search . '%');
-        })
-        ->when(auth()->user()->role->type == 'LS', function($query) {
-            $query->where('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
-        })
-        ->when(auth()->user()->role->type == 'IS', function($query) {
-            $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%');
-        })
-        ->orderBy('id', 'desc')->paginate($request->entries ?? 10);
+            ->orWhere('RpeResult', 'LIKE', '%' . $search . '%')
+            ->when(auth()->user()->role->type == 'LS', function($query) {
+                $query->where('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
+            })
+            ->when(auth()->user()->role->type == 'IS', function($query) {
+                $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%');
+            })
+            ->orderBy('id', 'desc')->paginate($request->entries ?? 10);
 
         // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
