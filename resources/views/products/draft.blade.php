@@ -169,7 +169,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Product Origin</label>
-                        <input type="text" class="form-control" id="product_origin" name="product_origin" placeholder="Enter Product Origin" required>
+                        <input type="text" class="form-control" id="product_origin" name="product_origin" placeholder="Enter Product Origin">
                     </div>
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
