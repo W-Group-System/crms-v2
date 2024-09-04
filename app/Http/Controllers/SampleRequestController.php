@@ -41,6 +41,7 @@ class SampleRequestController extends Controller
         $categories = IssueCategory::all();
         $departments = ConcernDepartment::all(); 
         $productApplications = ProductApplication::all();   
+        
         // $salesPersons = User::whereHas('salespersons')->get();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
@@ -83,7 +84,7 @@ class SampleRequestController extends Controller
         $userByUser = Auth::user()->user_id; 
 
         $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
-          ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
                     // When filtering by '10', include all relevant progress status records
                     $query->where('Progress', '10')
@@ -121,10 +122,9 @@ class SampleRequestController extends Controller
             ->when(auth()->user()->role->type == 'IS', function($query) {
                 $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
             })
-              ->orderBy($sort, $direction)
-              ->paginate($request->entries ?? 10);
-
-
+                ->orderBy($sort, $direction)
+                ->paginate($request->entries ?? 10);
+        
         $openStatus = request('open');
         $closeStatus = request('close');
         $products = SampleRequestProduct::whereHas('sampleRequest', function ($query) use ($search, $openStatus, $closeStatus) {
