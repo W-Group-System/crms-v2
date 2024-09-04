@@ -80,7 +80,7 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->when($role->type, function($q) use ($role) {
+            ->when(optional($role)->type, function($q) use ($role) {
                 if ($role->type == "IS") {
                     $q->where('Type', '2');
                 } elseif ($role->type == "LS") {
@@ -159,7 +159,7 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->when($role->type, function($q) use ($role) {
+            ->when(optional($role)->type, function($q) use ($role) {
                 if ($role->type == "IS") {
                     $q->where('Type', '2');
                 } elseif ($role->type == "LS") {
@@ -237,7 +237,7 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->when($role->type, function($q) use ($role) {
+            ->when(optional($role)->type, function($q) use ($role) {
                 if ($role->type == "IS") {
                     $q->where('Type', '2');
                 } elseif ($role->type == "LS") {
@@ -279,9 +279,9 @@ class ClientController extends Controller
         
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
-        $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        $withRelation = optional($role)->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
         
-        if ($role->description == 'International Sales - Supervisor' || $role->description == 'Local Sales - Supervisor') {
+        if (optional($role)->description == 'International Sales - Supervisor' || optional($role)->description == 'Local Sales - Supervisor') {
             $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
             $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
@@ -294,6 +294,7 @@ class ClientController extends Controller
         return view('clients.create', array_merge($data, [
             'primarySalesPersons' => $primarySalesPersons,
             'secondarySalesPersons' => $secondarySalesPersons,
+            'role' => $role
         ]));
     }
 

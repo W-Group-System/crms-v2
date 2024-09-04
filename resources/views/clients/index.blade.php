@@ -43,36 +43,36 @@
                 <table class="table table-striped table-bordered table-hover" id="client_table" width="100%">
                     <thead>
                         <tr>
-                            <th>Action</th>
+                            <!-- <th>Action</th> -->
                             <th>
                                 Type
-                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'Type', 'direction' => request('sort') == 'Type' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.index', ['search' => $search, 'sort' => 'Type', 'direction' => request('sort') == 'Type' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Type' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Industry
-                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'ClientIndustryId', 'direction' => request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.index', ['search' => $search, 'sort' => 'ClientIndustryId', 'direction' => request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Buyer Code
-                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'BuyerCode', 'direction' => request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.index', ['search' => $search, 'sort' => 'BuyerCode', 'direction' => request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Name
-                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'Name', 'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.index', ['search' => $search, 'sort' => 'Name', 'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Name' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Account Manager
-                                <a href="{{ route('client.index', ['search' => $search, 'sort' => 'PrimaryAccountManagerId', 'direction' => request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.index', ['search' => $search, 'sort' => 'PrimaryAccountManagerId', 'direction' => request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                         </tr>
                     </thead>
@@ -80,12 +80,12 @@
                         @if($currentClient->count() > 0)
                             @foreach($currentClient as $client)
                             <tr>
-                                <td>
+                                <!-- <td>
                                     <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
                                         <i class="ti-eye"></i>
                                     </button>
                                     <button type="button" name="delete" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button>
-                                </td>
+                                </td> -->
                                 <td>
                                     @if($client->Type == "1")
                                         <label>Local</label>
@@ -238,6 +238,10 @@
 
 <script>
     $(document).ready(function() {
+        $('.table').tablesorter({
+            theme: "bootstrap"
+        })
+
         $(".achivedClient").on('click', function() {
             var clientId = $(this).data('id');
 
