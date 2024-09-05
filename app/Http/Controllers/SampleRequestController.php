@@ -113,7 +113,10 @@ class SampleRequestController extends Controller
             ->where(function ($query) use ($search){
                 $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
                 ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-                ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+                ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%');
+                });
                 // ->orWhereHas('client', function ($q) use ($search) {
                 //     $q->where('name', 'LIKE', '%' . $search . '%');
                 // });
