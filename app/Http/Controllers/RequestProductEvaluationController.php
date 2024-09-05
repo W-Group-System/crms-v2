@@ -69,10 +69,10 @@ class RequestProductEvaluationController extends Controller
             ->when(auth()->user()->role->type == 'IS', function($query) {
                 $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%');
             })
-            ->when(auth()->user()->role->type == 'RND', function($query) {
-                $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%')
-                    ->where('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
-            })
+            // ->when(auth()->user()->role->type == 'RND', function($query) {
+            //     $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%')
+            //         ->orWhere('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
+            // })
             ->where(function($query)use($search){
                 $query->where('RpeNumber', 'LIKE', '%'.$search.'%')
                     ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
