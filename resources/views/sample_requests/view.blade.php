@@ -980,7 +980,7 @@
                         </table>
                     </div>
                 </div> --}}
-                @if(authCheckIfItsRnd(auth()->user()->department_id))
+                {{-- @if(authCheckIfItsRnd(auth()->user()->department_id)) --}}
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
                         @if(checkIfHaveFiles(auth()->user()->role) == "yes")
@@ -1031,7 +1031,7 @@
                         </table>
                     </div>
                 </div>
-                @endif
+                {{-- @endif --}}
                 <div class="tab-pane fade" id="raw_materials" role="tabpanel" aria-labelledby="raw-materials-tab">
                     <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Raw Material"  data-toggle="modal" data-target="#addRawMaterial">
