@@ -496,7 +496,7 @@
                     @elseif($requestEvaluation->secondarySalesPersonById)
                     {{optional($requestEvaluation->secondarySalesPersonById)->full_name}} :
                     @endif
-                </p>
+                </p>r
             </div>
             @foreach ( $rpeTransactionApprovals as $rpeTransactionApproval )
             <div class="group-form">

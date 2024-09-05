@@ -23,6 +23,7 @@
         <link href="{{ asset('css/vendor.bundle.base.css') }}" rel="stylesheet">
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
+        <link rel="icon" href="{{asset('images/wgroup.png')}}" type="image/x-icon">
     </head>
     <style>
         .loader {

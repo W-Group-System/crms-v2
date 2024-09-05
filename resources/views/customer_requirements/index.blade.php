@@ -40,7 +40,7 @@
             <div class="row">
                 <div class="col-lg-6">
                     <span>Show</span>
-                    <form method="GET" class="d-inline-block">
+                    <form method="GET" class="d-inline-block" onsubmit="show()">
                         <select name="entries" class="form-control">
                             <option value="10" @if($entries == 10) selected @endif>10</option>
                             <option value="25" @if($entries == 25) selected @endif>25</option>
@@ -51,7 +51,7 @@
                     <span>Entries</span>
                 </div>
                 <div class="col-lg-6">
-                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <div class="row height d-flex justify-content-end align-items-end">
                             <div class="col-md-8">
                                 <div class="search">
@@ -64,7 +64,7 @@
                     </form>
                 </div>
             </div>
-            <div class="table-responsive" style="overflow: scroll; height: 50vh;">
+            <div class="table-responsive" >
                 <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%">
                     @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == "RND")
                     <thead>

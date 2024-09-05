@@ -23,7 +23,11 @@
                 </div>
             </form>
             <div class="card-title d-flex justify-content-start mt-3">
+                @if (checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
+                @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <button type="button" id="bulk_approve" class="btn btn-sm btn-success mr-2">Bulk Approve</button>
+                @endif 
+                @endif
                 <button type="button" id="bulk_delete" class="btn btn-sm btn-danger">Bulk Delete</button>
             </div>
             <table class="table table-striped table-bordered table-hover" id="base_price_table" width="100%">
@@ -46,9 +50,13 @@
                                 data-target="#editBase{{ $newBase->Id }}" data-toggle="modal" title='Edit New Base Price'>
                                 <i class="ti-pencil"></i>
                             </button>  
+                            @if (checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
+                            @if(authCheckIfItsRnd(auth()->user()->department_id))
                             <button type="button" class="btn btn-sm btn-success approve-btn"  data-id="{{ $newBase->Id }}">
                                 <i class="ti-thumb-up"></i>
                             </button> 
+                            @endif 
+                            @endif
                             <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $newBase->Id }}" title='Delete Base Price'>
                                 <i class="ti-trash"></i>
                             </button>
