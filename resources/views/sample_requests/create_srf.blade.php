@@ -560,9 +560,6 @@ $(document).ready(function() {
                     <input type="file" class="form-control" name="srf_file[]" multiple>
                 </div>
                 <div class="form-group">
-                    <input type="hidden" class="form-control" name="srf_id" value="{{ $srf->Id }}">
-                </div>
-                <div class="form-group">
                     <button type="button" class="btn btn-sm btn-primary addSrfFile"><i class="ti-plus"></i></button>
                     <button type="button" class="btn btn-sm btn-danger deleteRowBtn"><i class="ti-trash"></i></button>
                 </div>
