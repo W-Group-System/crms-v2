@@ -8,6 +8,7 @@ use App\SampleRequest;
 use App\Client;
 use App\ConcernDepartment;
 use App\Contact;
+use App\Exports\SampleRequestExport;
 use App\IssueCategory;
 use App\Product;
 use App\ProductApplication;
@@ -26,6 +27,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
 use PDF;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -199,21 +201,34 @@ class SampleRequestController extends Controller
         $rndPersonnel = User::whereHas('rndUsers')->get();
         $srfProgress = SrfProgress::all();
         $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)->where('userType', 'RND')->get();
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
-        ->get();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
-        if (($role->description == 'International Sales - Supervisor') || ($role->description == 'Local Sales - Supervisor')) {
-            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+        $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+
+        if ($role->name == 'Staff L2' ) {
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApproverById->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
             $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
+
+        if ($loggedInUser->role->name == "Staff L1") {
+            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
+                ->orwhere('PrimaryAccountManagerId', $loggedInUser->id)
+                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
+                ->get();
+        } elseif ($loggedInUser->role->name == "Staff L2" || $loggedInUser->role->name == "Department Admin") {
+            $subordinateIds = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            
+            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
+                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
+                ->orWhereIn('PrimaryAccountManagerId', $subordinateIds)
+                ->orWhereIn('SecondaryAccountManagerId', $subordinateIds)
+                ->get();
+        } 
         $productApplications = ProductApplication::all(); 
         $productCodes = Product::where('status', '4')->get();
         $users = User::wherehas('localsalespersons')->get();
@@ -880,6 +895,10 @@ class SampleRequestController extends Controller
 
     return redirect()->back()->with('success', 'Dispositions updated successfully.');
 }
+public function export(Request $request)
+    {
+        return Excel::download(new SampleRequestExport($request->open, $request->close), 'Sample Request.xlsx');
+    }
 
 
 }    
