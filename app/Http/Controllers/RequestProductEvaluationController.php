@@ -62,14 +62,31 @@ class RequestProductEvaluationController extends Controller
             ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
                 $query->where('Status', $request->close);
             })
-            ->orWhere('RpeResult', 'LIKE', '%' . $search . '%')
+            // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%')
             ->when(auth()->user()->role->type == 'LS', function($query) {
                 $query->where('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
             })
             ->when(auth()->user()->role->type == 'IS', function($query) {
                 $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%');
             })
-            ->orderBy('id', 'desc')->paginate($request->entries ?? 10);
+            ->when(auth()->user()->role->type == 'RND', function($query) {
+                $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%')
+                    ->where('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
+            })
+            ->where(function($query)use($search){
+                $query->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
+                    ->orWhere('DueDate', 'LIKE','%'.$search.'%')
+                    ->orWhereHas('client', function($query)use($search) {
+                        $query->where('Name', 'LIKE','%'.$search.'%');
+                    })
+                    ->orWhereHas('product_application', function($query)use($search) {
+                        $query->where('Name', 'LIKE','%'.$search.'%');
+                    })
+                    ->orWhere('RpeResult', 'LIKE','%'.$search.'%');
+            })
+            ->orderBy('id', 'desc')
+            ->paginate($request->entries ?? 10);
 
         // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
