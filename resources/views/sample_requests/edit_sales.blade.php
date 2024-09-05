@@ -562,21 +562,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    if (dispatchInput) {
-        if (storedDispatched) {
-            dispatchInput.setAttribute('min', storedDispatched);
-        } else {
-            dispatchInput.setAttribute('min', today);
-        }
-    }
+    // if (dispatchInput) {
+    //     if (storedDispatched) {
+    //         dispatchInput.setAttribute('min', storedDispatched);
+    //     } else {
+    //         dispatchInput.setAttribute('min', today);
+    //     }
+    // }
     
-    if (sampleReceivedInput) {
-        if (storedSampleReceived) {
-            sampleReceivedInput.setAttribute('min', storedSampleReceived);
-        } else {
-            sampleReceivedInput.setAttribute('min', today);
-        }
-    }
+    // if (sampleReceivedInput) {
+    //     if (storedSampleReceived) {
+    //         sampleReceivedInput.setAttribute('min', storedSampleReceived);
+    //     } else {
+    //         sampleReceivedInput.setAttribute('min', today);
+    //     }
+    // }
 });
 
 </script>
