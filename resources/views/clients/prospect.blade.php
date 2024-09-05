@@ -7,11 +7,11 @@
             </h4>
             <div class="row height d-flex ">
                 <div class="col-md-6 mt-2 mb-2">
-                    <a href="#" id="copy_prospect_btn" class="btn btn-md btn-info mb-1">Copy</a>
-                    <a href="{{url('export_prospect_client')}}" class="btn btn-md btn-success mb-1">Excel</a>
+                    <a href="#" id="copy_prospect_btn" class="btn btn-md btn-outline-info mb-1">Copy</a>
+                    <a href="{{url('export_prospect_client')}}" class="btn btn-md btn-outline-success mb-1">Excel</a>
                 </div>
                 <div class="col-md-6 mt-2 mb-2 text-right">
-                    <a href="{{ url('client/create') }}"><button class="btn btn-md btn-primary"><i class="ti ti-plus"></i>&nbsp;New</button></a>
+                    <a href="{{ url('client/create') }}" id="newClient"><button class="btn btn-md btn-outline-primary"><i class="ti ti-plus"></i>&nbsp;New</button></a>
                 </div>
             </div>
             <div class="row">
@@ -60,33 +60,33 @@
                             <th>Action</th>
                             <th>
                                 Type
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Type', 'direction' => request('sort') == 'Type' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Type', 'direction' => request('sort') == 'Type' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Type' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Industry
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'ClientIndustryId', 'direction' => request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'ClientIndustryId', 'direction' => request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Buyer Code
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'BuyerCode', 'direction' => request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'BuyerCode', 'direction' => request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Name
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Name', 'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Name', 'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Name' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Account Manager
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'PrimaryAccountManagerId', 'direction' => request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'PrimaryAccountManagerId', 'direction' => request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                         </tr>
                     </thead>
@@ -95,11 +95,11 @@
                             @foreach($prospectClient as $client)
                                 <tr>
                                     <td>
-                                        <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
+                                        <!-- <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
                                             <i class="ti-eye"></i>
-                                        </button>
+                                        </button> -->
                                         <a href="{{ url('/edit_client/' . $client->id) }}" class="btn btn-sm btn-warning"><i class="ti ti-pencil"></i></a>
-                                        <button type="button" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button>
+                                        <!-- <button type="button" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button> -->
                                     </td>
                                     <td>{{ $client->Type == "1" ? 'Local' : 'International' }}</td>
                                     <td>{{ $client->industry->Name ?? 'N/A' }}</td>
@@ -142,6 +142,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
+        $('.table').tablesorter({
+            theme: "bootstrap"
+        })
+
         $(".achivedClient").on('click', function() {
             var clientId = $(this).data('id');
 
@@ -228,6 +232,13 @@
                 }
             });
         });
+
+        $("#newClient").on('click', function() {
+            var PrimaryAccountManager = $('[name="PrimaryAccountManagerId"]').val();
+
+            refreshSecondaryApprovers(PrimaryAccountManager)
+        })
+        
 
         // $('.deleteClient').on('click', function(){
         //     var clientId = $(this).data('id');

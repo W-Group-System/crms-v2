@@ -21,12 +21,26 @@
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label>Primary Account Manager</label>
-                            <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Account Manager" >
+                            <!-- <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Account Manager" >
                                 <option value="" disabled selected>Select Account Manager</option>
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}">{{ $user->full_name }}</option>
                                 @endforeach
-                            </select>
+                            </select> -->
+                            @if(auth()->user()->role->name == "Staff L1")
+                                <input type="hidden" name="PrimaryAccountManagerId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                            @elseif(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
+                                @php
+                                    $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                @endphp
+                                <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Sales Person">
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($subordinates as $subordinate)
+                                        <option value="{{ $subordinate->id }}" >{{ $subordinate->full_name }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -296,10 +310,10 @@
                 dataType: 'json',
                 success: function(response) {
                     // Populate the select box with options
-                    $regionSelect.append('<option value="" disabled>Select Region</option>');
+                    $regionSelect.append('<option value="" >Select Region</option>');
                     $.each(response, function(index, region) {
                         $regionSelect.append('<option value="' + region.id + '"' + 
-                            (selectedRegionId && selectedRegionId == region.id ? ' selected' : '') +
+                            (selectedRegionId && selectedRegionId == region.id ? ' ' : '') +
                             '>' + region.name + '</option>');
                     });
 
@@ -412,6 +426,7 @@
                 }
             });
         });
+        
 
     });
 
