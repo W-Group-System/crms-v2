@@ -155,7 +155,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Product Code:</label>
-                                <select class="form-control js-example-basic-single" name="ProductCode[]" style="position: relative !important" title="Select Product Code" required>
+                                <input type="text" class="form-control" name="ProductCode[]" value="{{ old('ProductCode.'.$index, $product->ProductCode) }}">
+                                {{-- <select class="form-control js-example-basic-single" name="ProductCode[]" style="position: relative !important" title="Select Product Code" required>
                                     <option value="" disabled>Select Product Code</option>
                                     @foreach ($productCodes as $productCode)
                                         <option value="{{ $productCode->code }}" 
@@ -163,7 +164,7 @@
                                             {{ $productCode->code }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>                            
                             <div class="form-group">
                                 <label for="ProductDescription">Product Description:</label>
@@ -405,12 +406,7 @@ $(document).ready(function() {
                 </div>
             <div class="form-group">
                 <label>Product Code:</label>
-                <select class="form-control js-example-basic-single ProductCode" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
-                    <option value="" disabled selected>Product Code</option>
-                    @foreach ($productCodes as $productCode)
-                        <option value="{{ $productCode->code }}" {{ in_array($productCode->code, old('ProductCode', [])) ? 'selected' : '' }}>{{ $productCode->code }}</option>
-                    @endforeach
-                </select>
+                <input type="text" class="form-control" name="ProductCode[]" >
             </div>
             @foreach(old('ProductDescription', ['']) as $index => $description)
                 <div class="form-group">
