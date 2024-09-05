@@ -164,7 +164,7 @@ class RequestProductEvaluationController extends Controller
             if ($user->department_id == 38)
             {
                 $type = "LS";
-                $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-LS%')->latest()->first();
+                $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-LS%')->orderBy('id', 'desc')->first();
                 $count = substr($rpeList->RpeNumber, 10);
                 $totalCount = $count + 1;
                 
