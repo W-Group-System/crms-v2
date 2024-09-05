@@ -203,7 +203,12 @@ class SampleRequestController extends Controller
         $SrfMaterials = SrfRawMaterial::where('SampleRequestId', $scrfNumber)->get();
         $rndPersonnel = User::whereHas('rndUsers')->get();
         $srfProgress = SrfProgress::all();
-        $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)->where('userType', 'RND')->get();
+        $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)
+        ->where(function ($query) {
+            $query->where('userType', 'RND')
+                  ->orWhereNull('userType')
+                  ->orWhere('userType', '');
+        })->get();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
