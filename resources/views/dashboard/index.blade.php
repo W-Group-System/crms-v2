@@ -240,8 +240,11 @@
                 </div>
             </div>
         </div>
-        @if(optional($role)->type == 'IS' || optional($role)->type == 'LS')
         <div class="col-md-4 grid-margin stretch-card">
+            @if(
+                (optional($role)->type === 'IS' || optional($role)->type === 'LS') &&
+                ($role->name === 'Department Admin' || $role->name === 'Staff L2')
+            )
             <div class="card">
                 <div class="card-body">
                     <p class="card-title">For Approval</p>
@@ -283,8 +286,8 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
-        @endif
     </div>
 
     <!-- <div class="row">

@@ -5,15 +5,15 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
                 <div align="right">
-                    <a href="{{ url()->previous() ?: url('/client') }}" class="btn btn-md btn-secondary">
+                    <a href="{{ url()->previous() ?: url('/client') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
-                    <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-primary"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                    <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-primary"><i class="ti ti-pencil"></i>&nbsp;Update</a>
                     <!-- <button type="button" class="btn btn-primary" title="Update Client" href="{{ url('/edit_client/' . $data->id) }}">
                         <i class="ti ti-pencil"></i>&nbsp;Update
                     </button> -->
                     @if($data->Status != '1')
-                    <button type="button" class="prospectClient btn btn-warning" title="Prospect File" data-id="{{ $data->id }}">
+                    <button type="button" class="prospectClient btn btn-outline-warning" title="Prospect File" data-id="{{ $data->id }}">
                         <i class="ti ti-control-record"></i>&nbsp;Prospect
                     </button>
                     @endif
@@ -170,7 +170,7 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
                     <div class="col-md-12" align="right">
-                        <button class="btn btn-primary mb-2" type="button" data-toggle="modal" data-target="#contactsModal">Add Contacts</button>
+                        <button class="btn btn-outline-primary mb-2" type="button" data-toggle="modal" data-target="#contactsModal">New</button>
                     </div>
                     @include('clients.add_contacts')
                     <div class="table-responsive">
@@ -228,7 +228,7 @@
                 </div>
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="col-md-12" align="right">
-                        <button class="btn btn-primary mb-2" type="button" data-toggle="modal" data-target="#filesModal">Add Files</button>
+                        <button class="btn btn-outline-primary mb-2" type="button" data-toggle="modal" data-target="#filesModal">New</button>
                     </div>
                     @include('clients.add_files')
                     <div class="table-responsive">
