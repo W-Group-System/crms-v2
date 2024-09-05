@@ -189,6 +189,7 @@ class RequestProductEvaluationController extends Controller
             'CurrencyId' => $request->input('CurrencyId'),
             'SampleName' => $request->input('SampleName'),
             'Supplier' => $request->input('Supplier'),
+            'RpeReferenceNumber' => $request->input('RpeReferenceNumber'),
             'ObjectiveForRpeProject' => $request->input('ObjectiveForRpeProject'),
             'Status' =>'10',
             'Progress' => '10',
@@ -488,6 +489,7 @@ class RequestProductEvaluationController extends Controller
     {
         $rpeList = RequestProductEvaluation::find($id);    
         $rpeList->Status = 10; 
+        $rpeList->Progress = 10; 
         $rpeList->save();
         
         Alert::success('Successfully Open')->persistent('Dismiss');
