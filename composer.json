@@ -18,6 +18,7 @@
         "league/csv": "^9.8",
         "maatwebsite/excel": "^3.1",
         "owen-it/laravel-auditing": "^8.0",
+        "rap2hpoutre/laravel-log-viewer": "^2.3",
         "realrashid/sweet-alert": "^7.2",
         "yajra/laravel-datatables-oracle": "^8.13"
     },

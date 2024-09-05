@@ -17,7 +17,7 @@ use App\Http\Controllers\PriceMonitoringController;
 |
 */
 Auth::routes();
-
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/', 'DashboardController@index');
     Route::get('/dashboard','DashboardController@index');
