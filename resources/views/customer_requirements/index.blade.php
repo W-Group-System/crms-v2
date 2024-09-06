@@ -147,7 +147,7 @@
                                 @php
                                     $user = auth()->user();
                                 @endphp
-                                <button type="button" class="btn btn-sm btn-warning editBtn" data-secondarysales="{{$customerRequirement->SecondarySalesPersonId}}"
+                                <button type="button" class="btn btn-sm btn-warning editBtn" data-primarysales="{{$customerRequirement->PrimarySalesPersonId}}" data-secondarysales="{{$customerRequirement->SecondarySalesPersonId}}"
                                     data-target="#editCrr-{{ $customerRequirement->id }}" data-toggle="modal" title='Edit' @if($user->id != $customerRequirement->PrimarySalesPersonId && $user->user_id != $customerRequirement->PrimarySalesPersonId) disabled @endif>
                                     <i class="ti-pencil"></i>
                                 </button>  
@@ -314,7 +314,7 @@
                                 @php
                                     $user = auth()->user();
                                 @endphp
-                                <button type="button" class="btn btn-sm btn-warning editBtn" data-secondarysales="{{$customerRequirement->SecondarySalesPersonId}}"
+                                <button type="button" class="btn btn-sm btn-warning editBtn" data-primarysales="{{$customerRequirement->PrimarySalesPersonId}}" data-secondarysales="{{$customerRequirement->SecondarySalesPersonId}}"
                                     data-target="#editCrr-{{ $customerRequirement->id }}" data-toggle="modal" title='Edit' @if($user->id != $customerRequirement->PrimarySalesPersonId && $user->user_id != $customerRequirement->PrimarySalesPersonId) disabled @endif>
                                     <i class="ti-pencil"></i>
                                 </button>  
@@ -492,17 +492,17 @@
             
         // })
 
-        $("#addCustomerRequirement").on('click', function() {
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
-
-            refreshSecondaryApprovers(primarySales)
-        })
+        // $("#addCustomerRequirement").on('click', function() {
+        //     var primarySales = $('[name="PrimarySalesPersonId"]').val();
+        //     console.log(primarySales);
+            
+        //     refreshSecondaryApprovers(primarySales)
+        // })
 
         $('.editBtn').on('click', function() {
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
-            
+            var primarySales = $(this).data('primarysales')
             var secondarySales = $(this).data('secondarysales');
-
+            
             $.ajax({
                 type: "POST",
                 url: "{{url('refresh_user_approvers')}}",
@@ -514,9 +514,11 @@
                 },
                 success: function(data)
                 {
+                    console.log(secondarySales);
+                    
                     setTimeout(() => {
                         $('[name="SecondarySalesPersonId"]').html(data) 
-                        $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
                     }, 500);
                 }
             })

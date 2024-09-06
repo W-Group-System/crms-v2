@@ -171,30 +171,23 @@ class CustomerRequirementController extends Controller
         // $crrNo = "CRR-{$type}-{$year}-{$newIncrement}";
 
         $user = Auth::user(); 
-        if (($user->department_id == 5) || ($user->department_id == 38))
-        {
-            $type = "";
-            $year = date('y');
-            if ($user->department_id == 5)
-            {
-                $type = "IS";
-                $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-IS%')->orderBy('id', 'desc')->first();
-                $count = substr($crrList->CrrNumber, 10);
-                $totalCount = $count + 1;
-                
-                $crrNo = "CRR-".$type.'-'.$year.'-'.$totalCount;
-            }
+        $type = "";
+        $year = date('y');
+        $crrList = CustomerRequirement::orderBy('id', 'desc')->first();
+        $count = substr($crrList->CrrNumber, 10);
+        $totalCount = $count + 1;
 
-            if ($user->department_id == 38)
-            {
-                $type = "LS";
-                $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-LS%')->orderBy('id', 'desc')->first();
-                $count = substr($crrList->CrrNumber, 10);
-                $totalCount = $count + 1;
-                
-                $crrNo = "CRR-".$type.'-'.$year.'-'.$totalCount;
-            }
+        if (auth()->user()->role->type == "IS")
+        {
+            $type = "IS";
         }
+
+        if (auth()->user()->role->type == "LS")
+        {
+            $type = "LS";
+        }
+
+        $crrNo = "CRR-".$type.'-'.$year.'-'.$totalCount;
 
         $customerRequirementData = CustomerRequirement::create([
             'CrrNumber' => $crrNo,
@@ -848,8 +841,8 @@ class CustomerRequirementController extends Controller
             elseif($user->salesApproverByUserId)
             {
                 $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
-                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
-
+                $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
+                
                 return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
             }
         }

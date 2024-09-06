@@ -1276,8 +1276,14 @@
         $("#update2Crr").on('click', function() {
             var secondarySales = $(this).data('secondarysales');
             var primarySales = $("[name='PrimarySalesPersonId']").val()
-
+            
             refreshSecondaryApprovers(secondarySales, primarySales)
+        })
+        
+        $('[name="PrimarySalesPersonId"]').on('change', function() {
+            var primarySales = $(this).val();
+
+            refreshSecondaryApproversv2(primarySales)
         })
 
         function refreshSecondaryApprovers(secondarySales, primarySales)
@@ -1295,7 +1301,27 @@
                 {
                     setTimeout(() => {
                         $('[name="SecondarySalesPersonId"]').html(data)
-                        $('[name="SecondarySalesPersonId"]').val(secondarySales)
+                        // $('[name="SecondarySalesPersonId"]').val(secondarySales)
+                    }, 500);
+                }
+            })
+        }
+
+        function refreshSecondaryApproversv2(primarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
                     }, 500);
                 }
             })
