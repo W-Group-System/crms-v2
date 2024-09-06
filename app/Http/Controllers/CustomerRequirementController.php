@@ -107,7 +107,7 @@ class CustomerRequirementController extends Controller
                     ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
                 }
             })
-            ->when($role->type, function($q) use ($role) {
+            ->when(optional($role)->type, function($q) use ($role) {
                 if ($role->type == "IS") {
                     $q->where('CrrNumber', 'LIKE', "%CRR-IS%");
                 } elseif ($role->type == "LS") {

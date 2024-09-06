@@ -286,6 +286,47 @@
                     </div>
                 </div>
             </div>
+            @else 
+            <!-- <div class="card">
+                <div class="card-body">
+                    <p class="card-title">For Approval</p>
+                    <div class="d-flex justify-content-between">
+                        <div class="mb-4 mt-2">
+                            <h3 class="text-primary fs-30 font-weight-medium">
+                                {{ $totalApproval ?? '0' }}
+                                <i class="ti ti-check-box"></i>
+                            </h3>
+                        </div>
+                        <div class="mt-3">
+                            <a href="#" class="text-info">View all</a>
+                        </div>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>Initial Review</p>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
+                                {{ $crrSalesApproval ?? '0' }}
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>Final Review</p>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
+                                {{ $rpeSalesApproval ?? '0' }}
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>Due Today</p>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
+                                {{ $srfSalesApproval ?? '0' }}
+                            </a>
+                        </h5>
+                    </div>
+                </div>
+            </div> -->
             @endif
         </div>
     </div>
