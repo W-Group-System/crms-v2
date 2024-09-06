@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="POST" action="{{url('update_all_files')}}" enctype="multipart/form-data">
+            <form method="POST" action="{{url('update_all_files')}}" enctype="multipart/form-data" onsubmit="show()">
                 {{csrf_field()}}
                 <input type="hidden" name="product_id" value="{{$data->id}}">
                 <div class="modal-body" style="padding: 20px">

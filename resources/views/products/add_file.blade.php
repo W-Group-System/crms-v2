@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="POST" action="{{url('add_product_files')}}" enctype="multipart/form-data">
+            <form method="POST" action="{{url('add_product_files')}}" enctype="multipart/form-data" onsubmit="show()">
                 {{csrf_field()}}
                 
                 <input type="hidden" name="product_id" value="{{$data->id}}">
