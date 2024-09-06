@@ -75,6 +75,9 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('update_product/{id}', 'ProductController@update')->name('update_product');
     Route::post('delete_product', 'ProductController@delete')->name('delete_product');
     Route::get('products', 'ProductController@salesProduct')->name('sales.products');
+    Route::get('print_mrdc_pds/{id}', 'ProductController@printMrdcPds');
+    Route::get('print_whi_pds/{id}', 'ProductController@printWhiPds');
+    Route::get('print_pbi_pds/{id}', 'ProductController@printPbiPds');
 
     # Export Products
     Route::get('/export_current_products', 'ProductController@exportCurrentProducts');

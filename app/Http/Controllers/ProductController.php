@@ -25,7 +25,9 @@ use App\ProductRawMaterials;
 use App\ProductSpecification;
 use App\ProductSubcategories;
 use App\RawMaterial;
+use Dompdf\Dompdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -980,5 +982,49 @@ class ProductController extends Controller
                 'entries' => $request->entries
             )
         ); 
+    }
+
+    public function printMrdcPds($id)
+    {
+        $pds = ProductDataSheet::with('productPhysicoChemicalAnalyses', 'productMicrobiologicalAnalysis', 'productHeavyMetal', 'productNutritionalInformation', 'productAllergens', 'productPotentialBenefit')->findOrFail($id);
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('products.print_mrdc_pds',
+            array(
+                'pds' => $pds
+            )
+        );
+        
+        return $pdf->stream();
+    }
+
+    public function printWhiPds($id)
+    {
+        $pds = ProductDataSheet::with('productPhysicoChemicalAnalyses', 'productMicrobiologicalAnalysis', 'productHeavyMetal', 'productNutritionalInformation', 'productAllergens', 'productPotentialBenefit')->findOrFail($id);
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('products.print_whi_pds',
+            array(
+                'pds' => $pds
+            )
+        )
+        ->setPaper('a4', 'portrait');
+        
+        return $pdf->stream();
+    }
+
+    public function printPbiPds($id)
+    {
+        $pds = ProductDataSheet::with('productPhysicoChemicalAnalyses', 'productMicrobiologicalAnalysis', 'productHeavyMetal', 'productNutritionalInformation', 'productAllergens', 'productPotentialBenefit')->findOrFail($id);
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('products.print_pbi_pds',
+            array(
+                'pds' => $pds
+            )
+        )
+        ->setPaper('a4', 'portrait');
+        
+        return $pdf->stream();
     }
 }
