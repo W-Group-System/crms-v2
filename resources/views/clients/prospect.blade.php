@@ -57,7 +57,7 @@
                 <table class="table table-striped table-bordered table-hover" id="prospect_table">
                     <thead>
                         <tr>
-                            @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin')
+                            @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin' || auth()->user()->role->type == 'LS' && auth()->user()->role->name == 'Department Admin')
                             <th>Action</th>
                             @endif
                             <th>
@@ -96,7 +96,7 @@
                         @if($prospectClient->count() > 0)
                             @foreach($prospectClient as $client)
                                 <tr>
-                                    @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin')
+                                    @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin' || auth()->user()->role->type == 'LS' && auth()->user()->role->name == 'Department Admin')
                                         <td align="center">
                                             <!-- <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
                                                 <i class="ti-eye"></i>
