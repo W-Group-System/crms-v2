@@ -5,25 +5,27 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
                 <div align="right">
-                    <a href="{{ url()->previous() ?: url('/client') }}" class="btn btn-md btn-outline-secondary">
+                    <a href="{{ session('last_client_page') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
-                    <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-primary"><i class="ti ti-pencil"></i>&nbsp;Update</a>
-                    <!-- <button type="button" class="btn btn-primary" title="Update Client" href="{{ url('/edit_client/' . $data->id) }}">
-                        <i class="ti ti-pencil"></i>&nbsp;Update
-                    </button> -->
+                    @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin')
+                        <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-primary"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                        <!-- <button type="button" class="btn btn-primary" title="Update Client" href="{{ url('/edit_client/' . $data->id) }}">
+                            <i class="ti ti-pencil"></i>&nbsp;Update
+                        </button> -->
+                    @endif
                     @if($data->Status != '1')
                     <button type="button" class="prospectClient btn btn-outline-warning" title="Prospect File" data-id="{{ $data->id }}">
                         <i class="ti ti-control-record"></i>&nbsp;Prospect
                     </button>
                     @endif
                     @if($data->Status != '2' && $data->Status != '5')
-                    <button type="button" class="activateClient btn btn-success" title="Activate Client" data-id="{{ $data->id }}">
+                    <button type="button" class="activateClient btn btn-outline-success" title="Activate Client" data-id="{{ $data->id }}">
                         <i class="ti ti-check-box"></i>&nbsp;Activate
                     </button>
                     @endif
                     @if($data->Status != '5')
-                    <button type="button" class="archivedClient btn btn-danger" title="Archived Client" data-id="{{ $data->id }}">
+                    <button type="button" class="archivedClient btn btn-outline-danger" title="Archived Client" data-id="{{ $data->id }}">
                         <i class="ti ti-archive"></i>&nbsp;Archive
                     </button>
                     @endif
@@ -197,10 +199,10 @@
                                 @foreach ($data->contacts as $contact)
                                     <tr>
                                         <td>
-                                            <button type="button" class="btn btn-warning btn-sm" title="Edit Client" data-toggle="modal" data-target="#edit_contact-{{ $contact->id }}">
+                                            <button type="button" class="btn btn-outline-warning btn-sm" title="Edit Client" data-toggle="modal" data-target="#edit_contact-{{ $contact->id }}">
                                                 <i class="ti-pencil"></i>
                                             </button>
-                                            <button type="button" class="btn btn-danger btn-sm deleteContact" title="Delete Client" data-id="{{ $contact->id }}">
+                                            <button type="button" class="btn btn-outline-danger btn-sm deleteContact" title="Delete Client" data-id="{{ $contact->id }}">
                                                 <i class="ti-trash"></i>
                                             </button>
                                         </td>
@@ -475,7 +477,7 @@
                 </div>
             </div>
             <div align="right" class="mt-3">
-                <a href="{{ url('/client') }}" class="btn btn-secondary">Close</a>
+                <a href="{{ session('last_client_page') }}" class="btn btn-secondary">Close</a>
             </div>
         </div>
     </div>

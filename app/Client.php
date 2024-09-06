@@ -12,7 +12,7 @@ class Client extends Model
         'BuyerCode', 'PrimaryAccountManagerId', 'SapCode', 'SecondaryAccountManagerId',
         'Name', 'TradeName', 'TaxIdentificationNumber', 'TelephoneNumber', 'PaymentTermId',
         'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'ClientCountryId',
-        'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId', 'Status'
+        'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId', 'Status', 'CompanyId', 'ContactName', 'Designation', 'PrimaryTelephone', 'SecondaryTelephone', 'PrimaryMobile', 'SecondaryMobile', 'EmailAddress', 'Skype', 'Viber', 'Facebook', 'WhatsApp', 'LinkedIn', 'Birthday'
     ];
 
     public function industry() 

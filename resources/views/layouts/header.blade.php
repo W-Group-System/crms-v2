@@ -95,7 +95,7 @@
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                                 <a href="{{ route('my_account') }}" class="dropdown-item">
                                     <i class="ti ti-user text-primary"></i>
-                                    My Acount
+                                    My Account
                                 </a>
                                 <a href="{{ route('change_password') }}" class="dropdown-item">
                                     <i class="ti ti-unlock text-primary"></i>

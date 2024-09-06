@@ -57,7 +57,9 @@
                 <table class="table table-striped table-bordered table-hover" id="prospect_table">
                     <thead>
                         <tr>
+                            @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin')
                             <th>Action</th>
+                            @endif
                             <th>
                                 Type
                                 <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Type', 'direction' => request('sort') == 'Type' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
@@ -94,13 +96,15 @@
                         @if($prospectClient->count() > 0)
                             @foreach($prospectClient as $client)
                                 <tr>
-                                    <td>
-                                        <!-- <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
-                                            <i class="ti-eye"></i>
-                                        </button> -->
-                                        <a href="{{ url('/edit_client/' . $client->id) }}" class="btn btn-sm btn-warning"><i class="ti ti-pencil"></i></a>
-                                        <!-- <button type="button" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button> -->
-                                    </td>
+                                    @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin')
+                                        <td align="center">
+                                            <!-- <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
+                                                <i class="ti-eye"></i>
+                                            </button> -->
+                                            <a href="{{ url('/edit_client/' . $client->id) }}" class="btn btn-sm btn-outline-warning"><i class="ti ti-pencil"></i></a>
+                                            <!-- <button type="button" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button> -->
+                                        </td>
+                                    @endif
                                     <td>{{ $client->Type == "1" ? 'Local' : 'International' }}</td>
                                     <td>{{ $client->industry->Name ?? 'N/A' }}</td>
                                     <td>{{ $client->BuyerCode ?? 'N/A' }}</td>
@@ -232,14 +236,7 @@
                 }
             });
         });
-
-        $("#newClient").on('click', function() {
-            var PrimaryAccountManager = $('[name="PrimaryAccountManagerId"]').val();
-
-            refreshSecondaryApprovers(PrimaryAccountManager)
-        })
         
-
         // $('.deleteClient').on('click', function(){
         //     var clientId = $(this).data('id');
         //     if(confirm('Are you sure you want to archive this client?')){

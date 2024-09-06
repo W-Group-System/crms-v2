@@ -4,8 +4,8 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
-            Add New Client
-            <a href="{{ url('/client_prospect') }}" class="btn btn-md btn-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+            New Client
+            <a href="{{ url('/client_prospect') }}" class="btn btn-md btn-outline-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
             </h4>
             <form id="form_client" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -53,9 +53,14 @@
                         <div class="form-group">
                             <label>Secondary Account Manager</label>
                             <select class="form-control js-example-basic-single" name="SecondaryAccountManagerId" id="SecondaryAccountManagerId" style="position: relative !important" title="Select Account Manager">
-                                <option value="" disabled selected>Select Account Manager</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->full_name }}</option>
+                                <option value="">Select Account Manager</option>
+                                <!-- @foreach($secondarySalesPersons as $user)
+                                    <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
+                                @endforeach -->
+                                @foreach($secondarySalesPersons as $user)
+                                    <option value="{{ $user->user_id }}" {{ $user->salesApproverById ? 'selected' : '' }}>
+                                        {{ $user->full_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -146,7 +151,7 @@
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label>Email Address</label>
-                            <input type="email" class="form-control" id="Email" name="Email" placeholder="Enter Email Address">
+                            <input type="text" class="form-control" id="Email" name="Email" placeholder="Enter Email Address">
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -213,26 +218,94 @@
                             <textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2"></textarea>
                         </div>
                     </div>
-                    <!-- <div class="col-lg-12">
-                        <table class="table table-striped mb-5" id="table_address">
-                            <thead>
-                                <tr>
-                                    <th width="10%"><a style="padding: 10px 20px" href="javascript:;" class="btn btn-primary addRow">+</th>
-                                    <th style="vertical-align: middle" width="40%">Address Type</th>
-                                    <th style="vertical-align: middle" width="40%">Address</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><a style="padding: 10px 20px" href="javascript:;" class="btn btn-danger deleteRow">-</a></td>
-                                    <td><input type="text" name="AddressType[]" id="AddressType" class="form-control adjust" placeholder="Enter Address Type"></td>
-                                    <td><input type="text" name="Address[]" id="Address" class="form-control adjust" placeholder="Enter Address"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div> -->
+                    <h4 class="col-lg-6 card-title d-flex justify-content-between align-items-center">Contact Information</h4>           
+                    <div class="container" id="ContactInfo">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input type="text" class="form-control" id="ContactName" name="ContactName[]" placeholder="Enter Contact Name">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Designation</label>
+                                    <input type="text" class="form-control" id="Designation" name="Designation[]" placeholder="Enter Designation">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Birthday</label>
+                                    <input type="date" class="form-control" id="Birthday" name="Birthday[]">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Telephone</label>
+                                    <input type="text" class="form-control" id="PrimaryTelephone" name="PrimaryTelephone[]" placeholder="Enter Primary Telephone">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Secondary Telephone</label>
+                                    <input type="text" class="form-control" id="SecondaryTelephone" name="SecondaryTelephone[]" placeholder="Enter Secondary Telephone">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Mobile</label>
+                                    <input type="text" class="form-control" id="PrimaryMobile" name="PrimaryMobile[]" placeholder="Enter Primary Mobile">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Secondary Mobile</label>
+                                    <input type="text" class="form-control" id="SecondaryMobile" name="SecondaryMobile[]" placeholder="Enter Secondary Mobile">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" class="form-control" id="EmailAddress" name="EmailAddress[]" placeholder="Enter Email Address">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Skype</label>
+                                    <input type="text" class="form-control" id="Skype" name="Skype[]" placeholder="Enter Skype">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Viber</label>
+                                    <input type="text" class="form-control" id="EmailAddres" name="EmailAddress[]" placeholder="Enter Viber">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>WhatsApp</label>
+                                    <input type="text" class="form-control" id="WhatsApp" name="WhatsApp[]" placeholder="Enter WhatsApp">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Facebook</label>
+                                    <input type="text" class="form-control" id="Facebook" name="Facebook[]" placeholder="Enter Facebook">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>LinkedIn</label>
+                                    <input type="text" class="form-control" id="LinkedIn" name="LinkedIn[]" placeholder="Enter LinkedIn">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12" align="left">
+                        <button type="button" class="btn btn-outline-success addContactBtn mb-2"><i class="icon-plus"></i>&nbsp;Add Contact</button>
+                    </div>
                     <div class="col-lg-12" align="right">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
                     </div>
                 </div>
             </form>
@@ -264,8 +337,102 @@
             // Append the new row to the container where addresses are listed
             $('#addressContainer').append(newRow);
         });
+
         $(document).on('click', '.removeRowBtn', function() {
             $(this).closest('.form-group').remove();
+        });
+
+        $(document).on('click', '.addContactBtn', function() {
+            var newRow = $('<div class="row" id="ContactInfo">' +
+                                '<div class="col-lg-12" align="right">' +
+                                    '<button type="button" class="btn btn-outline-danger removeContactBtn mb-2">-</button>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Name</label>' +
+                                        '<input type="text" class="form-control" id="ContactName" name="ContactName[]" placeholder="Enter Contact Name">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Designation</label>' +
+                                        '<input type="text" class="form-control" id="Designation" name="Designation[]" placeholder="Enter Designation">' +
+                                    '</div>'+
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Birthday</label>' +
+                                        '<input type="date" class="form-control" id="Birthday" name="Birthday[]">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Telephone</label>' +
+                                        '<input type="text" class="form-control" id="PrimaryTelephone" name="PrimaryTelephone[]" placeholder="Enter Primary Telephone">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Secondary Telephone</label>' +
+                                        '<input type="text" class="form-control" id="SecondaryTelephone" name="SecondaryTelephone[]" placeholder="Enter Secondary Telephone">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Mobile</label>' +
+                                        '<input type="text" class="form-control" id="PrimaryMobile" name="PrimaryMobile[]" placeholder="Enter Primary Mobile">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Secondary Mobile</label>' +
+                                        '<input type="text" class="form-control" id="SecondaryMobile" name="SecondaryMobile[]" placeholder="Enter Secondary Mobile">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Email Address</label>' +
+                                        '<input type="email" class="form-control" id="EmailAddress" name="EmailAddress[]" placeholder="Enter Email Address">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Skype</label>' +
+                                        '<input type="text" class="form-control" id="Skype" name="Skype[]" placeholder="Enter Skype">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Viber</label>' +
+                                        '<input type="text" class="form-control" id="EmailAddres" name="EmailAddress[]" placeholder="Enter Viber">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        ' <label>WhatsApp</label>' +
+                                        '<input type="text" class="form-control" id="WhatsApp" name="WhatsApp[]" placeholder="Enter WhatsApp">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>Facebook</label>' +
+                                        '<input type="text" class="form-control" id="Facebook" name="Facebook[]" placeholder="Enter Facebook">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-lg-6">' +
+                                    '<div class="form-group">' +
+                                        '<label>LinkedIn</label>' +
+                                        '<input type="text" class="form-control" id="LinkedIn" name="LinkedIn[]" placeholder="Enter LinkedIn">' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>');
+
+            // Append the new row to the container where addresses are listed
+            $('#ContactInfo').append(newRow);
+        });
+        
+        $(document).on('click', '.removeContactBtn', function() {
+            $(this).closest('#ContactInfo').remove();
         });
 
         var selectedType = $('#Type').val();
@@ -416,6 +583,12 @@
                                     $('#form_client').find('[name="Address[]"]').eq(fieldIndex).addClass('is-invalid');
                                 }
                             }
+                            if (index.includes('ContactName')) {
+                                var fieldIndex = index.match(/\d+/)[0];
+                                if (index.includes('ContactName')) {
+                                    $('#form_client').find('[name="ContactName[]"]').eq(fieldIndex).addClass('is-invalid');
+                                }
+                            }
                         });
                         errorsHtml += '</ul></div>';
                         $('html, body').animate({
@@ -426,9 +599,6 @@
                 }
             });
         });
-        
-
     });
-
 </script>
 @endsection
