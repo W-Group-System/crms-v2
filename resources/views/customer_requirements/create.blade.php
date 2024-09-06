@@ -190,7 +190,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Upload Files</label>
-                                <input type="file" name="sales_upload_crr[]" class="form-control" multiple required>
+                                <input type="file" name="sales_upload_crr[]" class="form-control" multiple>
                             </div>
                         </div>
                         <div class="col-lg-6">

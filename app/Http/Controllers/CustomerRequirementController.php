@@ -160,34 +160,47 @@ class CustomerRequirementController extends Controller
     // Store
     public function store(Request $request)
     {
-        // $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
-        // $type = $salesUser->Type == 2 ? 'IS' : 'LS';
-        // $year = Carbon::parse($request->input('CreatedDate'))->format('y');
-        // $lastEntry = CustomerRequirement::where('CrrNumber', 'LIKE', "CRR-{$type}-%")
-        //             ->orderBy('id', 'desc')
-        //             ->first();
-        // $lastNumber = $lastEntry ? intval(substr($lastEntry->CrrNumber, -4)) : 0;
-        // $newIncrement = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        // $crrNo = "CRR-{$type}-{$year}-{$newIncrement}";
-
         $user = Auth::user(); 
         $type = "";
         $year = date('y');
-        $crrList = CustomerRequirement::orderBy('id', 'desc')->first();
-        $count = substr($crrList->CrrNumber, 10);
-        $totalCount = $count + 1;
-
-        if (auth()->user()->role->type == "IS")
+        if ($user->role->type == "IS")
         {
             $type = "IS";
+            $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-IS%')->orderBy('id', 'desc')->first();
+            $count = substr($crrList->CrrNumber, 10);
+            $totalCount = $count + 1;
+            
+            $crrNo = "CRR-".$type.'-'.$year.'-'.$totalCount;
         }
 
-        if (auth()->user()->role->type == "LS")
+        if ($user->role->type == "LS")
         {
             $type = "LS";
+            $crrList = CustomerRequirement::where('CrrNumber', 'LIKE', '%CRR-LS%')->orderBy('id', 'desc')->first();
+            $count = substr($crrList->CrrNumber, 10);
+            $totalCount = $count + 1;
+            
+            $crrNo = "CRR-".$type.'-'.$year.'-'.$totalCount;
         }
 
-        $crrNo = "CRR-".$type.'-'.$year.'-'.$totalCount;
+        // $user = Auth::user(); 
+        // $type = "";
+        // $year = date('y');
+        // $crrList = CustomerRequirement::orderBy('id', 'desc')->first();
+        // $count = substr($crrList->CrrNumber, 10);
+        // $totalCount = $count + 1;
+
+        // if (auth()->user()->role->type == "IS")
+        // {
+        //     $type = "IS";
+        // }
+
+        // if (auth()->user()->role->type == "LS")
+        // {
+        //     $type = "LS";
+        // }
+
+        // $crrNo = "CRR-".$type.'-'.$year.'-'.$totalCount;
 
         $customerRequirementData = CustomerRequirement::create([
             'CrrNumber' => $crrNo,
@@ -413,7 +426,7 @@ class CustomerRequirementController extends Controller
         $crrFile->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     
@@ -455,7 +468,7 @@ class CustomerRequirementController extends Controller
         }
 
         Alert::success('Successfully Uploaded')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function updateCrrFile(Request $request, $id)
@@ -494,7 +507,7 @@ class CustomerRequirementController extends Controller
         $crrFile->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function deleteCrrFile($id)
@@ -503,7 +516,7 @@ class CustomerRequirementController extends Controller
         $crrFile->delete();
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function updateCrr(Request $request, $id)
@@ -771,7 +784,7 @@ class CustomerRequirementController extends Controller
         $crrDetails->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'supplementary_details']);
     }
 
     public function updateSupplementary(Request $request, $id)
@@ -783,7 +796,7 @@ class CustomerRequirementController extends Controller
         $crrDetails->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'supplementary_details']);
     }
 
     public function deleteSupplementary(Request $request, $id)
@@ -792,7 +805,7 @@ class CustomerRequirementController extends Controller
         $crrDetails->delete();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'supplementary_details']);
     }
 
     public function addPersonnel(Request $request)
@@ -803,7 +816,7 @@ class CustomerRequirementController extends Controller
         $personnel->save(); 
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'personnel']);
     }
     
     public function updatePersonnel(Request $request, $id)
@@ -814,7 +827,7 @@ class CustomerRequirementController extends Controller
         $personnel->save(); 
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'personnel']);
     }
 
     public function deletePersonnel($id)
@@ -823,7 +836,7 @@ class CustomerRequirementController extends Controller
         $personnel->delete();
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'personnel']);
     }
     
     public function refreshUserApprover(Request $request)
@@ -915,7 +928,7 @@ class CustomerRequirementController extends Controller
         $files->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function deleteSalesFiles(Request $request)
