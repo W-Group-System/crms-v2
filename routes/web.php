@@ -290,6 +290,11 @@ Route::group(['middleware' => 'inactive_users'], function() {
 
     Route::get('sample_request_export', 'SampleRequestController@export');
 
+    // Sample Request Customer Service
+    Route::get('/sample_request_cs_local', 'SampleRequestController@cs_local');
+    Route::post('sample_request_cs/edit/{id}', 'SampleRequestController@csSrfUpdate');
+    Route::get('/sample_request_cs_international', 'SampleRequestController@cs_international');
+    
     // Price Monitoring 
     Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
     Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');
