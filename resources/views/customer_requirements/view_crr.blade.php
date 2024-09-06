@@ -578,16 +578,16 @@
             </div>
             <ul class="nav nav-tabs viewTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active p-2" id="supplementary_details-tab" data-toggle="tab" href="#supplementary_details" role="tab" aria-controls="supplementary_details" aria-selected="true">Supplementary Details</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'supplementary_details' || session('tab') == null) active @endif" id="supplementary_details-tab" data-toggle="tab" href="#supplementary_details" role="tab" aria-controls="supplementary_details" aria-selected="true">Supplementary Details</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="assigned-tab" data-toggle="tab" href="#assigned" role="tab" aria-controls="assigned" aria-selected="false">Assigned R&D Personnel</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'personnel') active @endif" id="assigned-tab" data-toggle="tab" href="#assigned" role="tab" aria-controls="assigned" aria-selected="false">Assigned R&D Personnel</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li> --}}
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'files') active @endif" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link p-2" id="approvals-tab" data-toggle="tab" href="#approvals" role="tab" aria-controls="approvals" aria-selected="false">Transaction Remarks</a>
@@ -597,7 +597,7 @@
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="supplementary_details" role="tabpanel" aria-labelledby="supplementary_details">
+                <div class="tab-pane fade @if(session('tab') == 'supplementary_details' || session('tab') == null) active show @endif" id="supplementary_details" role="tabpanel" aria-labelledby="supplementary_details">
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         @if($crr->Progress != 60)
                         <button type="button" class="btn btn-outline-primary btn-sm float-right mb-3" data-toggle="modal" data-target="#addSupplementary">
@@ -655,7 +655,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade " id="assigned" role="tabpanel" aria-labelledby="assigned">
+                <div class="tab-pane fade @if(session('tab') == 'personnel') active show @endif" id="assigned" role="tabpanel" aria-labelledby="assigned">
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         @if(rndManager(auth()->user()->role))
                             @if($crr->Progress != 55 && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81 && rndManager(auth()->user()->role))
@@ -779,7 +779,7 @@
                         </table>
                     </div>
                 </div> --}}
-                <div class="tab-pane fade " id="files" role="tabpanel" aria-labelledby="files-tab">
+                <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
                     @if(checkIfHaveFiles(auth()->user()->role) == "yes")
                     <div align="right">
                         <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addCrrFiles">
