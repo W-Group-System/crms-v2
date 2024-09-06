@@ -8,7 +8,7 @@
                 </button>
             </div>
             
-            <form method="POST" action="{{url('add_product_ds')}}">
+            <form method="POST" action="{{url('add_product_ds')}}" onsubmit="show()">
                 {{csrf_field()}}
                 
                 <input type="hidden" name="product_id" value="{{$data->id}}">

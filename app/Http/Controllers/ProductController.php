@@ -386,7 +386,7 @@ class ProductController extends Controller
         // }
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'materials']);
     }
 
     public function addToNewProducts(Request $request)
@@ -502,7 +502,7 @@ class ProductController extends Controller
         $fileProducts->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function editFiles(Request $request, $id)
@@ -525,7 +525,7 @@ class ProductController extends Controller
         $fileProducts->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function deleteProductFiles($id)
@@ -534,7 +534,7 @@ class ProductController extends Controller
         $productFiles->delete();
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function productDs(Request $request)
@@ -645,7 +645,7 @@ class ProductController extends Controller
             }
 
             Alert::success('Successfully Saved')->persistent('Dismiss');
-            return back();
+            return back()->with(['tab' => 'pds']);
         }
     }
 
@@ -748,7 +748,7 @@ class ProductController extends Controller
         $productDataSheet->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'pds']);
     }
 
     public function viewPdsDetails($id)
@@ -764,7 +764,7 @@ class ProductController extends Controller
         $productDataSheet->delete();
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'pds']);
     }
 
     public function updateAllProductSpecification(Request $request)
@@ -812,7 +812,7 @@ class ProductController extends Controller
             }
 
             Alert::success('Successfully Saved')->persistent('Dismiss');
-            return back();
+            return back()->with(['tab' => 'files']);
         }
     }
 

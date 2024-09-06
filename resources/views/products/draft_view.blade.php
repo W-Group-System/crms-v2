@@ -48,8 +48,8 @@
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p>
-                    <p class="mb-0"><strong>EUR</strong> {{usdToEur($rmc)}}</p>
-                    <p class="mb-0"><strong>PHP</strong> {{usdToPhp($rmc)}}</p>
+                    <p class="mb-0"><strong>EUR</strong> {{number_format(usdToEur($rmc), 2)}}</p>
+                    <p class="mb-0"><strong>PHP</strong> {{number_format(usdToPhp($rmc), 2)}}</p>
                 </div>
             </div>
             <div class="row">
@@ -134,16 +134,16 @@
             </div>
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active p-2" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'materials' || session('tab') == null) active @endif" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
                 </li> --}}
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="pds-tab" data-toggle="tab" href="#pds" role="tab" aria-controls="pds" aria-selected="false">PDS</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'pds') active @endif" id="pds-tab" data-toggle="tab" href="#pds" role="tab" aria-controls="pds" aria-selected="false">PDS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">Files</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'files') active @endif" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">Files</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link p-2" id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
@@ -159,7 +159,7 @@
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade active show" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @include('components.error')
                     <div class="col-lg-12" align="right">
                         <button type="submit" class="btn btn-md btn-primary submit_approval mb-3" data-toggle="modal" data-target="#rawMaterials{{$data->id}}">Update</button>
@@ -270,7 +270,7 @@
                         @include('products.edit_specification')
                     @endforeach
                 </div> --}}
-                <div class="tab-pane fade" id="pds" role="tabpanel" aria-labelledby="pds-tab">
+                <div class="tab-pane fade @if(session('tab') == 'pds') active show @endif" id="pds" role="tabpanel" aria-labelledby="pds-tab">
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">New</button>
                     </div>
@@ -280,28 +280,24 @@
                         <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
+                                    <th>Actions</th>
                                     <th>Product</th>
                                     <th>Control Number</th>
                                     <th>Company</th>
                                     <th>Date Issued</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @if($data->productDataSheet)
                                     <tr>
-                                        <td>{{$data->code}}</td>
-                                        <td>{{$data->productDataSheet->ControlNumber}}</td>
-                                        <td>@if($data->productDataSheet->clients){{$data->productDataSheet->clients->Name}}@endif</td>
-                                        <td>{{date('M d, Y', strtotime($data->productDataSheet->DateIssued))}}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#pdsModal-{{$data->productDataSheet->Id}}">
-                                                <i class="ti-pencil"></i>
-                                            </button>
                                             <a href="{{url('view_details/'.$data->productDataSheet->Id)}}" class="btn btn-info btn-sm" title="View Details" target="_blank">
                                                 <i class="ti-eye"></i>
                                             </a>
-                                            <form action="{{url('delete_pds/'.$data->productDataSheet->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                            <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#pdsModal-{{$data->productDataSheet->Id}}">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+                                            <form action="{{url('delete_pds/'.$data->productDataSheet->Id)}}" method="post" class="d-inline-block" title="Delete" onsubmit="show()">
                                                 {{csrf_field()}}
 
                                                 <button type="button" class="btn btn-sm btn-danger deletePds" title="Delete">
@@ -309,6 +305,10 @@
                                                 </button>
                                             </form>
                                         </td>
+                                        <td>{{$data->code}}</td>
+                                        <td>{{$data->productDataSheet->ControlNumber}}</td>
+                                        <td>@if($data->productDataSheet->clients){{$data->productDataSheet->clients->Name}}@endif</td>
+                                        <td>{{date('M d, Y', strtotime($data->productDataSheet->DateIssued))}}</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -318,7 +318,7 @@
                         @include('products.edit_pds')
                     @endif
                 </div>
-                <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
+                <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">New</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
@@ -329,11 +329,11 @@
                         <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
+                                    <th>Actions</th>
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Client</th>
                                     <th>File</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             
@@ -341,6 +341,18 @@
                                 @if($data->productFiles)
                                     @foreach ($data->productFiles as $pf)
                                         <tr>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                    <i class="ti-pencil"></i>
+                                                </button>
+                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete" onsubmit="show()">
+                                                    {{csrf_field()}}
+    
+                                                    <button type="button" class="btn btn-sm btn-danger deleteProductFiles" title="Delete">
+                                                        <i class="ti-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                             <td>{{$pf->Name}}</td>
                                             <td>
                                                 {{$pf->Description}}
@@ -353,27 +365,9 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($pf->IsConfidential == 0)
-                                                <a href="{{url($pf->Path)}}" class="btn btn-sm btn-info" target="_blank">
-                                                    <i class="ti-eye"></i>
+                                                <a href="{{url($pf->Path)}}" target="_blank">
+                                                    <i class="ti-file"></i>
                                                 </a>
-                                                @elseif($pf->IsConfidential == 1)
-                                                <a href="{{url($pf->Path)}}" class="btn btn-sm btn-info" target="_blank">
-                                                    <i class="mdi mdi-eye-off-outline"></i>
-                                                </a>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
-                                                    <i class="ti-pencil"></i>
-                                                </button>
-                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
-                                                    {{csrf_field()}}
-    
-                                                    <button type="button" class="btn btn-sm btn-danger deleteProductFiles" title="Delete">
-                                                        <i class="ti-trash"></i>
-                                                    </button>
-                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -711,14 +705,20 @@
                     type: "POST",
                     url: action,
                     data: formData,
+                    beforeSend: function()
+                    {
+                        show();
+                    },
                     success: function()
                     {
+                        hide();
+                        
                         Swal.fire({
                             icon: "success",
                             title: "Successfully Saved",
+                        }).then(() => {
+                            location.reload()
                         })
-
-                        location.reload()
                     }
                 })
             }
