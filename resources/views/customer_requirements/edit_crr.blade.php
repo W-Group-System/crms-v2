@@ -166,7 +166,7 @@
                                 <select name="RefCode" class="form-control js-example-basic-single" required>
                                     <option disabled selected value>Select REF Code</option>
                                     @foreach ($refCode as $key=>$code)
-                                        <option value="{{$key}}" @if($key == $customerRequirement->RefCode) selected @endif>{{$code}}</option>
+                                        <option value="{{$key}}" @if($key == ($customerRequirement->RefCode ?? 'RND')) selected @endif>{{$code}}</option>
                                     @endforeach
                                 </select>
                             </div>
