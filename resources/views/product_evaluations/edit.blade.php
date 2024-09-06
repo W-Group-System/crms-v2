@@ -161,6 +161,12 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
+                                <label for="name">RPE Reference Number</label>
+                                <input type="text" class="form-control" id="RpeReferenceNumber" name="RpeReferenceNumber" placeholder="Enter Rpe Reference Number" value="{{ $productEvaluation->RpeReferenceNumber }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
                                 <label for="name">Objective for RPE Project</label>
                                 <textarea class="form-control" name="ObjectiveForRpeProject" rows="4">{{ $productEvaluation->ObjectiveForRpeProject }}</textarea>
                             </div>
@@ -179,6 +185,31 @@
                         </div> --}}
 
                     </div>
+                    @foreach ($productEvaluation->salesRpeFiles as $files)
+                    <div class="form-header">
+                        <span class="header-label">Files</span>
+                        <hr class="form-divider">
+                    </div>
+                    <div class="rpe-file">
+                        <div class="form-group">
+                            <label for="name"><b>Name</b></label>
+                            <input type="text" name="name[]" class="form-control" id="name" placeholder="" value="{{ optional($files)->Name }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="rpe_file"><b>Browse Files</b></label>
+                            <input type="file" class="form-control" id="rpe_file" name="rpe_file[]">
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-sm btn-primary addRpeFile"><i class="ti-plus"></i></button>
+                            <button type="button" class="btn btn-sm btn-danger deleteRowBtn" hidden><i class="ti-trash"></i></button>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="rpe_id[]" value="{{$files->Id }}">
+                        </div>
+                    </div>
+                    @endforeach
+                    <div class="modal-footer"></div>
+                <div class="modal-footer">
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <input type="submit"  class="btn btn-success" value="Save">

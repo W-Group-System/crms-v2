@@ -113,6 +113,10 @@
                                    <option value="20">VAT Exclusive</option>
                                 </select>
                            </div>
+                           <div class="form-group">
+                                <label>Other Remarks</label>
+                                <input type="text" class="form-control" name="OtherRemarks" placeholder="Input Other Remarks" >
+                            </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
                         <div class="add_create_prf_form col-lg-12 row">

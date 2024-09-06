@@ -69,7 +69,7 @@
                             </button>
                         @endif
 
-                        @if($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 70)
+                        {{-- @if($requestEvaluation->Progress == 70)
                             <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
                                 @csrf
 
@@ -77,9 +77,16 @@
                                     <i class="ti ti-check-box"></i>&nbsp;Return to RND
                                 </button>
                             </form>
-                        @endif
+                        @endif --}}
 
                         @if($requestEvaluation->Progress == 60 && $requestEvaluation->Progress != 70)
+                            <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
+                                @csrf
+
+                                <button type="button" class="btn btn-info returnToRnd">
+                                    <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                </button>
+                            </form>
                             <form method="POST" class="d-inline-block" action="{{url('sales_accept_rpe/'.$requestEvaluation->id)}}">
                                 @csrf
 
@@ -89,15 +96,17 @@
                             </form>
                         @endif
 
-                        @if($requestEvaluation->Status == 10)
-                            <button type="button" class="btn btn-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$requestEvaluation->id}}">
-                                <i class="ti ti-close"></i>&nbsp;Close
-                            </button>
+                        @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 70 ||  $requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
+                                <button type="button" class="btn btn-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$requestEvaluation->id}}">
+                                    <i class="ti ti-close"></i>&nbsp;Close
+                                </button>
+                            @endif
 
-                            <button type="button" class="btn btn-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
-                                <i class="mdi mdi-cancel"></i>&nbsp;Cancel
-                            </button>
-                        @endif
+                            @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
+                                <button type="button" class="btn btn-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
+                                    <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                                </button>
+                            @endif
 
                         @if($requestEvaluation->Status == 30)
                             <form method="POST" class="d-inline-block" action="{{url('open_rpe/'.$requestEvaluation->id)}}">
@@ -188,7 +197,7 @@
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                             
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
-                             @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 20 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 57)
+                             @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 20 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 81)
                                 <button type="button" class="btn btn-info"
                                     data-target="#returnToSales{{  $requestEvaluation->id }}" 
                                     data-toggle="modal" 
@@ -220,7 +229,7 @@
                                 @endif
                             @endif
 
-                            @if($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 70)
+                            {{-- @if($requestEvaluation->Status == 10 && $requestEvaluation->Progress == 70)
                                 <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
                                     @csrf
 
@@ -228,9 +237,16 @@
                                         <i class="ti ti-check-box"></i>&nbsp;Return to RND
                                     </button>
                                 </form>
-                            @endif
+                            @endif --}}
 
                             @if($requestEvaluation->Progress == 60 && $requestEvaluation->Progress != 70)
+                                <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
+                                    @csrf
+
+                                    <button type="button" class="btn btn-info returnToRnd">
+                                        <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                    </button>
+                                </form>
                                 <form method="POST" class="d-inline-block" action="{{url('sales_accept_rpe/'.$requestEvaluation->id)}}">
                                     @csrf
 
@@ -240,11 +256,13 @@
                                 </form>
                             @endif
 
-                            @if($requestEvaluation->Status == 10)
+                            @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 70 ||  $requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
                                 <button type="button" class="btn btn-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$requestEvaluation->id}}">
                                     <i class="ti ti-close"></i>&nbsp;Close
                                 </button>
+                            @endif
 
+                            @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
                                 <button type="button" class="btn btn-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
                                     <i class="mdi mdi-cancel"></i>&nbsp;Cancel
                                 </button>
@@ -312,6 +330,18 @@
                                     </form>
                                 @endif
 
+                                @if($requestEvaluation->Progress == 81 || $requestEvaluation->Progress == 57 || $requestEvaluation->Progress == 81)
+                              
+                                    <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
+                                        @csrf
+
+                                        <button type="button" class="btn btn-info returnToRnd">
+                                            <i class="ti ti-check-box"></i>&nbsp;Return to Specialist
+                                        </button>
+                                    </form>
+                                    
+                                @endif
+
                                 @if($requestEvaluation->Progress == 57)
                                     <form method="POST" action="{{url('final_review_rpe/'.$requestEvaluation->id)}}" class="d-inline-block">
                                         @csrf 
@@ -331,6 +361,7 @@
                                         </button>
                                     </form>
                                 @endif
+                                
                                 
                             @endif
 
@@ -573,8 +604,8 @@
                 @endphp            
                 
                 <p class="col-sm-3 col-form-label">{!! $rpeResultLinked !!}</p>
-                <p class="col-sm-3 col-form-label"><b>Date Started :</b></p>
-                <p class="col-sm-3 col-form-label">{{ date('M d, Y', strtotime($requestEvaluation->DateStarted)) }}</p>
+                {{-- <p class="col-sm-3 col-form-label"><b>Date Started :</b></p>
+                <p class="col-sm-3 col-form-label">{{ date('M d, Y', strtotime($requestEvaluation->DateStarted)) }}</p> --}}
             </div>
             <div class="form-group row mb-2">
                 <p class="col-sm-3 col-form-label"><b></b></p>
@@ -586,13 +617,36 @@
                 <p class="col-sm-3 col-form-label"><b></b></p>
                 <p class="col-sm-3 col-form-label"></p>
                 <p class="col-sm-3 col-form-label"><b>Lead Time :</b></p>
-                <p class="col-sm-3 col-form-label"></p>
+                @php
+                    $dateReceived = $requestEvaluation->DateReceived ? strtotime($requestEvaluation->DateReceived) : null;
+                    $dueDate = $requestEvaluation->DueDate ? strtotime($requestEvaluation->DueDate) : null;
+                    $dateCompleted = $requestEvaluation->DateCompleted ? strtotime($requestEvaluation->DateCompleted) : null;
+
+                    if ($dateReceived && $dueDate) {
+                        $difference = ($dueDate - $dateReceived) / (60 * 60 * 24); 
+                        $leadtime = number_format($difference, 0);
+                    } else {
+                        $leadtime = 'NA';
+                    }
+
+                    if (!$dateCompleted) {
+                        $dateCompleted = time();
+                    }
+
+                    if ($dueDate) {
+                        $delay = ($dateCompleted - $dueDate) / (60 * 60 * 24); 
+                        $delayed = number_format($delay, 0);
+                    } else {
+                        $delayed = 'NA';
+                    }
+                @endphp
+                <p class="col-sm-3 col-form-label">{{ $leadtime }} day/s</p>
             </div>
             <div class="form-group row mb-2">
                 <p class="col-sm-3 col-form-label"><b></b></p>
                 <p class="col-sm-3 col-form-label"></p>
                 <p class="col-sm-3 col-form-label"><b>Delayed :</b></p>
-                <p class="col-sm-3 col-form-label"></p>
+                <p class="col-sm-3 col-form-label">{{ $delayed }} day/s</p>
             </div>
         </div>
         </div>

@@ -37,6 +37,16 @@
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
             </div>
+            <div class="mb-3">
+                <a href="#" id="copy_btn" class="btn btn-md btn-info">Copy</a>
+                <form method="GET" action="{{url('sample_request_export')}}" class="d-inline-block">
+    
+                    <input type="hidden" name="open" value="{{$open}}">
+                    <input type="hidden" name="close" value="{{$close}}">
+                    
+                    <button type="submit" class="btn btn-success">Export</button>
+                </form>
+            </div>
             <div class="row">
                 <div class="col-lg-6">
                     <span>Show</span>
@@ -131,8 +141,8 @@
                 </div>
             </div>
             @elseif (auth()->user()->role->type == 'IS')
-            <div class="table-responsive" style="overflow: scroll; height: 50vh;">
-                <table class="table table-striped table-bordered table-hover" id="sample_request_table">
+            <div class="table-responsive" >
+                <table class="table table-striped table-bordered table-hover" id="sample_request_table" width="100%">
                     <thead>
                         <tr>
                             <th>Action</th>
@@ -196,7 +206,14 @@
                                 <td>{{ optional($srf->client)->Name }}</td>
                                 <td>{{ optional(optional($srf->client)->clientregion)->Name }}</td>
                                 <td>{{ optional(optional($srf->client)->clientcountry)->Name }}</td>
-                                <td>{{ $srf->primarySalesPerson->full_name ?? 'N/A' }}</td>
+                                <td>
+                                    {{-- {{ $srf->primarySalesPerson->full_name ?? 'N/A' }} --}}
+                                    @if($srf->primarySalesPerson)
+                                        {{$srf->primarySalesPerson->full_name}}
+                                    @elseif($srf->primarySalesById)
+                                        {{$srf->primarySalesById->full_name}}
+                                    @endif
+                                </td>
                                 <td>
                                     @foreach ($srf->requestProducts as $product)
                                         {{ $product->ProductIndex }}<br>
@@ -364,6 +381,39 @@
         })
 });
 
+    $(document).ready(function(){
+        $('#copy_btn').click(function() {
+            var tableData = '';
+
+            $('#sample_request_table thead tr').each(function(rowIndex, tr) {
+                $(tr).find('th').each(function(cellIndex, th) {
+                    tableData += $(th).text().trim() + '\t';
+                });
+                tableData += '\n';
+            });
+
+            $('#sample_request_table tbody tr').each(function(rowIndex, tr) {
+                $(tr).find('td').each(function(cellIndex, td) {
+                    tableData += $(td).text().trim() + '\t';
+                });
+                tableData += '\n';
+            });
+
+            var tempTextArea = $('<textarea>');
+            $('body').append(tempTextArea);
+            tempTextArea.val(tableData).select();
+            document.execCommand('copy');
+            tempTextArea.remove();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Table data has been copied to the clipboard.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        });
+    })
 </script>
 {{-- @foreach ($sampleRequests as $srf)
 @foreach ($srf->requestProducts as $product)

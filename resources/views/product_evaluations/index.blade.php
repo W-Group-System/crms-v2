@@ -19,6 +19,16 @@
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
             </div>
+            <div class="mb-3">
+                <a href="#" id="copy_btn" class="btn btn-md btn-info">Copy</a>
+                <form method="GET" action="{{url('product_evaluation_export')}}" class="d-inline-block">
+    
+                    <input type="hidden" name="open" value="{{$open}}">
+                    <input type="hidden" name="close" value="{{$close}}">
+                    
+                    <button type="submit" class="btn btn-success">Export</button>
+                </form>
+            </div>
             <div class="row">
                 <div class="col-lg-6">
                     <span>Show</span>
@@ -314,6 +324,38 @@
         $(".table").tablesorter({
             theme : "bootstrap",
         })
+
+        $('#copy_btn').click(function() {
+            var tableData = '';
+
+            $('#product_evaluation_table thead tr').each(function(rowIndex, tr) {
+                $(tr).find('th').each(function(cellIndex, th) {
+                    tableData += $(th).text().trim() + '\t';
+                });
+                tableData += '\n';
+            });
+
+            $('#product_evaluation_table tbody tr').each(function(rowIndex, tr) {
+                $(tr).find('td').each(function(cellIndex, td) {
+                    tableData += $(td).text().trim() + '\t';
+                });
+                tableData += '\n';
+            });
+
+            var tempTextArea = $('<textarea>');
+            $('body').append(tempTextArea);
+            tempTextArea.val(tableData).select();
+            document.execCommand('copy');
+            tempTextArea.remove();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Table data has been copied to the clipboard.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        });
     })
 </script>
 @endsection
