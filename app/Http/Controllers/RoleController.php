@@ -567,6 +567,28 @@ class RoleController extends Controller
                         $access->approve = null;
                     }
                 }
+
+                if ($module == "Customer Service SRF")
+                {
+                    if ($request->has('Customer_Service_SRF'))
+                    {
+                        $access->edit = $request->Customer_Service_SRF['edit'] ?? null;
+                        $access->create = $request->Customer_Service_SRF['create'] ?? null; 
+                        $access->update = $request->Customer_Service_SRF['update'] ?? null; 
+                        $access->view = $request->Customer_Service_SRF['view'] ?? null; 
+                        $access->delete = $request->Customer_Service_SRF['delete'] ?? null; 
+                        $access->approve = $request->Customer_Service_SRF['approve'] ?? null; 
+                    }
+                    else
+                    {
+                        $access->create = null;
+                        $access->edit = null;
+                        $access->update = null; 
+                        $access->view = null; 
+                        $access->delete = null; 
+                        $access->approve = null;
+                    }
+                }
                 
                 if ($module == "Price Monitoring")
                 {
@@ -1543,6 +1565,27 @@ class RoleController extends Controller
                         $access->approve = null;
                     }
                 }
+                if ($module == "Customer Service SRF")
+                {
+                    if ($request->has('Customer_Service_SRF'))
+                    {
+                        $access->edit = $request->Customer_Service_SRF['edit'] ?? null;
+                        $access->create = $request->Customer_Service_SRF['create'] ?? null; 
+                        $access->update = $request->Customer_Service_SRF['update'] ?? null; 
+                        $access->view = $request->Customer_Service_SRF['view'] ?? null; 
+                        $access->delete = $request->Customer_Service_SRF['delete'] ?? null; 
+                        $access->approve = $request->Customer_Service_SRF['approve'] ?? null; 
+                    }
+                    else
+                    {
+                        $access->create = null;
+                        $access->edit = null;
+                        $access->update = null; 
+                        $access->view = null; 
+                        $access->delete = null; 
+                        $access->approve = null;
+                    }
+                }
                 
                 if ($module == "Price Monitoring")
                 {
@@ -2040,6 +2083,7 @@ class RoleController extends Controller
             'Customer Requirement',
             'Request for Product Evaluation',
             'Sample Request Form',
+            'Customer Service SRF',
             'Price Monitoring',
             // 'Client Transaction Setup',
             'Categorization',

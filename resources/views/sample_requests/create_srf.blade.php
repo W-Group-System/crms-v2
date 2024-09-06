@@ -272,8 +272,8 @@
     </div>
     
 
-    <div class="modal-footer product-footer"></div>
-    <div class="form-header">
+    {{-- <div class="modal-footer product-footer"></div> --}}
+    {{-- <div class="form-header">
         <span class="header-label">Dispatch Details</span>
         <hr class="form-divider">
     </div>
@@ -306,7 +306,7 @@
         <label for="Note">Notes</label>
         <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes">{{ old('Note') }}</textarea>
     </div>
-</div>
+</div> --}}
 </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

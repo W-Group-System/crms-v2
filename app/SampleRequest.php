@@ -62,6 +62,10 @@ class SampleRequest extends Model implements Auditable
     {
         return $this->belongsTo(User::class, 'SecondarySalesPersonId', 'user_id');
     }
+    public function secondarySalesById()
+    {
+        return $this->belongsTo(User::class, 'SecondarySalesPersonId','id');
+    }
     public function progressStatus()
     {
         return $this->belongsTo(SrfProgress::class, 'Progress', 'id');

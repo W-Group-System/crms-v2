@@ -377,6 +377,15 @@ function getUserApprover($approver)
 }
 function getHistoricalPrices($materialId) {
     return BasePrice::where('MaterialId', $materialId)
-                                    ->orderBy('EffectiveDate', 'desc')
-                                    ->get();
+        ->orderBy('EffectiveDate', 'desc')
+        ->get();
+}
+function authCheckIfItsCustomerService($role)
+{
+    if ($role == 11)
+    {
+        return true;
     }
+    
+    return false;
+}
