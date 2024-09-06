@@ -454,6 +454,7 @@ class PriceMonitoringController extends Controller
             'PriceRequestPurpose' => $request->input('PriceRequestPurpose'),
             'PriceLockPeriod' => $request->input('DeliverySchedule'),
             'TaxType' => $request->input('TaxType'),
+            'OtherRemarks' => $request->input('OtherRemarks'),
             'Status' => '10',
             'Progress' => '10',
 
@@ -503,7 +504,9 @@ class PriceMonitoringController extends Controller
         $priceMonitoringData->Destination = $request->input('Destination');
         $priceMonitoringData->PaymentTermId = $request->input('PaymentTerm');
         $priceMonitoringData->PriceRequestPurpose = $request->input('PriceRequestPurpose');
-        $priceMonitoringData->PriceLockPeriod = $request->input('DeliverySchedule'); $priceMonitoringData->TaxType = $request->input('TaxType');
+        $priceMonitoringData->PriceLockPeriod = $request->input('DeliverySchedule'); 
+        $priceMonitoringData->TaxType = $request->input('TaxType');
+        $priceMonitoringData->OtherRemarks = $request->input('OtherRemarks');
         $priceMonitoringData->save();
     
         foreach ($request->input('Product') as $key => $value) {

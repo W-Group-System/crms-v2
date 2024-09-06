@@ -113,6 +113,10 @@
                                    <option value="20" @if ($priceMonitoring->TaxType == '20') selected @endif>VAT Exclusive</option>
                                 </select>
                            </div>
+                            <div class="form-group">
+                                <label>Other Remarks</label>
+                                <input type="text" class="form-control" name="OtherRemarks" placeholder="Input Other Remarks" value="{{ $priceMonitoring->OtherRemarks }}">
+                            </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
                         <div class="prfForm{{ $priceMonitoring->id }}">

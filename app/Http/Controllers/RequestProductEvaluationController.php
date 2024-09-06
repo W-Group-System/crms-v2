@@ -5,6 +5,7 @@ use App\Activity;
 use App\FileActivity;
 use App\ProductEvaluation;
 use App\Client;
+use App\Exports\ProductEvaluationExport;
 use App\PriceCurrency;
 use App\ProductApplication;
 use App\ProjectName;
@@ -20,6 +21,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -194,6 +196,28 @@ class RequestProductEvaluationController extends Controller
             'Status' =>'10',
             'Progress' => '10',
         ]);
+        $files = $request->file('rpe_file');
+                $names = $request->input('name');
+                $rpeId =  $productEvaluationData->id;
+                
+                if ($files) {
+                    foreach ($files as $index => $file) {
+                    $name = $names[$index];
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs('public/rpeFiles', $fileName);
+                    $fileUrl = '/storage/rpeFiles/' . $fileName;       
+                    $uploadedFile = new RpeFile();
+                    $uploadedFile->RequestProductEvaluationId = $rpeId;
+                    $uploadedFile->Name = $name;
+                    $uploadedFile->Path = $fileUrl;
+                    if ((auth()->user()->department_id == 5) || (auth()->user()->department_id == 38)) {
+                        $uploadedFile->userType = 'Sales';
+                    } elseif ((auth()->user()->department_id == 15) || (auth()->user()->department_id == 42)) {
+                        $uploadedFile->userType = 'RND';
+                    }
+                    $uploadedFile->save();
+                    }
+                }
         return redirect()->back()->with('success', 'RPE added successfully.');
     }
     public function update(Request $request, $id)
@@ -214,9 +238,33 @@ class RequestProductEvaluationController extends Controller
         $rpe->SampleName = $request->input('SampleName');
         $rpe->Supplier = $request->input('Supplier');
         $rpe->ObjectiveForRpeProject = $request->input('ObjectiveForRpeProject');
-        $rpe->Manufacturer = $request->Manufacturer;
+        $rpe->Manufacturer = $request->input('Manufacturer');
         // $rpe->Status = $request->input('Status');
         $rpe->save();
+
+        if ($request->has('rpe_id')) {
+            $rpeIds = $request->input('rpe_id');
+            $names = $request->input('name');
+            $files = $request->file('rpe_file');
+    
+            foreach ($rpeIds as $index => $rpeId) {
+                $rpeFile = RpeFile::findOrFail($rpeId);
+    
+                if (isset($names[$index])) {
+                    $rpeFile->Name = $names[$index];
+                }
+    
+                if (isset($files[$index]) && $files[$index] instanceof \Illuminate\Http\UploadedFile) {
+                    $file = $files[$index];
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs('public/rpeFiles', $fileName);
+                    $fileUrl = '/storage/rpeFiles/' . $fileName;
+    
+                    $rpeFile->Path = $fileUrl;
+                }
+    
+                $rpeFile->save();
+            }}
         return redirect()->back()->with('success', 'RPE updated successfully');
     }
 
@@ -628,5 +676,10 @@ class RequestProductEvaluationController extends Controller
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
         } 
-    }    
+    }
+    
+    public function export(Request $request)
+    {
+        return Excel::download(new ProductEvaluationExport($request->open, $request->close), 'Request Product Evaluation.xlsx');
+    }
 }

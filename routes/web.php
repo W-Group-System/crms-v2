@@ -235,6 +235,8 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('ReturnToSales_rpe/{id}', 'RequestProductEvaluationController@ReturnToSalesRpe');
     Route::post('ApproveRpe/{id}', 'RequestProductEvaluationController@approveRpeSales');
 
+    Route::get('product_evaluation_export', 'RequestProductEvaluationController@export');
+
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
     Route::post('/new_sample_request', 'SampleRequestController@store')->name('sample_request.store');
@@ -285,6 +287,8 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('sample_get-last-increment-f/{year}/{clientCode}', [SampleRequestController::class, 'getSampleLastIncrementF']);
 
     Route::delete('delete-srf-product/{id}', 'SampleRequestController@deleteSrfProduct');
+
+    Route::get('sample_request_export', 'SampleRequestController@export');
 
     // Price Monitoring 
     Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
