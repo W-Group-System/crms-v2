@@ -47,7 +47,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$crr->DueDate}}" min="{{date('Y-m-d')}}">
+                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$crr->DueDate}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -82,11 +82,26 @@
                                         <option value="{{ $user->id }}" @if($user->user_id == $crr->PrimarySalesPersonId || $user->id == $crr->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select> --}}
-                                <input type="hidden" name="PrimarySalesPersonId" value="{{$crr->PrimarySalesPersonId}}">
+                                {{-- <input type="hidden" name="PrimarySalesPersonId" value="{{$crr->PrimarySalesPersonId}}">
+
                                 @if($crr->primarySalesById)
                                 <input type="text" class="form-control" value="{{$crr->primarySalesById->full_name}}" readonly>
                                 @elseif($crr->primarySales)
                                 <input type="text" class="form-control" value="{{$crr->primarySales->full_name}}" readonly>
+                                @endif --}}
+                                @if(auth()->user()->role->name == "Staff L1")
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @elseif (auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                @php
+                                    $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                @endphp
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($subordinates as $user)
+                                        <option value="{{ $user->id }}" @if($user->user_id == $crr->PrimarySalesPersonId || $user->id == $crr->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select>
                                 @endif
                             </div>
                         </div>
@@ -114,7 +129,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $crr->SecondarySalesPersonId || $user->id == $crr->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
@@ -190,7 +205,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Upload Files</label>
-                                <input type="file" name="sales_upload_crr[]" class="form-control" multiple required>
+                                <input type="file" name="sales_upload_crr[]" class="form-control" multiple>
                             </div>
                         </div>
                         <div class="col-lg-6">

@@ -1,5 +1,5 @@
-<div class="modal fade" id="editCrr-{{$customerRequirement->id}}" tabindex="-1" role="dialog" aria-labelledby="addCustomerRequirement" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
+<div class="modal fade" id="editCrr-{{$customerRequirement->id}}">
+	<div class="modal-dialog modal-md" >
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="addCustomerRequirentLabel">Edit Customer Requirement</h5>
@@ -53,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$customerRequirement->DueDate}}" min="{{date('Y-m-d')}}">
+                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$customerRequirement->DueDate}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -89,7 +89,7 @@
                                     $subordinates = getUserApprover(auth()->user()->getSalesApprover);
                                 @endphp
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
+                                    <option disabled selected value>Select Sales Person</option>
                                     @foreach($subordinates as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $customerRequirement->PrimarySalesPersonId || $user->id == $customerRequirement->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
@@ -121,8 +121,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="">Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $customerRequirement->SecondarySalesPersonId || $user->id == $customerRequirement->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
@@ -186,7 +186,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Upload Files</label>
-                                <input type="file" name="sales_upload_crr[]" class="form-control" multiple required>
+                                <input type="file" name="sales_upload_crr[]" class="form-control" multiple>
                             </div>
                         </div>
                         <div class="col-lg-6">
