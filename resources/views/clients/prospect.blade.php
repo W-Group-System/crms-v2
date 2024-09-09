@@ -3,10 +3,45 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">Client List (Prospect)
-                <a href="{{ url('client/create') }}"><button class="btn btn-md btn-primary">Add Client</button></a>
+            <h4 class="card-title d-flex justify-content-between align-items-center">Client List (Prospect) 
             </h4>
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+            <div class="row height d-flex ">
+                <div class="col-md-6 mt-2 mb-2">
+                    <a href="#" id="copy_prospect_btn" class="btn btn-md btn-outline-info mb-1">Copy</a>
+                    <a href="{{url('export_prospect_client')}}" class="btn btn-md btn-outline-success mb-1">Excel</a>
+                </div>
+                <div class="col-md-6 mt-2 mb-2 text-right">
+                    <a href="{{ url('client/create') }}" id="newClient"><button class="btn btn-md btn-outline-primary"><i class="ti ti-plus"></i>&nbsp;New</button></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <span>Show</span>
+                    <form method="GET" class="d-inline-block">
+                        <select name="number_of_entries" class="form-control" onchange="this.form.submit()">
+                            <option value="10" @if($entries == 10) selected @endif>10</option>
+                            <option value="25" @if($entries == 25) selected @endif>25</option>
+                            <option value="50" @if($entries == 50) selected @endif>50</option>
+                            <option value="100" @if($entries == 100) selected @endif>100</option>
+                        </select>
+                    </form>
+                    <span>Entries</span>
+                </div>
+                <div class="col-lg-6">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-lg-9">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Client" name="search" value="{{ $search }}">
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="height d-flex justify-content-between align-items-between">
                     <a href="{{url('export_prospect_client')}}" class="btn btn-md btn-success mb-1">Export</a>
                     <div class="col-md-5">
@@ -17,59 +52,67 @@
                         </div>
                     </div>
                 </div>
-            </form>
+            </form> -->
             <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover" id="client_prospect">
+                <table class="table table-striped table-bordered table-hover" id="prospect_table">
                     <thead>
                         <tr>
+                            @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin' || auth()->user()->role->type == 'LS' && auth()->user()->role->name == 'Department Admin')
                             <th>Action</th>
+                            @endif
                             <th>
                                 Type
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Type', 'direction' => request('sort') == 'Type' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Type', 'direction' => request('sort') == 'Type' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Type' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Industry
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'ClientIndustryId', 'direction' => request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'ClientIndustryId', 'direction' => request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ClientIndustryId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Buyer Code
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'BuyerCode', 'direction' => request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'BuyerCode', 'direction' => request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'BuyerCode' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Name
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Name', 'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Name', 'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Name' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Account Manager
-                                <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'PrimaryAccountManagerId', 'direction' => request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'PrimaryAccountManagerId', 'direction' => request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'PrimaryAccountManagerId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if($clients->count() > 0)
-                            @foreach($clients as $client)
+                        @if($prospectClient->count() > 0)
+                            @foreach($prospectClient as $client)
                                 <tr>
-                                    <td>
-                                        <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
-                                            <i class="ti-eye"></i>
-                                        </button>
-                                        <a href="{{ url('/edit_client/' . $client->id) }}" class="btn btn-sm btn-warning"><i class="ti ti-pencil"></i></a>
-                                        <button type="button" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button>
-                                    </td>
+                                    @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin' || auth()->user()->role->type == 'LS' && auth()->user()->role->name == 'Department Admin')
+                                        <td align="center">
+                                            <!-- <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
+                                                <i class="ti-eye"></i>
+                                            </button> -->
+                                            <a href="{{ url('/edit_client/' . $client->id) }}" class="btn btn-sm btn-outline-warning"><i class="ti ti-pencil"></i></a>
+                                            <!-- <button type="button" class="achivedClient btn btn-sm btn-secondary" data-id="{{$client->id}}"><i class="ti ti-archive"></i></button> -->
+                                        </td>
+                                    @endif
                                     <td>{{ $client->Type == "1" ? 'Local' : 'International' }}</td>
                                     <td>{{ $client->industry->Name ?? 'N/A' }}</td>
                                     <td>{{ $client->BuyerCode ?? 'N/A' }}</td>
-                                    <td>{{ $client->Name ?? 'N/A' }}</td>
+                                    <td>
+                                        <a href="javascript:void(0);" onclick="viewClient({{ $client->id }})">
+                                            {{ $client->Name ?? 'N/A' }}
+                                        </a>
+                                    </td>
                                     <td>
                                         {{ $client->userByUserId->full_name ?? $client->userById->full_name ?? 'N/A' }} /
                                         {{ $client->userByUserId2->full_name ?? $client->userById2->full_name ?? 'N/A' }}
@@ -84,11 +127,11 @@
                     </tbody>
                 </table>
             </div>
-            {!! $clients->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
+            {!! $prospectClient->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
             @php
-                $total = $clients->total();
-                $currentPage = $clients->currentPage();
-                $perPage = $clients->perPage();
+                $total = $prospectClient->total();
+                $currentPage = $prospectClient->currentPage();
+                $perPage = $prospectClient->perPage();
 
                 $from = ($currentPage - 1) * $perPage + 1;
                 $to = min($currentPage * $perPage, $total);
@@ -103,6 +146,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
+        $('.table').tablesorter({
+            theme: "bootstrap"
+        })
+
         $(".achivedClient").on('click', function() {
             var clientId = $(this).data('id');
 
@@ -139,6 +186,57 @@
             });
         });
 
+        $('#copy_prospect_btn').click(function() {
+            $.ajax({
+                url: "{{ route('client.prospect') }}",
+                type: 'GET',
+                data: {
+                    search: "{{ request('search') }}",
+                    sort: "{{ request('sort') }}",
+                    direction: "{{ request('direction') }}",
+                    fetch_all: true
+                },
+                success: function(data) {
+                    var tableData = '';
+
+                    // Add the table header
+                    $('#prospect_table thead tr').each(function(rowIndex, tr) {
+                        $(tr).find('th').each(function(cellIndex, th) {
+                            tableData += $(th).text().trim() + '\t'; // Add a tab space
+                        });
+                        tableData += '\n'; // New line after each row
+                    });
+
+                    // Add the table body from the fetched data
+                    $(data).each(function(index, item) {
+                        tableData += (item.Action ?? '') + '\t' +
+                                    (item.Type === 1 ? 'Local' : 'International') + '\t' + 
+                                    (item.industry?.Name ?? 'N/A') + '\t' + 
+                                    (item.BuyerCode ?? 'N/A') + '\t' + 
+                                    (item.Name ?? 'N/A') + '\t' + 
+                                    ((item.user_by_user_id?.full_name ?? item.user_by_user_id?.full_name) ?? 'N/A') + ' / ' +
+                                    ((item.user_by_user_id2?.full_name ?? item.user_by_user_id2?.full_name) ?? 'N/A') + '\n';
+                    });
+
+                    // Create a temporary textarea element to hold the text
+                    var tempTextArea = $('<textarea>');
+                    $('body').append(tempTextArea);
+                    tempTextArea.val(tableData).select();
+                    document.execCommand('copy');
+                    tempTextArea.remove(); // Remove the temporary element
+
+                    // Notify the user
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Table data has been copied to the clipboard.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
+        
         // $('.deleteClient').on('click', function(){
         //     var clientId = $(this).data('id');
         //     if(confirm('Are you sure you want to archive this client?')){

@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Application Sub Categories
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formProductSubcategories" id="addBtn">Add Application Sub Categories</button>
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formProductSubcategories" id="addBtn">New</button>
             </h4>
             {{-- <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -106,7 +106,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_product_subcategories" enctype="multipart/form-data" action="{{ route('product_subcategories.store') }}">
+                <form method="POST" id="form_product_subcategories" enctype="multipart/form-data" action="{{ route('product_subcategories.store') }}" onsubmit="show()">
                     <span id="form_result"></span>
                     @csrf
                     <div class="form-group">

@@ -68,7 +68,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Shelf Life</label>
-                                <input type="text" class="form-control" name="ShelfLife" value="{{ $price_monitorings->ShelfLife }}">
+                                <input type="text" class="form-control" name="ShelfLife" value="{{ $price_monitorings->ShelfLife ?? "2 Years" }}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -130,13 +130,13 @@
                                             <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
                                                 <option value="" disabled selected>Select Product</option>
                                                 @foreach($products as $product)
-                                                    <option value="{{ $product->id }}" @if ($priceProducts->ProductId == $product->id) selected @endif>{{ $product->code }}</option>
+                                                    <option value="{{ $product->id }}" data-type="{{ $product->type }}" data-application_id="{{ $product->application_id }}"  @if ($priceProducts->ProductId == $product->id) selected @endif>{{ $product->code }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="form-group">
                                             <label>Category</label>
-                                            <select class="form-control js-example-basic-single" name="Type[]"  style="position: relative !important" title="Select Category">
+                                            <select class="form-control js-example-basic-single category-select" name="Type[]"  style="position: relative !important" title="Select Category">
                                                 <option value="" disabled @if ($priceProducts->Type == '') selected @endif>Select Category</option>
                                                 <option value="1" @if ($priceProducts->Type == '1') selected @endif>Pure</option>
                                                 <option value="2" @if ($priceProducts->Type == '2') selected @endif>Blend</option>
@@ -144,7 +144,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Application:</label>
-                                            <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
+                                            <select class="form-control js-example-basic-single application-select" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
                                                 <option value="" disabled selected>Select Application</option>
                                                 @foreach ($productApplications as $application)
                                                     <option value="{{ $application->id }}" @if ($priceProducts->ApplicationId == $application->id) selected @endif>{{ $application->Name }}</option>
@@ -580,13 +580,13 @@ function updateSellingPrice($row) {
                                    <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
                                        <option value="" disabled selected>Select Product</option>
                                        @foreach($products as $product)
-                                           <option value="{{ $product->id }}">{{ $product->code }}</option>
+                                           <option value="{{ $product->id }}" data-type="{{ $product->type }}" data-application_id="{{ $product->application_id }}">{{ $product->code }}</option>
                                        @endforeach
                                    </select>
                                </div>
                                <div class="form-group">
                                     <label>Category</label>
-                                    <select class="form-control js-example-basic-single ProductType" name="Type[]"  style="position: relative !important" title="Select Category">
+                                    <select class="form-control js-example-basic-single category-select ProductType" name="Type[]"  style="position: relative !important" title="Select Category">
                                        <option value="" disabled selected>Select Category</option>
                                        <option value="1">Pure</option>
                                        <option value="2">Blend</option>
@@ -594,7 +594,7 @@ function updateSellingPrice($row) {
                                </div>
                                <div class="form-group">
                                    <label>Application:</label>
-                                   <select class="form-control js-example-basic-single ApplicationId" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
+                                   <select class="form-control js-example-basic-single application-select ApplicationId" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
                                        <option value="" disabled selected>Select Application</option>
                                        @foreach ($productApplications as $application)
                                            <option value="{{ $application->id }}" >{{ $application->Name }}</option>
@@ -755,4 +755,21 @@ function updateSellingPrice($row) {
         });
     });
 });
+
+$(document).ready(function() {
+    function handleProductChange(event) {
+        var $productSelect = $(event.target);
+        var selectedOption = $productSelect.find('option:selected');
+        var selectedType = selectedOption.data('type');
+        var selectedApplicationId = selectedOption.data('application_id');
+
+        var $row = $productSelect.closest('.create_prf_form{{ $price_monitorings->id }}');
+        
+        $row.find('.category-select').val(selectedType).change();
+        $row.find('.application-select').val(selectedApplicationId).change();
+    }
+
+    $(document).on('change', '.product-select', handleProductChange);
+});
+
 </script>

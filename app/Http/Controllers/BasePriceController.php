@@ -87,11 +87,18 @@ class BasePriceController extends Controller
             ->where('Status', 1)
             ->orderBy('CreatedDate', 'desc') 
             ->paginate(10);
-
+            $allNewbasePrice = BasePrice::with(['productMaterial', 'userApproved'])
+            ->joinSub($latestDatesSubquery, 'latest_dates', function ($join) {
+                $join->on('productmaterialbaseprices.MaterialId', '=', 'latest_dates.MaterialId')
+                    ->on('productmaterialbaseprices.CreatedDate', '=', 'latest_dates.latest_created_date');
+            })
+            ->where('Status', 1)
+            ->orderBy('CreatedDate', 'desc')
+            ->get();
         $rawMaterials = RawMaterial::all();
         $productCurrency = PriceCurrency::all();
 
-        return view('base_prices.new_basePrice_index', compact('newBasePrice', 'search', 'rawMaterials', 'productCurrency')); 
+        return view('base_prices.new_basePrice_index', compact('newBasePrice', 'search', 'rawMaterials', 'productCurrency','allNewbasePrice')); 
     }
 
 
@@ -189,6 +196,24 @@ class BasePriceController extends Controller
         }
     }
 
+    public function bulkApprove(Request $request)
+    {
+        $ids = $request->input('ids');
+    
+        try {
+            BasePrice::whereIn('Id', $ids)->update([
+                'Status' => 3,
+                'ApprovedBy' => auth()->user()->user_id,
+                'EffectiveDate' => now(),
+                'updated_at' => now()
+            ]);
+    
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+    
     public function destroy($id)
     {
         try {
@@ -199,4 +224,18 @@ class BasePriceController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to delete base price.'], 500);
         }
     }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        try {
+            BasePrice::whereIn('Id', $ids)->delete();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
 }

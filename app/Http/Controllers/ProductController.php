@@ -25,11 +25,13 @@ use App\ProductRawMaterials;
 use App\ProductSpecification;
 use App\ProductSubcategories;
 use App\RawMaterial;
+use Dompdf\Dompdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
-
+use Illuminate\Support\Str;
 class ProductController extends Controller
 {
     // Current List
@@ -37,8 +39,10 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->where('status', 4)
-            ->when($request->search, function($q)use($request){
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+            ->where(function($q)use($request){
+                if ($request->search != null)
+                {
+                    $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
                     ->orWhereHas('userByUserId', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
@@ -46,6 +50,7 @@ class ProductController extends Controller
                     ->orWhereHas('userById', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
+                }
             })
             ->when($request->application_filter, function($q)use($request) {
                 $q->where('application_id', $request->application_filter);
@@ -79,8 +84,10 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->where('status', 2)
-            ->when($request->search, function($q)use($request){
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+            ->where(function($q)use($request){
+                if ($request->search != null)
+                {
+                    $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
                     ->orWhereHas('userByUserId', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
@@ -88,6 +95,7 @@ class ProductController extends Controller
                     ->orWhereHas('userById', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
+                }
             }) 
             ->orderBy('updated_at', 'desc')
             ->paginate($request->entries ?? 10);
@@ -113,8 +121,10 @@ class ProductController extends Controller
 
         $products = Product::where('status', 1)
             ->with(['userById', 'userByUserId'])
-            ->when($request->search, function($q)use($request) {
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+            ->where(function($q)use($request) {
+                if ($request->search != null)
+                {
+                    $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
                     ->orWhereHas('userByUserId', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
@@ -122,6 +132,7 @@ class ProductController extends Controller
                     ->orWhereHas('userById', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
+                }
             })
             ->orderBy('id', 'desc')
             ->paginate($request->entries ?? 10);
@@ -138,8 +149,10 @@ class ProductController extends Controller
     {   
         $products = Product::with(['userById', 'userByUserId'])
             ->where('status', 5)
-            ->when($request->search, function($q)use($request) {
-                $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
+            ->where(function($q)use($request) {
+                if ($request->search != null)
+                {
+                    $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
                     ->orWhereHas('userByUserId', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
@@ -147,6 +160,7 @@ class ProductController extends Controller
                     ->orWhereHas('userById', function($q)use($request) {
                         $q->where('full_name', 'LIKE', "%".$request->search."%");
                     });
+                }
             })
             ->orderBy('updated_at', 'desc')
             ->paginate($request->entries ?? 10);
@@ -163,41 +177,54 @@ class ProductController extends Controller
     // Store
     public function store(Request $request)
     {
-        $rules = array(
-            'code'              =>  'required',
-            'type'              =>  'required',
-            'application_id'    =>  'required'
-        );
-
-        $customMessages = [
-            'application_id.required'   =>  'The application field is required.',
-            'code.required'             =>  'The product code field is required'            
-        ];
-
-        $error = Validator::make($request->all(), $rules, $customMessages);
-
-        if($error->fails())
+        $series_number = 0;
+        if(preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $request->code, $matches))
         {
-            return response()->json(['errors' => $error->errors()->all()]);
+            $series_number = $matches[2];
         }
 
-        $form_data = array(
-            'ddw_number'                    =>  $request->ddw_number,
-            'code'                          =>  $request->code,
-            'reference_no'                  =>  $request->reference_no,
-            'type'                          =>  $request->type,
-            'application_id'                =>  $request->application_id,
-            'application_subcategory_id'    =>  $request->application_subcategory_id,
-            'product_origin'                =>  $request->product_origin,
-            'created_by'                    =>  auth()->user()->id,
-            'status'                        =>  '1'
-        );
+        if ($series_number == 0)
+        {
+            $product = new Product;
+            $product->ddw_number = $request->ddw_number;
+            $product->code = $request->code;
+            $product->reference_no = $request->reference_no;
+            $product->type = $request->type;
+            $product->application_id = $request->application_id;
+            $product->application_subcategory_id = $request->application_subcategory_id;
+            $product->product_origin = $request->product_origin;
+            $product->created_by = $request->created_by;
+            $product->status = $request->status;
+            $product->save();
 
-        Product::create($form_data);
-
-        // return response()->json(['success' => 'Data Added Successfully.']);
-        Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+            return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
+        }
+        else
+        {
+            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->first();
+            
+            if ($products == null)
+            {
+                $product = new Product;
+                $product->ddw_number = $request->ddw_number;
+                $product->code = $request->code;
+                $product->reference_no = $request->reference_no;
+                $product->type = $request->type;
+                $product->application_id = $request->application_id;
+                $product->application_subcategory_id = $request->application_subcategory_id;
+                $product->product_origin = $request->product_origin;
+                $product->created_by = $request->created_by;
+                $product->status = $request->status;
+                $product->save();
+    
+                return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
+            }
+            else
+            {
+                return response()->json(['status' => 0, 'error' => 'The number series is existing.']);
+            }
+        }
+        
     }
 
     // Edit
@@ -213,18 +240,52 @@ class ProductController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $product->ddw_number = $request->ddw_number;
-        $product->code = $request->code;
-        $product->reference_no = $request->reference_no;
-        $product->type = $request->type;
-        $product->application_id = $request->application_id;
-        $product->application_subcategory_id = $request->application_subcategory_id;
-        $product->product_origin = $request->product_origin;
-        $product->save();
+        $series_number = 0;
+        if(preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $request->code, $matches))
+        {
+            $series_number = $matches[2];
+        }
 
-        Alert::success('Successfully Updated.')->persistent('Dismiss');
-        return back();
+        if($series_number == 0)
+        {
+            $product = Product::findOrFail($id);
+            $product->ddw_number = $request->ddw_number;
+            $product->code = $request->code;
+            $product->reference_no = $request->reference_no;
+            $product->type = $request->type;
+            $product->application_id = $request->application_id;
+            $product->application_subcategory_id = $request->application_subcategory_id;
+            $product->product_origin = $request->product_origin;
+            $product->save();
+
+            return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
+        }
+        else
+        {
+            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->first();
+    
+            if ($products == null)
+            {
+                $product = Product::findOrFail($id);
+                $product->ddw_number = $request->ddw_number;
+                $product->code = $request->code;
+                $product->reference_no = $request->reference_no;
+                $product->type = $request->type;
+                $product->application_id = $request->application_id;
+                $product->application_subcategory_id = $request->application_subcategory_id;
+                $product->product_origin = $request->product_origin;
+                $product->save();
+    
+                return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
+            }
+            else
+            {
+                return response()->json(['status' => 0, 'error' => 'The number series is existing.']);
+            }
+        }
+
+        // Alert::success('Successfully Updated.')->persistent('Dismiss');
+        // return back();
     }
 
     // View
@@ -327,7 +388,7 @@ class ProductController extends Controller
         // }
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'materials']);
     }
 
     public function addToNewProducts(Request $request)
@@ -342,6 +403,14 @@ class ProductController extends Controller
 
     public function addToCurrentProducts(Request $request)
     {
+        $productMaterialComposition = ProductMaterialsComposition::where('ProductId', $request->id)->get();
+
+        if ($productMaterialComposition->isEmpty())
+        {
+            Alert::error('Error! Unable to move products into current');
+            return back();
+        }
+
         $product = Product::findOrFail($request->id);
         $product->status = 4;
         $product->save();
@@ -435,7 +504,7 @@ class ProductController extends Controller
         $fileProducts->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function editFiles(Request $request, $id)
@@ -458,7 +527,7 @@ class ProductController extends Controller
         $fileProducts->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function deleteProductFiles($id)
@@ -467,7 +536,7 @@ class ProductController extends Controller
         $productFiles->delete();
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'files']);
     }
 
     public function productDs(Request $request)
@@ -578,7 +647,7 @@ class ProductController extends Controller
             }
 
             Alert::success('Successfully Saved')->persistent('Dismiss');
-            return back();
+            return back()->with(['tab' => 'pds']);
         }
     }
 
@@ -681,7 +750,7 @@ class ProductController extends Controller
         $productDataSheet->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'pds']);
     }
 
     public function viewPdsDetails($id)
@@ -697,7 +766,7 @@ class ProductController extends Controller
         $productDataSheet->delete();
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'pds']);
     }
 
     public function updateAllProductSpecification(Request $request)
@@ -724,40 +793,29 @@ class ProductController extends Controller
 
     public function updateAllFiles(Request $request)
     {
-        $productFiles = ProductFiles::where('ProductId', $request->product_id)->delete();
-
-        if($request->description)
+        if ($request->has('files'))
         {
-            foreach($request->description as $key=>$description)
+            $productFiles = ProductFiles::where('ProductId', $request->product_id)->delete();
+
+            $attachments = $request->file('files');
+            foreach($attachments as $key=>$attachment)
             {
                 $productFiles = new ProductFiles;
                 $productFiles->ProductId = $request->product_id;
                 $productFiles->Name = $request->name[$key];
                 $productFiles->ClientId = $request->client[$key];
-                $productFiles->Description = $description;
-                
-                if ($request->hasFile('files') && isset($request->file('files')[$key]))
-                {
-                    $files = $request->file('files');
-                    foreach($files as $file)
-                    {
-                        $fileName = time().'_'.$file->getClientOriginalName();
-                        $file->move(public_path().'/attachments/', $fileName);
-    
-                        $productFiles->Path = "/attachments/" . $fileName;
-                    }
-                }
-                else 
-                {
-                    $productFiles->Path = $request->product_files[$key] ?? null;
-                }
+                $productFiles->Description = $request->description[$key];
 
+                $name = time().'-'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('attachments'), $name);
+
+                $productFiles->path = '/attachments/'.$name;
                 $productFiles->save();
             }
-        }
 
-        Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+            Alert::success('Successfully Saved')->persistent('Dismiss');
+            return back()->with(['tab' => 'files']);
+        }
     }
 
     public function viewDraft($id)
@@ -924,5 +982,49 @@ class ProductController extends Controller
                 'entries' => $request->entries
             )
         ); 
+    }
+
+    public function printMrdcPds($id)
+    {
+        $pds = ProductDataSheet::with('productPhysicoChemicalAnalyses', 'productMicrobiologicalAnalysis', 'productHeavyMetal', 'productNutritionalInformation', 'productAllergens', 'productPotentialBenefit')->findOrFail($id);
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('products.print_mrdc_pds',
+            array(
+                'pds' => $pds
+            )
+        );
+        
+        return $pdf->stream();
+    }
+
+    public function printWhiPds($id)
+    {
+        $pds = ProductDataSheet::with('productPhysicoChemicalAnalyses', 'productMicrobiologicalAnalysis', 'productHeavyMetal', 'productNutritionalInformation', 'productAllergens', 'productPotentialBenefit')->findOrFail($id);
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('products.print_whi_pds',
+            array(
+                'pds' => $pds
+            )
+        )
+        ->setPaper('a4', 'portrait');
+        
+        return $pdf->stream();
+    }
+
+    public function printPbiPds($id)
+    {
+        $pds = ProductDataSheet::with('productPhysicoChemicalAnalyses', 'productMicrobiologicalAnalysis', 'productHeavyMetal', 'productNutritionalInformation', 'productAllergens', 'productPotentialBenefit')->findOrFail($id);
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('products.print_pbi_pds',
+            array(
+                'pds' => $pds
+            )
+        )
+        ->setPaper('a4', 'portrait');
+        
+        return $pdf->stream();
     }
 }

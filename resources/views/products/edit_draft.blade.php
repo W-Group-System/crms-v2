@@ -8,7 +8,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_product" action="{{url('update_product/'.$p->id)}}">
+                <form method="POST" class="edit_form_product" action="{{url('update_product/'.$p->id)}}">
+                    <span id="update_form_result"></span>
                     @csrf
                     <div class="form-group">
                         <label for="name">DDW Number</label>
@@ -41,7 +42,7 @@
                     </div>
                     <div class="form-group">
                         <label>Application Subcategory</label>
-                        <select class="form-control js-example-basic-single" name="application_subcategory_id" style="position: relative !important" title="Select Subcategory" required>
+                        <select class="form-control js-example-basic-single" name="application_subcategory_id" style="position: relative !important" title="Select Subcategory">
                             <option value="" disabled selected>Select Subcategory</option>
                             @foreach($product_subcategories as $product_subcategory)
                                 <option value="{{ $product_subcategory->id }}" @if($product_subcategory->id == $p->application_subcategory_id) selected @endif>{{ $product_subcategory->Name }}</option>
@@ -50,7 +51,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Product Origin</label>
-                        <input type="text" class="form-control" id="product_origin" name="product_origin" placeholder="Enter Product Origin" value="{{$p->product_origin}}" required>
+                        <input type="text" class="form-control" id="product_origin" name="product_origin" placeholder="Enter Product Origin" value="{{$p->product_origin}}">
                     </div>
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">

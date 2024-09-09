@@ -119,7 +119,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_role" enctype="multipart/form-data" action="{{url('new_role')}}">
+                <form method="POST" id="form_role" enctype="multipart/form-data" action="{{url('new_role')}}" onsubmit="show()">
                     @csrf
                     <div class="form-group">
                         <label for="department">Department</label>
@@ -132,7 +132,14 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" required>
+                        {{-- <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" required> --}}
+                        <select class="form-control js-example-basic-single" name="name" required>
+                            <option disabled selected value>-Select Name-</option>
+                            <option value="Staff L1">Staff L1</option>
+                            <option value="Staff L2">Staff L2</option>
+                            <option value="Department Admin">Department Admin</option>
+                            <option value="Accounting">Accounting</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="name">Description</label>
@@ -228,7 +235,7 @@
 
         $(".departmentSelectOption").on('change', function() {
             
-            if($(this).val() == 38 || $(this).val() == 5)
+            if($(this).val() == 38 || $(this).val() == 5 || $(this).val() == 41 || $(this).val() == 11)
             {
                 if ($('.form-group:contains("Type")').length == 0)
                 {
@@ -239,6 +246,8 @@
                                 <option disabled selected value>Select Type</option>
                                 <option value="LS">Local Sales</option>
                                 <option value="IS">International Sales</option>
+                                <option value="RND">Research & Development</option>
+                                <option value="ACCTG">Accounting</option>
                             </select>
                         </div>
                     `

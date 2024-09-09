@@ -166,10 +166,11 @@
                             @foreach($priceRequests as $price_request)
                                 <tr>
                                     <td>{{date('M. d, Y', strtotime($price_request->DateRequested))}}</td>
+                                    <td>{{ $price_request->PrfNumber }} </td>
                                     <td>{{ $price_request->primarySalesPerson->full_name ?? $price_request->userById->full_name ?? 'N/A' }} </td>
                                     <td>{{ $price_request->client->name ?? 'N/A' }} </td>
                                     <td>{{ $price_request->code }}</td>
-                                    <td>{{ $price_request->ProductRmc ?? 'N/A' }}</td>
+                                    <td>{{ $price_request->ProductRmc }}</td>
                                     <td>{{ $price_request->IsalesOfferedPrice ?? 'N/A' }}</td>
                                     <td>{{ $price_request->ShipmentTerm ?? 'N/A' }}</td>
                                     <td>{{ $price_request->paymentterms->Name ?? 'N/A' }}</td>
@@ -200,6 +201,14 @@
                                     <option value="">Select Date</option>
                                     @foreach($allDates as $date)
                                         <option value="{{ $date }}" {{ request('filter_date') == $date ? 'selected' : '' }}>{{ $date }}</option>
+                                    @endforeach
+                                </select>
+                            </th>
+                            <th>
+                                <select id="filter-prf" class="form-control js-example-basic-single">
+                                    <option value="">Select Account Manager</option>
+                                    @foreach($allPrf as $prf)
+                                        <option value="{{ $prf }}" {{ request('filter_prf') == $prf ? 'selected' : '' }}>{{ $prf }}</option>
                                     @endforeach
                                 </select>
                             </th>
@@ -381,13 +390,13 @@
                     // Add the table body from the fetched data
                     $(data).each(function(index, item) {
                         tableData += (item.DateRequested ? formatDate(item.DateRequested) : '') + '\t' +
-                                    (item.primary_sales_person.full_name || '') + '\t' +
+                                    (item.primary_sales_person?.full_name || '') + '\t' +
                                     (item.client.name || '') + '\t' +
                                     (item.code || '') + '\t' +
                                     (item.ProductRmc || '') + '\t' +
                                     (item.IsalesOfferedPrice || '') + '\t' +
                                     (item.ShipmentTerm || '') + '\t' +
-                                    (item.paymentterms.Name || '') + '\t' +
+                                    (item.paymentterms?.Name || '') + '\t' +
                                     (item.QuantityRequired || '') + '\t' +
                                     (item.IsalesMargin || '') + '\t' +
                                     (item.IsalesMarginPercentage || '') + '\t' +
@@ -481,9 +490,10 @@
             });
         });
 
-        $('#filter-date, #filter-account-manager, #filter-client, #filter-product, #filter-rmc, #filter-shipment, #filter-payment, #filter-accepted, #filter-quantity, #filter-offered, #filter-margin, #filter-percent-margin, #filter-total-margin').on('change', function() {
+        $('#filter-date, #filter-account-manager, #filter-client, #filter-product, #filter-rmc, #filter-shipment, #filter-payment, #filter-accepted, #filter-quantity, #filter-offered, #filter-margin, #filter-percent-margin, #filter-total-margin, #filter-prf').on('change', function() {
             var filters = {
                 filter_date: $('#filter-date').val(),
+                filter_prf: $('#filter-prf').val(),
                 filter_account_manager: $('#filter-account-manager').val(),
                 filter_client: $('#filter-client').val(),
                 filter_product: $('#filter-product').val(),

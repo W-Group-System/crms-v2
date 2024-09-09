@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h5 class="modal-title">Add Files</h5>
             </div>
-            <form method="POST" action="{{url('add_crr_file')}}" enctype="multipart/form-data">
+            <form method="POST" action="{{url('add_crr_file')}}" enctype="multipart/form-data" onsubmit="show()">
                 @csrf 
                 <input type="hidden" name="customer_requirements_id" value="{{$crr->id}}">
                 <div class="modal-body">
@@ -16,13 +16,13 @@
                         <div class="col-lg-12 mb-3">
                             <div class="form-group">
                                 <label>Is Confidential :</label>
-                                <input type="checkbox" name="is_confidential" checked>
+                                <input type="checkbox" name="is_confidential">
                             </div>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <div class="form-group">
                                 <label>Is For Review :</label>
-                                <input type="checkbox" name="is_for_review" checked>
+                                <input type="checkbox" name="is_for_review">
                             </div>
                         </div>
                         <div class="col-lg-12 mb-3">

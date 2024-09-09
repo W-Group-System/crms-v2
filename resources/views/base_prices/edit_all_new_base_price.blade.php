@@ -11,41 +11,43 @@
                 <form method="POST" enctype="multipart/form-data" action="{{ url('/editAllNewBasePrice') }}">
                     @csrf
                     <div class="table-responsive">
-                        <table class="table table-striped" id="materialBasePrice">
-                            <thead>
-                                <tr>
-                                    <th>Material</th>
-                                    <th>Currency</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody >
-                                @foreach ( $newBasePrice as $BasePrice)
-                                <tr>
-                                    <td>
-                                        <input type="hidden" name="BasePriceId[]" value="{{ $BasePrice->Id }}">
-                                        <select class="form-control js-example-basic-single" name="Material[]" style="position: relative !important" title="Select Material" >
-                                            <option value="" disabled selected>Select Material</option>
-                                            @foreach ($rawMaterials as $material)
-                                                <option value="{{ $material->id }}" @if ( $BasePrice->MaterialId == $material->id ) selected @endif>{{ $material->Name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-control js-example-basic-single" name="Currency[]" style="position: relative !important" title="Select Currency" disabled>
-                                            <option value="" disabled selected>Select Currency</option>
-                                            @foreach ($productCurrency as $currency)
-                                                <option value="{{ $currency->id }}" @if ( $BasePrice->CurrencyId == $currency->id ) selected @endif>{{ $currency->Name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="number" step=".01" class="form-control" name="Price[]" value="{{  $BasePrice->Price }}"  placeholder="" >
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                        <div style="overflow-y: scroll; height: 50vh;">
+                            <table class="table table-striped" id="materialBasePrice">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Currency</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($allNewbasePrice as $BasePrice)
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" name="BasePriceId[]" value="{{ $BasePrice->Id }}">
+                                            <select class="form-control js-example-basic-single" name="Material[]" style="position: relative !important" title="Select Material" >
+                                                <option value="" disabled selected>Select Material</option>
+                                                @foreach ($rawMaterials as $material)
+                                                    <option value="{{ $material->id }}" @if ($BasePrice->MaterialId == $material->id) selected @endif>{{ $material->Name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control js-example-basic-single" name="Currency[]" style="position: relative !important" title="Select Currency" disabled>
+                                                <option value="" disabled selected>Select Currency</option>
+                                                @foreach ($productCurrency as $currency)
+                                                    <option value="{{ $currency->id }}" @if ($BasePrice->CurrencyId == $currency->id) selected @endif>{{ $currency->Name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" step=".01" class="form-control" name="Price[]" value="{{ $BasePrice->Price }}" placeholder="">
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         @php
@@ -64,8 +66,7 @@
                             </div>
                         </div>
                     </div>
-                    
-                </form>
+                </form>                
             </div>
         </div>
     </div>

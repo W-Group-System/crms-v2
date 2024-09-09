@@ -53,13 +53,14 @@ function usdToEur($cost)
         {
             $q->where('FromCurrencyId', 2)->where('ToCurrencyId', 1);
         })
+        ->orderBy('EffectiveDate', 'desc')
         ->first();
 
     if ($currencyExchangeRates != null){
 
         $eur = $currencyExchangeRates->ExchangeRate * $cost;
 
-        return round($eur, 2);
+        return $eur;
     }
     
 }
@@ -86,13 +87,14 @@ function usdToPhp($cost)
     $currencyExchangeRates = CurrencyExchange::whereHas('fromCurrency', function($q) {
         $q->where('FromCurrencyId', 2)->where('ToCurrencyId', 3);
     })
+    ->orderBy('EffectiveDate', 'desc')
     ->first();
 
     $exchangeRate = ($currencyExchangeRates != null) ? $currencyExchangeRates->ExchangeRate : 1;
 
     $php = $exchangeRate * $cost;
 
-    return round($php, 2);
+    return $php;
 }
 
 function identicalComposition($materials, $product_id)
@@ -133,7 +135,7 @@ function customerRequirements($product)
 
 function getProductIdByCode($code)
 {
-    $product = Product::where('code', $code)->first();
+    $product = Product::where('code', $code)->where('status', 4)->first();
     
     return $product ? $product->id : null;
 }
@@ -208,7 +210,7 @@ function checkRolesIfHaveApprove($module, $department, $role)
 
 function checkIfHaveFiles($role)
 {
-    if (($role->department_id == 5 || $role->department_id == 38) && $role->name == "Department Admin")
+    if (($role->department_id == 5 || $role->department_id == 38 || $role->department_id == 15) && ($role->name == "Department Admin" || $role->name == "Staff L2" || $role->name == "Staff L1"))
     {
         return "yes";
     }
@@ -219,6 +221,16 @@ function checkIfHaveFiles($role)
 function checkIfItsManagerOrSupervisor($role)
 {
     if (($role->department_id == 5 || $role->department_id == 38 || $role->department_id == 15 || $role->department_id == 42) && ($role->name == "Department Admin" || $role->name == "Staff L2"))
+    {
+        return "yes";
+    }
+    
+    return "no";
+}
+
+function checkIfItsSalesManager($role)
+{
+    if (($role->department_id == 5 || $role->department_id == 38) && ($role->name == "Department Admin"))
     {
         return "yes";
     }
@@ -290,9 +302,19 @@ function authCheckIfItsSales($department)
     return false;
 }
 
+function authCheckIfItsSalesManager($role)
+{
+    if ($role == 21)
+    {
+        return true;
+    }
+    
+    return false;
+}
+
 function authCheckIfItsRnd($department)
 {
-    if ($department == 15)
+    if ($department == 15 || $department == 42)
     {
         return true;
     }
@@ -339,10 +361,285 @@ function checkIfItsSalesDept($department)
 
 function rndManager($role)
 {
-    if ($role->department_id == 15 || $role->id == 14 || $role->department_id == 42)
+    if (($role->department_id == 15 || $role->id == 14 || $role->department_id == 42) &&( $role->name == "Department Admin" || $role->name == "Staff L2"))
     {
         return true;
     }
     // dd($role);
     return false;
+}
+
+function getUserApprover($approver)
+{
+    $user = User::whereIn('id', ($approver->pluck('UserId')))->orWhere('id', auth()->user()->id)->get();
+    
+    return $user;
+}
+function getHistoricalPrices($materialId) {
+    return BasePrice::where('MaterialId', $materialId)
+        ->orderBy('EffectiveDate', 'desc')
+        ->get();
+}
+function authCheckIfItsCustomerService($role)
+{
+    if ($role == 11)
+    {
+        return true;
+    }
+    
+    return false;
+}
+
+function physioChemicalAnalysis()
+{
+    $physio_chemical_analysis = [
+        [
+            'Parameter' => 'Loss on Drying',
+            'Value' => 'Max 12.0%',
+            'Remarks' => 'at 105°C to constant weight; WI-QCD-32',
+        ],
+        [
+            'Parameter' => 'Sulfate',
+            'Value' => '15-40%',
+            'Remarks' => 'As SO4̄²,dried basis',
+        ],
+        [
+            'Parameter' => 'Total Ash',
+            'Value' => '15-40%',
+            'Remarks' => 'Dried Basis',
+        ],
+        [
+            'Parameter' => 'Acid-insoluble Ash',
+            'Value' => 'Max 1%',
+            'Remarks' => '',
+        ],
+        [
+            'Parameter' => 'Acid-insoluble Matter',
+            'Value' => '8-15%',
+            'Remarks' => '',
+        ],
+        [
+            'Parameter' => 'Residual Solvent',
+            'Value' => 'Max 0.1%',
+            'Remarks' => 'Ethanol, isopropanol or methanol',
+        ],
+        [
+            'Parameter' => 'Low Molecular Weight Carrageenan (mol. wt. fraction <50 kDa)',
+            'Value' => 'Max 5%',
+            'Remarks' => 'As SO4̄²,dried basis',
+        ],
+        [
+            'Parameter' => 'pH',
+            'Value' => '',
+            'Remarks' => 'WI-08-02i (1.5%); WI-08-02ii (1.0%); WI-R&D-73',
+        ],
+        [
+            'Parameter' => 'Water Viscosity',
+            'Value' => '',
+            'Remarks' => 'WI-08-03i (1.5%); WI-08-03ii (1.0%); WI-R&D-74',
+        ],
+        [
+            'Parameter' => 'Milk Viscosity',
+            'Value' => '',
+            'Remarks' => 'WI-08-10x; WI-R&D-77',
+        ],
+        [
+            'Parameter' => 'Water Gel Strength',
+            'Value' => '',
+            'Remarks' => 'WI-08-04i; WI-R&D-38',
+        ],
+        [
+            'Parameter' => 'Potassium Gel Strength',
+            'Value' => '',
+            'Remarks' => 'WI-08-05i; WI-R&D-62 ',
+        ],
+        [
+            'Parameter' => 'Brine Gel Strength',
+            'Value' => '',
+            'Remarks' => 'WI-08-06i; WI-R&D-56',
+        ],
+        [
+            'Parameter' => 'Milk Gel Strength',
+            'Value' => '',
+            'Remarks' => 'WI-08-07i; WI-R&D-33',
+        ],
+        [
+            'Parameter' => 'Calcium Gel Strength',
+            'Value' => '',
+            'Remarks' => 'WI-08-08i; WI-R&D-15',
+        ],
+        [
+            'Parameter' => 'Dessert Gel Strength',
+            'Value' => '',
+            'Remarks' => 'WI-08-04vi; WI-R&D-39',
+        ],
+    ];
+
+    return collect($physio_chemical_analysis)->map(function($item) {
+        return (object) $item;
+    });
+}
+
+function microbiologicalAnalysis()
+{
+    $microbiological_analysis = [
+        [
+            'Parameter' => 'Total Plate Count',
+            'Value' => 'Max 5,000CFU/g',
+            'Remarks' => '35°C for 48 hours incubation; WI-QCD-24',
+        ],
+        [
+            'Parameter' => 'Yeast and Molds',
+            'Value' => 'Max 300 CFU/g',
+            'Remarks' => '35°C for 48 hours incubation; WI-QCD-26',
+        ],
+        [
+            'Parameter' => 'Salmonella',
+            'Value' => 'Absent in 10g',
+            'Remarks' => '35°C for 48 hours incubation; WI-QCD-21',
+        ],
+        [
+            'Parameter' => 'E. coli',
+            'Value' => 'Absent in 5g',
+            'Remarks' => '35°C for 48 hours incubation; WI-QCD-10',
+        ],
+    ];
+
+    return collect($microbiological_analysis)->map(function($item) {
+        return (object) $item;
+    });
+}
+
+function heavyMetals()
+{
+    $heavy_metals = [
+        [
+            'Parameter' => 'Lead (Pb)',
+            'Value' => 'Max 5 ppm',
+        ],
+        [
+            'Parameter' => 'Arsenic (As)',
+            'Value' => 'Max 3 ppm',
+        ],
+        [
+            'Parameter' => 'Mercury (Hg)',
+            'Value' => 'Max 1 ppm',
+        ],
+        [
+            'Parameter' => 'Cadmium (Cd)',
+            'Value' => 'Max 2 ppm',
+        ],
+    ];
+
+    return collect($heavy_metals)->map(function($item) {
+        return (object) $item;
+    });
+}
+
+function nutrionalInformation()
+{
+    $nutrional_information = [
+        [
+            'Parameter' => 'Energy',
+            'Value' => '288 (kcal)',
+        ],
+        [
+            'Parameter' => 'Fat',
+            'Value' => '0 g',
+        ],
+        [
+            'Parameter' => 'Carbohydrates',
+            'Value' => '71 g',
+        ],
+        [
+            'Parameter' => 'Fiber, insoluble',
+            'Value' => '4 g',
+        ],
+        [
+            'Parameter' => 'Fiber, soluble',
+            'Value' => '67 g',
+        ],
+        [
+            'Parameter' => 'Protein',
+            'Value' => '1 g',
+        ],
+        [
+            'Parameter' => 'Sodium',
+            'Value' => '0.5 g',
+        ],
+        [
+            'Parameter' => 'Potassium',
+            'Value' => '4.5 g',
+        ],
+        [
+            'Parameter' => 'Vitamin D',
+            'Value' => '0 g',
+        ],
+    ];
+
+    return collect($nutrional_information)->map(function($item) {
+        return (object) $item;
+    });
+}
+
+function allergens()
+{
+    $nutrional_information = [
+        [
+            'Parameter' => 'Cereal containing gluten',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Crustaceans',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Eggs',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Fish',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Soy beans',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Milk (incl. Lactose)',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Nuts',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Celery',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Mustard',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Sesame Seeds',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Sulphur dioxide and sulphites (>10 mg/kg)',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Lupin',
+            'IsAllergen' => '',
+        ],
+        [
+            'Parameter' => 'Mollusc',
+            'IsAllergen' => '',
+        ],
+    ];
+
+    return collect($nutrional_information)->map(function($item) {
+        return (object) $item;
+    });
 }

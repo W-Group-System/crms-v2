@@ -77,9 +77,22 @@ class ReportsController extends Controller
             ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
             ->leftJoin('pricerequestproducts', 'pricerequestproducts.id', '=', 'pricerequestforms.id')
             ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
-            ->orderBy($sort, $direction);
-            
-        // dd($sort);
+            ->when($sort, function ($query) use ($sort, $direction) {
+                if ($sort == 'PrimarySalesPersonId') {
+                    $query->orderBy('PrimarySalesPersonId', $direction);
+                } elseif ($sort == 'ClientId') {
+                    $query->orderBy('ClientId', $direction);
+                } elseif ($sort == 'ProductCode') {
+                    $query->orderBy('products.code', $direction);
+                } elseif ($sort == 'PaymentTermId') {
+                    $query->orderBy('PaymentTermId', $direction);
+                } else {
+                    $query->orderBy($sort, $direction);
+                }
+            });
+        
+        $priceRequests = $query->get();   
+        // dd($priceRequests->take(1));
         // Apply Filters
         if ($request->filled('filter_date')) {
             $query->whereDate('DateRequested', $request->filter_date);
@@ -103,6 +116,7 @@ class ReportsController extends Controller
 
             // Use these optimized queries
             $allDates = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('DateRequested')->unique()->sort()->values();
+            $allPrf = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('PrfNumber')->unique()->sort()->values();
             $allPrimarySalesPersons = User::whereIn('users.user_id', PriceMonitoring::pluck('PrimarySalesPersonId')->unique())
                 ->pluck('full_name', 'users.user_id')
                 ->sort();
@@ -148,8 +162,7 @@ class ReportsController extends Controller
             
             return view('reports.price_summary', compact(
                 'search', 'priceRequests', 'entries', 'fetchAll', 'sort', 'direction',
-                'allPrimarySalesPersons', 'allProductRmc', 'allDates', 'allClients',
-                'allShipments', 'allPayments', 'allQuantity', 'allAccepted', 'allRemarks', 'allProducts', 'allOfferedPrice', 'allMargin', 'allPercentMargin', 'totalMargins', 'from', 'to'
+                'allPrimarySalesPersons', 'allProductRmc', 'allDates', 'allClients','allShipments', 'allPayments', 'allQuantity', 'allAccepted', 'allRemarks', 'allProducts', 'allOfferedPrice', 'allMargin', 'allPercentMargin', 'totalMargins', 'allPrf', 'from', 'to'
             ));
         }
     }

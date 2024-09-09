@@ -9,6 +9,7 @@ use App\PaymentTerms;
 use App\Region;
 use App\Area;
 use App\BusinessType;
+use App\SalesApprovers;
 use App\Contact;
 use App\FileClient;
 use App\Industry;
@@ -18,28 +19,32 @@ use App\Exports\ArchivedClientExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Auth;
+use Collective\Html\FormFacade as Form;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
     // Current List
     public function index(Request $request)
-    {   
-        // $clients = Client::with(['industry'])->where('Status', '2')->orderBy('Id', 'desc')->get();
-        // if(request()->ajax())   
-        // {
-        //     return datatables()->of($clients)
-        //             ->addColumn('action', function ($data) {
-        //                 $viewButton = '<a type="button" href="' . route("client.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
-        //                 $editButton = '<a type="button" href="' . route("client.edit", ["id" => $data->id]) . '" name="edit" id="' . $data->id . '" class="edit btn btn-primary">Edit</a>';
-        //                 return $viewButton . '&nbsp;&nbsp;' . $editButton;
-        //             })
-        //             ->rawColumns(['action'])
-        //             ->make(true);
-        // }
-        // return view('clients.index', compact('clients'));
+    {
         $request->session()->put('last_client_page', url()->full());
         $search = $request->input('search');
+        $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
+        $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $role = auth()->user()->role;
+        $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
+        $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
+
+        // Validate sort and direction parameters
+        $validSorts = ['Name', 'BuyerCode', 'Type', 'ClientIndustryId', 'PrimaryAccountManagerId'];
+        if (!in_array($sort, $validSorts)) {
+            $sort = 'Name';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
+
         // Map search terms to type values
         $typeMap = [
             'Local' => '1',
@@ -51,6 +56,7 @@ class ClientController extends Controller
         // Default to all types if no specific type is searched
         $typeSearch = $typeMap[$search] ?? null;
 
+        // Build the query with relationships
         $clients = Client::with(['industry', 'userById', 'userByUserId', 'userByUserId2'])
             ->where('Status', '2')  // Filter by status
             ->where(function ($query) use ($search, $typeSearch) {
@@ -75,35 +81,49 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
-            ->paginate(10);  // Paginate results with 10 items per page
+            ->when(optional($role)->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('Type', '2');
+                } elseif ($role->type == "LS") {
+                    $q->where('Type', '1');
+                }
+            })
+            ->orderBy($sort, $direction);
 
-        // Return view with search term and paginated client data
-        return view('clients.index', [
-            'search' => $search,
-            'clients' => $clients
-        ]);
+        if ($fetchAll) {
+            $currentClient = $clients->get(); // Fetch all results
+            return response()->json($currentClient); // Return JSON response for copying
+        } else {
+            $currentClient = $clients->paginate($entries); // Default pagination
+            return view('clients.index', [
+                'search' => $search,
+                'currentClient' => $currentClient,
+                'fetchAll' => $fetchAll,
+                'entries' => $entries
+            ]);
+        }
     }
 
     // Prospect List
     public function prospect(Request $request)
     {   
-        // $clients = Client::with(['industry'])->where('Status', '1')->orderBy('Id', 'desc')->get();
-        // if(request()->ajax())   
-        // {
-        //     return datatables()->of($clients)
-        //             ->addColumn('action', function ($data) {
-        //                 $viewButton = '<a type="button" href="' . route("client.view", ["id" => $data->id]) . '" name="view" id="' . $data->id . '" class="edit btn btn-success">View</a>';
-        //                 $editButton = '<a type="button" href="' . route("client.edit", ["id" => $data->id]) . '" name="edit" id="' . $data->id . '" class="edit btn btn-primary">Edit</a>';
-        //                 return $viewButton . '&nbsp;&nbsp;' . $editButton;
-        //             })
-        //             ->rawColumns(['action'])
-        //             ->make(true);
-        // }
-        // return view('clients.prospect', compact('clients')); 
+        
         $request->session()->put('last_client_page', url()->full());
-        // Retrieve search term from the request
         $search = $request->input('search');
+        $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
+        $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $role = auth()->user()->role;
+        $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
+        $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
+
+        // Validate sort and direction parameters
+        $validSorts = ['Name', 'BuyerCode', 'Type', 'ClientIndustryId', 'PrimaryAccountManagerId'];
+        if (!in_array($sort, $validSorts)) {
+            $sort = 'BuyerCode';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
     
         // Map search terms to type values
         $typeMap = [
@@ -140,14 +160,27 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
-            ->paginate(10);  // Paginate results with 10 items per page
+            ->when(optional($role)->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('Type', '2');
+                } elseif ($role->type == "LS") {
+                    $q->where('Type', '1');
+                }
+            })
+            ->orderBy($sort, $direction);
 
-        // Return view with search term and paginated client data
-        return view('clients.prospect', [
-            'search' => $search,
-            'clients' => $clients,
-        ]);
+        if ($fetchAll) {
+            $prospectClient = $clients->get(); // Fetch all results
+            return response()->json($prospectClient); // Return JSON response for copying
+        } else {
+            $prospectClient = $clients->paginate($entries); // Default pagination
+            return view('clients.prospect', [
+                'search' => $search,
+                'prospectClient' => $prospectClient,
+                'fetchAll' => $fetchAll,
+                'entries' => $entries
+            ]);
+        }
     }
 
     // Archived List
@@ -155,9 +188,20 @@ class ClientController extends Controller
     {   
         // Save the current URL in session (if needed for page tracking)
         $request->session()->put('last_client_page', url()->full());
-
-        // Retrieve search term from the request
         $search = $request->input('search');
+        $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
+        $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $role = auth()->user()->role;
+        $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
+        $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
+
+        $validSorts = ['Name', 'BuyerCode', 'Type', 'ClientIndustryId', 'PrimaryAccountManagerId'];
+        if (!in_array($sort, $validSorts)) {
+            $sort = 'Name';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
     
         // Map search terms to type values
         $typeMap = [
@@ -194,14 +238,27 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->orderBy(request('sort', 'id'), request('direction', 'desc'))
-            ->paginate(10);  // Paginate results with 10 items per page
-
-        // Return view with search term and paginated client data
-        return view('clients.archived', [
-            'search' => $search,
-            'clients' => $clients,
-        ]);
+            ->when(optional($role)->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('Type', '2');
+                } elseif ($role->type == "LS") {
+                    $q->where('Type', '1');
+                }
+            })
+            ->orderBy($sort, $direction);
+        
+        if ($fetchAll) {
+            $archivedClient = $clients->get(); // Fetch all results
+            return response()->json($archivedClient); // Return JSON response for copying
+        } else {
+            $archivedClient = $clients->paginate($entries); // Default pagination
+            return view('clients.archived', [
+                'search' => $search,
+                'archivedClient' => $archivedClient,
+                'fetchAll' => $fetchAll,
+                'entries' => $entries
+            ]);
+        }
     }
 
     // Create
@@ -219,7 +276,25 @@ class ClientController extends Controller
             'buyerCode'         => 'BCODE-' . now()->format('Ymd-His'),
         ];
         
-        return view('clients.create', $data);
+        $loggedInUser = Auth::user();
+        $role = $loggedInUser->role;
+        $withRelation = optional($role)->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        
+        if (optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') {
+            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::where('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
+        } else {
+            $primarySalesPersons = User::where('id', $loggedInUser->id)->with($withRelation)->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
+        }
+
+        // Pass the data, primarySalesPersons, and secondarySalesPersons to the view
+        return view('clients.create', array_merge($data, [
+            'primarySalesPersons' => $primarySalesPersons,
+            'secondarySalesPersons' => $secondarySalesPersons,
+            'role' => $role
+        ]));
     }
 
     public function getRegions(Request $request)
@@ -253,6 +328,7 @@ class ClientController extends Controller
             'AddressType.*'             => 'required|string|max:255',
             'Address'                   => 'required|array',
             'Address.*'                 => 'required|string|max:255',
+            'ContactName.*'             => 'required|string|max:255',
         ];  
 
         $customMessages = [
@@ -264,7 +340,8 @@ class ClientController extends Controller
             'BusinessTypeId.required'           => 'The business type is required.',
             'ClientIndustryId.required'         => 'The industry is required.',
             'AddressType.*.required'            => 'Each address type is required.',
-            'Address.*.required'                => 'Each address is required.'
+            'Address.*.required'                => 'Each address is required.',
+            'ContactName.*.required'            => 'Contact Name is required.'
         ];
 
         $validator = Validator::make($request->all(), $rules, $customMessages);
@@ -277,7 +354,7 @@ class ClientController extends Controller
             'BuyerCode', 'PrimaryAccountManagerId', 'SapCode', 'SecondaryAccountManagerId',
             'Name', 'TradeName', 'TaxIdentificationNumber', 'TelephoneNumber', 'PaymentTermId',
             'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'ClientCountryId',
-            'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId'
+            'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId', 'Status'
         ]));
         
         // Handle addresses if provided
@@ -292,6 +369,17 @@ class ClientController extends Controller
                 }
             }
         }
+
+        if ($request->has('ContactName') && is_array($request->ContactName)) {
+            foreach ($request->ContactName as $key => $contactName) {
+                if (!empty($contactName)) { // Corrected to use $contactName
+                    Contact::create([
+                        'CompanyId' => $client->id,
+                        'ContactName' => $contactName,
+                    ]);
+                }
+            }
+        }        
        
         // Return success message
         return response()->json(['success' => 'Data Added Successfully.']);
@@ -305,6 +393,7 @@ class ClientController extends Controller
         $contacts = Contact::where('CompanyId', $id)->get();
         $files = FileClient::where('ClientId', $id)->get();
         $users = User::where('is_active', '1')->whereNull('deleted_at')->get();
+       
         // dd($addresses);
         $collections = [
             'business_types' => BusinessType::all(),
@@ -582,4 +671,5 @@ class ClientController extends Controller
     {
         return Excel::download(new ArchivedClientExport, 'Archived Client.xlsx');
     }
+
 }

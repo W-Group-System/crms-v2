@@ -27,6 +27,7 @@
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
         <link rel="stylesheet" href="{{asset('css/theme.bootstrap_4.min.css')}}">
+        <link rel="icon" href="{{asset('images/wgroup.png')}}" type="image/x-icon">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
@@ -54,6 +55,17 @@
         {
             background-color: white !important;
         }
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url("{{ asset('images/loading.gif') }}") 50% 50% no-repeat white;
+            opacity: .8;
+            background-size: 120px 120px;
+        }   
     </style>
     @yield('css')
     @php
@@ -61,12 +73,14 @@
         $department = auth()->user()->department_id;
     @endphp
     <body>
+        <div id="loader" style="display:none;" class="loader"></div>
+
         <div class="container-scroller">
             <!-- partial:partials/_navbar.html -->
             <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
                 <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                    <a class="navbar-brand brand-logo mr-5" href="index.html"><img src="{{ asset('/images/crms2.png')}}" class="mr-2" alt="logo"/></a>
-                    <a class="navbar-brand brand-logo-mini" href="index.html"><img src="{{ asset('/images/crms2.png')}}" alt="logo"/></a>
+                    <a class="navbar-brand brand-logo mr-5" href="{{ url('/') }}"><img src="{{ asset('/images/crms2.png')}}" class="mr-2" alt="logo"/></a>
+                    <a class="navbar-brand brand-logo-mini" href="{{ url('/') }}"><img src="{{ asset('/images/crms2.png')}}" alt="logo"/></a>
                 </div>
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
                     <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -81,7 +95,7 @@
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                                 <a href="{{ route('my_account') }}" class="dropdown-item">
                                     <i class="ti ti-user text-primary"></i>
-                                    My Acount
+                                    My Account
                                 </a>
                                 <a href="{{ route('change_password') }}" class="dropdown-item">
                                     <i class="ti ti-unlock text-primary"></i>
@@ -91,7 +105,7 @@
                                     <i class="ti-power-off text-primary"></i>
                                     Logout
                                 </a> -->
-                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="logout(); show();">
                                 <i class="ti-power-off text-primary"></i>
                                     {{ __('Logout') }}
                                 </a>
@@ -226,7 +240,7 @@
                             </div>
                         </li>
                         @endif
-                        @if((viewModule('Customer Requirement', $department, $role) == "yes") || (viewModule('Request for Product Evaluation', $department, $role) == "yes") || (viewModule('Sample Request Form', $department, $role) == "yes") || (viewModule('Price Monitoring', $department, $role) == "yes") )
+                        @if((viewModule('Customer Requirement', $department, $role) == "yes") || (viewModule('Request for Product Evaluation', $department, $role) == "yes") || (viewModule('Sample Request Form', $department, $role) == "yes") || (viewModule('Price Monitoring', $department, $role) == "yes") || (viewModule('Customer Service SRF', $department, $role) == "yes"))
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#tables" aria-expanded="false" aria-controls="tables" onclick="toggleTables(event)">
                                 <i class="icon-grid-2 menu-icon"></i>
@@ -247,9 +261,13 @@
                                     @if(viewModule('Sample Request Form', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request') }}">Sample Request Form</a></li>
                                     @endif
-                                    @if(viewModule('Price Monitoring', $department, $role) == "yes")
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
+                                    @if(viewModule('Customer Service SRF', $department, $role) == "yes")
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request_cs_local') }}">Sample Request Local</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request_cs_international') }}">Sample Request International</a></li>
                                     @endif
+                                    {{-- @if(viewModule('Price Monitoring', $department, $role) == "yes")
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
+                                    @endif --}}
                                     @if(viewModule('Price Monitoring', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring_ls') }}">Price Monitoring</a></li>
                                     @endif
@@ -343,6 +361,46 @@
                             </a>
                         </li>
                         @endif
+
+                        @if(optional(auth()->user()->role)->type == "ACCTG")
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" data-target="#module" aria-expanded="false" aria-controls="module" onclick="toggleModule(event)">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">Module Setup</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse" id="module">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="javascript:void(0);" data-target="#nav_payment_currency" aria-expanded="false" aria-controls="nav_payment_currency" onclick="togglePaymentCurrency(event)">
+                                            <span class="menu-title">Payment Currency</span>
+                                            <i class="menu-arrow"></i>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="javascript:void(0);" data-target="#nav_accounting" aria-expanded="false" aria-controls="nav_accounting" onclick="toggleSetupAccounting(event)">
+                                            <span class="menu-title">Accounting</span>
+                                            <i class="menu-arrow"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="collapse" id="nav_payment_currency">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/price_currency') }}">Price Currencies</a></li>
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('currency_exchange') }}">Currency Exchange Rates</a></li>
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('payment_terms') }}">Payment Terms</a></li>
+                                </ul>
+                            </div>
+                            <div class="collapse" id="nav_accounting">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/fixed_cost') }}">Price Request Fixed Cost</a></li>
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/request_gae') }}">Price Request GAE</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        @endif
+
                         @if(auth()->user()->department_id == 1)
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#module" aria-expanded="false" aria-controls="module" onclick="toggleModule(event)">
@@ -356,6 +414,7 @@
                                     <li class="nav-item"><a class="nav-link" href="">Accounting Users</a></li>
                                     <li class="nav-item"><a class="nav-link" href="">Production Users</a></li>
                                     <li class="nav-item"><a class="nav-link" href="">Sales</a></li> --}}
+                                    
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#nav_location" aria-expanded="false" aria-controls="nav_location" onclick="toggleLocation(event)">
                                             <span class="menu-title">Location</span>
@@ -1141,6 +1200,19 @@
             }
         </style>
         @include('sweetalert::alert')
+        <script>
+            function show() {
+                document.getElementById("loader").style.display = "block";
+            }
+            function hide()
+            {
+                document.getElementById("loader").style.display = "none";
+            }
+            function logout() {
+                event.preventDefault();
+                document.getElementById('logout-form').submit();
+            }
+        </script>
         <script src="{{ asset('js/vendor.bundle.base.js') }}"></script>
         <script src="{{ asset('js/Chart.min.js') }}"></script>
         <script src="{{ asset('js/jquery.dataTables.js') }}"></script>

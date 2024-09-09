@@ -40,15 +40,45 @@
                         <label for="DateStarted">Date Started (MM/DD/YYYY):</label>
                         <input type="date" class="form-control" name="DateStarted" value="" placeholder="" readonly>
                     </div>
+
+                    @if (auth()->user()->role->name == 'Staff L2')
                     <div class="form-group">
                         <label>Primary Sales Person:</label>
-                        <select class="form-control js-example-basic-single" name="PrimarySalesPerson" style="position: relative !important" title="Select PrimarySalesPerson" required>
+                        <select  class="form-control js-example-basic-single" name="PrimarySalesPerson" style="position: relative !important" title="Select PrimarySalesPerson" required >
                             <option value="" disabled selected>Primary Sales Person</option>
                             @foreach ($primarySalesPersons as $salesPerson)
                                 <option value="{{ $salesPerson->user_id }}"{{ old('PrimarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }} >{{ $salesPerson->full_name }}</option>
                             @endforeach
                         </select>
                     </div>
+                    @else
+                    <div class="form-group">
+                        <label>Primary Sales Person:</label>
+                        <input type="text" class="form-control form-control-sm" value="{{ old('PrimarySalesPerson', auth()->user()->full_name) }}" readonly>
+                        <input type="hidden" name="PrimarySalesPerson" value="{{ old('PrimarySalesPerson', auth()->user()->user_id) }}">
+                    </div>
+                    @endif
+                    {{-- <div class="form-group">
+                        <label>Primary Salesperson:</label>
+                        <select 
+                            class="form-control js-example-basic-single" 
+                            name="PrimarySalesPerson" 
+                            style="position: relative !important" 
+                            title="Select PrimarySalesPerson" 
+                            required 
+                            @if (!(auth()->user()->role->name == 'Staff L2')) 
+                                disabled 
+                            @endif
+                        >
+                            @if ((auth()->user()->role->name == 'Staff L2'))
+                                <option value="" disabled selected>Primary Sales Person</option>
+                            @endif
+                            @foreach ($primarySalesPersons as $salesPerson)
+                                <option value="{{ $salesPerson->user_id }}"{{ old('PrimarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }} >{{ $salesPerson->full_name }}</option>
+                            @endforeach
+                        </select>
+                    </div> --}}
+                    
                     <div class="form-group">
                         <label>Secondary Sales Person:</label>
                         <select class="form-control js-example-basic-single" name="SecondarySalesPerson"  style="position: relative !important" title="Select SecondarySalesPerson" required>
@@ -115,6 +145,25 @@
             </div>
             <div class="modal-footer"></div>
             <div class="form-header">
+                <span class="header-label">Files</span>
+                <hr class="form-divider">
+            </div>
+            <div class="srf-file">
+                <div class="form-group">
+                    <label for="name"><b>Name</b></label>
+                    <input type="text" name="name[]" class="form-control" id="name" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="srf_file"><b>Browse Files</b></label>
+                    <input type="file" class="form-control" id="srf_file" name="srf_file[]" multiple>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-sm btn-primary addSrfFile"><i class="ti-plus"></i></button>
+                    <button type="button" class="btn btn-sm btn-danger deleteRowBtn" hidden><i class="ti-trash"></i></button>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+            <div class="form-header">
                 <span class="header-label">Product</span>
                 <hr class="form-divider">
             </div>
@@ -126,7 +175,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Product Type:</label>
-                    <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type">
+                    <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type" required>
                         <option value="" disabled {{ old('ProductType') === null ? 'selected' : '' }}>Select Product Type</option>
                         <option value="1" {{ old('ProductType') == '1' ? 'selected' : '' }}>Pure</option>
                         <option value="2" {{ old('ProductType') == '2' ? 'selected' : '' }}>Blend</option>
@@ -143,12 +192,13 @@
                 </div>
             <div class="form-group">
                 <label>Product Code:</label>
-                <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
+                <input type="text" class="form-control" name="ProductCode[]" >
+                {{-- <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
                     <option value="" disabled selected>Product Code</option>
                     @foreach ($productCodes as $productCode)
                         <option value="{{ $productCode->code }}" {{ in_array($productCode->code, old('ProductCode', [])) ? 'selected' : '' }}>{{ $productCode->code }}</option>
                     @endforeach
-                </select>
+                </select> --}}
             </div>
             @foreach(old('ProductDescription', ['']) as $index => $description)
                 <div class="form-group">
@@ -174,14 +224,14 @@
                     @foreach(old('Quantity', ['']) as $index => $quantity)
                     <div class="form-group">
                         <label for="Quantity">Quantity</label>
-                        <input type="number" class="form-control" name="Quantity[]" value="{{ $quantity }}">
+                        <input type="number" class="form-control" name="Quantity[]" value="{{ $quantity !== '' ? $quantity : 0 }}">
                     </div>
                     @endforeach
                 </div>
                 <div class="col-md-5">
                     <div class="form-group">
                         <label>Unit</label>
-                        <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit">
+                        <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit" required>
                             <option value="1" {{ old('UnitOfMeasure') == '1' ? 'selected' : '' }}>Grams</option>
                             <option value="2" {{ old('UnitOfMeasure') == '2' ? 'selected' : '' }}>Kilograms</option>
                         </select>
@@ -216,14 +266,14 @@
             @endforeach
         </div>
         <div class="col-lg-12">
-            <button type="button" class="btn btn-primary" id="addProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
+            <button type="button" class="btn btn-primary addProductRowBtn" id="addProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
             <button type="button" class="btn btn-info duplicateProductForm"  style="float: left; margin:5px;">Duplicate</button>
         </div>
     </div>
     
 
-    <div class="modal-footer product-footer"></div>
-    <div class="form-header">
+    {{-- <div class="modal-footer product-footer"></div> --}}
+    {{-- <div class="form-header">
         <span class="header-label">Dispatch Details</span>
         <hr class="form-divider">
     </div>
@@ -256,7 +306,7 @@
         <label for="Note">Notes</label>
         <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes">{{ old('Note') }}</textarea>
     </div>
-</div>
+</div> --}}
 </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -295,12 +345,7 @@
                 </div>
                 <div class="form-group">
                 <label>Product Code:</label>
-                <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" >
-                    <option value="" disabled selected>Product Code</option>
-                    @foreach ($productCodes as $productCode)
-                        <option value="{{ $productCode->code }}" >{{ $productCode->code }}</option>
-                    @endforeach
-                </select>
+                <input type="text" class="form-control" name="ProductCode[]" >
                 </div>
                 <div class="form-group">
                     <label for="ProductDescription">Product Description:</label>
@@ -496,6 +541,60 @@ $(document).ready(function() {
         $(this).find('form')[0].reset();
         $(this).find('select').val('').trigger('change'); 
     });
+    });
+
+    $(document).ready(function() {
+        function addSrfFileForm() {
+            var newProductForm = `
+            <div class="srf-file">
+                <div class="form-group">
+                    <label for="name"><b>Name</b></label>
+                    <input type="text" name="name[]" class="form-control" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="srf_file"><b>Browse Files</b></label>
+                    <input type="file" class="form-control" name="srf_file[]" multiple>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-sm btn-primary addSrfFile"><i class="ti-plus"></i></button>
+                    <button type="button" class="btn btn-sm btn-danger deleteRowBtn"><i class="ti-trash"></i></button>
+                </div>
+            </div>`;
+    
+            $('.srf-file').last().find('.addSrfFile').hide();
+            $('.srf-file').last().find('.deleteRowBtn').show();
+            $('.srf-file').last().after(newProductForm);
+        }
+    
+        $(document).on('click', '.addSrfFile', function() {
+            addSrfFileForm();
+        });
+    
+        $(document).on('click', '.deleteRowBtn', function() {
+            var currentRow = $(this).closest('.srf-file');
+            
+            if ($('.srf-file').length > 1) {
+                if ($('.srf-file').last().is(currentRow)) {
+                    currentRow.prev().find('.addSrfFile').show();
+                    currentRow.prev().find('.deleteRowBtn').show();
+                }
+                currentRow.remove();
+            }
+            
+            if ($('.srf-file').length === 1) {
+                $('.srf-file').find('.addSrfFile').show();
+                $('.srf-file').find('.deleteRowBtn').hide();
+            }
+        });
+    
+        $(document).on('change', 'input[type="file"]', function() {
+            var filename = $(this).val().split('\\').pop();
+            $(this).closest('.srf-file').find('input[name="name[]"]').val(filename);
+        });
+    
+        if ($('.srf-file').length === 1) {
+            $('.srf-file').find('.deleteRowBtn').hide();
+        }
     });
     // $('#add_sample_request').click(function(){
     //         $('#formSampleRequest').modal('show');

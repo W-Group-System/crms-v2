@@ -11,20 +11,53 @@
                 <form method="POST" id="form_sample_request" enctype="multipart/form-data" action="{{ url('srfFiles') }}">
                     @csrf
                     <div class="srf-file">
-                        <div class="form-group">
-                            <label for="name"><b>Name</b></label>
-                            <input type="text" name="name[]" class="form-control" id="name" placeholder="">
-                        </div>
-                        <div class="form-group">
-                            <label for="srf_file"><b>Browse Files</b></label>
-                            <input type="file" class="form-control" id="srf_file" name="srf_file[]" multiple>
-                        </div>
-                        <div class="form-group">
-                            <input type="hidden" class="form-control" name="srf_id" value="{{ $sampleRequest->Id }}">
-                        </div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-sm btn-primary addSrfFile"><i class="ti-plus"></i></button>
-                            <button type="button" class="btn btn-sm btn-danger deleteRowBtn" hidden><i class="ti-trash"></i></button>
+                        <div class="row">
+                            <div class="col-lg-12 mb-3">
+                                <label for="name">Name</label>
+                                <input type="text" name="name[]" class="form-control" id="name" placeholder="">
+                            </div>
+                            @if(authCheckIfItsRnd(auth()->user()->department_id))
+                                @if(authCheckIfItsRndStaff(auth()->user()->role))
+                                    <div class="col-lg-12 mb-3">
+                                        <div class="form-group">
+                                            <label>Is Confidential :</label>
+                                            <input type="checkbox" name="is_confidential" checked disabled>
+                                            <input type="hidden" name="is_confidential" value="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 mb-3">
+                                        <div class="form-group">
+                                            <label>Is For Review :</label>
+                                            <input type="checkbox" name="is_for_review" checked disabled>
+                                            <input type="hidden" name="is_for_review" value="1">
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="col-lg-12 mb-3">
+                                        <div class="form-group">
+                                            <label>Is Confidential :</label>
+                                            <input type="checkbox" name="is_confidential">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 mb-3">
+                                        <div class="form-group">
+                                            <label>Is For Review :</label>
+                                            <input type="checkbox" name="is_for_review">
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+                            <div class="col-lg-12 mb-3">
+                                <label for="srf_file">Browse Files</label>
+                                <input type="file" class="form-control" id="srf_file" name="srf_file[]" multiple>
+                            </div>
+                            <div class="col-lg-12 mb-3">
+                                <input type="hidden" class="form-control" name="srf_id" value="{{ $sampleRequest->Id }}">
+                            </div>
+                            <div class="col-lg-12 mb-3">
+                                <button type="button" class="btn btn-sm btn-primary addSrfFile"><i class="ti-plus"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger deleteRowBtn" hidden><i class="ti-trash"></i></button>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -43,11 +76,42 @@
             var newProductForm = `
             <div class="srf-file">
                 <div class="form-group">
-                    <label for="name"><b>Name</b></label>
+                    <label for="name">Name</label>
                     <input type="text" name="name[]" class="form-control" placeholder="">
                 </div>
+                @if(authCheckIfItsRnd(auth()->user()->department_id))
+                                @if(authCheckIfItsRndStaff(auth()->user()->role))
+                                    <div class="col-lg-12 mb-3">
+                                        <div class="form-group">
+                                            <label>Is Confidential :</label>
+                                            <input type="checkbox" name="is_confidential" checked disabled>
+                                            <input type="hidden" name="is_confidential" value="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 mb-3">
+                                        <div class="form-group">
+                                            <label>Is For Review :</label>
+                                            <input type="checkbox" name="is_for_review" checked disabled>
+                                            <input type="hidden" name="is_for_review" value="1">
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="col-lg-12 mb-3">
+                                        <div class="form-group">
+                                            <label>Is Confidential :</label>
+                                            <input type="checkbox" name="is_confidential">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 mb-3">
+                                        <div class="form-group">
+                                            <label>Is For Review :</label>
+                                            <input type="checkbox" name="is_for_review">
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
                 <div class="form-group">
-                    <label for="srf_file"><b>Browse Files</b></label>
+                    <label for="srf_file">Browse Files</label>
                     <input type="file" class="form-control" name="srf_file[]" multiple>
                 </div>
                 <div class="form-group">

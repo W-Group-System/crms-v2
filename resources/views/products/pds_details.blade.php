@@ -4,6 +4,26 @@
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
+            <div class="card-title d-flex justify-content-between align-items-center">
+                &nbsp;
+                <div align="right">
+                    <a href="{{ url()->previous() ?: url('/customer_requirements') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a>
+                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_whi_pds/'.$pds->Id)}}" target="_blank">
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        WHI
+                    </a>
+                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_mrdc_pds/'.$pds->Id)}}" target="_blank">
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        MRDC
+                    </a>
+                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_pbi_pds/'.$pds->Id)}}" target="_blank">
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        PBI
+                    </a>
+                </div>
+            </div>
             <h2 class="text-center">{{$pds->products->code}}</h2>
             <h5 class="text-center">Control No : {{$pds->ControlNumber}}</h5>
             <h5 class="text-center">Client : @if($pds->Clients)  {{$pds->clients->Name}} @endif</h5>
@@ -22,9 +42,13 @@
                 <div class="col-lg-12 mb-3">
                     <label><strong>POTENTIAL BENEFITS</strong></label>
                     <hr style="margin-top: 0px; color: black; border-top-color: black;">
-                    @foreach ($pds->productPotentialBenefit as $data)
-                        <p>{{$data->Benefit}}</p> <br>
-                    @endforeach
+                    <div class="row">
+                        @foreach ($pds->productPotentialBenefit as $data)
+                            <div class="col-lg-12">
+                                <p class="m-0">{{$data->Benefit}}</p>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
                 <div class="col-lg-12 mb-3">
                     <label><strong>PHYSICO-CHEMICAL ANALYSES</strong></label>

@@ -2,11 +2,15 @@
 
 namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Audit;
 
-class RequestProductEvaluation extends Model
+class RequestProductEvaluation extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
+
     protected $table = "requestproductevaluations";
 
     // const UPDATED_AT = "ModifiedDate";
@@ -71,4 +75,21 @@ class RequestProductEvaluation extends Model
     {
         return $this->hasMany(RpeDetail::class,'RequestProductEvaluationId','id');
     }
+    public function rpeTransactionApprovals()
+    {
+        return $this->hasMany(TransactionApproval::class,'TransactionId','id')->where('Type', 20)->where('RemarksType', 'approved');
+    }
+    public function approver()
+    {
+        return $this->belongsTo(User::class,'ApprovedBy','Id');
+    }
+    public function rndRpeFiles()
+    {
+        return $this->hasMany(RpeFile::class, 'RequestProductEvaluationId', 'id')->where('userType', 'RND');
+    }
+    public function salesRpeFiles()
+    {
+        return $this->hasMany(RpeFile::class, 'RequestProductEvaluationId', 'id')->where('userType', 'Sales');
+    }
+    
 }

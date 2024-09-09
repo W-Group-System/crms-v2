@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
                 Product List (Draft)
-            <button type="button" class="btn btn-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">Add Product</button>
+            <button type="button" class="btn btn-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">New</button>
             </h4>
             
             <div class="mb-3">
@@ -57,9 +57,9 @@
                         @foreach ($products as $p)
                             <tr>
                                 <td>
-                                    <a href="{{url('view_draft_product/'.$p->id)}}" type="submit" class="btn btn-info btn-sm" title="View Products">
+                                    {{-- <a href="{{url('view_draft_product/'.$p->id)}}" type="submit" class="btn btn-info btn-sm" title="View Products">
                                         <i class="ti-eye"></i>
-                                    </a>
+                                    </a> --}}
 
                                     <button class="btn btn-sm btn-warning" title="Edit" type="button" data-toggle="modal" data-target="#formProduct-{{$p->id}}">
                                         <i class="ti-pencil"></i>
@@ -74,7 +74,7 @@
                                         </button>
                                     </form> --}}
 
-                                    <form method="POST" class="d-inline-block" action="{{url('add_to_new_products')}}">
+                                    {{-- <form method="POST" class="d-inline-block" action="{{url('add_to_new_products')}}">
                                         @csrf
 
                                         <input type="hidden" name="id" value="{{$p->id}}">
@@ -82,11 +82,13 @@
                                         <button class="btn btn-success btn-sm newProducts" type="button" title="Add new products" data-id="{{$p->id}}">
                                             <i class="ti-plus"></i>
                                         </button>
-                                    </form>
+                                    </form> --}}
                                     
                                 </td>
                                 <td>{{$p->ddw_number}}</td>
-                                <td>{{$p->code}}</td>
+                                <td>
+                                    <a href="{{url('view_draft_product/'.$p->id)}}">{{$p->code}}</a>
+                                </td>
                                 <td>
                                     {{isset($p->userByUserId->full_name)? $p->userByUserId->full_name : $p->userById->full_name}}
                                 </td>
@@ -158,7 +160,7 @@
                     </div>
                     <div class="form-group">
                         <label>Application Subcategory</label>
-                        <select class="form-control js-example-basic-single" name="application_subcategory_id" id="application_subcategory_id" style="position: relative !important" title="Select Subcategory" required>
+                        <select class="form-control js-example-basic-single" name="application_subcategory_id" id="application_subcategory_id" style="position: relative !important" title="Select Subcategory">
                             <option value="" disabled selected>Select Subcategory</option>
                             @foreach($product_subcategories as $product_subcategory)
                                 <option value="{{ $product_subcategory->id }}">{{ $product_subcategory->Name }}</option>
@@ -167,7 +169,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name">Product Origin</label>
-                        <input type="text" class="form-control" id="product_origin" name="product_origin" placeholder="Enter Product Origin" required>
+                        <input type="text" class="form-control" id="product_origin" name="product_origin" placeholder="Enter Product Origin">
                     </div>
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
@@ -227,6 +229,83 @@
 
         $("[name='entries']").on('change', function() {
             $(this).closest('form').submit()
+        })
+
+        $('#form_product').on('submit', function(e) {
+            e.preventDefault()
+
+            var form = $(this).serializeArray()
+            var action = $(this).attr('action')
+
+            $.ajax({
+                type: "POST",
+                url: action,
+                data: form,
+                beforeSend: function()
+                {
+                    show()
+                },
+                success: function(res)
+                {
+                    hide()
+                    if(res.status == 0)
+                    {
+                        html = '<div class="alert alert-danger">';
+                        html += '<p>' + res.error + '</p>';
+                        html += '</div>';
+
+                        $('#form_result').html(html);
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            title: res.message,
+                            icon: "success"
+                        }).then(() => {
+                            location.reload()
+                        })
+                    }
+                }
+            })
+        })
+
+        $(".edit_form_product").on('submit', function(e) {
+            e.preventDefault()
+
+            var form = $(this).serializeArray()
+            var action = $(this).attr('action')
+
+            $.ajax({
+                type: "POST",
+                url: action,
+                data: form,
+                beforeSend: function()
+                {
+                    show()
+                },
+                success: function(res)
+                {
+                    hide()
+
+                    if(res.status == 0)
+                    {
+                        html = '<div class="alert alert-danger">';
+                        html += '<p>' + res.error + '</p>';
+                        html += '</div>';
+
+                        $('#update_form_result').html(html);
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            title: res.message,
+                            icon: "success"
+                        }).then(() => {
+                            location.reload()
+                        })
+                    }
+                }
+            })
         })
     })
 </script>

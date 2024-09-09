@@ -68,7 +68,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Shelf Life</label>
-                                <input type="text" class="form-control" name="ShelfLife" placeholder="Enter Shelf Life">
+                                <input type="text" class="form-control" name="ShelfLife" placeholder="Enter Shelf Life" value="2 Years">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -113,6 +113,10 @@
                                    <option value="20">VAT Exclusive</option>
                                 </select>
                            </div>
+                           <div class="form-group">
+                                <label>Other Remarks</label>
+                                <input type="text" class="form-control" name="OtherRemarks" placeholder="Input Other Remarks" >
+                            </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
                         <div class="add_create_prf_form col-lg-12 row">
@@ -120,16 +124,16 @@
                                 <div><label>PRODUCT</label></div>
                                 <div class="form-group">
                                     <label>Product</label>
-                                    <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
+                                    <select class="form-control js-example-basic-single product-pick product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
                                         <option value="" disabled selected>Select Product</option>
                                         @foreach($products as $product)
-                                            <option value="{{ $product->id }}">{{ $product->code }}</option>
+                                            <option value="{{ $product->id }}" data-type="{{ $product->type }}" data-application_id="{{ $product->application_id }}">{{ $product->code }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                      <label>Category</label>
-                                     <select class="form-control js-example-basic-single" name="Type[]"  style="position: relative !important" title="Select Category">
+                                     <select class="form-control js-example-basic-single category-select" name="Type[]"  style="position: relative !important" title="Select Category">
                                         <option value="" disabled selected>Select Category</option>
                                         <option value="1">Pure</option>
                                         <option value="2">Blend</option>
@@ -137,7 +141,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Application:</label>
-                                    <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
+                                    <select class="form-control js-example-basic-single application-select" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
                                         <option value="" disabled selected>Select Application</option>
                                         @foreach ($productApplications as $application)
                                             <option value="{{ $application->id }}" >{{ $application->Name }}</option>
@@ -514,16 +518,16 @@ function updateSellingPrice($row) {
                                 <div><label>PRODUCT</label></div>
                                 <div class="form-group">
                                     <label>Product</label>
-                                    <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
+                                    <select class="form-control js-example-basic-single product-pick product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
                                         <option value="" disabled selected>Select Product</option>
                                         @foreach($products as $product)
-                                            <option value="{{ $product->id }}">{{ $product->code }}</option>
+                                            <option value="{{ $product->id }}" data-type="{{ $product->type }}" data-application_id="{{ $product->application_id }}">{{ $product->code }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                      <label>Category</label>
-                                     <select class="form-control js-example-basic-single" name="Type[]"  style="position: relative !important" title="Select Category">
+                                     <select class="form-control js-example-basic-single category-select" name="Type[]"  style="position: relative !important" title="Select Category">
                                         <option value="" disabled selected>Select Category</option>
                                         <option value="1">Pure</option>
                                         <option value="2">Blend</option>
@@ -531,7 +535,7 @@ function updateSellingPrice($row) {
                                 </div>
                                 <div class="form-group">
                                     <label>Application:</label>
-                                    <select class="form-control js-example-basic-single" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
+                                    <select class="form-control js-example-basic-single application-select" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
                                         <option value="" disabled selected>Select Application</option>
                                         @foreach ($productApplications as $application)
                                             <option value="{{ $application->id }}" >{{ $application->Name }}</option>
@@ -683,4 +687,7 @@ function updateSellingPrice($row) {
             validityDateInput.setAttribute('min', today);
             dateRequestedInput.value = today;
     });
+    
+  
+
 </script>

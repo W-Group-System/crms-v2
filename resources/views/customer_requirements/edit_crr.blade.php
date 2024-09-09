@@ -1,5 +1,5 @@
-<div class="modal fade" id="editCrr-{{$customerRequirement->id}}" tabindex="-1" role="dialog" aria-labelledby="addCustomerRequirement" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
+<div class="modal fade" id="editCrr-{{$customerRequirement->id}}">
+	<div class="modal-dialog modal-md" >
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="addCustomerRequirentLabel">Edit Customer Requirement</h5>
@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{url('update_customer_requirement/'.$customerRequirement->id)}}">
+                <form method="POST" enctype="multipart/form-data" action="{{url('update_customer_requirement/'.$customerRequirement->id)}}" onsubmit="show()">
                     @csrf
                     <div class="row">
                         {{-- <div class="col-lg-6">
@@ -53,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$customerRequirement->DueDate}}" min="{{date('Y-m-d')}}">
+                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$customerRequirement->DueDate}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -69,8 +69,9 @@
                                         <label>Unit</label>
                                         <select class="form-control js-example-basic-single" name="UnitOfMeasureId" style="position: relative !important" title="Select Unit">
                                             <option value="" disabled selected>Select Unit</option>
-                                            <option value="1" @if($customerRequirement->UnitOfMeasureId == 1) selected @endif>Grams</option>
-                                            <option value="2" @if($customerRequirement->UnitOfMeasureId == 2) selected @endif>Kilograms</option>
+                                            @foreach ($unitOfMeasure as $unit)
+                                                <option value="{{$unit->Id}}" @if($unit->Id == $customerRequirement->UnitOfMeasureId) selected @endif>{{$unit->Name}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -79,12 +80,21 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
+                                
+                                @if(auth()->user()->role->name == "Staff L1")
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @elseif (auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                @php
+                                    $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                @endphp
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
+                                    <option disabled selected value>Select Sales Person</option>
+                                    @foreach($subordinates as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $customerRequirement->PrimarySalesPersonId || $user->id == $customerRequirement->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
+                                @endif
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -111,8 +121,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="">Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $customerRequirement->SecondarySalesPersonId || $user->id == $customerRequirement->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
@@ -156,7 +166,7 @@
                                 <select name="RefCode" class="form-control js-example-basic-single" required>
                                     <option disabled selected value>Select REF Code</option>
                                     @foreach ($refCode as $key=>$code)
-                                        <option value="{{$key}}" @if($key == $customerRequirement->RefCode) selected @endif>{{$code}}</option>
+                                        <option value="{{$key}}" @if($key == ($customerRequirement->RefCode ?? 'RND')) selected @endif>{{$code}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -173,13 +183,19 @@
                                 <input type="text" class="form-control" id="RefRpeNumber" name="RefRpeNumber" placeholder="Enter RPE Number" value="{{$customerRequirement->RefRpeNumber}}">
                             </div>
                         </div>
-                        <div class="col-lg-12">
+                        <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="name">Details of Requirement</label>
-                                <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" rows="7">{!! nl2br(e($customerRequirement->DetailsOfRequirement)) !!}</textarea>
+                                <label>Upload Files</label>
+                                <input type="file" name="sales_upload_crr[]" class="form-control" multiple>
                             </div>
                         </div>
                         <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">Details of Requirement</label>
+                                <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" cols="30" rows="10">{{$customerRequirement->DetailsOfRequirement}}</textarea>
+                            </div>
+                        </div>
+                        {{-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Status</label>
                                 <select name="Status" class="form-control js-example-basic-single">
@@ -189,7 +205,7 @@
                                     <option value="50" @if($customerRequirement->Status == 50) selected @endif>Cancelled</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

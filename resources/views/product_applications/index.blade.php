@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Application List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" id="addBtn" data-target="#formProductApplication">Add Product Application</button>
+            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" id="addBtn" data-target="#formProductApplication">New</button>
             </h4>
 
             <div class="mb-3">
@@ -93,7 +93,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_product_application" enctype="multipart/form-data" action="{{ url('new_product_applications') }}">
+                <form method="POST" id="form_product_application" enctype="multipart/form-data" action="{{ url('new_product_applications') }}" onsubmit="show()">
                     @csrf
                     <div class="form-group">
                         <label for="name">Application</label>

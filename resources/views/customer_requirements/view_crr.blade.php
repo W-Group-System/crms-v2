@@ -4,32 +4,34 @@
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
+            @include('components.error')
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
                 <div align="right">
-                    <a href="{{ url()->previous() ?: url('/customer_requirements') }}" class="btn btn-md btn-secondary">
+                    {{-- <a href="{{ url()->previous() ?: url('/customer_requirements') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> --}}
+                    <a href="{{ url('/customer_requirement?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
 
-                    @if(authCheckIfItsSales(auth()->user()->department_id))
-                    <button type="button" class="btn btn-danger btn-icon-text" >
+                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_crr')}}" target="_blank">
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
-                    </button>
-                    @endif
+                    </a>
 
                     @if(authCheckIfItsRndStaff(auth()->user()->role))
-                        @if($crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81)
-                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
-                            <i class="ti ti-pencil"></i>&nbsp;Update
-                        </button>
-                        @endif
-
                         @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
+                            @if($crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81)
+                                <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                                    <i class="ti ti-pencil"></i>&nbsp;Update
+                                </button>
+                            @endif
+                            
                             @if($crr->Progress == 35)
-                            <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block">
+                            <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
                                 @csrf 
 
-                                <button type="button" class="btn btn-success startCrrBtn">
+                                <button type="button" class="btn btn-outline-success startCrrBtn">
                                     <i class="ti-control-play"></i>&nbsp; Start
                                 </button>
                             </form>
@@ -37,16 +39,16 @@
                         @endif
 
                         @if($crr->Progress == 50)
-                            <button type="button" class="btn btn-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
+                            <button type="button" class="btn btn-outline-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
                                 <i class="ti-control-pause"></i>&nbsp; Pause
                             </button>
                         @endif
 
                         @if($crr->Progress == 55)
-                            <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block">
+                            <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
                                 @csrf 
 
-                                <button type="button" class="btn btn-success startCrrBtn">
+                                <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#continueStatus{{$crr->id}}">
                                     <i class="ti-control-play"></i>&nbsp; Continue
                                 </button>
                             </form>
@@ -55,10 +57,10 @@
 
                     @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
                         @if($crr->Progress == 50)
-                        <form method="POST" action="{{url('submit_crr/'.$crr->id)}}" class="d-inline-block">
+                        <form method="POST" action="{{url('submit_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
                             @csrf 
 
-                            <button type="button" class="btn btn-warning submitCrrBtn">
+                            <button type="button" class="btn btn-outline-warning submitCrrBtn">
                                 <i class="ti-check"></i>&nbsp; Submit
                             </button>
                         </form>
@@ -68,214 +70,192 @@
                     @if(auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId)
                         @if($crr->Status == 10)
                             @if(auth()->user()->department_id == 15 || auth()->user()->department_id == 42)
-                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
                             @endif
 
                             @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38)
-                            <button type="button" class="btn btn-warning" id="update2Crr" data-toggle="modal" data-target="#editCrr{{$crr->id}}" data-secondarysales="{{$crr->SecondarySalesPersonId}}">
+                            <button type="button" class="btn btn-outline-warning" id="update2Crr" data-toggle="modal" data-target="#editCrr{{$crr->id}}" data-secondarysales="{{$crr->SecondarySalesPersonId}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
                             @endif
                         @endif
 
-                        @if($crr->Progress == 70 && $crr->Status == 10)
-                        <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}">
+                        @if($crr->Status == 10 && $crr->Progress == 60)
+                        <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}" onsubmit="show()">
                             @csrf
 
-                            <button type="button" class="btn btn-info returnToRnd">
+                            <button type="button" class="btn btn-outline-info returnToRnd">
                                 <i class="ti ti-check-box"></i>&nbsp;Return to RND
                             </button>
                         </form>
-                        @endif
-
-                        @if(checkRolesIfHaveApprove('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
-                            {{-- @if($crr->Progress == 60)
-                            <button type="button" class="btn btn-info" data-toggle="modal">
-                                <i class="ti ti-back-left"></i>&nbsp;Return
-                            </button>
-                            @endif --}}
-
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
-                                <i class="ti ti-check-box"></i>&nbsp;Accept
-                            </button>
                         @endif
 
                         @if($crr->Progress == 60)
-                        <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}">
+                        <form method="POST" class="d-inline-block" action="{{url('sales_accepted/'.$crr->id)}}" onsubmit="show()">
                             @csrf
 
-                            <button type="button" class="btn btn-info returnToRnd">
-                                <i class="ti ti-check-box"></i>&nbsp;Return to RND
-                            </button>
-                        </form>
-
-                        <form method="POST" class="d-inline-block" action="{{url('sales_accepted/'.$crr->id)}}">
-                            @csrf
-
-                            <button type="button" class="btn btn-success salesAccepted">
+                            <button type="button" class="btn btn-outline-success salesAccepted">
                                 <i class="ti ti-check-box"></i>&nbsp;Accept
                             </button>
                         </form>
                         @endif
                         
                         @if($crr->Status == 30)
-                            <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}">
+                            {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
                                 @csrf
 
-                                <button type="button" class="btn btn-success openBtn">
-                                    <i class="mdi mdi-open-in-new"></i>&nbsp;Open
-                                </button>
-                            </form>
+                            </form> --}}
+                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#openStatus{{$crr->id}}">
+                                <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                            </button>
                         @endif
                         
-                        @if($crr->Status == 10)
-                            <button type="button" class="btn btn-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
+                        @if($crr->Status == 10 && ($crr->Progress == 60 || $crr->Progress == 10 || $crr->Progress == 20 || $crr->Progress == 30))
+                            <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
                                 <i class="ti ti-close"></i>&nbsp;Close
                             </button>
-                            <button type="button" class="btn btn-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                            <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
                                 <i class="mdi mdi-cancel"></i>&nbsp;Cancel
                             </button>
                         @endif
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                     
-                        @if($crr->Progress != 30 && $crr->Progress != 10 && $crr->Progress != 20)
+                        @if($crr->Progress != 30 && $crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60)
                             @if(auth()->user()->department_id == 15 || auth()->user()->department_id == 42)
-                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
                             @endif
                         @else
                             @if(authCheckIfItsRnd(auth()->user()->department_id))
                                 @if($crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60)
-                                <form action="{{url('return_to_sales/'.$crr->id)}}" class="d-inline-block" method="POST">
-                                    @csrf
-
-                                    <button type="button" class="btn btn-info returnToSalesBtn">
+                                    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#returnToSales{{$crr->id}}">
                                         <i class="ti-back-left">&nbsp;</i> Return to Sales
                                     </button>
-                                </form>
                                 @endif
                             @endif
                         @endif
 
                         @if(authCheckIfItsSales(auth()->user()->department_id))
                             @if($crr->Status == 10)
-                            <button type="button" class="btn btn-warning" id="update2Crr" data-toggle="modal" data-target="#editCrr{{$crr->id}}" data-secondarysales="{{$crr->SecondarySalesPersonId}}">
+                            <button type="button" class="btn btn-outline-warning" id="update2Crr" data-toggle="modal" data-target="#editCrr{{$crr->id}}" data-secondarysales="{{$crr->SecondarySalesPersonId}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
                             @endif
                         @endif
                         
-                        @if(checkIfItsApprover(auth()->user()->id, $crr->PrimarySalesPersonId, "CRR") == "yes" && $crr->Progress == 10)
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
-                                <i class="ti ti-check-box"></i>&nbsp;Accept
+                        @if(checkIfItsApprover(auth()->user()->id, $crr->PrimarySalesPersonId, "CRR") == "yes")
+                            @if($crr->Progress == 10 && $crr->Status == 10)
+                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
+                                <i class="ti ti-check-box"></i>&nbsp;Approve
                             </button>
+                            @endif
                         @endif
                         
                         @if(authCheckIfItsSales(auth()->user()->department_id))
 
-                            @if(($crr->Progress == 60 || $crr->Progress == 70) && $crr->Status == 10)
-                            <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}">
+                            @if($crr->Progress == 60 && $crr->Status == 10)
+                            <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}" onsubmit="show()">
                                 @csrf
 
-                                <button type="button" class="btn btn-info returnToRnd">
+                                <button type="button" class="btn btn-outline-info returnToRnd">
                                     <i class="ti ti-check-box"></i>&nbsp;Return to RND
                                 </button>
                             </form>
                             @endif 
 
                             @if($crr->Progress == 60)
-                                <form method="POST" class="d-inline-block" action="{{url('sales_accepted/'.$crr->id)}}">
+                                <form method="POST" class="d-inline-block" action="{{url('sales_accepted/'.$crr->id)}}" onsubmit="show()">
                                     @csrf
 
-                                    <button type="button" class="btn btn-success salesAccepted">
+                                    <button type="button" class="btn btn-outline-success salesAccepted">
                                         <i class="ti ti-check-box"></i>&nbsp;Accept
                                     </button>
                                 </form>
                             @endif
 
                             @if($crr->Status == 30)
-                            <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}">
+                            {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
                                 @csrf
 
-                                <button type="button" class="btn btn-success openBtn">
-                                    <i class="mdi mdi-open-in-new"></i>&nbsp;Open
-                                </button>
-                            </form>
+                            </form> --}}
+                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#openStatus{{$crr->id}}">
+                                <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                            </button>
                             @endif
 
-                            @if($crr->Status == 10)
-                            <button type="button" class="btn btn-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
-                                <i class="ti ti-close"></i>&nbsp;Close
-                            </button>
-                            <button type="button" class="btn btn-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
-                                <i class="mdi mdi-cancel"></i>&nbsp;Cancel
-                            </button>
+                            @if($crr->Status == 10 && ($crr->Progress == 60 || $crr->Progress == 10 || $crr->Progress == 20 || $crr->Progress == 30))
+                                <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
+                                    <i class="ti ti-close"></i>&nbsp;Close
+                                </button>
+                                <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                                    <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                                </button>
                             @endif
                         @else
-                            @if($crr->Progress == 55 || $crr->Progress == 57 || $crr->Progress == 81)
-                            <form action="{{url('start_crr/'.$crr->id)}}" method="post" class="d-inline-block">
+                            @if($crr->Progress == 57 || $crr->Progress == 81)
+                            <form action="{{url('start_crr/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
                                 @csrf
 
-                                <button type="button" class="btn btn-danger returnBtn">
+                                <button type="button" class="btn btn-outline-danger returnBtn">
                                     <i class="ti-back-left">&nbsp;</i> Return To Specialist
                                 </button>
                             </form>
                             @endif
 
                             @if($crr->Progress == 30)
-                                <form action="{{url('rnd_received/'.$crr->id)}}" method="post" class="d-inline-block">
+                                <form action="{{url('rnd_received/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
                                     @csrf
 
-                                    <button type="button" class="btn btn-success receivedBtn">
+                                    <button type="button" class="btn btn-outline-success receivedBtn">
                                         <i class="ti-bookmark">&nbsp;</i> Received
                                     </button>
                                 </form>
                             @endif
 
                             @if($crr->Progress == 35)
-                                <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block">
+                                <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
                                     @csrf 
 
-                                    <button type="button" class="btn btn-success startCrrBtn">
+                                    <button type="button" class="btn btn-outline-success startCrrBtn">
                                         <i class="ti-control-play"></i>&nbsp; Start
                                     </button>
                                 </form>
                             @endif
 
                             @if($crr->Progress == 50)
-                                <button type="button" class="btn btn-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
+                                <button type="button" class="btn btn-outline-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
                                     <i class="ti-control-pause"></i>&nbsp; Pause
                                 </button>
                             @endif
 
                             @if($crr->Progress == 55)
-                                <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block">
+                                {{-- <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
                                     @csrf 
 
-                                    <button type="button" class="btn btn-success startCrrBtn" data-label="Continue">
-                                        <i class="ti-control-play"></i>&nbsp; Continue
-                                    </button>
-                                </form>
+                                </form> --}}
+                                <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#continueStatus{{$crr->id}}">
+                                    <i class="ti-control-play"></i>&nbsp; Continue
+                                </button>
                             @endif
 
                             @if($crr->Progress == 57)
-                                <form method="POST" action="{{url('submit_final_crr/'.$crr->id)}}" class="d-inline-block">
+                                <form method="POST" action="{{url('submit_final_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
                                     @csrf 
 
-                                    <button type="button" class="btn btn-success submitFinalCrr">
+                                    <button type="button" class="btn btn-outline-success submitFinalCrr">
                                         <i class="ti-check"></i>&nbsp; Submit
                                     </button>
                                 </form>
                             @endif
 
                             @if($crr->Progress == 57 || $crr->Progress == 81)
-                                <form method="POST" action="{{url('complete_crr/'.$crr->id)}}" class="d-inline-block">
+                                <form method="POST" action="{{url('complete_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
                                     @csrf 
 
-                                    <button type="button" class="btn btn-primary completeCrr">
+                                    <button type="button" class="btn btn-outline-primary completeCrr">
                                         <i class="ti-pencil-alt"></i>&nbsp; Completed
                                     </button>
                                 </form>
@@ -289,34 +269,36 @@
                 <label><strong>Customer Details</strong></label>
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
 
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Client :</b></label>
+                <div class="row mb-0">
                     <div class="col-sm-3">
-                        <label>
-                            <a href="{{url('view_client/'.$crr->ClientId)}}" >{{optional($crr->client)->Name}}</a>
-                        </label>
+                        <p class="mb-0"><b>Client :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0"><a href="{{url('view_client/'.$crr->ClientId)}}" >{{optional($crr->client)->Name}}</a></p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Client Trade Name :</b></label>
+                <div class="row mb-0">
                     <div class="col-sm-3">
-                        <label>
+                        <p class="mb-0"><b>Client Trade Name :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">
                             @if($crr->client)
                             {{$crr->client->TradeName}}
                             @endif
-                        </label>
+                        </p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Region :</b></label>
+                <div class="row mb-0">
+                    <p class="col-sm-3 mb-0"><b>Region :</b></p>
                     <div class="col-sm-3">
-                        <label>{{optional($crr->client->clientregion)->Name}}</label>
+                        <p class="mb-0">{{optional($crr->client->clientregion)->Name}}</p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Country :</b></label>
+                <div class="row mb-3">
+                    <p class="col-sm-3 mb-0"><b>Country :</b></p>
                     <div class="col-sm-3">
-                        <label>{{optional($crr->client->clientcountry)->Name}}</label>
+                        <p class="mb-0">{{optional($crr->client->clientcountry)->Name}}</p>
                     </div>
                 </div>
             </div>
@@ -324,42 +306,52 @@
                 <label><strong>Request Details</strong></label>
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
 
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>CRR # :</b></label>
+                <div class="row mb-0">
                     <div class="col-sm-3">
-                        <label>{{$crr->CrrNumber}}</label>
+                        <p class="mb-0"><b>CRR # :</b></p>
                     </div>
-                    <label class="col-sm-3 col-form-label"><b>Primary Sales Person :</b></label>
                     <div class="col-sm-3">
-                        <label>
+                        <p class="mb-0">{{$crr->CrrNumber}}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0"><b>Primary Sales Person :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">
                             @if($crr->primarySales)
                             {{$crr->primarySales->full_name}}
                             @elseif($crr->primarySalesById)
                             {{$crr->primarySalesById->full_name}}
                             @endif
-                        </label>
+                        </p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Date Created :</b></label>
+                <div class="row">
                     <div class="col-sm-3">
-                        <label>{{date('M d Y H:i A', strtotime($crr->DateCreated))}}</label>
+                        <p class="mb-0"><b>Date Created :</b></p>
                     </div>
-                    <label class="col-sm-3 col-form-label"><b>Secondary Sales Person :</b></label>
                     <div class="col-sm-3">
-                        <label>
+                        <p class="mb-0">{{date('Y-m-d H:i A', strtotime($crr->DateCreated))}}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0"><b>Secondary Sales Person :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">
                             @if($crr->secondarySales)
                             {{$crr->secondarySales->full_name}}
                             @elseif($crr->secondarySalesById)
                             {{$crr->secondarySalesById->full_name}}
                             @endif
-                        </label>
+                        </p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Priority :</b></label>
+                <div class="row">
                     <div class="col-sm-3">
-                        <label>
+                        <p class="mb-0"><b>Priority :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">
                             @if($crr->Priority == 1)
                             Low
                             @elseif($crr->Priority == 3)
@@ -367,11 +359,13 @@
                             @elseif($crr->Priority == 5)
                             High
                             @endif
-                        </label>
+                        </p>
                     </div>
-                    <label class="col-sm-3 col-form-label"><b>Status :</b></label>
                     <div class="col-sm-3">
-                        <label>
+                        <p class="mb-0"><b>Status :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">
                             @if($crr->Status == 10)
                             Open
                             @elseif($crr->Status == 30)
@@ -379,107 +373,143 @@
                             @elseif($crr->Status == 50)
                             Cancelled
                             @endif
-                        </label>
+                        </p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Due Date :</b></label>
+                <div class="row">
+                    <div class="col-sm-3"><p class="mb-0"><b>Due Date :</b></p></div>
                     <div class="col-sm-3">
-                        <label>{{date('M d Y', strtotime($crr->DueDate))}}</label>
+                        <p class="mb-0">{{date('Y-m-d', strtotime($crr->DueDate))}}</p>
                     </div>
-                    <label class="col-sm-3 col-form-label"><b>Progress :</b></label>
+                    <div class="col-sm-3"><p class="mb-0"><b>Progress :</b></p></div>
                     <div class="col-sm-3">
-                        <label>{{optional($crr->progressStatus)->name}}</label>
+                        <p class="mb-0">{{optional($crr->progressStatus)->name}}</p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Application : </b></label>
+                <div class="row">
+                    <label class="col-sm-3"><p class="mb-0"><b>Application : </b></p></label>
                     <div class="col-sm-3">
-                        <label>{{optional($crr->product_application)->Name}}</label>
+                        <p class="mb-0">{{optional($crr->product_application)->Name}}</p>
                     </div>
-                    <label class="col-sm-3 col-form-label"><b>Nature of Request :</b></label>
+                    <div class="col-sm-3"><p class="mb-0"><b>Nature of Request :</b></p></div>
                     <div class="col-sm-3">
                         @if($crr->crrNature)
-                        @foreach ($crr->crrNature as $natureOfRequests)
-                            <label>{{optional($natureOfRequests->natureOfRequest)->Name}}</label> <br>
-                        @endforeach
+                            @foreach ($crr->crrNature as $natureOfRequests)
+                                <p class="mb-0">{{optional($natureOfRequests->natureOfRequest)->Name}}</p>
+                            @endforeach
                         @endif
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Competitor :</b></label>
+                <div class="row">
+                    <div class="col-sm-3"><p class="mb-0"><b>Competitor :</b></p></div>
                     <div class="col-sm-3">
-                        <label>{{$crr->Competitor}}</label>
+                        <p class="mb-0">{{$crr->Competitor}}</p>
                     </div>
-                    <label class="col-sm-3 col-form-label"><b>REF CRR Number :</b></label>
+                    <div class="col-sm-3"><p class="mb-0"><b>REF CRR Number :</b></p></div>
                     <div class="col-sm-3">
                         @php
                             $id = linkToCrr($crr->RefCrrNumber);
                         @endphp
-                        <label>
-                            <a href="{{url('view_customer_requirement/'.$id)}}">
+                        <p class="mb-0">
+                            <a href="{{url('view_customer_requirement/'.$id)}}" target="_blank">
                                 {{$crr->RefCrrNumber}}
                             </a>
-                        </label>
+                        </p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Competitor Price :</b></label>
+                <div class="row">
+                    <div class="col-sm-3"><p class="mb-0"><b>Competitor Price :</b></p></div>
                     <div class="col-sm-3">
-                        <label>{{$crr->CompetitorPrice}}</label>
+                        <p class="mb-0">{{$crr->CompetitorPrice}}</p>
                     </div>
-                    <label class="col-sm-3 col-form-label"><b>REF RPE Number :</b></label>
+                    <div class="col-sm-3"><p class="mb-0"><b>REF RPE Number :</b></p></div>
                     <div class="col-sm-3">
                         @php
                             $id = linkToRpe($crr->RefRpeNumber);
                         @endphp
-                        <label>
+                        <p class="mb-0">
                             <a href="{{url('product_evaluation/view/'.$id)}}" target="_blank">
                                 {{$crr->RefRpeNumber}}
                             </a>
-                        </label>
+                        </p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Potential Volume :</b></label>
+                <div class="row">
+                    <div class="col-sm-3"><p class="mb-0"><b>Potential Volume :</b></p></div>
                     <div class="col-sm-3">
-                        <label>{{$crr->PotentialVolume}}</label>
+                        <p class="mb-0">{{$crr->PotentialVolume}} {{optional($crr->unitOfMeasure)->Symbol}}</p>
                     </div>
-                </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Target Price :</b></label>
                     <div class="col-sm-3">
-                        <label>{{$crr->TargetPrice}}</label>
+                        <p><b>Sales Approved Date :</b></p>
                     </div>
-                </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Details of Requirement :</b></label>
                     <div class="col-sm-3">
-                        <label>{{$crr->DetailsOfRequirement}}</label>
+                        <p>
+                            @if($crr->SalesApprovedDate != null)
+                            {{date('Y-m-d', strtotime($crr->SalesApprovedDate))}}
+                            @else
+                            <p>N/A</p>
+                            @endif
+                        </p>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-sm-3"><p class="mb-0"><b>Target Price :</b></p></div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">{{$crr->TargetPrice}} {{optional($crr->price)->Name}}</p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-3"><p class="mb-0"><b>Details of Requirement :</b></p></div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">{!! nl2br(e($crr->DetailsOfRequirement)) !!}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <label><strong>Sales Files</strong></label>
+                <hr style="margin-top: 0px; color: black; border-top-color: black;">
+
+                @if($crr->crrFiles->isNotEmpty())
+                @foreach ($crr->crrFiles->whereIn('UserType', ['IS', 'LS']) as $key=>$file)
+                    <small>
+                        <span>{{$key+1}}. </span>
+                        <a href="{{url($file->Path)}}"  target="_blank">{{$file->Name}}</a>
+                    </small>
+                    &nbsp;
+                    <a href="#" class="text-warning" data-toggle="modal" data-target="#editSalesFiles{{$file->Id}}">
+                        <i class="ti-pencil-alt"></i>
+                    </a>
+
+                    <a href="#" class="text-danger deleteFilesBtn" data-id="{{$file->Id}}">
+                        <i class="ti-trash"></i>
+                    </a>
+
+                    {{-- <form method="POST" action="{{url('delete_sales_files')}}" class="d-inline-block" id="deleteSalesForm" style="display: none;">
+                        @csrf
+                        
+                    </form> --}}
+                    <br>
+
+                    @include('customer_requirements.edit_sales_files')
+                @endforeach
+                @else
+                <p>N/A</p>
+                @endif
             </div>
             <div class="col-md-12">
                 <label><strong>Approver Remarks</strong></label>
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label">
-                        @if($crr->crrTransactionApprovals->isEmpty())
-                            @if($crr->approver)
-                            <b>{{$crr->approver->full_name}} :</b> {{$crr->AcceptRemarks}}
-                            @else
-                            <p>No approver remarks yet</p>
+                <div class="row mb-3">
+                    <label class="col-sm-3">
+                        @if($crr->approver)
+                            @php
+                                $acceptRemarks = $crr->crrTransactionApprovals->sortByDesc('Id')->firstWhere('RemarksType', 'accept');
+                            @endphp
+                            @if($acceptRemarks != null)
+                            <p class="mb-0"><b>{{$crr->approver->full_name}} :</b> {{$acceptRemarks->Remarks}}</p>
                             @endif
                         @else
-                        @foreach ($crr->crrTransactionApprovals as $transactionApproval)
-                            <b>
-                                @if($transactionApproval->userByUserId)
-                                    {{$transactionApproval->userByUserId->full_name}} :<br>
-                                @elseif($transactionApproval->userById)
-                                    {{$transactionApproval->userById->full_name}} :<br>
-                                @endif
-                            </b> 
-                        @endforeach
+                            <p class="mb-0">No approver remarks yet</p>
                         @endif
                     </label>
                 </div>
@@ -488,46 +518,46 @@
                 <label><strong>Recommendation</strong></label>
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
 
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>DDW Number : </b></label>
+                <div class="row">
+                    <div class="col-sm-3"><p class="mb-0"><b>DDW Number : </b></p></div>
                     <div class="col-sm-3">
-                        <label>@if($crr->DdwNumber != null){{$crr->DdwNumber}}@else N/A @endif</label>
+                        <p class="mb-0">@if($crr->DdwNumber != null){{$crr->DdwNumber}}@else N/A @endif</p>
                     </div>
-                    <label class="col-sm-3 col-form-label"><b>Date Received :</b></label>
+                    <div class="col-sm-3"><p class="mb-0"><b>Date Received :</b></p></div>
                     <div class="col-sm-3">
-                        <label>
+                        <p class="mb-0">
                             @if($crr->DateReceived != null)
-                            {{date('M d Y', strtotime($crr->DateReceived))}}
+                            {{date('Y-m-d', strtotime($crr->DateReceived))}}
                             @else
                             N/A
                             @endif
-                        </label>
+                        </p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Recommendation : </b></label>
+                <div class="row">
+                    <div class="col-sm-3"><p class="mb-0"><b>Recommendation : </b></p></div>
                     <div class="col-sm-3">
-                        <label>
+                        <p class="mb-0">
                             @if($crr->Recommendation != null)
                             {!! nl2br(e($crr->Recommendation)) !!}
                             @else
                             N/A
                             @endif
-                        </label>
+                        </p>
                     </div>
-                    <label class="col-sm-3 col-form-label"><b>Date Completed :</b></label>
+                    <div class="col-sm-3"><p class="mb-0"><b>Date Completed :</b></p></div>
                     <div class="col-sm-3">
-                        <label>
+                        <p class="mb-0">
                             @if($crr->DateCompleted != null)
-                            {{date('M d Y', strtotime($crr->DateCompleted))}}
+                            {{date('Y-m-d', strtotime($crr->DateCompleted))}}
                             @else
                             N/A
                             @endif
-                        </label>
+                        </p>
                     </div>
                 </div>
-                <div class="form-group row mb-2">
-                    <label class="col-sm-3 col-form-label"><b>Days Late : </b></label>
+                <div class="form-group row mb-3">
+                    <div class="col-sm-3"><p class="mb-0"><b>Days Late : </b></p></div>
                     <div class="col-sm-3">
                         @php
                             $today = new DateTime();
@@ -543,38 +573,38 @@
                             } 
                             
                         @endphp
-                        <label>
+                        <p class="mb-0">
                             {{$days_late .' day' .$s}}
-                        </label>
+                        </p>
                     </div>
                 </div>
             </div>
             <ul class="nav nav-tabs viewTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="supplementary_details-tab" data-toggle="tab" href="#supplementary_details" role="tab" aria-controls="supplementary_details" aria-selected="true">Supplementary Details</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'supplementary_details' || session('tab') == null) active @endif" id="supplementary_details-tab" data-toggle="tab" href="#supplementary_details" role="tab" aria-controls="supplementary_details" aria-selected="true">Supplementary Details</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="assigned-tab" data-toggle="tab" href="#assigned" role="tab" aria-controls="assigned" aria-selected="false">Assigned R&D Personnel</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'personnel') active @endif" id="assigned-tab" data-toggle="tab" href="#assigned" role="tab" aria-controls="assigned" aria-selected="false">Assigned R&D Personnel</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
+                </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link p-2 @if(session('tab') == 'files') active @endif" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
+                    <a class="nav-link p-2" id="approvals-tab" data-toggle="tab" href="#approvals" role="tab" aria-controls="approvals" aria-selected="false">Transaction Remarks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " id="approvals-tab" data-toggle="tab" href="#approvals" role="tab" aria-controls="approvals" aria-selected="false">Approvals</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link " id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
+                    <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="supplementary_details" role="tabpanel" aria-labelledby="supplementary_details">
+                <div class="tab-pane fade @if(session('tab') == 'supplementary_details' || session('tab') == null) active show @endif" id="supplementary_details" role="tabpanel" aria-labelledby="supplementary_details">
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
-                        @if($crr->Progress != 60)
-                        <button type="button" class="btn btn-primary float-right mb-3" data-toggle="modal" data-target="#addSupplementary">
-                            Add Supplementary Details
+                        @if($crr->Progress != 60 && $crr->Progress != 30)
+                        <button type="button" class="btn btn-outline-primary btn-sm float-right mb-3" data-toggle="modal" data-target="#addSupplementary">
+                            New
                         </button>
                         @include('customer_requirements.add_supplementary_details')
                         @endif
@@ -594,12 +624,12 @@
                                 @foreach ($crr->crrDetails as $details)
                                     <tr>
                                         <td>
-                                            @if($crr->Progress != 60)
+                                            @if($crr->Progress != 60 && $crr->Progress != 30)
                                             <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editSupplementary{{$details->Id}}">
                                                 <i class="ti-pencil"></i>
                                             </button>
 
-                                            <form method="POST" class="d-inline-block" action="{{url('delete_supplementary/'.$details->Id)}}">
+                                            <form method="POST" class="d-inline-block" action="{{url('delete_supplementary/'.$details->Id)}}" onsubmit="show()">
                                                 @csrf 
 
                                                 <button type="button" class="btn btn-sm btn-danger deleteSupplementaryDetailsBtn">
@@ -628,13 +658,15 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade " id="assigned" role="tabpanel" aria-labelledby="assigned">
+                <div class="tab-pane fade @if(session('tab') == 'personnel') active show @endif" id="assigned" role="tabpanel" aria-labelledby="assigned">
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
-                        @if($crr->Progress != 55 && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81 && rndManager(auth()->user()->role))
-                        <button type="button" class="btn btn-primary float-right mb-3" data-toggle="modal" data-target="#addPersonnel">
-                            Add Personnel
-                        </button>
-                        @include('customer_requirements.new_personnel')
+                        @if(rndManager(auth()->user()->role))
+                            @if($crr->Progress != 30 && $crr->Progress != 55 && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81 && rndManager(auth()->user()->role))
+                            <button type="button" class="btn btn-outline-primary btn-sm float-right mb-3" data-toggle="modal" data-target="#addPersonnel">
+                                New
+                            </button>
+                            @include('customer_requirements.new_personnel')
+                            @endif
                         @endif
                     @endif
 
@@ -650,12 +682,12 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            @if(rndManager(auth()->user()->role) && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81)
+                                            @if(rndManager(auth()->user()->role) && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81 && $crr->Progress != 30)
                                             <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editPersonnel{{$personnel->Id}}">
                                                 <i class="ti-pencil"></i>
                                             </button>
 
-                                            <form method="POST" class="d-inline-block" action="{{url('delete_personnel/'.$personnel->Id)}}">
+                                            <form method="POST" class="d-inline-block" action="{{url('delete_personnel/'.$personnel->Id)}}" onsubmit="show()">
                                                 @csrf
 
                                                 <button type="button" class="btn btn-danger btn-sm deletePersonnelButton">
@@ -679,7 +711,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities">
+                {{-- <div class="tab-pane fade" id="activities" role="tabpanel" aria-labelledby="activities">
                     <div class="form-group">
                         <label>Show : </label>
                         <label class="checkbox-inline">
@@ -749,12 +781,18 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <div class="tab-pane fade " id="files" role="tabpanel" aria-labelledby="files-tab">
-                    @if(checkIfHaveFiles(auth()->user()->role) == "yes")
-                    <button type="button" class="btn btn-primary mb-3 float-right" data-toggle="modal" data-target="#addCrrFiles">
-                        Add Customer Requirement Files
-                    </button>
+                </div> --}}
+                <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30)
+                    <div align="right">
+                        <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addCrrFiles">
+                            New
+                        </button>
+    
+                        <button type="button" class="btn btn-outline-warning btn-sm mb-3" data-toggle="modal" data-target="#uploadMultipleFiles">
+                            Upload Multiple Files
+                        </button>
+                    </div>
                     @endif
 
                     @include('customer_requirements.new_crr_files')
@@ -765,19 +803,21 @@
                                 <tr>
                                     <th>Action</th>
                                     <th>Name</th>
+                                    <th>Status</th>
                                     <th>File</th>
                                 </tr>
                             </thead>
-                            @foreach ($crr->crrFiles as $files)
+                            @foreach ($crr->crrFiles->whereNotIn('UserType', ['IS', 'LS']) as $files)
+                                @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $files->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                 <tbody>
                                     <tr>
                                         <td>
-                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes")
+                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30)
                                             <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCrrFiles-{{$files->Id}}" title="Edit">
                                                 <i class="ti-pencil"></i>
                                             </button>
 
-                                            <form method="POST" class="d-inline-block" action="{{url('delete_crr_file/'.$files->Id)}}">
+                                            <form method="POST" class="d-inline-block" action="{{url('delete_crr_file/'.$files->Id)}}" onsubmit="show()">
                                                 @csrf 
 
                                                 <button type="button" class="btn btn-sm btn-danger deleteBtn" title="Delete">
@@ -797,14 +837,22 @@
                                             {{$files->Name}}
                                         </td>
                                         <td>
-                                            <a href="{{url($files->Path)}}" target="_blank" class="btn btn-sm btn-info" title="View a file">
-                                                <i class="ti-eye"></i>
+                                            @if($files->IsForReview == 1)
+                                                <div class="badge badge-warning">In-Review</div>
+                                            @elseif($files->IsForReview == 0)
+                                                <div class="badge badge-success">Approved</div>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{url($files->Path)}}" target="_blank">
+                                                <i class="ti-file"></i>
                                             </a>
                                         </td>
                                     </tr>
                                 </tbody>
 
                                 @include('customer_requirements.edit_crr_files')
+                                @endif
                             @endforeach
                         </table>
                     </div>
@@ -814,15 +862,15 @@
                         <table class="table table-bordered table-striped table-hover tables" width="100%">
                             <thead>
                                 <tr>
-                                    <th>Index</th>
                                     <th>Name</th>
                                     <th>Status</th>
+                                    <th>Remarks</th>
+                                    <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($crr->crrTransactionApprovals as $transactionApprovals)
                                     <tr>
-                                        <td>{{$transactionApprovals->Index}}</td>
                                         <td>
                                             @if($transactionApprovals->userByUserId)
                                                 {{$transactionApprovals->userByUserId->full_name}}
@@ -831,13 +879,24 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($transactionApprovals->Status == 10)
-                                                Declined
-                                            @elseif($transactionApprovals->Status == 20)
-                                                Approved
+                                            @if($transactionApprovals->Status == 20)
+                                                <div class="badge badge-danger">Closed</div>
+                                            @elseif($transactionApprovals->Status == 0)
+                                                <div class="badge badge-warning">Cancelled</div>
+                                            @elseif($transactionApprovals->Status == 10)
+                                                <div class="badge badge-success">Approved</div>
+                                            @elseif($transactionApprovals->Status == 30)
+                                                <div class="badge badge-info">Returned</div>
+                                            @elseif($transactionApprovals->Status == 40)
+                                                <div class="badge badge-primary">Open</div>
+                                            @elseif($transactionApprovals->Status == 50)
+                                                <div class="badge badge-secondary">Continue</div>
                                             @endif
-
                                         </td>
+                                        <td>
+                                            {!! nl2br($transactionApprovals->Remarks) !!}
+                                        </td>
+                                        <td>{{date('M d, Y', strtotime($transactionApprovals->CreatedDate))}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -857,7 +916,7 @@
                             <tbody>
                                 @foreach ($crr->historyLogs as $logs)
                                     <tr>
-                                        <td>{{date('M d, Y - H:i A', strtotime($logs->ActionDate))}}</td>
+                                        <td>{{date('M d, Y - h:i A', strtotime($logs->ActionDate))}}</td>
                                         <td>
                                             @if($logs->historyUser)
                                             {{$logs->historyUser->full_name}}
@@ -882,6 +941,13 @@
 @include('customer_requirements.cancel_crr')
 @include('customer_requirements.accept_crr')
 @include('customer_requirements.pause_remarks')
+@include('customer_requirements.return_to_sales_remarks')
+@include('customer_requirements.open_remarks')
+@include('customer_requirements.continue_remarks')
+
+{{-- @foreach ($crr->crrFiles as $files)
+@endforeach --}}
+@include('customer_requirements.add_all_files')
 
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
@@ -906,7 +972,7 @@
         });
 
         $('.natureRequestSelect').select2({
-            width: "92%"
+            width: "85%"
         });
 
         $('.addRow').on('click', function() {
@@ -1213,8 +1279,14 @@
         $("#update2Crr").on('click', function() {
             var secondarySales = $(this).data('secondarysales');
             var primarySales = $("[name='PrimarySalesPersonId']").val()
-
+            
             refreshSecondaryApprovers(secondarySales, primarySales)
+        })
+        
+        $('[name="PrimarySalesPersonId"]').on('change', function() {
+            var primarySales = $(this).val();
+
+            refreshSecondaryApproversv2(primarySales)
         })
 
         function refreshSecondaryApprovers(secondarySales, primarySales)
@@ -1232,29 +1304,49 @@
                 {
                     setTimeout(() => {
                         $('[name="SecondarySalesPersonId"]').html(data)
-                        $('[name="SecondarySalesPersonId"]').val(secondarySales)
+                        // $('[name="SecondarySalesPersonId"]').val(secondarySales)
                     }, 500);
                 }
             })
         }
 
-        $(".returnToSalesBtn").on('click', function() {
-            var form = $(this).closest('form')
-
-            Swal.fire({
-                title: "Are you sure?",
-                // text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Return"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit()
+        function refreshSecondaryApproversv2(primarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                    }, 500);
                 }
-            });
-        })
+            })
+        }
+
+        // $(".returnToSalesBtn").on('click', function() {
+        //     var form = $(this).closest('form')
+
+        //     Swal.fire({
+        //         title: "Are you sure?",
+        //         // text: "You won't be able to revert this!",
+        //         icon: "warning",
+        //         showCancelButton: true,
+        //         confirmButtonColor: "#3085d6",
+        //         cancelButtonColor: "#d33",
+        //         confirmButtonText: "Return"
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             form.submit()
+        //         }
+        //     });
+        // })
 
         $('.returnToRnd').on('click', function() {
             var form = $(this).closest('form')
@@ -1288,6 +1380,93 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit()
+                }
+            });
+        })
+
+        $('.addMultipleFilesBtn').on('click', function() {
+            var newRow = `
+                <div class="col-md-6 mb-3">
+                    <div class="card border border-1 border-primary">
+                        <div class="card-header bg-primary" style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
+                            <h5 class="card-title text-white">Upload Files
+                                <button type="button" class="btn btn-danger btn-sm float-right closeMultipleFilesBtn">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="col-md-12 mb-3">
+                                <label>Name</label>
+                                <input type="text" name="file_name[]" class="form-control crrFileName" placeholder="Enter name" required>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <div class="form-group">
+                                    <label>Is Confidential</label>
+                                    <input type="checkbox" name="is_confidential[]" checked>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <div class="form-group">
+                                    <label>Is For Review</label>
+                                    <input type="checkbox" name="is_for_review[]" @if(auth()->user()->role->name == "Staff L1")  onclick="return false;" @endif>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label>Browser File</label>
+                                <input type="file" name="crr_file[]" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+
+            $("#multipleFilesContainer .row").append(newRow);
+        })
+
+        $(document).on('click', '.closeMultipleFilesBtn', function() {
+            
+            $(this).closest('.col-md-6').remove()
+        })
+
+        $(document).on('change', '[name="crr_file[]"]', function(e) {
+            var filename = e.target.files[0].name;
+
+            $(this).closest('.col-md-6').find('[name="file_name[]"]').val(filename);
+        })
+
+        $('.deleteFilesBtn').on('click', function() {
+            var id = $(this).data('id');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Delete"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url('delete_sales_files')}}",
+                        data: {
+                            id: id
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function()
+                        {
+                            Swal.fire({
+                                title: "Successfully Deleted",
+                                icon: "success"
+                            }).then(() => {
+                                location.reload();
+                            })
+                        }
+                    })
                 }
             });
         })

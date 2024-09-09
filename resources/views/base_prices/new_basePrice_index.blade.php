@@ -22,9 +22,18 @@
                     </div>
                 </div>
             </form>
+            <div class="card-title d-flex justify-content-start mt-3">
+                @if (checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
+                @if(authCheckIfItsRnd(auth()->user()->department_id))
+                <button type="button" id="bulk_approve" class="btn btn-sm btn-success mr-2">Bulk Approve</button>
+                @endif 
+                @endif
+                <button type="button" id="bulk_delete" class="btn btn-sm btn-danger">Bulk Delete</button>
+            </div>
             <table class="table table-striped table-bordered table-hover" id="base_price_table" width="100%">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="select_all"> Select All</th>
                         <th width="20%">Action</th>
                         <th width="20%">Material</th>
                         <th width="20%">Price</th>
@@ -35,14 +44,19 @@
                 <tbody>
                     @foreach ( $newBasePrice as $newBase)
                     <tr>
+                        <td><input type="checkbox" class="item-checkbox" value="{{ $newBase->Id }}"></td>
                         <td align="center">
                             <button type="button" class="btn btn-sm btn-warning"
                                 data-target="#editBase{{ $newBase->Id }}" data-toggle="modal" title='Edit New Base Price'>
                                 <i class="ti-pencil"></i>
                             </button>  
+                            @if (checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
+                            @if(authCheckIfItsRnd(auth()->user()->department_id))
                             <button type="button" class="btn btn-sm btn-success approve-btn"  data-id="{{ $newBase->Id }}">
                                 <i class="ti-thumb-up"></i>
                             </button> 
+                            @endif 
+                            @endif
                             <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $newBase->Id }}" title='Delete Base Price'>
                                 <i class="ti-trash"></i>
                             </button>
@@ -124,10 +138,10 @@
             Swal.fire({
                 title: "Do you want to approve this base price?",
                 showDenyButton: true,
-                showCancelButton: true,
+                // showCancelButton: true,
                 icon: "info",
                 confirmButtonText: "Approve",
-                denyButtonText: `Disapprove`
+                // denyButtonText: `Disapprove`
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -146,52 +160,141 @@
                             console.error(xhr.responseText);
                         }
                     });
-                } else if (result.isDenied) {
-                    $.ajax({
-                        url: 'approveNewBasePrice/' + id, 
-                        type: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}', 
-                            status: 'disapproved' 
-                        },
-                        success: function(response) {
-                            Swal.fire("Base price disapproved!", "", "success");
-                            location.reload()
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire("Error approving base price", "", "error");
-                            console.error(xhr.responseText);
-                        }
-                    });
-                }
+                } 
             });
         });
 
         $('.delete-btn').on('click', function() {
-        var id = $(this).data('id');
-        var $row = $(this).closest('tr'); 
+    var id = $(this).data('id');
+    var $row = $(this).closest('tr'); 
 
-        if (confirm('Are you sure you want to delete this base price?')) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
             $.ajax({
                 url: 'base-price/' + id,
                 type: 'DELETE',
                 data: {
-                    _token: '{{ csrf_token() }}'  
+                    _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
                     if (response.success) {
-                        $row.remove();  
-                        alert(response.message);
+                        $row.remove();
+                        Swal.fire(
+                            'Deleted!',
+                            response.message,
+                            'success'
+                        );
                     } else {
-                        alert(response.message);
+                        Swal.fire(
+                            'Error!',
+                            response.message,
+                            'error'
+                        );
                     }
                 },
                 error: function(xhr) {
-                    alert('An error occurred while deleting the base price.');
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while deleting the base price.',
+                        'error'
+                    );
                 }
             });
         }
     });
+});
+
+
+    $(document).ready(function() {
+    $('#select_all').click(function() {
+        var isChecked = $(this).prop('checked');
+        $('.item-checkbox').prop('checked', isChecked);
+    });
+
+    $('#bulk_approve').click(function() {
+        var selectedIds = getSelectedIds();
+        if (selectedIds.length === 0) {
+            Swal.fire("No items selected", "", "info");
+            return;
+        }
+        Swal.fire({
+            title: "Approve selected base prices?",
+            showCancelButton: true,
+            icon: "info",
+            confirmButtonText: "Approve",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'bulkApproveNewBasePrice',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        ids: selectedIds,
+                    },
+                    success: function(response) {
+                        Swal.fire("Base prices approved!", "", "success");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire("Error approving base prices", "", "error");
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+
+    $('#bulk_delete').click(function() {
+        var selectedIds = getSelectedIds();
+        if (selectedIds.length === 0) {
+            Swal.fire("No items selected", "", "info");
+            return;
+        }
+        Swal.fire({
+            title: "Are you sure you want to delete selected base prices?",
+            text: "This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'bulkDeleteBasePrice',
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        ids: selectedIds
+                    },
+                    success: function(response) {
+                        Swal.fire("Base prices deleted!", "", "success");
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire("Error deleting base prices", "", "error");
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+
+    function getSelectedIds() {
+        return $('.item-checkbox:checked').map(function() {
+            return $(this).val();
+        }).get();
+    }
+});
+
     });
 </script>
 @include('base_prices.create_new_base_price')

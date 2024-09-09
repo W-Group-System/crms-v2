@@ -5,10 +5,10 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Evaluation List
-            <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">Add Product Evaluation</button>
+            <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
             </h4>
             <div class="form-group">
-                <form method="GET" >
+                <form method="GET" onsubmit="show()">
                     <label>Show : </label>
                     <label class="checkbox-inline">
                         <input name="open" class="activity_status" type="checkbox" value="10" @if($open == 10) checked @endif> Open
@@ -19,10 +19,20 @@
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
             </div>
+            <div class="mb-3">
+                <a href="#" id="copy_btn" class="btn btn-md btn-info">Copy</a>
+                <form method="GET" action="{{url('product_evaluation_export')}}" class="d-inline-block">
+    
+                    <input type="hidden" name="open" value="{{$open}}">
+                    <input type="hidden" name="close" value="{{$close}}">
+                    
+                    <button type="submit" class="btn btn-success">Export</button>
+                </form>
+            </div>
             <div class="row">
                 <div class="col-lg-6">
                     <span>Show</span>
-                    <form method="GET" class="d-inline-block">
+                    <form method="GET" class="d-inline-block" onsubmit="show()">
                         <select name="entries" class="form-control">
                             <option value="10" @if($entries == 10) selected @endif>10</option>
                             <option value="25" @if($entries == 25) selected @endif>25</option>
@@ -33,7 +43,7 @@
                     <span>Entries</span>
                 </div>
                 <div class="col-lg-6">
-                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <div class="row height d-flex justify-content-end align-items-end">
                             <div class="col-md-8">
                                 <div class="search">
@@ -172,7 +182,25 @@
                                 <td>{{ $productEvaluation->DueDate }}</td>
                                 <td>{{ optional($productEvaluation->client)->Name }}</td>
                                 <td>{{ optional($productEvaluation->product_application)->Name }}</td>
-                                <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td>
+                                {{-- <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td> --}}
+                                <td>
+                                    @php
+                                        $rpeResult = $productEvaluation->RpeResult;
+                                        $pattern = '/\[(.*?)\]/';
+                                    
+                                        $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
+                                            $code = $matches[1];
+                                            $productId = getProductIdByCode($code);
+                                            
+                                            if ($productId != null) {
+                                                return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
+                                            }
+                                            return $matches[0];
+                                        }, $rpeResult);
+                                    @endphp  
+
+                                    {!! nl2br($rpeResultLinked) !!}
+                                </td>
                                 <td>
                                     @if($productEvaluation->Status == 10)
                                             Open
@@ -210,6 +238,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
 
+@include('product_evaluations.create')
+@foreach ( $request_product_evaluations as $productEvaluation )
+@include('product_evaluations.edit')
+@endforeach
 
 <script>
     function confirmDelete(id) {
@@ -262,8 +294,9 @@
         })
 
         $(".editBtn").on('click', function() {
-            var secondarySales = $(this).data('secondarysales');
             var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            
+            var secondarySales = $(this).data('secondarysales');
 
             refreshSecondaryApprovers(primarySales,secondarySales)
         })
@@ -288,10 +321,41 @@
                 }
             })
         }
+        $(".table").tablesorter({
+            theme : "bootstrap",
+        })
+
+        $('#copy_btn').click(function() {
+            var tableData = '';
+
+            $('#product_evaluation_table thead tr').each(function(rowIndex, tr) {
+                $(tr).find('th').each(function(cellIndex, th) {
+                    tableData += $(th).text().trim() + '\t';
+                });
+                tableData += '\n';
+            });
+
+            $('#product_evaluation_table tbody tr').each(function(rowIndex, tr) {
+                $(tr).find('td').each(function(cellIndex, td) {
+                    tableData += $(td).text().trim() + '\t';
+                });
+                tableData += '\n';
+            });
+
+            var tempTextArea = $('<textarea>');
+            $('body').append(tempTextArea);
+            tempTextArea.val(tableData).select();
+            document.execCommand('copy');
+            tempTextArea.remove();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Table data has been copied to the clipboard.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        });
     })
 </script>
-@include('product_evaluations.create')
-@foreach ( $request_product_evaluations as $productEvaluation )
-@include('product_evaluations.edit')
-@endforeach
 @endsection

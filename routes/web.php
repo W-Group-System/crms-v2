@@ -18,9 +18,8 @@ use App\Http\Controllers\PriceMonitoringController;
 */
 Auth::routes();
 
-// Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'inactive_users'], function() {
-    Route::get('/', 'HomeController@index');
+    Route::get('/', 'DashboardController@index');
     Route::get('/dashboard','DashboardController@index');
 
     // change password
@@ -76,6 +75,9 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('update_product/{id}', 'ProductController@update')->name('update_product');
     Route::post('delete_product', 'ProductController@delete')->name('delete_product');
     Route::get('products', 'ProductController@salesProduct')->name('sales.products');
+    Route::get('print_mrdc_pds/{id}', 'ProductController@printMrdcPds');
+    Route::get('print_whi_pds/{id}', 'ProductController@printWhiPds');
+    Route::get('print_pbi_pds/{id}', 'ProductController@printPbiPds');
 
     # Export Products
     Route::get('/export_current_products', 'ProductController@exportCurrentProducts');
@@ -173,6 +175,10 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('return_to_sales/{id}', 'CustomerRequirementController@returnToSales');
     Route::post('return_to_rnd/{id}', 'CustomerRequirementController@returnToRnd');
     Route::post('sales_accepted/{id}', 'CustomerRequirementController@salesAccepted');
+    Route::get('print_crr', 'CustomerRequirementController@printCrr');
+    Route::post('multipleUploadFiles', 'CustomerRequirementController@multipleUploadFiles');
+    Route::post('update_sales_files/{id}', 'CustomerRequirementController@updateSalesFiles');
+    Route::post('delete_sales_files', 'CustomerRequirementController@deleteSalesFiles');
 
     # Crr Supplementary Details
     Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');
@@ -193,7 +199,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('delete_crr_file/{id}', 'CustomerRequirementController@deleteCrrFile');
 
     // Product Evaluation
-    Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
+    // Route::get('/product_evaluation', 'ProductEvaluationController@index')->name('product_evaluation.index');
 
     // Request Product Evaluation
     Route::get('/request_product_evaluation', 'RequestProductEvaluationController@index')->name('product_evaluation.index');
@@ -229,6 +235,10 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('final_review_rpe/{id}', 'RequestProductEvaluationController@finalReview');
     Route::post('complete_rpe/{id}', 'RequestProductEvaluationController@completeRpe');
     Route::post('sales_accept_rpe/{id}', 'RequestProductEvaluationController@salesAcceptRpe');
+    Route::post('ReturnToSales_rpe/{id}', 'RequestProductEvaluationController@ReturnToSalesRpe');
+    Route::post('ApproveRpe/{id}', 'RequestProductEvaluationController@approveRpeSales');
+
+    Route::get('product_evaluation_export', 'RequestProductEvaluationController@export');
 
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
@@ -263,19 +273,31 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('RndUpdate/{id}', 'SampleRequestController@RndUpdate');
     Route::post('CancelRemarks/{id}', 'SampleRequestController@CancelRemarks');
     Route::post('CloseRemarks/{id}', 'SampleRequestController@CloseRemarks');
-    Route::post('ReturnToSales/{id}', 'SampleRequestController@ReturnToSales');
+    // Route::post('ReturnToSales/{id}', 'SampleRequestController@ReturnToSales');
+    Route::post('ReturnToSalesSRF/{id}', 'SampleRequestController@ReturnToSalesSRF');
+
     Route::post('ReturnToRnd/{id}', 'SampleRequestController@ReturnToRnd');
     Route::post('ReturnToSpecialist/{id}', 'SampleRequestController@ReturnToSpecialist');
     Route::post('SubmitSrf/{id}', 'SampleRequestController@SubmitSrf');
     Route::post('AcceptSrf/{id}', 'SampleRequestController@AcceptSrf');
     Route::post('OpenStatus/{id}', 'SampleRequestController@OpenStatus');
     Route::post('CompleteSrf/{id}', 'SampleRequestController@CompleteSrf');
+    Route::get('print_srf/{id}', 'SampleRequestController@print_srf');
+    Route::post('editDisposition/{id}', 'SampleRequestController@editDisposition');
+    Route::post('initialQuantity/{id}', 'SampleRequestController@initialQuantity');
 
     Route::get('sample_contacts-by-client-f/{clientId}', [SampleRequestController::class, 'getSampleContactsByClientF']);
     Route::get('sample_get-last-increment-f/{year}/{clientCode}', [SampleRequestController::class, 'getSampleLastIncrementF']);
 
     Route::delete('delete-srf-product/{id}', 'SampleRequestController@deleteSrfProduct');
 
+    Route::get('sample_request_export', 'SampleRequestController@export');
+
+    // Sample Request Customer Service
+    Route::get('/sample_request_cs_local', 'SampleRequestController@cs_local');
+    Route::post('sample_request_cs/edit/{id}', 'SampleRequestController@csSrfUpdate');
+    Route::get('/sample_request_cs_international', 'SampleRequestController@cs_international');
+    
     // Price Monitoring 
     Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
     Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');
@@ -422,6 +444,10 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('editNewBase/{id}', 'BasePriceController@updateBasePrice');
     Route::post('approveNewBasePrice/{id}', 'BasePriceController@editApproved');
     Route::delete('base-price/{id}', 'BasePriceController@destroy');
+    Route::post('/bulkApproveNewBasePrice', 'BasePriceController@bulkApprove');
+    Route::delete('/bulkDeleteBasePrice', 'BasePriceController@bulkDelete');
+
+
 
     // Price Request Fixed Cost
     Route::get('/fixed_cost', 'PriceFixedCostController@index')->name('fixed_cost.index');

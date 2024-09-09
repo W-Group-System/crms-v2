@@ -15,7 +15,7 @@
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        <button type="submit" class="btn btn-md btn-primary submit_approval" name="action" value="Draft" title="Submit to draft products">Draft</button>
+                        <button type="button" class="btn btn-md btn-primary submit_approval" id="draftBtn" name="action" value="Draft" >Move to Draft</button>
                     </form>
                 </div>
             </div>
@@ -25,138 +25,135 @@
                 $customerRequirements = customerRequirements($data->code);
                 $productRps = productRps($data->code);
             @endphp
-            <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>DDW Number:</b></label>
-                    <label class="col-sm-3 col-form-label">@if($data->ddw_number != null){{ $data->ddw_number }}@endif</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b>Raw Materials:</b></label>
-                    <label class="col-sm-2 col-form-label"><strong>USD</strong> {{number_format($rmc, 2)}}</label>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>DDW Number:</b></p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Code:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->code }}</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>EUR</strong> {{usdToEur($rmc)}}</label>
+                <div class="col-md-3">
+                    @if($data->ddw_number != null)
+                    <p class="mb-0">{{$data->ddw_number}}</p>
+                    @else
+                    <p>N/A</p>
+                    @endif
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Type:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->type == 1 ? 'Pure' : 'Blend' }}</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"><strong>PHP</strong> {{usdToPhp($rmc)}}</label>
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Raw Materials Cost:</b></p>
                 </div>
-                <div class="form-group row" style="margin-top: 20px">
-                    <label class="col-sm-2 col-form-label"><b>Reference Number:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->reference_no }}</label>
-                    <label class="offset-sm-2 col-sm-2 col-form-label"><b></b></label>
-                    <label class="col-sm-2 col-form-label"></label>
+                <div class="col-md-3">
+                    <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p>
+                    <p class="mb-0"><strong>EUR</strong> {{number_format(usdToEur($rmc), 2)}}</p>
+                    <p class="mb-0"><strong>PHP</strong> {{number_format(usdToPhp($rmc), 2)}}</p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Product Origin:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->product_origin }}</label>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Code:</b></p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Application:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $product_applications ? $product_applications->Name : 'N/A' }}</label>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $data->code }}</p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Subcategory:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $product_subcategories ? $product_subcategories->Name : 'N/A' }}</label>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Type:</b></p>
                 </div>
-                <div class="form-group row" style="margin-top: 20px">
-                    <label class="col-sm-2 col-form-label"><b>Created By:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $userAccounts->full_name }}</label>
+                <div class="col-md-3">
+                    @if($data->type == 1)
+                    <p class="mb-0">Pure</p>
+                    @else
+                    <p class="mb-0">Blend</p>
+                    @endif
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Date Created:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->created_at->format('Y-m-d') }}</label>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Reference Number:</b></p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Approved By:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $approveUsers->full_name }}</label>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $data->reference_no }}</p>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"><b>Date Approved:</b></label>
-                    <label class="col-sm-3 col-form-label">{{ $data->date_approved }}</label>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Product Origin:</b></p>
                 </div>
-                <div class="form-group row" style="margin-top: 20px">
-                    <label class="col-sm-2 col-form-label"><b>Status:</b></label>
-                    @php
-                        $statusLabels = [
-                            1 => 'Draft',
-                            2 => 'New',
-                            4 => 'Current',
-                            5 => 'Archived',
-                        ];
-                    @endphp
-                    <label class="col-sm-3 col-form-label"> {{ $statusLabels[$data->status] ?? 'N/A' }}</label>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $data->product_origin }}</p>
                 </div>
-            </form>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Application:</b></p>
+                </div>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $product_applications ? $product_applications->Name : 'N/A' }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="mb-0"><b>Subcategory:</b></p>
+                </div>
+                <div class="col-md-3">
+                    <p class="mb-0">{{ $product_subcategories ? $product_subcategories->Name : 'N/A' }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2"><p class="mb-0"><b>Created By:</b></p></div>
+                <div class="col-md-3"><p class="mb-0">{{ $userAccounts->full_name }}</p></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2 col-form-label"><p class="mb-0"><b>Date Created:</b></p></div>
+                <div class="col-sm-3 col-form-label"><p class="mb-0">{{ $data->created_at->format('Y-m-d') }}</p></div>
+            </div>
+            <div class="row">
+                <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
+                <div class="col-md-3"><p class="mb-0">{{ $approveUsers->full_name ?? '' }}</p></div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 col-form-label"><p class="mb-0"><b>Date Approved:</b></p></div>
+                <div class="col-md-3 col-form-label"><p class="mb-0">{{ $data->date_approved != null ? $data->date_approved : 'N/A' }}</p></div>
+            </div>
+            <div class="row mb-5">
+                <div class="col-md-2"><p class="mb-0"><b>Status:</b></p></div>
+                @php
+                    $statusLabels = [
+                        1 => 'Draft',
+                        2 => 'New',
+                        4 => 'Current',
+                        5 => 'Archived',
+                    ];
+                @endphp
+                <div class="col-md-3"><p class="mb-0"> {{ $statusLabels[$data->status] ?? 'N/A' }}</p></div>
+            </div>
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'materials' || session('tab') == null) active @endif" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
+                </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link p-2 @if(session('tab') == 'pds') active @endif" id="pds-tab" data-toggle="tab" href="#pds" role="tab" aria-controls="pds" aria-selected="false">PDS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="pds-tab" data-toggle="tab" href="#pds" role="tab" aria-controls="pds" aria-selected="false">PDS</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'files') active @endif" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">Files</a>
+                    <a class="nav-link p-2" id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " id="rmc-tab" data-toggle="tab" href="#rmc" role="tab" aria-controls="rmc" aria-selected="false">Historical RMC</a>
+                    <a class="nav-link p-2" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="client-tab" data-toggle="tab" href="#client" role="tab" aria-controls="client" aria-selected="false">Client Transaction</a>
+                    <a class="nav-link p-2" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="identical-tab" data-toggle="tab" href="#identical" role="tab" aria-controls="identical" aria-selected="false">Identical Composition</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="historycal-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
+                    <a class="nav-link p-2" id="historycal-tab" data-toggle="tab" href="#historicalLogs" role="tab" aria-controls="historicalLogs" aria-selected="false">Historical Logs</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade active show" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @include('components.error')
-                    {{-- <form method="POST" action="{{url('update_raw_materials/'.$data->id)}}">
-                        {{csrf_field()}}
-
-                        <div class="col-lg-12" align="right">
-                            <button type="submit" class="btn btn-md btn-primary submit_approval">Update</button>
-                        </div>
-    
-                        <button type="button" class="btn btn-sm btn-success mb-4" id="addBtn">
-                            <i class="ti-plus"></i>
-                        </button>
-
-                        <table class="table table-striped table-bordered table-hover" id="material_table" width="100%">
-                            <tbody class="tbodyRawMaterials">
-                                @foreach ($data->productMaterialComposition as $pmc)
-                                    <tr>
-                                        <td>
-                                            <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
-                                                <option value="">- Raw Materials -</option>
-                                                @foreach ($rawMaterials as $rm)
-                                                    <option value="{{$rm->id}}" @if($pmc->MaterialId == $rm->id) selected @endif>{{$rm->Name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" value="{{$pmc->Percentage}}" max="100" required>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-danger removeRawMat" type="button">
-                                                <i class="ti-minus"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </form> --}}
-
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-bordered tables" width="100%">
                             <thead>
@@ -180,7 +177,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+                {{-- <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     @include('components.error')
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">Add</button>
@@ -232,8 +229,8 @@
                     @foreach ($data->productSpecification as $ps)
                         @include('products.edit_specification')
                     @endforeach
-                </div>
-                <div class="tab-pane fade" id="pds" role="tabpanel" aria-labelledby="pds-tab">
+                </div> --}}
+                <div class="tab-pane fade @if(session('tab') == 'pds') active show @endif" id="pds" role="tabpanel" aria-labelledby="pds-tab">
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
                     </div>
@@ -243,27 +240,25 @@
                         <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
+                                    <th>Actions</th>
                                     <th>Product</th>
                                     <th>Control Number</th>
                                     <th>Company</th>
                                     <th>Date Issued</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @if($data->productDataSheet)
                                     <tr>
-                                        <td>{{$data->code}}</td>
-                                        <td>{{$data->productDataSheet->ControlNumber}}</td>
-                                        <td>@if($data->productDataSheet->clients){{$data->productDataSheet->clients->Name}}@endif</td>
-                                        <td>{{date('M d, Y', strtotime($data->productDataSheet->DateIssued))}}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#pdsModal-{{$data->productDataSheet->Id}}">
-                                                <i class="ti-pencil"></i>
-                                            </button>
                                             <a href="{{url('view_details/'.$data->productDataSheet->Id)}}" class="btn btn-info btn-sm" title="View Details" target="_blank">
                                                 <i class="ti-eye"></i>
                                             </a>
+
+                                            <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#pdsModal-{{$data->productDataSheet->Id}}">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+                                            
                                             <form action="{{url('delete_pds/'.$data->productDataSheet->Id)}}" method="post" class="d-inline-block" title="Delete">
                                                 {{csrf_field()}}
 
@@ -272,6 +267,10 @@
                                                 </button>
                                             </form>
                                         </td>
+                                        <td>{{$data->code}}</td>
+                                        <td>{{$data->productDataSheet->ControlNumber}}</td>
+                                        <td>@if($data->productDataSheet->clients){{$data->productDataSheet->clients->Name}}@endif</td>
+                                        <td>{{date('M d, Y', strtotime($data->productDataSheet->DateIssued))}}</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -281,7 +280,7 @@
                         @include('products.edit_pds')
                     @endif
                 </div>
-                <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
+                <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
@@ -292,11 +291,11 @@
                         <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
+                                    <th>Actions</th>
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Client</th>
                                     <th>File</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             
@@ -304,6 +303,18 @@
                                 @if($data->productFiles)
                                     @foreach ($data->productFiles as $pf)
                                         <tr>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                    <i class="ti-pencil"></i>
+                                                </button>
+                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                                    {{csrf_field()}}
+    
+                                                    <button type="button" class="btn btn-sm btn-danger deleteProductFiles" title="Delete">
+                                                        <i class="ti-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                             <td>{{$pf->Name}}</td>
                                             <td>
                                                 @if($pf->IsConfidential == 0)
@@ -318,28 +329,11 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($pf->IsConfidential == 0)
-                                                <a href="{{$pf->Path}}" class="btn btn-sm btn-info" target="_blank">
-                                                    <i class="ti-eye"></i>
+                                                <a href="{{url($pf->Path)}}" target="_blank">
+                                                    <i class="ti-file"></i>
                                                 </a>
-                                                @elseif($pf->IsConfidential == 1)
-                                                <a href="{{$pf->Path}}" class="btn btn-sm btn-info" target="_blank">
-                                                    <i class="mdi mdi-eye-off-outline"></i>
-                                                </a>
-                                                @endif
                                             </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
-                                                    <i class="ti-pencil"></i>
-                                                </button>
-                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
-                                                    {{csrf_field()}}
-    
-                                                    <button type="button" class="btn btn-sm btn-danger deleteProductFiles" title="Delete">
-                                                        <i class="ti-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </td>
+                                            
                                         </tr>
                                     @endforeach
                                 @endif
@@ -407,7 +401,7 @@
                                             <td>Sample Request</td>
                                             <td>
                                                 <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
-                                                    {{$item->sampleRequest->SrfNumber}}
+                                                    {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
                                             </td>
                                         </tr>
@@ -775,39 +769,54 @@
             $("#filename").val(filename);
         })
 
+        $(document).on('change', '[name="files[]"]', function(e) {
+            var filename = e.target.files[0].name;
+
+            $(this).closest('.row').find('[name="name[]"]').val(filename);
+        })
+
+
         $(".addBtnFiles").on('click', function()
         {
             var newRow = `
-                <fieldset class="border border-primary p-3 mb-3">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <label>Name :</label>
-                            <input type="text" name="name[]" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-lg-6">
-                            <label>Client :</label>
-                            <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
-                                <option value="">-Client-</option>
-                                @foreach ($client as $c)
-                                    <option value="{{$c->id}}">{{$c->Name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-lg-6">
-                            <label>Description :</label>
-                            <input type="text" name="description[]" class="form-control form-control-sm" required> 
-                        </div>
-                        <div class="col-lg-6">
-                            <label>Is Confidential :</label>
-                            <input type="checkbox" name="is_confidential[]"> 
-                        </div>
-                        <div class="col-lg-6">
-                            <label>File :</label>
-                            <input type="file" name="files[]" id="file" class="form-control form-control-sm" required>
-                            <input type="hidden" name="files[]">
-                        </div>
+                <div class="row">
+                    <div class="col-lg-10">
+                        <fieldset class="border border-primary p-3 mb-3">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Name :</label>
+                                    <input type="text" name="name[]" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Client :</label>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                        <option value="">-Client-</option>
+                                        @foreach ($client as $c)
+                                            <option value="{{$c->id}}">{{$c->Name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Description :</label>
+                                    <textarea name="description[]" class="form-control" cols="30" rows="10"></textarea>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Is Confidential :</label>
+                                    <input type="checkbox" name="is_confidential[]"> 
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>File :</label>
+                                    <input type="file" name="files[]" id="file" class="form-control form-control-sm" >
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
-                </fieldset>
+                    <div class="col-lg-2">
+                        <button class="btn btn-sm btn-danger mb-3 removeBtnFiles" type="button" >
+                            <i class="ti-minus"></i>
+                        </button>
+                    </div>
+                </div>
             `
 
             var row = $(newRow);
@@ -815,9 +824,10 @@
             row.find('.js-example-basic-single').select2();
         })
 
-        $(".removeBtnFiles").on('click', function()
+        $(document).on('click', '.removeBtnFiles', function()
         {
-            $('.product_files_container').children().last().remove();
+            // $('.product_files_container').children().last().remove();
+            $(this).closest('.row').remove()
             
         })
 
@@ -859,24 +869,42 @@
             });
         })
 
-            $('.deleteProductFiles').on('click', function() {
+        $('.deleteProductFiles').on('click', function() {
 
-                var form = $(this).closest('form');
+            var form = $(this).closest('form');
 
-                Swal.fire({
-                    title: "Are you sure?",
-                    text: "You won't be able to revert this!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes, delete it!"
-                    }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            })
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        })
+
+        $('#draftBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Move to Draft"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        })
     });
 </script>
 @endsection

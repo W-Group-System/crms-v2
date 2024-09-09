@@ -55,14 +55,42 @@
                             <i class="mdi mdi-open-in-new"></i>&nbsp;Open
                         </button>
                     @endif
-                    @if(checkIfItsApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, "PRF") == "yes" && $price_monitorings->Progress == 10)
-                            <button type="button" class="btn btn-md btn-success"
+                   
+                    @php
+                        $showButton = false;
+                        foreach ($price_monitorings->requestPriceProducts as $product) {
+                            if ($product->LsalesMarkupPercent > 15) {
+                                $showButton = true;
+                                break; 
+                            }
+                        }
+                    @endphp
+
+                    @if(checkIfItsApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, "PRF") === "yes" && $price_monitorings->Progress == 10 && $showButton)
+                        <button type="button" class="btn btn-md btn-success"
                                 data-target="#approvePrf{{ $price_monitorings->id }}" 
                                 data-toggle="modal" 
                                 title='Approve PRF'>
-                                <i class="ti ti-check-box">&nbsp;</i>Approve
-                            </button>
-                        @endif
+                            <i class="ti ti-check-box">&nbsp;</i>Approve
+                        </button>
+                    @elseif (checkIfItsApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, "PRF") === "yes" && $price_monitorings->Progress == 10)
+                    <button type="button" class="btn btn-md btn-success"
+                            data-target="#approveManagerPrf{{ $price_monitorings->id }}" 
+                            data-toggle="modal" 
+                            title='Approve PRF'>
+                        <i class="ti ti-check-box">&nbsp;</i>Approve To Manager
+                    </button>
+                    @endif
+
+                    @if(authCheckIfItsSalesManager(auth()->user()->role_id) && $price_monitorings->Progress == 40)
+                    <button type="button" class="btn btn-md btn-success"
+                            data-target="#approvePrf{{ $price_monitorings->id }}" 
+                            data-toggle="modal" 
+                            title='Approve PRF'>
+                        <i class="ti ti-check-box">&nbsp;</i>Approve
+                    </button>
+                    @endif
+
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">
@@ -83,9 +111,10 @@
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Secondary Sales Person:</b></p>
                             <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->secondarySalesPerson)->full_name }}</p>
-                            <p class="offset-sm-2 col-sm-2 col-form-label"><b>Progress:</b></p>
+                            <p class="offset-sm-2 col-sm-2 col-form-labe"><b>Progress:</b></p>
                             <p class="col-sm-3 col-form-label">
-                                @if ($price_monitorings->Progress == '10')
+                                {{ optional($price_monitorings->progressStatus)->name }}
+                                {{-- @if ($price_monitorings->Progress == '10')
                                 For Approval
                                 @elseif ($price_monitorings->Progress == '20')
                                 Waiting For Disposition
@@ -95,7 +124,7 @@
                                 Closed
                                 @else
                                 Waiting For Disposition
-                                @endif
+                                @endif --}}
                             </p>
                         </div>
                         <div class="form-group row">
@@ -619,7 +648,7 @@
 
     </script>
 @include('price_monitoring.upload_prf_file')
-@include('price_monitoring_ls.create_activity')
+{{-- @include('price_monitoring_ls.create_activity') --}}
 @foreach ($prfFileUploads as $fileupload)
 @include('price_monitoring.edit_prfFiles')
 @endforeach
@@ -630,6 +659,7 @@
 
 @include('price_monitoring_ls.close')
 @include('price_monitoring_ls.prf_approval')
+@include('price_monitoring_ls.prf_manager_approval')
 @include('price_monitoring_ls.ls_view_edit')
 {{-- @include('sample_requests.create_supplementary')
 @include('sample_requests.assign_personnel')

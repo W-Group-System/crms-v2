@@ -15,6 +15,35 @@
                             <label for="name"><b>Name</b></label>
                             <input type="text" name="name" id="fileName" class="form-control" value="{{ $fileupload->Name }}">
                         </div>
+                        @if(authCheckIfItsRnd(auth()->user()->department_id))
+                            @if(authCheckIfItsRndStaff(auth()->user()->role))
+                                <div class="col-lg-12 mb-3">
+                                    <div class="form-group">
+                                        <label>Is Confidential :</label>
+                                        <input type="checkbox" name="is_confidential" @if($fileupload->IsConfidential == 1) checked @endif disabled>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 mb-3">
+                                    <div class="form-group">
+                                        <label>Is For Review :</label>
+                                        <input type="checkbox" name="is_for_review" @if($fileupload->IsForReview == 1) checked @endif disabled>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="col-lg-12 mb-3">
+                                    <div class="form-group">
+                                        <label>Is Confidential :</label>
+                                        <input type="checkbox" name="is_confidential" @if($fileupload->IsConfidential == 1) checked @endif>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 mb-3">
+                                    <div class="form-group">
+                                        <label>Is For Review :</label>
+                                        <input type="checkbox" name="is_for_review" @if($fileupload->IsForReview == 1) checked @endif>
+                                    </div>
+                                </div>
+                            @endif
+                        @endif
                         <div class="form-group">
                             <label for="srf_file"><b>Browse Files</b></label>
                             <input type="file" class="form-control file" name="srf_file">
