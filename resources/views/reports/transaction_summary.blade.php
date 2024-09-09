@@ -9,8 +9,8 @@
             <div class="row height d-flex ">
                 <div class="col-md-6 mt-2 mb-2">
                     <!-- <a href="#" id="copy_transaction_btn" class="btn btn-md btn-info" style="margin-top: 2em">Copy</a> -->
-                    <button class="btn btn-md btn-info" style="margin-top: 2em" id="copy_transaction_btn">Copy</button>
-                    <a href="{{ route('export_transaction_activity', request()->all()) }}" class="btn btn-success" style="margin-top: 2em">Excel</a>
+                    <button class="btn btn-md btn-outline-info" style="margin-top: 1.5em" id="copy_transaction_btn">Copy</button>
+                    <a href="{{ route('export_transaction_activity', request()->all()) }}" class="btn btn-outline-success" style="margin-top: 1.5em">Excel</a>
                 </div>
                 <form class="form-inline col-md-6" action="{{ route('reports.transaction_activity') }}" method="GET">
                     <div class="col-md-6 mt-2 mb-2">
