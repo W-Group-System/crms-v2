@@ -602,7 +602,7 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade @if(session('tab') == 'supplementary_details' || session('tab') == null) active show @endif" id="supplementary_details" role="tabpanel" aria-labelledby="supplementary_details">
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
-                        @if($crr->Progress != 60)
+                        @if($crr->Progress != 60 && $crr->Progress != 30)
                         <button type="button" class="btn btn-outline-primary btn-sm float-right mb-3" data-toggle="modal" data-target="#addSupplementary">
                             New
                         </button>
@@ -624,7 +624,7 @@
                                 @foreach ($crr->crrDetails as $details)
                                     <tr>
                                         <td>
-                                            @if($crr->Progress != 60)
+                                            @if($crr->Progress != 60 && $crr->Progress != 30)
                                             <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editSupplementary{{$details->Id}}">
                                                 <i class="ti-pencil"></i>
                                             </button>
@@ -661,7 +661,7 @@
                 <div class="tab-pane fade @if(session('tab') == 'personnel') active show @endif" id="assigned" role="tabpanel" aria-labelledby="assigned">
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         @if(rndManager(auth()->user()->role))
-                            @if($crr->Progress != 55 && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81 && rndManager(auth()->user()->role))
+                            @if($crr->Progress != 30 && $crr->Progress != 55 && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81 && rndManager(auth()->user()->role))
                             <button type="button" class="btn btn-outline-primary btn-sm float-right mb-3" data-toggle="modal" data-target="#addPersonnel">
                                 New
                             </button>
@@ -682,7 +682,7 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            @if(rndManager(auth()->user()->role) && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81)
+                                            @if(rndManager(auth()->user()->role) && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81 && $crr->Progress != 30)
                                             <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editPersonnel{{$personnel->Id}}">
                                                 <i class="ti-pencil"></i>
                                             </button>
@@ -783,7 +783,7 @@
                     </div>
                 </div> --}}
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
-                    @if(checkIfHaveFiles(auth()->user()->role) == "yes")
+                    @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30)
                     <div align="right">
                         <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addCrrFiles">
                             New
@@ -812,7 +812,7 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes")
+                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30)
                                             <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCrrFiles-{{$files->Id}}" title="Edit">
                                                 <i class="ti-pencil"></i>
                                             </button>
