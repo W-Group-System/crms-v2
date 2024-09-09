@@ -14,6 +14,7 @@ use App\User;
 use App\Product;
 use App\SrfProgress;
 use League\Csv\Writer;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TransactionActivityExport;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,18 @@ class ReportsController extends Controller
         $fetchAll = $request->input('fetch_all', false);
         $entries = $request->input('number_of_entries', 10);
 
+        // Use provided 'from' and 'to' dates or default to the current month if not provided
+        $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
+        $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
+
+        $validSorts = ['DateRequested', 'PrimarySalesPersonId', 'ClientId', 'ProductCode', 'ProductRmc', 'OfferedPrice', 'ShipmentTerm', 'PaymentTerm', 'QuantityRequired', 'Margin', 'MarginPercentage', 'TotalMargin', 'IsAccepted', 'Remarks'];
+        if (!in_array($sort, $validSorts)) {
+            $sort = 'DateRequested'; // Default sort field
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
+        }
+
         // Optimize base query with necessary joins only
         $query = PriceMonitoring::query()
             ->with([
@@ -39,48 +52,34 @@ class ReportsController extends Controller
                 'priceRequestProduct:id,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
                 'paymentterms:id,Name'
             ])
-            ->when($search, function ($query) use ($search) {
+            ->where(function ($query) use ($search) {
                 $query->where('DateRequested', 'LIKE', '%' . $search . '%')
                     ->orWhere('ShipmentTerm', 'LIKE', '%' . $search . '%')
+                    ->orWhere('code', 'LIKE', '%' . $search . '%')
                     ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
                         $q->where('full_name', 'LIKE', '%' . $search . '%');
                     })
                     ->orWhereHas('client', function ($q) use ($search) {
-                        $q->where('Name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('products', function ($q) use ($search) {
-                        $q->where('code', 'LIKE', '%' . $search . '%');
+                        $q->where('name', 'LIKE', '%' . $search . '%');
                     })
                     ->orWhereHas('priceRequestProduct', function ($q) use ($search) {
                         $q->where('ProductRmc', 'LIKE', '%' . $search . '%')
-                            ->orWhere('IsalesOfferedPrice', 'LIKE', '%' . $search . '%')
-                            ->orWhere('QuantityRequired', 'LIKE', '%' . $search . '%')
-                            ->orWhere('IsalesMargin', 'LIKE', '%' . $search . '%')
-                            ->orWhere('IsalesMarginPercentage', 'LIKE', '%' . $search . '%')
-                            ->orWhere('Remarks', 'LIKE', '%' . $search . '%');
+                        ->orWhere('IsalesOfferedPrice', 'LIKE', '%' . $search . '%')
+                        ->orWhere('QuantityRequired', 'LIKE', '%' . $search . '%')
+                        ->orWhere('IsalesMargin', 'LIKE', '%' . $search . '%')
+                        ->orWhere('IsalesMarginPercentage', 'LIKE', '%' . $search . '%')
+                        ->orWhere('Remarks', 'LIKE', '%' . $search . '%');
                     })
                     ->orWhereHas('paymentterms', function ($q) use ($search) {
                         $q->where('Name', 'LIKE', '%' . $search . '%');
                     });
             })
+            ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
             ->leftJoin('pricerequestproducts', 'pricerequestproducts.id', '=', 'pricerequestforms.id')
             ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
-            ->when($sort, function ($query) use ($sort, $direction) {
-                if ($sort == 'PrimarySalesPersonId') {
-                    $query->orderBy('PrimarySalesPersonId', $direction);
-                } elseif ($sort == 'ClientId') {
-                    $query->orderBy('ClientId', $direction);
-                } elseif ($sort == 'ProductCode') {
-                    $query->orderBy('products.code', $direction);
-                } elseif ($sort == 'PaymentTermId') {
-                    $query->orderBy('PaymentTermId', $direction);
-                } else {
-                    $query->orderBy($sort, $direction);
-                }
-            });
-        // dd($query->take(1));
-        $priceRequests = $query->get();   
-        // dd($priceRequests->take(1));
+            ->orderBy($sort, $direction);
+            
+        // dd($sort);
         // Apply Filters
         if ($request->filled('filter_date')) {
             $query->whereDate('DateRequested', $request->filter_date);
@@ -150,43 +149,142 @@ class ReportsController extends Controller
             return view('reports.price_summary', compact(
                 'search', 'priceRequests', 'entries', 'fetchAll', 'sort', 'direction',
                 'allPrimarySalesPersons', 'allProductRmc', 'allDates', 'allClients',
-                'allShipments', 'allPayments', 'allQuantity', 'allAccepted', 'allRemarks', 'allProducts', 'allOfferedPrice', 'allMargin', 'allPercentMargin', 'totalMargins'
+                'allShipments', 'allPayments', 'allQuantity', 'allAccepted', 'allRemarks', 'allProducts', 'allOfferedPrice', 'allMargin', 'allPercentMargin', 'totalMargins', 'from', 'to'
             ));
         }
     }
 
     // Export Price Requests
+    // public function exportPriceRequest(Request $request)
+    // {
+    //     $search = $request->input('search');
+    //     $sort = $request->get('sort', 'DateRequested'); // Default to 'DateRequested' if no sort is specified
+    //     $direction = $request->get('direction', 'asc'); // Default to ascending order
+    //     $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
+    //     $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
+
+    //     $validSorts = ['DateRequested', 'PrimarySalesPersonId', 'ClientId', 'ProductCode', 'ProductRmc', 'OfferedPrice', 'ShipmentTerm', 'PaymentTerm', 'QuantityRequired', 'Margin', 'MarginPercentage', 'TotalMargin', 'IsAccepted', 'Remarks'];
+    //     if (!in_array($sort, $validSorts)) {
+    //         $sort = 'DateRequested'; // Default sort field
+    //     }
+    //     if (!in_array($direction, ['asc', 'desc'])) {
+    //         $direction = 'desc';
+    //     }
+
+    //     // Fetch all records based on search, sort, and direction
+    //     $priceRequests = PriceMonitoring::with([
+    //             'primarySalesPerson:user_id,full_name', 
+    //             'client:id,name', 
+    //             'products',
+    //             'paymentterms:id,Name'
+    //         ])// Eager load relationships
+    //         ->leftJoin('pricerequestproducts', 'pricerequestproducts.id', '=', 'pricerequestforms.id')
+    //         ->where(function ($query) use ($search) {
+    //             $query->where('DateRequested', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('ShipmentTerm', 'LIKE', '%' . $search . '%')
+    //                 ->orWhere('code', 'LIKE', '%' . $search . '%')
+    //                 ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
+    //                     $q->where('full_name', 'LIKE', '%' . $search . '%');
+    //                 })
+    //                 ->orWhereHas('client', function ($q) use ($search) {
+    //                     $q->where('name', 'LIKE', '%' . $search . '%');
+    //                 })
+    //                 ->orWhereHas('priceRequestProduct', function ($q) use ($search) {
+    //                     $q->where('ProductRmc', 'LIKE', '%' . $search . '%')
+    //                     ->orWhere('IsalesOfferedPrice', 'LIKE', '%' . $search . '%')
+    //                     ->orWhere('QuantityRequired', 'LIKE', '%' . $search . '%')
+    //                     ->orWhere('IsalesMargin', 'LIKE', '%' . $search . '%')
+    //                     ->orWhere('IsalesMarginPercentage', 'LIKE', '%' . $search . '%')
+    //                     ->orWhere('Remarks', 'LIKE', '%' . $search . '%');
+    //                 })
+    //                 ->orWhereHas('paymentterms', function ($q) use ($search) {
+    //                     $q->where('Name', 'LIKE', '%' . $search . '%');
+    //                 });
+    //         })
+    //         ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
+    //         ->leftJoin('pricerequestproducts', 'pricerequestproducts.id', '=', 'pricerequestforms.id')
+    //         ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
+    //         ->orderBy($sort, $direction);
+            
+     
+    //     // Convert data to an array format that can be easily handled by JavaScript
+    //     return response()->json($priceRequests);
+    // }
     public function exportPriceRequest(Request $request)
     {
         $search = $request->input('search');
         $sort = $request->get('sort', 'DateRequested'); // Default to 'DateRequested' if no sort is specified
-        $direction = $request->get('direction', 'asc'); // Default to ascending order
+        $direction = $request->get('direction', 'desc'); // Default to 'desc' if no direction is specified
+        $from = $request->input('from') ? Carbon::parse($request->input('from'))->format('Y-m-d') : now()->startOfMonth()->format('Y-m-d');
+        $to = $request->input('to') ? Carbon::parse($request->input('to'))->format('Y-m-d') : now()->endOfMonth()->format('Y-m-d');
 
-        // Define a list of valid columns for sorting
-        $validSortColumns = ['DateRequested', 'PrimarySalesPersonId', 'ClientId', 'ProductCode', 'ProductRmc', 'OfferedPrice', 'ShipmentTerm', 'PaymentTerm', 'QuantityRequired', 'Margin', 'MarginPercentage', 'TotalMargin', 'IsAccepted', 'Remarks'];
-
-        // Validate sort column
-        if (!in_array($sort, $validSortColumns)) {
-            $sort = 'DateRequested'; // Default to 'DateRequested' if invalid
+        $validSorts = ['DateRequested', 'PrimarySalesPersonId', 'ClientId', 'ProductCode', 'ProductRmc', 'OfferedPrice', 'ShipmentTerm', 'PaymentTerm', 'QuantityRequired', 'Margin', 'MarginPercentage', 'TotalMargin', 'IsAccepted', 'Remarks'];
+        if (!in_array($sort, $validSorts)) {
+            $sort = 'DateRequested'; // Default sort field
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'desc';
         }
 
         // Fetch all records based on search, sort, and direction
-        $priceRequests = PriceMonitoring::with([
+        $priceRequests = PriceMonitoring::query()
+            ->with([
                 'primarySalesPerson:user_id,full_name', 
                 'client:id,name', 
-                'products',
+                'priceRequestProduct:ProductId,id',
+                'priceRequestProduct:id,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
                 'paymentterms:id,Name'
-            ])// Eager load relationships
-            ->leftJoin('pricerequestproducts', 'pricerequestproducts.id', '=', 'pricerequestforms.id')
+            ])
             ->where(function ($query) use ($search) {
                 $query->where('DateRequested', 'LIKE', '%' . $search . '%')
-                    ->orWhere('PrimarySalesPersonId', 'LIKE', '%' . $search . '%');
+                    ->orWhere('ShipmentTerm', 'LIKE', '%' . $search . '%')
+                    ->orWhere('code', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
+                        $q->where('full_name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('client', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('priceRequestProduct', function ($q) use ($search) {
+                        $q->where('ProductRmc', 'LIKE', '%' . $search . '%')
+                        ->orWhere('IsalesOfferedPrice', 'LIKE', '%' . $search . '%')
+                        ->orWhere('QuantityRequired', 'LIKE', '%' . $search . '%')
+                        ->orWhere('IsalesMargin', 'LIKE', '%' . $search . '%')
+                        ->orWhere('IsalesMarginPercentage', 'LIKE', '%' . $search . '%')
+                        ->orWhere('Remarks', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('paymentterms', function ($q) use ($search) {
+                        $q->where('Name', 'LIKE', '%' . $search . '%');
+                    });
             })
+            ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
+            ->leftJoin('pricerequestproducts', 'pricerequestproducts.id', '=', 'pricerequestforms.id')
+            ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
             ->orderBy($sort, $direction)
-            ->get(); // Fetch all results
-     
+            ->get(); // Execute the query and get the results
+        // dd($priceRequests);
         // Convert data to an array format that can be easily handled by JavaScript
-        return response()->json($priceRequests);
+        $data = $priceRequests->map(function ($item) {
+            return [
+                'DateRequested' => $item->DateRequested,
+                'PrimarySalesPersonId' => $item->primarySalesPerson->full_name ?? 'N/A',
+                'Client' => $item->client->name ?? 'N/A',
+                'ProductCode' => $item->code ?? 'N/A',
+                'ProductRmc' => $item->ProductRmc ?? 'N/A',
+                'OfferedPrice' => $item->IsalesOfferedPrice ?? 'N/A',
+                'QuantityRequired' => $item->QuantityRequired ?? 'N/A',
+                'Margin' => $item->IsalesMargin ?? 'N/A',
+                'MarginPercentage' => $item->IsalesMarginPercentage ?? 'N/A',
+                'TotalMargin' => $item->TotalMargin ?? 'N/A',
+                'ShipmentTerm' => $item->ShipmentTerm ?? 'N/A',
+                'PaymentTerm' => $item->paymentterms->Name ?? 'N/A',
+                'IsAccepted' => $item->IsAccepted ? 'YES' : 'NO',
+                'Remarks' => $item->Remarks ?? 'N/A',
+            ];
+        });
+        
+        // Return the data as JSON
+        return response()->json($data);
     }
 
     // Transaction/Activity

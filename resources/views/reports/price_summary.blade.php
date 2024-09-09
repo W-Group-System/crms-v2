@@ -6,17 +6,29 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Price Request Summary
             </h4>
-            <div class="row height d-flex ">
-                <div class="col-md-5 mt-2 mb-2">
-                    <a href="#" id="copy_price_btn" class="btn btn-md btn-info mb-1">Copy</a>
-                    <a href="#" id="excel_price_btn" class="btn btn-md btn-success mb-1">Excel</a>
+            <div class="row height d-flex">
+                <div class="col-md-6 mt-2 mb-2">
+                    <a href="#" id="copy_price_btn" style="margin-top: 1.5em" class="btn btn-md btn-outline-info mb-1">Copy</a>
+                    <a href="#" id="excel_price_btn" style="margin-top: 1.5em" class="btn btn-md btn-outline-success mb-1">Excel</a>
                 </div>
+                <form class="form-inline col-md-6" action="{{ route('reports.price_request') }}" method="GET">
+                    <div class="col-md-6 mt-2 mb-2">
+                        <label style="align-items: start;justify-content: left;">From (DD/MM/YYYY):</label>
+                        <input type="date" class="form-control" name="from" id="from" value="{{ request('from', now()->startOfMonth()->format('Y-m-d')) }}" style="width: 100%;" onchange="this.form.submit()">
+                    </div>
+                    <div class="col-md-6 mt-2 mb-2">
+                        <label style="align-items: start;justify-content: left;">To (DD/MM/YYYY):</label>
+                        <input type="date" class="form-control" name="to" id="to" value="{{ request('to', now()->endOfMonth()->format('Y-m-d')) }}" style="width: 100%;" onchange="this.form.submit()">
+                    </div>
+                </form>
             </div>
             <div class="row">
                 <div class="col-lg-6">
                     <span>Show</span>
                     <form method="GET" class="d-inline-block">
-                        <select name="number_of_entries" class="form-control">
+                        <input type="hidden" name="from" value="{{ $from }}">
+                        <input type="hidden" name="to" value="{{ $to }}">
+                        <select name="number_of_entries" class="form-control" onchange="this.form.submit();">
                             <option value="10" @if($entries == 10) selected @endif>10</option>
                             <option value="25" @if($entries == 25) selected @endif>25</option>
                             <option value="50" @if($entries == 50) selected @endif>50</option>
@@ -27,6 +39,8 @@
                 </div>
                 <div class="col-lg-6">
                     <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <input type="hidden" name="from" value="{{ $from }}">
+                        <input type="hidden" name="to" value="{{ $to }}">
                         <div class="row height d-flex justify-content-end align-items-end">
                             <div class="col-lg-9">
                                 <div class="search">
@@ -60,60 +74,60 @@
                         <tr>
                             <th>
                                 Date
-                                <a href="{{ route('reports.price_request', [
+                                <!-- <a href="{{ route('reports.price_request', [
                                     'sort' => 'DateRequested', 
                                     'direction' => request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Account Manager
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'PrimarySalesPersonId', 'direction' => request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'PrimarySalesPersonId', 'direction' => request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Client
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'ClientId', 'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'ClientId', 'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Product
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'PriceRequestFormId', 'direction' => request('sort') == 'PriceRequestFormId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'PriceRequestFormId', 'direction' => request('sort') == 'PriceRequestFormId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'PriceRequestFormId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 RMC
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'ProductRmc', 'direction' => request('sort') == 'ProductRmc' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'ProductRmc', 'direction' => request('sort') == 'ProductRmc' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ProductRmc' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Offered Price
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesOfferedPrice', 'direction' => request('sort') == 'IsalesOfferedPrice' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesOfferedPrice', 'direction' => request('sort') == 'IsalesOfferedPrice' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'IsalesOfferedPrice' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Shipment Term
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'ShipmentTerm', 'direction' => request('sort') == 'ShipmentTerm' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'ShipmentTerm', 'direction' => request('sort') == 'ShipmentTerm' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ShipmentTerm' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Payment Term
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'PaymentTermId', 'direction' => request('sort') == 'PaymentTermId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'PaymentTermId', 'direction' => request('sort') == 'PaymentTermId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'PaymentTermId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Quantity Required
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'QuantityRequired', 'direction' => request('sort') == 'QuantityRequired' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'QuantityRequired', 'direction' => request('sort') == 'QuantityRequired' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'QuantityRequired' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Margin
@@ -123,27 +137,27 @@
                             </th>
                             <th>
                                 % Margin
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesMarginPercentage', 'direction' => request('sort') == 'IsalesMarginPercentage' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesMarginPercentage', 'direction' => request('sort') == 'IsalesMarginPercentage' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'IsalesMarginPercentage' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Total Margin
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesMargin', 'direction' => request('sort') == 'IsalesMargin' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesMargin', 'direction' => request('sort') == 'IsalesMargin' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'IsalesMargin' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Accepted?
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsAccepted', 'direction' => request('sort') == 'IsAccepted' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsAccepted', 'direction' => request('sort') == 'IsAccepted' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'IsAccepted' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Remarks?
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'Remarks', 'direction' => request('sort') == 'Remarks' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'Remarks', 'direction' => request('sort') == 'Remarks' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Remarks' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                         </tr>
                     </thead>
@@ -300,7 +314,7 @@
                     </tfoot>
                 </table>
             </div>
-            {!! $priceRequests->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
+            {{ $priceRequests->appends(['from' => $from, 'to' => $to, 'search' => $search, 'sort' => $sort, 'direction' => $direction])->links() }}
             @php
                 $total = $priceRequests->total();
                 $currentPage = $priceRequests->currentPage();
@@ -324,6 +338,10 @@
 </style>
 <script>
     $(document).ready(function() {
+        $('.table').tablesorter({
+            theme: "bootstrap"
+        })
+
         $("[name='number_of_entries']").on('change', function() {
             var form = $(this).closest('form');
             form.submit();
@@ -396,41 +414,67 @@
             });
         });
 
+        // $('#excel_price_btn').click(function() {
+        //     $.ajax({
+        //         url: "{{ route('export_price_request') }}", // URL for exporting all data
+        //         method: "GET",
+        //         data: {
+        //             search: "{{ $search }}", // Pass current search parameters if needed
+        //             sort: "{{ request('sort', 'DateRequested') }}", // Use default 'DateRequested' if not provided
+        //             direction: "{{ request('direction', 'asc') }}" // Use default 'asc' if not provided
+        //         },
+        //         success: function(data) {
+        //             // Ensure data is in array format
+        //             if (Array.isArray(data)) {
+        //                 // Create a new workbook and worksheet
+        //                 var wb = XLSX.utils.book_new();
+        //                 var ws = XLSX.utils.json_to_sheet(data.map(item => ({
+        //                     DateRequested: formatDate(item.DateRequested),
+        //                     PrimarySalesPerson: item.primary_sales_person.full_name || 'N/A',
+        //                     Client: item.client.name || 'N/A',
+        //                     ProductCode: item.products?.map(product => product.code).join(', ') || 'N/A', // Handle products as an array
+        //                     ProductRmc: item.ProductRmc,
+        //                     OfferedPrice: item.IsalesOfferedPrice || '',
+        //                     ShipmentTerm: item.ShipmentTerm || '',
+        //                     PaymentTerm: item.paymentterms.Name || '',
+        //                     QuantityRequired: item.QuantityRequired || '',
+        //                     Margin: item.IsalesMargin || '',
+        //                     MarginPercentage: item.IsalesMarginPercentage || '',
+        //                     TotalMargin: item.total_margin || '',
+        //                     Accepted: item.IsAccepted ? 'YES' : 'NO',
+        //                     Remarks: item.Remarks || ''
+        //                 })));
+
+        //                 // Append the worksheet to the workbook
+        //                 XLSX.utils.book_append_sheet(wb, ws, "Price Requests");
+
+        //                 // Write the workbook to a file
+        //                 XLSX.writeFile(wb, "price_requests.xlsx");
+        //             }
+        //         }
+        //     });
+        // });
+
         $('#excel_price_btn').click(function() {
+            var from = $('#from').val();
+            var to = $('#to').val();
+
             $.ajax({
                 url: "{{ route('export_price_request') }}", // URL for exporting all data
                 method: "GET",
                 data: {
-                    search: "{{ $search }}", // Pass current search parameters if needed
+                    search: "{{ request('search', '') }}", // Pass current search parameters if needed
                     sort: "{{ request('sort', 'DateRequested') }}", // Use default 'DateRequested' if not provided
-                    direction: "{{ request('direction', 'asc') }}" // Use default 'asc' if not provided
+                    direction: "{{ request('direction', 'desc') }}", // Use default 'desc' if not provided
+                    from: from,
+                    to: to
                 },
                 success: function(data) {
-                    // Ensure data is in array format
                     if (Array.isArray(data)) {
-                        // Create a new workbook and worksheet
                         var wb = XLSX.utils.book_new();
-                        var ws = XLSX.utils.json_to_sheet(data.map(item => ({
-                            DateRequested: formatDate(item.DateRequested),
-                            PrimarySalesPerson: item.primary_sales_person.full_name || 'N/A',
-                            Client: item.client.name || 'N/A',
-                            ProductCode: item.products?.map(product => product.code).join(', ') || 'N/A', // Handle products as an array
-                            ProductRmc: item.ProductRmc,
-                            OfferedPrice: item.IsalesOfferedPrice || '',
-                            ShipmentTerm: item.ShipmentTerm || '',
-                            PaymentTerm: item.paymentterms.Name || '',
-                            QuantityRequired: item.QuantityRequired || '',
-                            Margin: item.IsalesMargin || '',
-                            MarginPercentage: item.IsalesMarginPercentage || '',
-                            TotalMargin: item.total_margin || '',
-                            Accepted: item.IsAccepted ? 'YES' : 'NO',
-                            Remarks: item.Remarks || ''
-                        })));
+                        var ws = XLSX.utils.json_to_sheet(data);
 
-                        // Append the worksheet to the workbook
                         XLSX.utils.book_append_sheet(wb, ws, "Price Requests");
-
-                        // Write the workbook to a file
                         XLSX.writeFile(wb, "price_requests.xlsx");
                     }
                 }
