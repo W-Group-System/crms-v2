@@ -7,7 +7,10 @@
             @include('components.error')
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
                 <div align="right">
-                    <a href="{{ url()->previous() ?: url('/customer_requirements') }}" class="btn btn-md btn-outline-secondary">
+                    {{-- <a href="{{ url()->previous() ?: url('/customer_requirements') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> --}}
+                    <a href="{{ url('/customer_requirement?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
 
@@ -408,7 +411,7 @@
                             $id = linkToCrr($crr->RefCrrNumber);
                         @endphp
                         <p class="mb-0">
-                            <a href="{{url('view_customer_requirement/'.$id)}}">
+                            <a href="{{url('view_customer_requirement/'.$id)}}" target="_blank">
                                 {{$crr->RefCrrNumber}}
                             </a>
                         </p>

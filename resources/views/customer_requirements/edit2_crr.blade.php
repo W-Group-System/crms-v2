@@ -62,7 +62,7 @@
                                     <div class="form-group">
                                         <label>Unit</label>
                                         <select class="form-control js-example-basic-single" name="UnitOfMeasureId" style="position: relative !important" title="Select Unit">
-                                            <option value="" disabled selected>Select Unit</option>
+                                            <option disabled selected value>Select Unit</option>
                                             {{-- <option value="1" @if($crr->UnitOfMeasureId == 1) selected @endif>Grams</option>
                                             <option value="2" @if($crr->UnitOfMeasureId == 2) selected @endif>Kilograms</option> --}}
                                             @foreach ($unitOfMeasure as $unit)
