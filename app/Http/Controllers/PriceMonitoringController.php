@@ -69,18 +69,22 @@ class PriceMonitoringController extends Controller
             if (auth()->user()->role->name == "Department Admin")
             {
                 $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
             }
             if (auth()->user()->role->name == "Staff L1")
             {
                 $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
-            }
-        })
-        ->where(function($query) {
-            if (auth()->user()->role->name == "Staff L2")
-            {
-                $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
             }
         })
