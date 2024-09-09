@@ -29885,9 +29885,9 @@ div.tagsinput span.tag a {
   top: 15px;
   left: 20px;
 }
-.search button{
+.search button {
   position: absolute;
-  top: 7px;
+  top: 4px;
   right: 5px;
   width: 80px;
 }
