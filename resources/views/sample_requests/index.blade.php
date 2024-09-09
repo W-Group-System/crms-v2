@@ -258,9 +258,10 @@
                                     @foreach ($srf->requestProducts as $product)
                                         {{ $product->CrrNumber }}<br>
                                     @endforeach
-                                </td>                                
-                                <td>{{  date('m/d/y', strtotime($srf->DateSampleReceived)) }}</td>
-                                <td>{{  date('m/d/y', strtotime($srf->DateDispatched)) }}</td>
+                                </td>   
+                                <td>{{ $srf->DateSampleReceived ? date('m/d/y', strtotime($srf->DateSampleReceived)) : 'NA' }}</td>
+                                <td>{{ $srf->DateDispatched ? date('m/d/y', strtotime($srf->DateDispatched)) : 'NA' }}</td>
+
                                 <td>
                                     @if($srf->Status == 10)
                                         Open
