@@ -9,6 +9,159 @@
     </div>
 
     <div class="row">
+        <div class="col-md-4 grid-margin">
+            @if(optional($role)->type == 'IS' || optional($role)->type == 'LS')
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <p class="card-title">For Approval</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-4 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalApproval ?? '0' }}
+                                    <i class="ti ti-check-box"></i>
+                                </h3>
+                            </div>
+                            <div class="mt-3">
+                                <a href="#" class="text-info">View all</a>
+                            </div>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>CRR</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
+                                    {{ $crrSalesApproval ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>RPE</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
+                                    {{ $rpeSalesApproval ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>SRF</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
+                                    {{ $srfSalesApproval ?? '0' }}
+                                </a>
+                            </h5>
+                            <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Activities</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-4 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalActivitiesCount ?? '0'}}
+                                    <i class="ti ti-layers"></i>
+                                </h3>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
+                            </div>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>Open Activities</p>
+                            <h5 class="text-primary font-weight-medium">{{ $openActivitiesCount ?? '0' }}</h5>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>Closed Activities</p>
+                            <h5 class="text-primary font-weight-medium">{{ $closedActivitiesCount ?? '0' }}</h5>
+                        </div>
+                    </div>
+                </div>
+            @else 
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <p class="card-title">Initial Review</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-4 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalApproval ?? '0' }}
+                                    <i class="ti ti-check-box"></i>
+                                </h3>
+                            </div>
+                            <div class="mt-3">
+                                <a href="#" class="text-info">View all</a>
+                            </div>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>CRR</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
+                                    {{ $crrRnDInitial ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>RPE</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
+                                    {{ $rpeSalesApproval ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>SRF</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
+                                    {{ $srfSalesApproval ?? '0' }}
+                                </a>
+                            </h5>
+                            <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Final Review</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-4 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalActivitiesCount ?? '0'}}
+                                    <i class="ti ti-layers"></i>
+                                </h3>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
+                            </div>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>CRR</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
+                                    {{ $crrSalesApproval ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>RPE</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
+                                    {{ $rpeSalesApproval ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>SRF</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
+                                    {{ $srfSalesApproval ?? '0' }}
+                                </a>
+                            </h5>
+                            <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+       
         <div class="col-md-4 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
@@ -52,14 +205,14 @@
                         <p>QCD/R&D Pending</p>
                         <h5 class="text-primary font-weight-medium">{{ $crrRnDPending ?? '0' }}</h5>
                     </div>
-                    <div class="mb-2 d-flex justify-content-between">
+                    <!-- <div class="mb-2 d-flex justify-content-between">
                         <p>QCD/R&D Initial Review</p>
                         <h5 class="text-primary font-weight-medium">{{ $crrRnDInitial ?? '0' }}</h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>QCD/R&D Final Review</p>
                         <h5 class="text-primary font-weight-medium">{{ $crrRnDFinal ?? '0' }}</h5>
-                    </div>
+                    </div> -->
                     <div class="mb-2 d-flex justify-content-between">
                         <p>R&D Completed</p>
                         <h5 class="text-primary font-weight-medium">{{ $crrRnDCompleted ?? '0' }}</h5>
@@ -126,8 +279,63 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="row">
         <div class="col-md-4 grid-margin stretch-card">
-        <div class="card">
+            <!-- <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Activities</p>
+                    <div class="d-flex justify-content-between">
+                        <div class="mb-4 mt-2">
+                            <h3 class="text-primary fs-30 font-weight-medium">
+                                {{ $totalActivitiesCount ?? '0'}}
+                                <i class="ti ti-layers"></i>
+                            </h3>
+                        </div>
+                        <div class="mt-3">
+                            <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
+                        </div>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>Open Activities</p>
+                        <h5 class="text-primary font-weight-medium">{{ $openActivitiesCount ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>Closed Activities</p>
+                        <h5 class="text-primary font-weight-medium">{{ $closedActivitiesCount ?? '0' }}</h5>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <p class="card-title">Customer Service</p>
+                    <div class="d-flex justify-content-between">
+                        <div class="mb-4 mt-2">
+                            <h3 class="text-primary fs-30 font-weight-medium">
+                                {{ $totalCustomerServiceCount ?? '0' }}
+                                <i class="ti ti-comments"></i>
+                            </h3>
+                        </div>
+                        <div class="mt-3">
+                            <a href="#" class="text-info">View all</a>
+                        </div>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>Customer Complaints</p>
+                        <h5 class="text-primary font-weight-medium">{{ $customerComplaintsCount ?? '0' }}</h5>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between">
+                        <p>Customer Feedback</p>
+                        <h5 class="text-primary font-weight-medium">{{ $customerFeedbackCount ?? '0' }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 grid-margin stretch-card">
+            <div class="card">
                 <div class="card-body">
                     <p class="card-title">Sample Request</p>
                     <div class="d-flex justify-content-between">
@@ -184,150 +392,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-title">Activities</p>
-                    <div class="d-flex justify-content-between">
-                        <div class="mb-4 mt-2">
-                            <h3 class="text-primary fs-30 font-weight-medium">
-                                {{ $totalActivitiesCount ?? '0'}}
-                                <i class="ti ti-layers"></i>
-                            </h3>
-                        </div>
-                        <div class="mt-3">
-                            <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
-                        </div>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>Open Activities</p>
-                        <h5 class="text-primary font-weight-medium">{{ $openActivitiesCount ?? '0' }}</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>Closed Activities</p>
-                        <h5 class="text-primary font-weight-medium">{{ $closedActivitiesCount ?? '0' }}</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-title">Customer Service</p>
-                    <div class="d-flex justify-content-between">
-                        <div class="mb-4 mt-2">
-                            <h3 class="text-primary fs-30 font-weight-medium">
-                                {{ $totalCustomerServiceCount ?? '0' }}
-                                <i class="ti ti-comments"></i>
-                            </h3>
-                        </div>
-                        <div class="mt-3">
-                            <a href="#" class="text-info">View all</a>
-                        </div>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>Customer Complaints</p>
-                        <h5 class="text-primary font-weight-medium">{{ $customerComplaintsCount ?? '0' }}</h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>Customer Feedback</p>
-                        <h5 class="text-primary font-weight-medium">{{ $customerFeedbackCount ?? '0' }}</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 grid-margin stretch-card">
-            @if(
-                (optional($role)->type === 'IS' || optional($role)->type === 'LS') &&
-                ($role->name === 'Department Admin' || $role->name === 'Staff L2')
-            )
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-title">For Approval</p>
-                    <div class="d-flex justify-content-between">
-                        <div class="mb-4 mt-2">
-                            <h3 class="text-primary fs-30 font-weight-medium">
-                                {{ $totalApproval ?? '0' }}
-                                <i class="ti ti-check-box"></i>
-                            </h3>
-                        </div>
-                        <div class="mt-3">
-                            <a href="#" class="text-info">View all</a>
-                        </div>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>CRR</p>
-                        <h5 class="text-primary font-weight-medium">
-                            <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
-                                {{ $crrSalesApproval ?? '0' }}
-                            </a>
-                        </h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>RPE</p>
-                        <h5 class="text-primary font-weight-medium">
-                            <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
-                                {{ $rpeSalesApproval ?? '0' }}
-                            </a>
-                        </h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>SRF</p>
-                        <h5 class="text-primary font-weight-medium">
-                            <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
-                                {{ $srfSalesApproval ?? '0' }}
-                            </a>
-                        </h5>
-                        <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
-                    </div>
-                </div>
-            </div>
-            @else 
-            <!-- <div class="card">
-                <div class="card-body">
-                    <p class="card-title">For Approval</p>
-                    <div class="d-flex justify-content-between">
-                        <div class="mb-4 mt-2">
-                            <h3 class="text-primary fs-30 font-weight-medium">
-                                {{ $totalApproval ?? '0' }}
-                                <i class="ti ti-check-box"></i>
-                            </h3>
-                        </div>
-                        <div class="mt-3">
-                            <a href="#" class="text-info">View all</a>
-                        </div>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>Initial Review</p>
-                        <h5 class="text-primary font-weight-medium">
-                            <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
-                                {{ $crrSalesApproval ?? '0' }}
-                            </a>
-                        </h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>Final Review</p>
-                        <h5 class="text-primary font-weight-medium">
-                            <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
-                                {{ $rpeSalesApproval ?? '0' }}
-                            </a>
-                        </h5>
-                    </div>
-                    <div class="mb-2 d-flex justify-content-between">
-                        <p>Due Today</p>
-                        <h5 class="text-primary font-weight-medium">
-                            <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
-                                {{ $srfSalesApproval ?? '0' }}
-                            </a>
-                        </h5>
-                    </div>
-                </div>
-            </div> -->
-            @endif
         </div>
     </div>
 
