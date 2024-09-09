@@ -138,6 +138,7 @@
                             <option value="Staff L1">Staff L1</option>
                             <option value="Staff L2">Staff L2</option>
                             <option value="Department Admin">Department Admin</option>
+                            <option value="Accounting">Accounting</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -234,7 +235,7 @@
 
         $(".departmentSelectOption").on('change', function() {
             
-            if($(this).val() == 38 || $(this).val() == 5)
+            if($(this).val() == 38 || $(this).val() == 5 || $(this).val() == 41 || $(this).val() == 11)
             {
                 if ($('.form-group:contains("Type")').length == 0)
                 {
@@ -245,6 +246,8 @@
                                 <option disabled selected value>Select Type</option>
                                 <option value="LS">Local Sales</option>
                                 <option value="IS">International Sales</option>
+                                <option value="RND">Research & Development</option>
+                                <option value="ACCTG">Accounting</option>
                             </select>
                         </div>
                     `

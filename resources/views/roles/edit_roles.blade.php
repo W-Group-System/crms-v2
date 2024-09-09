@@ -27,6 +27,7 @@
                             <option value="Staff L1" @if($role->name == "Staff L1") selected @endif>Staff L1</option>
                             <option value="Staff L2" @if($role->name == "Staff L2") selected @endif>Staff L2</option>
                             <option value="Department Admin" @if($role->name == "Department Admin") selected @endif>Department Admin</option>
+                            <option value="Accounting" @if($role->name == "Accounting") selected @endif>Accounting</option>
                         </select>
                     </div>
                     <div class="form-group">

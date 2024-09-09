@@ -361,6 +361,46 @@
                             </a>
                         </li>
                         @endif
+
+                        @if(optional(auth()->user()->role)->type == "ACCTG")
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0);" data-target="#module" aria-expanded="false" aria-controls="module" onclick="toggleModule(event)">
+                                <i class="icon-layout menu-icon"></i>
+                                <span class="menu-title">Module Setup</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse" id="module">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="javascript:void(0);" data-target="#nav_payment_currency" aria-expanded="false" aria-controls="nav_payment_currency" onclick="togglePaymentCurrency(event)">
+                                            <span class="menu-title">Payment Currency</span>
+                                            <i class="menu-arrow"></i>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="javascript:void(0);" data-target="#nav_accounting" aria-expanded="false" aria-controls="nav_accounting" onclick="toggleSetupAccounting(event)">
+                                            <span class="menu-title">Accounting</span>
+                                            <i class="menu-arrow"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="collapse" id="nav_payment_currency">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/price_currency') }}">Price Currencies</a></li>
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('currency_exchange') }}">Currency Exchange Rates</a></li>
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('payment_terms') }}">Payment Terms</a></li>
+                                </ul>
+                            </div>
+                            <div class="collapse" id="nav_accounting">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/fixed_cost') }}">Price Request Fixed Cost</a></li>
+                                    <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/request_gae') }}">Price Request GAE</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        @endif
+
                         @if(auth()->user()->department_id == 1)
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#module" aria-expanded="false" aria-controls="module" onclick="toggleModule(event)">
@@ -374,6 +414,7 @@
                                     <li class="nav-item"><a class="nav-link" href="">Accounting Users</a></li>
                                     <li class="nav-item"><a class="nav-link" href="">Production Users</a></li>
                                     <li class="nav-item"><a class="nav-link" href="">Sales</a></li> --}}
+                                    
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#nav_location" aria-expanded="false" aria-controls="nav_location" onclick="toggleLocation(event)">
                                             <span class="menu-title">Location</span>
