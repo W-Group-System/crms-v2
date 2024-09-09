@@ -1,206 +1,313 @@
-{{-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-    <style>
-         .form-divider{
-        border-top: 3px solid rgb(0, 13, 255);
-        }
-    </style>
-</head>
-<body>
-    <h3>Sample Request Details</h3>
-    <hr class="form-divider">
-
-    <p><strong>SRF Number:</strong> {{ $sample_requests->SrfNumber }}</p>
-
-
-
-</body>
-</html> --}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Sample Request Form</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             font-size: 12px;
             margin: 0;
             padding: 0;
-            color: #333;
         }
-        .container {
-            margin: 20px;
-        }
+
         .header {
             text-align: right;
             margin-bottom: 10px;
         }
-        .header h1 {
-            font-size: 20px;
-            color: #0044cc;
-            border-bottom: 2px solid #0044cc;
-            padding-bottom: 5px;
-        }
-        .details, .request-details {
-            border: 1px solid #ccc;
-            margin-bottom: 15px;
-            padding: 10px;
-        }
-        .details th, .details td {
-            text-align: left;
+
+        .section-title {
+            background-color: #d3d3d3;
             padding: 5px;
+            margin-top: 10px;
+            font-weight: bold;
         }
-        .details th {
-            width: 150px;
-            background-color: #f4f4f4;
-        }
-        .request-details {
-            margin-bottom: 30px;
-        }
-        .request-details h3 {
-            background-color: #f4f4f4;
-            padding: 5px;
-            margin: 0 0 10px 0;
-        }
-        .request-details table {
+
+        .details-table {
             width: 100%;
             border-collapse: collapse;
         }
-        .request-details table, .request-details th, .request-details td {
-            border: 1px solid #ccc;
-            padding: 5px;
+
+        .details-table td {
+            border: none;
+            vertical-align: middle; 
         }
-        .remarks {
-            margin-top: 15px;
+
+        .label {
+            font-weight: bold;
+            text-align: right;
+            width: 50%;
+        }
+
+        .detail {
+            text-align: left; 
+            padding-left: 10px;
+            width: 50%; 
+        }
+        .signatures {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding-top: 50px;
+            text-align: center;
+        }
+
+        .signature-space {
+            width: 33%;
+            display: inline-block;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .page {
+            position: relative;
+            min-height: 100vh; 
+            padding-bottom: 100px; 
+        }
+
+        .two-columns {
+            display: table;
+            width: 100%;
+        }
+
+        .column {
+            display: table-cell;
+            vertical-align: top;
+            width: 50%;
+        }
+        .border {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        overflow: hidden; 
+        }
+        .form-divider{
+        border-top: 3px solid rgb(0, 13, 255);
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page">
         <div class="header">
             <p>{{ \Carbon\Carbon::now()->format('F d, Y') }}</p>
         </div>
-        <h1>Sample Request Form</h1>
+        <h3>Sample Request Details</h3>
+        <hr class="form-divider">
 
-        <div class="details">
-            <table>
-                <tr>
-                    <th>Client Name</th>
-                    <td>{{ $sample_requests->name }}</td>
-                    <th>Contact</th>
-                    <td>{{ $sample_requests->contact }}</td>
-                </tr>
-                <tr>
-                    <th>Client Trade Name</th>
-                    <td>{{ $sample_requests->trade_name }}</td>
-                    <th>Telephone</th>
-                    <td>{{ $sample_requests->telephone }}</td>
-                </tr>
-                <tr>
-                    <th>Region</th>
-                    <td>{{ $sample_requests->region }}</td>
-                    <th>Mobile</th>
-                    <td>{{ $sample_requests->mobile }}</td>
-                </tr>
-                <tr>
-                    <th>Country</th>
-                    <td>{{ $sample_requests->country }}</td>
-                    <th>Email</th>
-                    <td>{{ $sample_requests->email }}</td>
-                </tr>
-            </table>
-        </div>
+        <div class="section-title">Customer Details</div>
+        <div class="two-columns">
+            <div class="column">
+                <table class="details-table">
+                    <tr>
+                        <td class="label"><span>Client Name:</span></td>
+                        <td class="detail">{{ $sample_requests->client->Name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Client Trade Name:</span></td>
+                        <td class="detail">{{ $sample_requests->client->trade_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Region:</span></td>
+                        <td class="detail">{{ optional(optional($sample_requests->client)->clientregion)->Name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Country:</span></td>
+                        <td class="detail">{{ optional(optional($sample_requests->client)->clientcountry)->Name }}</td>
+                    </tr>
+                </table>
+            </div>
 
-        <div class="request-details">
-            <h3>Request Details</h3>
-            <table>
-                <tr>
-                    <th>SRF #</th>
-                    <td>{{ $sample_requests->srf_number }}</td>
-                    <th>Primary Sales Person</th>
-                    <td>{{ $sample_requests->primary_sales_person }}</td>
-                </tr>
-                <tr>
-                    <th>Manual SRF #</th>
-                    <td>{{ $sample_requests->manual_srf_number }}</td>
-                    <th>Secondary Sales Person</th>
-                    <td>{{ $sample_requests->secondary_sales_person }}</td>
-                </tr>
-                <tr>
-                    <th>Date Requested</th>
-                    <td>{{ $sample_requests->date_requested }}</td>
-                    <th>Date Required</th>
-                    <td>{{ $sample_requests->date_required }}</td>
-                </tr>
-                <tr>
-                    <th>Date Started</th>
-                    <td>{{ $sample_requests->date_started }}</td>
-                    <th>REF CODE</th>
-                    <td>{{ $sample_requests->ref_code }}</td>
-                </tr>
-                <tr>
-                    <th>Type</th>
-                    <td>{{ $sample_requests->type }}</td>
-                </tr>
-            </table>
-
-            <div class="remarks">
-                <p><strong>Remarks:</strong> {{ $sample_requests->remarks }}</p>
+            <div class="column">
+                <table class="details-table">
+                    <tr>
+                        <td class="label"><span>Contact:</span></td>
+                        <td class="detail">{{ optional($sample_requests->clientContact)->ContactName}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Telephone:</span></td>
+                        <td class="detail">{{ optional($sample_requests->clientContact)->PrimaryTelephone}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Mobile:</span></td>
+                        <td class="detail">{{ optional($sample_requests->clientContact)->PrimaryMobile}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Email:</span></td>
+                        <td class="detail">{{ optional($sample_requests->clientContact)->EmailAddress}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Skype:</span></td>
+                        <td class="detail">{{ optional($sample_requests->clientContact)->Skype}}</td>
+                    </tr>
+                </table>
             </div>
         </div>
+        <div class="section-title">Requirement Details</div>
+        <div class="two-columns">
+            <div class="column">
+                <table class="details-table">
+                    <tr>
+                        <td class="label"><span>SRF #:</span></td>
+                        <td class="detail">{{ $sample_requests->SrfNumber }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Manual SRF #:</span></td>
+                        <td class="detail">{{ $sample_requests->ManualSrfNumber }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Date Requested:</span></td>
+                        <td class="detail">{{ $sample_requests->DateRequested }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Date Required:</span></td>
+                        <td class="detail">{{ $sample_requests->DateRequired }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Date Started:</span></td>
+                        <td class="detail">{{ $sample_requests->DateStarted }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>REF CODE:</span></td>
+                        <td class="detail">
+                            @if($sample_requests->RefCode == 1)
+                                RND
+                            @elseif($sample_requests->RefCode == 2)
+                                QCD
+                            @else
+                                {{ $sample_requests->RefCode }}
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Type:</span></td>
+                        <td class="detail">
+                            @if($sample_requests->SrfType == 1)
+                                Regular
+                             @elseif($sample_requests->SrfType == 2)
+                                PSS
+                            @elseif($sample_requests->SrfType == 3)
+                                CSS
+                            @else
+                                {{ $sample_requests->InternalRemarks }}
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Remarks:</span></td>
+                        <td class="detail">{{ $sample_requests->DateStarted }}</td>
+                    </tr>
+                </table>
+            </div>
 
-        {{-- @foreach($sample_requests->products as $product)
-        <div class="request-details">
-            <h3>Product Details</h3>
-            <table>
-                <tr>
-                    <th>Index</th>
-                    <td>{{ $product->index }}</td>
-                    <th>RPE #</th>
-                    <td>{{ $product->rpe_number }}</td>
-                </tr>
-                <tr>
-                    <th>Product Type</th>
-                    <td>{{ $product->type }}</td>
-                    <th>CRR #</th>
-                    <td>{{ $product->crr_number }}</td>
-                </tr>
-                <tr>
-                    <th>Application</th>
-                    <td>{{ $product->application }}</td>
-                    <th>Disposition</th>
-                    <td>{{ $product->disposition }}</td>
-                </tr>
-                <tr>
-                    <th>Product Code</th>
-                    <td>{{ $product->code }}</td>
-                    <th>Disposition Remarks</th>
-                    <td>{{ $product->disposition_remarks }}</td>
-                </tr>
-                <tr>
-                    <th>Product Description</th>
-                    <td colspan="3">{{ $product->description }}</td>
-                </tr>
-                <tr>
-                    <th>Number of Packages</th>
-                    <td>{{ $product->packages }}</td>
-                    <th>Quantity</th>
-                    <td>{{ $product->quantity }}</td>
-                </tr>
-                <tr>
-                    <th>Label</th>
-                    <td colspan="3">{{ $product->label }}</td>
-                </tr>
-            </table>
-
-            <div class="remarks">
-                <p><strong>Remarks:</strong> {{ $product->remarks }}</p>
+            <div class="column">
+                <table class="details-table">
+                    <tr>
+                        <td class="label"><span>Primary Sales Person:</span></td>
+                        <td class="detail">{{ optional($sample_requests->primarySalesPerson)->full_name}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"><span>Secondary Sales Person:</span></td>
+                        <td class="detail">{{ optional($sample_requests->secondarySalesPerson)->full_name}}</td>
+                    </tr>
+                </table>
             </div>
         </div>
-        @endforeach --}}
+        @foreach ( $sample_requests->requestProducts as $requestProducts)
+            <div class="border">
+                <div class="two-columns">
+                    <div class="column">
+                        <table class="details-table">
+                            <tr>
+                                <td class="label"><span>Index #:</span></td>
+                                <td class="detail">{{ $sample_requests->SrfNumber}}-{{ $requestProducts->ProductIndex }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>Product Type:</span></td>
+                                <td class="detail">
+                                    @if($requestProducts->ProductType == 1)
+                                        Pure
+                                    @elseif($requestProducts->ProductType == 2)
+                                        Blend
+                                    @else
+                                    {{ $requestProducts->ProductType }}
+                                    @endif
+                                </td>
+                            </tr>        
+                            <tr>
+                                <td class="label"><span>Application:</span></td>
+                                <td class="detail">{{ $requestProducts->productApplicationsId->Name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>Product Code:</span></td>
+                                <td class="detail">{{ $requestProducts->ProductCode }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>Product Description:</span></td>
+                                <td class="detail">{{ $requestProducts->ProductDescription }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>Number of Packages:</span></td>
+                                <td class="detail">{{ $requestProducts->NumberOfPackages }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>Quantity:</span></td>
+                                <td class="detail">
+                                    {{ $requestProducts->Quantity }} 
+                                    @if ( $requestProducts->UnitOfMeasureId == 1)
+                                    g
+                                    @elseif ($requestProducts->UnitOfMeasureId == 2)
+                                    kg
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>Label:</span></td>
+                                <td class="detail">{{ $requestProducts->Label }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>Remarks:</span></td>
+                                <td class="detail">{{ $requestProducts->Remarks }}</td>
+                            </tr>
+                        </table>
+                    </div>
+        
+                    <div class="column">
+                        <table class="details-table">
+                            <tr>
+                                <td class="label"><span>RPE #:</span></td>
+                                <td class="detail">{{$requestProducts->RpeNumber}}</td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>CRR #:</span></td>
+                                <td class="detail">{{$requestProducts->CrrNumber}}</td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>Disposition:</span></td>
+                                <td class="detail">
+                                    @if ($requestProducts->Disposition == '1')
+                                        No Feedback
+                                    @elseif ($requestProducts->Disposition == '10')
+                                        Accepted
+                                    @elseif ($requestProducts->Disposition == '20')
+                                        Rejected
+                                    @else
+                                        NA
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span>Disposition Remarks:</span></td>
+                                <td class="detail">{{$requestProducts->DispositionRejectionDescription}}</td>
+                            </tr>
 
+                        </table>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+    <div class="signatures">
+        <div class="signature-space">[Signature over printed name]</div>
+        <div class="signature-space">[Signature over printed name]</div>
+        <div class="signature-space">[Signature over printed name]</div>
     </div>
 </body>
 </html>
