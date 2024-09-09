@@ -7,7 +7,10 @@
             @include('components.error')
             <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
                 <div align="right">
-                    <a href="{{ url()->previous() ?: url('/customer_requirements') }}" class="btn btn-md btn-outline-secondary">
+                    {{-- <a href="{{ url()->previous() ?: url('/customer_requirements') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> --}}
+                    <a href="{{ url('/customer_requirement?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
 
@@ -408,7 +411,7 @@
                             $id = linkToCrr($crr->RefCrrNumber);
                         @endphp
                         <p class="mb-0">
-                            <a href="{{url('view_customer_requirement/'.$id)}}">
+                            <a href="{{url('view_customer_requirement/'.$id)}}" target="_blank">
                                 {{$crr->RefCrrNumber}}
                             </a>
                         </p>
@@ -458,9 +461,40 @@
                 <div class="row mb-3">
                     <div class="col-sm-3"><p class="mb-0"><b>Details of Requirement :</b></p></div>
                     <div class="col-sm-3">
-                        <p class="mb-0">{{$crr->DetailsOfRequirement}}</p>
+                        <p class="mb-0">{!! nl2br(e($crr->DetailsOfRequirement)) !!}</p>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <label><strong>Sales Files</strong></label>
+                <hr style="margin-top: 0px; color: black; border-top-color: black;">
+
+                @if($crr->crrFiles->isNotEmpty())
+                @foreach ($crr->crrFiles->whereIn('UserType', ['IS', 'LS']) as $key=>$file)
+                    <small>
+                        <span>{{$key+1}}. </span>
+                        <a href="{{url($file->Path)}}"  target="_blank">{{$file->Name}}</a>
+                    </small>
+                    &nbsp;
+                    <a href="#" class="text-warning" data-toggle="modal" data-target="#editSalesFiles{{$file->Id}}">
+                        <i class="ti-pencil-alt"></i>
+                    </a>
+
+                    <a href="#" class="text-danger deleteFilesBtn" data-id="{{$file->Id}}">
+                        <i class="ti-trash"></i>
+                    </a>
+
+                    {{-- <form method="POST" action="{{url('delete_sales_files')}}" class="d-inline-block" id="deleteSalesForm" style="display: none;">
+                        @csrf
+                        
+                    </form> --}}
+                    <br>
+
+                    @include('customer_requirements.edit_sales_files')
+                @endforeach
+                @else
+                <p>N/A</p>
+                @endif
             </div>
             <div class="col-md-12">
                 <label><strong>Approver Remarks</strong></label>
@@ -547,19 +581,17 @@
             </div>
             <ul class="nav nav-tabs viewTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active p-2" id="supplementary_details-tab" data-toggle="tab" href="#supplementary_details" role="tab" aria-controls="supplementary_details" aria-selected="true">Supplementary Details</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'supplementary_details' || session('tab') == null) active @endif" id="supplementary_details-tab" data-toggle="tab" href="#supplementary_details" role="tab" aria-controls="supplementary_details" aria-selected="true">Supplementary Details</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="assigned-tab" data-toggle="tab" href="#assigned" role="tab" aria-controls="assigned" aria-selected="false">Assigned R&D Personnel</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'personnel') active @endif" id="assigned-tab" data-toggle="tab" href="#assigned" role="tab" aria-controls="assigned" aria-selected="false">Assigned R&D Personnel</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li> --}}
-                @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'files') active @endif" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
-                @endif
                 <li class="nav-item">
                     <a class="nav-link p-2" id="approvals-tab" data-toggle="tab" href="#approvals" role="tab" aria-controls="approvals" aria-selected="false">Transaction Remarks</a>
                 </li>
@@ -568,7 +600,7 @@
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="supplementary_details" role="tabpanel" aria-labelledby="supplementary_details">
+                <div class="tab-pane fade @if(session('tab') == 'supplementary_details' || session('tab') == null) active show @endif" id="supplementary_details" role="tabpanel" aria-labelledby="supplementary_details">
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         @if($crr->Progress != 60)
                         <button type="button" class="btn btn-outline-primary btn-sm float-right mb-3" data-toggle="modal" data-target="#addSupplementary">
@@ -626,7 +658,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade " id="assigned" role="tabpanel" aria-labelledby="assigned">
+                <div class="tab-pane fade @if(session('tab') == 'personnel') active show @endif" id="assigned" role="tabpanel" aria-labelledby="assigned">
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         @if(rndManager(auth()->user()->role))
                             @if($crr->Progress != 55 && $crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81 && rndManager(auth()->user()->role))
@@ -750,8 +782,7 @@
                         </table>
                     </div>
                 </div> --}}
-                @if(authCheckIfItsRnd(auth()->user()->department_id))
-                <div class="tab-pane fade " id="files" role="tabpanel" aria-labelledby="files-tab">
+                <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
                     @if(checkIfHaveFiles(auth()->user()->role) == "yes")
                     <div align="right">
                         <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addCrrFiles">
@@ -776,7 +807,8 @@
                                     <th>File</th>
                                 </tr>
                             </thead>
-                            @foreach ($crr->crrFiles as $files)
+                            @foreach ($crr->crrFiles->whereNotIn('UserType', ['IS', 'LS']) as $files)
+                                @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $files->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                 <tbody>
                                     <tr>
                                         <td>
@@ -813,18 +845,18 @@
                                         </td>
                                         <td>
                                             <a href="{{url($files->Path)}}" target="_blank">
-                                                File Link
+                                                <i class="ti-file"></i>
                                             </a>
                                         </td>
                                     </tr>
                                 </tbody>
 
                                 @include('customer_requirements.edit_crr_files')
+                                @endif
                             @endforeach
                         </table>
                     </div>
                 </div>
-                @endif
                 <div class="tab-pane fade" id="approvals" role="tabpanel" aria-labelledby="approvals-tab">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover tables" width="100%">
@@ -1247,8 +1279,14 @@
         $("#update2Crr").on('click', function() {
             var secondarySales = $(this).data('secondarysales');
             var primarySales = $("[name='PrimarySalesPersonId']").val()
-
+            
             refreshSecondaryApprovers(secondarySales, primarySales)
+        })
+        
+        $('[name="PrimarySalesPersonId"]').on('change', function() {
+            var primarySales = $(this).val();
+
+            refreshSecondaryApproversv2(primarySales)
         })
 
         function refreshSecondaryApprovers(secondarySales, primarySales)
@@ -1266,7 +1304,27 @@
                 {
                     setTimeout(() => {
                         $('[name="SecondarySalesPersonId"]').html(data)
-                        $('[name="SecondarySalesPersonId"]').val(secondarySales)
+                        // $('[name="SecondarySalesPersonId"]').val(secondarySales)
+                    }, 500);
+                }
+            })
+        }
+
+        function refreshSecondaryApproversv2(primarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
                     }, 500);
                 }
             })
@@ -1375,6 +1433,42 @@
             var filename = e.target.files[0].name;
 
             $(this).closest('.col-md-6').find('[name="file_name[]"]').val(filename);
+        })
+
+        $('.deleteFilesBtn').on('click', function() {
+            var id = $(this).data('id');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Delete"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{url('delete_sales_files')}}",
+                        data: {
+                            id: id
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function()
+                        {
+                            Swal.fire({
+                                title: "Successfully Deleted",
+                                icon: "success"
+                            }).then(() => {
+                                location.reload();
+                            })
+                        }
+                    })
+                }
+            });
         })
     })
 </script>

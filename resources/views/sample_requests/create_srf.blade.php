@@ -192,12 +192,13 @@
                 </div>
             <div class="form-group">
                 <label>Product Code:</label>
-                <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
+                <input type="text" class="form-control" name="ProductCode[]" >
+                {{-- <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
                     <option value="" disabled selected>Product Code</option>
                     @foreach ($productCodes as $productCode)
                         <option value="{{ $productCode->code }}" {{ in_array($productCode->code, old('ProductCode', [])) ? 'selected' : '' }}>{{ $productCode->code }}</option>
                     @endforeach
-                </select>
+                </select> --}}
             </div>
             @foreach(old('ProductDescription', ['']) as $index => $description)
                 <div class="form-group">
@@ -271,8 +272,8 @@
     </div>
     
 
-    <div class="modal-footer product-footer"></div>
-    <div class="form-header">
+    {{-- <div class="modal-footer product-footer"></div> --}}
+    {{-- <div class="form-header">
         <span class="header-label">Dispatch Details</span>
         <hr class="form-divider">
     </div>
@@ -305,7 +306,7 @@
         <label for="Note">Notes</label>
         <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes">{{ old('Note') }}</textarea>
     </div>
-</div>
+</div> --}}
 </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -344,12 +345,7 @@
                 </div>
                 <div class="form-group">
                 <label>Product Code:</label>
-                <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" >
-                    <option value="" disabled selected>Product Code</option>
-                    @foreach ($productCodes as $productCode)
-                        <option value="{{ $productCode->code }}" >{{ $productCode->code }}</option>
-                    @endforeach
-                </select>
+                <input type="text" class="form-control" name="ProductCode[]" >
                 </div>
                 <div class="form-group">
                     <label for="ProductDescription">Product Description:</label>
@@ -558,9 +554,6 @@ $(document).ready(function() {
                 <div class="form-group">
                     <label for="srf_file"><b>Browse Files</b></label>
                     <input type="file" class="form-control" name="srf_file[]" multiple>
-                </div>
-                <div class="form-group">
-                    <input type="hidden" class="form-control" name="srf_id" value="{{ $srf->Id }}">
                 </div>
                 <div class="form-group">
                     <button type="button" class="btn btn-sm btn-primary addSrfFile"><i class="ti-plus"></i></button>

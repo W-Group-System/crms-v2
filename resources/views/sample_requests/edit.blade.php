@@ -155,7 +155,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Product Code:</label>
-                                <select class="form-control js-example-basic-single" name="ProductCode[]" style="position: relative !important" title="Select Product Code" required>
+                                <input type="text" class="form-control" name="ProductCode[]" value="{{ old('ProductCode.'.$index, $product->ProductCode) }}">
+                                {{-- <select class="form-control js-example-basic-single" name="ProductCode[]" style="position: relative !important" title="Select Product Code" required>
                                     <option value="" disabled>Select Product Code</option>
                                     @foreach ($productCodes as $productCode)
                                         <option value="{{ $productCode->code }}" 
@@ -163,7 +164,7 @@
                                             {{ $productCode->code }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>                            
                             <div class="form-group">
                                 <label for="ProductDescription">Product Description:</label>
@@ -244,29 +245,29 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="Courier">Courier:</label>
-                        <input type="text" class="form-control" name="Courier" placeholder="Enter Courier" value="{{ old('Courier', $srf->Courier) }}">
+                        <input type="text" class="form-control" name="Courier" placeholder="Enter Courier" value="{{ old('Courier', $srf->Courier) }}" readonly>
                     </div>
                     <div class="form-group">
                         <label for="AwbNumber">AWB Number:</label>
-                        <input type="text" class="form-control" name="AwbNumber" placeholder="Enter AWB Number" value="{{ old('AwbNumber', $srf->AwbNumber) }}">
+                        <input type="text" class="form-control" name="AwbNumber" placeholder="Enter AWB Number" value="{{ old('AwbNumber', $srf->AwbNumber) }}" readonly>
                     </div>
                     <div class="form-group">
                         <label for="DateDispatched">Date Dispatched (MM/DD/YYYY):</label>
-                        <input type="date" class="form-control DateDispatched{{ $srf->Id  }}" name="DateDispatched" placeholder="Enter Date Dispatched" value="{{ old('DateDispatched', !empty($srf->DateDispatched) ? date('Y-m-d', strtotime($srf->DateDispatched)) : '') }}">
+                        <input type="date" class="form-control DateDispatched{{ $srf->Id  }}" name="DateDispatched" placeholder="Enter Date Dispatched" value="{{ old('DateDispatched', !empty($srf->DateDispatched) ? date('Y-m-d', strtotime($srf->DateDispatched)) : '') }}" readonly>
                     </div>
                     <div class="form-group">
                         <label>Date Sample Received (MM/DD/YYYY):</label>
-                        <input type="date" class="form-control DateSampleReceived{{ $srf->Id }}" name="DateSampleReceived"  placeholder="Enter Sample Received" value="{{ old('DateSampleReceived', !empty($srf->DateSampleReceived) ? date('Y-m-d', strtotime($srf->DateSampleReceived)) : '') }}">
+                        <input type="date" class="form-control DateSampleReceived{{ $srf->Id }}" name="DateSampleReceived"  placeholder="Enter Sample Received" value="{{ old('DateSampleReceived', !empty($srf->DateSampleReceived) ? date('Y-m-d', strtotime($srf->DateSampleReceived)) : '') }}" readonly>
                     </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="DeliveryRemarks">Delivery Remarks</label>
-                    <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks">{{ old('DeliveryRemarks', $srf->DeliveryRemarks) }}</textarea>
+                    <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks" readonly>{{ old('DeliveryRemarks', $srf->DeliveryRemarks) }}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="Note">Notes</label>
-                    <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes">{{ old('Note', $srf->Note) }}</textarea>
+                    <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes" readonly>{{ old('Note', $srf->Note) }}</textarea>
                 </div>
             </div>
             </div>
@@ -405,12 +406,7 @@ $(document).ready(function() {
                 </div>
             <div class="form-group">
                 <label>Product Code:</label>
-                <select class="form-control js-example-basic-single ProductCode" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
-                    <option value="" disabled selected>Product Code</option>
-                    @foreach ($productCodes as $productCode)
-                        <option value="{{ $productCode->code }}" {{ in_array($productCode->code, old('ProductCode', [])) ? 'selected' : '' }}>{{ $productCode->code }}</option>
-                    @endforeach
-                </select>
+                <input type="text" class="form-control" name="ProductCode[]" >
             </div>
             @foreach(old('ProductDescription', ['']) as $index => $description)
                 <div class="form-group">

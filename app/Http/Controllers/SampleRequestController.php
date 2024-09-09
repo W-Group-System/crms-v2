@@ -8,6 +8,7 @@ use App\SampleRequest;
 use App\Client;
 use App\ConcernDepartment;
 use App\Contact;
+use App\Exports\SampleRequestExport;
 use App\IssueCategory;
 use App\Product;
 use App\ProductApplication;
@@ -26,6 +27,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
 use PDF;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -59,6 +61,7 @@ class SampleRequestController extends Controller
 
         if ($loggedInUser->role->name == "Staff L1") {
             $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
+                ->orwhere('PrimaryAccountManagerId', $loggedInUser->id)
                 ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
                 ->get();
         } elseif ($loggedInUser->role->name == "Staff L2" || $loggedInUser->role->name == "Department Admin") {
@@ -69,7 +72,7 @@ class SampleRequestController extends Controller
                 ->orWhereIn('PrimaryAccountManagerId', $subordinateIds)
                 ->orWhereIn('SecondaryAccountManagerId', $subordinateIds)
                 ->get();
-        }
+        } 
         $productCodes = Product::where('status', '4')->get();
         $search = $request->input('search');
         $sort = $request->get('sort', 'Id');
@@ -77,7 +80,7 @@ class SampleRequestController extends Controller
         $entries = $request->entries;
         $open = $request->open;
         $close = $request->close;
-        $progress = $request->query('progress'); // Get the status from the query parameters
+        $progress = $request->query('progress'); 
 
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
@@ -85,7 +88,6 @@ class SampleRequestController extends Controller
         $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
-                    // When filtering by '10', include all relevant progress status records
                     $query->where('Progress', '10')
                         ->where(function($query) use ($userId, $userByUser) {
                             $query->where('PrimarySalesPersonId', $userId)
@@ -94,7 +96,6 @@ class SampleRequestController extends Controller
                                 ->orWhere('SecondarySalesPersonId', $userByUser);
                         });
                 } else {
-                    // Apply progress filter if it's not '10'
                     $query->where('Progress', $progress);
                 }
             })
@@ -110,7 +111,10 @@ class SampleRequestController extends Controller
             ->where(function ($query) use ($search){
                 $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
                 ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-                ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+                ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%');
+                });
                 // ->orWhereHas('client', function ($q) use ($search) {
                 //     $q->where('name', 'LIKE', '%' . $search . '%');
                 // });
@@ -197,22 +201,40 @@ class SampleRequestController extends Controller
         $SrfMaterials = SrfRawMaterial::where('SampleRequestId', $scrfNumber)->get();
         $rndPersonnel = User::whereHas('rndUsers')->get();
         $srfProgress = SrfProgress::all();
-        $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)->where('userType', 'RND')->get();
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
-        ->get();
+        $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)
+        ->where(function ($query) {
+            $query->where('userType', 'RND')
+                  ->orWhereNull('userType')
+                  ->orWhere('userType', '');
+        })->get();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
-        if (($role->description == 'International Sales - Supervisor') || ($role->description == 'Local Sales - Supervisor')) {
-            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+        $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+
+        if ($role->name == 'Staff L2' ) {
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApproverById->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
             
         } else {
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
             $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
+
+        if ($loggedInUser->role->name == "Staff L1") {
+            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
+                ->orwhere('PrimaryAccountManagerId', $loggedInUser->id)
+                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
+                ->get();
+        } elseif ($loggedInUser->role->name == "Staff L2" || $loggedInUser->role->name == "Department Admin") {
+            $subordinateIds = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            
+            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
+                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
+                ->orWhereIn('PrimaryAccountManagerId', $subordinateIds)
+                ->orWhereIn('SecondaryAccountManagerId', $subordinateIds)
+                ->get();
+        } 
         $productApplications = ProductApplication::all(); 
         $productCodes = Product::where('status', '4')->get();
         $users = User::wherehas('localsalespersons')->get();
@@ -520,12 +542,12 @@ class SampleRequestController extends Controller
             'ClientId' => $request->input('ClientId'),
             'ContactId' => $request->input('ClientContactId'),
             'InternalRemarks' => $request->input('Remarks'),
-            'Courier' => $request->input('Courier'),
-            'AwbNumber' => $request->input('AwbNumber'),
-            'DateDispatched' => $request->input('DateDispatched'),
-            'DateSampleReceived' => $request->input('DateSampleReceived'),
-            'DeliveryRemarks' => $request->input('DeliveryRemarks'),
-            'Note' => $request->input('Note'),
+            // 'Courier' => $request->input('Courier'),
+            // 'AwbNumber' => $request->input('AwbNumber'),
+            // 'DateDispatched' => $request->input('DateDispatched'),
+            // 'DateSampleReceived' => $request->input('DateSampleReceived'),
+            // 'DeliveryRemarks' => $request->input('DeliveryRemarks'),
+            // 'Note' => $request->input('Note'),
         ]);
 
 
@@ -585,12 +607,12 @@ class SampleRequestController extends Controller
     $srf->ClientId = $request->input('ClientId');
     $srf->ContactId = $request->input('ClientContactId');
     $srf->InternalRemarks = $request->input('Remarks');
-    $srf->Courier = $request->input('Courier');
-    $srf->AwbNumber = $request->input('AwbNumber');
-    $srf->DateDispatched = $request->input('DateDispatched');
-    $srf->DateSampleReceived = $request->input('DateSampleReceived');
-    $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
-    $srf->Note = $request->input('Note');
+    // $srf->Courier = $request->input('Courier');
+    // $srf->AwbNumber = $request->input('AwbNumber');
+    // $srf->DateDispatched = $request->input('DateDispatched');
+    // $srf->DateSampleReceived = $request->input('DateSampleReceived');
+    // $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
+    // $srf->Note = $request->input('Note');
     $srf->save();
 
     foreach ($request->input('ProductCode', []) as $key => $value) {
@@ -606,7 +628,7 @@ class SampleRequestController extends Controller
                 'ProductDescription' => $request->input('ProductDescription.' . $key),
                 'NumberOfPackages' => $request->input('NumberOfPackages.' . $key),
                 'Quantity' => $request->input('Quantity.' . $key),
-                'UnitOfMeasure' => $request->input('UnitOfMeasure.' . $key),
+                'UnitOfMeasureId' => $request->input('UnitOfMeasure.' . $key),
                 'Label' => $request->input('Label.' . $key),
                 'RpeNumber' => $request->input('RpeNumber.' . $key),
                 'CrrNumber' => $request->input('CrrNumber.' . $key),
@@ -879,6 +901,125 @@ class SampleRequestController extends Controller
 
     return redirect()->back()->with('success', 'Dispositions updated successfully.');
 }
+public function export(Request $request)
+    {
+        return Excel::download(new SampleRequestExport($request->open, $request->close), 'Sample Request.xlsx');
+    }
+
+    public function cs_local(Request $request)
+    {    
+        $search = $request->input('search');
+        $sort = $request->get('sort', 'Id');
+        $direction = $request->get('direction', 'desc');
+        $entries = $request->entries;
+        $open = $request->open;
+        $close = $request->close;
+        $progress = $request->query('progress');
+
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id; 
+
+        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '10') {
+                    $query->where('Progress', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+                $query->whereIn('Status', [$request->open, $request->close]);
+            })
+            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+                $query->where('Status', $request->open);
+            })
+            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+                $query->where('Status', $request->close);
+            })
+            ->where(function ($query) use ($search){
+                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%');
+                });
+            })
+            ->where('SrfNumber', 'LIKE', '%' . 'SRF-LS' . '%')
+            ->orderBy($sort, $direction)
+            ->paginate($request->entries ?? 10);
+        
+        return view('customer_service.customer_service_local_srf', compact('sampleRequests','search','entries', 'open','close'));
+    }
+
+    public function csSrfUpdate(Request $request, $id)
+    {
+        $srf = SampleRequest::with('requestProducts')->findOrFail($id);
+        $srf->Courier = $request->input('Courier');
+        $srf->AwbNumber = $request->input('AwbNumber');
+        $srf->DateDispatched = $request->input('DateDispatched');
+        $srf->DateSampleReceived = $request->input('DateSampleReceived');
+        $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
+        $srf->Note = $request->input('Note');
+        $srf->save();
+        
+        return redirect()->back()->with('success', 'Sample Request updated successfully');
+    }
+    public function cs_international(Request $request)
+    {    
+        $search = $request->input('search');
+        $sort = $request->get('sort', 'Id');
+        $direction = $request->get('direction', 'desc');
+        $entries = $request->entries;
+        $open = $request->open;
+        $close = $request->close;
+        $progress = $request->query('progress');
+
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id; 
+
+        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '10') {
+                    $query->where('Progress', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+                $query->whereIn('Status', [$request->open, $request->close]);
+            })
+            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+                $query->where('Status', $request->open);
+            })
+            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+                $query->where('Status', $request->close);
+            })
+            ->where(function ($query) use ($search){
+                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', '%' . $search . '%');
+                });
+            })
+            ->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%')
+            ->orderBy($sort, $direction)
+            ->paginate($request->entries ?? 10);
+        
+        return view('customer_service.customer_service_international_srf', compact('sampleRequests','search','entries', 'open','close'));
+    }
 
 
 }    

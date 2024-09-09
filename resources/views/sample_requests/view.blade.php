@@ -128,11 +128,11 @@
                             @endif
                         {{-- @endif --}}
 
-                        @if($sampleRequest->Progress == 70 && $sampleRequest->Status == 10)
+                        {{-- @if($sampleRequest->Progress == 70 && $sampleRequest->Status == 10)
                             <button type="button" class="btn btn-info returnToRnd" data-id="{{ $sampleRequest->Id }}">
                                 <i class="ti ti-check-box"></i>&nbsp;Return to RND
                             </button>
-                        @endif
+                        @endif --}}
 
                         @if(checkRolesIfHaveApprove('Sample Request', auth()->user()->department_id, auth()->user()->role_id) == "yes")
                             <button type="button" class="btn btn-md btn-success"
@@ -165,20 +165,22 @@
                             </button>
                         @endif
                         
-                        @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
-                            <button type="button" class="btn btn-primary"
-                                data-target="#closeSrf{{ $sampleRequest->Id }}" 
-                                data-toggle="modal" 
-                                title='Close SRF'>
-                                <i class="ti ti-close">&nbsp;</i>Close
-                            </button>
-                            <button type="button" class="btn btn-danger"
-                                data-target="#cancelSrf{{ $sampleRequest->Id }}" 
-                                data-toggle="modal" 
-                                title='Cancel SRF'>
-                                <i class="mdi mdi-cancel">&nbsp;</i>Cancel
-                            </button>
-                        @endif
+                        @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 70 || $sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                                <button type="button" class="btn btn-primary"
+                                    data-target="#closeSrf{{ $sampleRequest->Id }}" 
+                                    data-toggle="modal" 
+                                    title='Close SRF'>
+                                    <i class="ti ti-close">&nbsp;</i>Close
+                                </button>
+                            @endif
+                            @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                                <button type="button" class="btn btn-danger"
+                                    data-target="#cancelSrf{{ $sampleRequest->Id }}" 
+                                    data-toggle="modal" 
+                                    title='Cancel SRF'>
+                                    <i class="mdi mdi-cancel">&nbsp;</i>Cancel
+                                </button>
+                            @endif
 
 
 
@@ -296,13 +298,15 @@
                             </button>
                             @endif
 
-                            @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                            @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 70 || $sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
                                 <button type="button" class="btn btn-primary"
                                     data-target="#closeSrf{{ $sampleRequest->Id }}" 
                                     data-toggle="modal" 
                                     title='Close SRF'>
                                     <i class="ti ti-close">&nbsp;</i>Close
                                 </button>
+                            @endif
+                            @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
                                 <button type="button" class="btn btn-danger"
                                     data-target="#cancelSrf{{ $sampleRequest->Id }}" 
                                     data-toggle="modal" 
@@ -746,14 +750,18 @@
                             @php
                                 $latestApproval = $sampleRequest->srfTransactionApprovals->where('RemarksType', 'approved')->last();
                             @endphp
-                            @if($latestApproval->userByUserId)
-                                <b>{{$latestApproval->userByUserId->full_name}} :</b>
-                                <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
-                            @elseif($latestApproval->userById)
-                                <b>{{$latestApproval->userById->full_name}} :</b>
-                                <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
+                            @if ($latestApproval)
+                                @if($latestApproval->userByUserId)
+                                    <b>{{$latestApproval->userByUserId->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
+                                @elseif($latestApproval->userById)
+                                    <b>{{$latestApproval->userById->full_name}} :</b>
+                                    <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
+                                @else
+                                <p>No approver remarks yet</p>
+                                @endif
                             @else
-                            <p>No approver remarks yet</p>
+                                <p>No approver remarks yet</p>
                             @endif
                         @endif
                     </label>
@@ -972,7 +980,7 @@
                         </table>
                     </div>
                 </div> --}}
-                @if(authCheckIfItsRnd(auth()->user()->department_id))
+                {{-- @if(authCheckIfItsRnd(auth()->user()->department_id)) --}}
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
                         @if(checkIfHaveFiles(auth()->user()->role) == "yes")
@@ -1023,7 +1031,7 @@
                         </table>
                     </div>
                 </div>
-                @endif
+                {{-- @endif --}}
                 <div class="tab-pane fade" id="raw_materials" role="tabpanel" aria-labelledby="raw-materials-tab">
                     <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Raw Material"  data-toggle="modal" data-target="#addRawMaterial">

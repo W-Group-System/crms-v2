@@ -5,6 +5,7 @@ use App\Activity;
 use App\FileActivity;
 use App\ProductEvaluation;
 use App\Client;
+use App\Exports\ProductEvaluationExport;
 use App\PriceCurrency;
 use App\ProductApplication;
 use App\ProjectName;
@@ -20,6 +21,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -62,14 +64,31 @@ class RequestProductEvaluationController extends Controller
             ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
                 $query->where('Status', $request->close);
             })
-            ->orWhere('RpeResult', 'LIKE', '%' . $search . '%')
+            // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%')
             ->when(auth()->user()->role->type == 'LS', function($query) {
                 $query->where('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
             })
             ->when(auth()->user()->role->type == 'IS', function($query) {
                 $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%');
             })
-            ->orderBy('id', 'desc')->paginate($request->entries ?? 10);
+            // ->when(auth()->user()->role->type == 'RND', function($query) {
+            //     $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%')
+            //         ->orWhere('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
+            // })
+            ->where(function($query)use($search){
+                $query->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
+                    ->orWhere('DueDate', 'LIKE','%'.$search.'%')
+                    ->orWhereHas('client', function($query)use($search) {
+                        $query->where('Name', 'LIKE','%'.$search.'%');
+                    })
+                    ->orWhereHas('product_application', function($query)use($search) {
+                        $query->where('Name', 'LIKE','%'.$search.'%');
+                    })
+                    ->orWhere('RpeResult', 'LIKE','%'.$search.'%');
+            })
+            ->orderBy('id', 'desc')
+            ->paginate($request->entries ?? 10);
 
         // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
@@ -147,7 +166,7 @@ class RequestProductEvaluationController extends Controller
             if ($user->department_id == 38)
             {
                 $type = "LS";
-                $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-LS%')->latest()->first();
+                $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-LS%')->orderBy('id', 'desc')->first();
                 $count = substr($rpeList->RpeNumber, 10);
                 $totalCount = $count + 1;
                 
@@ -172,10 +191,33 @@ class RequestProductEvaluationController extends Controller
             'CurrencyId' => $request->input('CurrencyId'),
             'SampleName' => $request->input('SampleName'),
             'Supplier' => $request->input('Supplier'),
+            'RpeReferenceNumber' => $request->input('RpeReferenceNumber'),
             'ObjectiveForRpeProject' => $request->input('ObjectiveForRpeProject'),
             'Status' =>'10',
             'Progress' => '10',
         ]);
+        $files = $request->file('rpe_file');
+                $names = $request->input('name');
+                $rpeId =  $productEvaluationData->id;
+                
+                if ($files) {
+                    foreach ($files as $index => $file) {
+                    $name = $names[$index];
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs('public/rpeFiles', $fileName);
+                    $fileUrl = '/storage/rpeFiles/' . $fileName;       
+                    $uploadedFile = new RpeFile();
+                    $uploadedFile->RequestProductEvaluationId = $rpeId;
+                    $uploadedFile->Name = $name;
+                    $uploadedFile->Path = $fileUrl;
+                    if ((auth()->user()->department_id == 5) || (auth()->user()->department_id == 38)) {
+                        $uploadedFile->userType = 'Sales';
+                    } elseif ((auth()->user()->department_id == 15) || (auth()->user()->department_id == 42)) {
+                        $uploadedFile->userType = 'RND';
+                    }
+                    $uploadedFile->save();
+                    }
+                }
         return redirect()->back()->with('success', 'RPE added successfully.');
     }
     public function update(Request $request, $id)
@@ -196,9 +238,33 @@ class RequestProductEvaluationController extends Controller
         $rpe->SampleName = $request->input('SampleName');
         $rpe->Supplier = $request->input('Supplier');
         $rpe->ObjectiveForRpeProject = $request->input('ObjectiveForRpeProject');
-        $rpe->Manufacturer = $request->Manufacturer;
+        $rpe->Manufacturer = $request->input('Manufacturer');
         // $rpe->Status = $request->input('Status');
         $rpe->save();
+
+        if ($request->has('rpe_id')) {
+            $rpeIds = $request->input('rpe_id');
+            $names = $request->input('name');
+            $files = $request->file('rpe_file');
+    
+            foreach ($rpeIds as $index => $rpeId) {
+                $rpeFile = RpeFile::findOrFail($rpeId);
+    
+                if (isset($names[$index])) {
+                    $rpeFile->Name = $names[$index];
+                }
+    
+                if (isset($files[$index]) && $files[$index] instanceof \Illuminate\Http\UploadedFile) {
+                    $file = $files[$index];
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs('public/rpeFiles', $fileName);
+                    $fileUrl = '/storage/rpeFiles/' . $fileName;
+    
+                    $rpeFile->Path = $fileUrl;
+                }
+    
+                $rpeFile->save();
+            }}
         return redirect()->back()->with('success', 'RPE updated successfully');
     }
 
@@ -471,6 +537,7 @@ class RequestProductEvaluationController extends Controller
     {
         $rpeList = RequestProductEvaluation::find($id);    
         $rpeList->Status = 10; 
+        $rpeList->Progress = 10; 
         $rpeList->save();
         
         Alert::success('Successfully Open')->persistent('Dismiss');
@@ -609,5 +676,10 @@ class RequestProductEvaluationController extends Controller
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
         } 
-    }    
+    }
+    
+    public function export(Request $request)
+    {
+        return Excel::download(new ProductEvaluationExport($request->open, $request->close), 'Request Product Evaluation.xlsx');
+    }
 }

@@ -27,6 +27,7 @@
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
         <link rel="stylesheet" href="{{asset('css/theme.bootstrap_4.min.css')}}">
+        <link rel="icon" href="{{asset('images/wgroup.png')}}" type="image/x-icon">
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
@@ -94,7 +95,7 @@
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                                 <a href="{{ route('my_account') }}" class="dropdown-item">
                                     <i class="ti ti-user text-primary"></i>
-                                    My Acount
+                                    My Account
                                 </a>
                                 <a href="{{ route('change_password') }}" class="dropdown-item">
                                     <i class="ti ti-unlock text-primary"></i>
@@ -239,7 +240,7 @@
                             </div>
                         </li>
                         @endif
-                        @if((viewModule('Customer Requirement', $department, $role) == "yes") || (viewModule('Request for Product Evaluation', $department, $role) == "yes") || (viewModule('Sample Request Form', $department, $role) == "yes") || (viewModule('Price Monitoring', $department, $role) == "yes") )
+                        @if((viewModule('Customer Requirement', $department, $role) == "yes") || (viewModule('Request for Product Evaluation', $department, $role) == "yes") || (viewModule('Sample Request Form', $department, $role) == "yes") || (viewModule('Price Monitoring', $department, $role) == "yes") || (viewModule('Customer Service SRF', $department, $role) == "yes"))
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#tables" aria-expanded="false" aria-controls="tables" onclick="toggleTables(event)">
                                 <i class="icon-grid-2 menu-icon"></i>
@@ -259,6 +260,10 @@
                                     @endif
                                     @if(viewModule('Sample Request Form', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request') }}">Sample Request Form</a></li>
+                                    @endif
+                                    @if(viewModule('Customer Service SRF', $department, $role) == "yes")
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request_cs_local') }}">Sample Request Local</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request_cs_international') }}">Sample Request International</a></li>
                                     @endif
                                     {{-- @if(viewModule('Price Monitoring', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
@@ -1157,6 +1162,10 @@
         <script>
             function show() {
                 document.getElementById("loader").style.display = "block";
+            }
+            function hide()
+            {
+                document.getElementById("loader").style.display = "none";
             }
             function logout() {
                 event.preventDefault();

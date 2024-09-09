@@ -17,7 +17,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" name="submitbutton" value="Approve to R&D" class="btn btn-success">Approve to R&D</button>
-                        <button type="submit" name="submitbutton" value="Approve to QCD" class="btn btn-success">Approve to QCD</button>
+                        {{-- <button type="submit" name="submitbutton" value="Approve to QCD" class="btn btn-success">Approve to QCD</button> --}}
                     </div>
                 </form>
             </div>

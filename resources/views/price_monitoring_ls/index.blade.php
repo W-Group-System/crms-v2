@@ -215,8 +215,33 @@
         });
     }   
     
-    
-    
+    // $(document).ready(function() {
+    //     $('.product-pick').on('change', function() {
+    //         var selectedProduct = $(this).find('option:selected');
+    //         var selectedType = selectedProduct.data('type');
+    //         var selectedApplicationId = selectedProduct.data('application_id');
+
+    //         $('.category-select').val(selectedType).change();
+
+    //         $('.application-select').val(selectedApplicationId).change();
+    //     });
+    // });
+    $(document).ready(function() {
+    function handleProductChange(event) {
+        var $productSelect = $(event.target);
+        var selectedOption = $productSelect.find('option:selected');
+        var selectedType = selectedOption.data('type');
+        var selectedApplicationId = selectedOption.data('application_id');
+
+        var $row = $productSelect.closest('.add_create_prf_form');
+        
+        $row.find('.category-select').val(selectedType).change();
+        $row.find('.application-select').val(selectedApplicationId).change();
+    }
+
+    $(document).on('change', '.product-pick', handleProductChange);
+})
+
 </script>
 @if(auth()->user()->role->type == 'LS')
     @include('price_monitoring_ls.create')

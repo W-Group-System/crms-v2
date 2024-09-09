@@ -87,11 +87,18 @@ class BasePriceController extends Controller
             ->where('Status', 1)
             ->orderBy('CreatedDate', 'desc') 
             ->paginate(10);
-
+            $allNewbasePrice = BasePrice::with(['productMaterial', 'userApproved'])
+            ->joinSub($latestDatesSubquery, 'latest_dates', function ($join) {
+                $join->on('productmaterialbaseprices.MaterialId', '=', 'latest_dates.MaterialId')
+                    ->on('productmaterialbaseprices.CreatedDate', '=', 'latest_dates.latest_created_date');
+            })
+            ->where('Status', 1)
+            ->orderBy('CreatedDate', 'desc')
+            ->get();
         $rawMaterials = RawMaterial::all();
         $productCurrency = PriceCurrency::all();
 
-        return view('base_prices.new_basePrice_index', compact('newBasePrice', 'search', 'rawMaterials', 'productCurrency')); 
+        return view('base_prices.new_basePrice_index', compact('newBasePrice', 'search', 'rawMaterials', 'productCurrency','allNewbasePrice')); 
     }
 
 

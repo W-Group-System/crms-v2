@@ -20,6 +20,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
+use Collective\Html\FormFacade as Form;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -80,7 +81,7 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->when($role->type, function($q) use ($role) {
+            ->when(optional($role)->type, function($q) use ($role) {
                 if ($role->type == "IS") {
                     $q->where('Type', '2');
                 } elseif ($role->type == "LS") {
@@ -118,7 +119,7 @@ class ClientController extends Controller
         // Validate sort and direction parameters
         $validSorts = ['Name', 'BuyerCode', 'Type', 'ClientIndustryId', 'PrimaryAccountManagerId'];
         if (!in_array($sort, $validSorts)) {
-            $sort = 'Name';
+            $sort = 'BuyerCode';
         }
         if (!in_array($direction, ['asc', 'desc'])) {
             $direction = 'desc';
@@ -159,7 +160,7 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->when($role->type, function($q) use ($role) {
+            ->when(optional($role)->type, function($q) use ($role) {
                 if ($role->type == "IS") {
                     $q->where('Type', '2');
                 } elseif ($role->type == "LS") {
@@ -237,7 +238,7 @@ class ClientController extends Controller
                         });
                 }
             })
-            ->when($role->type, function($q) use ($role) {
+            ->when(optional($role)->type, function($q) use ($role) {
                 if ($role->type == "IS") {
                     $q->where('Type', '2');
                 } elseif ($role->type == "LS") {
@@ -265,9 +266,7 @@ class ClientController extends Controller
     {
         $data = [
             'clients'           => Client::all(),
-            'users'             => User::whereHas('role', function ($query) {
-                                        $query->whereIn('type', ['IS', 'LS']); // Use whereIn for an array of types
-                                    })->get(),
+            'users'             => User::all(),
             'payment_terms'     => PaymentTerms::all(),
             'regions'           => Region::all(),
             'countries'         => Country::all(),
@@ -277,23 +276,24 @@ class ClientController extends Controller
             'buyerCode'         => 'BCODE-' . now()->format('Ymd-His'),
         ];
         
-        $loggedInUser = Auth::user(); 
+        $loggedInUser = Auth::user();
         $role = $loggedInUser->role;
-        $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        $withRelation = optional($role)->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
         
-        if ($role->description == 'International Sales - Supervisor' || $role->description == 'Local Sales - Supervisor') {
+        if (optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') {
             $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
             $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::where('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         } else {
             $primarySalesPersons = User::where('id', $loggedInUser->id)->with($withRelation)->get();
             $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
-        
+
         // Pass the data, primarySalesPersons, and secondarySalesPersons to the view
         return view('clients.create', array_merge($data, [
             'primarySalesPersons' => $primarySalesPersons,
             'secondarySalesPersons' => $secondarySalesPersons,
+            'role' => $role
         ]));
     }
 
@@ -328,6 +328,7 @@ class ClientController extends Controller
             'AddressType.*'             => 'required|string|max:255',
             'Address'                   => 'required|array',
             'Address.*'                 => 'required|string|max:255',
+            'ContactName.*'             => 'required|string|max:255',
         ];  
 
         $customMessages = [
@@ -339,7 +340,8 @@ class ClientController extends Controller
             'BusinessTypeId.required'           => 'The business type is required.',
             'ClientIndustryId.required'         => 'The industry is required.',
             'AddressType.*.required'            => 'Each address type is required.',
-            'Address.*.required'                => 'Each address is required.'
+            'Address.*.required'                => 'Each address is required.',
+            'ContactName.*.required'            => 'Contact Name is required.'
         ];
 
         $validator = Validator::make($request->all(), $rules, $customMessages);
@@ -352,7 +354,7 @@ class ClientController extends Controller
             'BuyerCode', 'PrimaryAccountManagerId', 'SapCode', 'SecondaryAccountManagerId',
             'Name', 'TradeName', 'TaxIdentificationNumber', 'TelephoneNumber', 'PaymentTermId',
             'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'ClientCountryId',
-            'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId'
+            'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId', 'Status'
         ]));
         
         // Handle addresses if provided
@@ -367,6 +369,17 @@ class ClientController extends Controller
                 }
             }
         }
+
+        if ($request->has('ContactName') && is_array($request->ContactName)) {
+            foreach ($request->ContactName as $key => $contactName) {
+                if (!empty($contactName)) { // Corrected to use $contactName
+                    Contact::create([
+                        'CompanyId' => $client->id,
+                        'ContactName' => $contactName,
+                    ]);
+                }
+            }
+        }        
        
         // Return success message
         return response()->json(['success' => 'Data Added Successfully.']);
@@ -380,6 +393,7 @@ class ClientController extends Controller
         $contacts = Contact::where('CompanyId', $id)->get();
         $files = FileClient::where('ClientId', $id)->get();
         $users = User::where('is_active', '1')->whereNull('deleted_at')->get();
+       
         // dd($addresses);
         $collections = [
             'business_types' => BusinessType::all(),
@@ -657,4 +671,5 @@ class ClientController extends Controller
     {
         return Excel::download(new ArchivedClientExport, 'Archived Client.xlsx');
     }
+
 }

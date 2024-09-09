@@ -1,5 +1,5 @@
-<div class="modal fade" id="editCrr-{{$customerRequirement->id}}" tabindex="-1" role="dialog" aria-labelledby="addCustomerRequirement" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
+<div class="modal fade" id="editCrr-{{$customerRequirement->id}}">
+	<div class="modal-dialog modal-md" >
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="addCustomerRequirentLabel">Edit Customer Requirement</h5>
@@ -53,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$customerRequirement->DueDate}}" min="{{date('Y-m-d')}}">
+                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$customerRequirement->DueDate}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -89,7 +89,7 @@
                                     $subordinates = getUserApprover(auth()->user()->getSalesApprover);
                                 @endphp
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
+                                    <option disabled selected value>Select Sales Person</option>
                                     @foreach($subordinates as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $customerRequirement->PrimarySalesPersonId || $user->id == $customerRequirement->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
@@ -121,8 +121,8 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="">Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $customerRequirement->SecondarySalesPersonId || $user->id == $customerRequirement->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
@@ -166,7 +166,7 @@
                                 <select name="RefCode" class="form-control js-example-basic-single" required>
                                     <option disabled selected value>Select REF Code</option>
                                     @foreach ($refCode as $key=>$code)
-                                        <option value="{{$key}}" @if($key == $customerRequirement->RefCode) selected @endif>{{$code}}</option>
+                                        <option value="{{$key}}" @if($key == ($customerRequirement->RefCode ?? 'RND')) selected @endif>{{$code}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -183,10 +183,16 @@
                                 <input type="text" class="form-control" id="RefRpeNumber" name="RefRpeNumber" placeholder="Enter RPE Number" value="{{$customerRequirement->RefRpeNumber}}">
                             </div>
                         </div>
-                        <div class="col-lg-12">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                <input type="file" name="sales_upload_crr[]" class="form-control" multiple>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Details of Requirement</label>
-                                <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" rows="7">{!! nl2br(e($customerRequirement->DetailsOfRequirement)) !!}</textarea>
+                                <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" cols="30" rows="10">{{$customerRequirement->DetailsOfRequirement}}</textarea>
                             </div>
                         </div>
                         {{-- <div class="col-lg-6">

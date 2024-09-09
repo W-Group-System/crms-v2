@@ -162,6 +162,12 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
+                                <label for="name">RPE Reference Number</label>
+                                <input type="text" class="form-control" id="RpeReferenceNumber" name="RpeReferenceNumber" placeholder="Enter Rpe Reference Number" value="{{ $requestEvaluation->RpeReferenceNumber }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
                                 <label for="name">Objective for RPE Project</label>
                                 <textarea type="text" class="form-control" name="ObjectiveForRpeProject">{{ $requestEvaluation->ObjectiveForRpeProject }}</textarea>
                             </div>

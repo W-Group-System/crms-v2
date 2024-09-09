@@ -14,7 +14,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Remarks</label>
-                                <textarea name="close_remarks" class="form-control" cols="50" rows="10" placeholder="Enter remarks" required>{{$sampleRequest->CloseRemarks}}</textarea>
+                                <textarea name="close_remarks" class="form-control" cols="50" rows="10" placeholder="Enter remarks">{{$sampleRequest->CloseRemarks}}</textarea>
                             </div>
                         </div>
                     </div>

@@ -8,7 +8,7 @@
             <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
             </h4>
             <div class="form-group">
-                <form method="GET" >
+                <form method="GET" onsubmit="show()">
                     <label>Show : </label>
                     <label class="checkbox-inline">
                         <input name="open" class="activity_status" type="checkbox" value="10" @if($open == 10) checked @endif> Open
@@ -19,10 +19,20 @@
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
             </div>
+            <div class="mb-3">
+                <a href="#" id="copy_btn" class="btn btn-md btn-info">Copy</a>
+                <form method="GET" action="{{url('product_evaluation_export')}}" class="d-inline-block">
+    
+                    <input type="hidden" name="open" value="{{$open}}">
+                    <input type="hidden" name="close" value="{{$close}}">
+                    
+                    <button type="submit" class="btn btn-success">Export</button>
+                </form>
+            </div>
             <div class="row">
                 <div class="col-lg-6">
                     <span>Show</span>
-                    <form method="GET" class="d-inline-block">
+                    <form method="GET" class="d-inline-block" onsubmit="show()">
                         <select name="entries" class="form-control">
                             <option value="10" @if($entries == 10) selected @endif>10</option>
                             <option value="25" @if($entries == 25) selected @endif>25</option>
@@ -33,7 +43,7 @@
                     <span>Entries</span>
                 </div>
                 <div class="col-lg-6">
-                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <div class="row height d-flex justify-content-end align-items-end">
                             <div class="col-md-8">
                                 <div class="search">
@@ -46,7 +56,7 @@
                     </form>
                 </div>
             </div>
-            <div class="table-responsive" style="overflow: scroll; height: 50vh;">
+            <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="product_evaluation_table">
                     @if(auth()->user()->role->type == "IS")
                         <thead>
@@ -314,6 +324,38 @@
         $(".table").tablesorter({
             theme : "bootstrap",
         })
+
+        $('#copy_btn').click(function() {
+            var tableData = '';
+
+            $('#product_evaluation_table thead tr').each(function(rowIndex, tr) {
+                $(tr).find('th').each(function(cellIndex, th) {
+                    tableData += $(th).text().trim() + '\t';
+                });
+                tableData += '\n';
+            });
+
+            $('#product_evaluation_table tbody tr').each(function(rowIndex, tr) {
+                $(tr).find('td').each(function(cellIndex, td) {
+                    tableData += $(td).text().trim() + '\t';
+                });
+                tableData += '\n';
+            });
+
+            var tempTextArea = $('<textarea>');
+            $('body').append(tempTextArea);
+            tempTextArea.val(tableData).select();
+            document.execCommand('copy');
+            tempTextArea.remove();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Copied!',
+                text: 'Table data has been copied to the clipboard.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        });
     })
 </script>
 @endsection

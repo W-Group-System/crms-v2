@@ -130,7 +130,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Product Code:</label>
-                                <select class="form-control js-example-basic-single" name="ProductCode[]" style="position: relative !important" title="Select Product Code" required>
+                                <input type="text" class="form-control" name="ProductCode[]" value="{{ old('ProductCode.'.$index, $product->ProductCode) }}">
+                                {{-- <select class="form-control js-example-basic-single" name="ProductCode[]" style="position: relative !important" title="Select Product Code" required>
                                     <option value="" disabled>Select Product Code</option>
                                     @foreach ($productCodes as $productCode)
                                         <option value="{{ $productCode->code }}" 
@@ -138,7 +139,7 @@
                                             {{ $productCode->code }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>                            
                             <div class="form-group">
                                 <label for="ProductDescription">Product Description:</label>
@@ -219,29 +220,29 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="Courier">Courier:</label>
-                        <input type="text" class="form-control" name="Courier" placeholder="Enter Courier" value="{{ old('Courier',  $sampleRequest->Courier) }}">
+                        <input type="text" class="form-control" name="Courier" placeholder="Enter Courier" value="{{ old('Courier',  $sampleRequest->Courier) }}" readonly>
                     </div>
                     <div class="form-group">
                         <label for="AwbNumber">AWB Number:</label>
-                        <input type="text" class="form-control" name="AwbNumber" placeholder="Enter AWB Number" value="{{ old('AwbNumber',  $sampleRequest->AwbNumber) }}">
+                        <input type="text" class="form-control" name="AwbNumber" placeholder="Enter AWB Number" value="{{ old('AwbNumber',  $sampleRequest->AwbNumber) }}" readonly>
                     </div>
                     <div class="form-group">
                         <label for="DateDispatched">Date Dispatched (MM/DD/YYYY):</label>
-                        <input type="date" class="form-control DateDispatched{{$sampleRequest->Id  }}" name="DateDispatched" placeholder="Enter Date Dispatched" value="{{ old('DateDispatched', !empty( $sampleRequest->DateDispatched) ? date('Y-m-d', strtotime( $sampleRequest->DateDispatched)) : '') }}">
+                        <input type="date" class="form-control DateDispatched{{$sampleRequest->Id  }}" name="DateDispatched" placeholder="Enter Date Dispatched" value="{{ old('DateDispatched', !empty( $sampleRequest->DateDispatched) ? date('Y-m-d', strtotime( $sampleRequest->DateDispatched)) : '') }}" readonly>
                     </div>
                     <div class="form-group">
                         <label>Date Sample Received (MM/DD/YYYY):</label>
-                        <input type="date" class="form-control DateSampleReceived{{$sampleRequest->Id }}" name="DateSampleReceived"  placeholder="Enter Sample Received" value="{{ old('DateSampleReceived', !empty( $sampleRequest->DateSampleReceived) ? date('Y-m-d', strtotime( $sampleRequest->DateSampleReceived)) : '') }}">
+                        <input type="date" class="form-control DateSampleReceived{{$sampleRequest->Id }}" name="DateSampleReceived"  placeholder="Enter Sample Received" value="{{ old('DateSampleReceived', !empty( $sampleRequest->DateSampleReceived) ? date('Y-m-d', strtotime( $sampleRequest->DateSampleReceived)) : '') }}" readonly>
                     </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="DeliveryRemarks">Delivery Remarks</label>
-                    <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks">{{ old('DeliveryRemarks',  $sampleRequest->DeliveryRemarks) }}</textarea>
+                    <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks" readonly>{{ old('DeliveryRemarks',  $sampleRequest->DeliveryRemarks) }}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="Note">Notes</label>
-                    <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes">{{ old('Note',  $sampleRequest->Note) }}</textarea>
+                    <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes" readonly>{{ old('Note',  $sampleRequest->Note) }}</textarea>
                 </div>
             </div>
             </div>
@@ -380,12 +381,7 @@ $(document).ready(function() {
                 </div>
             <div class="form-group">
                 <label>Product Code:</label>
-                <select class="form-control js-example-basic-single ProductCode" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
-                    <option value="" disabled selected>Product Code</option>
-                    @foreach ($productCodes as $productCode)
-                        <option value="{{ $productCode->code }}" {{ in_array($productCode->code, old('ProductCode', [])) ? 'selected' : '' }}>{{ $productCode->code }}</option>
-                    @endforeach
-                </select>
+                <input type="text" class="form-control" name="ProductCode[]" >
             </div>
             @foreach(old('ProductDescription', ['']) as $index => $description)
                 <div class="form-group">
@@ -562,21 +558,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    if (dispatchInput) {
-        if (storedDispatched) {
-            dispatchInput.setAttribute('min', storedDispatched);
-        } else {
-            dispatchInput.setAttribute('min', today);
-        }
-    }
+    // if (dispatchInput) {
+    //     if (storedDispatched) {
+    //         dispatchInput.setAttribute('min', storedDispatched);
+    //     } else {
+    //         dispatchInput.setAttribute('min', today);
+    //     }
+    // }
     
-    if (sampleReceivedInput) {
-        if (storedSampleReceived) {
-            sampleReceivedInput.setAttribute('min', storedSampleReceived);
-        } else {
-            sampleReceivedInput.setAttribute('min', today);
-        }
-    }
+    // if (sampleReceivedInput) {
+    //     if (storedSampleReceived) {
+    //         sampleReceivedInput.setAttribute('min', storedSampleReceived);
+    //     } else {
+    //         sampleReceivedInput.setAttribute('min', today);
+    //     }
+    // }
 });
 
 </script>

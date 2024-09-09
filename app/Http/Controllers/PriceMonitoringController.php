@@ -15,6 +15,7 @@ use App\SrfFile;
 use App\TransactionLogs;
 use App\Contact;
 use App\Helpers\Helpers;
+use App\PrfProgress;
 use App\PriceRequestGae;
 use App\ProductApplication;
 use App\User;
@@ -64,8 +65,25 @@ class PriceMonitoringController extends Controller
         ->orderBy('id', 'desc')
         ->paginate(10);
         $productApplications = ProductApplication::all(); 
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        $clients = Client::where(function($query) {
+            if (auth()->user()->role->name == "Department Admin")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L1")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
+        ->where(function($query) {
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
         ->get();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
@@ -436,6 +454,7 @@ class PriceMonitoringController extends Controller
             'PriceRequestPurpose' => $request->input('PriceRequestPurpose'),
             'PriceLockPeriod' => $request->input('DeliverySchedule'),
             'TaxType' => $request->input('TaxType'),
+            'OtherRemarks' => $request->input('OtherRemarks'),
             'Status' => '10',
             'Progress' => '10',
 
@@ -485,7 +504,9 @@ class PriceMonitoringController extends Controller
         $priceMonitoringData->Destination = $request->input('Destination');
         $priceMonitoringData->PaymentTermId = $request->input('PaymentTerm');
         $priceMonitoringData->PriceRequestPurpose = $request->input('PriceRequestPurpose');
-        $priceMonitoringData->PriceLockPeriod = $request->input('DeliverySchedule'); $priceMonitoringData->TaxType = $request->input('TaxType');
+        $priceMonitoringData->PriceLockPeriod = $request->input('DeliverySchedule'); 
+        $priceMonitoringData->TaxType = $request->input('TaxType');
+        $priceMonitoringData->OtherRemarks = $request->input('OtherRemarks');
         $priceMonitoringData->save();
     
         foreach ($request->input('Product') as $key => $value) {
@@ -530,8 +551,26 @@ class PriceMonitoringController extends Controller
         $pricegaes = PriceRequestGae::get();
         $payment_terms = PaymentTerms::all();
         $clientId = $price_monitorings->ClientId;
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        $progresses = PrfProgress::all();
+        $clients = Client::where(function($query) {
+            if (auth()->user()->role->name == "Department Admin")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L1")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
+        ->where(function($query) {
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
         ->get();
         $users = User::wherehas('localsalespersons')->get();
         $activities = Activity::where('TransactionNumber', $PriceRequestNumber)->get();
@@ -661,6 +700,22 @@ public function ClosePrf( Request $request , $id)
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
         }    
+
+        public function ApproveManagerPrf(Request $request, $id)
+    {
+        $approvePrf = PriceMonitoring::find( $id);    
+        if ($approvePrf) {
+            $approvePrf->ApprovalRemarks = $request->input('Remarks');
+            $approvePrf->Progress = '40'; 
+
+
+        }
+            $approvePrf->save();
+
+            Alert::success('Successfully Saved')->persistent('Dismiss');
+            return back();
+        }   
+        
 
         public function ReopenPrf(Request $request, $id)
         {
