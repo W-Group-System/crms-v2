@@ -470,15 +470,21 @@ class PriceMonitoringController extends Controller
                 'ProductRmc' => $request->input('Rmc')[$key],
                 'LsalesDirectLabor' => $request->input('DirectLabor')[$key],
                 'LsalesFactoryOverhead' => $request->input('FactoryOverhead')[$key],
+                'LsalesTotalManufacturingCost' => $request->input('TotalManufacturingCost')[$key],
                 'LsalesBlendingLoss' => $request->input('BlendingLoss')[$key],
                 'LsalesDeliveryType' => $request->input('DeliveryType')[$key],
                 'LsalesDeliveryCost' => $request->input('DeliveryCost')[$key],
                 'OtherCostRequirements' => $request->input('OtherCostRequirement')[$key],
+                'LsalesTotalOperatingCost' => $request->input('TotalManufacturingCost')[$key],
                 'LsalesFinancingCost' => $request->input('FinancingCost')[$key],
                 'PriceRequestGaeId' => $request->input('PriceGae')[$key],
                 'LsalesGaeValue' => $request->input('GaeCost')[$key],
                 'LsalesMarkupPercent' => $request->input('MarkupPercent')[$key],
                 'LsalesMarkupValue' => $request->input('MarkupPhp')[$key],
+                'LsalesTotalProductCost' => $request->input('TotalProductCost')[$key],
+                'LsalesSellingPricePhp' => $request->input('SellingPricePhp')[$key],
+                'LsalesSellingPriceVat' => $request->input('SellingPriceVat')[$key],
+
 
         ]);
     }
@@ -532,6 +538,11 @@ class PriceMonitoringController extends Controller
                     'LsalesGaeValue' => $request->input('GaeCost.' . $key),
                     'LsalesMarkupPercent' => $request->input('MarkupPercent.' . $key),
                     'LsalesMarkupValue' => $request->input('MarkupPhp.' . $key),
+                    'LsalesTotalManufacturingCost' => $request->input('TotalManufacturingCost.' . $key),
+                    'LsalesTotalOperatingCost' => $request->input('TotalOperatingCost.' . $key),
+                    'LsalesTotalProductCost' => $request->input('TotalProductCost.' . $key),
+                    'LsalesSellingPricePhp' => $request->input('SellingPricePhp.' . $key),
+                    'LsalesSellingPriceVat' => $request->input('SellingPriceVat.' . $key),
 
                 ]
             );
