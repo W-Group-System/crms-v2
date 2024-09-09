@@ -59,20 +59,30 @@ class SampleRequestController extends Controller
             $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
 
-        if ($loggedInUser->role->name == "Staff L1") {
-            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
-                ->orwhere('PrimaryAccountManagerId', $loggedInUser->id)
-                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
-                ->get();
-        } elseif ($loggedInUser->role->name == "Staff L2" || $loggedInUser->role->name == "Department Admin") {
-            $subordinateIds = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            
-            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
-                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
-                ->orWhereIn('PrimaryAccountManagerId', $subordinateIds)
-                ->orWhereIn('SecondaryAccountManagerId', $subordinateIds)
-                ->get();
-        } 
+        $clients = Client::where(function($query) {
+            if (auth()->user()->role->name == "Department Admin")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L1")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
+        ->get();
         $productCodes = Product::where('status', '4')->get();
         $search = $request->input('search');
         $sort = $request->get('sort', 'Id');
@@ -884,6 +894,18 @@ class SampleRequestController extends Controller
         $pdf = PDF::loadView('sample_requests.print', [
             'sample_requests' => $srf,
         ])->setPaper('a4', 'portrait');
+    
+        return $pdf->stream('print.pdf');
+    }
+
+    public function print_srf_2(Request $request, $id)
+    {
+        $srf = SampleRequest::findOrFail($id);
+
+        View::share('sample_requests', $srf);
+        $pdf = PDF::loadView('sample_requests.print2', [
+            'sample_requests' => $srf,
+        ])->setPaper('A4', 'portrait');
     
         return $pdf->stream('print.pdf');
     }
