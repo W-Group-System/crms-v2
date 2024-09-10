@@ -81,6 +81,7 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
                             </th>
+                            <th>PRF #</th>
                             <th>
                                 Account Manager
                                 <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'PrimarySalesPersonId', 'direction' => request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">

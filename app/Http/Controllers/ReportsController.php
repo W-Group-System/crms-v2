@@ -48,14 +48,13 @@ class ReportsController extends Controller
             ->with([
                 'primarySalesPerson:user_id,full_name', 
                 'client:id,name', 
-                'priceRequestProduct:id,code', 
-                'priceRequestProduct:id,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
+                'priceRequestProduct:id,ProductId,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
                 'paymentterms:id,Name'
             ])
             ->where(function ($query) use ($search) {
-                $query->where('DateRequested', 'LIKE', '%' . $search . '%')
-                    ->orWhere('ShipmentTerm', 'LIKE', '%' . $search . '%')
-                    ->orWhere('code', 'LIKE', '%' . $search . '%')
+                $query->where('pricerequestforms.DateRequested', 'LIKE', '%' . $search . '%')
+                    ->orWhere('pricerequestforms.ShipmentTerm', 'LIKE', '%' . $search . '%')
+                    ->orWhere('pricerequestproducts.ProductId', 'LIKE', '%' . $search . '%')
                     ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
                         $q->where('full_name', 'LIKE', '%' . $search . '%');
                     })
@@ -75,23 +74,28 @@ class ReportsController extends Controller
                     });
             })
             ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
-            ->leftJoin('pricerequestproducts', 'pricerequestproducts.id', '=', 'pricerequestforms.id')
+            ->leftJoin('pricerequestproducts', 'pricerequestproducts.PriceRequestFormId', '=', 'pricerequestforms.id')
             ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
-            ->when($sort, function ($query) use ($sort, $direction) {
-                if ($sort == 'PrimarySalesPersonId') {
-                    $query->orderBy('PrimarySalesPersonId', $direction);
-                } elseif ($sort == 'ClientId') {
-                    $query->orderBy('ClientId', $direction);
-                } elseif ($sort == 'ProductCode') {
-                    $query->orderBy('products.code', $direction);
-                } elseif ($sort == 'PaymentTermId') {
-                    $query->orderBy('PaymentTermId', $direction);
-                } else {
-                    $query->orderBy($sort, $direction);
-                }
-            });
+            ->select('pricerequestforms.*', 'pricerequestproducts.*', 'products.*') // Select the necessary fields
+            ->orderBy($sort, $direction); // Fetch the data
+
+        // You can then further filter or process the data as needed.
+
+            // ->when($sort, function ($query) use ($sort, $direction) {
+            //     if ($sort == 'PrimarySalesPersonId') {
+            //         $query->orderBy('PrimarySalesPersonId', $direction);
+            //     } elseif ($sort == 'ClientId') {
+            //         $query->orderBy('ClientId', $direction);
+            //     } elseif ($sort == 'ProductCode') {
+            //         $query->orderBy('products.code', $direction);
+            //     } elseif ($sort == 'PaymentTermId') {
+            //         $query->orderBy('PaymentTermId', $direction);
+            //     } else {
+            //         $query->orderBy($sort, $direction);
+            //     }
+            // });
         
-        $priceRequests = $query->get();   
+        // $priceRequests = $query->get();   
         // dd($priceRequests->take(1));
         // Apply Filters
         if ($request->filled('filter_date')) {
