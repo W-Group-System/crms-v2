@@ -121,8 +121,10 @@
                     @elseif(authCheckIfItsRndStaff(auth()->user()->role))
                     
                     {{-- RND Staff --}}
-                    
-                    @if(rndPersonnel($requestEvaluation->rpePersonnel, auth()->user()->id))
+                    @php
+                        $id = auth()->user()->id || auth()->user()->user_id;
+                    @endphp
+                    @if(rndPersonnel($requestEvaluation->rpePersonnel, $id))
                             
                         @if ($requestEvaluation->Status == 10)
 
