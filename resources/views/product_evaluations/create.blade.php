@@ -60,7 +60,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Potential Volume</label>
-                                        <input type="number" class="form-control" id="PotentialVolume" name="PotentialVolume" value="0">
+                                        <input type="number" step=".01" class="form-control" id="PotentialVolume" name="PotentialVolume" value="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -96,7 +96,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Target Price</label>
-                                        <input type="number" class="form-control" id="TargetRawPrice" name="TargetRawPrice" value="0">
+                                        <input type="number" step=".01" class="form-control" id="TargetRawPrice" name="TargetRawPrice" value="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
