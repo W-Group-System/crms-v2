@@ -10,6 +10,15 @@
             <div class="modal-body">
                 <form method="POST" enctype="multipart/form-data" action="{{ url('local_price_monitoring') }}">
                     @csrf
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
@@ -302,7 +311,7 @@
                     type: "GET",
                     dataType: "json",
                     success:function(data) {
-                        $('.payment-term').val(data.PaymentTerm);
+                        $('.payment-term').val(data.PaymentTerm || '');
                     }
                 });
             } else {
@@ -689,5 +698,9 @@ function updateSellingPrice($row) {
     });
     
   
-
+    $(document).ready(function(){
+        @if ($errors->any())
+            $('#AddPriceMonitoringLs').modal('show');
+        @endif
+    });
 </script>
