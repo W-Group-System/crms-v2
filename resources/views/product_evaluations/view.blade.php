@@ -380,14 +380,14 @@
                 <div class="form-group row">
                     <p class="col-sm-3 col-form-label"><b>Client Name :</b></p>
                     <p class="col-sm-3">
-                        <a href="{{ url('view_client/' . $requestEvaluation->client->id) }}">
-                            {{ $requestEvaluation->client->Name }}
+                        <a href="{{ url('view_client/' . optional($requestEvaluation->client)->id) }}">
+                            {{ optional($requestEvaluation->client)->Name }}
                         </a>
                     </p>
                 </div>
                  <div class="form-group row">
                     <p class="col-sm-3 col-form-label"><b>Client Trade Name :</b></p>
-                    <p class="col-sm-3">{{ $requestEvaluation->client->TradeName }}</p>
+                    <p class="col-sm-3">{{ optional($requestEvaluation->client)->TradeName }}</p>
                 </div>
                 <div class="form-group row mb-2">
                     <p class="col-sm-3 col-form-label"><b>Region :</b></p>
