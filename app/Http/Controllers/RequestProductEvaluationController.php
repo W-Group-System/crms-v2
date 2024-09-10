@@ -374,7 +374,7 @@ class RequestProductEvaluationController extends Controller
         $project_names = ProjectName::all();
 
         $product_applications = ProductApplication::all();
-        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals','rndPersonnel','activities', 'clients','users','rpeFileUploads', 'combinedLogs', 'project_names', 'price_currencies', 'product_applications', 'secondarySalesPersons'));
+        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals','rndPersonnel','activities', 'clients','users','rpeFileUploads', 'combinedLogs', 'project_names', 'price_currencies', 'product_applications','primarySalesPersons', 'secondarySalesPersons'));
     }
 
     public function addSupplementary(Request $request)
