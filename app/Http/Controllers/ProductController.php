@@ -194,7 +194,7 @@ class ProductController extends Controller
             $product->application_subcategory_id = $request->application_subcategory_id;
             $product->product_origin = $request->product_origin;
             $product->created_by = $request->created_by;
-            $product->status = $request->status;
+            $product->status = 1;
             $product->save();
 
             return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
@@ -214,7 +214,7 @@ class ProductController extends Controller
                 $product->application_subcategory_id = $request->application_subcategory_id;
                 $product->product_origin = $request->product_origin;
                 $product->created_by = $request->created_by;
-                $product->status = $request->status;
+                $product->status = 1;
                 $product->save();
     
                 return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
