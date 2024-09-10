@@ -96,7 +96,7 @@
                         @if($prospectClient->count() > 0)
                             @foreach($prospectClient as $client)
                                 <tr>
-                                    @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin' || auth()->user()->role->type == 'LS' && auth()->user()->role->name == 'Department Admin')
+                                    @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin' || auth()->user()->role->type == 'LS' && auth()->user()->role->name == 'Department Admin' || auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Staff L2' || auth()->user()->role->type == 'LS' && auth()->user()->role->name == 'Staff L2' )
                                         <td align="center">
                                             <!-- <button type="button" class="btn btn-info btn-sm" title="View Client" onclick="viewClient({{ $client->id }})">
                                                 <i class="ti-eye"></i>
