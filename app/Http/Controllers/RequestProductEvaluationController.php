@@ -244,6 +244,17 @@ class RequestProductEvaluationController extends Controller
         $rpe->ObjectiveForRpeProject = $request->input('ObjectiveForRpeProject');
         $rpe->Manufacturer = $request->input('Manufacturer');
         // $rpe->Status = $request->input('Status');
+        if ($request->has('action'))
+        {
+            if ($request->action == "update_rnd")
+            {
+                $rpe->DdwNumber = $request->ddw_number;
+                $rpe->DateReceived = $request->date_received;
+                $rpe->RpeResult = $request->rpe_recommendation;
+                $rpe->DateCompleted = $request->date_completed;
+                $rpe->DateStarted = $request->date_started;
+            }
+        }
         $rpe->save();
 
         if ($request->has('rpe_id')) {
