@@ -23,7 +23,7 @@
                                 <select class="form-control js-example-basic-single" name="ClientId" id="ClientId" style="position: relative !important" title="Select Client" required>
                                     <option value="" disabled selected>Select Client</option>
                                     @foreach($clients as $client)
-                                        <option value="{{ $client->id }}">{{ $client->Name }}</option>
+                                        <option value="{{ $client->id }}" @if(old('ClientId') == $client->id) selected @endif>{{ $client->Name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -33,9 +33,9 @@
                                 <label>Priority</label>
                                 <select class="form-control js-example-basic-single" name="Priority" id="Priority" style="position: relative !important" title="Select Priority">
                                     <option value="" disabled selected>Select Priority</option>
-                                    <option value="1">Low</option>
-                                    <option value="3">Medium</option>
-                                    <option value="5">High</option>
+                                    <option value="1" @if(old('Priority') == 1) selected @endif>Low</option>
+                                    <option value="3" @if(old('Priority') == 3) selected @endif>Medium</option>
+                                    <option value="5" @if(old('Priority') == 5) selected @endif>High</option>
                                 </select>
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                                 <select class="form-control js-example-basic-single" name="ApplicationId" id="ApplicationId" style="position: relative !important" title="Select Application" required>
                                     <option value="" disabled selected>Select Application</option>
                                     @foreach($product_applications as $product_application)
-                                        <option value="{{ $product_application->id }}">{{ $product_application->Name }}</option>
+                                        <option value="{{ $product_application->id }}" @if(old('ApplicationId') == $product_application->id) selected @endif>{{ $product_application->Name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -53,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate">
+                                <input type="date" class="form-control" id="DueDate" value="{{old('DueDate')}}" name="DueDate">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -61,7 +61,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Potential Volume</label>
-                                        <input type="number" step=".01" class="form-control" id="PotentialVolume" name="PotentialVolume" value="0">
+                                        <input type="number" step=".01" class="form-control" id="PotentialVolume" name="PotentialVolume" value="{{old('PotentialVolume', 0)}}">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -70,7 +70,7 @@
                                         <select class="form-control js-example-basic-single" name="UnitOfMeasureId" id="UnitOfMeasureId" style="position: relative !important" title="Select Unit">
                                             <option value="" disabled selected>Select Unit</option>
                                             @foreach ($unitOfMeasure as $unit)
-                                                <option value="{{$unit->Id}}">{{$unit->Name}}</option>
+                                                <option value="{{$unit->Id}}" @if(old('UnitOfMeasureId') == $unit->Id) selected @endif>{{$unit->Name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -96,7 +96,7 @@
                                     <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                         <option value="" disabled selected>Select Sales Person</option>
                                         @foreach($subordinates as $subordinate)
-                                            <option value="{{ $subordinate->id }}" >{{ $subordinate->full_name }}</option>
+                                            <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPersonId') == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
                                         @endforeach
                                     </select>
                                 @endif
@@ -107,7 +107,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Target Price</label>
-                                        <input type="number" step=".01" class="form-control" id="TargetPrice" name="TargetPrice" value="0">
+                                        <input type="number" step=".01" class="form-control" id="TargetPrice" name="TargetPrice" value="{{old('TargetPrice', 0)}}">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -116,7 +116,7 @@
                                         <select class="form-control js-example-basic-single" name="CurrencyId" id="CurrencyId" style="position: relative !important" title="Select Currency">
                                             <option value="" disabled selected>Select Currency</option>
                                             @foreach($price_currencies as $price_currency)
-                                                <option value="{{ $price_currency->id }}">{{ $price_currency->Name }}</option>
+                                                <option value="{{ $price_currency->id }}" @if(old('CurrencyId') == $price_currency->Name) selected @endif>{{ $price_currency->Name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -129,7 +129,7 @@
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->full_name }}</option>
+                                        <option value="{{ $user->id }}" @if(old('SecondarySalesPersonId') == $user->id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -137,13 +137,13 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Competitor</label>
-                                <input type="text" class="form-control" id="Competitor" name="Competitor" placeholder="Enter Competitor">
+                                <input type="text" class="form-control" id="Competitor" name="Competitor" value="{{old('Competitor')}}" placeholder="Enter Competitor">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Competitor Price</label>
-                                <input type="number" step=".01" class="form-control" id="CompetitorPrice" name="CompetitorPrice" value="0">
+                                <input type="number" step=".01" class="form-control" id="CompetitorPrice" value="{{old('CompetitorPrice')}}" name="CompetitorPrice" value="0">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -170,7 +170,7 @@
                                 <select name="RefCode" class="form-control js-example-basic-single" required>
                                     <option disabled selected value>Select REF Code</option>
                                     @foreach ($refCode as $key=>$code)
-                                        <option value="{{$key}}">{{$code}}</option>
+                                        <option value="{{$key}}" @if(old('RefCode') == $key) selected @endif>{{$code}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -178,13 +178,13 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">REF CRR Number</label>
-                                <input type="text" class="form-control" id="RefCrrNumber" name="RefCrrNumber" placeholder="Enter CRR Number">
+                                <input type="text" class="form-control" id="RefCrrNumber" name="RefCrrNumber" value="{{old('RefCrrNumber')}}" placeholder="Enter CRR Number">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">REF RPE Number</label>
-                                <input type="text" class="form-control" id="RefRpeNumber" name="RefRpeNumber" placeholder="Enter RPE Number">
+                                <input type="text" class="form-control" id="RefRpeNumber" name="RefRpeNumber" value="{{old('RefRpeNumber')}}" placeholder="Enter RPE Number">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -196,7 +196,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Details of Requirement</label>
-                                <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" cols="30" rows="10"></textarea>
+                                <textarea type="text" class="form-control" id="DetailsOfRequirement" name="DetailsOfRequirement" placeholder="Enter Details of Requirement" cols="30" rows="10">{{old('DetailsOfRequirement')}}</textarea>
                             </div>
                         </div>
                     </div>
