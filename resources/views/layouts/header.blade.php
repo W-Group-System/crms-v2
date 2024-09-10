@@ -377,25 +377,37 @@
                                             <i class="menu-arrow"></i>
                                         </a>
                                     </li>
+                                    @if(viewModule('Price Request Fixed Cost', $department, $role) == "yes" || viewModule('Price Request GAE', $department, $role) == "yes")
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#nav_accounting" aria-expanded="false" aria-controls="nav_accounting" onclick="toggleSetupAccounting(event)">
                                             <span class="menu-title">Accounting</span>
                                             <i class="menu-arrow"></i>
                                         </a>
                                     </li>
+                                    @endif
                                 </ul>
                             </div>
                             <div class="collapse" id="nav_payment_currency">
                                 <ul class="nav flex-column sub-menu">
+                                    {{-- @if(viewModule('Concerned Department', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/price_currency') }}">Price Currencies</a></li>
+                                    @endif --}}
+                                    @if(viewModule('Currency Exchange Rates', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('currency_exchange') }}">Currency Exchange Rates</a></li>
+                                    @endif
+                                    {{-- @if(viewModule('Concerned Department', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('payment_terms') }}">Payment Terms</a></li>
+                                    @endif --}}
                                 </ul>
                             </div>
                             <div class="collapse" id="nav_accounting">
                                 <ul class="nav flex-column sub-menu">
+                                    @if(viewModule('Price Request Fixed Cost', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/fixed_cost') }}">Price Request Fixed Cost</a></li>
+                                    @endif
+                                    @if(viewModule('Price Request GAE', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link setup-item" href="{{ url('/request_gae') }}">Price Request GAE</a></li>
+                                    @endif
                                 </ul>
                             </div>
                         </li>
