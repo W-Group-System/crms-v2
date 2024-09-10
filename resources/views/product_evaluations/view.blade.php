@@ -553,25 +553,22 @@
                             @endif
                         @else
                         @php
-                            $latestApproval = $requestEvaluation->rpeTransactionApprovals->last();
+                            $latestApproval = $requestEvaluation->rpeTransactionApprovals->where('RemarksType', 'approved')->last();
                         @endphp
-                        @if($latestApproval->userByUserId)
-                            <b>{{$latestApproval->userByUserId->full_name}} :</b>
-                            <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
-                        @elseif($latestApproval->userById)
-                            <b>{{$latestApproval->userById->full_name}} :</b>
-                            <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
-                        @endif
-                        <!-- @foreach ($requestEvaluation->rpeTransactionApprovals as $transactionApproval)
-                                @if($transactionApproval->userByUserId)
-                                    <b>{{$transactionApproval->userByUserId->full_name}} :</b>
-                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
-                                @elseif($transactionApproval->userById)
-                                    <b>{{$transactionApproval->userById->full_name}} :</b>
-                                    <p style="margin-top: 20px;"> {{ $transactionApproval->Remarks }}</p>
-                                @endif
-                        @endforeach -->
-                        @endif
+                         @if ($latestApproval)
+                         @if($latestApproval->userByUserId)
+                             <b>{{$latestApproval->userByUserId->full_name}} :</b>
+                             <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
+                         @elseif($latestApproval->userById)
+                             <b>{{$latestApproval->userById->full_name}} :</b>
+                             <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
+                         @else
+                         <p>No approver remarks yet</p>
+                         @endif
+                     @else
+                         <p>No approver remarks yet</p>
+                     @endif
+                 @endif
                     </label>
                 </div>
             </div>
