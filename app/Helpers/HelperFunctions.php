@@ -371,7 +371,7 @@ function rndManager($role)
 
 function getUserApprover($approver)
 {
-    $user = User::whereIn('id', ($approver->pluck('UserId')))->orWhere('id', auth()->user()->id)->get();
+    $user = User::whereIn('id', ($approver->pluck('UserId')->toArray()))->orWhere('id', auth()->user()->id)->get();
     
     return $user;
 }

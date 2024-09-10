@@ -525,8 +525,6 @@
                 },
                 success: function(data)
                 {
-                    console.log(secondarySales);
-                    
                     setTimeout(() => {
                         $('[name="SecondarySalesPersonId"]').html(data) 
                         // $('[name="SecondarySalesPersonId"]').val(secondarySales) 

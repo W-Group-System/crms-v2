@@ -142,7 +142,7 @@ class CustomerRequirementController extends Controller
                 }
             })
             ->get();
-        $users = User::all();
+        $users = User::where('is_active', 1)->get();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
 
@@ -848,6 +848,7 @@ class CustomerRequirementController extends Controller
     public function refreshUserApprover(Request $request)
     {
         $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        // dd($user);
         if ($user != null)
         {
             if($user->salesApproverById)
