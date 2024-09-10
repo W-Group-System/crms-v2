@@ -96,7 +96,7 @@
                                     <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                         <option value="" disabled selected>Select Sales Person</option>
                                         @foreach($subordinates as $subordinate)
-                                            <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPersonId') == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
+                                            <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPersonId') == $subordinate->id || auth()->user()->id == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
                                         @endforeach
                                     </select>
                                 @endif
