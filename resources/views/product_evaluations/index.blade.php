@@ -105,8 +105,8 @@
                                 </td>
                                 <td>{{ $productEvaluation->DueDate }}</td>
                                 <td>{{ optional($productEvaluation->client)->Name }}</td>
-                                <td>{{optional($productEvaluation->client->clientregion)->Name}}</td>
-                                <td>{{optional($productEvaluation->client->clientcountry)->Name}}</td>
+                                <td>{{ optional(optional($productEvaluation->client)->clientregion)->Name }}</td>
+                                <td>{{ optional(optional($productEvaluation->client)->clientcountry)->Name }}</td>
                                 <td>
                                     @if($productEvaluation->primarySalesPerson)
                                     {{$productEvaluation->primarySalesPerson->full_name}}

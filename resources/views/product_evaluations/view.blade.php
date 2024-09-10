@@ -391,11 +391,15 @@
                 </div>
                 <div class="form-group row mb-2">
                     <p class="col-sm-3 col-form-label"><b>Region :</b></p>
-                    <p class="col-sm-3">{{ $requestEvaluation->client->clientregion->Name }}</p>
+                    <p class="col-sm-3">
+                        {{ optional(optional($requestEvaluation->client)->clientregion)->Name }}
+                    </p>
                 </div>
                 <div class="form-group row mb-2">
                     <p class="col-sm-3 col-form-label"><b>Country :</b></p>
-                    <p class="col-sm-3">{{ optional($requestEvaluation->client->clientcountry)->Name }}</p>
+                    <p class="col-sm-3">
+                        {{ optional(optional($requestEvaluation->client)->clientcountry)->Name }}
+                    </p>
                 </div>
             </div>
             <div class="form-header">
