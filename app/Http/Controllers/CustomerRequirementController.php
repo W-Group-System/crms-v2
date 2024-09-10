@@ -160,6 +160,12 @@ class CustomerRequirementController extends Controller
     // Store
     public function store(Request $request)
     {
+        $request->validate([
+            'NatureOfRequestId' => 'required'
+        ], [
+            'NatureOfRequestId.required' => 'The Nature of Request is required.'
+        ]);
+
         $user = Auth::user(); 
         $type = "";
         $year = date('y');
@@ -370,7 +376,7 @@ class CustomerRequirementController extends Controller
         $product_applications = ProductApplication::get();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
-        $rnd_personnel = User::whereIn('department_id', [15, 42])->whereNotIn('id', [auth()->user()->id])->get();
+        $rnd_personnel = User::whereIn('department_id', [15, 42])->get();
         $refCode = $this->refCode();
         $unitOfMeasure = UnitOfMeasure::get();
 
