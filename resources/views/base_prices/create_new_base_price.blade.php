@@ -42,7 +42,7 @@
                                         <input type="hidden" name="Currency[]" value="{{ $productCurrency->firstWhere('Name', 'USD')->id ?? '' }}">
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control" name="Price[]" value="0" placeholder="" required>
+                                        <input type="number" step=".01" class="form-control" name="Price[]" value="0" placeholder="" required>
                                     </td>
                                 </tr>
                             </tbody>
@@ -86,7 +86,7 @@
                     </select>
                 </td>
                 <td>
-                    <input type="number" class="form-control" name="Price[]" value="0" placeholder="">
+                    <input type="number" step=".01" class="form-control" name="Price[]" value="0" placeholder="">
                 </td>
             </tr>`;
             var row = $(newRow);
