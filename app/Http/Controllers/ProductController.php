@@ -193,7 +193,7 @@ class ProductController extends Controller
             $product->application_id = $request->application_id;
             $product->application_subcategory_id = $request->application_subcategory_id;
             $product->product_origin = $request->product_origin;
-            $product->created_by = $request->created_by;
+            $product->created_by = auth()->user()->id;
             $product->status = 1;
             $product->save();
 
@@ -213,7 +213,7 @@ class ProductController extends Controller
                 $product->application_id = $request->application_id;
                 $product->application_subcategory_id = $request->application_subcategory_id;
                 $product->product_origin = $request->product_origin;
-                $product->created_by = $request->created_by;
+                $product->created_by = auth()->user()->id;
                 $product->status = 1;
                 $product->save();
     
