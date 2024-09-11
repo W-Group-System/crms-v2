@@ -20,7 +20,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Date Received</label>
-                                <input type="date" name="date_received" class="form-control" value="{{$requestEvaluation->DateReceived}}" required>
+                                <input type="date" name="date_received" class="form-control" value="{{$requestEvaluation->DateReceived}}">
                             </div>
                         </div>
                         <div class="col-lg-12">
@@ -32,13 +32,13 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Date Started</label>
-                                <input type="date" name="date_started" class="form-control" value="{{$requestEvaluation->DateStarted}}" required>
+                                <input type="date" name="date_started" class="form-control" value="{{$requestEvaluation->DateStarted}}">
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Date Completed</label>
-                                <input type="date" name="date_completed" class="form-control" value="{{$requestEvaluation->DateCompleted}}" required>
+                                <input type="date" name="date_completed" class="form-control" value="{{$requestEvaluation->DateCompleted}}">
                             </div>
                         </div>
                     </div>
