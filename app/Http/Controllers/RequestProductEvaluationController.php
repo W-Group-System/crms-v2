@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
 use RealRashid\SweetAlert\Facades\Alert;
+use Collective\Html\FormFacade as Form;
+
 
 
 class RequestProductEvaluationController extends Controller
@@ -188,7 +190,7 @@ class RequestProductEvaluationController extends Controller
             'TargetRawPrice' => $request->input('TargetRawPrice'),
             'ProjectNameId' => $request->input('ProjectNameId'),
             'PrimarySalesPersonId' => $request->input('PrimarySalesPersonId'),
-            'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
+            'SecondarySalesPersonId' => $request->input('SecondarySalesPersonId'),
             'Priority' => $request->input('Priority'),
             'AttentionTo' => $request->input('AttentionTo'),
             'UnitOfMeasureId' => $request->input('UnitOfMeasureId'),
@@ -200,28 +202,32 @@ class RequestProductEvaluationController extends Controller
             'Status' =>'10',
             'Progress' => '10',
         ]);
-        $files = $request->file('rpe_file');
-                $names = $request->input('name');
-                $rpeId =  $productEvaluationData->id;
-                
-                if ($files) {
-                    foreach ($files as $index => $file) {
-                    $name = $names[$index];
-                    $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('public/rpeFiles', $fileName);
-                    $fileUrl = '/storage/rpeFiles/' . $fileName;       
-                    $uploadedFile = new RpeFile();
-                    $uploadedFile->RequestProductEvaluationId = $rpeId;
-                    $uploadedFile->Name = $name;
-                    $uploadedFile->Path = $fileUrl;
-                    if ((auth()->user()->department_id == 5) || (auth()->user()->department_id == 38)) {
-                        $uploadedFile->userType = 'Sales';
-                    } elseif ((auth()->user()->department_id == 15) || (auth()->user()->department_id == 42)) {
-                        $uploadedFile->userType = 'RND';
-                    }
-                    $uploadedFile->save();
-                    }
+        if ($request->has('SalesRpeFile'))
+        {
+            $attachments = $request->file('SalesRpeFile');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('rpeFiles'), $name);
+                $path = '/rpeFiles/'.$name;
+
+                $rpeFiles = new RpeFile();
+                $rpeFiles->Name = $name;
+                $rpeFiles->Path = $path;
+                $rpeFiles->RequestProductEvaluationId = $productEvaluationData['id'];
+
+                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                {
+                    $rpeFiles->UserType = "Sales";
                 }
+                if (auth()->user()->role->type == "RND")
+                {
+                    $rpeFiles->UserType = "RND";
+                }
+                
+                $rpeFiles->save();
+            }
+        }
         return redirect()->back()->with('success', 'RPE added successfully.');
     }
     public function update(Request $request, $id)
@@ -257,29 +263,32 @@ class RequestProductEvaluationController extends Controller
         }
         $rpe->save();
 
-        if ($request->has('rpe_id')) {
-            $rpeIds = $request->input('rpe_id');
-            $names = $request->input('name');
-            $files = $request->file('rpe_file');
-    
-            foreach ($rpeIds as $index => $rpeId) {
-                $rpeFile = RpeFile::findOrFail($rpeId);
-    
-                if (isset($names[$index])) {
-                    $rpeFile->Name = $names[$index];
+        if ($request->has('SalesRpeFile'))
+        {
+            $attachments = $request->file('SalesRpeFile');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('rpeFiles'), $name);
+                $path = '/rpeFiles/'.$name;
+
+                $rpeFiles = new RpeFile();
+                $rpeFiles->Name = $name;
+                $rpeFiles->Path = $path;
+                $rpeFiles->RequestProductEvaluationId = $id;
+                
+                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                {
+                    $rpeFiles->UserType = "Sales";
                 }
-    
-                if (isset($files[$index]) && $files[$index] instanceof \Illuminate\Http\UploadedFile) {
-                    $file = $files[$index];
-                    $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('public/rpeFiles', $fileName);
-                    $fileUrl = '/storage/rpeFiles/' . $fileName;
-    
-                    $rpeFile->Path = $fileUrl;
+                if (auth()->user()->role->type == "RND")
+                {
+                    $rpeFiles->UserType = "Rnd";
                 }
-    
-                $rpeFile->save();
-            }}
+                
+                $rpeFiles->save();
+            }
+        }
         return redirect()->back()->with('success', 'RPE updated successfully');
     }
 
@@ -696,5 +705,49 @@ class RequestProductEvaluationController extends Controller
     public function export(Request $request)
     {
         return Excel::download(new ProductEvaluationExport($request->open, $request->close), 'Request Product Evaluation.xlsx');
+    }
+
+    public function refreshUserApprover(Request $request)
+    {
+        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        if ($user != null)
+        {
+            if($user->salesApproverById)
+            {
+                $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
+
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+            elseif($user->salesApproverByUserId)
+            {
+                $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
+                
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+        }
+
+        return "";
+    }
+    public function editsalesRpeFiles(Request $request, $id)
+    {
+        $attachments = $request->file('file');
+        $name = time().'_'.$attachments->getClientOriginalName();
+        $attachments->move(public_path('rpeFiles'), $name);
+        $path = '/rpeFiles/'.$name;
+
+        $files = RpeFile::findOrFail($id);
+        $files->Name = $name;
+        $files->Path = $path;
+        if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+        {
+            $files->userType = "Sales";
+        }
+
+        $files->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back()->with(['tab' => 'files']);
     }
 }
