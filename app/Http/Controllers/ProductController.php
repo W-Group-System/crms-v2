@@ -491,6 +491,19 @@ class ProductController extends Controller
 
     public function addFiles(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'file' => 'max:1024'
+        ], [
+            'file*' => 'The file may not be greater than 1MB.'
+        ]);
+
+        if ($validator->fails())
+        {
+            $errors = $validator->errors();
+            
+            return back()->with(['errors' => $errors, 'tab' => 'files']);
+        }
+
         $fileProducts = new ProductFiles;
         $fileProducts->ProductId = $request->product_id;
         $fileProducts->Name = $request->name;
@@ -511,6 +524,19 @@ class ProductController extends Controller
 
     public function editFiles(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'file' => 'max:1024'
+        ], [
+            'file*' => 'The file may not be greater than 1MB.'
+        ]);
+
+        if ($validator->fails())
+        {
+            $errors = $validator->errors();
+            
+            return back()->with(['errors' => $errors, 'tab' => 'files']);
+        }
+
         $fileProducts = ProductFiles::findOrFail($id);
         $fileProducts->Name = $request->name;
         $fileProducts->Description = $request->description;
@@ -797,6 +823,19 @@ class ProductController extends Controller
     {
         if ($request->has('files'))
         {
+            $validator = Validator::make($request->all(), [
+                'files[]' => 'max:1024|array'
+            ], [
+                'files*' => 'The file may not be greater than 1MB.'
+            ]);
+    
+            if ($validator->fails())
+            {
+                $errors = $validator->errors();
+                
+                return back()->with(['errors' => $errors, 'tab' => 'files']);
+            }
+
             $productFiles = ProductFiles::where('ProductId', $request->product_id)->delete();
 
             $attachments = $request->file('files');

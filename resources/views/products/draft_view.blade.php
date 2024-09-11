@@ -319,6 +319,7 @@
                     @endif
                 </div>
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    @include('components.error')
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">New</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
@@ -965,6 +966,12 @@
 
             $("#filename").val(filename);
         })
+
+        $('input[type="file"]').on('change', function(e) {
+            var filename = e.target.files[0].name;
+
+            $("#edit_filename").val(filename);
+        })
         
         $(document).on('change', '[name="files[]"]', function(e) {
             var filename = e.target.files[0].name;
@@ -985,7 +992,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label>Client :</label>
-                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm">
                                         <option value="">-Client-</option>
                                         @foreach ($client as $c)
                                             <option value="{{$c->id}}">{{$c->Name}}</option>

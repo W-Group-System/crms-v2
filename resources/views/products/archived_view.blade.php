@@ -161,7 +161,10 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                    @if(session('tab') == 'materials')
                     @include('components.error')
+                    @endif
+
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-bordered tables" width="100%">
                             <thead>
@@ -289,6 +292,9 @@
                     @endif
                 </div>
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    @if(session('tab') == 'files')
+                    @include('components.error')
+                    @endif
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
@@ -315,7 +321,7 @@
                                                 <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
                                                     <i class="ti-pencil"></i>
                                                 </button>
-                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete" onsubmit="show()">
                                                     {{csrf_field()}}
     
                                                     <button type="button" class="btn btn-sm btn-danger deleteProductFiles" title="Delete">
@@ -777,6 +783,12 @@
             $("#filename").val(filename);
         })
 
+        $('input[type="file"]').on('change', function(e) {
+            var filename = e.target.files[0].name;
+
+            $("#edit_filename").val(filename);
+        })
+
         $(document).on('change', '[name="files[]"]', function(e) {
             var filename = e.target.files[0].name;
 
@@ -797,7 +809,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label>Client :</label>
-                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm">
                                         <option value="">-Client-</option>
                                         @foreach ($client as $c)
                                             <option value="{{$c->id}}">{{$c->Name}}</option>
