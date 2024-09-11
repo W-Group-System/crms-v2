@@ -75,4 +75,13 @@ class Product extends Model implements Auditable
     {
         return $this->belongsTo(ProductApplication::class);
     }
+
+    public function approveById()
+    {
+        return $this->belongsTo(User::class, 'approved_by', 'id');
+    }
+    public function approveByUserId()
+    {
+        return $this->belongsTo(User::class, 'approved_by', 'user_id');
+    }
 }

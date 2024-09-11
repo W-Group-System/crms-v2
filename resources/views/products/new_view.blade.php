@@ -11,7 +11,8 @@
                 <div class="col-lg-6" align="right">
                     <a href="{{ url('new_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
-                    <form method="post" class="d-inline-block" id="rejectForm">
+                    @if(auth()->user()->role->type == "RND" && (auth()->user()->role->name == "Staff L2") || (auth()->user()->role->name == "Department Admin"))
+                    <form method="post" class="d-inline-block" id="rejectForm" onsubmit="show()">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
@@ -19,12 +20,13 @@
                         <button type="submit" class="btn btn-md btn-danger" title="Reject">Reject</button>
                     </form>
 
-                    <form method="POST" action="{{url('add_to_current_products')}}" class="d-inline-block">
+                    <form method="POST" action="{{url('add_to_current_products')}}" class="d-inline-block" onsubmit="show()">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
                         <button type="button" class="btn btn-md btn-primary" id="currentBtn" name="action" value="Current">Move to Current</button>
                     </form>
+                    @endif
                 </div>
             </div>
             @php
@@ -115,7 +117,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
-                <div class="col-md-3"><p class="mb-0">{{ $approveUsers->full_name ?? '' }}</p></div>
+                <div class="col-md-3"><p class="mb-0">N/A</p></div>
             </div>
             <div class="row">
                 <div class="col-md-2 col-form-label"><p class="mb-0"><b>Date Approved:</b></p></div>
@@ -533,13 +535,14 @@
                 {{csrf_field()}}
                 
                 <div class="modal-body">
+                    <p id="totalPercentage">{{$percentage ?? 0.00}}</p>
+
                     <div class="card border border-1 border-primary rounded-0 rounded-bottom" style="height: 70vh; overflow-y:auto;">
                         <div class="card-header bg-primary text-white">
                             Raw Materials Percentage
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <span id="totalPercentage">{{$percentage ?? 0.00}}</span>
         
                                 <table class="table table-striped table-bordered table-hover" id="rawMaterialsTable">
                                     <thead>
@@ -617,6 +620,9 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     $(document).ready(function() {
+        var percentage = {!! json_encode($percentage) !!}
+        document.getElementById('totalPercentage').innerText = percentage
+        
         new DataTable('.tables', {
             destroy: true,
             processing: true,
@@ -629,10 +635,11 @@
             processing: true,
             // pageLength: 10,
             paginate: false,
-            ordering: false
+            ordering: true,
+            dom: "lrt"
         })
 
-        $(".percentageVal").on('change', function() {
+        $(".percentageVal").on('input', function() {
             var total = 0;
             
             $('.percentageVal').each(function() {

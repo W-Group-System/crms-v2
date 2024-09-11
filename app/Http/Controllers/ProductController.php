@@ -195,6 +195,7 @@ class ProductController extends Controller
             $product->product_origin = $request->product_origin;
             $product->created_by = auth()->user()->id;
             $product->status = 1;
+            $product->approved_by = null;
             $product->save();
 
             return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
@@ -316,12 +317,11 @@ class ProductController extends Controller
         $product_applications = ProductApplication::find($data->application_id);
         $product_subcategories = ProductSubcategories::find($data->application_subcategory_id);
         $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
-        $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
-
+        
         $rawMaterials = RawMaterial::where('status', 'Active')->get();
         $client = Client::get();
 
-        return view('products.view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));
+        return view('products.view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'rawMaterials', 'client'));
     }
 
     // Delete
@@ -413,6 +413,8 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($request->id);
         $product->status = 4;
+        $product->approved_by = auth()->user()->id;
+        $product->date_approved = date('Y-m-d h:i:s');
         $product->save();
 
         Alert::success('Successfully added to current products')->persistent("Dismiss");
@@ -845,12 +847,12 @@ class ProductController extends Controller
         $product_applications = ProductApplication::find($data->application_id);
         $product_subcategories = ProductSubcategories::find($data->application_subcategory_id);
         $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
-        $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
+        // $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
 
         $rawMaterials = RawMaterial::get();
         $client = Client::get();
 
-        return view('products.draft_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));
+        return view('products.draft_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'rawMaterials', 'client'));
     }
     
     public function viewNew($id)
@@ -880,12 +882,11 @@ class ProductController extends Controller
         $product_applications = ProductApplication::find($data->application_id);
         $product_subcategories = ProductSubcategories::find($data->application_subcategory_id);
         $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
-        $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
 
         $rawMaterials = RawMaterial::where('status', 'Active')->get();
         $client = Client::get();
 
-        return view('products.new_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));
+        return view('products.new_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'rawMaterials', 'client'));
     }
 
     public function viewArchived($id)
@@ -915,12 +916,11 @@ class ProductController extends Controller
         $product_applications = ProductApplication::find($data->application_id);
         $product_subcategories = ProductSubcategories::find($data->application_subcategory_id);
         $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
-        $approveUsers = $users->firstWhere('user_id', $data->approved_by) ?? $users->firstWhere('id', $data->approved_by);
 
         $rawMaterials = RawMaterial::where('status', 'Active')->get();
         $client = Client::get();
 
-        return view('products.archived_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'approveUsers', 'rawMaterials', 'client'));
+        return view('products.archived_view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'rawMaterials', 'client'));
     }
 
     public function exportCurrentProducts()

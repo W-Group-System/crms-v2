@@ -12,7 +12,7 @@
                     <a href="{{ url('/current_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
-                        <form method="POST" action="{{url('add_to_archive_products')}}" class="d-inline-block">
+                        <form method="POST" action="{{url('add_to_archive_products')}}" class="d-inline-block" onsubmit="show()">
                             {{csrf_field()}}
 
                             <input type="hidden" name="id" value="{{$data->id}}">
@@ -111,7 +111,13 @@
             </div>
             <div class="row">
                 <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
-                <div class="col-md-3"><p class="mb-0">{{ $approveUsers->full_name ?? '' }}</p></div>
+                <div class="col-md-3">
+                    @if($data->approveById)
+                    <p class="mb-0">{{ $data->approveById->full_name}}</p>
+                    @elseif($data->approveByUserId)
+                    <p class="mb-0">{{ $data->userByUserId->full_name }}</p>
+                    @endif
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-2 col-form-label"><p class="mb-0"><b>Date Approved:</b></p></div>
