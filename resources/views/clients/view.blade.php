@@ -8,12 +8,10 @@
                     <a href="{{ session('last_client_page') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
-                    @if(auth()->user()->role->name == 'Staff L2' || auth()->user()->role->name == 'Department Admin')
-                        <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-primary"><i class="ti ti-pencil"></i>&nbsp;Update</a>
-                        <!-- <button type="button" class="btn btn-primary" title="Update Client" href="{{ url('/edit_client/' . $data->id) }}">
-                            <i class="ti ti-pencil"></i>&nbsp;Update
-                        </button> -->
-                    @endif
+                    <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-primary"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                    <!-- <button type="button" class="btn btn-primary" title="Update Client" href="{{ url('/edit_client/' . $data->id) }}">
+                        <i class="ti ti-pencil"></i>&nbsp;Update
+                    </button> -->
                     @if($data->Status != '1')
                     <button type="button" class="prospectClient btn btn-outline-warning" title="Prospect File" data-id="{{ $data->id }}">
                         <i class="ti ti-control-record"></i>&nbsp;Prospect

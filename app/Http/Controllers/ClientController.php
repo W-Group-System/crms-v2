@@ -394,7 +394,6 @@ class ClientController extends Controller
         $files = FileClient::where('ClientId', $id)->get();
         $users = User::where('is_active', '1')->whereNull('deleted_at')->get();
        
-        // dd($addresses);
         $collections = [
             'business_types' => BusinessType::all(),
             'payment_terms' => PaymentTerms::all(),
