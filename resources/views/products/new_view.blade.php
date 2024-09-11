@@ -135,7 +135,7 @@
             </div>
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link p-2 @if(session('tab') == 'materials' || session('tab') == null) active @endif" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'materials' || session('tab') == null) active @endif" id="materials-tab" data-toggle="tab" href="#materials" role="tab">Materials</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
@@ -161,7 +161,9 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                    @if(session('tab') == 'materials')
                     @include('components.error')
+                    @endif
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval" data-toggle="modal" data-target="#rawMaterials{{$data->id}}">Update</button>
                     </div>
@@ -292,6 +294,9 @@
                     @endif
                 </div>
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    @if(session('tab') == 'files')
+                    @include('components.error')
+                    @endif
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
@@ -935,6 +940,12 @@
             $("#filename").val(filename);
         })
 
+        $('input[type="file"]').on('change', function(e) {
+            var filename = e.target.files[0].name;
+
+            $("#edit_filename").val(filename);
+        })
+
         $(".addBtnFiles").on('click', function()
         {
             var newRow = `
@@ -948,7 +959,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label>Client :</label>
-                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm">
                                         <option value="">-Client-</option>
                                         @foreach ($client as $c)
                                             <option value="{{$c->id}}">{{$c->Name}}</option>

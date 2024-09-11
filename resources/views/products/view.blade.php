@@ -158,7 +158,9 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                    @if(session('tab') == 'materials')
                     @include('components.error')
+                    @endif
                     
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped tables">
@@ -291,6 +293,9 @@
                     @endif
                 </div>
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    @if(session('tab') == 'files')
+                    @include('components.error')
+                    @endif
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
@@ -540,34 +545,34 @@
             ordering: false
         });
 
-        $("#addBtn").on('click', function() {
+        // $("#addBtn").on('click', function() {
             
-            var newRow = `
-                <tr>
-                    <td>
-                        <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
-                            <option value="">- Raw Materials -</option>
-                            @foreach ($rawMaterials as $rm)
-                                <option value="{{$rm->id}}">{{$rm->Name}}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" max="100" required>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger btn-sm removeRawMat" type="button">
-                            <i class="ti-minus"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
+        //     var newRow = `
+        //         <tr>
+        //             <td>
+        //                 <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
+        //                     <option value="">- Raw Materials -</option>
+        //                     @foreach ($rawMaterials as $rm)
+        //                         <option value="{{$rm->id}}">{{$rm->Name}}</option>
+        //                     @endforeach
+        //                 </select>
+        //             </td>
+        //             <td>
+        //                 <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" max="100" required>
+        //             </td>
+        //             <td>
+        //                 <button class="btn btn-danger btn-sm removeRawMat" type="button">
+        //                     <i class="ti-minus"></i>
+        //                 </button>
+        //             </td>
+        //         </tr>
+        //     `;
             
-            var row = $(newRow);
-            $(".tbodyRawMaterials").append(row);
-            row.find('.js-example-basic-single').select2();
+        //     var row = $(newRow);
+        //     $(".tbodyRawMaterials").append(row);
+        //     row.find('.js-example-basic-single').select2();
 
-        });
+        // });
 
         $(document).on('click', '.removeRawMat', function()
         {
@@ -780,6 +785,12 @@
             $("#filename").val(filename);
         })
 
+        $('input[type="file"]').on('change', function(e) {
+            var filename = e.target.files[0].name;
+
+            $("#edit_filename").val(filename);
+        })
+
         $(document).on('change', '[name="files[]"]', function(e) {
             var filename = e.target.files[0].name;
 
@@ -799,7 +810,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label>Client :</label>
-                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm">
                                         <option value="">-Client-</option>
                                         @foreach ($client as $c)
                                             <option value="{{$c->id}}">{{$c->Name}}</option>
