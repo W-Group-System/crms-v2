@@ -417,7 +417,6 @@ class ClientController extends Controller
     {
         $rules = [
             'BuyerCode'                 => 'required|string|max:255',
-            'PrimaryAccountManagerId'   => 'required|string',
             'Name'                      => 'required|string|max:255',
             'Type'                      => 'required|string|max:255',
             'ClientRegionId'            => 'required|string',
