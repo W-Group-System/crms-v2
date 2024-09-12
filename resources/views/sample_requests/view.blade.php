@@ -78,6 +78,7 @@
                     </button>
                     @endif --}}
                     <a target='_blank' href="{{ url('print_srf', $sampleRequest->Id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print</a>
+                    {{-- <a target='_blank' href="{{ url('print_srf_2', $sampleRequest->Id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print 2</a> --}}
                     {{-- <button type="button" class="btn btn-danger btn-icon-text" >
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
@@ -983,7 +984,8 @@
                 {{-- @if(authCheckIfItsRnd(auth()->user()->department_id)) --}}
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
-                        @if(checkIfHaveFiles(auth()->user()->role) == "yes")
+                        {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes") --}}
+                        @if(authCheckIfItsRnd(auth()->user()->department_id))
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Upload File"  data-toggle="modal" data-target="#uploadFile">
                             <i class="ti-plus"></i>
                         </button>
@@ -1000,9 +1002,11 @@
                             </thead>
                             <tbody>
                                 @foreach ($srfFileUploads as $fileupload)
+                                    @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $fileupload->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                     <tr>
                                         <td align="center">
-                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes")
+                                            {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes") --}}
+                                            @if(authCheckIfItsRnd(auth()->user()->department_id))
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
                                                 data-target="#editSrfFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
                                                 <i class="ti-pencil"></i>
@@ -1026,6 +1030,7 @@
                                             @endif
                                         </td>
                                     </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>

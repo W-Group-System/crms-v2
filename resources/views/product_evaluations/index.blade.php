@@ -6,6 +6,7 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Evaluation List
             <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
+            @include('product_evaluations.create')
             </h4>
             <div class="form-group">
                 <form method="GET" onsubmit="show()">
@@ -237,7 +238,6 @@
     </div>
 </div>
 
-@include('product_evaluations.create')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
 <script>
@@ -284,40 +284,7 @@
             $(this).closest('form').submit()
         })
 
-        // $("#addRpeBtn").on('click', function() {
-        //     var primarySales = $('[name="PrimarySalesPersonId"]').val();
 
-        //     refreshSecondaryApprovers(primarySales,"")
-        // })
-
-        // $(".editBtn").on('click', function() {
-        //     var primarySales = $('[name="PrimarySalesPersonId"]').val();
-            
-        //     var secondarySales = $(this).data('secondarysales');
-
-        //     refreshSecondaryApprovers(primarySales,secondarySales)
-        // })
-
-        // function refreshSecondaryApprovers(primarySales,secondarySales)
-        // {
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "{{url('refresh_user_approvers')}}",
-        //         headers: {
-        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //         },
-        //         data: {
-        //             ps: primarySales,
-        //         },
-        //         success: function(data)
-        //         {
-        //             setTimeout(() => {
-        //                 $('[name="SecondarySalesPersonId"]').html(data) 
-        //                 $('[name="SecondarySalesPersonId"]').val(secondarySales) 
-        //             }, 500);
-        //         }
-        //     })
-        // }
         $(".table").tablesorter({
             theme : "bootstrap",
         })

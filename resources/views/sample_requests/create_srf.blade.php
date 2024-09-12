@@ -328,7 +328,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Product Type:</label>
-                    <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type">
+                    <select class="form-control js-example-basic-single" name="ProductType[]" style="position: relative !important" title="Select Product Type" required>
                         <option value="" disabled selected>Select Product Type</option>
                         <option value="1">Pure</option>
                         <option value="2">Blend</option>
