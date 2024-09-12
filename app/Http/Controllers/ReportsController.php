@@ -31,144 +31,156 @@ class ReportsController extends Controller
         $fetchAll = $request->input('fetch_all', false);
         $entries = $request->input('number_of_entries', 10);
 
-        // Use provided 'from' and 'to' dates or default to the current month if not provided
         $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
         $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
 
+        // Get filter inputs
+        $filterDate = $request->input('filter_date');
+        $filterPRF = $request->input('filter_prf');
+        $filterAccount = $request->input('filter_account_manager');
+        $filterClient = $request->input('filter_client');
+        $filterProduct = $request->input('filter_product');
+        $filterRMC = $request->input('filter_rmc');
+        $filterOffered = $request->input('filter_offered');
+        $filterShipment = $request->input('filter_shipment');
+        $filterPayment = $request->input('filter_payment');
+        $filterQuantity = $request->input('filter_quantity');
+        $filterMargin = $request->input('filter_margin');
+        $filterPercentMargin = $request->input('filter_percent_margin');
+        $filterTotalMargin = $request->input('filter_total_margin');
+        $filterAccepted = $request->input('filter_accepted');
+        $filterRemarks = $request->input('filter_remarks');
+
         $validSorts = ['DateRequested', 'PrimarySalesPersonId', 'ClientId', 'ProductCode', 'ProductRmc', 'OfferedPrice', 'ShipmentTerm', 'PaymentTerm', 'QuantityRequired', 'Margin', 'MarginPercentage', 'TotalMargin', 'IsAccepted', 'Remarks'];
         if (!in_array($sort, $validSorts)) {
-            $sort = 'DateRequested'; // Default sort field
+            $sort = 'DateRequested';
         }
+
         if (!in_array($direction, ['asc', 'desc'])) {
             $direction = 'desc';
         }
 
-        // Optimize base query with necessary joins only
-        $query = PriceMonitoring::query()
-            ->with([
-                'primarySalesPerson:user_id,full_name', 
-                'client:id,name', 
-                'priceRequestProduct:id,ProductId,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
-                'paymentterms:id,Name'
-            ])
-            ->where(function ($query) use ($search) {
-                $query->where('pricerequestforms.DateRequested', 'LIKE', '%' . $search . '%')
-                    ->orWhere('pricerequestforms.ShipmentTerm', 'LIKE', '%' . $search . '%')
-                    ->orWhere('pricerequestproducts.ProductId', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
-                        $q->where('full_name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('client', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('priceRequestProduct', function ($q) use ($search) {
-                        $q->where('ProductRmc', 'LIKE', '%' . $search . '%')
-                        ->orWhere('IsalesOfferedPrice', 'LIKE', '%' . $search . '%')
-                        ->orWhere('QuantityRequired', 'LIKE', '%' . $search . '%')
-                        ->orWhere('IsalesMargin', 'LIKE', '%' . $search . '%')
-                        ->orWhere('IsalesMarginPercentage', 'LIKE', '%' . $search . '%')
-                        ->orWhere('Remarks', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('paymentterms', function ($q) use ($search) {
-                        $q->where('Name', 'LIKE', '%' . $search . '%');
-                    });
-            })
-            ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
-            ->leftJoin('pricerequestproducts', 'pricerequestproducts.PriceRequestFormId', '=', 'pricerequestforms.id')
-            ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
-            ->select('pricerequestforms.*', 'pricerequestproducts.*', 'products.*') // Select the necessary fields
-            ->orderBy($sort, $direction); // Fetch the data
+        // Build the query
+        $query = PriceMonitoring::with([
+            'primarySalesPerson:user_id,full_name', 
+            'client:id,name', 
+            'priceRequestProduct:id,ProductId,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
+            'paymentterms:id,Name',
+            'products:ProductId,code'
+        ])
+        ->leftJoin('pricerequestproducts', 'pricerequestproducts.PriceRequestFormId', '=', 'pricerequestforms.id')
+        ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
+        ->leftJoin('clientpaymentterms', 'clientpaymentterms.id', '=', 'pricerequestforms.PaymentTermId')
+        ->leftJoin('users as primarySalesPerson', 'primarySalesPerson.id', '=', 'pricerequestforms.PrimarySalesPersonId')
+        ->leftJoin('clientcompanies as client', 'client.id', '=', 'pricerequestforms.ClientId')
+        ->select('pricerequestforms.*', 'pricerequestproducts.*', 'products.*', 'clientpaymentterms.Name as PaymentTermName')
+        ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
+        ->where(function ($query) use ($search) {
+            $query->where('pricerequestforms.DateRequested', 'LIKE', "%$search%")
+                ->orWhere('pricerequestforms.PrfNumber', 'LIKE', "%$search%")
+                ->orWhere('pricerequestforms.ShipmentTerm', 'LIKE', "%$search%")
+                ->orWhereHas('products', function ($q) use ($search) {
+                    $q->where('code', 'LIKE', "%$search%");
+                })
+                ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
+                    $q->where('full_name', 'LIKE', "%$search%");
+                })
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', "%$search%");
+                })
+                ->orWhereHas('priceRequestProduct', function ($q) use ($search) {
+                    $q->where('ProductRmc', 'LIKE', "%$search%")
+                    ->orWhere('IsalesOfferedPrice', 'LIKE', "%$search%")
+                    ->orWhere('QuantityRequired', 'LIKE', "%$search%")
+                    ->orWhere('IsalesMargin', 'LIKE', "%$search%")
+                    ->orWhere('IsalesMarginPercentage', 'LIKE', "%$search%")
+                    ->orWhere('Remarks', 'LIKE', "%$search%");
+                })
+                ->orWhereHas('paymentterms', function ($q) use ($search) {
+                    $q->where('Name', 'LIKE', "%$search%");
+                });
+        })        
+        ->when($filterDate, function ($query) use ($filterDate) {
+            return $query->where('pricerequestforms.DateRequested', 'LIKE', '%' . $filterDate . '%');
+        })
+        ->when($filterPRF, function ($query) use ($filterPRF) {
+            return $query->where('pricerequestforms.PrfNumber', 'LIKE', '%' . $filterPRF . '%');
+        })
+        ->when($filterAccount, function ($query) use ($filterAccount) {
+            return $query->where('primarySalesPerson.full_name', 'LIKE', '%' . $filterAccount . '%');
+        })
+        ->when($filterClient, function ($query) use ($filterClient) {
+            return $query->where('client.name', 'LIKE', '%' . $filterClient . '%');
+        })
+        ->when($filterProduct, function ($query) use ($filterProduct) {
+            return $query->where('products.code', 'LIKE', '%' . $filterProduct . '%');
+        })
+        ->when($filterRMC, function ($query) use ($filterRMC) {
+            return $query->where('pricerequestproducts.ProductRmc', 'LIKE', '%' . $filterRMC . '%');
+        })
+        ->when($filterOffered, function ($query) use ($filterOffered) {
+            return $query->where('pricerequestproducts.IsalesOfferedPrice', 'LIKE', '%' . $filterOffered . '%');
+        })
+        ->when($filterShipment, function ($query) use ($filterShipment) {
+            return $query->where('pricerequestforms.ShipmentTerm', 'LIKE', '%' . $filterShipment . '%');
+        })
+        ->when($filterPayment, function ($query) use ($filterPayment) {
+            return $query->where('paymentterms.Name', 'LIKE', '%' . $filterPayment . '%'); // Ensure correct column name
+        })
+        ->when($filterQuantity, function ($query) use ($filterQuantity) {
+            return $query->where('pricerequestproducts.QuantityRequired', 'LIKE', '%' . $filterQuantity . '%');
+        })
+        ->when($filterMargin, function ($query) use ($filterMargin) {
+            return $query->where('pricerequestproducts.IsalesMargin', 'LIKE', '%' . $filterMargin . '%');
+        })
+        ->when($filterPercentMargin, function ($query) use ($filterPercentMargin) {
+            return $query->where('pricerequestproducts.IsalesMarginPercentage', 'LIKE', '%' . $filterPercentMargin . '%');
+        })
+        ->when($filterTotalMargin, function ($query) use ($filterTotalMargin) {
+            return $query->where('pricerequestproducts.IsalesMargin', 'LIKE', '%' . $filterTotalMargin . '%');
+        })
+        ->when($filterAccepted, function ($query) use ($filterAccepted) {
+            return $query->where('pricerequestforms.IsAccepted', 'LIKE', '%' . $filterAccepted . '%');
+        })
+        ->when($filterRemarks, function ($query) use ($filterRemarks) {
+            return $query->where('pricerequestforms.Remarks', 'LIKE', '%' . $filterRemarks . '%');
+        })
+        ->orderBy($sort, $direction);
 
-        // You can then further filter or process the data as needed.
-
-            // ->when($sort, function ($query) use ($sort, $direction) {
-            //     if ($sort == 'PrimarySalesPersonId') {
-            //         $query->orderBy('PrimarySalesPersonId', $direction);
-            //     } elseif ($sort == 'ClientId') {
-            //         $query->orderBy('ClientId', $direction);
-            //     } elseif ($sort == 'ProductCode') {
-            //         $query->orderBy('products.code', $direction);
-            //     } elseif ($sort == 'PaymentTermId') {
-            //         $query->orderBy('PaymentTermId', $direction);
-            //     } else {
-            //         $query->orderBy($sort, $direction);
-            //     }
-            // });
-        
-        // $priceRequests = $query->get();   
-        // dd($priceRequests->take(1));
-        // Apply Filters
-        if ($request->filled('filter_date')) {
-            $query->whereDate('DateRequested', $request->filter_date);
-        }
-        
-        if ($request->filled('filter_account_manager')) {
-            $query->where('PrimarySalesPersonId', $request->filter_account_manager);
-        }
-        
-        if ($request->filled('filter_client')) {
-            $query->where('ClientId', $request->filter_client);
-        }        
-
+        // Fetch all data or paginate
         if ($fetchAll) {
-            return response()->json($query->get());
+            $priceRequests = $query->get();
         } else {
-            $priceRequests = $query->paginate($entries);        
-
-            // Cache or reuse these results if possible
-            $allIds = PriceMonitoring::pluck('id')->unique();
-
-            // Use these optimized queries
-            $allDates = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('DateRequested')->unique()->sort()->values();
-            $allPrf = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('PrfNumber')->unique()->sort()->values();
-            $allPrimarySalesPersons = User::whereIn('users.user_id', PriceMonitoring::pluck('PrimarySalesPersonId')->unique())
-                ->pluck('full_name', 'users.user_id')
-                ->sort();
-            $allClients = Client::whereIn('id', PriceMonitoring::pluck('ClientId')->unique())
-                ->pluck('Name', 'id')
-                ->sort();
-            $allProducts = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->join('products', 'pricerequestproducts.ProductId', '=', 'products.id') 
-                ->distinct()
-                ->pluck('products.code'); 
-            $allProductRmc = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->distinct()
-                ->pluck('ProductRmc')
-                ->sort()
-                ->values();
-            $allOfferedPrice = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->distinct()
-                ->pluck('IsalesOfferedPrice')
-                ->sort()
-                ->values();
-            $allMargin = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->pluck('IsalesMargin')
-                ->sort()
-                ->values();
-            $allPercentMargin = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->pluck('IsalesMarginPercentage')
-                ->sort()
-                ->values();
-            $totalMargins = PriceRequestProduct::all()->map(function($priceRequest) {
-                return number_format($priceRequest->QuantityRequired * $priceRequest->IsalesMargin, 2);
-            })->unique()->sort();
-            $allShipments = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('ShipmentTerm')->unique()->sort()->values();
-            $allPayments = PaymentTerms::whereIn('clientpaymentterms.id', PriceMonitoring::pluck('PaymentTermId')->unique())
-                ->pluck('Name', 'clientpaymentterms.id')
-                ->sort();
-            $allQuantity = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->distinct()
-                ->pluck('QuantityRequired')
-                ->sort()
-                ->values();
-            $allAccepted = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('IsAccepted')->unique()->sort()->values();
-            $allRemarks = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('Remarks')->unique()->sort()->values();
-            
-            return view('reports.price_summary', compact(
-                'search', 'priceRequests', 'entries', 'fetchAll', 'sort', 'direction',
-                'allPrimarySalesPersons', 'allProductRmc', 'allDates', 'allClients','allShipments', 'allPayments', 'allQuantity', 'allAccepted', 'allRemarks', 'allProducts', 'allOfferedPrice', 'allMargin', 'allPercentMargin', 'totalMargins', 'allPrf', 'from', 'to'
-            ));
+            $priceRequests = $query->paginate($entries);
         }
+        // dd($priceRequests);
+        $allIds = PriceMonitoring::pluck('id')->unique();
+
+        // Use these optimized queries
+        $allDates = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('DateRequested')->unique()->sort()->values();
+        $allPrf = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('PrfNumber')->unique()->sort()->values();
+        $allPrimarySalesPersons = User::whereIn('users.user_id', PriceMonitoring::pluck('PrimarySalesPersonId')->unique())->pluck('full_name')->unique()->sort()->values();
+        $allClients = Client::whereIn('id', PriceMonitoring::pluck('ClientId')->unique())->pluck('name')->unique();
+        $allProducts = Product::whereIn('id', PriceRequestProduct::pluck('ProductId')->unique())->pluck('code')->unique();
+        // dd($allProducts);
+        $allRmc = PriceRequestProduct::pluck('ProductRmc')->unique()->sort()->values();
+        $allOffered = PriceRequestProduct::pluck('IsalesOfferedPrice')->unique()->sort()->values();
+        $allShipment = PriceMonitoring::pluck('ShipmentTerm')->unique()->sort()->values();
+        $allPayment = PaymentTerms::pluck('Name')->unique()->sort()->values();
+        $allQuantity = PriceRequestProduct::pluck('QuantityRequired')->unique()->sort()->values();
+        $allMargin = PriceRequestProduct::pluck('IsalesMargin')->unique()->sort()->values();
+        $allPercentMargin = PriceRequestProduct::pluck('IsalesMarginPercentage')->unique()->sort()->values();
+        $allTotalMargin = PriceRequestProduct::pluck('IsalesMargin')->unique()->sort()->values();
+        $allAccepted = PriceMonitoring::pluck('IsAccepted')->unique()->sort()->values();
+        $allRemarks = PriceMonitoring::pluck('Remarks')->unique()->sort()->values();
+
+        return view('reports.price_summary', compact(
+            'search', 'priceRequests', 'entries', 'fetchAll', 'sort', 'direction', 'allDates', 'allPrf',
+            'allPrimarySalesPersons', 'allClients', 'allProducts', 'allRmc',
+            'allOffered', 'allMargin', 'allPercentMargin', 'allShipment',
+            'allPayment', 'allQuantity', 'allTotalMargin', 'allAccepted', 'allRemarks', 'from', 'to'
+        ));
+        
     }
 
     // Export Price Requests
@@ -288,7 +300,7 @@ class ReportsController extends Controller
                 'Client' => $item->client->name ?? 'N/A',
                 'ProductCode' => $item->code ?? 'N/A',
                 'ProductRmc' => $item->ProductRmc ?? 'N/A',
-                'OfferedPrice' => $item->IsalesOfferedPrice ?? 'N/A',
+                'OfferedPrice' => $item->IsalesOfferedPrice ?? '0',
                 'QuantityRequired' => $item->QuantityRequired ?? 'N/A',
                 'Margin' => $item->IsalesMargin ?? 'N/A',
                 'MarginPercentage' => $item->IsalesMarginPercentage ?? 'N/A',
@@ -653,6 +665,15 @@ class ReportsController extends Controller
         $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
         $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
 
+        $filterType = $request->input('filter_type');
+        $filterTransactionNumber = $request->input('filter_transaction_number');
+        $filterBDE = $request->input('filter_bde');
+        $filterClient = $request->input('filter_client');
+        $filterDateCreated = $request->input('filter_date_created');
+        $filterDueDate = $request->input('filter_due_date');
+        $filterStatus = $request->input('filter_status');
+        $filterProgress = $request->input('filter_progress');
+
         // Ensure sort and direction are valid
         $validSorts = ['status', 'client', 'transaction_number', 'date_created'];
         if (!in_array($sort, $validSorts)) {
@@ -698,7 +719,31 @@ class ReportsController extends Controller
                         ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
                         ->orWhere(DB::raw("'Customer Requirement'"), 'LIKE', '%' . $search . '%');
                 })
-                ->whereBetween('customerrequirements.DateCreated', [$from, $to]);
+                ->whereBetween('customerrequirements.DateCreated', [$from, $to])
+                    ->when($filterType, function ($query) use ($filterType) {
+                        return $query->where(DB::raw("'Customer Requirement'"), '=', $filterType);
+                    })
+                    ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
+                        return $query->where('customerrequirements.CrrNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
+                    })
+                    ->when($filterBDE, function ($query) use ($filterBDE) {
+                        return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
+                    })
+                    ->when($filterClient, function ($query) use ($filterClient) {
+                        return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
+                    })
+                    ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
+                        return $query->where('customerrequirements.DateCreated', 'LIKE', '%' . $filterDateCreated . '%');
+                    })
+                    ->when($filterDueDate, function ($query) use ($filterDueDate) {
+                        return $query->where('customerrequirements.DueDate', 'LIKE', '%' . $filterDueDate . '%');
+                    })
+                    ->when($filterStatus, function ($query) use ($filterStatus) {
+                        return $query->where('customerrequirements.Status', 'LIKE', '%' . $filterStatus . '%');
+                    })
+                    ->when($filterProgress, function ($query) use ($filterProgress) {
+                        return $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%');
+                    });
 
         $srf_data = SampleRequest::select(
                     DB::raw("'Sample Request' as type"),
@@ -864,6 +909,14 @@ class ReportsController extends Controller
                                 ->union($rpe_data)
                                 ->union($price_data)
                                 ->union($act_data);
+
+        $transactionNumbers = $combined_query->pluck('transaction_number')->unique();
+        $uniqueBde = $combined_query->distinct()->pluck('bde')->unique();
+        $uniqueClient = $combined_query->distinct()->pluck('client')->unique();
+        $uniqueDateCreated = $combined_query->distinct()->pluck('date_created')->unique();
+        $uniqueDueDate = $combined_query->distinct()->pluck('due_date')->unique();
+        $uniqueStatus = $combined_query->distinct()->pluck('status')->unique();
+        $uniqueProgress = $combined_query->distinct()->pluck('progress')->unique();
 
         // Apply sorting
         $query = DB::table(DB::raw("({$combined_query->toSql()}) as combined"))

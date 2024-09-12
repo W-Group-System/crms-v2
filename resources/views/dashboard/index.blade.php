@@ -50,6 +50,15 @@
                             </h5>
                             <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
                         </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>PRF</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
+                                    
+                                </a>
+                            </h5>
+                            <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
+                        </div>
                     </div>
                 </div>
                 <div class="card">
