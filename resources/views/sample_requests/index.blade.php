@@ -117,6 +117,8 @@
                                         Open
                                     @elseif($srf->Status == 30)
                                         Closed
+                                    @elseif($srf->Status == 50)
+                                        Cancelled
                                     @else
                                         {{ $srf->Status }}
                                     @endif
