@@ -428,10 +428,10 @@
         newRow.find('.deleteRowBtn').removeAttr('hidden');
     }
 
-    $(document).on('click', '#addProductRowBtn', function() {
-        addProductRow();
-        $('#addProductRowBtn').hide(); 
-    });
+    // $(document).on('click', '#addProductRowBtn', function() {
+    //     addProductRow();
+    //     $('#addProductRowBtn').hide(); 
+    // });
     $(document).on('click', '.addProductRowBtn', function() {
         addProductRow();
     });
