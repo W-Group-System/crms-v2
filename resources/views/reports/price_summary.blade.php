@@ -112,6 +112,7 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'IsalesOfferedPrice' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
                             </th>
+                            <th>Selling Price</th>
                             <th>
                                 Shipment Term
                                 <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'ShipmentTerm', 'direction' => request('sort') == 'ShipmentTerm' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
@@ -165,6 +166,18 @@
                     <tbody>
                         @if($priceRequests->count() > 0)
                             @foreach($priceRequests as $price_request)
+                                @php
+                                    $total = collect([
+                                        $price_request->ProductRmc,
+                                        $price_request->LsalesDirectLabor,
+                                        $price_request->LsalesFactoryOverhead,
+                                        $price_request->LsalesDeliveryCost,
+                                        $price_request->LsalesGaeValue,
+                                        $price_request->OtherCostRequirements,
+                                        $price_request->LsalesBlendingLoss,
+                                        $price_request->LsalesMarkupValue
+                                    ])->filter()->sum();
+                                @endphp
                                 <tr>
                                     <td>{{date('M. d, Y', strtotime($price_request->DateRequested))}}</td>
                                     <td>{{ $price_request->PrfNumber }} </td>
@@ -173,6 +186,7 @@
                                     <td>{{ $price_request->code }}</td>
                                     <td>{{ $price_request->ProductRmc }}</td>
                                     <td>{{ $price_request->IsalesOfferedPrice ?? 'N/A' }}</td>
+                                    <td>{{ number_format($total, 2) }}</td>
                                     <td>{{ $price_request->ShipmentTerm ?? 'N/A' }}</td>
                                     <td>{{ $price_request->paymentterms->Name ?? 'N/A' }}</td>
                                     <td>{{ $price_request->QuantityRequired ?? 'N/A' }}</td>
@@ -198,124 +212,125 @@
                     <tfoot>
                         <tr>
                             <th>
-                                <select id="filter-date" class="form-control js-example-basic-single">
+                                <select id="filter-date" name="filter_date" class="form-control js-example-basic-single">
                                     <option value="">Select Date</option>
                                     @foreach($allDates as $date)
-                                        <option value="{{ $date }}" {{ request('filter_date') == $date ? 'selected' : '' }}>{{ $date }}</option>
+                                        <option value="{{ $date }}">{{ $date }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-prf" class="form-control js-example-basic-single">
-                                    <option value="">Select Account Manager</option>
+                                <select id="filter-prf" name="filter_prf" class="form-control js-example-basic-single">
+                                    <option value="">Select PRF</option>
                                     @foreach($allPrf as $prf)
-                                        <option value="{{ $prf }}" {{ request('filter_prf') == $prf ? 'selected' : '' }}>{{ $prf }}</option>
+                                        <option value="{{ $prf }}">{{ $prf }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-account-manager" class="form-control js-example-basic-single">
+                                <select id="filter-account-manager" name="filter_account_manager" class="form-control js-example-basic-single">
                                     <option value="">Select Account Manager</option>
-                                    @foreach($allPrimarySalesPersons as $id => $name)
-                                        <option value="{{ $id }}" {{ request('filter_account_manager') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                    @foreach($allPrimarySalesPersons as $primaryName)
+                                        <option value="{{ $primaryName }}">{{ $primaryName }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-client" class="form-control js-example-basic-single">
+                                <select id="filter-client" name="filter_client" class="form-control js-example-basic-single">
                                     <option value="">Select Client</option>
-                                    @foreach($allClients as $id => $name)
-                                        <option value="{{ $id }}" {{ request('filter_client') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                    @foreach($allClients as $name)
+                                        <option value="{{ $name }}">{{ $name }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-product" class="form-control js-example-basic-single">
+                                <select id="filter-product" name="filter_product" class="form-control js-example-basic-single">
                                     <option value="">Select Product</option>
-                                    @foreach($allProducts as $id => $name)
-                                        <option value="{{ $id }}" {{ request('filter_product') == $id ? '' : '' }}>{{ $name }}</option>
+                                    @foreach($allProducts as $name)
+                                        <option value="{{ $name }}">{{ $name }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-rmc" class="form-control js-example-basic-single">
+                                <select id="filter-rmc" name="filter_rmc" class="form-control js-example-basic-single">
                                     <option value="">Select RMC</option>
-                                    @foreach($allProductRmc as $rmc)
-                                        <option value="{{ $rmc }}" {{ request('filter_rmc') == $rmc ? 'selected' : '' }}>{{ $rmc }}</option>
+                                    @foreach($allRmc as $rmc)
+                                        <option value="{{ $rmc }}">{{ $rmc }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-offered" class="form-control js-example-basic-single">
+                                <select id="filter-offered" name="filter_offered" class="form-control js-example-basic-single">
                                     <option value="">Select Offered</option>
-                                    @foreach($allOfferedPrice as $offered)
-                                        <option value="{{ $offered }}" {{ request('filter_offered') == $offered ? 'selected' : '' }}>{{ $offered }}</option>
+                                    @foreach($allOffered as $offered)
+                                        <option value="{{ $offered }}">{{ $offered }}</option>
                                     @endforeach
                                 </select>
                             </th>
+                            <th></th>
                             <th>
-                                <select id="filter-shipment" class="form-control js-example-basic-single">
+                                <select id="filter-shipment" name="filter_shipment" class="form-control js-example-basic-single">
                                     <option value="">Select Shipment</option>
-                                    @foreach($allShipments as $shipment)
-                                        <option value="{{ $shipment }}" {{ request('filter_shipment') == $shipment ? '' : '' }}>{{ $shipment ?? 'N/A'}}</option>
+                                    @foreach($allShipment as $shipment)
+                                        <option value="{{ $shipment }}">{{ $shipment ?? 'N/A'}}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-payment" class="form-control js-example-basic-single">
+                                <select id="filter-payment" name="filter_payment" class="form-control js-example-basic-single">
                                     <option value="">Select Payment</option>
-                                    @foreach($allPayments as $id => $name)
-                                        <option value="{{ $id }}" {{ request('filter_payment') == $id ? 'selected' : '' }}>{{ $name }}</option>
+                                    @foreach($allPayment as $id => $name)
+                                        <option value="{{ $id }}">{{ $name }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-quantity" class="form-control js-example-basic-single">
+                                <select id="filter-quantity" name="filter_quantity" class="form-control js-example-basic-single">
                                     <option value="">Select Quantity</option>
                                     @foreach($allQuantity as $quantity)
-                                        <option value="{{ $quantity }}" {{ request('filter_quantity') == $quantity ? '' : '' }}>{{ $quantity }}</option>
+                                        <option value="{{ $quantity }}">{{ $quantity }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-margin" class="form-control js-example-basic-single">
+                                <select id="filter-margin" name="filter_margin" class="form-control js-example-basic-single">
                                     <option value="">Select Margin</option>
                                     @foreach($allMargin as $margin)
-                                        <option value="{{ $margin }}" {{ request('filter_margin') == $margin ? '' : '' }}>{{ $margin }}</option>
+                                        <option value="{{ $margin }}">{{ $margin }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-percent-margin" class="form-control js-example-basic-single">
+                                <select id="filter-percent-margin" name="filter_percent_margin" class="form-control js-example-basic-single">
                                     <option value="">Select % Margin</option>
                                     @foreach($allPercentMargin as $percent_margin)
-                                        <option value="{{ $percent_margin }}" {{ request('filter_margin') == $percent_margin ? '' : '' }}>{{ $percent_margin }}</option>
+                                        <option value="{{ $percent_margin }}">{{ $percent_margin }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-total-margin" class="form-control js-example-basic-single">
+                                <select id="filter-total-margin" name="filter_total_margin" class="form-control js-example-basic-single">
                                     <option value="">Select Total Margin</option>
-                                    @foreach($totalMargins as $total_margin)
-                                        <option value="{{ $total_margin }}" {{ request('filter_total_margin') == $total_margin ? '' : '' }}>{{ $total_margin }}</option>
+                                    @foreach($allTotalMargin as $total_margin)
+                                        <option value="{{ $total_margin }}">{{ $total_margin }}</option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-accepted" class="form-control js-example-basic-single">
+                                <select id="filter-accepted" name="filter_accepted" class="form-control js-example-basic-single">
                                     <option value="">Select</option>
                                     @foreach($allAccepted as $accept)
-                                        <option value="{{ $accept }}" {{ request('filter_accepted') == $accept ? '' : '' }}>
+                                        <option value="{{ $accept }}">
                                             {{ $accept == 0 ? 'NO' : 'YES' }}
                                         </option>
                                     @endforeach
                                 </select>
                             </th>
                             <th>
-                                <select id="filter-remarks" class="form-control js-example-basic-single">
+                                <select id="filter-remarks" name="filter_remarks" class="form-control js-example-basic-single">
                                     <option value="">Select Remarks</option>
                                     @foreach($allRemarks as $remark)
-                                        <option value="{{ $remark }}" {{ request('filter_remarks') == $remark ? '' : '' }}>{{ $remark ?? 'N/A '}}</option>
+                                        <option value="{{ $remark }}">{{ $remark ?? 'N/A '}}</option>
                                     @endforeach
                                 </select>
                             </th>
@@ -491,27 +506,74 @@
             });
         });
 
-        $('#filter-date, #filter-account-manager, #filter-client, #filter-product, #filter-rmc, #filter-shipment, #filter-payment, #filter-accepted, #filter-quantity, #filter-offered, #filter-margin, #filter-percent-margin, #filter-total-margin, #filter-prf').on('change', function() {
-            var filters = {
-                filter_date: $('#filter-date').val(),
-                filter_prf: $('#filter-prf').val(),
-                filter_account_manager: $('#filter-account-manager').val(),
-                filter_client: $('#filter-client').val(),
-                filter_product: $('#filter-product').val(),
-                filter_offered: $('#filter-offered').val(),
-                filter_margin: $('#filter-margin').val(),
-                filter_percent_margin: $('#filter-percent-margin').val(),
-                filter_total_margin: $('#filter-total-margin').val(),
-                filter_rmc: $('#filter-rmc').val(),
-                filter_shipment: $('#filter-shipment').val(),
-                filter_payment: $('#filter-payment').val(),
-                filter_quantity: $('#filter-quantity').val(),
-                filter_remarks: $('#filter-remarks').val(),
-                filter_accepted: $('#filter-accepted').val(),
-            };
+        // $('#filter-date, #filter-account-manager, #filter-client, #filter-product, #filter-rmc, #filter-shipment, #filter-payment, #filter-accepted, #filter-quantity, #filter-offered, #filter-margin, #filter-percent-margin, #filter-total-margin, #filter-prf').on('change', function() {
+        //     var filters = {
+        //         filter_date: $('#filter-date').val(),
+        //         filter_prf: $('#filter-prf').val(),
+        //         filter_account_manager: $('#filter-account-manager').val(),
+        //         filter_client: $('#filter-client').val(),
+        //         filter_product: $('#filter-product').val(),
+        //         filter_offered: $('#filter-offered').val(),
+        //         filter_margin: $('#filter-margin').val(),
+        //         filter_percent_margin: $('#filter-percent-margin').val(),
+        //         filter_total_margin: $('#filter-total-margin').val(),
+        //         filter_rmc: $('#filter-rmc').val(),
+        //         filter_shipment: $('#filter-shipment').val(),
+        //         filter_payment: $('#filter-payment').val(),
+        //         filter_quantity: $('#filter-quantity').val(),
+        //         filter_remarks: $('#filter-remarks').val(),
+        //         filter_accepted: $('#filter-accepted').val(),
+        //     };
 
-            // Build the query string and redirect
-            window.location.href = "{{ route('reports.price_request') }}?" + $.param(filters);
+        //     // Build the query string and redirect
+        //     window.location.href = "{{ route('reports.price_request') }}?" + $.param(filters);
+        // });
+
+        // Function to handle filter changes
+        function applyPriceFilters() {
+            const filterDate = $('#filter-date').val();
+            const filterPRF = $('#filter-prf').val();
+            const filterAccount = $('#filter-account-manager').val();
+            const filterClient = $('#filter-client').val();
+            const filterProduct = $('#filter-product').val();
+            const filterRMC = $('#filter-rmc').val();
+            const filterOffered = $('#filter-offered').val();
+            const filterShipment = $('#filter-shipment').val();
+            const filterPayment = $('#filter-payment').val();
+            const filterQuantity = $('#filter-quantity').val();
+            const filterMargin = $('#filter-margin').val();
+            const filterPercentMargin = $('#filter-percent-margin').val();
+            const filterTotalMargin = $('#filter-total-margin').val();
+            const filterAccepted = $('#filter-accepted').val();
+            const filterRemarks = $('#filter-remarks').val();
+            
+            // Build query string based on filters
+            const queryParams = new URLSearchParams({
+                filter_date: filterDate,
+                filter_prf: filterPRF,
+                filter_account_manager: filterAccount,
+                filter_client: filterClient,
+                filter_product: filterProduct,
+                filter_rmc: filterRMC,
+                filter_offered: filterOffered,
+                filter_shipment: filterShipment,
+                filter_payment: filterPayment,
+                filter_quantity: filterQuantity,
+                filter_margin: filterMargin,
+                filter_percent_margin: filterPercentMargin,
+                filter_total_margin: filterTotalMargin,
+                filter_accepted: filterAccepted,
+                filter_remarks: filterRemarks,
+                // Add other filters here if needed
+            }).toString();
+
+            // Redirect to the filtered URL
+            window.location.search = queryParams;
+        }
+
+        // Attach event handlers
+        $('#filter-date, #filter-account-manager, #filter-client, #filter-product, #filter-rmc, #filter-shipment, #filter-payment, #filter-accepted, #filter-quantity, #filter-offered, #filter-margin, #filter-percent-margin, #filter-total-margin, #filter-prf').on('change keyup', function() {
+            applyPriceFilters();
         });
 
     });

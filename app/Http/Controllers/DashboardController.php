@@ -45,7 +45,7 @@ class DashboardController extends Controller
         $totalActivitiesCount = $openActivitiesCount + $closedActivitiesCount;
 
         // Customer Requirement
-        function countCustomerRequirements($userId, $userByUser, $field, $value) {
+        function countCustomerRequirements($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null ) {
             return CustomerRequirement::where(function($query) use ($userId, $userByUser) {
                     $query->where('PrimarySalesPersonId', $userId)
                         ->orWhere('SecondarySalesPersonId', $userId)
@@ -53,19 +53,22 @@ class DashboardController extends Controller
                         ->orWhere('SecondarySalesPersonId', $userByUser);
                 })
                 ->where($field, $value)
+                ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
+                    return $query->where($excludeField, '!=', $excludeValue);
+                })
                 ->count();
         }
         
         // Get counts for different statuses and progress stages
         $crrCancelled = countCustomerRequirements($userId, $userByUser, 'Status', '50');
-        $crrSalesApproval = countCustomerRequirements($userId, $userByUser, 'Progress', '10');
-        $crrSalesApproved = countCustomerRequirements($userId, $userByUser, 'Progress', '20');
-        $crrSalesAccepted = countCustomerRequirements($userId, $userByUser, 'Progress', '70');
-        $crrRnDOngoing = countCustomerRequirements($userId, $userByUser, 'Progress', '50');
-        $crrRnDPending = countCustomerRequirements($userId, $userByUser, 'Progress', '55');
-        $crrRnDInitial = countCustomerRequirements($userId, $userByUser, 'Progress', '57');
-        $crrRnDFinal = countCustomerRequirements($userId, $userByUser, 'Progress', '81');
-        $crrRnDCompleted = countCustomerRequirements($userId, $userByUser, 'Progress', '60');
+        $crrSalesApproval = countCustomerRequirements($userId, $userByUser, 'Progress', '10', 'Status', 50);
+        $crrSalesApproved = countCustomerRequirements($userId, $userByUser, 'Progress', '20', 'Status', 50);
+        $crrSalesAccepted = countCustomerRequirements($userId, $userByUser, 'Progress', '70', 'Status', 50);
+        $crrRnDOngoing = countCustomerRequirements($userId, $userByUser, 'Progress', '50', 'Status', 50);
+        $crrRnDPending = countCustomerRequirements($userId, $userByUser, 'Progress', '55', 'Status', 50);
+        $crrRnDInitial = countCustomerRequirements($userId, $userByUser, 'Progress', '57', 'Status', 50);
+        $crrRnDFinal = countCustomerRequirements($userId, $userByUser, 'Progress', '81', 'Status', 50);
+        $crrRnDCompleted = countCustomerRequirements($userId, $userByUser, 'Progress', '60', 'Status', 50);
 
         $totalCRRCount = $crrCancelled + $crrSalesApproval + $crrSalesApproved + $crrSalesAccepted + $crrRnDOngoing + $crrRnDPending + $crrRnDInitial + $crrRnDFinal + $crrRnDCompleted;
 
@@ -95,7 +98,7 @@ class DashboardController extends Controller
         $totalRPECount = $rpeCancelled + $rpeSalesApproval + $rpeSalesApproved + $rpeSalesAccepted + $rpeRnDOngoing + $rpeRnDPending + $rpeRnDInitial + $rpeRnDFinal + $rpeRnDCompleted;
         
         // Sample Request  
-        function countSampleRequest($userId, $userByUser, $field, $value) {
+        function countSampleRequest($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
             return SampleRequest::where(function($query) use ($userId, $userByUser) {
                     $query->where('PrimarySalesPersonId', $userId)
                         ->orWhere('SecondarySalesPersonId', $userId)
@@ -103,18 +106,21 @@ class DashboardController extends Controller
                         ->orWhere('SecondarySalesPersonId', $userByUser);
                 })
                 ->where($field, $value)
+                ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
+                    return $query->where($excludeField, '==', $excludeValue);
+                })
                 ->count();
         }
 
         $srfCancelled = countSampleRequest($userId, $userByUser, 'Status', '50');
-        $srfSalesApproval = countSampleRequest($userId, $userByUser, 'Progress', '10');
-        $srfSalesApproved = countSampleRequest($userId, $userByUser, 'Progress', '20');
-        $srfSalesAccepted = countSampleRequest($userId, $userByUser, 'Progress', '70');
-        $srfRnDOngoing = countSampleRequest($userId, $userByUser, 'Progress', '50');
-        $srfRnDPending = countSampleRequest($userId, $userByUser, 'Progress', '55');
-        $srfRnDInitial = countSampleRequest($userId, $userByUser, 'Progress', '57');
-        $srfRnDFinal = countSampleRequest($userId, $userByUser, 'Progress', '81');
-        $srfRnDCompleted = countSampleRequest($userId, $userByUser, 'Progress', '60');
+        $srfSalesApproval = countSampleRequest($userId, $userByUser, 'Progress', '10', 'Status', '50');
+        $srfSalesApproved = countSampleRequest($userId, $userByUser, 'Progress', '20', 'Status', '50');
+        $srfSalesAccepted = countSampleRequest($userId, $userByUser, 'Progress', '70', 'Status', '50');
+        $srfRnDOngoing = countSampleRequest($userId, $userByUser, 'Progress', '50', 'Status', '50');
+        $srfRnDPending = countSampleRequest($userId, $userByUser, 'Progress', '55', 'Status', '50');
+        $srfRnDInitial = countSampleRequest($userId, $userByUser, 'Progress', '57', 'Status', '50');
+        $srfRnDFinal = countSampleRequest($userId, $userByUser, 'Progress', '81', 'Status', '50');
+        $srfRnDCompleted = countSampleRequest($userId, $userByUser, 'Progress', '60', 'Status', '50');
 
         $totalSRFCount = $srfCancelled + $srfSalesApproval + $srfSalesApproved + $srfSalesAccepted + $srfRnDOngoing + $srfRnDPending + $srfRnDInitial + $srfRnDFinal + $srfRnDCompleted;
 
