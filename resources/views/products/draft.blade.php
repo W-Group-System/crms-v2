@@ -90,7 +90,12 @@
                                     <a href="{{url('view_draft_product/'.$p->id)}}">{{$p->code}}</a>
                                 </td>
                                 <td>
-                                    {{isset($p->userByUserId->full_name)? $p->userByUserId->full_name : $p->userById->full_name}}
+                                    {{-- {{isset($p->userByUserId->full_name)? $p->userByUserId->full_name : $p->userById->full_name}} --}}
+                                    @if($p->userByUserId)
+                                    {{$p->userByUserId->full_name}}
+                                    @elseif($p->userById)
+                                    {{$p->userById->full_name}}
+                                    @endif
                                 </td>
                                 <td>{{date('M d, Y', strtotime($p->created_at))}}</td>
                             </tr>

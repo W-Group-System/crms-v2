@@ -6,6 +6,7 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Evaluation List
             <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
+            @include('product_evaluations.create')
             </h4>
             <div class="form-group">
                 <form method="GET" onsubmit="show()">
@@ -87,7 +88,7 @@
                                 <td align="center">
                                     <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
 
-                                    <button type="button" class="btn btn-sm btn-warning editBtn" data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}">
+                                    <button type="button" class="btn btn-sm btn-warning editBtn" data-primarysales="{{$productEvaluation->PrimarySalesPersonId}}" data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}" data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif >
                                         <i class="ti-pencil"></i>
                                     </button>
 
@@ -105,8 +106,8 @@
                                 </td>
                                 <td>{{ $productEvaluation->DueDate }}</td>
                                 <td>{{ optional($productEvaluation->client)->Name }}</td>
-                                <td>{{optional($productEvaluation->client->clientregion)->Name}}</td>
-                                <td>{{optional($productEvaluation->client->clientcountry)->Name}}</td>
+                                <td>{{ optional(optional($productEvaluation->client)->clientregion)->Name }}</td>
+                                <td>{{ optional(optional($productEvaluation->client)->clientcountry)->Name }}</td>
                                 <td>
                                     @if($productEvaluation->primarySalesPerson)
                                     {{$productEvaluation->primarySalesPerson->full_name}}
@@ -141,6 +142,7 @@
                                 </td>
                                 <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
                             </tr>
+                            @include('product_evaluations.edit')
                             @endforeach
                         </tbody>
                     @else
@@ -163,7 +165,7 @@
                                 <td align="center">
                                     <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
 
-                                    <button type="button" class="btn btn-sm btn-warning editBtn" data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}">
+                                    <button type="button" class="btn btn-sm btn-warning editBtn" data-primarysales="{{$productEvaluation->PrimarySalesPersonId}}" data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}"  data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}">
                                         <i class="ti-pencil"></i>
                                     </button>
 
@@ -214,6 +216,7 @@
                                 </td>
                                 <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
                             </tr>
+                            @include('product_evaluations.edit')
                             @endforeach
                         </tbody>
                     @endif
@@ -237,12 +240,6 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
-
-@include('product_evaluations.create')
-@foreach ( $request_product_evaluations as $productEvaluation )
-@include('product_evaluations.edit')
-@endforeach
-
 <script>
     function confirmDelete(id) {
         Swal.fire({
@@ -287,40 +284,7 @@
             $(this).closest('form').submit()
         })
 
-        $("#addRpeBtn").on('click', function() {
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
 
-            refreshSecondaryApprovers(primarySales,"")
-        })
-
-        $(".editBtn").on('click', function() {
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
-            
-            var secondarySales = $(this).data('secondarysales');
-
-            refreshSecondaryApprovers(primarySales,secondarySales)
-        })
-
-        function refreshSecondaryApprovers(primarySales,secondarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                        $('[name="SecondarySalesPersonId"]').val(secondarySales) 
-                    }, 500);
-                }
-            })
-        }
         $(".table").tablesorter({
             theme : "bootstrap",
         })
@@ -356,6 +320,64 @@
                 showConfirmButton: false
             });
         });
+
+        
+        $("#addRpeBtn").on('click', function() {
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            
+            refreshSecondaryApprovers(primarySales)
+        })
+
+        $('.editBtn').on('click', function() {
+            var primarySales = $(this).data('primarysales')
+            var secondarySales = $(this).data('secondarysales');
+
+            console.log(primarySales);
+            
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                    }, 500);
+                }
+            })
+        })
+
+        $('[name="PrimarySalesPersonId"]').on('change', function() {
+            var primarySales = $(this).val();
+
+            refreshSecondaryApprovers(primarySales)
+        })
+
+        function refreshSecondaryApprovers(primarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                    }, 500);
+                }
+            })
+        }
     })
 </script>
 @endsection

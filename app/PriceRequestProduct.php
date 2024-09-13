@@ -38,5 +38,9 @@ class PriceRequestProduct extends Model
     {
         return $this->belongsTo(SrfProgress::class, 'Progress', 'id');
     }
+    public function gaeType()
+    {
+        return $this->belongsTo(PriceRequestGae::class, 'PriceRequestGaeId', 'id');
+    }
     
 }

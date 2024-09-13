@@ -142,7 +142,7 @@ class CustomerRequirementController extends Controller
                 }
             })
             ->get();
-        $users = User::all();
+        $users = User::where('is_active', 1)->get();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
 
@@ -160,6 +160,12 @@ class CustomerRequirementController extends Controller
     // Store
     public function store(Request $request)
     {
+        $request->validate([
+            'NatureOfRequestId' => 'required'
+        ], [
+            'NatureOfRequestId.required' => 'The Nature of Request is required.'
+        ]);
+
         $user = Auth::user(); 
         $type = "";
         $year = date('y');
@@ -370,7 +376,7 @@ class CustomerRequirementController extends Controller
         $product_applications = ProductApplication::get();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
-        $rnd_personnel = User::whereIn('department_id', [15, 42])->whereNotIn('id', [auth()->user()->id])->get();
+        $rnd_personnel = User::whereIn('department_id', [15, 42])->get();
         $refCode = $this->refCode();
         $unitOfMeasure = UnitOfMeasure::get();
 
@@ -842,6 +848,7 @@ class CustomerRequirementController extends Controller
     public function refreshUserApprover(Request $request)
     {
         $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        // dd($user);
         if ($user != null)
         {
             if($user->salesApproverById)

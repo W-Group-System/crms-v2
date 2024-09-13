@@ -10,6 +10,29 @@
             Role List
             <button type="button" class="btn btn-md btn-primary" id="add_role" data-toggle="modal" data-target="#formRole">Add Role</button>
             </h4>
+
+            <form method="GET" onsubmit="show()">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for=""><strong>Filter Department</strong></label>
+                        <select name="filter_department" class="form-control form-control-sm js-example-basic-single">
+                            <option disabled selected value>-Select Department-</option>
+                            @foreach ($department as $dpt)
+                            <option value="{{$dpt->id}}">{{$dpt->department_code.' - '.$dpt->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="">&nbsp;</label>
+                        <div class="form-group">
+                            <button class="btn btn-primary" type="submit">
+                                Filter 
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
             <div class="row">
                 <div class="col-lg-6">
                     <span>Showing</span>

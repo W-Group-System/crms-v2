@@ -17,7 +17,7 @@ use App\Http\Controllers\PriceMonitoringController;
 |
 */
 Auth::routes();
-
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/', 'DashboardController@index');
     Route::get('/dashboard','DashboardController@index');
@@ -223,6 +223,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('rpeFiles', 'RequestProductEvaluationController@uploadFile');
     Route::post('updateRpeFile/{id}', 'RequestProductEvaluationController@editFile');
     Route::delete('requestEvaluation/view/file-delete/{id}', 'RequestProductEvaluationController@deleteFile');
+    Route::post('update_rpe_sales_files/{id}', 'RequestProductEvaluationController@editsalesRpeFiles');
 
     Route::post('CancelRpe/{id}', 'RequestProductEvaluationController@CancelRpe');
     Route::post('CloseRpe/{id}', 'RequestProductEvaluationController@CloseRpe');
@@ -239,6 +240,8 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('ApproveRpe/{id}', 'RequestProductEvaluationController@approveRpeSales');
 
     Route::get('product_evaluation_export', 'RequestProductEvaluationController@export');
+
+    Route::post('refresh_user_approvers', 'RequestProductEvaluationController@refreshUserApprover');
 
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');

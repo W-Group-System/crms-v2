@@ -245,29 +245,29 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="Courier">Courier:</label>
-                        <input type="text" class="form-control" name="Courier" placeholder="Enter Courier" value="{{ old('Courier', $srf->Courier) }}" readonly>
+                        <input type="text" class="form-control" name="Courier" placeholder="Enter Courier" value="{{ old('Courier', $srf->Courier) }}" >
                     </div>
                     <div class="form-group">
                         <label for="AwbNumber">AWB Number:</label>
-                        <input type="text" class="form-control" name="AwbNumber" placeholder="Enter AWB Number" value="{{ old('AwbNumber', $srf->AwbNumber) }}" readonly>
+                        <input type="text" class="form-control" name="AwbNumber" placeholder="Enter AWB Number" value="{{ old('AwbNumber', $srf->AwbNumber) }}" >
                     </div>
                     <div class="form-group">
                         <label for="DateDispatched">Date Dispatched (MM/DD/YYYY):</label>
-                        <input type="date" class="form-control DateDispatched{{ $srf->Id  }}" name="DateDispatched" placeholder="Enter Date Dispatched" value="{{ old('DateDispatched', !empty($srf->DateDispatched) ? date('Y-m-d', strtotime($srf->DateDispatched)) : '') }}" readonly>
+                        <input type="date" class="form-control DateDispatched{{ $srf->Id  }}" name="DateDispatched" placeholder="Enter Date Dispatched" value="{{ old('DateDispatched', !empty($srf->DateDispatched) ? date('Y-m-d', strtotime($srf->DateDispatched)) : '') }}" >
                     </div>
                     <div class="form-group">
                         <label>Date Sample Received (MM/DD/YYYY):</label>
-                        <input type="date" class="form-control DateSampleReceived{{ $srf->Id }}" name="DateSampleReceived"  placeholder="Enter Sample Received" value="{{ old('DateSampleReceived', !empty($srf->DateSampleReceived) ? date('Y-m-d', strtotime($srf->DateSampleReceived)) : '') }}" readonly>
+                        <input type="date" class="form-control DateSampleReceived{{ $srf->Id }}" name="DateSampleReceived"  placeholder="Enter Sample Received" value="{{ old('DateSampleReceived', !empty($srf->DateSampleReceived) ? date('Y-m-d', strtotime($srf->DateSampleReceived)) : '') }}" >
                     </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="DeliveryRemarks">Delivery Remarks</label>
-                    <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks" readonly>{{ old('DeliveryRemarks', $srf->DeliveryRemarks) }}</textarea>
+                    <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks" >{{ old('DeliveryRemarks', $srf->DeliveryRemarks) }}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="Note">Notes</label>
-                    <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes" readonly>{{ old('Note', $srf->Note) }}</textarea>
+                    <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes" >{{ old('Note', $srf->Note) }}</textarea>
                 </div>
             </div>
             </div>

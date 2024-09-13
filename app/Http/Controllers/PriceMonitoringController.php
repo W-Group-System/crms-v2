@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Auth;
 use OwenIt\Auditing\Models\Audit;
 use App\ProductMaterialsComposition;
 use App\SalesApprovers;
+use PDF;
+use Illuminate\Support\Facades\View;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PriceMonitoringController extends Controller
@@ -492,6 +494,12 @@ class PriceMonitoringController extends Controller
 
     public function storeLocalSalePre(Request $request)
     {
+        $request->validate([
+            'PaymentTerm' => 'required',
+        ], [
+            'PaymentTerm.required' => 'Payment term is required.', // Custom error message
+        ]);
+
         $user = Auth::user(); 
         $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
         $type = $salesUser->Type == 2 ? 'IS' : 'LS';
@@ -732,10 +740,15 @@ class PriceMonitoringController extends Controller
     {
         $client = Client::with('clientPaymentTerm')->find($id);
         if ($client) {
+            $paymentTerm = $client->clientPaymentTerm ? $client->clientPaymentTerm->Name : '';
+    
             return response()->json([
-                'PaymentTerm' => $client->clientPaymentTerm->Name,
+                'PaymentTerm' => $paymentTerm,
             ]);
         }
+        return response()->json([
+            'PaymentTerm' => '',
+        ]);
     }
 
     public function deleteProduct(Request $request , $id)
@@ -899,6 +912,18 @@ class PriceMonitoringController extends Controller
         
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
+    }
+
+    public function quotation(Request $request, $id)
+    {
+        $prf = PriceMonitoring::findOrFail($id);
+
+        View::share('price_monitoring_ls', $prf);
+        $pdf = PDF::loadView('price_monitoring_ls.quotation', [
+            'price_monitoring_ls' => $prf,
+        ])->setPaper('A4', 'portrait');
+    
+        return $pdf->stream('print.pdf');
     }
 
 }

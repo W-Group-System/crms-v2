@@ -60,7 +60,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Potential Volume</label>
-                                        <input type="number" class="form-control" id="PotentialVolume" name="PotentialVolume" value="0">
+                                        <input type="number" step=".01" class="form-control" id="PotentialVolume" name="PotentialVolume" value="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -78,7 +78,21 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                @if(auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                @if(auth()->user()->role->name == "Staff L1")
+                                    <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                    <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @elseif(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
+                                    @php
+                                        $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                    @endphp
+                                    <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                        <option value="" disabled selected>Select Sales Person</option>
+                                        @foreach($subordinates as $subordinate)
+                                            <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPersonId') == $subordinate->id || auth()->user()->id == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                                {{-- @if(auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($primarySalesPersons as $user)
@@ -88,7 +102,7 @@
                                 @else
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->user_id}}">
                                 <input type="text" class="form-control" value="{{auth()->user()->full_name}}" disabled>
-                                @endif
+                                @endif --}}
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -96,7 +110,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Target Price</label>
-                                        <input type="number" class="form-control" id="TargetRawPrice" name="TargetRawPrice" value="0">
+                                        <input type="number" step=".01" class="form-control" id="TargetRawPrice" name="TargetRawPrice" value="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -115,10 +129,10 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPerson" style="position: relative !important" title="Select Sales Person">
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" id="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($secondarySalesPersons as $user)
-                                        <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -171,26 +185,13 @@
                                 <textarea class="form-control" id="Objective" name="ObjectiveForRpeProject" placeholder="Enter Objective" rows="4"></textarea>
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                <input type="file" name="SalesRpeFile[]" class="form-control" multiple>
+                            </div>
+                        </div>
                     </div>
-                        <div class="form-header">
-                            <span class="header-label">Files</span>
-                            <hr class="form-divider">
-                        </div>
-                        <div class="rpe-file">
-                            <div class="form-group">
-                                <label for="name"><b>Name</b></label>
-                                <input type="text" name="name[]" class="form-control" id="name" placeholder="">
-                            </div>
-                            <div class="form-group">
-                                <label for="rpe_file"><b>Browse Files</b></label>
-                                <input type="file" class="form-control" id="rpe_file" name="rpe_file[]" multiple>
-                            </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-sm btn-primary addRpeFile"><i class="ti-plus"></i></button>
-                                <button type="button" class="btn btn-sm btn-danger deleteRowBtn" hidden><i class="ti-trash"></i></button>
-                            </div>
-                        </div>
-                        <div class="modal-footer"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <input type="submit"  class="btn btn-success" value="Save">

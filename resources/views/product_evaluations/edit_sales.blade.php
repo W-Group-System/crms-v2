@@ -61,7 +61,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Potential Volume</label>
-                                        <input type="number" class="form-control" name="PotentialVolume" value="{{ $requestEvaluation->PotentialVolume }}">
+                                        <input type="number" step=".01" class="form-control" name="PotentialVolume" value="{{ $requestEvaluation->PotentialVolume }}">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -79,14 +79,31 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                {{-- <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                @if(auth()->user()->role->name == "Staff L1")
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @elseif (auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                @php
+                                    $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                @endphp
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($subordinates as $user)
+                                        <option value="{{ $user->id }}" @if($user->user_id == $requestEvaluation->PrimarySalesPersonId || $user->id == $requestEvaluation->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select>
+                                @endif
+                                {{-- @if(auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($primarySalesPersons as $user)
                                         <option value="{{ $user->user_id }}" @if ( $requestEvaluation->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select> --}}
-                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
-                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" disabled>
+                                </select>
+                                @else 
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{$requestEvaluation->PrimarySalesPersonId}}">
+                                <input type="text" class="form-control" value="{{optional($requestEvaluation->primarySalesPerson)->full_name}}" readonly>
+                                @endif --}}
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -94,7 +111,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Target Price</label>
-                                        <input type="number" class="form-control"  name="TargetRawPrice" value="{{ $requestEvaluation->TargetRawPrice }}">
+                                        <input type="number" step=".01" class="form-control"  name="TargetRawPrice" value="{{ $requestEvaluation->TargetRawPrice }}">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -172,6 +189,12 @@
                                 <textarea type="text" class="form-control" name="ObjectiveForRpeProject">{{ $requestEvaluation->ObjectiveForRpeProject }}</textarea>
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                <input type="file" name="SalesRpeFile[]" class="form-control" multiple>
+                            </div>
+                        </div>
                         {{-- <div class="col-lg-6"></div>
                         <div class="col-lg-6">
                             <div class="form-group">
@@ -215,7 +238,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
         var dueDateInput = document.querySelector('.DueDate{{ $requestEvaluation->DueDate }}');
-        var storedDate = '{{ !empty($requestEvaluation->DieDate) ? date('Y-m-d', strtotime($requestEvaluation->DieDate)) : '' }}';
+        var storedDate = '{{ !empty($requestEvaluation->DueDate) ? date('Y-m-d', strtotime($requestEvaluation->DueDate)) : '' }}';
         var today = new Date().toISOString().split('T')[0];
 
         if (storedDate) {
