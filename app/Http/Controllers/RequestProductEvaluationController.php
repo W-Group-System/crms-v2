@@ -36,12 +36,30 @@ class RequestProductEvaluationController extends Controller
         $search = $request->input('search');
         $open = $request->open;
         $close = $request->close;
+        $status = $request->query('status'); // Get the status from the query parameters
         $progress = $request->query('progress'); // Get the status from the query parameters
 
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
 
         $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application'])
+            ->when($status, function($query) use ($status, $userId, $userByUser) {
+                if ($status == '50') {
+                    // When filtering by '50', include all cancelled status records
+                    $query->where(function ($query) use ($userId, $userByUser) {
+                        $query->where('Status', '50')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                    });
+                } else {
+                    // Apply status filter if it's not '50'
+                    $query->where('Status', $status);
+                }
+            })
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
                     // When filtering by '10', include all relevant progress status records
