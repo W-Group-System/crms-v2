@@ -99,9 +99,9 @@ class PriceMonitoringController extends Controller
                     // When filtering by '10', include all relevant progress status records
                     $query->where('Progress', '10')
                         ->where(function($query) use ($userId, $userByUser) {
-                            $query->where('PrimarySalesPersonId', $userId)
-                                ->orWhere('SecondarySalesPersonId', $userId)
-                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                            $query->where('SecondarySalesPersonId', $userId)
+                                // ->orWhere('SecondarySalesPersonId', $userId)
+                                // ->orWhere('PrimarySalesPersonId', $userByUser)
                                 ->orWhere('SecondarySalesPersonId', $userByUser);
                         });
                 } else {
