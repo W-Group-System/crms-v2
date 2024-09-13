@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
 use RealRashid\SweetAlert\Facades\Alert;
+use Collective\Html\FormFacade as Form;
+
 
 
 class RequestProductEvaluationController extends Controller
@@ -97,18 +99,22 @@ class RequestProductEvaluationController extends Controller
             if (auth()->user()->role->name == "Department Admin")
             {
                 $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
             }
             if (auth()->user()->role->name == "Staff L1")
             {
                 $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
-            }
-        })
-        ->where(function($query) {
-            if (auth()->user()->role->name == "Staff L2")
-            {
-                $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
             }
         })
@@ -131,8 +137,9 @@ class RequestProductEvaluationController extends Controller
 
         $product_applications = ProductApplication::all();
         $entries = $request->entries;
+        $users = User::where('is_active', 1)->get();
 
-        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications',  'price_currencies', 'project_names', 'search' , 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons', 'entries')); 
+        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications',  'price_currencies', 'project_names', 'search' , 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons', 'entries', 'users')); 
     }
 
     public function store(Request $request)
@@ -184,7 +191,7 @@ class RequestProductEvaluationController extends Controller
             'TargetRawPrice' => $request->input('TargetRawPrice'),
             'ProjectNameId' => $request->input('ProjectNameId'),
             'PrimarySalesPersonId' => $request->input('PrimarySalesPersonId'),
-            'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
+            'SecondarySalesPersonId' => $request->input('SecondarySalesPersonId'),
             'Priority' => $request->input('Priority'),
             'AttentionTo' => $request->input('AttentionTo'),
             'UnitOfMeasureId' => $request->input('UnitOfMeasureId'),
@@ -196,28 +203,32 @@ class RequestProductEvaluationController extends Controller
             'Status' =>'10',
             'Progress' => '10',
         ]);
-        $files = $request->file('rpe_file');
-                $names = $request->input('name');
-                $rpeId =  $productEvaluationData->id;
-                
-                if ($files) {
-                    foreach ($files as $index => $file) {
-                    $name = $names[$index];
-                    $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('public/rpeFiles', $fileName);
-                    $fileUrl = '/storage/rpeFiles/' . $fileName;       
-                    $uploadedFile = new RpeFile();
-                    $uploadedFile->RequestProductEvaluationId = $rpeId;
-                    $uploadedFile->Name = $name;
-                    $uploadedFile->Path = $fileUrl;
-                    if ((auth()->user()->department_id == 5) || (auth()->user()->department_id == 38)) {
-                        $uploadedFile->userType = 'Sales';
-                    } elseif ((auth()->user()->department_id == 15) || (auth()->user()->department_id == 42)) {
-                        $uploadedFile->userType = 'RND';
-                    }
-                    $uploadedFile->save();
-                    }
+        if ($request->has('SalesRpeFile'))
+        {
+            $attachments = $request->file('SalesRpeFile');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('rpeFiles'), $name);
+                $path = '/rpeFiles/'.$name;
+
+                $rpeFiles = new RpeFile();
+                $rpeFiles->Name = $name;
+                $rpeFiles->Path = $path;
+                $rpeFiles->RequestProductEvaluationId = $productEvaluationData['id'];
+
+                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                {
+                    $rpeFiles->UserType = "Sales";
                 }
+                if (auth()->user()->role->type == "RND")
+                {
+                    $rpeFiles->UserType = "RND";
+                }
+                
+                $rpeFiles->save();
+            }
+        }
         return redirect()->back()->with('success', 'RPE added successfully.');
     }
     public function update(Request $request, $id)
@@ -240,31 +251,45 @@ class RequestProductEvaluationController extends Controller
         $rpe->ObjectiveForRpeProject = $request->input('ObjectiveForRpeProject');
         $rpe->Manufacturer = $request->input('Manufacturer');
         // $rpe->Status = $request->input('Status');
+        if ($request->has('action'))
+        {
+            if ($request->action == "update_rnd")
+            {
+                $rpe->DdwNumber = $request->ddw_number;
+                $rpe->DateReceived = $request->date_received;
+                $rpe->RpeResult = $request->rpe_recommendation;
+                $rpe->DateCompleted = $request->date_completed;
+                $rpe->DateStarted = $request->date_started;
+            }
+        }
         $rpe->save();
 
-        if ($request->has('rpe_id')) {
-            $rpeIds = $request->input('rpe_id');
-            $names = $request->input('name');
-            $files = $request->file('rpe_file');
-    
-            foreach ($rpeIds as $index => $rpeId) {
-                $rpeFile = RpeFile::findOrFail($rpeId);
-    
-                if (isset($names[$index])) {
-                    $rpeFile->Name = $names[$index];
+        if ($request->has('SalesRpeFile'))
+        {
+            $attachments = $request->file('SalesRpeFile');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('rpeFiles'), $name);
+                $path = '/rpeFiles/'.$name;
+
+                $rpeFiles = new RpeFile();
+                $rpeFiles->Name = $name;
+                $rpeFiles->Path = $path;
+                $rpeFiles->RequestProductEvaluationId = $id;
+                
+                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                {
+                    $rpeFiles->UserType = "Sales";
                 }
-    
-                if (isset($files[$index]) && $files[$index] instanceof \Illuminate\Http\UploadedFile) {
-                    $file = $files[$index];
-                    $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('public/rpeFiles', $fileName);
-                    $fileUrl = '/storage/rpeFiles/' . $fileName;
-    
-                    $rpeFile->Path = $fileUrl;
+                if (auth()->user()->role->type == "RND")
+                {
+                    $rpeFiles->UserType = "Rnd";
                 }
-    
-                $rpeFile->save();
-            }}
+                
+                $rpeFiles->save();
+            }
+        }
         return redirect()->back()->with('success', 'RPE updated successfully');
     }
 
@@ -290,10 +315,35 @@ class RequestProductEvaluationController extends Controller
         // $rndPersonnel = User::whereHas('rndUsers')->get();
         $activities = Activity::where('TransactionNumber', $RequestNumber)->get();
         $rpeFileUploads = RpeFile::where('RequestProductEvaluationId', $rpeNumber)->where('userType', 'RND')->get();
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        // ->get();
+        $clients = Client::where(function($query) {
+            if (auth()->user()->role->name == "Department Admin")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L1")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
         ->get();
-        $users = User::wherehas('localsalespersons')->get();
+        // $users = User::wherehas('localsalespersons')->get();
+        $users = User::where('is_active', 1)->get();
         $rpeTransactionApprovals  = TransactionApproval::where('TransactionId', $id)
         ->where('Type', '20')
         ->get();
@@ -315,20 +365,30 @@ class RequestProductEvaluationController extends Controller
             } elseif ($audit->auditable_type === 'App\RpePersonnel') {
                 $details = $audit->event . " " . 'RPE R&D Personnel';
             } elseif ($audit->auditable_type === 'App\RequestProductEvaluation') {
-                $details = $audit->event . " " . 'Request Product Evaluation';
-                // if (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 20) {
-                //     $details = "Approve sample request entry";
-                // } elseif (isset($audit->new_values['Progress']) && ($audit->new_values['Progress'] == 30 || $audit->new_values['Progress'] == 80)) {
-                //     $details = "Approve sample request entry";
-                // } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 35) {
-                //     $details = "Receive sample request entry";
-                // } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
-                //     $details = "Pause sample request transaction." . isset($audit->new_values['Remarks']);
-                // } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
-                //     $details = "Start sample request transaction";
-                // } else {
-                //     $details = $audit->event . " " . 'Sample Request';
-                // }
+                // $details = $audit->event . " " . 'Request Product Evaluation';
+                if (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 20) {
+                    $details = "Approve request product evaluation entry";
+                } elseif (isset($audit->new_values['Progress']) && ($audit->new_values['Progress'] == 30 || $audit->new_values['Progress'] == 80)) {
+                    $details = "Approve request product evaluation entry";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 35) {
+                    $details = "Receive request product evaluation entry";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
+                    $details = "Pause request product evaluation transaction." . isset($audit->new_values['Remarks']);
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
+                    $details = "Start request product evaluation transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
+                    $details = "Submitted request product evaluation transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
+                    $details = "Completed request product evaluation transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 70) {
+                    $details = "Accepted request product evaluation transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 81) {
+                    $details = "Submitted request product evaluation transaction for Final Review";
+                } elseif (isset($audit->new_values['Status']) && $audit->new_values['Status'] == 30) {
+                    $details = "Closed request product evaluation transaction";
+                } else {
+                    $details = $audit->event . " " . 'Sample Request';
+                }
             }
             return (object) [
                 'CreatedDate' => $audit->created_at,
@@ -350,9 +410,9 @@ class RequestProductEvaluationController extends Controller
     
         $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
         
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
-        ->get();
+        // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        // ->get();
         // $users = User::all();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
@@ -370,7 +430,7 @@ class RequestProductEvaluationController extends Controller
         $project_names = ProjectName::all();
 
         $product_applications = ProductApplication::all();
-        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals','rndPersonnel','activities', 'clients','users','rpeFileUploads', 'combinedLogs', 'project_names', 'price_currencies', 'product_applications', 'secondarySalesPersons'));
+        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals','rndPersonnel','activities', 'clients','users','rpeFileUploads', 'combinedLogs', 'project_names', 'price_currencies', 'product_applications','primarySalesPersons', 'secondarySalesPersons'));
     }
 
     public function addSupplementary(Request $request)
@@ -681,5 +741,49 @@ class RequestProductEvaluationController extends Controller
     public function export(Request $request)
     {
         return Excel::download(new ProductEvaluationExport($request->open, $request->close), 'Request Product Evaluation.xlsx');
+    }
+
+    public function refreshUserApprover(Request $request)
+    {
+        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        if ($user != null)
+        {
+            if($user->salesApproverById)
+            {
+                $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
+
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+            elseif($user->salesApproverByUserId)
+            {
+                $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
+                
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+        }
+
+        return "";
+    }
+    public function editsalesRpeFiles(Request $request, $id)
+    {
+        $attachments = $request->file('file');
+        $name = time().'_'.$attachments->getClientOriginalName();
+        $attachments->move(public_path('rpeFiles'), $name);
+        $path = '/rpeFiles/'.$name;
+
+        $files = RpeFile::findOrFail($id);
+        $files->Name = $name;
+        $files->Path = $path;
+        if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+        {
+            $files->userType = "Sales";
+        }
+
+        $files->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back()->with(['tab' => 'files']);
     }
 }

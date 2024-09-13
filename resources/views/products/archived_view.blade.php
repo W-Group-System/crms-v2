@@ -11,7 +11,7 @@
                 <div class="col-lg-6" align="right">
                     <a href="{{ url('/archived_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
-                    <form method="POST" action="{{url('/add_to_draft_products')}}" class="d-inline-block">
+                    <form method="POST" action="{{url('/add_to_draft_products')}}" class="d-inline-block" onsubmit="show()">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
@@ -107,7 +107,15 @@
             </div>
             <div class="row">
                 <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
-                <div class="col-md-3"><p class="mb-0">{{ $approveUsers->full_name ?? '' }}</p></div>
+                <div class="col-md-3">
+                    @if($data->approveById)
+                    <p class="mb-0">{{ $data->approveById->full_name}}</p>
+                    @elseif($data->approveByUserId)
+                    <p class="mb-0">{{ $data->userByUserId->full_name }}</p>
+                    @else
+                    N/A
+                    @endif
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-2 col-form-label"><p class="mb-0"><b>Date Approved:</b></p></div>
@@ -153,7 +161,10 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                    @if(session('tab') == 'materials')
                     @include('components.error')
+                    @endif
+
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-bordered tables" width="100%">
                             <thead>
@@ -281,6 +292,9 @@
                     @endif
                 </div>
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    @if(session('tab') == 'files')
+                    @include('components.error')
+                    @endif
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
@@ -307,7 +321,7 @@
                                                 <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
                                                     <i class="ti-pencil"></i>
                                                 </button>
-                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete" onsubmit="show()">
                                                     {{csrf_field()}}
     
                                                     <button type="button" class="btn btn-sm btn-danger deleteProductFiles" title="Delete">
@@ -368,6 +382,7 @@
                                 <tr>
                                     <th>Type</th>
                                     <th>Transaction</th>
+                                    <th>Disposition Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -380,6 +395,7 @@
                                                     {{$cr->CrrNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -392,6 +408,7 @@
                                                     {{$rps->RpeNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -400,9 +417,16 @@
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
+                                                <a href="{{url('samplerequest/view/'.optional($item->sampleRequest)->Id)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
+                                            </td>
+                                            <td>
+                                                @if($item->DispositionRejectionDescription != null)
+                                                {{$item->DispositionRejectionDescription}}
+                                                @else
+                                                N/A
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -769,6 +793,12 @@
             $("#filename").val(filename);
         })
 
+        $('input[type="file"]').on('change', function(e) {
+            var filename = e.target.files[0].name;
+
+            $("#edit_filename").val(filename);
+        })
+
         $(document).on('change', '[name="files[]"]', function(e) {
             var filename = e.target.files[0].name;
 
@@ -789,7 +819,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label>Client :</label>
-                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm">
                                         <option value="">-Client-</option>
                                         @foreach ($client as $c)
                                             <option value="{{$c->id}}">{{$c->Name}}</option>

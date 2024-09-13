@@ -312,7 +312,15 @@ class SampleRequestController extends Controller
                 $details = "Pause sample request transaction." . isset($audit->new_values['Remarks']);
             } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
                 $details = "Start sample request transaction";
-            } else {
+            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
+                $details = "Submitted sample request transaction";
+            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
+                $details = "Completed sample request transaction";
+            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 70) {
+                $details = "Accepted sample request transaction";
+            } elseif (isset($audit->new_values['Status']) && $audit->new_values['Status'] == 30) {
+                $details = "Closed sample request transaction";
+            }else {
                 $details = $audit->event . " " . 'Sample Request';
             }
         }
@@ -581,12 +589,12 @@ class SampleRequestController extends Controller
             'ClientId' => $request->input('ClientId'),
             'ContactId' => $request->input('ClientContactId'),
             'InternalRemarks' => $request->input('Remarks'),
-            // 'Courier' => $request->input('Courier'),
-            // 'AwbNumber' => $request->input('AwbNumber'),
-            // 'DateDispatched' => $request->input('DateDispatched'),
-            // 'DateSampleReceived' => $request->input('DateSampleReceived'),
-            // 'DeliveryRemarks' => $request->input('DeliveryRemarks'),
-            // 'Note' => $request->input('Note'),
+            'Courier' => $request->input('Courier'),
+            'AwbNumber' => $request->input('AwbNumber'),
+            'DateDispatched' => $request->input('DateDispatched'),
+            'DateSampleReceived' => $request->input('DateSampleReceived'),
+            'DeliveryRemarks' => $request->input('DeliveryRemarks'),
+            'Note' => $request->input('Note'),
         ]);
 
 
@@ -646,12 +654,12 @@ class SampleRequestController extends Controller
     $srf->ClientId = $request->input('ClientId');
     $srf->ContactId = $request->input('ClientContactId');
     $srf->InternalRemarks = $request->input('Remarks');
-    // $srf->Courier = $request->input('Courier');
-    // $srf->AwbNumber = $request->input('AwbNumber');
-    // $srf->DateDispatched = $request->input('DateDispatched');
-    // $srf->DateSampleReceived = $request->input('DateSampleReceived');
-    // $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
-    // $srf->Note = $request->input('Note');
+    $srf->Courier = $request->input('Courier');
+    $srf->AwbNumber = $request->input('AwbNumber');
+    $srf->DateDispatched = $request->input('DateDispatched');
+    $srf->DateSampleReceived = $request->input('DateSampleReceived');
+    $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
+    $srf->Note = $request->input('Note');
     $srf->save();
 
     foreach ($request->input('ProductCode', []) as $key => $value) {

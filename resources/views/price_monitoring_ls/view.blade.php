@@ -38,6 +38,8 @@
                 </div>
                 <div class="col-lg-12" align="right">
                     <a href="{{ url('/price_monitoring_ls') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a target='_blank' href="{{ url('quotation', $price_monitorings->id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Quotation</a>
+                    <a target='_blank' href="{{ url('computation', $price_monitorings->id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Computation</a>
                     @if ($price_monitorings->Progress != 30)
                             <button type="button" class="btn btn-md btn-warning"
                             data-target="#closePrf{{ $price_monitorings->id }}" 
@@ -287,8 +289,8 @@
                                 <p class="col-sm-6 col-form-label">{{ number_format($prcieProduct->LsalesDeliveryCost + $prcieProduct->LsalesFinancingCost + $prcieProduct->LsalesGaeValue + $prcieProduct->OtherCostRequirements, 2) }}</p>
                             </div>
                          </div>
-                         @php
-                             $totalCost = $prcieProduct->ProductRmc +
+                         {{-- @php
+                                $totalCost = $prcieProduct->ProductRmc +
                                 $prcieProduct->LsalesDirectLabor +
                                 $prcieProduct->LsalesFactoryOverhead +
                                 $prcieProduct->LsalesDeliveryCost +
@@ -302,7 +304,28 @@
                             $sellingPrice = number_format($totalCost,2) + ($markupValue);
                             $sellingPriceWithVAT = number_format($sellingPrice,2) * 0.12;
                             $sumWithVat = $sellingPrice + $sellingPriceWithVAT;
-                         @endphp
+                         @endphp --}}
+                         @php
+                            $totalCost = $prcieProduct->ProductRmc +
+                                        $prcieProduct->LsalesDirectLabor +
+                                        $prcieProduct->LsalesFactoryOverhead +
+                                        $prcieProduct->LsalesDeliveryCost +
+                                        $prcieProduct->LsalesFinancingCost +
+                                        $prcieProduct->LsalesGaeValue +
+                                        $prcieProduct->OtherCostRequirements +
+                                        $prcieProduct->LsalesBlendingLoss;
+
+                            $markupPercent = $prcieProduct->LsalesMarkupPercent;
+                            $markupValue = $prcieProduct->LsalesMarkupValue;
+
+                            $sellingPrice = $totalCost + $markupValue;
+                            $sellingPriceWithVAT = $sellingPrice * 0.12;
+                            $sumWithVat = $sellingPrice + $sellingPriceWithVAT;
+
+                            $formattedSellingPrice = number_format($sellingPrice, 2);
+                            $formattedSellingPriceWithVAT = number_format($sellingPriceWithVAT, 2);
+                            $formattedSumWithVat = number_format($sumWithVat, 2);
+                        @endphp
                          <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209)"></div>
                          <div class="col-lg-4">
                             <div class="form-group row">
@@ -325,11 +348,11 @@
                          <div class="col-lg-4">
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Selling Price :</b></p>
-                                <p class="col-sm-6 col-form-label">{{ number_format($sellingPrice, 2) }}</p>
+                                <p class="col-sm-6 col-form-label">{{ $formattedSellingPrice }}</p>
                             </div>
                             <div class="form-group row">
                                 <p class="col-sm-6 col-form-label"><b>Selling Price + 12% VAT :</b></p>
-                                <p class="col-sm-6 col-form-label">{{ number_format($sumWithVat, 2) }}</p>
+                                <p class="col-sm-6 col-form-label">{{ $formattedSumWithVat }}</p>
                             </div>
                          </div>
                     </div>

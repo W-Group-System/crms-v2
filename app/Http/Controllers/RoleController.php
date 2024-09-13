@@ -20,6 +20,9 @@ class RoleController extends Controller
                 $query->where('name', 'LIKE', '%' . $search . '%')
                     ->orWhere('description', 'LIKE', '%' . $search . '%');
             })
+            ->when($request->filter_department, function($query)use($request) {
+                $query->where('department_id', $request->filter_department);
+            })
             ->orderBy('id', 'desc')
             ->paginate($request->entries ?? 10);
         

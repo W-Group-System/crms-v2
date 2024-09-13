@@ -103,26 +103,25 @@
                                     <i class="ti-pencil"></i>
                                 </button>    
                             </td>
-                                <td>{{ $srf->SrfNumber }}</td>
-                                <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
-                                <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
-                                <td>{{ optional($srf->client)->Name }}</td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ optional($product->productApplicationsId)->Name }}<br>
-                                    @endforeach
-                                </td>
-                               <td>
-                                    @if($srf->Status == 10)
-                                        <div class="badge badge-success">Open</div>
-                                    @elseif($srf->Status == 30)
-                                        <div class="badge badge-warning">Closed</div>
-                                    @elseif($srf->Status == 50)
-                                        <div class="badge badge-danger">Cancelled</div>
-                                    @endif
-                                </td>
-                                <td>{{ optional($srf->progressStatus)->name }}</td>
-                                
+                            <td>{{ $srf->SrfNumber }}</td>
+                            <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
+                            <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
+                            <td>{{ optional($srf->client)->Name }}</td>
+                            <td>
+                                @foreach ($srf->requestProducts as $product)
+                                    {{ optional($product->productApplicationsId)->Name }}<br>
+                                @endforeach
+                            </td>
+                           <td>
+                                @if($srf->Status == 10)
+                                    <div class="badge badge-success">Open</div>
+                                @elseif($srf->Status == 30)
+                                    <div class="badge badge-warning">Closed</div>
+                                @elseif($srf->Status == 50)
+                                    <div class="badge badge-danger">Cancelled</div>
+                                @endif
+                            </td>
+                            <td>{{ optional($srf->progressStatus)->name }}</td>
                         </tr>
                     @endforeach
                     </tbody>

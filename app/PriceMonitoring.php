@@ -28,6 +28,10 @@ class PriceMonitoring extends Model implements Auditable
     {
         return $this->belongsTo(Contact::class, 'ContactId');
     }
+    public function clientCompanyAddress()
+    {
+        return $this->belongsTo(Address::class, 'ClientId', 'CompanyId');
+    }
 
     public function product_application() 
     {

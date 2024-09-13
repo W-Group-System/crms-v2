@@ -504,12 +504,11 @@
             
         // })
 
-        // $("#addCustomerRequirement").on('click', function() {
-        //     var primarySales = $('[name="PrimarySalesPersonId"]').val();
-        //     console.log(primarySales);
+        $("#addCustomerRequirement").on('click', function() {
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
             
-        //     refreshSecondaryApprovers(primarySales)
-        // })
+            refreshSecondaryApprovers(primarySales)
+        })
 
         $('.editBtn').on('click', function() {
             var primarySales = $(this).data('primarysales')
@@ -526,8 +525,6 @@
                 },
                 success: function(data)
                 {
-                    console.log(secondarySales);
-                    
                     setTimeout(() => {
                         $('[name="SecondarySalesPersonId"]').html(data) 
                         // $('[name="SecondarySalesPersonId"]').val(secondarySales) 

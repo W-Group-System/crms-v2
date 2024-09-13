@@ -18,7 +18,7 @@
                         <button type="submit" class="btn btn-md btn-secondary submit_approval" name="action" value="New" title="Submit to archive products">Archive</button>
                     </form> --}}
 
-                    <form method="POST" action="{{url('/add_to_new_products')}}" class="d-inline-block">
+                    <form method="POST" action="{{url('/add_to_new_products')}}" class="d-inline-block" onsubmit="show()">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
@@ -114,7 +114,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
-                <div class="col-md-3"><p class="mb-0">{{ $approveUsers->full_name ?? '' }}</p></div>
+                <div class="col-md-3"><p class="mb-0">N/A</p></div>
             </div>
             <div class="row">
                 <div class="col-md-2 col-form-label"><p class="mb-0"><b>Date Approved:</b></p></div>
@@ -319,6 +319,7 @@
                     @endif
                 </div>
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    @include('components.error')
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">New</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
@@ -438,7 +439,7 @@
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
+                                                <a href="{{url('samplerequest/view/'.$item->sampleRequest->Id)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
                                             </td>
@@ -572,14 +573,14 @@
                 {{csrf_field()}}
                 
                 <div class="modal-body">
+                    <p id="totalPercentage">{{$percentage ?? 0.00}}</p>
+
                     <div class="card border border-1 border-primary rounded-0 rounded-bottom" style="height: 70vh; overflow-y:auto;">
                         <div class="card-header bg-primary text-white">
                             Raw Materials Percentage
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <span id="totalPercentage">{{$percentage ?? 0.00}}</span>
-        
                                 <table class="table table-striped table-bordered table-hover" id="rawMaterialsTable">
                                     <thead>
                                         <tr>
@@ -604,7 +605,7 @@
         
                                                 @foreach ($data->productMaterialComposition as $rawMats)
                                                     @if($rawMats->MaterialId == $rm->id)
-                                                        <input type="number" name="percentage[]" class="form-control percentageVal" value="{{$rawMats->Percentage}}">
+                                                        <input type="number" name="percentage[]" class="form-control form-control-sm percentageVal" value="{{$rawMats->Percentage}}">
                                                         @php
                                                             $composition_found = true;
                                                             $percentage += $rawMats->Percentage;
@@ -614,7 +615,7 @@
                                                 @endforeach
         
                                                 @if(!$composition_found)
-                                                <input type="number" name="percentage[]" class="form-control percentageVal">
+                                                <input type="number" name="percentage[]" class="form-control form-control-sm percentageVal">
                                                 @endif
         
                                             </td>
@@ -658,11 +659,12 @@
         var rawMatsTable = $("#rawMaterialsTable").DataTable({
             destroy: false,
             processing: true,
-            ordering: false,
-            paginate: false
+            ordering: true,
+            paginate: false,
+            dom: "lrt"
         })
 
-        $(".percentageVal").on('change', function() {
+        $(".percentageVal").on('input', function() {
             var total = 0;
             
             $('.percentageVal').each(function() {
@@ -701,28 +703,45 @@
             }
             else
             {
-                $.ajax({
-                    type: "POST",
-                    url: action,
-                    data: formData,
-                    beforeSend: function()
-                    {
-                        show();
-                    },
-                    success: function()
-                    {
-                        hide();
-                        
-                        Swal.fire({
-                            icon: "success",
-                            title: "Successfully Saved",
-                        }).then(() => {
-                            location.reload()
-                        })
+                var hasZeroValue = false;
+                $('.percentageVal').each(function() {
+                    if ($(this).val() === "0" || $(this).val() === 0) {
+                        hasZeroValue = true;
+                        return false;
                     }
                 })
-            }
 
+                if (hasZeroValue)
+                {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Cannot accept 0%"
+                    })
+                }
+                else
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: action,
+                        data: formData,
+                        beforeSend: function()
+                        {
+                            show();
+                        },
+                        success: function()
+                        {
+                            hide();
+                            
+                            Swal.fire({
+                                icon: "success",
+                                title: "Successfully Saved",
+                            }).then(() => {
+                                location.reload()
+                            })
+                        }
+                    })
+                }
+            }
         })
 
         // $("#addBtn").on('click', function() {
@@ -964,6 +983,12 @@
 
             $("#filename").val(filename);
         })
+
+        $('input[type="file"]').on('change', function(e) {
+            var filename = e.target.files[0].name;
+
+            $("#edit_filename").val(filename);
+        })
         
         $(document).on('change', '[name="files[]"]', function(e) {
             var filename = e.target.files[0].name;
@@ -984,7 +1009,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label>Client :</label>
-                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm">
                                         <option value="">-Client-</option>
                                         @foreach ($client as $c)
                                             <option value="{{$c->id}}">{{$c->Name}}</option>

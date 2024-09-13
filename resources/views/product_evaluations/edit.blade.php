@@ -60,7 +60,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Potential Volume</label>
-                                        <input type="number" class="form-control" name="PotentialVolume" value="{{ $productEvaluation->PotentialVolume }}">
+                                        <input type="number" step=".01" class="form-control" name="PotentialVolume" value="{{ $productEvaluation->PotentialVolume }}">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -78,16 +78,19 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                @if(auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                @if(auth()->user()->role->name == "Staff L1")
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @elseif (auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                @php
+                                    $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                @endphp
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($primarySalesPersons as $user)
-                                        <option value="{{ $user->user_id }}" @if ( $productEvaluation->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
+                                    @foreach($subordinates as $user)
+                                        <option value="{{ $user->id }}" @if($user->user_id == $productEvaluation->PrimarySalesPersonId || $user->id == $productEvaluation->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
-                                @else 
-                                <input type="hidden" name="PrimarySalesPersonId" value="{{$productEvaluation->PrimarySalesPersonId}}">
-                                <input type="text" class="form-control" value="{{optional($productEvaluation->primarySalesPerson)->full_name}}" readonly>
                                 @endif
                             </div>
                         </div>
@@ -96,7 +99,7 @@
                                 <div class="col-sm-8" style="padding-right: 0px">
                                     <div class="form-group">
                                         <label>Target Price</label>
-                                        <input type="number" class="form-control"  name="TargetRawPrice" value="{{ $productEvaluation->TargetRawPrice }}">
+                                        <input type="number" class="form-control"  step=".01" name="TargetRawPrice" value="{{ $productEvaluation->TargetRawPrice }}">
                                     </div>
                                 </div>
                                 <div class="col-sm-4" style="padding-left: 0px">
@@ -171,6 +174,12 @@
                                 <textarea class="form-control" name="ObjectiveForRpeProject" rows="4">{{ $productEvaluation->ObjectiveForRpeProject }}</textarea>
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                <input type="file" name="SalesRpeFile[]" class="form-control" multiple>
+                            </div>
+                        </div>
                         {{-- <div class="col-lg-6"></div>
                         <div class="col-lg-6">
                             <div class="form-group">
@@ -185,30 +194,7 @@
                         </div> --}}
 
                     </div>
-                    @foreach ($productEvaluation->salesRpeFiles as $files)
-                    <div class="form-header">
-                        <span class="header-label">Files</span>
-                        <hr class="form-divider">
-                    </div>
-                    <div class="rpe-file">
-                        <div class="form-group">
-                            <label for="name"><b>Name</b></label>
-                            <input type="text" name="name[]" class="form-control" id="name" placeholder="" value="{{ optional($files)->Name }}">
-                        </div>
-                        <div class="form-group">
-                            <label for="rpe_file"><b>Browse Files</b></label>
-                            <input type="file" class="form-control" id="rpe_file" name="rpe_file[]">
-                        </div>
-                        <div class="form-group">
-                            <button type="button" class="btn btn-sm btn-primary addRpeFile"><i class="ti-plus"></i></button>
-                            <button type="button" class="btn btn-sm btn-danger deleteRowBtn" hidden><i class="ti-trash"></i></button>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" name="rpe_id[]" value="{{$files->Id }}">
-                        </div>
-                    </div>
-                    @endforeach
-                    <div class="modal-footer"></div>
+                   
                 <div class="modal-footer">
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -239,7 +225,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
         var dueDateInput = document.querySelector('.DueDate{{ $productEvaluation->DueDate }}');
-        var storedDate = '{{ !empty($productEvaluation->DieDate) ? date('Y-m-d', strtotime($productEvaluation->DieDate)) : '' }}';
+        var storedDate = '{{ !empty($productEvaluation->DueDate) ? date('Y-m-d', strtotime($productEvaluation->DueDate)) : '' }}';
         var today = new Date().toISOString().split('T')[0];
 
         if (storedDate) {

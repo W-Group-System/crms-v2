@@ -111,9 +111,9 @@
                                     {{date('M d, Y', strtotime($product->created_at))}}
                                 </td>
                                 <td>{{$product->application->Name}}</td>
-                                <td>{{$usd}}</td>
-                                <td>{{$eur}}</td>
-                                <td>{{$php}}</td>
+                                <td>{{number_format($usd, 2)}}</td>
+                                <td>{{number_format($eur, 2)}}</td>
+                                <td>{{number_format($php, 2)}}</td>
                             </tr>
                         @endforeach
                         @else

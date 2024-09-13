@@ -16,12 +16,14 @@
                                 <label>Type</label>
                                 <select class="form-control form-control-sm js-example-basic-single" name="Type" style="position: relative !important" title="Select Type" required>
                                     <option value="" disabled selected>Select Type</option>
-                                    <option value="10" @if($a->Type == 10) selected @endif>Task</option>
+                                    <option value="30" @if($a->Type == 30) selected @endif>OB</option>
+                                    <option value="40" @if($a->Type == 40) selected @endif>Plant Visit</option>
+                                    {{-- <option value="10" @if($a->Type == 10) selected @endif>Task</option> --}}
                                     <option value="20" @if($a->Type == 20) selected @endif>Call</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        {{-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Related To</label>
                                 <select class="form-control form-control-sm js-example-basic-single" name="RelatedTo" style="position: relative !important" title="Select Type" required>
@@ -39,7 +41,7 @@
                                     <option value="93" @if($a->RelatedTo == 93) selected @endif>Technical Presentation</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>

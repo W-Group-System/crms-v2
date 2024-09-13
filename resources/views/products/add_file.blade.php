@@ -15,19 +15,19 @@
                     <div class="row">
                         <div class="col-lg-12 mb-3">
                             <label>Name</label>
-                            <input type="text" name="name" id="filename" class="form-control form-control-sm" placeholder="Enter name" required>
+                            <input type="text" name="name" id="filename" class="form-control form-control-sm" placeholder="Enter name" value="{{old('filename')}}" required>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label>Description</label>
                             {{-- <input type="text" name="description" class="form-control form-control-sm" placeholder="Enter description" required> --}}
-                            <textarea name="description" class="form-control" cols="30" rows="10" placeholder="Enter description" required></textarea>
+                            <textarea name="description" class="form-control" cols="30" rows="10" placeholder="Enter description" required>{{old('description')}}</textarea>
                         </div>
                         <div class="col-lg-12 mb-3">
                             <label>Client</label>
-                            <select name="client" class="js-example-basic-single form-control form-control-sm" required>
+                            <select name="client" class="js-example-basic-single form-control form-control-sm">
                                 <option value="">-Client-</option>
                                 @foreach ($client as $c)
-                                    <option value="{{$c->id}}">{{$c->Name}}</option>
+                                    <option value="{{$c->id}}" @if(old('client') == $c->id) selected @endif>{{$c->Name}}</option>
                                 @endforeach
                             </select>
                         </div>
