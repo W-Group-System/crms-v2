@@ -382,6 +382,7 @@
                                 <tr>
                                     <th>Type</th>
                                     <th>Transaction</th>
+                                    <th>Disposition Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -394,6 +395,7 @@
                                                     {{$cr->CrrNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -406,6 +408,7 @@
                                                     {{$rps->RpeNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -414,9 +417,16 @@
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
+                                                <a href="{{url('samplerequest/view/'.optional($item->sampleRequest)->Id)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
+                                            </td>
+                                            <td>
+                                                @if($item->DispositionRejectionDescription != null)
+                                                {{$item->DispositionRejectionDescription}}
+                                                @else
+                                                N/A
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

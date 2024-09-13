@@ -439,7 +439,7 @@
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
+                                                <a href="{{url('samplerequest/view/'.$item->sampleRequest->Id)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
                                             </td>
@@ -703,28 +703,45 @@
             }
             else
             {
-                $.ajax({
-                    type: "POST",
-                    url: action,
-                    data: formData,
-                    beforeSend: function()
-                    {
-                        show();
-                    },
-                    success: function()
-                    {
-                        hide();
-                        
-                        Swal.fire({
-                            icon: "success",
-                            title: "Successfully Saved",
-                        }).then(() => {
-                            location.reload()
-                        })
+                var hasZeroValue = false;
+                $('.percentageVal').each(function() {
+                    if ($(this).val() === "0" || $(this).val() === 0) {
+                        hasZeroValue = true;
+                        return false;
                     }
                 })
-            }
 
+                if (hasZeroValue)
+                {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Cannot accept 0%"
+                    })
+                }
+                else
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: action,
+                        data: formData,
+                        beforeSend: function()
+                        {
+                            show();
+                        },
+                        success: function()
+                        {
+                            hide();
+                            
+                            Swal.fire({
+                                icon: "success",
+                                title: "Successfully Saved",
+                            }).then(() => {
+                                location.reload()
+                            })
+                        }
+                    })
+                }
+            }
         })
 
         // $("#addBtn").on('click', function() {

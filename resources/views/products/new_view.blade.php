@@ -392,6 +392,7 @@
                                 <tr>
                                     <th>Type</th>
                                     <th>Transaction</th>
+                                    <th>Disposition Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -404,6 +405,7 @@
                                                     {{$cr->CrrNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -416,6 +418,7 @@
                                                     {{$rps->RpeNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -424,9 +427,16 @@
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
+                                                <a href="{{url('samplerequest/view/'.$item->sampleRequest->Id)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
+                                            </td>
+                                            <td>
+                                                @if($item->DispositionRejectionDescription != null)
+                                                {{$item->DispositionRejectionDescription}}
+                                                @else
+                                                N/A
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -683,28 +693,45 @@
             }
             else
             {
-                $.ajax({
-                    type: "POST",
-                    url: action,
-                    data: formData,
-                    beforeSend: function()
-                    {
-                        show();
-                    },
-                    success: function()
-                    {
-                        hide();
-
-                        Swal.fire({
-                            icon: "success",
-                            title: "Successfully Saved",
-                        }).then(() => {
-                            location.reload()
-                        })
+                var hasZeroValue = false;
+                $('.percentageVal').each(function() {
+                    if ($(this).val() === "0" || $(this).val() === 0) {
+                        hasZeroValue = true;
+                        return false;
                     }
                 })
-            }
 
+                if (hasZeroValue)
+                {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Cannot accept 0%"
+                    })
+                }
+                else
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: action,
+                        data: formData,
+                        beforeSend: function()
+                        {
+                            show();
+                        },
+                        success: function()
+                        {
+                            hide();
+
+                            Swal.fire({
+                                icon: "success",
+                                title: "Successfully Saved",
+                            }).then(() => {
+                                location.reload()
+                            })
+                        }
+                    })
+                }
+            }
         })
 
         // $("#addBtn").on('click', function() {
