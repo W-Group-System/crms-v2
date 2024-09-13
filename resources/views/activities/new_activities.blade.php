@@ -16,12 +16,14 @@
                                 <label>Type</label>
                                 <select class="form-control form-control-sm js-example-basic-single" name="Type" id="Type" style="position: relative !important" title="Select Type" required>
                                     <option value="" disabled selected>Select Type</option>
-                                    <option value="10">Task</option>
+                                    {{-- <option value="10">Task</option> --}}
+                                    <option value="30">OB</option>
+                                    <option value="40">Plant Visit</option>
                                     <option value="20">Call</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        {{-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Related To</label>
                                 <select class="form-control form-control-sm js-example-basic-single" name="RelatedTo" id="RelatedTo" style="position: relative !important" title="Select Type" required>
@@ -39,7 +41,7 @@
                                     <option value="93">Technical Presentation</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Client</label>
