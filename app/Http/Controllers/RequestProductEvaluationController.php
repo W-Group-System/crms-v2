@@ -410,9 +410,9 @@ class RequestProductEvaluationController extends Controller
     
         $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
         
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
-        ->get();
+        // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        // ->get();
         // $users = User::all();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
