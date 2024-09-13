@@ -45,8 +45,8 @@
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p>
-                    <p class="mb-0"><strong>EUR</strong> {{usdToEur($rmc)}}</p>
-                    <p class="mb-0"><strong>PHP</strong> {{usdToPhp($rmc)}}</p>
+                    <p class="mb-0"><strong>EUR</strong> {{number_format(usdToEur($rmc), 2)}}</p>
+                    <p class="mb-0"><strong>PHP</strong> {{number_format(usdToPhp($rmc), 2)}}</p>
                 </div>
             </div>
             <div class="row">
@@ -388,6 +388,7 @@
                                 <tr>
                                     <th>Type</th>
                                     <th>Transaction</th>
+                                    <th>Disposition Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -398,6 +399,7 @@
                                             <td>
                                                 <a href="{{url('view_customer_requirement/'.$cr->id)}}" target="_blank">{{$cr->CrrNumber}}</a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -410,6 +412,7 @@
                                                     {{$rps->RpeNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -418,9 +421,16 @@
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
+                                                <a href="{{url('samplerequest/view/'.$item->sampleRequest->Id)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
+                                            </td>
+                                            <td>
+                                                @if($item->DispositionRejectionDescription != null)
+                                                {{$item->DispositionRejectionDescription}}
+                                                @else
+                                                N/A
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
