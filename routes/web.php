@@ -299,17 +299,17 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/sample_request_cs_international', 'SampleRequestController@cs_international');
     
     // Price Monitoring 
-    Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
-    Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');
-    Route::post('/price_monitoring', 'PriceMonitoringController@store');
-    Route::post('price_monitoring/edit/{id}', 'PriceMonitoringController@update');
-    Route::delete('delete_price_request/{id}', 'PriceMonitoringController@delete');
-    Route::get('price_monitoring/view/{id}', 'PriceMonitoringController@view');
+    // Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
+    // Route::get('/client-details/{id}', 'PriceMonitoringController@getClientDetails');
+    // Route::post('/price_monitoring', 'PriceMonitoringController@store');
+    // Route::post('price_monitoring/edit/{id}', 'PriceMonitoringController@update');
+    // Route::delete('delete_price_request/{id}', 'PriceMonitoringController@delete');
+    // Route::get('price_monitoring/view/{id}', 'PriceMonitoringController@view');
 
-    Route::post('prfFiles', 'PriceMonitoringController@uploadFile');
-    Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
-    Route::delete('price_monitorings/view/file-delete/{id}', 'PriceMonitoringController@deleteFile');
-    Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
+    // Route::post('prfFiles', 'PriceMonitoringController@uploadFile');
+    // Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
+    // Route::delete('price_monitorings/view/file-delete/{id}', 'PriceMonitoringController@deleteFile');
+    // Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
 
     // Price Monitoring Local Sales
     Route::get('/price_monitoring_ls', 'PriceMonitoringController@index')->name('price_monitoring.index');
@@ -446,8 +446,6 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::delete('base-price/{id}', 'BasePriceController@destroy');
     Route::post('/bulkApproveNewBasePrice', 'BasePriceController@bulkApprove');
     Route::delete('/bulkDeleteBasePrice', 'BasePriceController@bulkDelete');
-
-
 
     // Price Request Fixed Cost
     Route::get('/fixed_cost', 'PriceFixedCostController@index')->name('fixed_cost.index');

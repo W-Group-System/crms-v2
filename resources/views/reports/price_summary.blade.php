@@ -38,7 +38,7 @@
                     <span>Entries</span>
                 </div>
                 <div class="col-lg-6">
-                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <input type="hidden" name="from" value="{{ $from }}">
                         <input type="hidden" name="to" value="{{ $to }}">
                         <div class="row height d-flex justify-content-end align-items-end">

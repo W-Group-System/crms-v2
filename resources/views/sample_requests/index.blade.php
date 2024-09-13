@@ -94,11 +94,11 @@
                         @foreach ($sampleRequests as $srf)
                         <tr>
                             <td align="center">
-                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
+                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
                                 @php
                                     $user = auth()->user();
                                 @endphp
-                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-warning btn-outline"
+                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
                                     data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF' @if($user->id != $srf->PrimarySalesPersonId && $user->user_id != $srf->PrimarySalesPersonId) disabled @endif>
                                     <i class="ti-pencil"></i>
                                 </button>    
@@ -114,11 +114,11 @@
                                 </td>
                                <td>
                                     @if($srf->Status == 10)
-                                        Open
+                                        <div class="badge badge-success">Open</div>
                                     @elseif($srf->Status == 30)
-                                        Closed
-                                    @else
-                                        {{ $srf->Status }}
+                                        <div class="badge badge-warning">Closed</div>
+                                    @elseif($srf->Status == 50)
+                                        <div class="badge badge-danger">Cancelled</div>
                                     @endif
                                 </td>
                                 <td>{{ optional($srf->progressStatus)->name }}</td>
@@ -127,7 +127,7 @@
                     @endforeach
                     </tbody>
                 </table>
-                {!! $sampleRequests->appends(['search' => $search])->links() !!}
+                {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
                 @php
                     $total = $sampleRequests->total();
                     $currentPage = $sampleRequests->currentPage();
@@ -174,8 +174,8 @@
                         @foreach ($sampleRequests as $srf)
                             <tr>
                                 <td align="center">
-                                    <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
-                                    <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-warning btn-outline"
+                                    <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
+                                    <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
                                         data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
                                         <i class="ti-pencil"></i>
                                     </button>
@@ -264,11 +264,11 @@
 
                                 <td>
                                     @if($srf->Status == 10)
-                                        Open
+                                        <div class="badge badge-success">Open</div>
                                     @elseif($srf->Status == 30)
-                                        Closed
-                                    @else
-                                        {{ $srf->Status }}
+                                        <div class="badge badge-warning">Closed</div>
+                                    @elseif($srf->Status == 50)
+                                        <div class="badge badge-danger">Cancelled</div>
                                     @endif
                                 </td>
                                 <td>{{ optional($srf->progressStatus)->name }}</td>
@@ -276,9 +276,7 @@
                         @endforeach
                     </tbody>
                 </table>
-            
-                {!! $products->appends(['search' => $search])->links() !!}
-            
+                <!-- {!! $products->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
                 @php
                     $total = $products->total();
                     $currentPage = $products->currentPage();
@@ -287,7 +285,18 @@
                     $from = ($currentPage - 1) * $perPage + 1;
                     $to = min($currentPage * $perPage, $total);
                 @endphp
-            
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                </div> -->
+                {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                @php
+                    $total = $sampleRequests->total();
+                    $currentPage = $sampleRequests->currentPage();
+                    $perPage = $sampleRequests->perPage();
+    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                 </div>
@@ -311,8 +320,8 @@
                         @foreach ($rndSrf as $srf)
                         <tr>
                             <td align="center">
-                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
-                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-warning btn-outline"
+                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
+                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
                                     data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
                                     <i class="ti-pencil"></i>
                                 </button>    
