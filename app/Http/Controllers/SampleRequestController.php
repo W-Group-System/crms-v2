@@ -42,11 +42,15 @@ class SampleRequestController extends Controller
         $contacts = Contact::all();
         $categories = IssueCategory::all();
         $departments = ConcernDepartment::all(); 
-        $productApplications = ProductApplication::all();   
+        $productApplications = ProductApplication::all();
+        $productCodes = Product::where('status', '4')->get();
         
         // $salesPersons = User::whereHas('salespersons')->get();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id;
+
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
         $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
 
@@ -59,23 +63,41 @@ class SampleRequestController extends Controller
             $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
 
+        $search = $request->input('search');
+        $sort = $request->get('sort', 'Id');
+        $direction = $request->get('direction', 'desc');
+        $entries = $request->entries;
+        $open = $request->open;
+        $close = $request->close;
+        $status = $request->query('status'); // Get the status from the query parameters
+        $progress = $request->query('progress'); // Get the status from the query parameters
+
+        // $clients = Client::where(function($query) {
+        //     if (auth()->user()->role->name == "Department Admin")
+        //     {
+        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
+        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+        //     }
+        //     if (auth()->user()->role->name == "Staff L2")
+        //     {
+        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
+        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+        //     }
+        //     if (auth()->user()->role->name == "Staff L1")
+        //     {
+        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
+        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+        //     }
+        // })
+        // ->get(); 
         $clients = Client::where(function($query) {
-            if (auth()->user()->role->name == "Department Admin")
-            {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-            }
-            if (auth()->user()->role->name == "Staff L2")
-            {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-            }
-            if (auth()->user()->role->name == "Staff L1")
-            {
+            if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
                 $query->where('PrimaryAccountManagerId', auth()->user()->id)
                     ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
@@ -83,21 +105,28 @@ class SampleRequestController extends Controller
             }
         })
         ->get();
-        $productCodes = Product::where('status', '4')->get();
-        $search = $request->input('search');
-        $sort = $request->get('sort', 'Id');
-        $direction = $request->get('direction', 'desc');
-        $entries = $request->entries;
-        $open = $request->open;
-        $close = $request->close;
-        $progress = $request->query('progress'); 
-
-        $userId = Auth::id(); 
-        $userByUser = Auth::user()->user_id; 
 
         $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
+            ->when($status, function($query) use ($status, $userId, $userByUser) {
+                if ($status == '50') {
+                    // When filtering by '50', include all cancelled status records
+                    $query->where(function ($query) use ($userId, $userByUser) {
+                        $query->where('Status', '50')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                    });
+                } else {
+                    // Apply status filter if it's not '50'
+                    $query->where('Status', $status);
+                }
+            })
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
+                    // When filtering by '10', include all relevant progress status records
                     $query->where('Progress', '10')
                         ->where(function($query) use ($userId, $userByUser) {
                             $query->where('PrimarySalesPersonId', $userId)
@@ -106,25 +135,26 @@ class SampleRequestController extends Controller
                                 ->orWhere('SecondarySalesPersonId', $userByUser);
                         });
                 } else {
+                    // Apply progress filter if it's not '10'
                     $query->where('Progress', $progress);
                 }
             })
-            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
-                $query->whereIn('Status', [$request->open, $request->close]);
+            ->when($open && $close, function($query) use ($open, $close) {
+                $query->whereIn('Status', [$open, $close]);
             })
-            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
-                $query->where('Status', $request->open);
+            ->when($open && !$close, function($query) use ($open) {
+                $query->where('Status', $open);
             })
-            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
-                $query->where('Status', $request->close);
+            ->when($close && !$open, function($query) use ($close) {
+                $query->where('Status', $close);
             })
             ->where(function ($query) use ($search){
                 $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
-                ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-                ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
-                ->orWhereHas('client', function ($q) use ($search) {
-                    $q->where('name', 'LIKE', '%' . $search . '%');
-                });
+                    ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                    ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('client', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    });
                 // ->orWhereHas('client', function ($q) use ($search) {
                 //     $q->where('name', 'LIKE', '%' . $search . '%');
                 // });
@@ -135,34 +165,33 @@ class SampleRequestController extends Controller
             ->when(auth()->user()->role->type == 'IS', function($query) {
                 $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
             })
-                ->orderBy($sort, $direction)
-                ->paginate($request->entries ?? 10);
+            ->orderBy($sort, $direction)
+            ->paginate($request->entries ?? 10);
         
-        $openStatus = request('open');
-        $closeStatus = request('close');
-        $products = SampleRequestProduct::whereHas('sampleRequest', function ($query) use ($search, $openStatus, $closeStatus) {
+        // $openStatus = request('open');
+        // $closeStatus = request('close');
+        $products = SampleRequestProduct::whereHas('sampleRequest', function ($query) use ($search, $open, $close) {
             $query->where(function ($query) use ($search) {
                 $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
                       ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
                       ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+            })
+            ->when($open || $close, function ($query) use ($open, $close) {
+                if ($open) {
+                    $query->orWhere('Status', $open);
+                }
+                if ($close) {
+                    $query->orWhere('Status', $close);
+                }
             });
-            if ($openStatus || $closeStatus) {
-                $query->where(function ($query) use ($openStatus, $closeStatus) {
-                    if ($openStatus) {
-                        $query->orWhere('Status', $openStatus);
-                    }
-                    if ($closeStatus) {
-                        $query->orWhere('Status', $closeStatus);
-                    }
-                });
-            }
         })
         
         ->whereHas('sampleRequest', function ($query) {
             $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
         }) 
-        ->orderBy('id' , 'desc')
+        ->orderBy('id', 'desc')
         ->paginate($request->entries ?? 10);
+
         $rndSrf = SampleRequest::with('requestProducts') 
         ->where(function ($query) use ($search){
             $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
