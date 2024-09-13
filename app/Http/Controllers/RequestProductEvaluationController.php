@@ -137,8 +137,9 @@ class RequestProductEvaluationController extends Controller
 
         $product_applications = ProductApplication::all();
         $entries = $request->entries;
+        $users = User::where('is_active', 1)->get();
 
-        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications',  'price_currencies', 'project_names', 'search' , 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons', 'entries')); 
+        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications',  'price_currencies', 'project_names', 'search' , 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons', 'entries', 'users')); 
     }
 
     public function store(Request $request)
@@ -314,10 +315,35 @@ class RequestProductEvaluationController extends Controller
         // $rndPersonnel = User::whereHas('rndUsers')->get();
         $activities = Activity::where('TransactionNumber', $RequestNumber)->get();
         $rpeFileUploads = RpeFile::where('RequestProductEvaluationId', $rpeNumber)->where('userType', 'RND')->get();
-        $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+        // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+        // ->get();
+        $clients = Client::where(function($query) {
+            if (auth()->user()->role->name == "Department Admin")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L1")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
         ->get();
-        $users = User::wherehas('localsalespersons')->get();
+        // $users = User::wherehas('localsalespersons')->get();
+        $users = User::where('is_active', 1)->get();
         $rpeTransactionApprovals  = TransactionApproval::where('TransactionId', $id)
         ->where('Type', '20')
         ->get();
@@ -339,20 +365,30 @@ class RequestProductEvaluationController extends Controller
             } elseif ($audit->auditable_type === 'App\RpePersonnel') {
                 $details = $audit->event . " " . 'RPE R&D Personnel';
             } elseif ($audit->auditable_type === 'App\RequestProductEvaluation') {
-                $details = $audit->event . " " . 'Request Product Evaluation';
-                // if (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 20) {
-                //     $details = "Approve sample request entry";
-                // } elseif (isset($audit->new_values['Progress']) && ($audit->new_values['Progress'] == 30 || $audit->new_values['Progress'] == 80)) {
-                //     $details = "Approve sample request entry";
-                // } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 35) {
-                //     $details = "Receive sample request entry";
-                // } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
-                //     $details = "Pause sample request transaction." . isset($audit->new_values['Remarks']);
-                // } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
-                //     $details = "Start sample request transaction";
-                // } else {
-                //     $details = $audit->event . " " . 'Sample Request';
-                // }
+                // $details = $audit->event . " " . 'Request Product Evaluation';
+                if (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 20) {
+                    $details = "Approve request product evaluation entry";
+                } elseif (isset($audit->new_values['Progress']) && ($audit->new_values['Progress'] == 30 || $audit->new_values['Progress'] == 80)) {
+                    $details = "Approve request product evaluation entry";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 35) {
+                    $details = "Receive request product evaluation entry";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
+                    $details = "Pause request product evaluation transaction." . isset($audit->new_values['Remarks']);
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
+                    $details = "Start request product evaluation transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
+                    $details = "Submitted request product evaluation transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
+                    $details = "Completed request product evaluation transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 70) {
+                    $details = "Accepted request product evaluation transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 81) {
+                    $details = "Submitted request product evaluation transaction for Final Review";
+                } elseif (isset($audit->new_values['Status']) && $audit->new_values['Status'] == 30) {
+                    $details = "Closed request product evaluation transaction";
+                } else {
+                    $details = $audit->event . " " . 'Sample Request';
+                }
             }
             return (object) [
                 'CreatedDate' => $audit->created_at,
