@@ -28,6 +28,8 @@ use App\SalesApprovers;
 use PDF;
 use Illuminate\Support\Facades\View;
 use RealRashid\SweetAlert\Facades\Alert;
+use Collective\Html\FormFacade as Form;
+
 
 class PriceMonitoringController extends Controller
 {
@@ -104,11 +106,12 @@ class PriceMonitoringController extends Controller
             $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
             $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
+        $users = User::where('is_active', 1)->get();
         $products = Product::where('status', '4')->get();
         $payment_terms = PaymentTerms::all();
         $pricegaes = PriceRequestGae::get();
         $payment_terms = PaymentTerms::all();
-        return view('price_monitoring_ls.index', compact('price_monitorings','clients','primarySalesPersons', 'secondarySalesPersons', 'search', 'products', 'payment_terms', 'open', 'close', 'productApplications', 'pricegaes' )); 
+        return view('price_monitoring_ls.index', compact('price_monitorings','clients','primarySalesPersons', 'secondarySalesPersons', 'search', 'products', 'payment_terms', 'open', 'close', 'productApplications', 'pricegaes', 'users' )); 
     }
 
     public function store(Request $request)
@@ -579,23 +582,47 @@ class PriceMonitoringController extends Controller
             if (auth()->user()->role->name == "Department Admin")
             {
                 $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
             }
             if (auth()->user()->role->name == "Staff L1")
             {
                 $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
-            }
-        })
-        ->where(function($query) {
-            if (auth()->user()->role->name == "Staff L2")
-            {
-                $query->where('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
             }
-        })
-        ->get();
-        $users = User::wherehas('localsalespersons')->get();
+        })->get();
+        // $clients = Client::where(function($query) {
+        //     if (auth()->user()->role->name == "Department Admin")
+        //     {
+        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
+        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+        //     }
+        //     if (auth()->user()->role->name == "Staff L1")
+        //     {
+        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
+        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
+        //     }
+        // })
+        // ->where(function($query) {
+        //     if (auth()->user()->role->name == "Staff L2")
+        //     {
+        //         $query->where('SecondaryAccountManagerId', auth()->user()->id)
+        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+        //     }
+        // })
+        // ->get();
+        // $users = User::wherehas('localsalespersons')->get();
+        $users = User::where('is_active', 1)->get();
         $activities = Activity::where('TransactionNumber', $PriceRequestNumber)->get();
         $transactionLogs = TransactionLogs::where('Type', '50')
         ->where('TransactionId', $prfNumber)
@@ -860,6 +887,42 @@ public function ClosePrf( Request $request , $id)
         ])->setPaper('A4', 'portrait');
     
         return $pdf->stream('print.pdf');
+    }
+
+    public function computation(Request $request, $id)
+    {
+        $prf = PriceMonitoring::findOrFail($id);
+
+        View::share('price_monitoring_ls', $prf);
+        $pdf = PDF::loadView('price_monitoring_ls.computation', [
+            'price_monitoring_ls' => $prf,
+        ])->setPaper('A4', 'portrait');
+    
+        return $pdf->stream('print.pdf');
+    }
+
+    public function refreshUserApprover(Request $request)
+    {
+        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        if ($user != null)
+        {
+            if($user->salesApproverById)
+            {
+                $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
+
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+            elseif($user->salesApproverByUserId)
+            {
+                $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
+                
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+        }
+
+        return "";
     }
 
 }

@@ -22,7 +22,7 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Sample Request List
             @if(checkRolesIfHaveCreate('Sample Request Form', auth()->user()->department_id, auth()->user()->role_id) == "yes")
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formSampleRequest">Add Sample Request</button>
+            <button type="button" class="btn btn-md btn-primary" id="addSrfBtn" data-toggle="modal" data-target="#formSampleRequest">Add Sample Request</button>
             @endif
             </h4>
             <div class="form-group">
@@ -416,8 +416,67 @@
                 showConfirmButton: false
             });
         });
+
+        $("#addSrfBtn").on('click', function() {
+            var primarySales = $('[name="PrimarySalesPerson"]').val();
+            
+            refreshSecondaryApprovers(primarySales)
+        })
+
+        $('.editBtn').on('click', function() {
+            var primarySales = $(this).data('primarysales')
+            var secondarySales = $(this).data('secondarysales');
+
+            console.log(primarySales);
+            
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPerson"]').html(data) 
+                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                    }, 500);
+                }
+            })
+        })
+
+        $('[name="PrimarySalesPerson"]').on('change', function() {
+            var primarySales = $(this).val();
+
+            refreshSecondaryApprovers(primarySales)
+        })
+
+        function refreshSecondaryApprovers(primarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPerson"]').html(data) 
+                    }, 500);
+                }
+            })
+        }
     })
 </script>
+@include('sample_requests.create_srf')
+
 {{-- @foreach ($sampleRequests as $srf)
 @foreach ($srf->requestProducts as $product)
 @include('sample_requests.edit')
@@ -435,6 +494,5 @@
 {{-- @endif --}}
 
 
-@include('sample_requests.create_srf')
 @endsection
 

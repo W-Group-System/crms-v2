@@ -286,6 +286,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('OpenStatus/{id}', 'SampleRequestController@OpenStatus');
     Route::post('CompleteSrf/{id}', 'SampleRequestController@CompleteSrf');
     Route::get('print_srf/{id}', 'SampleRequestController@print_srf');
+    Route::get('print_srf_2/{id}', 'SampleRequestController@print_srf_2');
     Route::post('editDisposition/{id}', 'SampleRequestController@editDisposition');
     Route::post('initialQuantity/{id}', 'SampleRequestController@initialQuantity');
 
@@ -295,6 +296,8 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::delete('delete-srf-product/{id}', 'SampleRequestController@deleteSrfProduct');
 
     Route::get('sample_request_export', 'SampleRequestController@export');
+
+    Route::post('refresh_user_approvers', 'SampleRequestController@refreshUserApprover');
 
     // Sample Request Customer Service
     Route::get('/sample_request_cs_local', 'SampleRequestController@cs_local');
@@ -331,6 +334,9 @@ Route::group(['middleware' => 'inactive_users'], function() {
 
     Route::post('ApprovePrf/{id}', 'PriceMonitoringController@ApprovePrf');
     Route::post('ReopenPrf/{id}', 'PriceMonitoringController@ReopenPrf');        
+
+    Route::get('quotation/{id}', 'PriceMonitoringController@quotation');
+    Route::get('computation/{id}', 'PriceMonitoringController@computation');
 
     // Customer Complaint 
     Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');

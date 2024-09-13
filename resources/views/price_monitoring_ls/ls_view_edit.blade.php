@@ -13,20 +13,36 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label>Primary Sales Person</label>
+                                {{-- <label>Primary Sales Person</label>
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
+                                    @foreach($primarySalesPersons as $user)
                                         <option value="{{ $user->user_id }}" @if ($price_monitorings->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
+                                </select> --}}
+                                <label>Primary Sales Person</label>
+                                @if(auth()->user()->role->name == "Staff L1")
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @elseif (auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                @php
+                                    $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                @endphp
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($subordinates as $user)
+                                        <option value="{{ $user->id }}" @if($user->user_id == $price_monitorings->PrimarySalesPersonId || $user->id == $price_monitorings->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
                                 </select>
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId"  style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        <option value="{{ $user->user_id }}" @if ($price_monitorings->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
+                                        {{-- <option value="{{ $user->user_id }}" @if ($price_monitorings->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option> --}}
+                                        <option value="{{ $user->id }}" @if($user->user_id == $price_monitorings->SecondarySalesPersonId || $user->id == $price_monitorings->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -68,7 +84,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Shelf Life</label>
-                                <input type="text" class="form-control" name="ShelfLife" value="{{ $price_monitorings->ShelfLife ?? "2 Years" }}" readonly>
+                                <input type="text" class="form-control" name="ShelfLife" value="{{ $price_monitorings->ShelfLife ?? "2 Years"}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -80,11 +96,11 @@
                                 <label>Destination</label>
                                 <input type="text" class="form-control" name="Destination" value="{{ $price_monitorings->Destination}}">
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label>Payment Term</label>
                                 <input type="text" class="form-control payment-term" name="PaymentTerm" value="{{ $price_monitorings->PaymentTermId}}" readonly>
-                            </div>
-                            {{-- <div class="form-group">
+                            </div> --}}
+                            <div class="form-group">
                                 <label>Payment Term</label>
                                 <select class="form-control js-example-basic-single" name="PaymentTerm" style="position: relative !important" title="Select Payment Term">
                                     <option value="" disabled selected>Select Payment Term</option>
@@ -92,7 +108,7 @@
                                         <option value="{{ $paymentTerm->id }}">{{ $paymentTerm->Name }}</option>
                                     @endforeach
                                 </select>
-                            </div> --}}
+                            </div>
                             <div class="form-group">
                                 <label>Purpose of Price Request</label>
                                 <select class="form-control js-example-basic-single" name="PriceRequestPurpose"  style="position: relative !important" title="Select Purpose">
@@ -113,6 +129,10 @@
                                    <option value="20" @if ($price_monitorings->TaxType == '20') selected @endif>VAT Exclusive</option>
                                 </select>
                            </div>
+                            <div class="form-group">
+                                <label>Other Remarks</label>
+                                <input type="text" class="form-control" name="OtherRemarks" placeholder="Input Other Remarks" value="{{ $price_monitorings->OtherRemarks }}">
+                            </div>
                         </div>
                         <div class="col-lg-12"><hr style="background-color: black"></div>
                         <div class="prfForm{{ $price_monitorings->id }}">
@@ -130,7 +150,7 @@
                                             <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
                                                 <option value="" disabled selected>Select Product</option>
                                                 @foreach($products as $product)
-                                                    <option value="{{ $product->id }}" data-type="{{ $product->type }}" data-application_id="{{ $product->application_id }}"  @if ($priceProducts->ProductId == $product->id) selected @endif>{{ $product->code }}</option>
+                                                    <option value="{{ $product->id }}" data-type="{{ $product->type }}" data-application_id="{{ $product->application_id }}" @if ($priceProducts->ProductId == $product->id) selected @endif>{{ $product->code }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -470,60 +490,66 @@ $(document).ready(function() {
        updateTotalProductCost($row);
    });
 
-function updateTotalProductCost($row) {
-       var totalManufacturing = parseFloat($row.find('.total-manufacturing-cost-input').val());
-       var totalOperating = parseFloat($row.find('.total-operation-cost').val());
-       var blendingLoss = parseFloat($row.find('.blending-loss').val()); 
-       
-       var totalProductCost = totalManufacturing + totalOperating + blendingLoss;
-       $row.find('.total-product-cost').val(totalProductCost.toFixed(2)); 
+   function updateTotalProductCost($row) {
+    var totalManufacturing = parseFloat($row.find('.total-manufacturing-cost-input').val()) || 0;
+    var totalOperating = parseFloat($row.find('.total-operation-cost').val()) || 0;
+    var blendingLoss = parseFloat($row.find('.blending-loss').val()) || 0;
+    
+    var totalProductCost = totalManufacturing + totalOperating + blendingLoss;
+    $row.find('.total-product-cost').val(totalProductCost.toFixed(2));
 
-       updateMarkupPHP($row);
-       updateMarkupPercent($row);
-   }
+    updateMarkupPHP($row);
+    updateSellingPrice($row);
+    updateSellingPriceWithVAT($row);
+}
 
-function updateSellingPrice($row) {
-       var totalProductCost = parseFloat($row.find('.total-product-cost').val());
-       var markupPHP = parseFloat($row.find('.markup-php').val());
+    function updateSellingPrice($row) {
+        var totalProductCost = parseFloat($row.find('.total-product-cost').val()) || 0;
+        var markupPHP = parseFloat($row.find('.markup-php').val()) || 0;
 
-       if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
-           var sellingPrice = totalProductCost + markupPHP;
-           $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
-       }
-   }
+        if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
+            var sellingPrice = totalProductCost + markupPHP;
+            $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
+            updateSellingPriceWithVAT($row);
+        }
+    }
 
-   function updateSellingPriceWithVAT($row) {
-       var sellingPrice = parseFloat($row.find('.selling-price-php').val());
 
-       if (!isNaN(sellingPrice)) {
-           var sellingPriceWithVAT = sellingPrice + (sellingPrice * 0.12);
-           $row.find('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
-       }
-   }
+    function updateSellingPriceWithVAT($row) {
+        var sellingPrice = parseFloat($row.find('.selling-price-php').val()) || 0;
+
+        if (!isNaN(sellingPrice)) {
+            var sellingPriceWithVAT = sellingPrice * 1.12;
+            $row.find('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
+        }
+    }
+
 
    function updateMarkupPHP($row) {
-       var totalProductCost = parseFloat($row.find('.total-product-cost').val());
-       var markupPercent = parseFloat($row.find('.markup-percent').val());
+        var totalProductCost = parseFloat($row.find('.total-product-cost').val()) || 0;
+        var markupPercent = parseFloat($row.find('.markup-percent').val()) || 0;
 
-       if (!isNaN(totalProductCost) && !isNaN(markupPercent)) {
-           var markupPHP = (markupPercent / 100) * totalProductCost;
-           $row.find('.markup-php').val(markupPHP.toFixed(2));
-           updateSellingPrice($row);
-           updateSellingPriceWithVAT($row);
-       }
-   }
+        if (!isNaN(totalProductCost) && !isNaN(markupPercent)) {
+            var markupPHP = (markupPercent / 100) * totalProductCost;
+            $row.find('.markup-php').val(markupPHP.toFixed(2));
+            updateSellingPrice($row);
+            updateSellingPriceWithVAT($row);
+        }
+    }
 
-   function updateMarkupPercent($row) {
-       var totalProductCost = parseFloat($row.find('.total-product-cost').val());
-       var markupPHP = parseFloat($row.find('.markup-php').val());
 
-       if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
-           var markupPercent = (markupPHP / totalProductCost) * 100;
-           $row.find('.markup-percent').val(markupPercent.toFixed(2));
-           updateSellingPrice($row);
-           updateSellingPriceWithVAT($row);
-       }
-   }
+    function updateMarkupPercent($row) {
+        var totalProductCost = parseFloat($row.find('.total-product-cost').val()) || 0;
+        var markupPHP = parseFloat($row.find('.markup-php').val()) || 0;
+
+        if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
+            var markupPercent = (markupPHP / totalProductCost) * 100;
+            $row.find('.markup-percent').val(markupPercent.toFixed(2));
+            updateSellingPrice($row);
+            updateSellingPriceWithVAT($row);
+        }
+    }
+
 
    $(document).on('input', '.markup-percent', function() {
        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
@@ -535,7 +561,13 @@ function updateSellingPrice($row) {
        updateMarkupPercent($row);
    });
 
-   $(document).on('input', '.selling-price-php', function() {
+//    $(document).on('input', '.selling-price-php', function() {
+//         var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
+//         updateSellingPrice($row);
+//         updateSellingPriceWithVAT($row);
+//     });
+
+$(document).on('input', '.selling-price-php', function() {
        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        var sellingPrice = parseFloat($(this).val());
        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
@@ -551,22 +583,63 @@ function updateSellingPrice($row) {
        }
    });
 
-   $(document).on('input', '.selling-price-vat', function() {
-       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
-       var sellingPriceWithVAT = parseFloat($(this).val());
-       var totalProductCost = parseFloat($row.find('.total-product-cost').val());
+    $(document).on('input', '.selling-price-vat', function() {
+        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
+        var sellingPriceWithVAT = parseFloat($(this).val()) || 0;
+        var sellingPrice = sellingPriceWithVAT / 1.12;
+        var totalProductCost = parseFloat($row.find('.total-product-cost').val()) || 0;
+        
+        if (!isNaN(sellingPrice) && !isNaN(totalProductCost)) {
+            var markupPHP = sellingPrice - totalProductCost;
+            var markupPercent = (markupPHP / totalProductCost) * 100;
+            
+            $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
+            $row.find('.markup-php').val(markupPHP.toFixed(2));
+            $row.find('.markup-percent').val(markupPercent.toFixed(2));
+        }
+    });
 
-       if (!isNaN(sellingPriceWithVAT) && !isNaN(totalProductCost)) {
-           var sellingPrice = sellingPriceWithVAT / 1.12;
-           var markupPHP = sellingPrice - totalProductCost;
-           var markupPercent = (markupPHP / totalProductCost) * 100;
+//    $(document).on('input', '.selling-price-php', function() {
+//        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
+//        var sellingPrice = parseFloat($(this).val());
+//        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
 
-           $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
-           $row.find('.markup-php').val(markupPHP.toFixed(2));
-           $row.find('.markup-percent').val(markupPercent.toFixed(2));
-       }
-   });
-   
+//        if (!isNaN(sellingPrice) && !isNaN(totalProductCost)) {
+//            var markupPHP = sellingPrice - totalProductCost;
+//            var markupPercent = (markupPHP / totalProductCost) * 100;
+//            var sellingPriceWithVAT = sellingPrice + (sellingPrice * 0.12);
+
+//            $row.find('.markup-php').val(markupPHP.toFixed(2));
+//            $row.find('.markup-percent').val(markupPercent.toFixed(2));
+//            $row.find('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
+//        }
+//    });
+
+//    $(document).on('input', '.selling-price-vat', function() {
+//        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
+//        var sellingPriceWithVAT = parseFloat($(this).val());
+//        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
+
+//        if (!isNaN(sellingPriceWithVAT) && !isNaN(totalProductCost)) {
+//            var sellingPrice = sellingPriceWithVAT / 1.12;
+//            var markupPHP = sellingPrice - totalProductCost;
+//            var markupPercent = (markupPHP / totalProductCost) * 100;
+
+//            $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
+//            $row.find('.markup-php').val(markupPHP.toFixed(2));
+//            $row.find('.markup-percent').val(markupPercent.toFixed(2));
+//        }
+//    });
+
+$(document).ready(function() {
+    $('.create_prf_form{{ $price_monitorings->id }}').each(function() {
+        var $row = $(this);
+        updateTotalProductCost($row); 
+    });
+});
+
+
+ 
        function addProductRow() {
        var newProductForm = `
                        <div class="create_prf_form{{ $price_monitorings->id }} col-lg-12 row">
@@ -771,5 +844,4 @@ $(document).ready(function() {
 
     $(document).on('change', '.product-select', handleProductChange);
 });
-
 </script>
