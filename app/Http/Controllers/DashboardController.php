@@ -48,9 +48,9 @@ class DashboardController extends Controller
         // Customer Requirement
         function countCustomerRequirements($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
             return CustomerRequirement::where(function($query) use ($userId, $userByUser) {
-                    $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('SecondarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                    $query->where('SecondarySalesPersonId', $userId)
+                        // ->orWhere('SecondarySalesPersonId', $userId)
+                        // ->orWhere('PrimarySalesPersonId', $userByUser)
                         ->orWhere('SecondarySalesPersonId', $userByUser);
                 })
                 ->where($field, $value)
@@ -77,9 +77,9 @@ class DashboardController extends Controller
         // Product Evaluation
         function countProductEvaluation($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
             return RequestProductEvaluation::where(function($query) use ($userId, $userByUser) {
-                    $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('SecondarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                    $query->where('SecondarySalesPersonId', $userId)
+                        // ->orWhere('SecondarySalesPersonId', $userId)
+                        // ->orWhere('PrimarySalesPersonId', $userByUser)
                         ->orWhere('SecondarySalesPersonId', $userByUser);
                 })
                 ->where($field, $value)
@@ -105,9 +105,9 @@ class DashboardController extends Controller
         // Sample Request  
         function countSampleRequest($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
             return SampleRequest::where(function($query) use ($userId, $userByUser) {
-                    $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('SecondarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                    $query->where('SecondarySalesPersonId', $userId)
+                        // ->orWhere('SecondarySalesPersonId', $userId)
+                        // ->orWhere('PrimarySalesPersonId', $userByUser)
                         ->orWhere('SecondarySalesPersonId', $userByUser);
                 })
                 ->where($field, $value)
@@ -132,9 +132,9 @@ class DashboardController extends Controller
         // Price Request
         function countPriceRequest($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
             return PriceMonitoring::where(function($query) use ($userId, $userByUser) {
-                    $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('SecondarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                    $query->where('SecondarySalesPersonId', $userId)
+                        // ->orWhere('SecondarySalesPersonId', $userId)
+                        // ->orWhere('PrimarySalesPersonId', $userByUser)
                         ->orWhere('SecondarySalesPersonId', $userByUser);
                 })
                 ->where($field, $value)
