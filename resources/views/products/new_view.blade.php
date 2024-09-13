@@ -11,7 +11,8 @@
                 <div class="col-lg-6" align="right">
                     <a href="{{ url('new_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
-                    <form method="post" class="d-inline-block" id="rejectForm">
+                    @if(auth()->user()->role->type == "RND" && (auth()->user()->role->name == "Staff L2") || (auth()->user()->role->name == "Department Admin"))
+                    <form method="post" class="d-inline-block" id="rejectForm" onsubmit="show()">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
@@ -19,12 +20,13 @@
                         <button type="submit" class="btn btn-md btn-danger" title="Reject">Reject</button>
                     </form>
 
-                    <form method="POST" action="{{url('add_to_current_products')}}" class="d-inline-block">
+                    <form method="POST" action="{{url('add_to_current_products')}}" class="d-inline-block" onsubmit="show()">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
                         <button type="button" class="btn btn-md btn-primary" id="currentBtn" name="action" value="Current">Move to Current</button>
                     </form>
+                    @endif
                 </div>
             </div>
             @php
@@ -115,7 +117,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
-                <div class="col-md-3"><p class="mb-0">{{ $approveUsers->full_name ?? '' }}</p></div>
+                <div class="col-md-3"><p class="mb-0">N/A</p></div>
             </div>
             <div class="row">
                 <div class="col-md-2 col-form-label"><p class="mb-0"><b>Date Approved:</b></p></div>
@@ -135,7 +137,7 @@
             </div>
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link p-2 @if(session('tab') == 'materials' || session('tab') == null) active @endif" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="true">Materials</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'materials' || session('tab') == null) active @endif" id="materials-tab" data-toggle="tab" href="#materials" role="tab">Materials</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="specifications-tab" data-toggle="tab" href="#specifications" role="tab" aria-controls="specifications" aria-selected="false">Specifications</a>
@@ -161,7 +163,9 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                    @if(session('tab') == 'materials')
                     @include('components.error')
+                    @endif
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval" data-toggle="modal" data-target="#rawMaterials{{$data->id}}">Update</button>
                     </div>
@@ -292,6 +296,9 @@
                     @endif
                 </div>
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
+                    @if(session('tab') == 'files')
+                    @include('components.error')
+                    @endif
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
                         <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
@@ -385,6 +392,7 @@
                                 <tr>
                                     <th>Type</th>
                                     <th>Transaction</th>
+                                    <th>Disposition Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -397,6 +405,7 @@
                                                     {{$cr->CrrNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -409,6 +418,7 @@
                                                     {{$rps->RpeNumber}}
                                                 </a>
                                             </td>
+                                            <td>N/A</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -417,9 +427,16 @@
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{url('samplerequest/view/'.$item->Id)}}" target="_blank">
+                                                <a href="{{url('samplerequest/view/'.$item->sampleRequest->Id)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
+                                            </td>
+                                            <td>
+                                                @if($item->DispositionRejectionDescription != null)
+                                                {{$item->DispositionRejectionDescription}}
+                                                @else
+                                                N/A
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -533,13 +550,14 @@
                 {{csrf_field()}}
                 
                 <div class="modal-body">
+                    <p id="totalPercentage">{{$percentage ?? 0.00}}</p>
+
                     <div class="card border border-1 border-primary rounded-0 rounded-bottom" style="height: 70vh; overflow-y:auto;">
                         <div class="card-header bg-primary text-white">
                             Raw Materials Percentage
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <span id="totalPercentage">{{$percentage ?? 0.00}}</span>
         
                                 <table class="table table-striped table-bordered table-hover" id="rawMaterialsTable">
                                     <thead>
@@ -617,6 +635,9 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     $(document).ready(function() {
+        var percentage = {!! json_encode($percentage) !!}
+        document.getElementById('totalPercentage').innerText = percentage
+        
         new DataTable('.tables', {
             destroy: true,
             processing: true,
@@ -629,10 +650,11 @@
             processing: true,
             // pageLength: 10,
             paginate: false,
-            ordering: false
+            ordering: true,
+            dom: "lrt"
         })
 
-        $(".percentageVal").on('change', function() {
+        $(".percentageVal").on('input', function() {
             var total = 0;
             
             $('.percentageVal').each(function() {
@@ -671,28 +693,45 @@
             }
             else
             {
-                $.ajax({
-                    type: "POST",
-                    url: action,
-                    data: formData,
-                    beforeSend: function()
-                    {
-                        show();
-                    },
-                    success: function()
-                    {
-                        hide();
-
-                        Swal.fire({
-                            icon: "success",
-                            title: "Successfully Saved",
-                        }).then(() => {
-                            location.reload()
-                        })
+                var hasZeroValue = false;
+                $('.percentageVal').each(function() {
+                    if ($(this).val() === "0" || $(this).val() === 0) {
+                        hasZeroValue = true;
+                        return false;
                     }
                 })
-            }
 
+                if (hasZeroValue)
+                {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Cannot accept 0%"
+                    })
+                }
+                else
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: action,
+                        data: formData,
+                        beforeSend: function()
+                        {
+                            show();
+                        },
+                        success: function()
+                        {
+                            hide();
+
+                            Swal.fire({
+                                icon: "success",
+                                title: "Successfully Saved",
+                            }).then(() => {
+                                location.reload()
+                            })
+                        }
+                    })
+                }
+            }
         })
 
         // $("#addBtn").on('click', function() {
@@ -935,6 +974,12 @@
             $("#filename").val(filename);
         })
 
+        $('input[type="file"]').on('change', function(e) {
+            var filename = e.target.files[0].name;
+
+            $("#edit_filename").val(filename);
+        })
+
         $(".addBtnFiles").on('click', function()
         {
             var newRow = `
@@ -948,7 +993,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label>Client :</label>
-                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm">
                                         <option value="">-Client-</option>
                                         @foreach ($client as $c)
                                             <option value="{{$c->id}}">{{$c->Name}}</option>

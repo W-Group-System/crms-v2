@@ -26,7 +26,7 @@
                                             </div>
                                             <div class="col-lg-6">
                                                 <label>Client :</label>
-                                                <select name="client[]" class="js-example-basic-single form-control form-control-sm" required>
+                                                <select name="client[]" class="js-example-basic-single form-control form-control-sm">
                                                     <option value="">-Client-</option>
                                                     @foreach ($client as $c)
                                                         <option value="{{$c->id}}" @if($c->id == $pf->ClientId) selected @endif>{{$c->Name}}</option>

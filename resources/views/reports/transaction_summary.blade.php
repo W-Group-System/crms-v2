@@ -12,16 +12,16 @@
                     <button class="btn btn-md btn-outline-info" style="margin-top: 1.5em" id="copy_transaction_btn">Copy</button>
                     <a href="{{ route('export_transaction_activity', request()->all()) }}" class="btn btn-outline-success" style="margin-top: 1.5em">Excel</a>
                 </div>
-                <form class="form-inline col-md-6" action="{{ route('reports.transaction_activity') }}" method="GET">
+                <form class="form-inline col-md-6" id="filter-form" action="{{ route('reports.transaction_activity') }}" method="GET" onsubmit="show()">
                     <div class="col-md-6 mt-2 mb-2">
                         <label style="align-items: start;justify-content: left;">From (DD/MM/YYYY):</label>
-                        <input type="date" class="form-control" name="from" id="from" value="{{ $from }}" onchange="this.form.submit();" style="width: 100%;">
+                        <input type="date" class="form-control" name="from" id="from" value="{{ $from }}" style="width: 100%;" >
                     </div>
                     <div class="col-md-6 mt-2 mb-2">
                         <label style="align-items: start;justify-content: left;">To (DD/MM/YYYY):</label>
-                        <input type="date" class="form-control" name="to" id="to" value="{{ $to }}" onchange="this.form.submit();" style="width: 100%;">
+                        <input type="date" class="form-control" name="to" id="to" value="{{ $to }}" style="width: 100%;" >
                     </div>
-                </form>                
+                </form>
             </div>
             <div class="row mt-2">
                 <div class="col-lg-6">
@@ -39,7 +39,7 @@
                     <span>Entries</span>
                 </div>
                 <div class="col-lg-6">
-                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <input type="hidden" name="from" value="{{ $from }}">
                         <input type="hidden" name="to" value="{{ $to }}">
                         <div class="row height d-flex justify-content-end align-items-end">
@@ -60,63 +60,63 @@
                         <tr>
                             <th>
                                 Type
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'type', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'type', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'type' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Transaction Number
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'transaction_number', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'transaction_number', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'transaction_number' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 BDE
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'bde', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'bde', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'bde' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Client
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'client', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'client', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'client' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Date Created
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'date_created', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'date_created', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'date_created' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Due Date
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'due_date', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'due_date', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'due_date' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Details
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'details', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'details', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'details' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Result
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'result', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'result', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'result' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Status
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'status', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'status', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 Progress
-                                <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'progress', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
+                                <!-- <a href="{{ route('reports.transaction_activity', array_merge(request()->query(), ['sort' => 'progress', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])) }}">
                                 <i class="ti ti-arrow-{{ request('sort') == 'progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                            </a>
+                                </a> -->
                             </th>
                         </tr>
                     </thead>
@@ -269,6 +269,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 <script>
     $(document).ready(function() {
+        $('.table').tablesorter({
+            theme: "bootstrap"
+        })
+        
         $("[name='number_of_entries']").on('change', function() {
             var form = $(this).closest('form');
             form.submit();
@@ -317,7 +321,9 @@
             const filterDueDate = $('#filter-due-date').val();
             const filterStatus = $('#filter-status').val();
             const filterProgress = $('#filter-progress').val();
-            
+            const dateFrom = $('#from').val();
+            const dateTo = $('#to').val();
+
             // Build query string based on filters
             const queryParams = new URLSearchParams({
                 filter_type: filterType,
@@ -328,6 +334,8 @@
                 filter_due_date: filterDueDate,
                 filter_status: filterStatus,
                 filter_progress: filterProgress,
+                from: dateFrom,
+                to: dateTo,
                 // Add other filters here if needed
             }).toString();
 
@@ -336,7 +344,7 @@
         }
 
         // Attach event handlers
-        $('#filter-type, #filter-transaction-number, #filter-bde, #filter-client, #filter-date-created, #filter-due-date, #filter-status, #filter-progress').on('change keyup', function() {
+        $('#filter-type, #filter-transaction-number, #filter-bde, #filter-client, #filter-date-created, #filter-due-date, #filter-status, #filter-progress, #from, #to').on('change keyup', function() {
             applyFilters();
         });
 
