@@ -957,9 +957,11 @@
                             </thead>
                             <tbody>
                                 @foreach ($rpeFileUploads as $fileupload)
+                                @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $fileupload->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                     <tr>
                                         <td align="center">
-                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes")
+                                            {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes") --}}
+                                            @if(authCheckIfItsRnd(auth()->user()->department_id))
                                                 <button type="button"  class="btn btn-sm btn-warning btn-outline"
                                                     data-target="#editRpeFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
                                                     <i class="ti-pencil"></i>
@@ -982,6 +984,7 @@
                                             @endif
                                         </td>
                                     </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>

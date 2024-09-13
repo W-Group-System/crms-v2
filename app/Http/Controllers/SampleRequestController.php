@@ -283,7 +283,15 @@ class SampleRequestController extends Controller
                 $details = "Pause sample request transaction." . isset($audit->new_values['Remarks']);
             } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
                 $details = "Start sample request transaction";
-            } else {
+            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
+                $details = "Submitted sample request transaction";
+            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
+                $details = "Completed sample request transaction";
+            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 70) {
+                $details = "Accepted sample request transaction";
+            } elseif (isset($audit->new_values['Status']) && $audit->new_values['Status'] == 30) {
+                $details = "Closed sample request transaction";
+            }else {
                 $details = $audit->event . " " . 'Sample Request';
             }
         }
