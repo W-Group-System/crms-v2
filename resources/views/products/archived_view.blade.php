@@ -15,7 +15,8 @@
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        <button type="button" class="btn btn-md btn-primary submit_approval" id="draftBtn" name="action" value="Draft" >Move to Draft</button>
+                        <input type="hidden" name="action" value="add_to_draft">
+                        <button type="button" class="btn btn-md btn-primary submit_approval" id="draftBtn">Move to Draft</button>
                     </form>
                 </div>
             </div>
@@ -493,8 +494,14 @@
                                 @if(count($data->productEventLogs) > 0)
                                     @foreach ($data->productEventLogs as $logs)
                                         <tr>
-                                            <td>{{date('M d Y', strtotime($logs->TimeStamp))}}</td>
-                                            <td>{{$logs->userByUserId->full_name}}</td>
+                                            <td>{{date('M d Y h:i A', strtotime($logs->TimeStamp))}}</td>
+                                            <td>
+                                                @if($logs->userByUserId)
+                                                {{optional($logs->userByUserId)->full_name}}
+                                                @elseif($logs->userById)
+                                                {{$logs->userById->full_name}}
+                                                @endif
+                                            </td>
                                             <td>{{$logs->Details}}</td>
                                         </tr>
                                     @endforeach
