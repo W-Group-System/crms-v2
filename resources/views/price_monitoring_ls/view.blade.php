@@ -46,7 +46,7 @@
                             data-toggle="modal">
                             <i class="ti-folder"></i>&nbsp;Close
                         </button>
-                        <button type="button" class="btn btn-warning"
+                        <button type="button" class="btn btn-warning editBtn"
                             data-target="#prfEdit{{ $price_monitorings->id }}" 
                             data-toggle="modal" 
                             title='Update PRF'>
@@ -108,11 +108,23 @@
                         </div>
                          <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Primary Sales Person:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->primarySalesPerson)->full_name }}</p>
+                            <p class="col-sm-3 col-form-label">
+                                @if($price_monitorings->primarySalesPerson)
+                                {{ optional($price_monitorings->primarySalesPerson)->full_name}}
+                                @elseif($price_monitorings->primarySalesPersonById)
+                                {{ optional($price_monitorings->primarySalesPersonById)->full_name}}
+                                @endif
+                                {{-- {{ optional($price_monitorings->primarySalesPerson)->full_name }}</p> --}}
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Secondary Sales Person:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ optional($price_monitorings->secondarySalesPerson)->full_name }}</p>
+                            <p class="col-sm-3 col-form-label">
+                                @if($price_monitorings->secondarySalesPerson)
+                                {{ optional($price_monitorings->secondarySalesPerson)->full_name}}
+                                @elseif($price_monitorings->secondarySalesPersonById)
+                                {{ optional($price_monitorings->secondarySalesPersonById)->full_name}}
+                                @endif
+                            </p>
                             <p class="offset-sm-2 col-sm-2 col-form-labe"><b>Progress:</b></p>
                             <p class="col-sm-3 col-form-label">
                                 {{ optional($price_monitorings->progressStatus)->name }}
@@ -643,6 +655,57 @@
             }],
             order: []
         });
+
+        $(".editBtn").on('click', function() {
+            var secondarySales = $(this).data('secondarysales');
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+
+            refreshSecondaryApprovers(primarySales,secondarySales)
+        })
+        $('[name="PrimarySalesPersonId"]').on('change', function() {
+            var primarySales = $(this).val();
+
+            refreshSecondaryApproversv2(primarySales)
+        })
+        function refreshSecondaryApprovers(primarySales,secondarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                    }, 500);
+                }
+            })
+        }
+        function refreshSecondaryApproversv2(primarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                    }, 500);
+                }
+            })
+        }
     });
 
     document.addEventListener('DOMContentLoaded', function() {

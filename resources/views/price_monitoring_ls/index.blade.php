@@ -6,9 +6,9 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Price Monitoring List
             @if(auth()->user()->role->type == 'LS')
-            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" data-toggle="modal" data-target="#AddPriceMonitoringLs">New</button>
+            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoringLs">New</button>
             @elseif (auth()->user()->role->type == 'IS')
-            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" data-toggle="modal" data-target="#AddPriceMonitoring">Add</button>
+            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoring">Add</button>
             @endif
             </h4>
             <div class="form-group">
@@ -51,8 +51,9 @@
                         @foreach ($price_monitorings as $priceMonitoring)
                         <tr>
                             <td align="center">
-                                <a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id) }}" class="btn btn-sm btn-outline-info" title="View Price Request"><i class="ti-eye"></i></a>
-                                <button type="button" class="btn btn-sm btn-outline-warning"
+                                <a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id) }}" class="btn btn-sm btn-outline-info btn-outline" title="View Price Request"><i class="ti-eye"></i></a>
+                                <button type="button" class="btn btn-sm btn-warning editBtn" data-primarysales="{{$priceMonitoring->PrimarySalesPersonId}}" data-secondarysales="{{$priceMonitoring->SecondarySalesPersonId}}"
+
                                     data-target="#editPriceRequest{{ $priceMonitoring->id }}" data-toggle="modal" title='Edit Price Request'>
                                     <i class="ti-pencil"></i>
                                 </button>  
@@ -61,7 +62,7 @@
                                 </button>
                             </td>
                             <td>{{ optional($priceMonitoring)->PrfNumber }}</td>
-                            <td>{{ $priceMonitoring->DateRequested }}</td>
+                            <td>{{  date('m-d-y', strtotime($priceMonitoring->DateRequested)) }}</td>
                             <td>{{ optional($priceMonitoring->client)->Name }}</td>
                             <td>
                                 <!-- @if($priceMonitoring->Status == 10)
@@ -133,7 +134,7 @@
                                 </button>
                             </td>
                             <td>{{ optional($priceMonitoring)->PrfNumber }}</td>
-                            <td>{{ $priceMonitoring->DateRequested }}</td>
+                            <td>{{  date('m-d-y', strtotime($priceMonitoring->DateRequested)) }}</td>
                             <td>{{ optional($priceMonitoring->client)->Name }}</td>
                             <td>
                                 <!-- @if($priceMonitoring->Status == 10)
@@ -254,6 +255,63 @@
     }
 
     $(document).on('change', '.product-pick', handleProductChange);
+
+    $("#addPrfBtn").on('click', function() {
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            
+            refreshSecondaryApprovers(primarySales)
+        })
+
+        $('.editBtn').on('click', function() {
+            var primarySales = $(this).data('primarysales')
+            var secondarySales = $(this).data('secondarysales');
+
+            console.log(primarySales);
+            
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                    }, 500);
+                }
+            })
+        })
+
+        $('[name="PrimarySalesPersonId"]').on('change', function() {
+            var primarySales = $(this).val();
+
+            refreshSecondaryApprovers(primarySales)
+        })
+
+        function refreshSecondaryApprovers(primarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                    }, 500);
+                }
+            })
+        }
 })
 
 </script>

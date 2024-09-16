@@ -8,7 +8,7 @@
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add New Region</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Add New Sample Request</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -41,23 +41,23 @@
                         <input type="date" class="form-control" name="DateStarted" value="" placeholder="" readonly>
                     </div>
 
-                    @if (auth()->user()->role->name == 'Staff L2')
                     <div class="form-group">
-                        <label>Primary Sales Person:</label>
-                        <select  class="form-control js-example-basic-single" name="PrimarySalesPerson" style="position: relative !important" title="Select PrimarySalesPerson" required >
-                            <option value="" disabled selected>Primary Sales Person</option>
-                            @foreach ($primarySalesPersons as $salesPerson)
-                                <option value="{{ $salesPerson->user_id }}"{{ old('PrimarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }} >{{ $salesPerson->full_name }}</option>
-                            @endforeach
-                        </select>
+                        <label>Primary Sales Person</label>
+                        @if(auth()->user()->role->name == "Staff L1")
+                            <input type="hidden" name="PrimarySalesPerson" value="{{auth()->user()->id}}">
+                            <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                        @elseif(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
+                            @php
+                                $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                            @endphp
+                            <select class="form-control js-example-basic-single" name="PrimarySalesPerson" id="PrimarySalesPerson" style="position: relative !important" title="Select Sales Person">
+                                <option value="" disabled selected>Select Sales Person</option>
+                                @foreach($subordinates as $subordinate)
+                                    <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPerson') == $subordinate->id || auth()->user()->id == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </div>
-                    @else
-                    <div class="form-group">
-                        <label>Primary Sales Person:</label>
-                        <input type="text" class="form-control form-control-sm" value="{{ old('PrimarySalesPerson', auth()->user()->full_name) }}" readonly>
-                        <input type="hidden" name="PrimarySalesPerson" value="{{ old('PrimarySalesPerson', auth()->user()->user_id) }}">
-                    </div>
-                    @endif
                     {{-- <div class="form-group">
                         <label>Primary Salesperson:</label>
                         <select 
@@ -83,7 +83,7 @@
                         <label>Secondary Sales Person:</label>
                         <select class="form-control js-example-basic-single" name="SecondarySalesPerson"  style="position: relative !important" title="Select SecondarySalesPerson" required>
                             <option value="" disabled selected>Secondary Sales Person</option>
-                            @foreach ($secondarySalesPersons as $salesPerson)
+                            @foreach ($users as $salesPerson)
                                 <option value="{{ $salesPerson->user_id }}" {{ old('SecondarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }}>{{ $salesPerson->full_name }}</option>
                             @endforeach
                         </select>

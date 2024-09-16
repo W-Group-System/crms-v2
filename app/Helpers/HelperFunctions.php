@@ -254,7 +254,8 @@ function checkIfItsApprover($user_id, $primary_sales_person, $type)
     }
     if ($type == "SRF")
     {
-        $user = User::where('user_id', $primary_sales_person)->first();
+        // $user = User::where('user_id', $primary_sales_person)->first();
+        $user = User::where('id', $primary_sales_person)->orWhere('user_id', $primary_sales_person)->first();
 
         $salesApprovers = SalesApprovers::where('SalesApproverId', $user_id)->where('UserId', $user->id)->first();
         
@@ -265,7 +266,7 @@ function checkIfItsApprover($user_id, $primary_sales_person, $type)
     }
     if ($type == "PRF")
     {
-        $user = User::where('user_id', $primary_sales_person)->first();
+        $user = User::where('id', $primary_sales_person)->orWhere('user_id', $primary_sales_person)->first();
 
         $salesApprovers = SalesApprovers::where('SalesApproverId', $user_id)->where('UserId', $user->id)->first();
         

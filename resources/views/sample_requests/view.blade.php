@@ -119,7 +119,7 @@
                     @if(auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId)
                             @if(auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'LS')
                             @if(empty($sampleRequest->Courier) && empty($sampleRequest->AwbNumber) && empty($sampleRequest->DateDispatched) && empty($sampleRequest->DateSampleReceived))
-                            <button type="button" class="btn btn-warning"
+                            <button type="button" class="btn btn-warning editBtn"
                                 data-target="#salesEdit{{$sampleRequest->Id}}" 
                                 data-toggle="modal" 
                                 title='Update SRF'>
@@ -202,7 +202,7 @@
 
                         @if(authCheckIfItsSales(auth()->user()->department_id))
                             @if($sampleRequest->Status == 10)
-                            <button type="button" class="btn btn-warning"
+                            <button type="button" class="btn btn-warning editBtn"
                                 data-target="#salesEdit{{ $sampleRequest->Id }}" 
                                 data-toggle="modal" 
                                 title='Update SRF'>
@@ -391,7 +391,7 @@
                             <p><b>Client Name :</b></p>
                         </div>
                         <div class="col-sm-3">
-                            <p><a href="{{ url('view_client/' . $sampleRequest->client->id) }}">
+                            <p><a href="{{ url('view_client/' . optional($sampleRequest->client)->id) }}">
                                 {{ optional($sampleRequest->client)->Name  }}</p>
                             </a></p>
                         </div>
@@ -473,7 +473,11 @@
                             <p><b>Primary Sales Person :</b></p>
                         </div>
                         <div class="col-sm-3">
-                            <p>{{ optional($sampleRequest->primarySalesPerson)->full_name}}</p>
+                            <p> @if($sampleRequest->primarySalesPerson)
+                                {{ optional($sampleRequest->primarySalesPerson)->full_name}}
+                                @elseif($sampleRequest->primarySalesPersonById)
+                                {{ optional($sampleRequest->primarySalesPersonById)->full_name}}
+                                @endif</p>
                         </div>
                     </div>
                     <div class="row mb-0">
@@ -487,7 +491,13 @@
                             <p><b>Secondary Sales Person :</b></p>
                         </div>
                         <div class="col-sm-3">
-                            <p>{{ optional($sampleRequest->secondarySalesPerson)->full_name}}</p>
+                            <p>
+                                @if($sampleRequest->secondarySalesPerson)
+                                {{ optional($sampleRequest->secondarySalesPerson)->full_name}}
+                                @elseif($sampleRequest->secondarySalesPersonById)
+                                {{ optional($sampleRequest->secondarySalesPersonById)->full_name}}
+                                @endif
+                            </p>
                         </div>
                     </div>
                     <div class="row mb-0">
@@ -621,104 +631,138 @@
                     </div>
                     
                 </div>
-            <div class="group-form">
-            
-                   
+            <div class="group-form">  
             <br>
             @foreach ( $sampleRequest->requestProducts as $requestProducts)
                 <div class="border">
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Index:</b></p>
-                        <p class="col-sm-3">{{ $sampleRequest->SrfNumber}}-{{ $requestProducts->ProductIndex }}</p>
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <p><b>Index</b></p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p>{{ $sampleRequest->SrfNumber}}-{{ $requestProducts->ProductIndex }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p></p>
+                        </div>
                     </div>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b></b></p>
-                        <p class="col-sm-3"></p>
-                    </div>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Product Type:</b></p>
-                        <p class="col-sm-3">
-                            @if($requestProducts->ProductType == 1)
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Product Type:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>@if($requestProducts->ProductType == 1)
                                 Pure
                             @elseif($requestProducts->ProductType == 2)
                                 Blend
                             @else
                             {{ $requestProducts->ProductType }}
-                            @endif
-                        </p>
-                        <p class="col-sm-3 col-form-label"><b>RPE Number:</b></p>
-                        <p class="col-sm-3">
-                            @php
-                                    $rpeNumber = $requestProducts->RpeNumber;
-                                    $rpeId = getRpeIdByNumber($rpeNumber);
-                                    if ($rpeId) {
-                                     echo '<a href="'.url('product_evaluation/view/'.$rpeId).'">'.$rpeNumber.'</a>';
-                                    } else {
-                                    echo $rpeNumber;
+                            @endif</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>RPE Number</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p> @php
+                                $rpeNumber = $requestProducts->RpeNumber;
+                                $rpeId = getRpeIdByNumber($rpeNumber);
+                                if ($rpeId) {
+                                 echo '<a href="'.url('product_evaluation/view/'.$rpeId).'">'.$rpeNumber.'</a>';
+                                } else {
+                                echo $rpeNumber;
+                            }
+                        @endphp</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Application:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $requestProducts->productApplicationsId->Name }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>CRR Number</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p> @php
+                                $crrNumber = $requestProducts->CrrNumber;
+                                $crr = getCrrIdByNumber($crrNumber);
+                                if ($crr) {
+                                 echo '<a href="'.url('view_customer_requirement/'.$crr).'">'.$crrNumber.'</a>';
+                                } else {
+                                echo $crrNumber;
+                            }
+                        @endphp</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Product Code:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>@php
+                                $prodCode = $requestProducts->ProductCode;
+                                $productId = getProductIdByCode($prodCode);
+                                if ($productId) {
+                                    echo '<a href="'.url('view_product/'.$productId).'">'.$prodCode.'</a>';
+                                } else {
+                                    echo $prodCode; // Or whatever you want to display if the product ID is not found
                                 }
-                            @endphp
-                        </p>
+                            @endphp</p>
+                        </div>
                     </div>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Application:</b></p>
-                        <p class="col-sm-3">{{ $requestProducts->productApplicationsId->Name }}</p>
-                        <p class="col-sm-3 col-form-label"><b>CRR Number:</b></p>
-                        <p class="col-sm-3">
-                            @php
-                                    $crrNumber = $requestProducts->CrrNumber;
-                                    $crr = getCrrIdByNumber($crrNumber);
-                                    if ($crr) {
-                                     echo '<a href="'.url('view_customer_requirement/'.$crr).'">'.$crrNumber.'</a>';
-                                    } else {
-                                    echo $crrNumber;
-                                }
-                            @endphp
-                        </p>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Product Description:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $requestProducts->ProductDescription }}</p>
+                        </div>
                     </div>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Product Code:</b></p>
-                        <p class="col-sm-3">
-                            @php
-                                    $prodCode = $requestProducts->ProductCode;
-                                    $productId = getProductIdByCode($prodCode);
-                                    if ($productId) {
-                                        echo '<a href="'.url('view_product/'.$productId).'">'.$prodCode.'</a>';
-                                    } else {
-                                        echo $prodCode; // Or whatever you want to display if the product ID is not found
-                                    }
-                                @endphp</p>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Number of Packages:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $requestProducts->NumberOfPackages }}</p>
+                        </div>
                     </div>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Product Description:</b></p>
-                        <p class="col-sm-3">{{ $requestProducts->ProductDescription }}</p>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Quantity:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $requestProducts->Quantity }} 
+                                @if ( $requestProducts->UnitOfMeasureId == 1)
+                                g
+                                @elseif ($requestProducts->UnitOfMeasureId == 2)
+                                kg
+                                @endif</p>
+                        </div>
                     </div>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Number of Packages:</b></p>
-                        <p class="col-sm-3">{{ $requestProducts->NumberOfPackages }}</p>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Label:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $requestProducts->Label }}</p>
+                        </div>
                     </div>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Quantity:</b></p>
-                        <p class="col-sm-3">{{ $requestProducts->Quantity }} 
-                            @if ( $requestProducts->UnitOfMeasureId == 1)
-                            g
-                            @elseif ($requestProducts->UnitOfMeasureId == 2)
-                            kg
-                            @endif
-                           </p>
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Remarks:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>{{ $requestProducts->Remarks }}</p>
+                        </div>
                     </div>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Label:</b></p>
-                        <p class="col-sm-3">{{ $requestProducts->Label }}</p>
-                    </div>
-                    <br>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Remarks</b></p>
-                        <p class="col-sm-8 col-form-label">{{ $requestProducts->Remarks }}</p>
-                    </div>
-                    <div class="form-group row">
-                        <p class="col-sm-3 col-form-label"><b>Disposition:</b></p>
-                        <p class="col-sm-3">
-                            @if ($requestProducts->Disposition == '1')
+                    <div class="row mb-0">
+                        <div class="col-sm-3">
+                            <p><b>Disposition:</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p>@if ($requestProducts->Disposition == '1')
                                 No Feedback
                             @elseif ($requestProducts->Disposition == '10')
                                 Accepted
@@ -726,20 +770,22 @@
                                 Rejected
                             @else
                                 NA
-                            @endif
-                        </p>
-                        <p class="col-sm-3 col-form-label"><b>Disposition Remarks</b></p>
-                        <p class="col-sm-3">{{ $requestProducts->DispositionRejectionDescription}}</p>
+                            @endif</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><b>Disposition Remarks</b></p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p> {{ $requestProducts->DispositionRejectionDescription}}</p>
+                        </div>
                     </div>
+                    <br>
                 </div>
-                <br>
             @endforeach
-            <div class="form-header">
-                <span class="header-label"><b>Approver Remarks</b></span>
-                <hr class="form-divider">
-            </div>
-            <div class="group-form">
-                <div class="form-group row">
+            <div class="col-md-12">
+                <label><strong>Approver Remarks</strong></label>
+                <hr style="margin-top: 0px; color: black; border-top-color: black;">
+                <div class="row mb-0">
                     <label class="col-sm-12 col-form-label">
                         @if($sampleRequest->srfTransactionApprovals->isEmpty())
                             @if($sampleRequest->approver)
@@ -768,34 +814,67 @@
                     </label>
                 </div>
             </div>
-            <div class="form-header">
-                <span class="header-label"><b>Dispatch Details</b></span>
-                <hr class="form-divider">
+            <div class="col-md-12">
+                <label><strong>Dispatch Details</strong></label>
+                <hr style="margin-top: 0px; color: black; border-top-color: black;">
+            
+                <div class="row mb-0">
+                    <div class="col-sm-3">
+                        <p><b>Courier :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p>{{ $sampleRequest->Courier  }}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p><b>Late :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p></p>
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <div class="col-sm-3">
+                        <p><b>AWB Number:</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p>{{ $sampleRequest->AwbNumber }}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p><b>Delivery Remarks :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p>{{ $sampleRequest->DeliveryRemarks}}</p>
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <div class="col-sm-3">
+                        <p><b>Date Dispatched :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p>{{ $sampleRequest->DateDispatched }}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p><b>Note:</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p>{{ $sampleRequest->Note}}</p>
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <div class="col-sm-3">
+                        <p><b>Date Sample Received :</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p>{{ $sampleRequest->DateSampleReceived }}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p><b></b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p></p>
+                    </div>
+                </div>
             </div>
-            <div class="group-form">
-            <div class="form-group row">
-                <p class="col-sm-3 col-form-label"><b>Courier:</b></p>
-                <p class="col-sm-3">{{ $sampleRequest->Courier  }}</p>
-                <p class="col-sm-3 col-form-label"><b>Late:</b></p>
-                <p class="col-sm-3"></p>
-            </div>
-             <div class="form-group row">
-                <p class="col-sm-3 col-form-label"><b>AWB Number:</b></p>
-                <p class="col-sm-3">{{ $sampleRequest->AwbNumber }}</p>
-                <p class="col-sm-3 col-form-label"><b>Delivery Remarks:</b></p>
-                <p class="col-sm-3">{{ $sampleRequest->DeliveryRemarks}}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-3 col-form-label"><b>Date Dispatched:</b></p>
-                <p class="col-sm-3">{{ $sampleRequest->DateDispatched }}</p>
-                <p class="col-sm-3 col-form-label"><b>Note:</b></p>
-                <p class="col-sm-3">{{ $sampleRequest->Note}}</p>
-            </div>
-            <div class="form-group row">
-                <p class="col-sm-3 col-form-label"><b>Date Sample Received:</b></p>
-                <p class="col-sm-3">{{ $sampleRequest->DateSampleReceived }}</p>
-            </div>
-        </div>
         </div>        
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
@@ -1549,6 +1628,57 @@
             }],
             order: []
         });
+
+        $(".editBtn").on('click', function() {
+            var secondarySales = $(this).data('secondarysales');
+            var primarySales = $('[name="PrimarySalesPerson"]').val();
+
+            refreshSecondaryApprovers(primarySales,secondarySales)
+        })
+        $('[name="PrimarySalesPerson"]').on('change', function() {
+            var primarySales = $(this).val();
+
+            refreshSecondaryApproversv2(primarySales)
+        })
+        function refreshSecondaryApprovers(primarySales,secondarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPerson"]').html(data) 
+                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                    }, 500);
+                }
+            })
+        }
+        function refreshSecondaryApproversv2(primarySales)
+        {
+            $.ajax({
+                type: "POST",
+                url: "{{url('refresh_user_approvers')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    ps: primarySales,
+                },
+                success: function(data)
+                {
+                    setTimeout(() => {
+                        $('[name="SecondarySalesPerson"]').html(data) 
+                    }, 500);
+                }
+            })
+        }
     });
 
     </script>

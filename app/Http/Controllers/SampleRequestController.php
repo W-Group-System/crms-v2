@@ -31,6 +31,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
 use PDF;
 use RealRashid\SweetAlert\Facades\Alert;
+use Collective\Html\FormFacade as Form;
+
 
 class SampleRequestController extends Controller
 {
@@ -54,14 +56,15 @@ class SampleRequestController extends Controller
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
         $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
 
-        if ($role->name == 'Staff L2' ) {
-            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApproverById->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
+        // if ($role->name == 'Staff L2' ) {
+        //     $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+        //     $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApproverById->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
             
-        } else {
-            $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
-        }
+        // } else {
+        //     $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
+        //     $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
+        // }
+        $users = User::where('is_active', 1)->get();
 
         $search = $request->input('search');
         $sort = $request->get('sort', 'Id');
@@ -202,7 +205,7 @@ class SampleRequestController extends Controller
         ->paginate($request->entries ?? 10);
 
        
-        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'primarySalesPersons', 'secondarySalesPersons', 'entries', 'open','close'));
+        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users'));
     }
 
     public function getSampleContactsByClientF($clientId)
@@ -260,20 +263,30 @@ class SampleRequestController extends Controller
             $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
         }
 
-        if ($loggedInUser->role->name == "Staff L1") {
-            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
-                ->orwhere('PrimaryAccountManagerId', $loggedInUser->id)
-                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
-                ->get();
-        } elseif ($loggedInUser->role->name == "Staff L2" || $loggedInUser->role->name == "Department Admin") {
-            $subordinateIds = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            
-            $clients = Client::where('PrimaryAccountManagerId', $loggedInUser->user_id)
-                ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id)
-                ->orWhereIn('PrimaryAccountManagerId', $subordinateIds)
-                ->orWhereIn('SecondaryAccountManagerId', $subordinateIds)
-                ->get();
-        } 
+        $clients = Client::where(function($query) {
+            if (auth()->user()->role->name == "Department Admin")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L2")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+            if (auth()->user()->role->name == "Staff L1")
+            {
+                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+            }
+        })
+        ->get();
         $productApplications = ProductApplication::all(); 
         $productCodes = Product::where('status', '4')->get();
         $users = User::wherehas('localsalespersons')->get();
@@ -1079,7 +1092,29 @@ public function export(Request $request)
         
         return view('customer_service.customer_service_international_srf', compact('sampleRequests','search','entries', 'open','close'));
     }
+    public function refreshUserApprover(Request $request)
+    {
+        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        if ($user != null)
+        {
+            if($user->salesApproverById)
+            {
+                $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
 
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+            elseif($user->salesApproverByUserId)
+            {
+                $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
+                $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
+                
+                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+            }
+        }
+
+        return "";
+    }
 
 }    
 

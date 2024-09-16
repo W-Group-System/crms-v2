@@ -2,6 +2,7 @@
 <html>
 <head>
     <style>
+        
         body {
             font-family: Arial, sans-serif;
             font-size: 12px;
@@ -98,11 +99,11 @@
                 <table class="details-table">
                     <tr>
                         <td class="label"><span>Client Name:</span></td>
-                        <td class="detail">{{ $sample_requests->client->Name }}</td>
+                        <td class="detail">{{ optional($sample_requests->client)->Name }}</td>
                     </tr>
                     <tr>
                         <td class="label"><span>Client Trade Name:</span></td>
-                        <td class="detail">{{ $sample_requests->client->trade_name }}</td>
+                        <td class="detail">{{ optional($sample_requests->client)->trade_name }}</td>
                     </tr>
                     <tr>
                         <td class="label"><span>Region:</span></td>

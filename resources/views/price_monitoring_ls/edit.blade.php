@@ -13,20 +13,36 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label>Primary Sales Person</label>
+                                {{-- <label>Primary Sales Person</label>
                                 <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($primarySalesPersons as $user)
                                         <option value="{{ $user->user_id }}" @if ($priceMonitoring->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
+                                </select> --}}
+                                <label>Primary Sales Person</label>
+                                @if(auth()->user()->role->name == "Staff L1")
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @elseif (auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
+                                @php
+                                    $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                @endphp
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($subordinates as $user)
+                                        <option value="{{ $user->id }}" @if($user->user_id == $priceMonitoring->PrimarySalesPersonId || $user->id == $priceMonitoring->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
                                 </select>
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
                                 <select class="form-control js-example-basic-single" name="SecondarySalesPersonId"  style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($secondarySalesPersons as $user)
-                                        <option value="{{ $user->user_id }}" @if ($priceMonitoring->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
+                                    @foreach($users as $user)
+                                        {{-- <option value="{{ $user->user_id }}" @if ($priceMonitoring->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option> --}}
+                                        <option value="{{ $user->id }}" @if($user->user_id == $priceMonitoring->SecondarySalesPersonId || $user->id == $priceMonitoring->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -80,11 +96,11 @@
                                 <label>Destination</label>
                                 <input type="text" class="form-control" name="Destination" value="{{ $priceMonitoring->Destination}}">
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label>Payment Term</label>
                                 <input type="text" class="form-control payment-term" name="PaymentTerm" value="{{ $priceMonitoring->PaymentTermId}}" readonly>
-                            </div>
-                            {{-- <div class="form-group">
+                            </div> --}}
+                            <div class="form-group">
                                 <label>Payment Term</label>
                                 <select class="form-control js-example-basic-single" name="PaymentTerm" style="position: relative !important" title="Select Payment Term">
                                     <option value="" disabled selected>Select Payment Term</option>
@@ -92,7 +108,7 @@
                                         <option value="{{ $paymentTerm->id }}">{{ $paymentTerm->Name }}</option>
                                     @endforeach
                                 </select>
-                            </div> --}}
+                            </div>
                             <div class="form-group">
                                 <label>Purpose of Price Request</label>
                                 <select class="form-control js-example-basic-single" name="PriceRequestPurpose"  style="position: relative !important" title="Select Purpose">
@@ -482,7 +498,6 @@ $(document).ready(function() {
     var totalProductCost = totalManufacturing + totalOperating + blendingLoss;
     $row.find('.total-product-cost').val(totalProductCost.toFixed(2));
 
-    // Trigger updates for other calculations
     updateMarkupPHP($row);
     updateSellingPrice($row);
     updateSellingPriceWithVAT($row);
@@ -546,11 +561,27 @@ $(document).ready(function() {
        updateMarkupPercent($row);
    });
 
-   $(document).on('input', '.selling-price-php', function() {
-        var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
-        updateSellingPrice($row);
-        updateSellingPriceWithVAT($row);
-    });
+//    $(document).on('input', '.selling-price-php', function() {
+//         var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+//         updateSellingPrice($row);
+//         updateSellingPriceWithVAT($row);
+//     });
+
+$(document).on('input', '.selling-price-php', function() {
+       var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
+       var sellingPrice = parseFloat($(this).val());
+       var totalProductCost = parseFloat($row.find('.total-product-cost').val());
+
+       if (!isNaN(sellingPrice) && !isNaN(totalProductCost)) {
+           var markupPHP = sellingPrice - totalProductCost;
+           var markupPercent = (markupPHP / totalProductCost) * 100;
+           var sellingPriceWithVAT = sellingPrice + (sellingPrice * 0.12);
+
+           $row.find('.markup-php').val(markupPHP.toFixed(2));
+           $row.find('.markup-percent').val(markupPercent.toFixed(2));
+           $row.find('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
+       }
+   });
 
     $(document).on('input', '.selling-price-vat', function() {
         var $row = $(this).closest('.create_prf_form{{ $priceMonitoring->id }}');
@@ -603,7 +634,7 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('.create_prf_form{{ $priceMonitoring->id }}').each(function() {
         var $row = $(this);
-        updateTotalProductCost($row); // Ensure this is called to initialize
+        updateTotalProductCost($row); 
     });
 });
 

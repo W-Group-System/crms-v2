@@ -51,10 +51,18 @@ class PriceMonitoring extends Model implements Auditable
     {
         return $this->belongsTo(User::class, 'PrimarySalesPersonId', 'user_id');
     }
+    public function primarySalesPersonById()
+    {
+        return $this->belongsTo(User::class,'PrimarySalesPersonId','id');
+    }
 
     public function secondarySalesPerson()
     {
         return $this->belongsTo(User::class, 'SecondarySalesPersonId', 'user_id');
+    }
+    public function secondarySalesPersonById()
+    {
+        return $this->belongsTo(User::class,'SecondarySalesPersonId','id');
     }
 
     public function userById()
