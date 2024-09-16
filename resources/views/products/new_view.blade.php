@@ -432,10 +432,14 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                @if($item->DispositionRejectionDescription != null)
-                                                {{$item->DispositionRejectionDescription}}
+                                                @if ($item->Disposition == '1')
+                                                    <span class="badge badge-warning">No Feedback</span>
+                                                @elseif ($item->Disposition == '10')
+                                                    <span class="badge badge-success">Accepted</span>
+                                                @elseif ($item->Disposition == '20')
+                                                    <span class="badge badge-danger">Rejected</span>
                                                 @else
-                                                N/A
+                                                    <span class="badge badge-info">N/A</span>
                                                 @endif
                                             </td>
                                         </tr>
