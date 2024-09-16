@@ -8,6 +8,7 @@ use App\UserAccessModule;
 use App\RequestProductEvaluation;
 use App\SalesApprovers;
 use App\User;
+use App\UserEventLogs;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -642,4 +643,54 @@ function allergens()
     return collect($nutrional_information)->map(function($item) {
         return (object) $item;
     });
+}
+
+function productManagementLogs($action, $product_code)
+{
+    $userEventLogs = new UserEventLogs;
+    $userEventLogs->timestamp = date('Y-m-d h:i:s');
+    $userEventLogs->UserId = auth()->user()->id;
+    $userEventLogs->Value = $product_code;
+    if ($action == "create")
+    {
+        $userEventLogs->Details = "Create new product entry.";
+    }
+    if ($action == "update")
+    {
+        $userEventLogs->Details = "Update product entry.";
+    }
+    if ($action == "update_raw_materials")
+    {
+        $userEventLogs->Details = "Update product material composition entry.";
+    }
+    if ($action == "create_files")
+    {
+        $userEventLogs->Details = "Create new product file entry.";
+    }
+    if ($action == "update_files")
+    {
+        $userEventLogs->Details = "Update product file entry.";
+    }
+    if ($action == "move_to_new")
+    {
+        $userEventLogs->Details = "Submit product entry for approval.";
+    }
+    if ($action == "move_to_current")
+    {
+        $userEventLogs->Details = "Approved product entry.";
+    }
+    if ($action == "archive")
+    {
+        $userEventLogs->Details = "	Archived product entry.";
+    }
+    if ($action == "add_to_draft")
+    {
+        $userEventLogs->Details = "Product has been moved to draft.";
+    }
+    if ($action == "reject")
+    {
+        $userEventLogs->Details = "Rejected product entry.";
+    }
+
+    $userEventLogs->save();
 }

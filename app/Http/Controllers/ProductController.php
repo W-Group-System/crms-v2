@@ -198,6 +198,7 @@ class ProductController extends Controller
             $product->approved_by = null;
             $product->save();
 
+            productManagementLogs("create", $product->code);
             return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
         }
         else
@@ -218,6 +219,7 @@ class ProductController extends Controller
                 $product->status = 1;
                 $product->save();
     
+                productManagementLogs("create", $product->code);
                 return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
             }
             else
@@ -259,6 +261,7 @@ class ProductController extends Controller
             $product->product_origin = $request->product_origin;
             $product->save();
 
+            productManagementLogs("update", $product->code);
             return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
         }
         else
@@ -277,6 +280,7 @@ class ProductController extends Controller
                 $product->product_origin = $request->product_origin;
                 $product->save();
     
+                productManagementLogs("update", $product->code);
                 return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
             }
             else
@@ -349,6 +353,8 @@ class ProductController extends Controller
             $product_composition->Percentage = $value;
             $product_composition->ProductId = $id;
             $product_composition->save(); 
+            
+            productManagementLogs("update_raw_materials", $product_composition->products->code);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -397,6 +403,8 @@ class ProductController extends Controller
         $product->status = 2;
         $product->save();
 
+        productManagementLogs("move_to_new", $product->code);
+
         Alert::success('Successfully added to new products')->persistent("Dismiss");
         return redirect('/new_products');
     }
@@ -417,6 +425,8 @@ class ProductController extends Controller
         $product->date_approved = date('Y-m-d h:i:s');
         $product->save();
 
+        productManagementLogs("move_to_current", $product->code);
+
         Alert::success('Successfully added to current products')->persistent("Dismiss");
         return redirect('/current_products');
     }
@@ -426,7 +436,9 @@ class ProductController extends Controller
         $product = Product::findOrFail($request->id);
         $product->status = 1;
         $product->save();
-        
+
+        productManagementLogs($request->action, $product->code);
+
         Alert::success('Successfully added to draft products')->persistent("Dismiss");
         return redirect('/draft_products');
     }
@@ -436,6 +448,8 @@ class ProductController extends Controller
         $product = Product::findOrFail($request->id);
         $product->status = 5;
         $product->save();
+
+        productManagementLogs("archive", $product->code);
 
         Alert::success('Sucessfully Archived')->persistent('Dismiss');
         return redirect('/archived_products');
@@ -518,6 +532,8 @@ class ProductController extends Controller
         $fileProducts->Path = "/attachments/" . $fileName;
         $fileProducts->save();
 
+        productManagementLogs("create_files", $fileProducts->product->code);
+
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back()->with(['tab' => 'files']);
     }
@@ -553,6 +569,8 @@ class ProductController extends Controller
         }
         
         $fileProducts->save();
+
+        productManagementLogs("update_files", $fileProducts->product->code);
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back()->with(['tab' => 'files']);

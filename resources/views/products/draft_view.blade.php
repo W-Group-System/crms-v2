@@ -512,15 +512,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if(count($data->productEventLogs) > 0)
-                                    @foreach ($data->productEventLogs as $logs)
-                                        <tr>
-                                            <td>{{date('M d Y', strtotime($logs->TimeStamp))}}</td>
-                                            <td>{{optional($logs->userByUserId)->full_name}}</td>
-                                            <td>{{$logs->Details}}</td>
-                                        </tr>
-                                    @endforeach
-                                @endif
+                                @foreach ($data->productEventLogs as $logs)
+                                    <tr>
+                                        <td>{{date('M d Y h:i A', strtotime($logs->TimeStamp))}}</td>
+                                        <td>
+                                            @if($logs->userByUserId)
+                                            {{optional($logs->userByUserId)->full_name}}
+                                            @elseif($logs->userById)
+                                            {{$logs->userById->full_name}}
+                                            @endif
+                                        </td>
+                                        <td>{{$logs->Details}}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

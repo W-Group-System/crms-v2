@@ -12,11 +12,11 @@
                     <a href="{{ url('new_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
                     @if(auth()->user()->role->type == "RND" && (auth()->user()->role->name == "Staff L2") || (auth()->user()->role->name == "Department Admin"))
-                    <form method="post" class="d-inline-block" id="rejectForm" onsubmit="show()">
+                    <form method="post" class="d-inline-block" id="rejectForm">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-
+                        <input type="hidden" name="action" value="reject">
                         <button type="submit" class="btn btn-md btn-danger" title="Reject">Reject</button>
                     </form>
 
@@ -24,7 +24,7 @@
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        <button type="button" class="btn btn-md btn-primary" id="currentBtn" name="action" value="Current">Move to Current</button>
+                        <button type="button" class="btn btn-md btn-primary" id="currentBtn">Move to Current</button>
                     </form>
                     @endif
                 </div>
@@ -503,8 +503,14 @@
                                 @if(count($data->productEventLogs) > 0)
                                     @foreach ($data->productEventLogs as $logs)
                                         <tr>
-                                            <td>{{date('M d Y', strtotime($logs->TimeStamp))}}</td>
-                                            <td>{{$logs->userByUserId->full_name}}</td>
+                                            <td>{{date('M d Y h:i A', strtotime($logs->TimeStamp))}}</td>
+                                            <td>
+                                                @if($logs->userByUserId)
+                                                {{optional($logs->userByUserId)->full_name}}
+                                                @elseif($logs->userById)
+                                                {{$logs->userById->full_name}}
+                                                @endif
+                                            </td>
                                             <td>{{$logs->Details}}</td>
                                         </tr>
                                     @endforeach
@@ -1052,8 +1058,14 @@
                         type: "POST",
                         url: "{{url('add_to_draft_products')}}",
                         data: formData,
+                        beforeSend: function()
+                        {
+                            show()
+                        },
                         success: function(res) 
                         {
+                            hide()
+                            
                             Swal.fire({
                                 title: "Moved!",
                                 text: "The product has been moved to draft",

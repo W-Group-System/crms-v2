@@ -13,4 +13,9 @@ class UserEventLogs extends Model
     {
         return $this->belongsTo(User::class, 'UserId', 'user_id');
     }
+
+    public function userById()
+    {
+        return $this->belongsTo(User::class, 'UserId', 'id');
+    }
 }
