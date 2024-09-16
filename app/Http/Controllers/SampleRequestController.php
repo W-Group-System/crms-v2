@@ -629,28 +629,32 @@ class SampleRequestController extends Controller
             ]);
         }
 
-                $files = $request->file('srf_file');
-                $names = $request->input('name');
-                $srfId =  $samplerequest->Id;
-                
-                if ($files) {
-                    foreach ($files as $index => $file) {
-                    $name = $names[$index];
-                    $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('public/srfFiles', $fileName);
-                    $fileUrl = '/storage/srfFiles/' . $fileName;       
-                    $uploadedFile = new SrfFile();
-                    $uploadedFile->SampleRequestId = $srfId;
-                    $uploadedFile->Name = $name;
-                    $uploadedFile->Path = $fileUrl;
-                    if ((auth()->user()->department_id == 5) || (auth()->user()->department_id == 38)) {
-                        $uploadedFile->userType = 'Sales';
-                    } elseif ((auth()->user()->department_id == 15) || (auth()->user()->department_id == 42)) {
-                        $uploadedFile->userType = 'RND';
-                    }
-                    $uploadedFile->save();
-                    }
+        if ($request->has('SalesSrfFile'))
+        {
+            $attachments = $request->file('SalesSrfFile');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('srfFiles'), $name);
+                $path = '/srfFiles/'.$name;
+
+                $srfFiles = new SrfFile();
+                $srfFiles->Name = $name;
+                $srfFiles->Path = $path;
+                $srfFiles->SampleRequestId = $samplerequest['Id'];
+
+                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                {
+                    $srfFiles->UserType = "Sales";
                 }
+                if (auth()->user()->role->type == "RND")
+                {
+                    $srfFiles->UserType = "RND";
+                }
+                
+                $srfFiles->save();
+            }
+        }
 
         return redirect()->route('sample_request.index')->with('success', 'Sample Request created successfully.');
 }
@@ -1115,6 +1119,26 @@ public function export(Request $request)
         }
 
         return "";
+    }
+    public function editsalesSrfFiles(Request $request, $id)
+    {
+        $attachments = $request->file('file');
+        $name = time().'_'.$attachments->getClientOriginalName();
+        $attachments->move(public_path('srfFiles'), $name);
+        $path = '/srfFiles/'.$name;
+
+        $files = SrfFile::findOrFail($id);
+        $files->Name = $name;
+        $files->Path = $path;
+        if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+        {
+            $files->userType = "Sales";
+        }
+
+        $files->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back()->with(['tab' => 'files']);
     }
 
 }    
