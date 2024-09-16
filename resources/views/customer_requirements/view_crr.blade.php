@@ -520,7 +520,7 @@
 
                 <div class="row">
                     <div class="col-sm-3 col-md-2"><p class="mb-0"><b>DDW Number : </b></p></div>
-                    <div class="col-sm-3 col-md-2">
+                    <div class="col-sm-3 col-md-3">
                         <p class="mb-0">@if($crr->DdwNumber != null){{$crr->DdwNumber}}@else N/A @endif</p>
                     </div>
                     <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Date Received :</b></p></div>
@@ -536,7 +536,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Recommendation : </b></p></div>
-                    <div class="col-sm-3 col-md-2">
+                    <div class="col-sm-3 col-md-3">
                         <p class="mb-0">
                             @php
                             $crr_recommendation = $crr->Recommendation;
@@ -552,12 +552,7 @@
                                 return $matches[0];
                             }, $crr_recommendation);
                             @endphp  
-                            {!! nl2br($crr_linked) !!}
-                            {{-- @if($crr_recommendation != null)
-                            {!! nl2br(e($crr_recommendation)) !!}
-                            @else
-                            N/A
-                            @endif --}}
+                            {{$crr_linked}}
                         </p>
                     </div>
                     <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Date Completed :</b></p></div>
