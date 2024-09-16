@@ -653,6 +653,7 @@ class SampleRequestController extends Controller
             ['id' => $productId],  
             [
                 'SampleRequestId' => $id, 
+                'ProductIndex' => $key + 1,
                 'ProductType' => $request->input('ProductType.' . $key),
                 'ApplicationId' => $request->input('ApplicationId.' . $key),
                 'ProductCode' =>  $value,

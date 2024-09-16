@@ -475,8 +475,8 @@
                         <div class="col-sm-3">
                             <p> @if($sampleRequest->primarySalesPerson)
                                 {{ optional($sampleRequest->primarySalesPerson)->full_name}}
-                                @elseif($sampleRequest->primarySalesPersonById)
-                                {{ optional($sampleRequest->primarySalesPersonById)->full_name}}
+                                @elseif($sampleRequest->primarySalesById)
+                                {{ optional($sampleRequest->primarySalesById)->full_name}}
                                 @endif</p>
                         </div>
                     </div>
@@ -494,8 +494,8 @@
                             <p>
                                 @if($sampleRequest->secondarySalesPerson)
                                 {{ optional($sampleRequest->secondarySalesPerson)->full_name}}
-                                @elseif($sampleRequest->secondarySalesPersonById)
-                                {{ optional($sampleRequest->secondarySalesPersonById)->full_name}}
+                                @elseif($sampleRequest->secondarySalesById)
+                                {{ optional($sampleRequest->secondarySalesById)->full_name}}
                                 @endif
                             </p>
                         </div>
@@ -889,9 +889,11 @@
                 <li class="nav-item">
                     <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
+                @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <li class="nav-item">
                     <a class="nav-link" id="raw-materials-tab" data-toggle="tab" href="#raw_materials" role="tab" aria-controls="rawMaterials" aria-selected="false">Raw Materials</a>
                 </li>
+                @endif
                 <li class="nav-item">
                     <a class="nav-link" id="transaction-remarks" data-toggle="tab" href="#transactionRemarks" role="tab" aria-controls="transactionRemarks" aria-selected="false">Transaction Remarks</a>
                 </li>
@@ -1116,6 +1118,7 @@
                     </div>
                 </div>
                 {{-- @endif --}}
+                @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <div class="tab-pane fade" id="raw_materials" role="tabpanel" aria-labelledby="raw-materials-tab">
                     <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Raw Material"  data-toggle="modal" data-target="#addRawMaterial">
@@ -1153,6 +1156,7 @@
                         </table>
                     </div>
                 </div>
+                @endif
                 <div class="tab-pane fade" id="transactionRemarks" role="tabpanel" aria-labelledby="transaction-remarks">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover table-detailed" style="width:100%;">

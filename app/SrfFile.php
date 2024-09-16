@@ -8,7 +8,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 
 
-class SrfFile extends Model implements Auditable
+class SrfFile extends Model
 {
     use SoftDeletes;
     use AuditableTrait;
