@@ -262,6 +262,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('srfFiles', 'SampleRequestController@uploadFile');
     Route::post('updateFile/{id}', 'SampleRequestController@editFile');
     Route::delete('samplerequest/view/file-delete/{id}', 'SampleRequestController@deleteFile');
+    Route::post('update_srf_sales_files/{id}', 'SampleRequestController@editsalesSrfFiles');
 
     Route::post('srfRawMaterial', 'SampleRequestController@addRawMaterial');
     Route::post('UpdateRawMaterial/edit/{id}', 'SampleRequestController@editRawMaterial');

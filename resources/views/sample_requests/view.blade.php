@@ -620,16 +620,22 @@
                     <hr style="margin-top: 0px; color: black; border-top-color: black;">
                     <div class="row mb-0">
                         @foreach ($sampleRequest->salesSrfFiles as $file)
-                            @if ($file->Path)
-                                <div class="col-sm-12">
+                        @if ($file->Path)
+                            <div class="col-sm-12 d-flex align-items-center">
                                     <p class="file-link" style="margin-top: 5px;">
                                         <a href="{{ url($file->Path) }}" target="_blank">{{ $file->Name }}</a>
                                     </p>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                    
+                                    &nbsp;
+                                    <a href="#" class="text-warning" data-toggle="modal" data-target="#editSrfSalesFiles{{$file->Id}}">
+                                        <i class="ti-pencil-alt"></i>
+                                    </a>
+                                    <a href="#" class="text-danger deleteFilesBtn" data-id="{{$file->Id}}">
+                                        <i class="ti-trash"></i>
+                                    </a>
+                            </div>
+                        @endif
+                    @endforeach
+                    </div> 
                 </div>
             <div class="group-form">  
             <br>
@@ -1618,6 +1624,42 @@
             });
         });
 
+        $('.deleteFilesBtn').on('click', function() {
+            var id = $(this).data('id');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Delete"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: '{{url('samplerequest/view/file-delete')}}/' + id,
+                        data: {
+                            id: id
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function()
+                        {
+                            Swal.fire({
+                                title: "Successfully Deleted",
+                                icon: "success"
+                            }).then(() => {
+                                location.reload();
+                            })
+                        }
+                    })
+                }
+            });
+        })
+
     $(document).ready(function() {
         new DataTable('.table-detailed', {
             pageLength: 10,
@@ -1686,6 +1728,9 @@
     });
 
     </script>
+@foreach ($sampleRequest->salesSrfFiles as $file)        
+@include('sample_requests.edit_sales_files')
+@endforeach
 @include('sample_requests.create_supplementary')
 @include('sample_requests.assign_personnel')
 @include('sample_requests.upload_srf_file')

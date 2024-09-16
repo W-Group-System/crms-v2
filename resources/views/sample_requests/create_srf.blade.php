@@ -88,6 +88,10 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Upload Files</label>
+                        <input type="file" name="SalesSrfFile[]" class="form-control" multiple>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
@@ -136,30 +140,10 @@
                         <label for="Remarks">Remarks (Internal)</label>
                         <textarea class="form-control" name="Remarks" placeholder="Enter Remarks" >{{ old('Remarks') }}</textarea>
                     </div>
-                   
                     {{-- <div class="form-group" hidden >
                         <label for="SrfNumber">Unique ID:</label>
                         <input type="text" class="form-control" id="SrfNumber" name="SrfNumber" readonly>
                     </div> --}}
-                </div>
-            </div>
-            <div class="modal-footer"></div>
-            <div class="form-header">
-                <span class="header-label">Files</span>
-                <hr class="form-divider">
-            </div>
-            <div class="srf-file">
-                <div class="form-group">
-                    <label for="name"><b>Name</b></label>
-                    <input type="text" name="name[]" class="form-control" id="name" placeholder="">
-                </div>
-                <div class="form-group">
-                    <label for="srf_file"><b>Browse Files</b></label>
-                    <input type="file" class="form-control" id="srf_file" name="srf_file[]" multiple>
-                </div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-sm btn-primary addSrfFile"><i class="ti-plus"></i></button>
-                    <button type="button" class="btn btn-sm btn-danger deleteRowBtn" hidden><i class="ti-trash"></i></button>
                 </div>
             </div>
             <div class="modal-footer"></div>
@@ -455,7 +439,6 @@
 
 
 
-
 $(document).ready(function() {
         const $dateRequested = $('.DateRequested');
         const $dateDispatched = $('#DateDispatched');
@@ -601,4 +584,3 @@ $(document).ready(function() {
     //         $('.modal-title').text("Add Sample Request");
     //     });
 </script>
-
