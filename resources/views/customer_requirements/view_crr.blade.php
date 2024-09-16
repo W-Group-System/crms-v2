@@ -69,7 +69,7 @@
 
                     @if(auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId)
                         @if($crr->Status == 10)
-                            @if(auth()->user()->department_id == 15 || auth()->user()->department_id == 42)
+                            @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
@@ -123,7 +123,7 @@
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                     
                         @if($crr->Progress != 30 && $crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60)
-                            @if(auth()->user()->department_id == 15 || auth()->user()->department_id == 42)
+                            @if(auth()->user()->role->type == $crr->RefCode)
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
@@ -195,72 +195,69 @@
                                 </button>
                             @endif
                         @else
-                            @if($crr->Progress == 57 || $crr->Progress == 81)
-                            <form action="{{url('start_crr/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
-                                @csrf
-
-                                <button type="button" class="btn btn-outline-danger returnBtn">
-                                    <i class="ti-back-left">&nbsp;</i> Return To Specialist
-                                </button>
-                            </form>
-                            @endif
-
-                            @if($crr->Progress == 30)
-                                <form action="{{url('rnd_received/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
+                            @if($crr->RefCode == auth()->user()->role->type)
+                                @if($crr->Progress == 57 || $crr->Progress == 81)
+                                <form action="{{url('start_crr/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
                                     @csrf
 
-                                    <button type="button" class="btn btn-outline-success receivedBtn">
-                                        <i class="ti-bookmark">&nbsp;</i> Received
+                                    <button type="button" class="btn btn-outline-danger returnBtn">
+                                        <i class="ti-back-left">&nbsp;</i> Return To Specialist
                                     </button>
                                 </form>
-                            @endif
+                                @endif
 
-                            @if($crr->Progress == 35)
-                                <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
-                                    @csrf 
+                                @if($crr->Progress == 30)
+                                    <form action="{{url('rnd_received/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
+                                        @csrf
 
-                                    <button type="button" class="btn btn-outline-success startCrrBtn">
-                                        <i class="ti-control-play"></i>&nbsp; Start
+                                        <button type="button" class="btn btn-outline-success receivedBtn">
+                                            <i class="ti-bookmark">&nbsp;</i> Received
+                                        </button>
+                                    </form>
+                                @endif
+
+                                @if($crr->Progress == 35)
+                                    <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
+                                        @csrf 
+
+                                        <button type="button" class="btn btn-outline-success startCrrBtn">
+                                            <i class="ti-control-play"></i>&nbsp; Start
+                                        </button>
+                                    </form>
+                                @endif
+
+                                @if($crr->Progress == 50)
+                                    <button type="button" class="btn btn-outline-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
+                                        <i class="ti-control-pause"></i>&nbsp; Pause
                                     </button>
-                                </form>
-                            @endif
+                                @endif
 
-                            @if($crr->Progress == 50)
-                                <button type="button" class="btn btn-outline-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
-                                    <i class="ti-control-pause"></i>&nbsp; Pause
-                                </button>
-                            @endif
-
-                            @if($crr->Progress == 55)
-                                {{-- <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
-                                    @csrf 
-
-                                </form> --}}
-                                <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#continueStatus{{$crr->id}}">
-                                    <i class="ti-control-play"></i>&nbsp; Continue
-                                </button>
-                            @endif
-
-                            @if($crr->Progress == 57)
-                                <form method="POST" action="{{url('submit_final_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
-                                    @csrf 
-
-                                    <button type="button" class="btn btn-outline-success submitFinalCrr">
-                                        <i class="ti-check"></i>&nbsp; Submit
+                                @if($crr->Progress == 55)
+                                    <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#continueStatus{{$crr->id}}">
+                                        <i class="ti-control-play"></i>&nbsp; Continue
                                     </button>
-                                </form>
+                                @endif
+
+                                @if($crr->Progress == 57)
+                                    <form method="POST" action="{{url('submit_final_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
+                                        @csrf 
+
+                                        <button type="button" class="btn btn-outline-success submitFinalCrr">
+                                            <i class="ti-check"></i>&nbsp; Submit
+                                        </button>
+                                    </form>
+                                @endif
+
+                                @if($crr->Progress == 57 || $crr->Progress == 81)
+                                    <form method="POST" action="{{url('complete_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
+                                        @csrf 
+
+                                        <button type="button" class="btn btn-outline-primary completeCrr">
+                                            <i class="ti-pencil-alt"></i>&nbsp; Completed
+                                        </button>
+                                    </form>
+                                @endif
                             @endif
-
-                            @if($crr->Progress == 57 || $crr->Progress == 81)
-                                <form method="POST" action="{{url('complete_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
-                                    @csrf 
-
-                                    <button type="button" class="btn btn-outline-primary completeCrr">
-                                        <i class="ti-pencil-alt"></i>&nbsp; Completed
-                                    </button>
-                                </form>
-                            @endif
-
                         @endif
                     @endif
                 </div>

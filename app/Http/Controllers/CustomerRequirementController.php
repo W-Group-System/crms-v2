@@ -625,24 +625,7 @@ class CustomerRequirementController extends Controller
             $transactionApproval->RemarksType = "accept";
             $transactionApproval->save();
         }
-        elseif($request->action == "approved_to_RND")
-        {
-            $crr->Progress = 30;
-            // $crr->AcceptRemarks = $request->accept_remarks;
-            $crr->ApprovedBy = auth()->user()->id;
-            $crr->SalesApprovedDate = date('Y-m-d');
-            $crr->save();
-
-            $transactionApproval = new TransactionApproval;
-            $transactionApproval->Type = 10;
-            $transactionApproval->TransactionId = $crr->id;
-            $transactionApproval->UserId = auth()->user()->id;
-            $transactionApproval->Status = 10;
-            $transactionApproval->Remarks = $request->accept_remarks;
-            $transactionApproval->RemarksType = "accept";
-            $transactionApproval->save();
-        }
-        elseif($request->action == "approved_to_QCD-MRDC")
+        elseif($request->action == "approved_to_RND" || $request->action == "approved_to_QCD-MRDC" || $request->action == "approved_to_QCD-WHI" || $request->action == "approved_to_QCD-PBI")
         {
             $crr->Progress = 30;
             // $crr->AcceptRemarks = $request->accept_remarks;
