@@ -21,14 +21,14 @@
                                     <i class="ti ti-check-box"></i>
                                 </h3>
                             </div>
-                            <div class="mt-3">
+                            <!-- <div class="mt-3">
                                 <a href="#" class="text-info">View all</a>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
+                            <a href="{{ route('customer_requirement.index', ['progress' => 10, 'status' => 10]) }}" target="_blank">
                                     {{ $crrSalesApproval ?? '0' }}
                                 </a>
                             </h5>
@@ -36,7 +36,7 @@
                         <div class="mb-2 d-flex justify-content-between">
                             <p>RPE</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
+                                <a href="{{ route('product_evaluation.index', ['progress' => 10, 'status' => 10]) }}" target="_blank">
                                     {{ $rpeSalesApproval ?? '0' }}
                                 </a>
                             </h5>
@@ -44,11 +44,19 @@
                         <div class="mb-2 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
+                                <a href="{{ route('sample_request.index', ['progress' => 10, 'status' => 10]) }}" target="_blank">
                                     {{ $srfSalesApproval ?? '0' }}
                                 </a>
                             </h5>
                             <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <p>PRF</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('price_monitoring.index', ['progress' => 10, 'status' => 10]) }}">
+                                    {{ $prfSalesApproval ?? '0' }}
+                                </a>
+                            </h5>
                         </div>
                     </div>
                 </div>
@@ -62,9 +70,9 @@
                                     <i class="ti ti-layers"></i>
                                 </h3>
                             </div>
-                            <div class="mt-3">
+                            <!-- <div class="mt-3">
                                 <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <p>Open Activities</p>
@@ -87,9 +95,9 @@
                                     <i class="ti ti-check-box"></i>
                                 </h3>
                             </div>
-                            <div class="mt-3">
+                            <!-- <div class="mt-3">
                                 <a href="#" class="text-info">View all</a>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <p>CRR</p>
@@ -173,9 +181,9 @@
                                 <i class="ti ti-user"></i>
                             </h3>
                         </div>
-                        <div class="mt-3">
+                        <!-- <div class="mt-3">
                             <a href="#" class="text-info">View all</a>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Cancelled</p>
@@ -231,9 +239,9 @@
                                 <i class="ti ti-package"></i>
                             </h3>
                         </div>
-                        <div class="mt-3">
+                        <!-- <div class="mt-3">
                             <a href="#" class="text-info">View all</a>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Cancelled</p>
@@ -319,9 +327,9 @@
                                 <i class="ti ti-comments"></i>
                             </h3>
                         </div>
-                        <div class="mt-3">
+                        <!-- <div class="mt-3">
                             <a href="#" class="text-info">View all</a>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Customer Complaints</p>
@@ -345,9 +353,9 @@
                                 <i class="ti ti-package"></i>
                             </h3>
                         </div>
-                        <div class="mt-3">
+                        <!-- <div class="mt-3">
                             <a href="#" class="text-info">View all</a>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>Cancelled</p>

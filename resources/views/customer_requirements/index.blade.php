@@ -375,12 +375,12 @@
                             </td>
                             <td>
                                 @if($customerRequirement->Status == 10)
-                                        <div class="badge badge-success">Open</div>
-                                    @elseif($customerRequirement->Status == 30)
-                                        <div class="badge badge-warning">Closed</div>
-                                    @elseif($customerRequirement->Status == 50)
-                                        <div class="badge badge-danger">Cancelled</div>
-                                    @endif
+                                    <div class="badge badge-success">Open</div>
+                                @elseif($customerRequirement->Status == 30)
+                                    <div class="badge badge-warning">Closed</div>
+                                @elseif($customerRequirement->Status == 50)
+                                    <div class="badge badge-danger">Cancelled</div>
+                                @endif
                             </td>
                             <td>{{ optional($customerRequirement->progressStatus)->name }}</td>
                         </tr>

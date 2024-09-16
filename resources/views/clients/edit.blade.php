@@ -167,7 +167,7 @@
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label>Email Address</label>
-                            <input type="email" class="form-control" id="Email" name="Email" placeholder="Enter Email Address" value="{{ $data->Email }}">
+                            <input type="text" class="form-control" id="Email" name="Email" placeholder="Enter Email Address" value="{{ $data->Email }}">
                         </div>
                     </div>
                     <div class="col-lg-6">

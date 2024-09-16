@@ -15,7 +15,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             Name :
-                            <input type="text" name="name" class="form-control form-control-sm" placeholder="Enter name" value="{{$pf->Name}}" required>
+                            <input type="text" name="name" id="edit_filename" class="form-control form-control-sm" placeholder="Enter name" value="{{$pf->Name}}" required>
                         </div>
                         <div class="col-lg-12">
                             Description :
@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-lg-12">
                             Client :
-                            <select name="client" class="js-example-basic-single form-control form-control-sm" required>
+                            <select name="client" class="js-example-basic-single form-control form-control-sm">
                                 <option value="">-Client-</option>
                                 @foreach ($client as $c)
                                     <option value="{{$c->id}}" {{$pf->ClientId == $c->id?'selected':''}}>{{$c->Name}}</option>

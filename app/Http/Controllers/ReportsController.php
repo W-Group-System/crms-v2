@@ -31,144 +31,156 @@ class ReportsController extends Controller
         $fetchAll = $request->input('fetch_all', false);
         $entries = $request->input('number_of_entries', 10);
 
-        // Use provided 'from' and 'to' dates or default to the current month if not provided
         $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
         $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
 
+        // Get filter inputs
+        $filterDate = $request->input('filter_date');
+        $filterPRF = $request->input('filter_prf');
+        $filterAccount = $request->input('filter_account_manager');
+        $filterClient = $request->input('filter_client');
+        $filterProduct = $request->input('filter_product');
+        $filterRMC = $request->input('filter_rmc');
+        $filterOffered = $request->input('filter_offered');
+        $filterShipment = $request->input('filter_shipment');
+        $filterPayment = $request->input('filter_payment');
+        $filterQuantity = $request->input('filter_quantity');
+        $filterMargin = $request->input('filter_margin');
+        $filterPercentMargin = $request->input('filter_percent_margin');
+        $filterTotalMargin = $request->input('filter_total_margin');
+        $filterAccepted = $request->input('filter_accepted');
+        $filterRemarks = $request->input('filter_remarks');
+
         $validSorts = ['DateRequested', 'PrimarySalesPersonId', 'ClientId', 'ProductCode', 'ProductRmc', 'OfferedPrice', 'ShipmentTerm', 'PaymentTerm', 'QuantityRequired', 'Margin', 'MarginPercentage', 'TotalMargin', 'IsAccepted', 'Remarks'];
         if (!in_array($sort, $validSorts)) {
-            $sort = 'DateRequested'; // Default sort field
+            $sort = 'DateRequested';
         }
+
         if (!in_array($direction, ['asc', 'desc'])) {
             $direction = 'desc';
         }
 
-        // Optimize base query with necessary joins only
-        $query = PriceMonitoring::query()
-            ->with([
-                'primarySalesPerson:user_id,full_name', 
-                'client:id,name', 
-                'priceRequestProduct:id,ProductId,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
-                'paymentterms:id,Name'
-            ])
-            ->where(function ($query) use ($search) {
-                $query->where('pricerequestforms.DateRequested', 'LIKE', '%' . $search . '%')
-                    ->orWhere('pricerequestforms.ShipmentTerm', 'LIKE', '%' . $search . '%')
-                    ->orWhere('pricerequestproducts.ProductId', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
-                        $q->where('full_name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('client', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('priceRequestProduct', function ($q) use ($search) {
-                        $q->where('ProductRmc', 'LIKE', '%' . $search . '%')
-                        ->orWhere('IsalesOfferedPrice', 'LIKE', '%' . $search . '%')
-                        ->orWhere('QuantityRequired', 'LIKE', '%' . $search . '%')
-                        ->orWhere('IsalesMargin', 'LIKE', '%' . $search . '%')
-                        ->orWhere('IsalesMarginPercentage', 'LIKE', '%' . $search . '%')
-                        ->orWhere('Remarks', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('paymentterms', function ($q) use ($search) {
-                        $q->where('Name', 'LIKE', '%' . $search . '%');
-                    });
-            })
-            ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
-            ->leftJoin('pricerequestproducts', 'pricerequestproducts.PriceRequestFormId', '=', 'pricerequestforms.id')
-            ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
-            ->select('pricerequestforms.*', 'pricerequestproducts.*', 'products.*') // Select the necessary fields
-            ->orderBy($sort, $direction); // Fetch the data
+        // Build the query
+        $query = PriceMonitoring::with([
+            'primarySalesPerson:user_id,full_name', 
+            'client:id,name', 
+            'priceRequestProduct:id,ProductId,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
+            'paymentterms:id,Name',
+            'products:ProductId,code'
+        ])
+        ->leftJoin('pricerequestproducts', 'pricerequestproducts.PriceRequestFormId', '=', 'pricerequestforms.id')
+        ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
+        ->leftJoin('clientpaymentterms', 'clientpaymentterms.id', '=', 'pricerequestforms.PaymentTermId')
+        ->leftJoin('users as primarySalesPerson', 'primarySalesPerson.id', '=', 'pricerequestforms.PrimarySalesPersonId')
+        ->leftJoin('clientcompanies as client', 'client.id', '=', 'pricerequestforms.ClientId')
+        ->select('pricerequestforms.*', 'pricerequestproducts.*', 'products.*', 'clientpaymentterms.Name as PaymentTermName')
+        ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
+        ->where(function ($query) use ($search) {
+            $query->where('pricerequestforms.DateRequested', 'LIKE', "%$search%")
+                ->orWhere('pricerequestforms.PrfNumber', 'LIKE', "%$search%")
+                ->orWhere('pricerequestforms.ShipmentTerm', 'LIKE', "%$search%")
+                ->orWhereHas('products', function ($q) use ($search) {
+                    $q->where('code', 'LIKE', "%$search%");
+                })
+                ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
+                    $q->where('full_name', 'LIKE', "%$search%");
+                })
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', "%$search%");
+                })
+                ->orWhereHas('priceRequestProduct', function ($q) use ($search) {
+                    $q->where('ProductRmc', 'LIKE', "%$search%")
+                    ->orWhere('IsalesOfferedPrice', 'LIKE', "%$search%")
+                    ->orWhere('QuantityRequired', 'LIKE', "%$search%")
+                    ->orWhere('IsalesMargin', 'LIKE', "%$search%")
+                    ->orWhere('IsalesMarginPercentage', 'LIKE', "%$search%")
+                    ->orWhere('Remarks', 'LIKE', "%$search%");
+                })
+                ->orWhereHas('paymentterms', function ($q) use ($search) {
+                    $q->where('Name', 'LIKE', "%$search%");
+                });
+        })        
+        ->when($filterDate, function ($query) use ($filterDate) {
+            return $query->where('pricerequestforms.DateRequested', 'LIKE', '%' . $filterDate . '%');
+        })
+        ->when($filterPRF, function ($query) use ($filterPRF) {
+            return $query->where('pricerequestforms.PrfNumber', 'LIKE', '%' . $filterPRF . '%');
+        })
+        ->when($filterAccount, function ($query) use ($filterAccount) {
+            return $query->where('primarySalesPerson.full_name', 'LIKE', '%' . $filterAccount . '%');
+        })
+        ->when($filterClient, function ($query) use ($filterClient) {
+            return $query->where('client.name', 'LIKE', '%' . $filterClient . '%');
+        })
+        ->when($filterProduct, function ($query) use ($filterProduct) {
+            return $query->where('products.code', 'LIKE', '%' . $filterProduct . '%');
+        })
+        ->when($filterRMC, function ($query) use ($filterRMC) {
+            return $query->where('pricerequestproducts.ProductRmc', 'LIKE', '%' . $filterRMC . '%');
+        })
+        ->when($filterOffered, function ($query) use ($filterOffered) {
+            return $query->where('pricerequestproducts.IsalesOfferedPrice', 'LIKE', '%' . $filterOffered . '%');
+        })
+        ->when($filterShipment, function ($query) use ($filterShipment) {
+            return $query->where('pricerequestforms.ShipmentTerm', 'LIKE', '%' . $filterShipment . '%');
+        })
+        ->when($filterPayment, function ($query) use ($filterPayment) {
+            return $query->where('paymentterms.Name', 'LIKE', '%' . $filterPayment . '%'); // Ensure correct column name
+        })
+        ->when($filterQuantity, function ($query) use ($filterQuantity) {
+            return $query->where('pricerequestproducts.QuantityRequired', 'LIKE', '%' . $filterQuantity . '%');
+        })
+        ->when($filterMargin, function ($query) use ($filterMargin) {
+            return $query->where('pricerequestproducts.IsalesMargin', 'LIKE', '%' . $filterMargin . '%');
+        })
+        ->when($filterPercentMargin, function ($query) use ($filterPercentMargin) {
+            return $query->where('pricerequestproducts.IsalesMarginPercentage', 'LIKE', '%' . $filterPercentMargin . '%');
+        })
+        ->when($filterTotalMargin, function ($query) use ($filterTotalMargin) {
+            return $query->where('pricerequestproducts.IsalesMargin', 'LIKE', '%' . $filterTotalMargin . '%');
+        })
+        ->when($filterAccepted, function ($query) use ($filterAccepted) {
+            return $query->where('pricerequestforms.IsAccepted', 'LIKE', '%' . $filterAccepted . '%');
+        })
+        ->when($filterRemarks, function ($query) use ($filterRemarks) {
+            return $query->where('pricerequestforms.Remarks', 'LIKE', '%' . $filterRemarks . '%');
+        })
+        ->orderBy($sort, $direction);
 
-        // You can then further filter or process the data as needed.
-
-            // ->when($sort, function ($query) use ($sort, $direction) {
-            //     if ($sort == 'PrimarySalesPersonId') {
-            //         $query->orderBy('PrimarySalesPersonId', $direction);
-            //     } elseif ($sort == 'ClientId') {
-            //         $query->orderBy('ClientId', $direction);
-            //     } elseif ($sort == 'ProductCode') {
-            //         $query->orderBy('products.code', $direction);
-            //     } elseif ($sort == 'PaymentTermId') {
-            //         $query->orderBy('PaymentTermId', $direction);
-            //     } else {
-            //         $query->orderBy($sort, $direction);
-            //     }
-            // });
-        
-        // $priceRequests = $query->get();   
-        // dd($priceRequests->take(1));
-        // Apply Filters
-        if ($request->filled('filter_date')) {
-            $query->whereDate('DateRequested', $request->filter_date);
-        }
-        
-        if ($request->filled('filter_account_manager')) {
-            $query->where('PrimarySalesPersonId', $request->filter_account_manager);
-        }
-        
-        if ($request->filled('filter_client')) {
-            $query->where('ClientId', $request->filter_client);
-        }        
-
+        // Fetch all data or paginate
         if ($fetchAll) {
-            return response()->json($query->get());
+            $priceRequests = $query->get();
         } else {
-            $priceRequests = $query->paginate($entries);        
-
-            // Cache or reuse these results if possible
-            $allIds = PriceMonitoring::pluck('id')->unique();
-
-            // Use these optimized queries
-            $allDates = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('DateRequested')->unique()->sort()->values();
-            $allPrf = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('PrfNumber')->unique()->sort()->values();
-            $allPrimarySalesPersons = User::whereIn('users.user_id', PriceMonitoring::pluck('PrimarySalesPersonId')->unique())
-                ->pluck('full_name', 'users.user_id')
-                ->sort();
-            $allClients = Client::whereIn('id', PriceMonitoring::pluck('ClientId')->unique())
-                ->pluck('Name', 'id')
-                ->sort();
-            $allProducts = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->join('products', 'pricerequestproducts.ProductId', '=', 'products.id') 
-                ->distinct()
-                ->pluck('products.code'); 
-            $allProductRmc = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->distinct()
-                ->pluck('ProductRmc')
-                ->sort()
-                ->values();
-            $allOfferedPrice = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->distinct()
-                ->pluck('IsalesOfferedPrice')
-                ->sort()
-                ->values();
-            $allMargin = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->pluck('IsalesMargin')
-                ->sort()
-                ->values();
-            $allPercentMargin = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->pluck('IsalesMarginPercentage')
-                ->sort()
-                ->values();
-            $totalMargins = PriceRequestProduct::all()->map(function($priceRequest) {
-                return number_format($priceRequest->QuantityRequired * $priceRequest->IsalesMargin, 2);
-            })->unique()->sort();
-            $allShipments = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('ShipmentTerm')->unique()->sort()->values();
-            $allPayments = PaymentTerms::whereIn('clientpaymentterms.id', PriceMonitoring::pluck('PaymentTermId')->unique())
-                ->pluck('Name', 'clientpaymentterms.id')
-                ->sort();
-            $allQuantity = PriceRequestProduct::whereIn('pricerequestproducts.PriceRequestFormId', $allIds)
-                ->distinct()
-                ->pluck('QuantityRequired')
-                ->sort()
-                ->values();
-            $allAccepted = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('IsAccepted')->unique()->sort()->values();
-            $allRemarks = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('Remarks')->unique()->sort()->values();
-            
-            return view('reports.price_summary', compact(
-                'search', 'priceRequests', 'entries', 'fetchAll', 'sort', 'direction',
-                'allPrimarySalesPersons', 'allProductRmc', 'allDates', 'allClients','allShipments', 'allPayments', 'allQuantity', 'allAccepted', 'allRemarks', 'allProducts', 'allOfferedPrice', 'allMargin', 'allPercentMargin', 'totalMargins', 'allPrf', 'from', 'to'
-            ));
+            $priceRequests = $query->paginate($entries);
         }
+        // dd($priceRequests);
+        $allIds = PriceMonitoring::pluck('id')->unique();
+
+        // Use these optimized queries
+        $allDates = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('DateRequested')->unique()->sort()->values();
+        $allPrf = PriceMonitoring::whereIn('pricerequestforms.id', $allIds)->pluck('PrfNumber')->unique()->sort()->values();
+        $allPrimarySalesPersons = User::whereIn('users.user_id', PriceMonitoring::pluck('PrimarySalesPersonId')->unique())->pluck('full_name')->unique()->sort()->values();
+        $allClients = Client::whereIn('id', PriceMonitoring::pluck('ClientId')->unique())->pluck('name')->unique();
+        $allProducts = Product::whereIn('id', PriceRequestProduct::pluck('ProductId')->unique())->pluck('code')->unique();
+        // dd($allProducts);
+        $allRmc = PriceRequestProduct::pluck('ProductRmc')->unique()->sort()->values();
+        $allOffered = PriceRequestProduct::pluck('IsalesOfferedPrice')->unique()->sort()->values();
+        $allShipment = PriceMonitoring::pluck('ShipmentTerm')->unique()->sort()->values();
+        $allPayment = PaymentTerms::pluck('Name')->unique()->sort()->values();
+        $allQuantity = PriceRequestProduct::pluck('QuantityRequired')->unique()->sort()->values();
+        $allMargin = PriceRequestProduct::pluck('IsalesMargin')->unique()->sort()->values();
+        $allPercentMargin = PriceRequestProduct::pluck('IsalesMarginPercentage')->unique()->sort()->values();
+        $allTotalMargin = PriceRequestProduct::pluck('IsalesMargin')->unique()->sort()->values();
+        $allAccepted = PriceMonitoring::pluck('IsAccepted')->unique()->sort()->values();
+        $allRemarks = PriceMonitoring::pluck('Remarks')->unique()->sort()->values();
+
+        return view('reports.price_summary', compact(
+            'search', 'priceRequests', 'entries', 'fetchAll', 'sort', 'direction', 'allDates', 'allPrf',
+            'allPrimarySalesPersons', 'allClients', 'allProducts', 'allRmc',
+            'allOffered', 'allMargin', 'allPercentMargin', 'allShipment',
+            'allPayment', 'allQuantity', 'allTotalMargin', 'allAccepted', 'allRemarks', 'from', 'to'
+        ));
+        
     }
 
     // Export Price Requests
@@ -286,9 +298,9 @@ class ReportsController extends Controller
                 'DateRequested' => $item->DateRequested,
                 'PrimarySalesPersonId' => $item->primarySalesPerson->full_name ?? 'N/A',
                 'Client' => $item->client->name ?? 'N/A',
-                'ProductCode' => $item->code ?? 'N/A',
+                'ProductCode' => $item->code,
                 'ProductRmc' => $item->ProductRmc ?? 'N/A',
-                'OfferedPrice' => $item->IsalesOfferedPrice ?? 'N/A',
+                'OfferedPrice' => $item->IsalesOfferedPrice ?? '0',
                 'QuantityRequired' => $item->QuantityRequired ?? 'N/A',
                 'Margin' => $item->IsalesMargin ?? 'N/A',
                 'MarginPercentage' => $item->IsalesMarginPercentage ?? 'N/A',
@@ -299,6 +311,7 @@ class ReportsController extends Controller
                 'Remarks' => $item->Remarks ?? 'N/A',
             ];
         });
+        dd($data);
         
         // Return the data as JSON
         return response()->json($data);
@@ -310,12 +323,13 @@ class ReportsController extends Controller
         $search = $request->input('search');
         $sort = $request->get('sort', 'client'); 
         $direction = $request->get('direction', 'desc');
+        $role = auth()->user()->role;
         $fetchAll = $request->input('fetch_all', false);
         $entries = $request->input('number_of_entries', 10);
 
         // Use provided 'from' and 'to' dates or default to the current month if not provided
-        $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
-        $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
+        $from = $request->input('from', now()->startOfMonth()->format('Y-m-d'));
+        $to = $request->input('to', now()->endOfMonth()->format('Y-m-d'));
 
         // Get filter inputs
         $filterType = $request->input('filter_type');
@@ -328,289 +342,323 @@ class ReportsController extends Controller
         $filterProgress = $request->input('filter_progress');
 
         // Ensure sort and direction are valid
-        $validSorts = ['status', 'client', 'transaction_number', 'date_created'];
-        if (!in_array($sort, $validSorts)) {
-            $sort = 'client'; // Default sort field
-        }
-        if (!in_array($direction, ['asc', 'desc'])) {
-            $direction = 'desc';
-        }
+        $validSorts = ['type', 'status', 'client', 'transaction_number', 'date_created'];
+        $sort = in_array($sort, $validSorts) ? $sort : 'client';
+        $direction = in_array($direction, ['asc', 'desc']) ? $direction : 'desc';
 
         // Define subqueries
         $crr_data = CustomerRequirement::select(
-                        'customerrequirements.id', 
-                        'customerrequirements.CrrNumber as transaction_number', 
-                        'users.full_name as bde',
-                        'clientcompanies.Name as client', 
-                        'customerrequirements.DateCreated as date_created', 
-                        'customerrequirements.DueDate as due_date', 
-                        'customerrequirements.DetailsOfRequirement as details', 
-                        'customerrequirements.Recommendation as result', 
-                        'customerrequirements.Status as status', 
-                        'srfprogresses.name as progress', 
-                        DB::raw("'Customer Requirement' as type")
-                    )
-                    ->leftJoin('users', 'customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
-                    ->leftJoin('clientcompanies', 'customerrequirements.ClientId', '=', 'clientcompanies.id')
-                    ->leftJoin('srfprogresses', 'customerrequirements.Progress', '=', 'srfprogresses.id')
-                    ->where(function ($query) use ($search) {
-                        $query->where('customerrequirements.CrrNumber', 'LIKE', '%' . $search . '%')
-                            ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('customerrequirements.DetailsOfRequirement', 'LIKE', '%' . $search . '%')
-                            ->orWhere('customerrequirements.Recommendation', 'LIKE', '%' . $search . '%')
-                            ->orWhere('customerrequirements.Status', 'LIKE', '%' . $search . '%')
-                            ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
-                            ->orWhere(DB::raw("'Customer Requirement'"), 'LIKE', '%' . $search . '%');
-                    })
-                    ->whereBetween('customerrequirements.DateCreated', [$from, $to])
-                    ->when($filterType, function ($query) use ($filterType) {
-                        return $query->where(DB::raw("'Customer Requirement'"), '=', $filterType);
-                    })
-                    ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
-                        return $query->where('customerrequirements.CrrNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
-                    })
-                    ->when($filterBDE, function ($query) use ($filterBDE) {
-                        return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
-                    })
-                    ->when($filterClient, function ($query) use ($filterClient) {
-                        return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
-                    })
-                    ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
-                        return $query->where('customerrequirements.DateCreated', 'LIKE', '%' . $filterDateCreated . '%');
-                    })
-                    ->when($filterDueDate, function ($query) use ($filterDueDate) {
-                        return $query->where('customerrequirements.DueDate', 'LIKE', '%' . $filterDueDate . '%');
-                    })
-                    ->when($filterStatus, function ($query) use ($filterStatus) {
-                        return $query->where('customerrequirements.Status', 'LIKE', '%' . $filterStatus . '%');
-                    })
-                    ->when($filterProgress, function ($query) use ($filterProgress) {
-                        return $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%');
-                    });
+                    'customerrequirements.id', 
+                    'customerrequirements.CrrNumber as transaction_number', 
+                    'users.full_name as bde',
+                    'clientcompanies.Name as client', 
+                    'customerrequirements.DateCreated as date_created', 
+                    'customerrequirements.DueDate as due_date', 
+                    'customerrequirements.DetailsOfRequirement as details', 
+                    'customerrequirements.Recommendation as result', 
+                    'customerrequirements.Status as status', 
+                    'srfprogresses.name as progress', 
+                    DB::raw("'Customer Requirement' as type")
+                )
+                ->leftJoin('users', 'customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
+                ->leftJoin('clientcompanies', 'customerrequirements.ClientId', '=', 'clientcompanies.id')
+                ->leftJoin('srfprogresses', 'customerrequirements.Progress', '=', 'srfprogresses.id')
+                ->whereBetween('customerrequirements.DateCreated', [$from, $to])
+                ->where(function ($query) use ($search) {
+                    $query->where('customerrequirements.CrrNumber', 'LIKE', '%' . $search . '%')
+                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('customerrequirements.DetailsOfRequirement', 'LIKE', '%' . $search . '%')
+                        ->orWhere('customerrequirements.Recommendation', 'LIKE', '%' . $search . '%')
+                        ->orWhere('customerrequirements.Status', 'LIKE', '%' . $search . '%')
+                        ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
+                        ->orWhere(DB::raw("'Customer Requirement'"), 'LIKE', '%' . $search . '%');
+                })
+                ->when($filterType, function ($query) use ($filterType) {
+                    return $query->where(DB::raw("'Customer Requirement'"), '=', $filterType);
+                })
+                ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
+                    return $query->where('customerrequirements.CrrNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
+                })
+                ->when($filterBDE, function ($query) use ($filterBDE) {
+                    return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
+                })
+                ->when($filterClient, function ($query) use ($filterClient) {
+                    return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
+                })
+                ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
+                    return $query->where('customerrequirements.DateCreated', 'LIKE', '%' . $filterDateCreated . '%');
+                })
+                ->when($filterDueDate, function ($query) use ($filterDueDate) {
+                    return $query->where('customerrequirements.DueDate', 'LIKE', '%' . $filterDueDate . '%');
+                })
+                ->when($filterStatus, function ($query) use ($filterStatus) {
+                    return $query->where('customerrequirements.Status', 'LIKE', '%' . $filterStatus . '%');
+                })
+                ->when($filterProgress, function ($query) use ($filterProgress) {
+                    return $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%');
+                })
+                ->when(optional($role)->type, function($q) use ($role) {
+                    if ($role->type == "IS") {
+                        $q->where('CrrNumber', 'LIKE', 'CRR-IS%');  
+                    } elseif ($role->type == "LS") {
+                        $q->where('CrrNumber', 'LIKE', 'CRR-LS%');  
+                    }
+                });
 
         $srf_data = SampleRequest::select(
-                        'samplerequests.Id', 
-                        'samplerequests.SrfNumber as transaction_number', 
-                        'users.full_name as bde',
-                        'clientcompanies.Name as client', 
-                        'samplerequests.created_at as date_created', 
-                        'samplerequests.DateRequired as due_date', 
-                        'samplerequests.InternalRemarks as details', 
-                        'samplerequests.Disposition as result',
-                        'samplerequests.Status as status', 
-                        'srfprogresses.name as progress', 
-                        DB::raw("'Sample Request' as type")
-                    )
-                    ->leftJoin('users', 'samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
-                    ->leftJoin('clientcompanies', 'samplerequests.ClientId', '=', 'clientcompanies.id')
-                    ->leftJoin('srfprogresses', 'samplerequests.Progress', '=', 'srfprogresses.id')
-                    ->where(function ($query) use ($search) {
-                        $query->where('samplerequests.SrfNumber', 'LIKE', '%' . $search . '%')
-                            ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('samplerequests.InternalRemarks', 'LIKE', '%' . $search . '%')
-                            ->orWhere('samplerequests.Disposition', 'LIKE', '%' . $search . '%')
-                            ->orWhere('samplerequests.Status', 'LIKE', '%' . $search . '%')
-                            ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
-                            ->orWhere(DB::raw("'Sample Request'"), 'LIKE', '%' . $search . '%');
-                    })
-                    ->whereBetween('samplerequests.created_at', [$from, $to])
-                    ->when($filterType, function ($query) use ($filterType) {
-                        return $query->where(DB::raw("'Sample Request'"), '=', $filterType);
-                    })
-                    ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
-                        return $query->where('samplerequests.SrfNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
-                    })
-                    ->when($filterBDE, function ($query) use ($filterBDE) {
-                        return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
-                    })
-                    ->when($filterClient, function ($query) use ($filterClient) {
-                        return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
-                    })
-                    ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
-                        return $query->where('samplerequests.created_at', 'LIKE', '%' . $filterDateCreated . '%');
-                    })
-                    ->when($filterDueDate, function ($query) use ($filterDueDate) {
-                        return $query->where('samplerequests.DateRequired', 'LIKE', '%' . $filterDueDate . '%');
-                    })
-                    ->when($filterStatus, function ($query) use ($filterStatus) {
-                        return $query->where('samplerequests.Status', 'LIKE', '%' . $filterStatus . '%');
-                    })
-                    ->when($filterProgress, function ($query) use ($filterProgress) {
-                        return $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%');
-                    });
+                    'samplerequests.Id', 
+                    'samplerequests.SrfNumber as transaction_number', 
+                    'users.full_name as bde',
+                    'clientcompanies.Name as client', 
+                    'samplerequests.created_at as date_created', 
+                    'samplerequests.DateRequired as due_date', 
+                    'samplerequests.InternalRemarks as details', 
+                    'samplerequests.Disposition as result',
+                    'samplerequests.Status as status', 
+                    'srfprogresses.name as progress', 
+                    DB::raw("'Sample Request' as type")
+                )
+                ->leftJoin('users', 'samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
+                ->leftJoin('clientcompanies', 'samplerequests.ClientId', '=', 'clientcompanies.id')
+                ->leftJoin('srfprogresses', 'samplerequests.Progress', '=', 'srfprogresses.id')
+                ->whereBetween('samplerequests.created_at', [$from, $to])
+                ->where(function ($query) use ($search) {
+                    $query->where('samplerequests.SrfNumber', 'LIKE', '%' . $search . '%')
+                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('samplerequests.InternalRemarks', 'LIKE', '%' . $search . '%')
+                        ->orWhere('samplerequests.Disposition', 'LIKE', '%' . $search . '%')
+                        ->orWhere('samplerequests.Status', 'LIKE', '%' . $search . '%')
+                        ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
+                        ->orWhere(DB::raw("'Sample Request'"), 'LIKE', '%' . $search . '%');
+                })
+                ->when($filterType, function ($query) use ($filterType) {
+                    return $query->where(DB::raw("'Sample Request'"), '=', $filterType);
+                })
+                ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
+                    return $query->where('samplerequests.SrfNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
+                })
+                ->when($filterBDE, function ($query) use ($filterBDE) {
+                    return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
+                })
+                ->when($filterClient, function ($query) use ($filterClient) {
+                    return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
+                })
+                ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
+                    return $query->where('samplerequests.created_at', 'LIKE', '%' . $filterDateCreated . '%');
+                })
+                ->when($filterDueDate, function ($query) use ($filterDueDate) {
+                    return $query->where('samplerequests.DateRequired', 'LIKE', '%' . $filterDueDate . '%');
+                })
+                ->when($filterStatus, function ($query) use ($filterStatus) {
+                    return $query->where('samplerequests.Status', 'LIKE', '%' . $filterStatus . '%');
+                })
+                ->when($filterProgress, function ($query) use ($filterProgress) {
+                    return $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%');
+                })
+                ->when(optional($role)->type, function($q) use ($role) {
+                    if ($role->type == "IS") {
+                        $q->where('SrfNumber', 'LIKE', 'SRF-IS%');  
+                    } elseif ($role->type == "LS") {
+                        $q->where('SrfNumber', 'LIKE', 'SRF-LS%');  
+                    }
+                });
 
         $rpe_data = RequestProductEvaluation::select(
-                        'requestproductevaluations.id', 
-                        'requestproductevaluations.RpeNumber as transaction_number', 
-                        'users.full_name as bde',
-                        'clientcompanies.Name as client', 
-                        'requestproductevaluations.CreatedDate as date_created', 
-                        'requestproductevaluations.DueDate as due_date', 
-                        'requestproductevaluations.ObjectiveForRpeProject as details', 
-                        'requestproductevaluations.RpeResult as result',
-                        'requestproductevaluations.Status as status', 
-                        'srfprogresses.name as progress', 
-                        DB::raw("'Request Product Evaluation' as type")
-                    )
-                    ->leftJoin('users', 'requestproductevaluations.PrimarySalesPersonId', '=', 'users.user_id')
-                    ->leftJoin('clientcompanies', 'requestproductevaluations.ClientId', '=', 'clientcompanies.id')
-                    ->leftJoin('srfprogresses', 'requestproductevaluations.Progress', '=', 'srfprogresses.id')
-                    ->where(function ($query) use ($search) {
-                        $query->where('requestproductevaluations.RpeNumber', 'LIKE', '%' . $search . '%')
-                            ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('requestproductevaluations.ObjectiveForRpeProject', 'LIKE', '%' . $search . '%')
-                            ->orWhere('requestproductevaluations.RpeResult', 'LIKE', '%' . $search . '%')
-                            ->orWhere('requestproductevaluations.Status', 'LIKE', '%' . $search . '%')
-                            ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
-                            ->orWhere(DB::raw("'Request Product Evaluation'"), 'LIKE', '%' . $search . '%');
-                    })
-                    ->whereBetween('requestproductevaluations.CreatedDate', [$from, $to])
-                    ->when($filterType, function ($query) use ($filterType) {
-                        return $query->where(DB::raw("'Request Product Evaluation'"), '=', $filterType);
-                    })
-                    ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
-                        return $query->where('requestproductevaluations.RpeNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
-                    })
-                    ->when($filterBDE, function ($query) use ($filterBDE) {
-                        return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
-                    })
-                    ->when($filterClient, function ($query) use ($filterClient) {
-                        return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
-                    })
-                    ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
-                        return $query->where('requestproductevaluations.CreatedDate', 'LIKE', '%' . $filterDateCreated . '%');
-                    })
-                    ->when($filterDueDate, function ($query) use ($filterDueDate) {
-                        return $query->where('requestproductevaluations.DueDate', 'LIKE', '%' . $filterDueDate . '%');
-                    })
-                    ->when($filterStatus, function ($query) use ($filterStatus) {
-                        return $query->where('requestproductevaluations.Status', 'LIKE', '%' . $filterStatus . '%');
-                    })
-                    ->when($filterProgress, function ($query) use ($filterProgress) {
-                        return $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%');
-                    });
+                    'requestproductevaluations.id', 
+                    'requestproductevaluations.RpeNumber as transaction_number', 
+                    'users.full_name as bde',
+                    'clientcompanies.Name as client', 
+                    'requestproductevaluations.CreatedDate as date_created', 
+                    'requestproductevaluations.DueDate as due_date', 
+                    'requestproductevaluations.ObjectiveForRpeProject as details', 
+                    'requestproductevaluations.RpeResult as result',
+                    'requestproductevaluations.Status as status', 
+                    'srfprogresses.name as progress', 
+                    DB::raw("'Request Product Evaluation' as type")
+                )
+                ->leftJoin('users', 'requestproductevaluations.PrimarySalesPersonId', '=', 'users.user_id')
+                ->leftJoin('clientcompanies', 'requestproductevaluations.ClientId', '=', 'clientcompanies.id')
+                ->leftJoin('srfprogresses', 'requestproductevaluations.Progress', '=', 'srfprogresses.id')
+                ->whereBetween('requestproductevaluations.CreatedDate', [$from, $to])
+                ->where(function ($query) use ($search) {
+                    $query->where('requestproductevaluations.RpeNumber', 'LIKE', '%' . $search . '%')
+                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('requestproductevaluations.ObjectiveForRpeProject', 'LIKE', '%' . $search . '%')
+                        ->orWhere('requestproductevaluations.RpeResult', 'LIKE', '%' . $search . '%')
+                        ->orWhere('requestproductevaluations.Status', 'LIKE', '%' . $search . '%')
+                        ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
+                        ->orWhere(DB::raw("'Request Product Evaluation'"), 'LIKE', '%' . $search . '%');
+                })                    
+                ->when($filterType, function ($query) use ($filterType) {
+                    return $query->where(DB::raw("'Request Product Evaluation'"), '=', $filterType);
+                })
+                ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
+                    return $query->where('requestproductevaluations.RpeNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
+                })
+                ->when($filterBDE, function ($query) use ($filterBDE) {
+                    return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
+                })
+                ->when($filterClient, function ($query) use ($filterClient) {
+                    return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
+                })
+                ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
+                    return $query->where('requestproductevaluations.CreatedDate', 'LIKE', '%' . $filterDateCreated . '%');
+                })
+                ->when($filterDueDate, function ($query) use ($filterDueDate) {
+                    return $query->where('requestproductevaluations.DueDate', 'LIKE', '%' . $filterDueDate . '%');
+                })
+                ->when($filterStatus, function ($query) use ($filterStatus) {
+                    return $query->where('requestproductevaluations.Status', 'LIKE', '%' . $filterStatus . '%');
+                })
+                ->when($filterProgress, function ($query) use ($filterProgress) {
+                    return $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%');
+                })
+                ->when(optional($role)->type, function($q) use ($role) {
+                    if ($role->type == "IS") {
+                        $q->where('RpeNumber', 'LIKE', 'RPE-IS%');  
+                    } elseif ($role->type == "LS") {
+                        $q->where('RpeNumber', 'LIKE', 'RPE-LS%');  
+                    }
+                });
 
         $price_data = PriceMonitoring::select(
-                        'pricerequestforms.id', 
-                        'pricerequestforms.PrfNumber as transaction_number', 
-                        'users.full_name as bde',
-                        'clientcompanies.Name as client', 
-                        'pricerequestforms.created_at as date_created', 
-                        'pricerequestforms.ValidityDate as due_date', 
-                        'pricerequestforms.Remarks as details', 
-                        'pricerequestforms.DispositionRemarks as result',
-                        'pricerequestforms.Status as status', 
-                        'srfprogresses.name as progress', 
-                        DB::raw("'Price Request' as type")
-                    )
-                    ->leftJoin('users', 'pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
-                    ->leftJoin('clientcompanies', 'pricerequestforms.ClientId', '=', 'clientcompanies.id')
-                    ->leftJoin('srfprogresses', 'pricerequestforms.Progress', '=', 'srfprogresses.id')
-                    ->where(function ($query) use ($search) {
-                        $query->where('pricerequestforms.PrfNumber', 'LIKE', '%' . $search . '%')
-                            ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('pricerequestforms.Remarks', 'LIKE', '%' . $search . '%')
-                            ->orWhere('pricerequestforms.DispositionRemarks', 'LIKE', '%' . $search . '%')
-                            ->orWhere('pricerequestforms.Status', 'LIKE', '%' . $search . '%')
-                            ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
-                            ->orWhere(DB::raw("'Price Request'"), 'LIKE', '%' . $search . '%');
-                    })
-                    ->whereBetween('pricerequestforms.created_at', [$from, $to])
-                    ->when($filterType, function ($query) use ($filterType) {
-                        return $query->where(DB::raw("'Price Request'"), '=', $filterType);
-                    })
-                    ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
-                        return $query->where('pricerequestforms.PrfNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
-                    })
-                    ->when($filterBDE, function ($query) use ($filterBDE) {
-                        return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
-                    })
-                    ->when($filterClient, function ($query) use ($filterClient) {
-                        return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
-                    })
-                    ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
-                        return $query->where('pricerequestforms.created_at', 'LIKE', '%' . $filterDateCreated . '%');
-                    })
-                    ->when($filterDueDate, function ($query) use ($filterDueDate) {
-                        return $query->where('pricerequestforms.ValidityDate', 'LIKE', '%' . $filterDueDate . '%');
-                    })
-                    ->when($filterStatus, function ($query) use ($filterStatus) {
-                        return $query->where('pricerequestforms.Status', 'LIKE', '%' . $filterStatus . '%');
-                    })
-                    ->when($filterProgress, function ($query) use ($filterProgress) {
-                        return $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%');
-                    });
+                    'pricerequestforms.id', 
+                    'pricerequestforms.PrfNumber as transaction_number', 
+                    'users.full_name as bde',
+                    'clientcompanies.Name as client', 
+                    'pricerequestforms.created_at as date_created', 
+                    'pricerequestforms.ValidityDate as due_date', 
+                    'pricerequestforms.Remarks as details', 
+                    'pricerequestforms.DispositionRemarks as result',
+                    'pricerequestforms.Status as status', 
+                    'srfprogresses.name as progress', 
+                    DB::raw("'Price Request' as type")
+                )
+                ->leftJoin('users', 'pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
+                ->leftJoin('clientcompanies', 'pricerequestforms.ClientId', '=', 'clientcompanies.id')
+                ->leftJoin('srfprogresses', 'pricerequestforms.Progress', '=', 'srfprogresses.id')
+                ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
+                ->where(function ($query) use ($search) {
+                    $query->where('pricerequestforms.PrfNumber', 'LIKE', '%' . $search . '%')
+                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('pricerequestforms.Remarks', 'LIKE', '%' . $search . '%')
+                        ->orWhere('pricerequestforms.DispositionRemarks', 'LIKE', '%' . $search . '%')
+                        ->orWhere('pricerequestforms.Status', 'LIKE', '%' . $search . '%')
+                        ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
+                        ->orWhere(DB::raw("'Price Request'"), 'LIKE', '%' . $search . '%');
+                })                    
+                ->when($filterType, function ($query) use ($filterType) {
+                    return $query->where(DB::raw("'Price Request'"), '=', $filterType);
+                })
+                ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
+                    return $query->where('pricerequestforms.PrfNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
+                })
+                ->when($filterBDE, function ($query) use ($filterBDE) {
+                    return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
+                })
+                ->when($filterClient, function ($query) use ($filterClient) {
+                    return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
+                })
+                ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
+                    return $query->where('pricerequestforms.DateRequested', 'LIKE', '%' . $filterDateCreated . '%');
+                })
+                ->when($filterDueDate, function ($query) use ($filterDueDate) {
+                    return $query->where('pricerequestforms.ValidityDate', 'LIKE', '%' . $filterDueDate . '%');
+                })
+                ->when($filterStatus, function ($query) use ($filterStatus) {
+                    return $query->where('pricerequestforms.Status', 'LIKE', '%' . $filterStatus . '%');
+                })
+                ->when($filterProgress, function ($query) use ($filterProgress) {
+                    return $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%');
+                })
+                ->when(optional($role)->type, function($q) use ($role) {
+                    if ($role->type == "IS") {
+                        $q->where('PrfNumber', 'LIKE', 'PRF-IS%');  
+                    } elseif ($role->type == "LS") {
+                        $q->where('PrfNumber', 'LIKE', 'PRF-LS%');  
+                    }
+                });
 
         $act_data = Activity::select(
-                        'activities.id', 
-                        'activities.ActivityNumber as transaction_number', 
-                        'users.full_name as bde',
-                        'clientcompanies.Name as client', 
-                        'activities.created_at as date_created', 
-                        'activities.ScheduleTo as due_date', 
-                        'activities.Title as details', 
-                        'activities.Response as result',
-                        'activities.Status as status', 
-                        'activities.Status as progress', 
-                        DB::raw("'Activity' as type")
-                    )
-                    ->leftJoin('users', 'activities.PrimaryResponsibleUserId', '=', 'users.user_id')
-                    ->leftJoin('clientcompanies', 'activities.ClientId', '=', 'clientcompanies.id')
-                    ->where(function ($query) use ($search) {
-                        $query->where('activities.ActivityNumber', 'LIKE', '%' . $search . '%')
-                            ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                            ->orWhere('activities.Title', 'LIKE', '%' . $search . '%')
-                            ->orWhere('activities.Response', 'LIKE', '%' . $search . '%')
-                            ->orWhere('activities.Status', 'LIKE', '%' . $search . '%')
-                            ->orWhere(DB::raw("'Activity'"), 'LIKE', '%' . $search . '%');
-                    })
-                    ->whereBetween('activities.created_at', [$from, $to])
-                    ->when($filterType, function ($query) use ($filterType) {
-                        return $query->where(DB::raw("'Activity'"), '=', $filterType);
-                    })
-                    ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
-                        return $query->where('activities.ActivityNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
-                    })
-                    ->when($filterBDE, function ($query) use ($filterBDE) {
-                        return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
-                    })
-                    ->when($filterClient, function ($query) use ($filterClient) {
-                        return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
-                    })
-                    ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
-                        return $query->where('activities.created_at', 'LIKE', '%' . $filterDateCreated . '%');
-                    })
-                    ->when($filterDueDate, function ($query) use ($filterDueDate) {
-                        return $query->where('activities.ScheduleTo', 'LIKE', '%' . $filterDueDate . '%');
-                    })
-                    ->when($filterStatus, function ($query) use ($filterStatus) {
-                        return $query->where('activities.Status', 'LIKE', '%' . $filterStatus . '%');
-                    })
-                    ->when($filterProgress, function ($query) use ($filterProgress) {
-                        return $query->where('activities.Status', 'LIKE', '%' . $filterProgress . '%');
-                    });
-
+                    'activities.id', 
+                    'activities.ActivityNumber as transaction_number', 
+                    'users.full_name as bde',
+                    'clientcompanies.Name as client', 
+                    'activities.created_at as date_created', 
+                    'activities.ScheduleTo as due_date', 
+                    'activities.Title as details', 
+                    'activities.Response as result',
+                    'activities.Status as status', 
+                    'activities.Status as progress', 
+                    DB::raw("'Activity' as type")
+                )
+                
+                ->leftJoin('users', 'activities.PrimaryResponsibleUserId', '=', 'users.user_id')
+                ->leftJoin('clientcompanies', 'activities.ClientId', '=', 'clientcompanies.id')
+                ->whereBetween('activities.created_at', [$from, $to])
+                ->where(function ($query) use ($search) {
+                    $query->where('activities.ActivityNumber', 'LIKE', '%' . $search . '%')
+                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('activities.Title', 'LIKE', '%' . $search . '%')
+                        ->orWhere('activities.Response', 'LIKE', '%' . $search . '%')
+                        ->orWhere('activities.Status', 'LIKE', '%' . $search . '%')
+                        ->orWhere(DB::raw("'Activity'"), 'LIKE', '%' . $search . '%');
+                })
+                ->when($filterType, function ($query) use ($filterType) {
+                    return $query->where(DB::raw("'Activity'"), '=', $filterType);
+                })
+                ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
+                    return $query->where('activities.ActivityNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
+                })
+                ->when($filterBDE, function ($query) use ($filterBDE) {
+                    return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
+                })
+                ->when($filterClient, function ($query) use ($filterClient) {
+                    return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
+                })
+                ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
+                    return $query->where('activities.created_at', 'LIKE', '%' . $filterDateCreated . '%');
+                })
+                ->when($filterDueDate, function ($query) use ($filterDueDate) {
+                    return $query->where('activities.ScheduleTo', 'LIKE', '%' . $filterDueDate . '%');
+                })
+                ->when($filterStatus, function ($query) use ($filterStatus) {
+                    return $query->where('activities.Status', 'LIKE', '%' . $filterStatus . '%');
+                })
+                ->when($filterProgress, function ($query) use ($filterProgress) {
+                    return $query->where('activities.Status', 'LIKE', '%' . $filterProgress . '%');
+                })
+                ->when(optional($role)->type, function($q) use ($role) {
+                    if ($role->type == "IS") {
+                        $q->where('ActivityNumber', 'LIKE', 'ACT-IS%');  
+                    } elseif ($role->type == "LS") {
+                        $q->where('ActivityNumber', 'LIKE', 'ACT-LS%');  
+                    }
+                });
+                    
         // Combine all queries
         $combined_query = $crr_data->union($srf_data)
                                 ->union($rpe_data)
                                 ->union($price_data)
                                 ->union($act_data);
-                                
+                                                 
         // Apply sorting and pagination
         $query = DB::table(DB::raw("({$combined_query->toSql()}) as combined"))
                 ->mergeBindings($combined_query->getQuery())
                 ->orderBy($sort, $direction);
 
+                
         if ($fetchAll) {
             $transaction_data = $query->get();
         } else {
             $transaction_data = $query->paginate($entries);
         }
+
         $transactionNumbers = $combined_query->pluck('transaction_number')->unique();
         $uniqueBde = $combined_query->distinct()->pluck('bde')->unique();
         $uniqueClient = $combined_query->distinct()->pluck('client')->unique();
@@ -642,6 +690,7 @@ class ReportsController extends Controller
         } else {
             return view('reports.transaction_summary', $data); // Return the view with paginated data
         }
+        
     }
 
     // Export Transaction Activity
@@ -650,8 +699,19 @@ class ReportsController extends Controller
         $search = $request->input('search');
         $sort = $request->get('sort', 'client');
         $direction = $request->get('direction', 'desc');
+        $role = auth()->user()->role;
         $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
         $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
+
+        // Get filter inputs
+        $filterType = $request->input('filter_type');
+        $filterTransactionNumber = $request->input('filter_transaction_number');
+        $filterBDE = $request->input('filter_bde');
+        $filterClient = $request->input('filter_client');
+        $filterDateCreated = $request->input('filter_date_created');
+        $filterDueDate = $request->input('filter_due_date');
+        $filterStatus = $request->input('filter_status');
+        $filterProgress = $request->input('filter_progress');
 
         // Ensure sort and direction are valid
         $validSorts = ['status', 'client', 'transaction_number', 'date_created'];
@@ -664,199 +724,311 @@ class ReportsController extends Controller
 
         // Reuse the combined query logic
         $crr_data = CustomerRequirement::select(
-                    DB::raw("'Customer Requirement' as type"),
-                    'customerrequirements.CrrNumber as transaction_number', 
-                    'users.full_name as bde',
-                    'clientcompanies.Name as client', 
-                    DB::raw("DATE_FORMAT(customerrequirements.DateCreated, '%b. %d, %Y') as date_created"),
-                    DB::raw("DATE_FORMAT(customerrequirements.DueDate, '%b. %d, %Y') as due_date"),
-                    'customerrequirements.DetailsOfRequirement as details', 
-                    'customerrequirements.Recommendation as result', 
-                    DB::raw("
-                        CASE 
+                DB::raw("'Customer Requirement' as type"),
+                'customerrequirements.CrrNumber as transaction_number', 
+                'users.full_name as bde',
+                'clientcompanies.Name as client', 
+                DB::raw("DATE_FORMAT(customerrequirements.DateCreated, '%b. %d, %Y') as date_created"),
+                DB::raw("DATE_FORMAT(customerrequirements.DueDate, '%b. %d, %Y') as due_date"),
+                'customerrequirements.DetailsOfRequirement as details', 
+                'customerrequirements.Recommendation as result', 
+                DB::raw("CASE 
                             WHEN customerrequirements.Status = 10 THEN 'Open' 
                             WHEN customerrequirements.Status = 20 THEN 'Closed'
-                            ELSE customerrequirements.Status
-                        END as status
-                    "),
-                    'srfprogresses.name as progress'  
-                )
-                ->leftJoin('users', 'customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
-                ->leftJoin('clientcompanies', 'customerrequirements.ClientId', '=', 'clientcompanies.id')
-                ->leftJoin('srfprogresses', 'customerrequirements.Progress', '=', 'srfprogresses.id')
-                ->where(function ($query) use ($search) {
-                    $query->where('customerrequirements.CrrNumber', 'LIKE', '%' . $search . '%')
-                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('customerrequirements.DetailsOfRequirement', 'LIKE', '%' . $search . '%')
-                        ->orWhere('customerrequirements.Recommendation', 'LIKE', '%' . $search . '%')
-                        ->orWhere(DB::raw("CASE 
-                                            WHEN customerrequirements.Status = 10 THEN 'Open' 
-                                            WHEN customerrequirements.Status = 20 THEN 'Closed'
-                                            ELSE customerrequirements.Status
-                                        END"), 'LIKE', '%' . $search . '%') 
-                        ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
-                        ->orWhere(DB::raw("'Customer Requirement'"), 'LIKE', '%' . $search . '%');
-                })
-                ->whereBetween('customerrequirements.DateCreated', [$from, $to]);
+                            ELSE 'Unknown'
+                        END as status"
+                ),
+                'srfprogresses.name as progress'
+            )
+            ->leftJoin('users', 'customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
+            ->leftJoin('clientcompanies', 'customerrequirements.ClientId', '=', 'clientcompanies.id')
+            ->leftJoin('srfprogresses', 'customerrequirements.Progress', '=', 'srfprogresses.id')
+            ->whereBetween('customerrequirements.DateCreated', [$from, $to])
+            ->where(function ($query) use ($search) {
+                $query->where('customerrequirements.CrrNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('customerrequirements.DetailsOfRequirement', 'LIKE', '%' . $search . '%')
+                    ->orWhere('customerrequirements.Recommendation', 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("CASE 
+                        WHEN customerrequirements.Status = 10 THEN 'Open' 
+                        WHEN customerrequirements.Status = 20 THEN 'Closed'
+                        ELSE 'Unknown'
+                    END"), 'LIKE', '%' . $search . '%')
+                    ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("'Customer Requirement'"), 'LIKE', '%' . $search . '%');
+            })
+            ->when($filterType, fn($query) => $query->where(DB::raw("'Customer Requirement'"), '=', $filterType))
+            ->when($filterTransactionNumber, fn($query) => $query->where('customerrequirements.CrrNumber', 'LIKE', '%' . $filterTransactionNumber . '%'))
+            ->when($filterBDE, fn($query) => $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%'))
+            ->when($filterClient, fn($query) => $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%'))
+            ->when($filterDateCreated, fn($query) => $query->whereDate('customerrequirements.DateCreated', '=', $filterDateCreated))
+            ->when($filterDueDate, fn($query) => $query->whereDate('customerrequirements.DueDate', '=', $filterDueDate))
+            ->when($filterStatus, fn($query) => $query->where(DB::raw("CASE 
+                WHEN customerrequirements.Status = 10 THEN 'Open' 
+                WHEN customerrequirements.Status = 20 THEN 'Closed'
+                ELSE 'Unknown'
+            END"), '=', $filterStatus))
+            ->when($filterProgress, fn($query) => $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%'))
+            ->when(optional($role)->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('CrrNumber', 'LIKE', 'CRR-IS%');  
+                } elseif ($role->type == "LS") {
+                    $q->where('CrrNumber', 'LIKE', 'CRR-LS%');  
+                }
+            });
+        
 
         $srf_data = SampleRequest::select(
-                    DB::raw("'Sample Request' as type"),
-                    'samplerequests.SrfNumber as transaction_number', 
-                    'users.full_name as bde',
-                    'clientcompanies.Name as client', 
-                    DB::raw("DATE_FORMAT(samplerequests.created_at, '%b. %d, %Y') as date_created"),
-                    DB::raw("DATE_FORMAT(samplerequests.DateRequired, '%b. %d, %Y') as due_date"),
-                    'samplerequests.InternalRemarks as details', 
-                    'samplerequests.Disposition as result',  
-                    DB::raw("
-                        CASE 
+                DB::raw("'Sample Request' as type"),
+                'samplerequests.SrfNumber as transaction_number', 
+                'users.full_name as bde',
+                'clientcompanies.Name as client', 
+                DB::raw("DATE_FORMAT(samplerequests.created_at, '%b. %d, %Y') as date_created"),
+                DB::raw("DATE_FORMAT(samplerequests.DateRequired, '%b. %d, %Y') as due_date"),
+                'samplerequests.InternalRemarks as details', 
+                'samplerequests.Disposition as result',  
+                DB::raw("CASE 
                             WHEN samplerequests.Status = 10 THEN 'Open' 
                             WHEN samplerequests.Status = 20 THEN 'Closed'
-                            ELSE samplerequests.Status
-                        END as status
-                    "),
-                    'srfprogresses.name as progress'                 
-                )
-                ->leftJoin('users', 'samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
-                ->leftJoin('clientcompanies', 'samplerequests.ClientId', '=', 'clientcompanies.id')
-                ->leftJoin('srfprogresses', 'samplerequests.Progress', '=', 'srfprogresses.id')
-                ->where(function ($query) use ($search) {
-                    $query->where('samplerequests.SrfNumber', 'LIKE', '%' . $search . '%')
-                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('samplerequests.InternalRemarks', 'LIKE', '%' . $search . '%')
-                        ->orWhere('samplerequests.Disposition', 'LIKE', '%' . $search . '%')
-                        ->orWhere(DB::raw("CASE 
-                                            WHEN samplerequests.Status = 10 THEN 'Open' 
-                                            WHEN samplerequests.Status = 20 THEN 'Closed'
-                                            ELSE samplerequests.Status
-                                        END"), 'LIKE', '%' . $search . '%') 
-                        ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
-                        ->orWhere(DB::raw("'Sample Request'"), 'LIKE', '%' . $search . '%');
-                })
-                ->whereBetween('samplerequests.created_at', [$from, $to]);
+                            ELSE 'Unknown'
+                        END as status"
+                ),
+                'srfprogresses.name as progress'
+            )
+            ->leftJoin('users', 'samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
+            ->leftJoin('clientcompanies', 'samplerequests.ClientId', '=', 'clientcompanies.id')
+            ->leftJoin('srfprogresses', 'samplerequests.Progress', '=', 'srfprogresses.id')
+            ->whereBetween('samplerequests.created_at', [$from, $to])
+            ->where(function ($query) use ($search) {
+                $query->where('samplerequests.SrfNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('samplerequests.InternalRemarks', 'LIKE', '%' . $search . '%')
+                    ->orWhere('samplerequests.Disposition', 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("CASE 
+                        WHEN samplerequests.Status = 10 THEN 'Open' 
+                        WHEN samplerequests.Status = 20 THEN 'Closed'
+                        ELSE 'Unknown'
+                    END"), 'LIKE', '%' . $search . '%')
+                    ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("'Sample Request'"), 'LIKE', '%' . $search . '%');
+            })
+            ->when($filterType, fn($query) => $query->where(DB::raw("'Sample Request'"), '=', $filterType))
+            ->when($filterTransactionNumber, fn($query) => $query->where('samplerequests.SrfNumber', 'LIKE', '%' . $filterTransactionNumber . '%'))
+            ->when($filterBDE, fn($query) => $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%'))
+            ->when($filterClient, fn($query) => $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%'))
+            ->when($filterDateCreated, fn($query) => $query->whereDate('samplerequests.created_at', '=', $filterDateCreated))
+            ->when($filterDueDate, fn($query) => $query->whereDate('samplerequests.DateRequired', '=', $filterDueDate))
+            ->when($filterStatus, fn($query) => $query->where(DB::raw("CASE 
+                WHEN samplerequests.Status = 10 THEN 'Open' 
+                WHEN samplerequests.Status = 20 THEN 'Closed'
+                ELSE 'Unknown'
+            END"), '=', $filterStatus))
+            ->when($filterProgress, fn($query) => $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%'))
+            ->when(optional($role)->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('SrfNumber', 'LIKE', 'SRF-IS%');  
+                } elseif ($role->type == "LS") {
+                    $q->where('SrfNumber', 'LIKE', 'SRF-LS%');  
+                }
+            });
+            
 
         $rpe_data = RequestProductEvaluation::select(
-                    DB::raw("'Request Product Evaluation' as type"),
-                    'requestproductevaluations.RpeNumber as transaction_number', 
-                    'users.full_name as bde',
-                    'clientcompanies.Name as client', 
-                    DB::raw("DATE_FORMAT(requestproductevaluations.CreatedDate, '%b. %d, %Y') as date_created"),
-                    DB::raw("DATE_FORMAT(requestproductevaluations.DueDate, '%b. %d, %Y') as due_date"),
-                    'requestproductevaluations.ObjectiveForRpeProject as details', 
-                    'requestproductevaluations.RpeResult as result',
-                    DB::raw("
-                        CASE 
+                DB::raw("'Request Product Evaluation' as type"),
+                'requestproductevaluations.RpeNumber as transaction_number', 
+                'users.full_name as bde',
+                'clientcompanies.Name as client', 
+                DB::raw("DATE_FORMAT(requestproductevaluations.CreatedDate, '%b. %d, %Y') as date_created"),
+                DB::raw("DATE_FORMAT(requestproductevaluations.DueDate, '%b. %d, %Y') as due_date"),
+                'requestproductevaluations.ObjectiveForRpeProject as details', 
+                'requestproductevaluations.RpeResult as result',
+                DB::raw("CASE 
                             WHEN requestproductevaluations.Status = 10 THEN 'Open' 
                             WHEN requestproductevaluations.Status = 20 THEN 'Closed'
-                            ELSE requestproductevaluations.Status
-                        END as status
-                    "),
-                    'srfprogresses.name as progress'          
-                )
-                ->leftJoin('users', 'requestproductevaluations.PrimarySalesPersonId', '=', 'users.user_id')
-                ->leftJoin('clientcompanies', 'requestproductevaluations.ClientId', '=', 'clientcompanies.id')
-                ->leftJoin('srfprogresses', 'requestproductevaluations.Progress', '=', 'srfprogresses.id')
-                ->where(function ($query) use ($search) {
-                    $query->where('requestproductevaluations.RpeNumber', 'LIKE', '%' . $search . '%')
-                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('requestproductevaluations.ObjectiveForRpeProject', 'LIKE', '%' . $search . '%')
-                        ->orWhere('requestproductevaluations.RpeResult', 'LIKE', '%' . $search . '%')
-                        ->orWhere(DB::raw("CASE 
-                                            WHEN requestproductevaluations.Status = 10 THEN 'Open' 
-                                            WHEN requestproductevaluations.Status = 20 THEN 'Closed'
-                                            ELSE requestproductevaluations.Status
-                                        END"), 'LIKE', '%' . $search . '%') 
-                        ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
-                        ->orWhere(DB::raw("'Request Product Evaluation'"), 'LIKE', '%' . $search . '%');
-                })
-                ->whereBetween('requestproductevaluations.CreatedDate', [$from, $to]);
+                            ELSE 'Unknown'
+                        END as status"
+                ),
+                'srfprogresses.name as progress'
+            )
+            ->leftJoin('users', 'requestproductevaluations.PrimarySalesPersonId', '=', 'users.user_id')
+            ->leftJoin('clientcompanies', 'requestproductevaluations.ClientId', '=', 'clientcompanies.id')
+            ->leftJoin('srfprogresses', 'requestproductevaluations.Progress', '=', 'srfprogresses.id')
+            ->whereBetween('requestproductevaluations.CreatedDate', [$from, $to])
+            ->where(function ($query) use ($search) {
+                $query->where('requestproductevaluations.RpeNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('requestproductevaluations.ObjectiveForRpeProject', 'LIKE', '%' . $search . '%')
+                    ->orWhere('requestproductevaluations.RpeResult', 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("CASE 
+                        WHEN requestproductevaluations.Status = 10 THEN 'Open' 
+                        WHEN requestproductevaluations.Status = 20 THEN 'Closed'
+                        ELSE 'Unknown'
+                    END"), 'LIKE', '%' . $search . '%')
+                    ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("'Request Product Evaluation'"), 'LIKE', '%' . $search . '%');
+            })
+            ->when($filterType, fn($query) => $query->where(DB::raw("'Request Product Evaluation'"), '=', $filterType))
+            ->when($filterTransactionNumber, fn($query) => $query->where('requestproductevaluations.RpeNumber', 'LIKE', '%' . $filterTransactionNumber . '%'))
+            ->when($filterBDE, fn($query) => $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%'))
+            ->when($filterClient, fn($query) => $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%'))
+            ->when($filterDateCreated, fn($query) => $query->whereDate('requestproductevaluations.CreatedDate', '=', $filterDateCreated))
+            ->when($filterDueDate, fn($query) => $query->whereDate('requestproductevaluations.DueDate', '=', $filterDueDate))
+            ->when($filterStatus, fn($query) => $query->where(DB::raw("CASE 
+                WHEN requestproductevaluations.Status = 10 THEN 'Open' 
+                WHEN requestproductevaluations.Status = 20 THEN 'Closed'
+                ELSE 'Unknown'
+            END"), '=', $filterStatus))
+            ->when($filterProgress, fn($query) => $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%'))
+            ->when(optional($role)->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('RpeNumber', 'LIKE', 'RPE-IS%');  
+                } elseif ($role->type == "LS") {
+                    $q->where('RpeNumber', 'LIKE', 'RPE-LS%');  
+                }
+            });
+            
 
         $price_data = PriceMonitoring::select(
-                    DB::raw("'Price Request' as type"),
-                    'pricerequestforms.PrfNumber as transaction_number', 
-                    'users.full_name as bde',
-                    'clientcompanies.Name as client', 
-                    DB::raw("DATE_FORMAT(pricerequestforms.created_at, '%b. %d, %Y') as date_created"),
-                    DB::raw("DATE_FORMAT(pricerequestforms.ValidityDate, '%b. %d, %Y') as due_date"),
-                    'pricerequestforms.Remarks as details', 
-                    'pricerequestforms.DispositionRemarks as result',
-                    DB::raw("
-                        CASE 
+                DB::raw("'Price Monitoring' as type"),
+                'pricerequestforms.PrfNumber as transaction_number', 
+                'users.full_name as bde',
+                'clientcompanies.Name as client', 
+                DB::raw("DATE_FORMAT(pricerequestforms.DateRequested, '%b. %d, %Y') as date_created"),
+                DB::raw("DATE_FORMAT(pricerequestforms.ValidityDate, '%b. %d, %Y') as due_date"),
+                'pricerequestforms.Remarks as details', 
+                'pricerequestforms.DispositionRemarks as result',  
+                DB::raw("CASE 
                             WHEN pricerequestforms.Status = 10 THEN 'Open' 
                             WHEN pricerequestforms.Status = 20 THEN 'Closed'
-                            ELSE pricerequestforms.Status
-                        END as staus
-                    "),
-                    'srfprogresses.name as progress'
-                )
-                ->leftJoin('users', 'pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
-                ->leftJoin('clientcompanies', 'pricerequestforms.ClientId', '=', 'clientcompanies.id')
-                ->leftJoin('srfprogresses', 'pricerequestforms.Progress', '=', 'srfprogresses.id')
-                ->where(function ($query) use ($search) {
-                    $query->where('pricerequestforms.PrfNumber', 'LIKE', '%' . $search . '%')
-                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('pricerequestforms.Remarks', 'LIKE', '%' . $search . '%')
-                        ->orWhere('pricerequestforms.DispositionRemarks', 'LIKE', '%' . $search . '%')
-                        ->orWhere(DB::raw("CASE 
-                                            WHEN pricerequestforms.Status = 10 THEN 'Open' 
-                                            WHEN pricerequestforms.Status = 20 THEN 'Closed'
-                                            ELSE pricerequestforms.Status
-                                        END"), 'LIKE', '%' . $search . '%') 
-                        ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
-                        ->orWhere(DB::raw("'Price Request'"), 'LIKE', '%' . $search . '%');
-                })
-                ->whereBetween('pricerequestforms.created_at', [$from, $to]);
+                            ELSE 'Unknown'
+                        END as status"
+                ),
+                'srfprogresses.name as progress'
+            )
+            ->leftJoin('users', 'pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
+            ->leftJoin('clientcompanies', 'pricerequestforms.ClientId', '=', 'clientcompanies.id')
+            ->leftJoin('srfprogresses', 'pricerequestforms.Progress', '=', 'srfprogresses.id')
+            ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
+            ->where(function ($query) use ($search) {
+                $query->where('pricerequestforms.PrfNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('pricerequestforms.Remarks', 'LIKE', '%' . $search . '%')
+                    ->orWhere('pricerequestforms.DispositionRemarks', 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("CASE 
+                        WHEN pricerequestforms.Status = 10 THEN 'Open' 
+                        WHEN pricerequestforms.Status = 20 THEN 'Closed'
+                        ELSE 'Unknown'
+                    END"), 'LIKE', '%' . $search . '%')
+                    ->orWhere('srfprogresses.name', 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("'Price Monitoring'"), 'LIKE', '%' . $search . '%');
+            })
+            ->when($filterType, fn($query) => $query->where(DB::raw("'Price Monitoring'"), '=', $filterType))
+            ->when($filterTransactionNumber, fn($query) => $query->where('pricerequestforms.PmNumber', 'LIKE', '%' . $filterTransactionNumber . '%'))
+            ->when($filterBDE, fn($query) => $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%'))
+            ->when($filterClient, fn($query) => $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%'))
+            ->when($filterDateCreated, fn($query) => $query->whereDate('pricerequestforms.DateRequested', '=', $filterDateCreated))
+            ->when($filterDueDate, fn($query) => $query->whereDate('pricerequestforms.ValidityDate', '=', $filterDueDate))
+            ->when($filterStatus, fn($query) => $query->where(DB::raw("CASE 
+                WHEN pricerequestforms.Status = 10 THEN 'Open' 
+                WHEN pricerequestforms.Status = 20 THEN 'Closed'
+                ELSE 'Unknown'
+            END"), '=', $filterStatus))
+            ->when($filterProgress, fn($query) => $query->where('srfprogresses.name', 'LIKE', '%' . $filterProgress . '%'))
+            ->when(optional($role)->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('Prfnumber', 'LIKE', 'PRF-IS%');  
+                } elseif ($role->type == "LS") {
+                    $q->where('Prfnumber', 'LIKE', 'PRF-LS%');  
+                }
+            });
+            
 
         $act_data = Activity::select(
-                    DB::raw("'Activity' as type"),
-                    'activities.ActivityNumber as transaction_number', 
-                    'users.full_name as bde',
-                    'clientcompanies.Name as client', 
-                    DB::raw("DATE_FORMAT(activities.created_at, '%b. %d, %Y') as date_created"),
-                    DB::raw("DATE_FORMAT(activities.ScheduleTo, '%b. %d, %Y') as due_date"),
-                    'activities.Title as details', 
-                    'activities.Response as result',
-                    DB::raw("
+                DB::raw("'Activity' as type"),
+                'activities.ActivityNumber as transaction_number', 
+                'users.full_name as bde',
+                'clientcompanies.Name as client', 
+                DB::raw("DATE_FORMAT(activities.created_at, '%b. %d, %Y') as date_created"),
+                DB::raw("DATE_FORMAT(activities.ScheduleTo, '%b. %d, %Y') as due_date"),
+                'activities.Title as details', 
+                'activities.Response as result',
+                DB::raw("
+                    CASE 
+                        WHEN activities.Status = 10 THEN 'Open' 
+                        WHEN activities.Status = 20 THEN 'Closed'
+                        ELSE CAST(activities.Status AS CHAR)
+                    END as status
+                "),
+                DB::raw("
+                    CASE 
+                        WHEN activities.Status = 10 THEN 'Open' 
+                        WHEN activities.Status = 20 THEN 'Closed'
+                        ELSE IFNULL(srfprogresses.name, 'Unknown')
+                    END as progress
+                ")  
+            )
+            ->leftJoin('users', 'activities.PrimaryResponsibleUserId', '=', 'users.user_id')
+            ->leftJoin('clientcompanies', 'activities.ClientId', '=', 'clientcompanies.id')
+            ->leftJoin('srfprogresses', 'activities.Status', '=', 'srfprogresses.id')  // Correct join condition
+            ->whereBetween('activities.created_at', [$from, $to])
+            ->where(function ($query) use ($search) {
+                $query->where('activities.ActivityNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('activities.Title', 'LIKE', '%' . $search . '%')
+                    ->orWhere('activities.Response', 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("
                         CASE 
                             WHEN activities.Status = 10 THEN 'Open' 
                             WHEN activities.Status = 20 THEN 'Closed'
-                            ELSE activities.Status
-                        END as status
-                    "),
-                    DB::raw("
+                            ELSE CAST(activities.Status AS CHAR)
+                        END
+                    "), 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("
                         CASE 
                             WHEN activities.Status = 10 THEN 'Open' 
                             WHEN activities.Status = 20 THEN 'Closed'
-                            ELSE srfprogresses.name
-                        END as progress
-                    ")  
-                )
-                ->leftJoin('users', 'activities.PrimaryResponsibleUserId', '=', 'users.user_id')
-                ->leftJoin('clientcompanies', 'activities.ClientId', '=', 'clientcompanies.id')
-                ->leftJoin('srfprogresses', 'activities.Status', '=', 'srfprogresses.id')  // Join with srfprogresses
-                ->where(function ($query) use ($search) {
-                    $query->where('activities.ActivityNumber', 'LIKE', '%' . $search . '%')
-                        ->orWhere('users.full_name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('clientcompanies.Name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('activities.Title', 'LIKE', '%' . $search . '%')
-                        ->orWhere('activities.Response', 'LIKE', '%' . $search . '%')
-                        ->orWhere(DB::raw("CASE 
-                                            WHEN activities.Status = 10 THEN 'Open' 
-                                            WHEN activities.Status = 20 THEN 'Closed'
-                                            ELSE activities.Status
-                                        END"), 'LIKE', '%' . $search . '%') 
-                        ->orWhere(DB::raw("CASE 
-                                            WHEN activities.Status = 10 THEN 'Open' 
-                                            WHEN activities.Status = 20 THEN 'Closed'
-                                            ELSE srfprogresses.name
-                                        END"), 'LIKE', '%' . $search . '%') 
-                        ->orWhere(DB::raw("'Activity'"), 'LIKE', '%' . $search . '%');
-                })
-                ->whereBetween('activities.created_at', [$from, $to]);
+                            ELSE IFNULL(srfprogresses.name, 'Unknown')
+                        END
+                    "), 'LIKE', '%' . $search . '%')
+                    ->orWhere(DB::raw("'Activity'"), 'LIKE', '%' . $search . '%');
+            })
+            ->when($filterType, function ($query) use ($filterType) {
+                return $query->where(DB::raw("'Activity'"), '=', $filterType);
+            })
+            ->when($filterTransactionNumber, function ($query) use ($filterTransactionNumber) {
+                return $query->where('activities.ActivityNumber', 'LIKE', '%' . $filterTransactionNumber . '%');
+            })
+            ->when($filterBDE, function ($query) use ($filterBDE) {
+                return $query->where('users.full_name', 'LIKE', '%' . $filterBDE . '%');
+            })
+            ->when($filterClient, function ($query) use ($filterClient) {
+                return $query->where('clientcompanies.Name', 'LIKE', '%' . $filterClient . '%');
+            })
+            ->when($filterDateCreated, function ($query) use ($filterDateCreated) {
+                return $query->whereDate('activities.created_at', '=', $filterDateCreated);
+            })
+            ->when($filterDueDate, function ($query) use ($filterDueDate) {
+                return $query->whereDate('activities.ScheduleTo', '=', $filterDueDate);
+            })
+            ->when($filterStatus, function ($query) use ($filterStatus) {
+                return $query->where('activities.Status', '=', $filterStatus);
+            })
+            
+            ->when($filterProgress, function ($query) use ($filterProgress) {
+                return $query->where(DB::raw("
+                    CASE 
+                        WHEN activities.Status = 10 THEN 'Open' 
+                        WHEN activities.Status = 20 THEN 'Closed'
+                        ELSE IFNULL(srfprogresses.name, 'Unknown')
+                    END
+                "), '=', $filterProgress);
+            });
+
 
 
         // Combine all queries

@@ -57,9 +57,7 @@
                 <table class="table table-striped table-bordered table-hover" id="prospect_table">
                     <thead>
                         <tr>
-                            @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin' || auth()->user()->role->type == 'LS' && auth()->user()->role->name == 'Department Admin')
                             <th>Action</th>
-                            @endif
                             <th>
                                 Type
                                 <!-- <a href="{{ route('client.prospect', ['search' => $search, 'sort' => 'Type', 'direction' => request('sort') == 'Type' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
