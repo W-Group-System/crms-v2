@@ -527,7 +527,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
 
     # Reports
     Route::get('/price_request', 'ReportsController@price_summary')->name('reports.price_request');
-    Route::get('/export_price_request', 'ReportsController@exportPriceRequest')->name('export_price_request');
+    Route::get('/export_price_request', 'ReportsController@exportPriceRequests')->name('export_price_request');
     Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
     Route::get('/export-transaction-activity', 'ReportsController@exportTransactionActivity')->name('export_transaction_activity');
     Route::get('/copy-transaction-activity', 'ReportsController@copyTransactionActivity')->name('copy_transaction_activity');

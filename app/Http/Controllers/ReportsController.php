@@ -71,7 +71,7 @@ class ReportsController extends Controller
         ->leftJoin('pricerequestproducts', 'pricerequestproducts.PriceRequestFormId', '=', 'pricerequestforms.id')
         ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
         ->leftJoin('clientpaymentterms', 'clientpaymentterms.id', '=', 'pricerequestforms.PaymentTermId')
-        ->leftJoin('users as primarySalesPerson', 'primarySalesPerson.id', '=', 'pricerequestforms.PrimarySalesPersonId')
+        ->leftJoin('users as primarySalesPerson', 'primarySalesPerson.user_id', '=', 'pricerequestforms.PrimarySalesPersonId')
         ->leftJoin('clientcompanies as client', 'client.id', '=', 'pricerequestforms.ClientId')
         ->select('pricerequestforms.*', 'pricerequestproducts.*', 'products.*', 'clientpaymentterms.Name as PaymentTermName')
         ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
@@ -162,7 +162,6 @@ class ReportsController extends Controller
         $allPrimarySalesPersons = User::whereIn('users.user_id', PriceMonitoring::pluck('PrimarySalesPersonId')->unique())->pluck('full_name')->unique()->sort()->values();
         $allClients = Client::whereIn('id', PriceMonitoring::pluck('ClientId')->unique())->pluck('name')->unique();
         $allProducts = Product::whereIn('id', PriceRequestProduct::pluck('ProductId')->unique())->pluck('code')->unique();
-        // dd($allProducts);
         $allRmc = PriceRequestProduct::pluck('ProductRmc')->unique()->sort()->values();
         $allOffered = PriceRequestProduct::pluck('IsalesOfferedPrice')->unique()->sort()->values();
         $allShipment = PriceMonitoring::pluck('ShipmentTerm')->unique()->sort()->values();
@@ -239,81 +238,193 @@ class ReportsController extends Controller
     //     // Convert data to an array format that can be easily handled by JavaScript
     //     return response()->json($priceRequests);
     // }
-    public function exportPriceRequest(Request $request)
+    public function exportPriceRequests(Request $request)
     {
         $search = $request->input('search');
-        $sort = $request->get('sort', 'DateRequested'); // Default to 'DateRequested' if no sort is specified
-        $direction = $request->get('direction', 'desc'); // Default to 'desc' if no direction is specified
-        $from = $request->input('from') ? Carbon::parse($request->input('from'))->format('Y-m-d') : now()->startOfMonth()->format('Y-m-d');
-        $to = $request->input('to') ? Carbon::parse($request->input('to'))->format('Y-m-d') : now()->endOfMonth()->format('Y-m-d');
+        $sort = $request->get('sort', 'DateRequested'); // Default sort field
+        $direction = $request->get('direction', 'desc'); // Default sort direction
 
-        $validSorts = ['DateRequested', 'PrimarySalesPersonId', 'ClientId', 'ProductCode', 'ProductRmc', 'OfferedPrice', 'ShipmentTerm', 'PaymentTerm', 'QuantityRequired', 'Margin', 'MarginPercentage', 'TotalMargin', 'IsAccepted', 'Remarks'];
+        $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
+        $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
+
+        // Get filter inputs
+        $filterDate = $request->input('filter_date');
+        $filterPRF = $request->input('filter_prf');
+        $filterAccount = $request->input('filter_account_manager');
+        $filterClient = $request->input('filter_client');
+        $filterProduct = $request->input('filter_product');
+        $filterRMC = $request->input('filter_rmc');
+        $filterOffered = $request->input('filter_offered');
+        $filterShipment = $request->input('filter_shipment');
+        $filterPayment = $request->input('filter_payment');
+        $filterQuantity = $request->input('filter_quantity');
+        $filterMargin = $request->input('filter_margin');
+        $filterPercentMargin = $request->input('filter_percent_margin');
+        $filterTotalMargin = $request->input('filter_total_margin');
+        $filterAccepted = $request->input('filter_accepted');
+        $filterRemarks = $request->input('filter_remarks');
+
+        $validSorts = [
+            'DateRequested', 'PrimarySalesPersonId', 'ClientId', 'ProductCode', 'ProductRmc', 'OfferedPrice', 
+            'ShipmentTerm', 'PaymentTerm', 'QuantityRequired', 'Margin', 'MarginPercentage', 'TotalMargin', 
+            'IsAccepted', 'Remarks'
+        ];
+
         if (!in_array($sort, $validSorts)) {
             $sort = 'DateRequested'; // Default sort field
         }
+
         if (!in_array($direction, ['asc', 'desc'])) {
-            $direction = 'desc';
+            $direction = 'desc'; // Default sort direction
         }
 
-        // Fetch all records based on search, sort, and direction
-        $priceRequests = PriceMonitoring::query()
-            ->with([
+        $priceRequests = PriceMonitoring::with([
                 'primarySalesPerson:user_id,full_name', 
                 'client:id,name', 
-                'priceRequestProduct:ProductId,id',
-                'priceRequestProduct:id,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
-                'paymentterms:id,Name'
+                'priceRequestProduct:id,ProductId,ProductRmc,IsalesOfferedPrice,QuantityRequired,IsalesMargin,IsalesMarginPercentage', 
+                'paymentterms:id,Name',
+                'products:ProductId,code'
             ])
-            ->where(function ($query) use ($search) {
-                $query->where('DateRequested', 'LIKE', '%' . $search . '%')
-                    ->orWhere('ShipmentTerm', 'LIKE', '%' . $search . '%')
-                    ->orWhere('code', 'LIKE', '%' . $search . '%')
+            ->leftJoin('pricerequestproducts', 'pricerequestproducts.PriceRequestFormId', '=', 'pricerequestforms.id')
+            ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
+            ->leftJoin('clientpaymentterms', 'clientpaymentterms.id', '=', 'pricerequestforms.PaymentTermId')
+            ->leftJoin('users as primarySalesPerson', 'primarySalesPerson.id', '=', 'pricerequestforms.PrimarySalesPersonId')
+            ->leftJoin('clientcompanies as client', 'client.id', '=', 'pricerequestforms.ClientId')
+            ->select('pricerequestforms.*', 'pricerequestproducts.*', 'products.code as ProductCode', 'clientpaymentterms.Name as PaymentTermName')
+            ->whereBetween('pricerequestforms.DateRequested', [$from, $to]);
+
+        // Apply filters
+        if ($filterDate) {
+            $priceRequests->where('DateRequested', 'LIKE', "%$filterDate%");
+        }
+
+        if ($filterPRF) {
+            $priceRequests->where('PrfNumber', 'LIKE', "%$filterPRF%");
+        }
+
+        if ($filterAccount) {
+            $priceRequests->whereHas('primarySalesPerson', function ($q) use ($filterAccount) {
+                $q->where('full_name', 'LIKE', "%$filterAccount%");
+            });
+        }
+
+        if ($filterClient) {
+            $priceRequests->whereHas('client', function ($q) use ($filterClient) {
+                $q->where('name', 'LIKE', "%$filterClient%");
+            });
+        }
+
+        if ($filterProduct) {
+            $priceRequests->whereHas('products', function ($q) use ($filterProduct) {
+                $q->where('code', 'LIKE', "%$filterProduct%");
+            });
+        }
+
+        if ($filterRMC) {
+            $priceRequests->whereHas('priceRequestProduct', function ($q) use ($filterRMC) {
+                $q->where('ProductRmc', 'LIKE', "%$filterRMC%");
+            });
+        }
+
+        if ($filterOffered) {
+            $priceRequests->whereHas('priceRequestProduct', function ($q) use ($filterOffered) {
+                $q->where('IsalesOfferedPrice', 'LIKE', "%$filterOffered%");
+            });
+        }
+
+        if ($filterShipment) {
+            $priceRequests->where('ShipmentTerm', 'LIKE', "%$filterShipment%");
+        }
+
+        if ($filterPayment) {
+            $priceRequests->whereHas('paymentterms', function ($q) use ($filterPayment) {
+                $q->where('Name', 'LIKE', "%$filterPayment%");
+            });
+        }
+
+        if ($filterQuantity) {
+            $priceRequests->whereHas('priceRequestProduct', function ($q) use ($filterQuantity) {
+                $q->where('QuantityRequired', 'LIKE', "%$filterQuantity%");
+            });
+        }
+
+        if ($filterMargin) {
+            $priceRequests->whereHas('priceRequestProduct', function ($q) use ($filterMargin) {
+                $q->where('IsalesMargin', 'LIKE', "%$filterMargin%");
+            });
+        }
+
+        if ($filterPercentMargin) {
+            $priceRequests->whereHas('priceRequestProduct', function ($q) use ($filterPercentMargin) {
+                $q->where('IsalesMarginPercentage', 'LIKE', "%$filterPercentMargin%");
+            });
+        }
+
+        if ($filterTotalMargin) {
+            $priceRequests->whereHas('priceRequestProduct', function ($q) use ($filterTotalMargin) {
+                $q->where('IsalesMargin', 'LIKE', "%$filterTotalMargin%"); // Ensure this is correct
+            });
+        }
+
+        if ($filterAccepted) {
+            $priceRequests->where('IsAccepted', 'LIKE', "%$filterAccepted%");
+        }
+
+        if ($filterRemarks) {
+            $priceRequests->where('Remarks', 'LIKE', "%$filterRemarks%");
+        }
+
+        // Apply global search
+        if ($search) {
+            $priceRequests->where(function ($query) use ($search) {
+                $query->where('DateRequested', 'LIKE', "%$search%")
+                    ->orWhere('PrfNumber', 'LIKE', "%$search%")
+                    ->orWhere('ShipmentTerm', 'LIKE', "%$search%")
+                    ->orWhereHas('products', function ($q) use ($search) {
+                        $q->where('code', 'LIKE', "%$search%");
+                    })
                     ->orWhereHas('primarySalesPerson', function ($q) use ($search) {
-                        $q->where('full_name', 'LIKE', '%' . $search . '%');
+                        $q->where('full_name', 'LIKE', "%$search%");
                     })
                     ->orWhereHas('client', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('priceRequestProduct', function ($q) use ($search) {
-                        $q->where('ProductRmc', 'LIKE', '%' . $search . '%')
-                        ->orWhere('IsalesOfferedPrice', 'LIKE', '%' . $search . '%')
-                        ->orWhere('QuantityRequired', 'LIKE', '%' . $search . '%')
-                        ->orWhere('IsalesMargin', 'LIKE', '%' . $search . '%')
-                        ->orWhere('IsalesMarginPercentage', 'LIKE', '%' . $search . '%')
-                        ->orWhere('Remarks', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('paymentterms', function ($q) use ($search) {
-                        $q->where('Name', 'LIKE', '%' . $search . '%');
+                        $q->where('name', 'LIKE', "%$search%");
                     });
-            })
-            ->whereBetween('pricerequestforms.DateRequested', [$from, $to])
-            ->leftJoin('pricerequestproducts', 'pricerequestproducts.id', '=', 'pricerequestforms.id')
-            ->leftJoin('products', 'products.id', '=', 'pricerequestproducts.ProductId')
-            ->orderBy($sort, $direction)
-            ->get(); // Execute the query and get the results
-        // dd($priceRequests);
-        // Convert data to an array format that can be easily handled by JavaScript
+            });
+        }
+        
+        $priceRequests->orderBy($sort, $direction);
+
+        $priceRequests = $priceRequests->get();
+
         $data = $priceRequests->map(function ($item) {
             return [
                 'DateRequested' => $item->DateRequested,
-                'PrimarySalesPersonId' => $item->primarySalesPerson->full_name ?? 'N/A',
+                'PrimarySalesPerson' => $item->primarySalesPerson->full_name ?? 'N/A',
                 'Client' => $item->client->name ?? 'N/A',
-                'ProductCode' => $item->code,
+                'ProductCode' => $item->ProductCode,
                 'ProductRmc' => $item->ProductRmc ?? 'N/A',
                 'OfferedPrice' => $item->IsalesOfferedPrice ?? '0',
+                'Selling Price' => array_sum([
+                    $item->ProductRmc, 
+                    $item->LsalesDirectLabor, 
+                    $item->LsalesFactoryOverhead, 
+                    $item->LsalesDeliveryCost, 
+                    $item->LsalesGaeValue, 
+                    $item->OtherCostRequirements, 
+                    $item->LsalesBlendingLoss, 
+                    $item->LsalesMarkupValue
+                ]),
                 'QuantityRequired' => $item->QuantityRequired ?? 'N/A',
                 'Margin' => $item->IsalesMargin ?? 'N/A',
                 'MarginPercentage' => $item->IsalesMarginPercentage ?? 'N/A',
                 'TotalMargin' => $item->TotalMargin ?? 'N/A',
                 'ShipmentTerm' => $item->ShipmentTerm ?? 'N/A',
-                'PaymentTerm' => $item->paymentterms->Name ?? 'N/A',
+                'PaymentTerm' => $item->PaymentTermName ?? 'N/A',
                 'IsAccepted' => $item->IsAccepted ? 'YES' : 'NO',
                 'Remarks' => $item->Remarks ?? 'N/A',
             ];
         });
-        dd($data);
-        
-        // Return the data as JSON
+
         return response()->json($data);
     }
 

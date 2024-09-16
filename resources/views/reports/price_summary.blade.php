@@ -13,11 +13,11 @@
                 </div>
                 <form class="form-inline col-md-6" action="{{ route('reports.price_request') }}" method="GET">
                     <div class="col-md-6 mt-2 mb-2">
-                        <label style="align-items: start;justify-content: left;">From (DD/MM/YYYY):</label>
+                        <label>From (DD/MM/YYYY):</label>
                         <input type="date" class="form-control" name="from" id="from" value="{{ request('from', now()->startOfMonth()->format('Y-m-d')) }}" style="width: 100%;" onchange="this.form.submit()">
                     </div>
                     <div class="col-md-6 mt-2 mb-2">
-                        <label style="align-items: start;justify-content: left;">To (DD/MM/YYYY):</label>
+                        <label>To (DD/MM/YYYY):</label>
                         <input type="date" class="form-control" name="to" id="to" value="{{ request('to', now()->endOfMonth()->format('Y-m-d')) }}" style="width: 100%;" onchange="this.form.submit()">
                     </div>
                 </form>
@@ -133,9 +133,9 @@
                             </th>
                             <th>
                                 Margin
-                                <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesMargin', 'direction' => request('sort') == 'IsalesMargin' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
+                                <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesMargin', 'direction' => request('sort') == 'IsalesMargin' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'IsalesMargin' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>
                                 % Margin
@@ -483,14 +483,17 @@
         $('#excel_price_btn').click(function() {
             var from = $('#from').val();
             var to = $('#to').val();
+            var search = "{{ request('search', '') }}"; // Pass current search parameters if needed
+            var sort = "{{ request('sort', 'DateRequested') }}"; // Use default 'DateRequested' if not provided
+            var direction = "{{ request('direction', 'desc') }}"; // Use default 'desc' if not provided
 
             $.ajax({
-                url: "{{ route('export_price_request') }}", // URL for exporting all data
+                url: "{{ route('export_price_request', request()->all()) }}",
                 method: "GET",
                 data: {
-                    search: "{{ request('search', '') }}", // Pass current search parameters if needed
-                    sort: "{{ request('sort', 'DateRequested') }}", // Use default 'DateRequested' if not provided
-                    direction: "{{ request('direction', 'desc') }}", // Use default 'desc' if not provided
+                    search: search,
+                    sort: sort,
+                    direction: direction,
                     from: from,
                     to: to
                 },
@@ -546,6 +549,8 @@
             const filterTotalMargin = $('#filter-total-margin').val();
             const filterAccepted = $('#filter-accepted').val();
             const filterRemarks = $('#filter-remarks').val();
+            const dateFrom = $('#from').val();
+            const dateTo = $('#to').val();
             
             // Build query string based on filters
             const queryParams = new URLSearchParams({
@@ -564,6 +569,8 @@
                 filter_total_margin: filterTotalMargin,
                 filter_accepted: filterAccepted,
                 filter_remarks: filterRemarks,
+                from: dateFrom,
+                to: dateTo,
                 // Add other filters here if needed
             }).toString();
 
@@ -572,7 +579,7 @@
         }
 
         // Attach event handlers
-        $('#filter-date, #filter-account-manager, #filter-client, #filter-product, #filter-rmc, #filter-shipment, #filter-payment, #filter-accepted, #filter-quantity, #filter-offered, #filter-margin, #filter-percent-margin, #filter-total-margin, #filter-prf').on('change keyup', function() {
+        $('#filter-date, #filter-account-manager, #filter-client, #filter-product, #filter-rmc, #filter-shipment, #filter-payment, #filter-accepted, #filter-quantity, #filter-offered, #filter-margin, #filter-percent-margin, #filter-total-margin, #filter-prf, #from, #to').on('change keyup', function() {
             applyPriceFilters();
         });
 
