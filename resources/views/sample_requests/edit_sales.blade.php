@@ -57,6 +57,10 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Upload Files</label>
+                        <input type="file" name="SalesSrfFile[]" class="form-control" multiple>
+                    </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">

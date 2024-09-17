@@ -44,6 +44,10 @@ class SampleRequest extends Model implements Auditable
     {
         return $this->belongsTo(Client::class, 'ClientId');
     }
+    public function clientAddress()
+    {
+        return $this->belongsTo(Address::class, 'ClientId', 'CompanyId');
+    }
 
     public function productApplicationsId()
     {

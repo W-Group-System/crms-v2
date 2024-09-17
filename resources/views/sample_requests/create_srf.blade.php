@@ -99,7 +99,10 @@
                         <select class="form-control js-example-basic-single" name="RefCode" id="RefCode" style="position: relative !important" title="Select Ref Code" required>
                             <option value="" disabled selected>Select REF Code</option>
                             <option value="1" {{ old('RefCode') == '1' ? 'selected' : '' }}>RND</option>
-                            <option value="2" {{ old('RefCode') == '2' ? 'selected' : '' }}>QCD</option>
+                            <option value="2" {{ old('RefCode') == '2' ? 'selected' : '' }}>QCD-WHI</option>
+                            <option value="3" {{ old('RefCode') == '3' ? 'selected' : '' }}>QCD-PBI</option>
+                            <option value="4" {{ old('RefCode') == '4' ? 'selected' : '' }}>QCD-MRDC</option>
+                            <option value="5" {{ old('RefCode') == '5' ? 'selected' : '' }}>QCD-CCC</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -494,7 +497,7 @@ $(document).ready(function() {
 
             if (refCode === '1') { 
                 $('.SrfType').append('<option value="1"' + (oldSrfType == '1' ? ' selected' : '') + '>Regular</option>');
-            } else if (refCode === '2') { 
+            } else { 
                 $('.SrfType').append('<option value="1"' + (oldSrfType == '1' ? ' selected' : '') + '>Regular</option>');
                 $('.SrfType').append('<option value="2"' + (oldSrfType == '2' ? ' selected' : '') + '>PSS</option>');
                 $('.SrfType').append('<option value="3"' + (oldSrfType == '3' ? ' selected' : '') + '>CSS</option>');

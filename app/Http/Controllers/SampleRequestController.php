@@ -38,9 +38,6 @@ class SampleRequestController extends Controller
 {
     public function index(Request $request)
     {   
-        // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
-        // ->get();
         $contacts = Contact::all();
         $categories = IssueCategory::all();
         $departments = ConcernDepartment::all(); 
@@ -123,7 +120,6 @@ class SampleRequestController extends Controller
                             });
                     });
                 } else {
-                    // Apply status filter if it's not '50'
                     $query->where('Status', $status);
                 }
             })
@@ -704,6 +700,33 @@ class SampleRequestController extends Controller
         );
     }
 
+    if ($request->has('SalesSrfFile'))
+        {
+            $attachments = $request->file('SalesSrfFile');
+            foreach($attachments as $attachment)
+            {
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path('srfFiles'), $name);
+                $path = '/srfFiles/'.$name;
+
+                $srfFiles = new SrfFile();
+                $srfFiles->Name = $name;
+                $srfFiles->Path = $path;
+                $srfFiles->SampleRequestId = $id;
+                
+                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                {
+                    $srfFiles->UserType = "Sales";
+                }
+                if (auth()->user()->role->type == "RND")
+                {
+                    $srfFiles->UserType = "Rnd";
+                }
+                
+                $srfFiles->save();
+            }
+        }
+
     return redirect()->back()->with('success', 'Sample Request updated successfully');
 }
 
@@ -714,8 +737,8 @@ class SampleRequestController extends Controller
         $approveSrfSales->sales_approved_date = Carbon::now();
         if ($approveSrfSales) {
             $buttonClicked = request()->input('submitbutton');    
-            if ($buttonClicked === 'Approve to R&D') {
-                $approveSrfSales->Progress = 30; 
+            if  ($buttonClicked === 'Approve_to_sales') {
+                $approveSrfSales->Progress = 20; 
 
                 $transactionApproval = new TransactionApproval();
                 $transactionApproval->Type = '30';
@@ -725,9 +748,19 @@ class SampleRequestController extends Controller
                 $transactionApproval->RemarksType = 'approved';
                 
                 $transactionApproval->save(); 
-            } elseif ($buttonClicked === 'Approve to QCD') {
-                $approveSrfSales->Progress = 80;
-                $approveSrfSales->InternalRemarks = request()->input('submitbutton'); 
+                // $approveSrfSales->Progress = 80;
+                // $approveSrfSales->InternalRemarks = request()->input('submitbutton'); 
+            }elseif ($buttonClicked === 'Approve_to_1' || $buttonClicked === 'Approve_to_2' || $buttonClicked === 'Approve_to_3' || $buttonClicked === 'Approve_to_4' || $buttonClicked === 'Approve_to_5') {
+                $approveSrfSales->Progress = 30;  
+
+                $transactionApproval = new TransactionApproval();
+                $transactionApproval->Type = '30';
+                $transactionApproval->TransactionId = $id;
+                $transactionApproval->UserId = Auth::user()->id;
+                $transactionApproval->Remarks = request()->input('Remarks');
+                $transactionApproval->RemarksType = 'approved';
+                
+                $transactionApproval->save(); 
             }
             $approveSrfSales->save();
 
@@ -961,6 +994,18 @@ class SampleRequestController extends Controller
         $pdf = PDF::loadView('sample_requests.print2', [
             'sample_requests' => $srf,
         ])->setPaper('A4', 'portrait');
+    
+        return $pdf->stream('print.pdf');
+    }
+
+    public function print_dispatch(Request $request, $id)
+    {
+        $srf = SampleRequest::findOrFail($id);
+
+        View::share('sample_requests', $srf);
+        $pdf = PDF::loadView('sample_requests.print_dispatch', [
+            'sample_requests' => $srf,
+        ])->setPaper('A4', 'landscape');
     
         return $pdf->stream('print.pdf');
     }

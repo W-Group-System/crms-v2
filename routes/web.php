@@ -288,6 +288,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('CompleteSrf/{id}', 'SampleRequestController@CompleteSrf');
     Route::get('print_srf/{id}', 'SampleRequestController@print_srf');
     Route::get('print_srf_2/{id}', 'SampleRequestController@print_srf_2');
+    Route::get('print_dispatch/{id}', 'SampleRequestController@print_dispatch');
     Route::post('editDisposition/{id}', 'SampleRequestController@editDisposition');
     Route::post('initialQuantity/{id}', 'SampleRequestController@initialQuantity');
 

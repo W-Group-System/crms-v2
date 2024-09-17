@@ -78,6 +78,9 @@
                     </button>
                     @endif --}}
                     <a target='_blank' href="{{ url('print_srf', $sampleRequest->Id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print</a>
+                    @if(!empty($sampleRequest->Courier) && !empty($sampleRequest->AwbNumber) && !empty($sampleRequest->DateDispatched) && !empty($sampleRequest->DateSampleReceived))
+                    <a target='_blank' href="{{ url('print_dispatch', $sampleRequest->Id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print Dispatch</a>
+                    @endif
                     {{-- <a target='_blank' href="{{ url('print_srf_2', $sampleRequest->Id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print 2</a> --}}
                     {{-- <button type="button" class="btn btn-danger btn-icon-text" >
                         <i class="ti ti-printer btn-icon-prepend"></i>
@@ -182,12 +185,6 @@
                                     <i class="mdi mdi-cancel">&nbsp;</i>Cancel
                                 </button>
                             @endif
-
-
-
-
-
-
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
                              @if($sampleRequest->Progress != 10 && $sampleRequest->Progress != 20 && $sampleRequest->Progress != 60 && $sampleRequest->Progress != 35 && $sampleRequest->Progress != 50 && $sampleRequest->Progress != 57)
@@ -316,6 +313,30 @@
                                 </button>
                             @endif
                         @else
+                        <?php 
+                        $refCodeType = '';
+                            switch ($sampleRequest->RefCode) {
+                                case 1:
+                                    $refCodeType = 'RND';
+                                    break;
+                                case 2:
+                                    $refCodeType = 'QCD-WHI';
+                                    break;
+                                case 3:
+                                    $refCodeType = 'QCD-PBI';
+                                    break;
+                                case 4:
+                                    $refCodeType = 'QCD-MRDC';
+                                    break;
+                                case 5:
+                                    $refCodeType = 'QCD-CCC';
+                                    break;
+                                default:
+                                    $refCodeType = '';
+                                    break;
+                            }
+                        ?> 
+                        @if($refCodeType == auth()->user()->role->type)
                             @if($sampleRequest->Progress == 55 || $sampleRequest->Progress == 57 || $sampleRequest->Progress == 81)
                                 {{-- <button type="button" class="btn btn-danger returnBtn">
                                     <i class="ti-back-left">&nbsp;</i> Return To Specialist
@@ -361,7 +382,7 @@
                                     <i class="ti-pencil-alt">&nbsp;</i>Completed
                                 </button>
                             @endif
-
+                         @endif
                         @endif
                     @endif
                     
