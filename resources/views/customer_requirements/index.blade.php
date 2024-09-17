@@ -7,7 +7,7 @@
             @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Customer Requirement List
-            <button type="button" class="btn btn-md btn-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement" class="btn btn-md btn-primary">New</button>
+            <button type="button" class="btn btn-md btn-outline-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement" class="btn btn-md btn-outline-primary">New</button>
             </h4>
             @else
             <h4 class="card-title d-flex justify-content-between align-items-center">Customer Requirement List</h4>
@@ -27,13 +27,11 @@
             </div>
 
             <div class="mb-3">
-                <a href="#" id="copy_btn" class="btn btn-md btn-info">Copy</a>
+                <a href="#" id="copy_btn" class="btn btn-md btn-outline-info">Copy</a>
                 <form method="GET" action="{{url('customer_requirement_export')}}" class="d-inline-block">
-    
                     <input type="hidden" name="open" value="{{$open}}">
                     <input type="hidden" name="close" value="{{$close}}">
-                    
-                    <button type="submit" class="btn btn-success">Export</button>
+                    <button type="submit" class="btn btn-outline-success">Export</button>
                 </form>
             </div>
             
@@ -53,7 +51,7 @@
                 <div class="col-lg-6">
                     <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <div class="row height d-flex justify-content-end align-items-end">
-                            <div class="col-md-8">
+                            <div class="col-md-10">
                                 <div class="search">
                                     <i class="ti ti-search"></i>
                                     <input type="text" class="form-control" placeholder="Search Customer Requirement" name="search" value="{{$search}}"> 
@@ -64,75 +62,75 @@
                     </form>
                 </div>
             </div>
-            <div class="table-responsive" >
-                <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%">
+            <div class="table-responsive" style="overflow: auto; height: 80vh;">
+                <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%" >
                     @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == "RND" || auth()->user()->role->type == "QCD-MRDC" || auth()->user()->role->type == "QCD-PBI" || auth()->user()->role->type == "QCD-WHI" || auth()->user()->role->type == "QCD-CCC")
                     <thead>
                         <tr>
-                            <th>Action</th>
+                            <!-- <th>Action</th> -->
                             <th>CRR #
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'CrrNumber', 
                                     'direction' => request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Date Created
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DateCreated', 
                                     'direction' => request('sort') == 'DateCreated' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'DateCreated' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Due Date
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DueDate', 
                                     'direction' => request('sort') == 'DueDate' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'DueDate' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Client Name
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'ClientId', 
                                     'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Application
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'ApplicationId', 
                                     'direction' => request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Recommendation
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'Recommendation', 
                                     'direction' => request('sort') == 'Recommendation' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Recommendation' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Status
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'Status', 
                                     'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Progress
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'Progress', 
                                     'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                         </tr>
                     </thead>
@@ -140,7 +138,7 @@
                         @if(count($customer_requirements) > 0)
                         @foreach ($customer_requirements as $customerRequirement)
                         <tr>
-                            <td>
+                            <!-- <td>
                                 <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements" target="_blank">
                                     <i class="ti-eye"></i>
                                 </a>
@@ -157,8 +155,8 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </form>
-                            </td>
-                            <td>{{ optional($customerRequirement)->CrrNumber }}</td>
+                            </td> -->
+                            <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements" target="_blank">{{ optional($customerRequirement)->CrrNumber }}</a></td>
                             <td>
                                 {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
                             </td>
@@ -200,118 +198,118 @@
                     @elseif(auth()->user()->role->type == "IS")
                     <thead>
                         <tr>
-                            <th>Action</th>
+                            <!-- <th>Action</th> -->
                             <th>CRR #
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'CrrNumber', 
                                     'direction' => request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Date Created
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DateCreated', 
                                     'direction' => request('sort') == 'DateCreated' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'DateCreated' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Due Date
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DueDate', 
                                     'direction' => request('sort') == 'DueDate' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'DueDate' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Client Name
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'ClientId', 
                                     'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a>
-                            </th>
+                            </th> -->
                             <th>Application
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'ApplicationId', 
                                     'direction' => request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Competitor
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'Competitor', 
                                     'direction' => request('sort') == 'Competitor' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Competitor' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Primary Sales Person
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'PrimarySalesPersonId', 
                                     'direction' => request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Details of Requirement
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DetailsOfRequirement', 
                                     'direction' => request('sort') == 'DetailsOfRequirement' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'DetailsOfRequirement' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Recommendation
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'Recommendation', 
                                     'direction' => request('sort') == 'Recommendation' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Recommendation' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Date Received
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DateReceived', 
                                     'direction' => request('sort') == 'DateReceived' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'DateReceived' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Days Late
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DueDate', 
                                     'direction' => request('sort') == 'DueDate' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'DueDate' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Nature of Request
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'NatureRequestId', 
                                     'direction' => request('sort') == 'NatureRequestId' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'NatureRequestId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Status
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'Status', 
                                     'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                             <th>Progress
-                                <a href="{{ route('customer_requirement.index', [
+                                <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'Progress', 
                                     'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc'
                                 ]) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                </a>
+                                </a> -->
                             </th>
                         </tr>
                     </thead>
@@ -319,7 +317,7 @@
                         @if(count($customer_requirements) > 0)
                         @foreach ($customer_requirements as $customerRequirement)
                         <tr>
-                            <td>
+                            <!-- <td>
                                 <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements" target="_blank">
                                     <i class="ti-eye"></i>
                                 </a>
@@ -336,8 +334,8 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </form>
-                            </td>
-                            <td>{{ optional($customerRequirement)->CrrNumber }}</td>
+                            </td> -->
+                            <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements" target="_blank">{{ optional($customerRequirement)->CrrNumber }}</a></td>
                             <td>
                                 {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
                             </td>
@@ -421,6 +419,10 @@
         $('.natureRequestSelect').select2({
             width: "85%"
         });
+
+        $(".table").tablesorter({
+            theme : "bootstrap",
+        })
 
         $('.addRow').on('click', function() {
             var newRow = `

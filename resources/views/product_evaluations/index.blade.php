@@ -17,16 +17,14 @@
                     <label class="checkbox-inline">
                         <input name="close" class="activity_status" type="checkbox" value="30" @if($close == 30) checked @endif> Closed
                     </label>
-                    <button type="submit" class="btn btn-sm btn-outline-primary">Filter Status</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
             </div>
             <div class="mb-3">
                 <a href="#" id="copy_btn" class="btn btn-md btn-outline-info">Copy</a>
                 <form method="GET" action="{{url('product_evaluation_export')}}" class="d-inline-block">
-    
                     <input type="hidden" name="open" value="{{$open}}">
                     <input type="hidden" name="close" value="{{$close}}">
-                    
                     <button type="submit" class="btn btn-outline-success">Export</button>
                 </form>
             </div>
@@ -46,7 +44,7 @@
                 <div class="col-lg-6">
                     <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <div class="row height d-flex justify-content-end align-items-end">
-                            <div class="col-md-8">
+                            <div class="col-md-10">
                                 <div class="search">
                                     <i class="ti ti-search"></i>
                                     <input type="text" class="form-control" placeholder="Search Request Product Evaluation" name="search" value="{{$search}}"> 
@@ -57,12 +55,12 @@
                     </form>
                 </div>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive" style="overflow: auto; height: 80vh;">
                 <table class="table table-striped table-bordered table-hover" id="product_evaluation_table">
                     @if(auth()->user()->role->type == "IS")
                         <thead>
                             <tr>
-                                <th>Action</th>
+                                <!-- <th>Action</th> -->
                                 <th>RPE #</th>
                                 <th>Date Created</th>
                                 <th>Due Date</th>
@@ -96,7 +94,7 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </td> -->
-                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}">{{ optional($productEvaluation)->RpeNumber }}</a></td>
+                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" title="View Product Evaluation" target="_blank">{{ optional($productEvaluation)->RpeNumber }}</a></td>
                                 <td>
                                     @if($productEvaluation->CreatedDate != null)
                                     {{ date('M d, Y h:i A', strtotime($productEvaluation->CreatedDate)) }}
@@ -283,7 +281,6 @@
         $('[name="entries"]').on('change', function() {
             $(this).closest('form').submit()
         })
-
 
         $(".table").tablesorter({
             theme : "bootstrap",
