@@ -16,8 +16,22 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" name="submitbutton" value="Approve to R&D" class="btn btn-success">Approve to R&D</button>
-                        <button type="submit" name="submitbutton" value="Approve to QCD" class="btn btn-success">Approve to QCD</button>
+                        <button type="submit" name="submitbutton" value="Approve_to_{{ $sampleRequest->RefCode }}" class="btn btn-success">
+                            Approve to 
+                            @if ($sampleRequest->RefCode == 1)
+                                RND
+                            @elseif ($sampleRequest->RefCode == 2)
+                                QCD-WHI
+                            @elseif ($sampleRequest->RefCode == 3)
+                                QCD-PBI
+                            @elseif ($sampleRequest->RefCode == 4)
+                                QCD-MRDC
+                            @elseif ($sampleRequest->RefCode == 5)
+                                QCD-CCC
+                            @endif
+                        </button>
+                        <button type="submit" class="btn btn-success" name="submitbutton" value="Approve_to_sales">Approve to Sales</button>
+                        {{-- <button type="submit" name="submitbutton" value="Approve to QCD" class="btn btn-success">Approve to QCD</button> --}}
                     </div>
                 </form>
             </div>
