@@ -22,7 +22,7 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Sample Request List
             @if(checkRolesIfHaveCreate('Sample Request Form', auth()->user()->department_id, auth()->user()->role_id) == "yes")
-            <button type="button" class="btn btn-md btn-primary" id="addSrfBtn" data-toggle="modal" data-target="#formSampleRequest">Add Sample Request</button>
+                <button type="button" class="btn btn-md btn-outline-primary" id="addSrfBtn" data-toggle="modal" data-target="#formSampleRequest">New</button>
             @endif
             </h4>
             <div class="form-group">
@@ -38,13 +38,11 @@
                 </form>
             </div>
             <div class="mb-3">
-                <a href="#" id="copy_btn" class="btn btn-md btn-info">Copy</a>
+                <a href="#" id="copy_btn" class="btn btn-md btn-outline-info">Copy</a>
                 <form method="GET" action="{{url('sample_request_export')}}" class="d-inline-block">
-    
                     <input type="hidden" name="open" value="{{$open}}">
                     <input type="hidden" name="close" value="{{$close}}">
-                    
-                    <button type="submit" class="btn btn-success">Export</button>
+                    <button type="submit" class="btn btn-outline-success">Export</button>
                 </form>
             </div>
             <div class="row">
@@ -61,206 +59,57 @@
                     <span>Entries</span>
                 </div>
                 <div class="col-lg-6">
-                <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
-                    <div class="row height d-flex justify-content-end align-items-end">
-                        <div class="col-md-8">
-                            <div class="search">
-                                <i class="ti ti-search"></i>
-                                <input type="text" class="form-control" placeholder="Search Sample Request" name="search" value="{{$search}}"> 
-                                <button class="btn btn-sm btn-info">Search</button>
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                        <div class="row height d-flex justify-content-end align-items-end">
+                            <div class="col-md-10">
+                                <div class="search">
+                                    <i class="ti ti-search"></i>
+                                    <input type="text" class="form-control" placeholder="Search Sample Request" name="search" value="{{$search}}"> 
+                                    <button class="btn btn-sm btn-info">Search</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-            
-            @if(auth()->user()->role->type == 'LS')
-            <div class="table-responsive" style="overflow: scroll; height: 50vh;">
-                <table class="table table-striped table-bordered table-hover" id="sample_request_table">
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th>SRF # </th>
-                            <th>Date Requested</th>
-                            <th>Date Required</th>
-                            <th>Client Name</th>
-                            <th>Application </th>
-                            <th>Status</th>
-                            <th>Progress </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($sampleRequests as $srf)
-                        <tr>
-                            <td align="center">
-                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
-                                @php
-                                    $user = auth()->user();
-                                @endphp
-                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
-                                    data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF' @if($user->id != $srf->PrimarySalesPersonId && $user->user_id != $srf->PrimarySalesPersonId) disabled @endif>
-                                    <i class="ti-pencil"></i>
-                                </button>    
-                            </td>
-                            <td>{{ $srf->SrfNumber }}</td>
-                            <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
-                            <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
-                            <td>{{ optional($srf->client)->Name }}</td>
-                            <td>
-                                @foreach ($srf->requestProducts as $product)
-                                    {{ optional($product->productApplicationsId)->Name }}<br>
-                                @endforeach
-                            </td>
-                           <td>
-                                @if($srf->Status == 10)
-                                    <div class="badge badge-success">Open</div>
-                                @elseif($srf->Status == 30)
-                                    <div class="badge badge-warning">Closed</div>
-                                @elseif($srf->Status == 50)
-                                    <div class="badge badge-danger">Cancelled</div>
-                                @endif
-                            </td>
-                            <td>{{ optional($srf->progressStatus)->name }}</td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-                {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
-                @php
-                    $total = $sampleRequests->total();
-                    $currentPage = $sampleRequests->currentPage();
-                    $perPage = $sampleRequests->perPage();
-    
-                    $from = ($currentPage - 1) * $perPage + 1;
-                    $to = min($currentPage * $perPage, $total);
-                @endphp
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                    </form>
                 </div>
             </div>
-            @elseif (auth()->user()->role->type == 'IS')
-            <div class="table-responsive" >
-                <table class="table table-striped table-bordered table-hover" id="sample_request_table" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th>SRF #</th>
-                            <th>Date Requested</th>
-                            <th>Date Required</th>
-                            <th>Ref Code</th>
-                            <th>Type</th>
-                            <th>Client Name</th>
-                            <th>Region</th>
-                            <th>Country</th>
-                            <th>Primary Sales Person</th>
-                            <th>Index</th>
-                            <th>Number of Packages</th>
-                            <th>Quantity</th>
-                            <th>Product Code</th>
-                            <th>Product Label</th>
-                            <th>Application</th>
-                            <th>Description</th>
-                            <th>RPE No.</th>
-                            <th>CRR No.</th>
-                            <th>Date Sample Received</th>
-                            <th>Date Dispatched</th>
-                            <th>Status</th>
-                            <th>Progress</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($sampleRequests as $srf)
+            
+            @if(auth()->user()->role->type == 'LS')
+                <div class="table-responsive" style="overflow: auto; height: 80vh;">
+                    <table class="table table-striped table-bordered table-hover" id="sample_request_table">
+                        <thead>
                             <tr>
-                                <td align="center">
+                                <!-- <th>Action</th> -->
+                                <th>SRF # </th>
+                                <th>Date Requested</th>
+                                <th>Date Required</th>
+                                <th>Client Name</th>
+                                <th>Application </th>
+                                <th>Status</th>
+                                <th>Progress </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($sampleRequests as $srf)
+                            <tr>
+                                <!-- <td align="center">
                                     <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
+                                    @php
+                                        $user = auth()->user();
+                                    @endphp
                                     <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
-                                        data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
+                                        data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF' @if($user->id != $srf->PrimarySalesPersonId && $user->user_id != $srf->PrimarySalesPersonId) disabled @endif>
                                         <i class="ti-pencil"></i>
-                                    </button>
-                                </td>
-                                <td>{{ $srf->SrfNumber }}</td>
-                                <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
+                                    </button>    
+                                </td> -->
+                                <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}" title="View Sample Request" target="_blank">{{ $srf->SrfNumber }}</a></td>
+                                <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                 <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
-                                <td>
-                                    @if($srf->RefCode == 1)
-                                        RND
-                                    @elseif($srf->RefCode == 2)
-                                        QCD
-                                    @else
-                                        {{ $srf->RefCode }}
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($srf->SrfType == 1)
-                                        Regular
-                                    @elseif($srf->SrfType == 2)
-                                        PSS
-                                    @elseif($srf->SrfType == 3)
-                                        CSS
-                                    @else
-                                        {{ $srf->SrfType }}
-                                    @endif
-                                </td>
                                 <td>{{ optional($srf->client)->Name }}</td>
-                                <td>{{ optional(optional($srf->client)->clientregion)->Name }}</td>
-                                <td>{{ optional(optional($srf->client)->clientcountry)->Name }}</td>
-                                <td>
-                                    {{-- {{ $srf->primarySalesPerson->full_name ?? 'N/A' }} --}}
-                                    @if($srf->primarySalesPerson)
-                                        {{$srf->primarySalesPerson->full_name}}
-                                    @elseif($srf->primarySalesById)
-                                        {{$srf->primarySalesById->full_name}}
-                                    @endif
-                                </td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ $product->ProductIndex }}<br>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ $product->NumberOfPackages }}<br>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ $product->Quantity }}<br>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ $product->ProductCode }}<br>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ $product->Label }}<br>
-                                    @endforeach
-                                </td>
                                 <td>
                                     @foreach ($srf->requestProducts as $product)
                                         {{ optional($product->productApplicationsId)->Name }}<br>
                                     @endforeach
                                 </td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ $product->ProductDescription }}<br>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ $product->RpeNumber }}<br>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ $product->CrrNumber }}<br>
-                                    @endforeach
-                                </td>   
-                                <td>{{ $srf->DateSampleReceived ? date('m/d/y', strtotime($srf->DateSampleReceived)) : 'NA' }}</td>
-                                <td>{{ $srf->DateDispatched ? date('m/d/y', strtotime($srf->DateDispatched)) : 'NA' }}</td>
-
                                 <td>
                                     @if($srf->Status == 10)
                                         <div class="badge badge-success">Open</div>
@@ -273,59 +122,208 @@
                                 <td>{{ optional($srf->progressStatus)->name }}</td>
                             </tr>
                         @endforeach
-                    </tbody>
-                </table>
-                <!-- {!! $products->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
-                @php
-                    $total = $products->total();
-                    $currentPage = $products->currentPage();
-                    $perPage = $products->perPage();
-            
-                    $from = ($currentPage - 1) * $perPage + 1;
-                    $to = min($currentPage * $perPage, $total);
-                @endphp
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-                </div> -->
-                {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
-                @php
-                    $total = $sampleRequests->total();
-                    $currentPage = $sampleRequests->currentPage();
-                    $perPage = $sampleRequests->perPage();
-    
-                    $from = ($currentPage - 1) * $perPage + 1;
-                    $to = min($currentPage * $perPage, $total);
-                @endphp
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                        </tbody>
+                    </table>
+                    {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                    @php
+                        $total = $sampleRequests->total();
+                        $currentPage = $sampleRequests->currentPage();
+                        $perPage = $sampleRequests->perPage();
+        
+                        $from = ($currentPage - 1) * $perPage + 1;
+                        $to = min($currentPage * $perPage, $total);
+                    @endphp
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                    </div>
                 </div>
-            </div>
+            @elseif (auth()->user()->role->type == 'IS')
+                <div class="table-responsive" style="overflow: auto; height: 80vh;">
+                    <table class="table table-striped table-bordered table-hover" id="sample_request_table" width="100%">
+                        <thead>
+                            <tr>
+                                <!-- <th>Action</th> -->
+                                <th>SRF #</th>
+                                <th>Date Requested</th>
+                                <th>Date Required</th>
+                                <th>Ref Code</th>
+                                <th>Type</th>
+                                <th>Client Name</th>
+                                <th>Region</th>
+                                <th>Country</th>
+                                <th>Primary Sales Person</th>
+                                <th>Index</th>
+                                <th>Number of Packages</th>
+                                <th>Quantity</th>
+                                <th>Product Code</th>
+                                <th>Product Label</th>
+                                <th>Application</th>
+                                <th>Description</th>
+                                <th>RPE No.</th>
+                                <th>CRR No.</th>
+                                <th>Date Sample Received</th>
+                                <th>Date Dispatched</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($sampleRequests as $srf)
+                                <tr>
+                                    <!-- <td align="center">
+                                        <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
+                                        <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
+                                            data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
+                                            <i class="ti-pencil"></i>
+                                        </button>
+                                    </td> -->
+                                    <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request" target="_blank">{{ $srf->SrfNumber }}</a></td>
+                                    <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
+                                    <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
+                                    <td>
+                                        @if($srf->RefCode == 1)
+                                            RND
+                                        @elseif($srf->RefCode == 2)
+                                            QCD
+                                        @else
+                                            {{ $srf->RefCode }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($srf->SrfType == 1)
+                                            Regular
+                                        @elseif($srf->SrfType == 2)
+                                            PSS
+                                        @elseif($srf->SrfType == 3)
+                                            CSS
+                                        @else
+                                            {{ $srf->SrfType }}
+                                        @endif
+                                    </td>
+                                    <td>{{ optional($srf->client)->Name }}</td>
+                                    <td>{{ optional(optional($srf->client)->clientregion)->Name }}</td>
+                                    <td>{{ optional(optional($srf->client)->clientcountry)->Name }}</td>
+                                    <td>
+                                        {{-- {{ $srf->primarySalesPerson->full_name ?? 'N/A' }} --}}
+                                        @if($srf->primarySalesPerson)
+                                            {{$srf->primarySalesPerson->full_name}}
+                                        @elseif($srf->primarySalesById)
+                                            {{$srf->primarySalesById->full_name}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ $product->ProductIndex }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ $product->NumberOfPackages }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ $product->Quantity }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ $product->ProductCode }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ $product->Label }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ optional($product->productApplicationsId)->Name }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ $product->ProductDescription }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ $product->RpeNumber }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ $product->CrrNumber }}<br>
+                                        @endforeach
+                                    </td>   
+                                    <td>{{ $srf->DateSampleReceived ? date('m/d/y', strtotime($srf->DateSampleReceived)) : 'NA' }}</td>
+                                    <td>{{ $srf->DateDispatched ? date('m/d/y', strtotime($srf->DateDispatched)) : 'NA' }}</td>
+
+                                    <td>
+                                        @if($srf->Status == 10)
+                                            <div class="badge badge-success">Open</div>
+                                        @elseif($srf->Status == 30)
+                                            <div class="badge badge-warning">Closed</div>
+                                        @elseif($srf->Status == 50)
+                                            <div class="badge badge-danger">Cancelled</div>
+                                        @endif
+                                    </td>
+                                    <td>{{ optional($srf->progressStatus)->name }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <!-- {!! $products->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                    @php
+                        $total = $products->total();
+                        $currentPage = $products->currentPage();
+                        $perPage = $products->perPage();
+                
+                        $from = ($currentPage - 1) * $perPage + 1;
+                        $to = min($currentPage * $perPage, $total);
+                    @endphp
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                    </div> -->
+                    {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                    @php
+                        $total = $sampleRequests->total();
+                        $currentPage = $sampleRequests->currentPage();
+                        $perPage = $sampleRequests->perPage();
+        
+                        $from = ($currentPage - 1) * $perPage + 1;
+                        $to = min($currentPage * $perPage, $total);
+                    @endphp
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                    </div>
+                </div>
             @else
-            <div class="table-responsive" style="overflow: scroll; height: 50vh;">
-                <table class="table table-striped table-bordered table-hover" id="sample_request_table">
-                    <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th>SRF #</th>
-                            <th>Date Requested</th>
-                            <th>Date Required</th>
-                            <th>Client Name</th>
-                            <th>Application</th>
-                            <th>Status</th>
-                            <th>Progress</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($rndSrf as $srf)
-                        <tr>
-                            <td align="center">
-                                <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
-                                <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
-                                    data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
-                                    <i class="ti-pencil"></i>
-                                </button>    
-                            </td>
-                                <td>{{ $srf->SrfNumber }}</td>
+                <div class="table-responsive" style="overflow: auto; height: 80vh;">
+                    <table class="table table-striped table-bordered table-hover" id="sample_request_table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>SRF #</th>
+                                <th>Date Requested</th>
+                                <th>Date Required</th>
+                                <th>Client Name</th>
+                                <th>Application</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($rndSrf as $srf)
+                            <tr>
+                                <td align="center">
+                                    <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
+                                    <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
+                                        data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
+                                        <i class="ti-pencil"></i>
+                                    </button>    
+                                </td>
+                                <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request" target="_blank">{{ $srf->SrfNumber }}</a></td>
                                 <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                 <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
                                 <td>{{ optional($srf->client)->Name }}</td>
@@ -334,7 +332,7 @@
                                         {{ optional($product->productApplicationsId)->Name }}<br>
                                     @endforeach
                                 </td>
-                               <td>
+                                <td>
                                     @if($srf->Status == 10)
                                         Open
                                     @elseif($srf->Status == 30)
@@ -344,26 +342,24 @@
                                     @endif
                                 </td>
                                 <td>{{ optional($srf->progressStatus)->name }}</td>
-                                
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-                {!! $sampleRequests->appends(['search' => $search])->links() !!}
-                @php
-                    $total = $sampleRequests->total();
-                    $currentPage = $sampleRequests->currentPage();
-                    $perPage = $sampleRequests->perPage();
-    
-                    $from = ($currentPage - 1) * $perPage + 1;
-                    $to = min($currentPage * $perPage, $total);
-                @endphp
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                    {!! $sampleRequests->appends(['search' => $search])->links() !!}
+                    @php
+                        $total = $sampleRequests->total();
+                        $currentPage = $sampleRequests->currentPage();
+                        $perPage = $sampleRequests->perPage();
+
+                        $from = ($currentPage - 1) * $perPage + 1;
+                        $to = min($currentPage * $perPage, $total);
+                    @endphp
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
+                    </div>
                 </div>
-            </div>
             @endif 
-            
         </div>
     </div>
 </div>
@@ -372,23 +368,23 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
    
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: "{{ session('success') }}",
-            confirmButtonText: 'OK'
-        });
-    @endif
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'OK'
+            });
+        @endif
 
-    $(".table").tablesorter({
+        $(".table").tablesorter({
             theme : "bootstrap",
         })
 
-    $("[name='entries']").on('change', function() {
+        $("[name='entries']").on('change', function() {
             $(this).closest('form').submit()
         })
-});
+    });
 
     $(document).ready(function(){
         $('#copy_btn').click(function() {

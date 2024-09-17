@@ -30,7 +30,7 @@
                 <div class="col-lg-6">
                     <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                         <div class="row height d-flex justify-content-end align-items-end">
-                            <div class="col-lg-9">
+                            <div class="col-lg-10">
                                 <div class="search">
                                     <i class="ti ti-search"></i>
                                     <input type="text" class="form-control" placeholder="Search Client" name="search" value="{{ $search }}">

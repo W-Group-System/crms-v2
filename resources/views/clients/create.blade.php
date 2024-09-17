@@ -148,10 +148,13 @@
                             </select>
                         </div>
                     </div> --}}
-                    <div class="col-lg-6">
+                    <div class="col-lg-6" id="EmailAddress">
                         <div class="form-group">
                             <label>Email Address</label>
-                            <input type="text" class="form-control" id="Email" name="Email" placeholder="Enter Email Address">
+                            <div class="input-group">                                
+                                <input type="text" class="form-control" id="Email" name="Email" placeholder="Enter Email Address">
+                                <button class="btn btn-sm btn-primary addRowBtn1" style="border-radius: 0px;" type="button">+</button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -339,6 +342,24 @@
         });
 
         $(document).on('click', '.removeRowBtn', function() {
+            $(this).closest('.form-group').remove();
+        });
+
+        $(document).on('click', '.addRowBtn1', function() {
+            var newRow = $('<div class="form-group">' +
+                            '<label>Client Address</label>' +
+                            '<div class="input-group">' +
+                                '<input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type">' +
+                                '<button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>' +
+                                '<button class="btn btn-sm btn-danger removeRowBtn1" style="border-radius: 0px;" type="button">-</button>' +
+                            '</div>' +
+                        '</div>');
+
+            // Append the new row to the container where addresses are listed
+            $('#EmailAddress').append(newRow);
+        });
+
+        $(document).on('click', '.removeRowBtn1', function() {
             $(this).closest('.form-group').remove();
         });
 
