@@ -98,25 +98,35 @@
                         <div class="col-sm-3">
                             <label>{{ $regions->Name ?? 'N/A' }}</label>
                         </div>
-                        <label class="col-sm-3 col-form-label"><b>Email Address</b></label>
+                        <label class="col-sm-3 col-form-label"><b>Primary Email Address</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->Email ?? 'N/A' }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-3 col-form-label"><b>Country</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $countries->Name ?? 'N/A' }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label"><b>Source</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->Source ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-2">
                         <label class="col-sm-3 col-form-label"><b>Area</b></label>
                         <div class="col-sm-3">
                             <label>{{ $areas->Name ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Second Email Address</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->Email2 ?? 'N/A' }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-2">
+                    <label class="col-sm-3 col-form-label"><b>Source</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->Source ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label"><b>Third Email Address</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->Email3 ?? 'N/A' }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-3 col-form-label"><b>Country</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $countries->Name ?? 'N/A' }}</label>
                         </div>
                         <label class="col-sm-3 col-form-label"><b>Business Type</b></label>
                         <div class="col-sm-3">

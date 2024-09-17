@@ -34,8 +34,8 @@
             </form>
 
             <div class="mb-3">
-                <button class="btn btn-md btn-info">Copy</button>
-                <a href="{{url('export_current_products')}}" class="btn btn-md btn-success">Excel</a>
+                <button class="btn btn-md btn-outline-info">Copy</button>
+                <a href="{{url('export_current_products')}}" class="btn btn-md btn-outline-success">Excel</a>
             </div>
 
             <div class="row">
