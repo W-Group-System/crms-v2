@@ -22005,17 +22005,12 @@ code {
   background: transparent;
 }
 
-.card .card-body {
-  padding: 1.25rem 1.25rem;
-}
-
 .card .card-body + .card-body {
   padding-top: 1rem;
 }
 
 .card .card-title {
   color: #010101;
-  margin-bottom: 1.2rem;
   text-transform: capitalize;
   font-size: 1.125rem;
   font-weight: 600;

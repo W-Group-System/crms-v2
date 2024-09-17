@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Evaluation List
-            <button type="button" class="btn btn-md btn-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
+            <button type="button" class="btn btn-md btn-outline-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
             @include('product_evaluations.create')
             </h4>
             <div class="form-group">
@@ -17,17 +17,17 @@
                     <label class="checkbox-inline">
                         <input name="close" class="activity_status" type="checkbox" value="30" @if($close == 30) checked @endif> Closed
                     </label>
-                    <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
+                    <button type="submit" class="btn btn-sm btn-outline-primary">Filter Status</button>
                 </form>
             </div>
             <div class="mb-3">
-                <a href="#" id="copy_btn" class="btn btn-md btn-info">Copy</a>
+                <a href="#" id="copy_btn" class="btn btn-md btn-outline-info">Copy</a>
                 <form method="GET" action="{{url('product_evaluation_export')}}" class="d-inline-block">
     
                     <input type="hidden" name="open" value="{{$open}}">
                     <input type="hidden" name="close" value="{{$close}}">
                     
-                    <button type="submit" class="btn btn-success">Export</button>
+                    <button type="submit" class="btn btn-outline-success">Export</button>
                 </form>
             </div>
             <div class="row">
@@ -85,18 +85,18 @@
                         <tbody>
                             @foreach ( $request_product_evaluations as $productEvaluation)
                             <tr>
-                                <td align="center">
-                                    <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
+                                <!-- <td align="center">
+                                    <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
 
-                                    <button type="button" class="btn btn-sm btn-warning editBtn" data-primarysales="{{$productEvaluation->PrimarySalesPersonId}}" data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}" data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif >
+                                    <button type="button" class="btn btn-sm btn-outline-warning editBtn" data-primarysales="{{$productEvaluation->PrimarySalesPersonId}}" data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}" data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif >
                                         <i class="ti-pencil"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete({{ $productEvaluation->id }})" title='Delete Request' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif>
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete-btn" onclick="confirmDelete({{ $productEvaluation->id }})" title='Delete Request' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif>
                                         <i class="ti-trash"></i>
                                     </button>
-                                </td>
-                                <td>{{ optional($productEvaluation)->RpeNumber }}</td>
+                                </td> -->
+                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}">{{ optional($productEvaluation)->RpeNumber }}</a></td>
                                 <td>
                                     @if($productEvaluation->CreatedDate != null)
                                     {{ date('M d, Y h:i A', strtotime($productEvaluation->CreatedDate)) }}
@@ -148,7 +148,7 @@
                     @else
                         <thead>
                             <tr>
-                                <th>Action</th>
+                                <!-- <th>Action</th> -->
                                 <th>RPE #</th>
                                 <th>Date Created</th>
                                 <th>Due Date</th>
@@ -162,18 +162,18 @@
                         <tbody>
                             @foreach ( $request_product_evaluations as $productEvaluation)
                             <tr>
-                                <td align="center">
-                                    <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-info btn-outline" title="View Request"><i class="ti-eye"></i></a>
+                                <!-- <td align="center">
+                                    <a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
 
-                                    <button type="button" class="btn btn-sm btn-warning editBtn" data-primarysales="{{$productEvaluation->PrimarySalesPersonId}}" data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}"  data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}">
+                                    <button type="button" class="btn btn-sm btn-outline-warning editBtn" data-primarysales="{{$productEvaluation->PrimarySalesPersonId}}" data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}"  data-target="#editRpe{{ $productEvaluation->id }}" data-toggle="modal" title='Edit New RPE' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif data-secondarysales="{{$productEvaluation->SecondarySalesPersonId}}">
                                         <i class="ti-pencil"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete({{ $productEvaluation->id }})" title='Delete Request' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif>
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete-btn" onclick="confirmDelete({{ $productEvaluation->id }})" title='Delete Request' @if(auth()->user()->id != $productEvaluation->PrimarySalesPersonId && auth()->user()->user_id != $productEvaluation->PrimarySalesPersonId) disabled @endif>
                                         <i class="ti-trash"></i>
                                     </button>
-                                </td>
-                                <td>{{ optional($productEvaluation)->RpeNumber }}</td>
+                                </td> -->
+                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}">{{ optional($productEvaluation)->RpeNumber }}</a></td>
                                 <td>
                                     @if($productEvaluation->CreatedDate != null)
                                     {{ date('M d, Y h:i A', strtotime($productEvaluation->CreatedDate)) }}

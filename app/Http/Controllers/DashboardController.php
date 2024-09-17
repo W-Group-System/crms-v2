@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id; // Safely access user_id
         $role = optional(Auth::user())->role;
-        
+
         if (!$userId && !$userByUser && !$role) {
             // Handle case where there is no authenticated user
             return redirect()->route('login'); // Or handle it in another appropriate way
@@ -153,6 +153,21 @@ class DashboardController extends Controller
 
         $totalSRFCount = $srfCancelled + $srfSalesApproval + $srfSalesApproved + $srfSalesAccepted + $srfRnDOngoing + $srfRnDPending + $srfRnDInitial + $srfRnDFinal + $srfRnDCompleted;
 
+        $totalApproval = $crrSalesApproval + $rpeSalesApproval + $srfSalesApproval + $prfSalesApproval;
+
+        // RND Approval
+        $crrRNDInitialReview = CustomerRequirement::where('Status', '10')->where('Progress', '57')->count();
+        $rpeRNDInitialReview = RequestProductEvaluation::where('Status', '10')->where('Progress', '57')->count();
+        $srfRNDInitialReview = SampleRequest::where('Status', '10')->where('Progress', '57')->count();
+
+        $totalInitialReview = $crrRNDInitialReview + $rpeRNDInitialReview + $srfRNDInitialReview;
+
+        $crrRNDFinallReview = CustomerRequirement::where('Status', '10')->where('Progress', '81')->count();
+        $rpeRNDFinallReview = RequestProductEvaluation::where('Status', '10')->where('Progress', '81')->count();
+        $srfRNDFinallReview = SampleRequest::where('Status', '10')->where('Progress', '81')->count();
+
+        $totalFinalReview = $crrRNDFinallReview + $rpeRNDFinallReview + $srfRNDFinallReview;
+
         // Customer Service
         $customerComplaintsCount = CustomerComplaint::where(function($query) use ($userId, $userByUser) {
             $query->where('ReceivedByUserId', $userId)
@@ -166,21 +181,6 @@ class DashboardController extends Controller
 
         $totalCustomerServiceCount = $customerComplaintsCount + $customerFeedbackCount;
 
-        // Approval
-        function countCrrApproval($userId, $userByUser, $field, $value) {
-            return CustomerRequirement::where(function($query) use ($userId, $userByUser) {
-                    $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('SecondarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser)
-                        ->orWhere('SecondarySalesPersonId', $userByUser);
-                })
-                ->where($field, $value)
-                ->count();
-        }
-        $srfCancelled = countSampleRequest($userId, $userByUser, 'Status', '50');
-
-        $totalApproval = $crrSalesApproval + $rpeSalesApproval + $srfSalesApproval + $prfSalesApproval;
-
         return view('dashboard.index', compact(
             'totalActivitiesCount', 'openActivitiesCount', 'closedActivitiesCount', 
             'totalCRRCount', 'crrCancelled', 'crrSalesAccepted', 'crrSalesApproval', 
@@ -188,7 +188,7 @@ class DashboardController extends Controller
             'crrRnDFinal', 'crrRnDCompleted', 'totalCustomerServiceCount', 
             'customerComplaintsCount', 'customerFeedbackCount', 'totalRPECount', 'rpeCancelled', 'rpeSalesApproval',
             'rpeSalesApproved', 'rpeSalesAccepted', 'rpeRnDOngoing', 'rpeRnDPending', 'rpeRnDInitial', 'rpeRnDFinal', 'rpeRnDCompleted', 'totalSRFCount', 'srfCancelled', 'srfSalesApproval',
-            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval'
+            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview'
         ));
     }
 }

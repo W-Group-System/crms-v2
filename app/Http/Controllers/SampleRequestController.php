@@ -201,9 +201,19 @@ class SampleRequestController extends Controller
             ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
             ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
         })
+        ->when($progress == '57', function($query) {
+            // Specific condition: Progress = 57 and Status = 10
+            $query->where('Progress', '57')
+                  ->where('Status', '10');
+        })
+        ->when($progress == '81', function($query) {
+            // Specific condition: Progress = 57 and Status = 10
+            $query->where('Progress', '81')
+                  ->where('Status', '10');
+        })
         ->orderBy($sort, $direction)
         ->paginate($request->entries ?? 10);
-
+        // dd($rndSrf);
        
         return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users'));
     }

@@ -10,7 +10,8 @@
 
     <div class="row">
         <div class="col-md-4 grid-margin">
-            @if(optional($role)->type == 'IS' || optional($role)->type == 'LS')
+            @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') &&
+                (optional($role)->type == 'IS' || optional($role)->type == 'LS'))
                 <div class="card mb-2">
                     <div class="card-body">
                         <p class="card-title">For Approval</p>
@@ -84,14 +85,15 @@
                         </div>
                     </div>
                 </div>
-            @else 
+            @elseif ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') &&
+                (optional($role)->type == 'RND'))
                 <div class="card mb-2">
                     <div class="card-body">
                         <p class="card-title">Initial Review</p>
                         <div class="d-flex justify-content-between">
                             <div class="mb-4 mt-2">
                                 <h3 class="text-primary fs-30 font-weight-medium">
-                                    {{ $totalApproval ?? '0' }}
+                                    {{ $totalInitialReview ?? '0' }}
                                     <i class="ti ti-check-box"></i>
                                 </h3>
                             </div>
@@ -102,27 +104,26 @@
                         <div class="mb-2 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
-                                    {{ $crrRnDInitial ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 57, 'status' => 10]) }}">
+                                    {{ $crrRNDInitialReview ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <p>RPE</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
-                                    {{ $rpeSalesApproval ?? '0' }}
+                                <a href="{{ route('product_evaluation.index', ['progress' => 57, 'status' => 10]) }}">
+                                    {{ $rpeRNDInitialReview ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
-                                    {{ $srfSalesApproval ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 57, 'status' => 10]) }}">
+                                    {{ $srfRNDInitialReview ?? '0' }}
                                 </a>
                             </h5>
-                            <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
                         </div>
                     </div>
                 </div>
@@ -132,35 +133,35 @@
                         <div class="d-flex justify-content-between">
                             <div class="mb-4 mt-2">
                                 <h3 class="text-primary fs-30 font-weight-medium">
-                                    {{ $totalActivitiesCount ?? '0'}}
+                                    {{ $totalFinalReview ?? '0'}}
                                     <i class="ti ti-layers"></i>
                                 </h3>
                             </div>
-                            <div class="mt-3">
+                            <!-- <div class="mt-3">
                                 <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['progress' => 10]) }}">
-                                    {{ $crrSalesApproval ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 81, 'status' => 10]) }}">
+                                    {{ $crrRNDFinallReview ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <p>RPE</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}">
-                                    {{ $rpeSalesApproval ?? '0' }}
+                                <a href="{{ route('product_evaluation.index', ['progress' => 81, 'status' => 10]) }}">
+                                    {{ $rpeRNDFinallReview ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-2 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['progress' => 10]) }}">
-                                    {{ $srfSalesApproval ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 81, 'status' => 10]) }}">
+                                    {{ $srfRNDFinallReview ?? '0' }}
                                 </a>
                             </h5>
                             <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
@@ -213,14 +214,14 @@
                         <p>QCD/R&D Pending</p>
                         <h5 class="text-primary font-weight-medium">{{ $crrRnDPending ?? '0' }}</h5>
                     </div>
-                    <!-- <div class="mb-2 d-flex justify-content-between">
+                    <div class="mb-2 d-flex justify-content-between">
                         <p>QCD/R&D Initial Review</p>
                         <h5 class="text-primary font-weight-medium">{{ $crrRnDInitial ?? '0' }}</h5>
                     </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>QCD/R&D Final Review</p>
                         <h5 class="text-primary font-weight-medium">{{ $crrRnDFinal ?? '0' }}</h5>
-                    </div> -->
+                    </div>
                     <div class="mb-2 d-flex justify-content-between">
                         <p>R&D Completed</p>
                         <h5 class="text-primary font-weight-medium">{{ $crrRnDCompleted ?? '0' }}</h5>
