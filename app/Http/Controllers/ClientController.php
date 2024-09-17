@@ -353,7 +353,7 @@ class ClientController extends Controller
         $client = Client::create($request->only([
             'BuyerCode', 'PrimaryAccountManagerId', 'SapCode', 'SecondaryAccountManagerId',
             'Name', 'TradeName', 'TaxIdentificationNumber', 'TelephoneNumber', 'PaymentTermId',
-            'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'ClientCountryId',
+            'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'Email2', 'Email3', 'ClientCountryId',
             'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId', 'Status'
         ]));
         
@@ -455,7 +455,7 @@ class ClientController extends Controller
         $client->update($request->only([
             'BuyerCode', 'PrimaryAccountManagerId', 'SapCode', 'SecondaryAccountManagerId',
             'Name', 'TradeName', 'TaxIdentificationNumber', 'TelephoneNumber', 'PaymentTermId',
-            'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'ClientCountryId',
+            'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'Email2', 'Email3', 'ClientCountryId',
             'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId'
         ]));
 

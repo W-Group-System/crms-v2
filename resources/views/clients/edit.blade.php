@@ -166,8 +166,8 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="form-group">
-                            <label>Email Address</label>
-                            <input type="text" class="form-control" id="Email" name="Email" placeholder="Enter Email Address" value="{{ $data->Email }}">
+                            <label>Primary Email Address</label>
+                            <input type="email" class="form-control" id="Email" name="Email" placeholder="Enter Email Address" value="{{ $data->Email }}">
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -181,10 +181,22 @@
                     </div>  
                     <div class="col-lg-6">
                         <div class="form-group">
+                            <label>Second Email Address</label>
+                            <input type="email" class="form-control" id="Email2" name="Email2" placeholder="Enter Email Address 2" value="{{ $data->Email2 }}">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
                             <label>Source</label>
                             <input type="text" class="form-control" id="Source" name="Source" placeholder="Enter Source" value="{{ $data->Source }}">
                         </div>
                     </div> 
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Third Email Address</label>
+                            <input type="email" class="form-control" id="Email3" name="Email3" placeholder="Enter Email Address 3" value="{{ $data->Email3 }}">
+                        </div>
+                    </div>
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label>Country</label>

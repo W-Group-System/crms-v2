@@ -6,8 +6,8 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">Client List (Archived)</h4>
             <div class="row height d-flex ">
                 <div class="col-md-5 mt-2 mb-2">
-                    <a href="#" id="copy_archived_btn" class="btn btn-md btn-info mb-1">Copy</a>
-                    <a href="{{url('export_current_client')}}" class="btn btn-md btn-success mb-1">Excel</a>
+                    <a href="#" id="copy_archived_btn" class="btn btn-md btn-outline-info mb-1">Copy</a>
+                    <a href="{{url('export_current_client')}}" class="btn btn-md btn-outline-success mb-1">Excel</a>
                 </div>
             </div>
             <div class="row">

@@ -11,7 +11,7 @@ class Client extends Model
     protected $fillable = [
         'BuyerCode', 'PrimaryAccountManagerId', 'SapCode', 'SecondaryAccountManagerId',
         'Name', 'TradeName', 'TaxIdentificationNumber', 'TelephoneNumber', 'PaymentTermId',
-        'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'ClientCountryId',
+        'FaxNumber', 'Type', 'Website', 'ClientRegionId', 'Email', 'Email2', 'Email3', 'ClientCountryId',
         'Source', 'ClientAreaId', 'BusinessTypeId', 'ClientIndustryId', 'Status', 'CompanyId', 'ContactName', 'Designation', 'PrimaryTelephone', 'SecondaryTelephone', 'PrimaryMobile', 'SecondaryMobile', 'EmailAddress', 'Skype', 'Viber', 'Facebook', 'WhatsApp', 'LinkedIn', 'Birthday'
     ];
 
