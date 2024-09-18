@@ -498,6 +498,7 @@
                             </div>
                         </li>
                         @endif
+                        @if(viewModule('Price Request Summary', $department, $role) == "yes" || viewModule('Transaction Activity Summary', $department, $role) == "yes")
                         <li class="nav-item"> 
                             <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="reports">
                                 <i class="icon-book menu-icon"></i>
@@ -506,11 +507,16 @@
                             </a>
                             <div class="collapse" id="reports">
                                 <ul class="nav flex-column sub-menu">
+                                    @if(viewModule('Price Request Summary', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url ('/price_request') }}">Price Request Summary</a></li>
+                                    @endif
+                                    @if(viewModule('Transaction Activity Summary', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url ('/transaction_activity') }}">Transaction/Activity Summary</a></li>
+                                    @endif
                                 </ul>
                             </div>
                         </li>
+                        @endif
                     </ul>
                 </nav>
                 <!-- partial -->
