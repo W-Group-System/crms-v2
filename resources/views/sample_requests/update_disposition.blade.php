@@ -12,6 +12,10 @@
                     @csrf
                     @foreach ($sampleRequest->requestProducts as $product)
                     <div class="form-group">
+                        <label>SRF Index</label>
+                        <input class="form-control" value="{{ $sampleRequest->SrfNumber}}-{{ $product->ProductIndex }}" readonly>
+                    </div>
+                    <div class="form-group">
                         <label>Disposition:</label>
                         <select class="form-control js-example-basic-single" name="Disposition[{{ $product->id }}]" style="position: relative !important" title="Select Disposition">
                             <option value="0" {{  $product->Disposition == "0" ? 'selected' : '' }}>Select Disposition</option>
