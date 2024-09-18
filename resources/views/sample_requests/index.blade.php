@@ -303,7 +303,7 @@
                     <table class="table table-striped table-bordered table-hover" id="sample_request_table">
                         <thead>
                             <tr>
-                                <th>Action</th>
+                                <!-- <th>Action</th> -->
                                 <th>SRF #</th>
                                 <th>Date Requested</th>
                                 <th>Date Required</th>
@@ -316,13 +316,13 @@
                         <tbody>
                             @foreach ($rndSrf as $srf)
                             <tr>
-                                <td align="center">
+                                <!-- <td align="center">
                                     <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
                                     <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
                                         data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
                                         <i class="ti-pencil"></i>
                                     </button>    
-                                </td>
+                                </td> -->
                                 <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request" target="_blank">{{ $srf->SrfNumber }}</a></td>
                                 <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                 <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>

@@ -107,7 +107,6 @@ class ClientController extends Controller
     // Prospect List
     public function prospect(Request $request)
     {   
-        
         $request->session()->put('last_client_page', url()->full());
         $search = $request->input('search');
         $sort = $request->get('sort', 'Name'); // Default to 'Name' if no sort is specified
