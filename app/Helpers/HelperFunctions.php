@@ -282,16 +282,19 @@ function checkIfItsApprover($user_id, $primary_sales_person, $type)
 function checkIfItsApprover2($user_id, $primary_sales_person, $secondary_sales_person, $type)
 {
     if ($type == "PRF") {
-        $primaryUser = User::where('id', $primary_sales_person)
-                           ->orWhere('user_id', $primary_sales_person)
-                           ->first();
+        $primary_sales_person = strtolower(trim($primary_sales_person));
 
+        $primaryUser = User::whereRaw('LOWER(TRIM(user_id)) = ?', [ $primary_sales_person ])
+                           ->orWhereRaw('LOWER(TRIM(id)) = ?', [ $primary_sales_person ])
+                           ->first();
+        
+                           
         $salesApprovers = SalesApprovers::where('SalesApproverId', $user_id)
                                          ->where('UserId', $primaryUser->id)
                                          ->first();
 
         if ($salesApprovers != null) {
-            if ($user_id == $secondary_sales_person) {
+            if ($user_id == $secondary_sales_person || auth()->user()->user_id == $secondary_sales_person) {
                 return "yes"; 
             }
         }
