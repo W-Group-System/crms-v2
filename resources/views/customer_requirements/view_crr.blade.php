@@ -436,6 +436,12 @@
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{$crr->PotentialVolume}} {{optional($crr->unitOfMeasure)->Symbol}}</p>
                     </div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Ref Code :</b></p></div>
+                    <div class="col-sm-3 col-md-2">
+                        <p class="mb-0">{{$crr->RefCode}}</p>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-sm-3 col-md-2">
                         <p><b>Sales Approved Date :</b></p>
                     </div>
@@ -448,8 +454,6 @@
                             @endif
                         </p>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Target Price :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{$crr->TargetPrice}} {{optional($crr->price)->Name}}</p>
