@@ -109,6 +109,28 @@ class RoleController extends Controller
                 $access->role_id = $request->role;
                 $access->module_name = $module;
 
+                if ($module == "Payment Terms")
+                {
+                    if ($request->has('Payment_Terms'))
+                    {
+                        $access->edit = $request->Payment_Terms['edit'] ?? null;
+                        $access->create = $request->Payment_Terms['create'] ?? null; 
+                        $access->update = $request->Payment_Terms['update'] ?? null; 
+                        $access->view = $request->Payment_Terms['view'] ?? null; 
+                        $access->delete = $request->Payment_Terms['delete'] ?? null; 
+                        $access->approve = $request->Payment_Terms['approve'] ?? null; 
+                    }
+                    else
+                    {
+                        $access->create = null;
+                        $access->edit = null;
+                        $access->update = null; 
+                        $access->view = null; 
+                        $access->delete = null; 
+                        $access->approve = null;
+                    }
+                }
+                
                 if ($module == "Products")
                 {
                     if ($request->has('Products'))
@@ -2052,6 +2074,28 @@ class RoleController extends Controller
                     }
                 }
 
+                if ($module == "Payment Terms")
+                {
+                    if ($request->has('Payment_Terms'))
+                    {
+                        $access->edit = $request->Payment_Terms['edit'] ?? null;
+                        $access->create = $request->Payment_Terms['create'] ?? null; 
+                        $access->update = $request->Payment_Terms['update'] ?? null; 
+                        $access->view = $request->Payment_Terms['view'] ?? null; 
+                        $access->delete = $request->Payment_Terms['delete'] ?? null; 
+                        $access->approve = $request->Payment_Terms['approve'] ?? null; 
+                    }
+                    else
+                    {
+                        $access->create = null;
+                        $access->edit = null;
+                        $access->update = null; 
+                        $access->view = null; 
+                        $access->delete = null; 
+                        $access->approve = null;
+                    }
+                }
+
                 
                 $access->save();
             }
@@ -2110,6 +2154,7 @@ class RoleController extends Controller
             'Supplier Transaction Module',
             'Supplier Product Evaluation',
             'Supplier Shipment Evaluation',
+            'Payment Terms'
             // 'User Setup'
         ];
     }
