@@ -644,49 +644,14 @@ class PriceMonitoringController extends Controller
         $clientId = $price_monitorings->ClientId;
         $progresses = PrfProgress::all();
         $clients = Client::where(function($query) {
-            if (auth()->user()->role->name == "Department Admin")
-            {
+            if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
                 $query->where('PrimaryAccountManagerId', auth()->user()->id)
                     ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
             }
-            if (auth()->user()->role->name == "Staff L2")
-            {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-            }
-            if (auth()->user()->role->name == "Staff L1")
-            {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-            }
-        })->get();
-        // $clients = Client::where(function($query) {
-        //     if (auth()->user()->role->name == "Department Admin")
-        //     {
-        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
-        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
-        //     }
-        //     if (auth()->user()->role->name == "Staff L1")
-        //     {
-        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
-        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id);
-        //     }
-        // })
-        // ->where(function($query) {
-        //     if (auth()->user()->role->name == "Staff L2")
-        //     {
-        //         $query->where('SecondaryAccountManagerId', auth()->user()->id)
-        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-        //     }
-        // })
-        // ->get();
-        // $users = User::wherehas('localsalespersons')->get();
+        })
+        ->get();
         $users = User::where('is_active', 1)->get();
         $activities = Activity::where('TransactionNumber', $PriceRequestNumber)->get();
         $transactionLogs = TransactionLogs::where('Type', '50')
