@@ -171,7 +171,7 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </td> -->
-                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}">{{ optional($productEvaluation)->RpeNumber }}</a></td>
+                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" title="View Product Evaluation" target="_blank">{{ optional($productEvaluation)->RpeNumber }}</a></td>
                                 <td>
                                     @if($productEvaluation->CreatedDate != null)
                                     {{ date('M d, Y h:i A', strtotime($productEvaluation->CreatedDate)) }}

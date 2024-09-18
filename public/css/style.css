@@ -17020,7 +17020,7 @@ button.bg-dark:focus,
 
 .mb-2,
 .my-2 {
-  margin-bottom: 0px !important;
+  margin-bottom: 0.5rem !important;
 }
 
 .ml-2, .btn-toolbar .btn-group + .btn-group, .btn-toolbar .fc .fc-button-group + .btn-group, .fc .btn-toolbar .fc-button-group + .btn-group, .btn-toolbar .fc .btn-group + .fc-button-group, .fc .btn-toolbar .btn-group + .fc-button-group, .btn-toolbar .fc .fc-button-group + .fc-button-group, .fc .btn-toolbar .fc-button-group + .fc-button-group, .rtl .settings-panel .events i,
