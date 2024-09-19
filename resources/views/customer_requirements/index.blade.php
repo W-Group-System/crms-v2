@@ -78,6 +78,7 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a>
                             </th>
+                            <th>Ref Code</th>
                             <th>Date Created
                                 <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DateCreated', 
@@ -160,6 +161,13 @@
                             </td>
                             <td>{{ optional($customerRequirement)->CrrNumber }}</td>
                             <td>
+                                @if($customerRequirement->RefCode != null)
+                                {{$customerRequirement->RefCode}}
+                                @else
+                                RND
+                                @endif
+                            </td>
+                            <td>
                                 {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
                             </td>
                             <td>
@@ -209,6 +217,7 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a>
                             </th>
+                            <th>Ref Code</th>
                             <th>Date Created
                                 <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DateCreated', 
@@ -338,6 +347,13 @@
                                 </form>
                             </td>
                             <td>{{ optional($customerRequirement)->CrrNumber }}</td>
+                            <td>
+                                @if($customerRequirement->RefCode != null)
+                                {{$customerRequirement->RefCode}}
+                                @else
+                                RND
+                                @endif
+                            </td>
                             <td>
                                 {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
                             </td>
