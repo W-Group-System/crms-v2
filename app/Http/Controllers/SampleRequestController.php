@@ -129,14 +129,17 @@ class SampleRequestController extends Controller
                     $query->where('Progress', '10')
                         ->where(function($query) use ($userId, $userByUser) {
                             $query->where('SecondarySalesPersonId', $userId)
-                                // ->orWhere('SecondarySalesPersonId', $userId)
-                                // ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
                                 ->orWhere('SecondarySalesPersonId', $userByUser);
                         });
                 } else {
                     // Apply progress filter if it's not '10'
                     $query->where('Progress', $progress);
                 }
+            })
+            ->when($request->input('DateRequired') === 'past', function($query) {
+                $query->where('DateRequired', '<', now());  // Fetch only records with past due dates
             })
             ->when($open && $close, function($query) use ($open, $close) {
                 $query->whereIn('Status', [$open, $close]);
@@ -192,24 +195,32 @@ class SampleRequestController extends Controller
         ->paginate($request->entries ?? 10);
 
         $rndSrf = SampleRequest::with('requestProducts') 
-        ->where(function ($query) use ($search){
-            $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
-            ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-            ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
-        })
-        ->when($progress == '57', function($query) {
-            // Specific condition: Progress = 57 and Status = 10
-            $query->where('Progress', '57')
-                  ->where('Status', '10');
-        })
-        ->when($progress == '81', function($query) {
-            // Specific condition: Progress = 57 and Status = 10
-            $query->where('Progress', '81')
-                  ->where('Status', '10');
-        })
-        ->orderBy($sort, $direction)
-        ->paginate($request->entries ?? 10);
-        // dd($rndSrf);
+            ->where(function ($query) use ($search){
+                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
+            })
+            ->when($progress == '57', function($query) {
+                // Specific condition: Progress = 57 and Status = 10
+                $query->where('Progress', '57')
+                    ->where('Status', '10');
+            })
+            ->when($progress == '81', function($query) {
+                // Specific condition: Progress = 57 and Status = 10
+                $query->where('Progress', '81')
+                    ->where('Status', '10');
+            })
+            ->when($progress == '30', function($query) {
+                // Specific condition: Progress = 57 and Status = 10
+                $query->where('Progress', '30')
+                    ->where('Status', '10');
+            })
+            ->when($request->input('DateRequired') === 'past', function($query) {
+                $query->where('DateRequired', '<', now());  // Fetch only records with past due dates
+            })
+            ->orderBy($sort, $direction)
+            ->paginate($request->entries ?? 10);
+            // dd($rndSrf);
        
         return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users'));
     }

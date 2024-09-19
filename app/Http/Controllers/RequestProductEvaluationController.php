@@ -75,6 +75,9 @@ class RequestProductEvaluationController extends Controller
                     $query->where('Progress', $progress);
                 }
             })
+            ->when($request->input('DueDate') === 'past', function($query) {
+                $query->where('DueDate', '<', now());  // Fetch only records with past due dates
+            })
             ->when($request->has('open') && $request->has('close'), function($query)use($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);
             })

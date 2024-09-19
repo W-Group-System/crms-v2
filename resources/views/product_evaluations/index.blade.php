@@ -94,7 +94,7 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </td> -->
-                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" title="View Product Evaluation" target="_blank">{{ optional($productEvaluation)->RpeNumber }}</a></td>
+                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" title="View Product Evaluation">{{ optional($productEvaluation)->RpeNumber }}</a></td>
                                 <td>
                                     @if($productEvaluation->CreatedDate != null)
                                     {{ date('M d, Y h:i A', strtotime($productEvaluation->CreatedDate)) }}
@@ -171,7 +171,7 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </td> -->
-                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" title="View Product Evaluation" target="_blank">{{ optional($productEvaluation)->RpeNumber }}</a></td>
+                                <td><a href="{{ url('product_evaluation/view/' . $productEvaluation->id) }}" title="View Product Evaluation">{{ optional($productEvaluation)->RpeNumber }}</a></td>
                                 <td>
                                     @if($productEvaluation->CreatedDate != null)
                                     {{ date('M d, Y h:i A', strtotime($productEvaluation->CreatedDate)) }}
@@ -203,14 +203,12 @@
                                 </td>
                                 <td>
                                     @if($productEvaluation->Status == 10)
-                                            Open
-                                        @elseif($productEvaluation->Status == 30)
-                                            Closed
-                                        @elseif($productEvaluation->Status == 50)
-                                            Cancelled
-                                        @else
-                                            {{ $productEvaluation->Status }}
-                                        @endif
+                                        <div class="badge badge-success">Open</div>
+                                    @elseif($productEvaluation->Status == 30)
+                                        <div class="badge badge-warning">Closed</div>
+                                    @elseif($productEvaluation->Status == 50)
+                                        <div class="badge badge-danger">Cancelled</div>
+                                    @endif
                                 </td>
                                 <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
                             </tr>

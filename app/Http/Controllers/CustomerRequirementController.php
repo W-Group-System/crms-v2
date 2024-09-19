@@ -45,9 +45,10 @@ class CustomerRequirementController extends Controller
         // dd($userByUser);
         // Fetch customer requirements with applied filters
         $customer_requirements = CustomerRequirement::with(['client', 'product_application'])
-            ->when($status, function($query) use ($status, $userId, $userByUser) {
+            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
                 if ($status == '50') {
-                    // When filtering by '50', include all cancelled status records
+                    // Filter for status '50' (cancelled) with relevant user filtering
                     $query->where(function ($query) use ($userId, $userByUser) {
                         $query->where('Status', '50')
                             ->where(function($query) use ($userId, $userByUser) {
@@ -76,6 +77,9 @@ class CustomerRequirementController extends Controller
                     // Apply progress filter if it's not '10'
                     $query->where('Progress', $progress);
                 }
+            })
+            ->when($request->input('DueDate') === 'past', function($query) {
+                $query->where('DueDate', '<', now());  // Fetch only records with past due dates
             })
             ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);

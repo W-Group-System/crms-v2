@@ -52,3 +52,15 @@ function toggleProducts(event) {
   event.preventDefault(); 
   $('#nav_products').collapse('toggle'); 
 }
+// Supplier Transaction
+function toggleSupplier(event) {
+  event.preventDefault(); 
+  $('#table_supplier').collapse('toggle'); 
+}
+
+setInterval(myTimer, 1000);
+
+function myTimer() {
+  const d = new Date();
+  document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+}
