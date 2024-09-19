@@ -580,7 +580,13 @@
                                 @if($sampleRequest->RefCode == 1)
                                     RND
                                 @elseif($sampleRequest->RefCode == 2)
-                                    QCD
+                                    QCD-WHI
+                                @elseif($sampleRequest->RefCode == 3)
+                                    QCD-PBI
+                                @elseif($sampleRequest->RefCode == 4)
+                                    QCD-MRDC
+                                @elseif($sampleRequest->RefCode == 5)
+                                    QCD-CCC
                                 @else
                                     {{ $sampleRequest->RefCode }}
                                 @endif
