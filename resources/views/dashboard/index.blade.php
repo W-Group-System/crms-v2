@@ -588,7 +588,9 @@
                                         <tr>
                                             <td>{{ $product->ddw_number }}</td>
                                             <td>{{ $product->code }}</td>
-                                            <td>{{ $product->userByUserId->full_name ?? $product->userById->full_name }}</td>
+                                            <td>
+                                                {{ $product->userByUserId ? $product->userByUserId->full_name : ($product->userById ? $product->userById->full_name : 'N/A') }}
+                                            </td>
                                             <td>{{date('m/d/Y', strtotime($product->created_at))}}</td>
                                         </tr>
                                     @endforeach
