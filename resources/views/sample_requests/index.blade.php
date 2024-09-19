@@ -101,7 +101,7 @@
                                         <i class="ti-pencil"></i>
                                     </button>    
                                 </td> -->
-                                <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}" title="View Sample Request" target="_blank">{{ $srf->SrfNumber }}</a></td>
+                                <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}" title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
                                 <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                 <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
                                 <td>{{ optional($srf->client)->Name }}</td>
@@ -177,7 +177,7 @@
                                             <i class="ti-pencil"></i>
                                         </button>
                                     </td> -->
-                                    <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request" target="_blank">{{ $srf->SrfNumber }}</a></td>
+                                    <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
                                     <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                     <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
                                     <td>
@@ -323,7 +323,7 @@
                                         <i class="ti-pencil"></i>
                                     </button>    
                                 </td> -->
-                                <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request" target="_blank">{{ $srf->SrfNumber }}</a></td>
+                                <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
                                 <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                 <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
                                 <td>{{ optional($srf->client)->Name }}</td>
@@ -346,7 +346,7 @@
                         @endforeach
                         </tbody>
                     </table>
-                    {!! $sampleRequests->appends(['search' => $search])->links() !!}
+                     {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
                     @php
                         $total = $sampleRequests->total();
                         $currentPage = $sampleRequests->currentPage();

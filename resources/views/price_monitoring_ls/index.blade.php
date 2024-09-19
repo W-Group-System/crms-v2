@@ -6,9 +6,9 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Price Monitoring List
             @if(auth()->user()->role->type == 'LS')
-            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoringLs">New</button>
+            <button type="button" class="btn btn-md btn-outline-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoringLs">New</button>
             @elseif (auth()->user()->role->type == 'IS')
-            <button type="button" class="btn btn-md btn-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoring">Add</button>
+            <button type="button" class="btn btn-md btn-outline-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoring">Add</button>
             @endif
             </h4>
             <div class="form-group">
@@ -35,11 +35,11 @@
                 </div>
             </form>
             @if (auth()->user()->role->type == 'LS')
-            <div class="table-responsive">
+            <div class="table-responsive" style="overflow: auto; height: 80vh;">
                 <table class="table table-striped table-bordered table-hover" id="price_monitoring_table">
                     <thead>
                         <tr>
-                            <th>Action</th>
+                            <!-- <th>Action</th> -->
                             <th>Price Request #</th>
                             <th>Date Created</th>
                             <th>Client Name</th>
@@ -50,7 +50,7 @@
                     <tbody>
                         @foreach ($price_monitorings as $priceMonitoring)
                         <tr>
-                            <td align="center">
+                            <!-- <td align="center">
                                 <a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id) }}" class="btn btn-sm btn-outline-info btn-outline" title="View Price Request"><i class="ti-eye"></i></a>
                                 <button type="button" class="btn btn-sm btn-warning editBtn" data-primarysales="{{$priceMonitoring->PrimarySalesPersonId}}" data-secondarysales="{{$priceMonitoring->SecondarySalesPersonId}}"
 
@@ -60,8 +60,8 @@
                                 <button type="button" class="btn btn-sm btn-outline-danger delete-btn" onclick="confirmDelete({{ $priceMonitoring->id }})" title='Delete Request'>
                                     <i class="ti-trash"></i>
                                 </button>
-                            </td>
-                            <td>{{ optional($priceMonitoring)->PrfNumber }}</td>
+                            </td> -->
+                            <td><a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id) }}" title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a></td>
                             <td>{{  date('m-d-y', strtotime($priceMonitoring->DateRequested)) }}</td>
                             <td>{{ optional($priceMonitoring->client)->Name }}</td>
                             <td>
@@ -82,13 +82,13 @@
                             </td>
                             <td>
                                 {{ optional($priceMonitoring->progressStatus)->name }}
-                                {{-- @if($priceMonitoring->Progress == 10)
-                                        For Approval
-                                    @elseif($priceMonitoring->Progress == 30)
-                                        Waiting For Disposition
-                                    @else
-                                        {{ $priceMonitoring->Progress }}
-                                    @endif --}}
+                            {{-- @if($priceMonitoring->Progress == 10)
+                                    For Approval
+                                @elseif($priceMonitoring->Progress == 30)
+                                    Waiting For Disposition
+                                @else
+                                    {{ $priceMonitoring->Progress }}
+                                @endif --}}
                             </td>
                         </tr>
                         @endforeach
@@ -108,11 +108,11 @@
                 </div>
             </div>
             @elseif (auth()->user()->role->type == 'IS')
-            <div class="table-responsive">
+            <div class="table-responsive" style="overflow: auto; height: 80vh;">
                 <table class="table table-striped table-bordered table-hover" id="price_monitoring_table">
                     <thead>
                         <tr>
-                            <th>Action</th>
+                            <!-- <th>Action</th> -->
                             <th>Price Request #</th>
                             <th>Date Created</th>
                             <th>Client Name</th>
@@ -123,7 +123,7 @@
                     <tbody>
                         @foreach ( $price_monitorings as $priceMonitoring)
                         <tr>
-                            <td align="center">
+                            <!-- <td align="center">
                                 <a href="{{ url('price_monitoring/view/' . $priceMonitoring->id) }}" class="btn btn-sm btn-outline-info" title="View Price Request"><i class="ti-eye"></i></a>
                                 <button type="button" class="btn btn-sm btn-outline-warning"
                                     data-target="#editPriceRequest{{ $priceMonitoring->id }}" data-toggle="modal" title='Edit Price Request'>
@@ -132,8 +132,8 @@
                                 <button type="button" class="btn btn-sm btn-outline-danger delete-btn" onclick="confirmDelete({{ $priceMonitoring->id }})" title='Delete Request'>
                                     <i class="ti-trash"></i>
                                 </button>
-                            </td>
-                            <td>{{ optional($priceMonitoring)->PrfNumber }}</td>
+                            </td> -->
+                            <td><a href="{{ url('price_monitoring/view/' . $priceMonitoring->id) }}"  title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a></td>
                             <td>{{  date('m-d-y', strtotime($priceMonitoring->DateRequested)) }}</td>
                             <td>{{ optional($priceMonitoring->client)->Name }}</td>
                             <td>

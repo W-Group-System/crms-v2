@@ -139,7 +139,7 @@
                         @foreach ($customer_requirements as $customerRequirement)
                         <tr>
                             <!-- <td>
-                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements" target="_blank">
+                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements">
                                     <i class="ti-eye"></i>
                                 </a>
                                 @php
@@ -156,7 +156,7 @@
                                     </button>
                                 </form>
                             </td> -->
-                            <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements" target="_blank">{{ optional($customerRequirement)->CrrNumber }}</a></td>
+                            <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements">{{ optional($customerRequirement)->CrrNumber }}</a></td>
                             <td>
                                 {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
                             </td>
@@ -318,7 +318,7 @@
                         @foreach ($customer_requirements as $customerRequirement)
                         <tr>
                             <!-- <td>
-                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements" target="_blank">
+                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" class="btn btn-sm btn-info" title="View Customer Requirements">
                                     <i class="ti-eye"></i>
                                 </a>
                                 @php
@@ -335,7 +335,7 @@
                                     </button>
                                 </form>
                             </td> -->
-                            <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements" target="_blank">{{ optional($customerRequirement)->CrrNumber }}</a></td>
+                            <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements">{{ optional($customerRequirement)->CrrNumber }}</a></td>
                             <td>
                                 {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
                             </td>
@@ -391,7 +391,8 @@
                     </tbody>
                     @endif
                 </table>
-                {!! $customer_requirements->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                <!-- {!! $customer_requirements->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
+                {{ $customer_requirements->appends(request()->query())->links() }}
                 @php
                     $total = $customer_requirements->total();
                     $currentPage = $customer_requirements->currentPage();
