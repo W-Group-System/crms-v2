@@ -580,7 +580,13 @@
                                 @if($sampleRequest->RefCode == 1)
                                     RND
                                 @elseif($sampleRequest->RefCode == 2)
-                                    QCD
+                                    QCD-WHI
+                                @elseif($sampleRequest->RefCode == 3)
+                                    QCD-PBI
+                                @elseif($sampleRequest->RefCode == 4)
+                                    QCD-MRDC
+                                @elseif($sampleRequest->RefCode == 5)
+                                    QCD-CCC
                                 @else
                                     {{ $sampleRequest->RefCode }}
                                 @endif
@@ -776,12 +782,12 @@
                             <p>{{ $requestProducts->Label }}</p>
                         </div>
                     </div>
-                    <div class="row mb-0">
+                    <div class="row mb-3">
                         <div class="col-sm-3">
                             <p><b>Remarks:</b></p>
                         </div>
-                        <div class="col-sm-3">
-                            <p>{{ $requestProducts->Remarks }}</p>
+                        <div class="col-sm-6">
+                            <p>{!! nl2br(e($requestProducts->Remarks)) !!}</p>
                         </div>
                     </div>
                     <div class="row mb-0">

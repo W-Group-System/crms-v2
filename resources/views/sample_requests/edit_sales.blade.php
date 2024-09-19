@@ -68,7 +68,10 @@
                             <select class="form-control js-example-basic-single editRefCode{{$sampleRequest->Id }}" name="RefCode" id="" style="position: relative !important" title="Select Ref Code">
                                 <option value="" disabled selected>Select REF Code</option>
                                 <option value="1" {{ old('RefCode',  $sampleRequest->RefCode) == "1" ? 'selected' : '' }}>RND</option>
-                                <option value="2" {{ old('RefCode',  $sampleRequest->RefCode) == "2" ? 'selected' : '' }}>QCD</option>
+                                <option value="2" {{ old('RefCode',  $sampleRequest->RefCode) == "2" ? 'selected' : '' }}>QCD-WHI</option>
+                                <option value="3" {{ old('RefCode',  $sampleRequest->RefCode) == "3" ? 'selected' : '' }}>QCD-PBI</option>
+                                <option value="4" {{ old('RefCode',  $sampleRequest->RefCode) == "4" ? 'selected' : '' }}>QCD-MRDC</option>
+                                <option value="5" {{ old('RefCode',  $sampleRequest->RefCode) == "5" ? 'selected' : '' }}>QCD-CCC</option>
                             </select>
                         </div>
                         <div class="form-group">
