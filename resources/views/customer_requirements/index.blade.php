@@ -76,6 +76,7 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
                             </th>
+                            <th>Ref Code</th>
                             <th>Date Created
                                 <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DateCreated', 
@@ -158,6 +159,13 @@
                             </td> -->
                             <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements">{{ optional($customerRequirement)->CrrNumber }}</a></td>
                             <td>
+                                @if($customerRequirement->RefCode != null)
+                                {{$customerRequirement->RefCode}}
+                                @else
+                                RND
+                                @endif
+                            </td>
+                            <td>
                                 {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
                             </td>
                             <td>
@@ -207,6 +215,7 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'CrrNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
                             </th>
+                            <th>Ref Code</th>
                             <th>Date Created
                                 <!-- <a href="{{ route('customer_requirement.index', [
                                     'sort' => 'DateCreated', 
@@ -336,6 +345,13 @@
                                 </form>
                             </td> -->
                             <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements">{{ optional($customerRequirement)->CrrNumber }}</a></td>
+                            <td>
+                                @if($customerRequirement->RefCode != null)
+                                {{$customerRequirement->RefCode}}
+                                @else
+                                RND
+                                @endif
+                            </td>
                             <td>
                                 {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
                             </td>
