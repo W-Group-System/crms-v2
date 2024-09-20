@@ -208,7 +208,7 @@
                             @endif
                         @endif
                         @if(
-                            (checkIfItsApprover(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, "SRF") == "yes") && 
+                            (checkIfItsApprover2(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, $price_monitorings->SecondarySalesPersonId, "SRF") == "yes") && 
                             $sampleRequest->Progress == 10
                         )
 
