@@ -194,8 +194,8 @@
                                         </button>
                                     </td> -->
                                     <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
-                                    <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
-                                    <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
+                                    {{-- <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
+                                    <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td> --}}
                                     <td>
                                         @if($srf->RefCode == 1)
                                             RND
