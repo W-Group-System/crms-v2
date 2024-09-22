@@ -44,20 +44,27 @@ class CustomerRequirementController extends Controller
         $userByUser = Auth::user()->user_id; 
         // dd($userByUser);
         // Fetch customer requirements with applied filters
-        $customer_requirements = CustomerRequirement::with(['client', 'product_application'])
+        $customer_requirements = CustomerRequirement::with(['client', 'product_application', 'crr_personnels'])
             ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
+                
                 if ($status == '50') {
                     // Filter for status '50' (cancelled) with relevant user filtering
-                    $query->where(function ($query) use ($userId, $userByUser) {
-                        $query->where('Status', '50')
-                            ->where(function($query) use ($userId, $userByUser) {
+                    $query->where('Status', '50')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where(function($query) use ($userId, $userByUser) {
                                 $query->where('PrimarySalesPersonId', $userId)
                                     ->orWhere('SecondarySalesPersonId', $userId)
                                     ->orWhere('PrimarySalesPersonId', $userByUser)
                                     ->orWhere('SecondarySalesPersonId', $userByUser);
                             });
-                    });
+                            
+                            // Filter using a whereHas for 'crr_personnels' related records
+                            $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                $query->where('PersonnelUserId', $userId)
+                                    ->orWhere('PersonnelUserId', $userByUser);
+                            });
+                        });
                 } else {
                     // Apply status filter if it's not '50'
                     $query->where('Status', $status);
@@ -116,9 +123,16 @@ class CustomerRequirementController extends Controller
                     $q->where('CrrNumber', 'LIKE', "%CRR-IS%");
                 } elseif ($role->type == "LS") {
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
-                }
-            })->orderBy($sort, $direction)
-              ->paginate($request->entries ?? 10);
+                } elseif ($role->type == "RND") {
+                    // Use 'orWhere' to allow either 'CRR-LS' or 'CRR-IS'
+                    $q->where(function($query) {
+                        $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
+                              ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
+                    });
+                }  
+            })
+                ->orderBy($sort, $direction)
+                ->paginate($request->entries ?? 10);
             
         // Fetch related data for filters and dropdowns
         $product_applications = ProductApplication::all();
