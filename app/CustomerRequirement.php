@@ -30,6 +30,11 @@ class CustomerRequirement extends Model implements Auditable
         return $this->belongsTo(ProductApplication::class, 'ApplicationId', 'id');
     }
 
+    public function crr_personnels() 
+    {
+        return $this->belongsTo(CrrPersonnel::class, 'id', 'CustomerRequirementId');
+    }
+
     public function progressStatus()
     {
         return $this->belongsTo(SrfProgress::class, 'Progress', 'id');
