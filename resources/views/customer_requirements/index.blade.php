@@ -7,7 +7,7 @@
             @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Customer Requirement List
-            <button type="button" class="btn btn-md btn-outline-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement" class="btn btn-md btn-outline-primary">New</button>
+            <button type="button" class="btn btn-md btn-outline-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement">New</button>
             </h4>
             @else
             <h4 class="card-title d-flex justify-content-between align-items-center">Customer Requirement List</h4>
@@ -186,12 +186,12 @@
                             </td>
                             <td>
                                 @if($customerRequirement->Status == 10)
-                                        <div class="badge badge-success">Open</div>
-                                    @elseif($customerRequirement->Status == 30)
-                                        <div class="badge badge-warning">Closed</div>
-                                    @elseif($customerRequirement->Status == 50)
-                                        <div class="badge badge-danger">Cancelled</div>
-                                    @endif
+                                    <div class="badge badge-success">Open</div>
+                                @elseif($customerRequirement->Status == 30)
+                                    <div class="badge badge-warning">Closed</div>
+                                @elseif($customerRequirement->Status == 50)
+                                    <div class="badge badge-danger">Cancelled</div>
+                                @endif
                             </td>
                             <td>{{ optional($customerRequirement->progressStatus)->name }}</td>
                             
