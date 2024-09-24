@@ -602,7 +602,7 @@
                             <p><b>Objective for RPE Project :</b></p>
                         </div>
                         <div class="col-sm-9">
-                            <p>{{ $requestEvaluation->ObjectiveForRpeProject }}</p>
+                            <p>{!! nl2br(e($requestEvaluation->ObjectiveForRpeProject)) !!}</p>
                         </div>
                     </div>
                     <div class="group-form">
