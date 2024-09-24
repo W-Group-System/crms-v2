@@ -466,7 +466,7 @@
                 <div class="row mb-3">
                     <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Details of Requirement :</b></p></div>
                     <div class="col-sm-3 col-md-10">
-                        <p class="mb-0">{{$crr->DetailsOfRequirement}}</p>
+                        <p class="mb-0">{!! nl2br(e($crr->DetailsOfRequirement)) !!}</p>
                     </div>
                 </div>
             </div>
