@@ -14,10 +14,12 @@
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
 
+                    @if(auth()->user()->role->type != "LS")
                     <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_crr')}}" target="_blank">
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
                     </a>
+                    @endif
 
                     @if(authCheckIfItsRndStaff(auth()->user()->role))
                         @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
@@ -146,13 +148,15 @@
                             @endif
                         @endif
                         
-                        @if(checkIfItsApprover(auth()->user()->id, $crr->PrimarySalesPersonId, "CRR") == "yes")
+                        {{-- @if(checkIfItsApprover(auth()->user()->id, $crr->PrimarySalesPersonId, "CRR") == "yes") --}}
+                        @if($crr->SecondarySalesPersonId == auth()->user()->id || $crr->SecondarySalesPersonId == auth()->user()->user_id)
                             @if($crr->Progress == 10 && $crr->Status == 10)
                             <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
                                 <i class="ti ti-check-box"></i>&nbsp;Approve
                             </button>
                             @endif
                         @endif
+                        {{-- @endif --}}
                         
                         @if(authCheckIfItsSales(auth()->user()->department_id))
 
