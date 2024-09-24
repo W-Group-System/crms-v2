@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\CrrNature;
 use App\CustomerRequirement;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -28,7 +29,7 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
 
         if(auth()->user()->role->type == "IS")
         {
-            return CustomerRequirement::select('CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Competitor', 'PrimarySalesPersonId', 'DetailsOfRequirement', 'Recommendation', 'DateReceived', 'Status', 'Progress')
+            return CustomerRequirement::with('crrNature')->select('id','CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Competitor', 'PrimarySalesPersonId', 'DetailsOfRequirement', 'Recommendation', 'DateReceived', 'Status', 'Progress')
                 ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
                     $query->whereIn('Status', [$openStatus, $closeStatus]);
                 })
@@ -44,7 +45,7 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
 
         if(auth()->user()->role->type == "LS")
         {
-            return CustomerRequirement::select('CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Recommendation', 'Status', 'Progress')
+            return CustomerRequirement::with('crrNature')->select('id', 'CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Recommendation', 'Status', 'Progress')
                 ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
                     $query->whereIn('Status', [$openStatus, $closeStatus]);
                 })
@@ -123,6 +124,13 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
         {
             $status = "Cancelled";
         }
+        
+        $crr_nature_array = [];
+        
+        foreach($row->crrNature as $crrNature)
+        {
+            $crr_nature_array[] = optional($crrNature->natureOfRequest)->Name;
+        }
 
         if(auth()->user()->role->type == "IS")
         {
@@ -138,10 +146,9 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 $row->Recommendation,
                 $row->DateReceived,
                 '',
-                // optional($row->crrNature->natureOfRequest)->Name,
-                '',
+                implode(", ", $crr_nature_array),
                 $status,
-                optional($row->progressStatus)->Name
+                optional($row->progressStatus)->name
             ];
         }
 
