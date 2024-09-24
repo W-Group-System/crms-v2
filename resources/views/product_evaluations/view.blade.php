@@ -214,6 +214,7 @@
                                     <i class="ti ti-pencil"></i>&nbsp;Update
                                 </button>
 
+                                @if($requestEvaluation->SecondarySalesPersonId == auth()->user()->id || $requestEvaluation->SecondarySalesPersonId == auth()->user()->user_id)
                                 @if($requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 40 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && $requestEvaluation->Progress != 70)
                                 <button type="button" class="btn btn-md btn-outline-success"
                                     data-target="#approveRpe{{ $requestEvaluation->id }}" 
@@ -228,6 +229,7 @@
                                         <i class="ti ti-check-box"></i>&nbsp;Approve
                                     </button>
                                 </form> --}}
+                                @endif
                                 @endif
                             @endif
 
