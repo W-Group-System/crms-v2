@@ -142,8 +142,8 @@
                             <div class="collapse" id="table_supplier">
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"><a class="nav-link" href="">Request Form</a></li> 
-                                    <li class="nav-item"><a class="nav-link" href="">Supplier Information</a></li> 
-                                    <li class="nav-item"><a class="nav-link" href="">Supplier Product Evaluation</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/supplier') }}">Supplier Information</a></li> 
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/supplier_product') }}">Supplier Product Evaluation</a></li>
                                     <li class="nav-item"><a class="nav-link" href="">Shipment Sample Evaluation</a></li> 
                                 </ul>
                             </div>

@@ -533,6 +533,17 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('/update_request_gae/{id}', 'RequestGAEController@update')->name('update_request_gae');
     Route::post('delete_request_gae/{Id}', 'RequestGAEController@delete')->name('delete_request_gae');
 
+    // Supplier
+    Route::get('/supplier', 'SupplierController@index')->name('supplier.index');
+    Route::post('/new_supplier', 'SupplierController@store')->name('supplier.store');
+    Route::get('/edit_supplier/{id}', 'SupplierController@edit')->name('edit_supplier');
+    Route::post('update_supplier/{Id}', 'SupplierController@update')->name('update_supplier');
+    Route::post('inactivate_supplier/{Id}', 'SupplierController@inactivate')->name('inactivate_supplier');
+
+    // Supplier Product Evaluation 
+    Route::get('/supplier_product', 'SupplierProductController@index')->name('supplier_product.index');
+    Route::post('/new_spe', 'SupplierProductController@store')->name('supplier_product.store');
+
     # Reports
     Route::get('/price_request', 'ReportsController@price_summary')->name('reports.price_request');
     Route::get('/export_price_request', 'ReportsController@exportPriceRequests')->name('export_price_request');
