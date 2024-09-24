@@ -602,7 +602,7 @@
                             <p><b>Objective for RPE Project :</b></p>
                         </div>
                         <div class="col-sm-9">
-                            <p>{{ $requestEvaluation->ObjectiveForRpeProject }}</p>
+                            <p>{!! nl2br(e($requestEvaluation->ObjectiveForRpeProject)) !!}</p>
                         </div>
                     </div>
                     <div class="group-form">
@@ -694,7 +694,7 @@
                             <p><b>RPE Recommendation :</b></p>
                         </div>
                         <div class="col-sm-9">
-                            <p>{!! $rpeResultLinked !!}</p>
+                            <p>{!! nl2br(e($rpeResultLinked)) !!}</p>
                         </div>
                     </div>
                     <div class="row mb-0">
