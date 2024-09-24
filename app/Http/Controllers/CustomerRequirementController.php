@@ -532,7 +532,7 @@ class CustomerRequirementController extends Controller
         $customerRequirement->DateReceived = $request->date_received;
         $customerRequirement->DueDate = $request->due_date;
         $customerRequirement->Recommendation = $request->recommendation;
-        $customerRequirement->Status = $request->Status;
+        // $customerRequirement->Status = $request->Status;
         // $customerRequirement->Progress = $request->progress;
         $customerRequirement->save();
 
