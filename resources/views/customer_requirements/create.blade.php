@@ -162,6 +162,17 @@
                                         <button type="button" class="btn btn-primary addRow">+</button>
                                     </div>
                                 </div> --}}
+                                <div class="input-group mb-3">
+                                    <select class="form-control natureRequestSelect" name="NatureOfRequestId[]" required>
+                                        <option value="" disabled selected>Select Nature of Request</option>
+                                        @foreach($nature_requests as $nature_request)
+                                            <option value="{{ $nature_request->id }}">{{ $nature_request->Name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-danger removeRow">-</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6">
