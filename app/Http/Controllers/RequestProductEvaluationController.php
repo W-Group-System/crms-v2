@@ -188,7 +188,7 @@ class RequestProductEvaluationController extends Controller
                 $count = substr($rpeList->RpeNumber, 10);
                 $totalCount = $count + 1;
                 
-                $rpeNo = "RPE-".$type.'-'.$year.'-'.$totalCount;
+                $rpeNo = "RPE-".$type.'-'.$year.'-0'.$totalCount;
             }
 
             if ($user->department_id == 38)
