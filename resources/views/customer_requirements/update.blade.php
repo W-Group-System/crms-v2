@@ -32,7 +32,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="name">Due Date :</label>
-                                <input type="date" class="form-control" name="due_date" value="{{$crr->DueDate}}" min="{{date('Y-m-d')}}">
+                                <input type="date" class="form-control" name="due_date" value="{{$crr->DueDate}}">
                             </div>
                         </div>
                         {{-- <div class="col-lg-12">
