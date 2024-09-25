@@ -220,7 +220,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('rpe_edit_activity/{id}', 'RequestProductEvaluationController@RpeActivityUpdate');
     Route::delete('requestEvaluation/view/activity-delete/{id}', 'RequestProductEvaluationController@deleteActivity');
 
-    Route::post('rpeFiles', 'RequestProductEvaluationController@uploadFile');
+    Route::post('uploadrpeFiles', 'RequestProductEvaluationController@uploadFile');
     Route::post('updateRpeFile/{id}', 'RequestProductEvaluationController@editFile');
     Route::delete('requestEvaluation/view/file-delete/{id}', 'RequestProductEvaluationController@deleteFile');
     Route::post('update_rpe_sales_files/{id}', 'RequestProductEvaluationController@editsalesRpeFiles');
@@ -259,7 +259,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('UpdateAssignedPersonnel/{id}', 'SampleRequestController@editPersonnel');
     Route::delete('samplerequest/view/personnel-delete/{id}', 'SampleRequestController@deleteSrfPersonnel');
 
-    Route::post('srfFiles', 'SampleRequestController@uploadFile');
+    Route::post('uploadsrfFiles', 'SampleRequestController@uploadFile');
     Route::post('updateFile/{id}', 'SampleRequestController@editFile');
     Route::delete('samplerequest/view/file-delete/{id}', 'SampleRequestController@deleteFile');
     Route::post('update_srf_sales_files/{id}', 'SampleRequestController@editsalesSrfFiles');
