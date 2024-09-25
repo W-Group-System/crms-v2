@@ -587,7 +587,11 @@
                                     @foreach($newProducts as $product)
                                         <tr>
                                             <td>{{ $product->ddw_number }}</td>
-                                            <td>{{ $product->code }}</td>
+                                            <td>
+                                                <a href="{{url('view_new_product/'.$product->id)}}"  title="View Products">
+                                                    {{ $product->code }}
+                                                </a>
+                                            </td>
                                             <td>
                                                 {{ $product->userByUserId ? $product->userByUserId->full_name : ($product->userById ? $product->userById->full_name : 'N/A') }}
                                             </td>

@@ -260,17 +260,79 @@ class DashboardController extends Controller
         $totalFinalReview = $crrRNDFinallReview + $rpeRNDFinallReview + $srfRNDFinallReview;
 
         // RND New Request
-        $crrRNDNew = CustomerRequirement::where('Status', '10')->where('Progress', '30')->count();
-        $rpeRNDNew = RequestProductEvaluation::where('Status', '10')->where('Progress', '30')->count();
-        $srfRNDNew = SampleRequest::where('Status', '10')->where('Progress', '30')->count();
+        // $crrRNDNew = CustomerRequirement::where('Status', '10')->where('Progress', '30')->count();
+        // $rpeRNDNew = RequestProductEvaluation::where('Status', '10')->where('Progress', '30')->count();
+        // $srfRNDNew = SampleRequest::where('Status', '10')->where('Progress', '30')->count();
+        $crrRNDNew = CustomerRequirement::where('Status', '10')
+            ->where('Progress', '30')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('CustomerRequirementId')
+                    ->from('crrpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); // Count the records that match the criteria
+
+        $rpeRNDNew = RequestProductEvaluation::where('Status', '10')
+            ->where('Progress', '30')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('RequestProductEvaluationId')
+                    ->from('rpepersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); // Count the records that match the criteria
+        
+        $srfRNDNew = SampleRequest::where('Status', '10')
+            ->where('Progress', '30')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('SampleRequestId')
+                    ->from('srfpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); // Count the records that match the criteria
 
         $totalNewRequest = $crrRNDNew + $rpeRNDNew + $srfRNDNew;
 
         // RND Due 
-        $crrDue = CustomerRequirement::where('Status', '10')->where('DueDate', '<', now())->count();
-        $rpeDue = RequestProductEvaluation::where('Status', '10')->where('DueDate', '<', now())->count();
-        $srfDue = SampleRequest::where('Status', '10')->where('DateRequired', '<', now())->count();
+        // $crrDue = CustomerRequirement::where('Status', '10')->where('DueDate', '<', now())->count();
+        // $rpeDue = RequestProductEvaluation::where('Status', '10')->where('DueDate', '<', now())->count();
+        // $srfDue = SampleRequest::where('Status', '10')->where('DateRequired', '<', now())->count();
 
+        $crrDue = CustomerRequirement::where('Status', '10')
+            ->where('DueDate', '<', now())
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('CustomerRequirementId')
+                    ->from('crrpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); // Count the records that match the criteria
+
+        $rpeDue = RequestProductEvaluation::where('Status', '10')
+            ->where('DueDate', '<', now())
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('RequestProductEvaluationId')
+                    ->from('rpepersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); // Count the records that match the criteria
+        
+        $srfDue = SampleRequest::where('Status', '10')
+            ->where('DateRequired', '<', now())
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('SampleRequestId')
+                    ->from('srfpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); // Count the records that match the criteria
+        
+        $totalDue = $crrDue + $rpeDue + $srfDue;
+           
+        // New Products
         $newProducts = Product::where(function($query) {
                 $query->whereMonth('created_at', Carbon::now()->month)
                     ->whereYear('created_at', Carbon::now()->year);
@@ -283,7 +345,7 @@ class DashboardController extends Controller
             ->get();
         // dd($newProducts);
 
-        $totalDue = $crrDue + $rpeDue + $srfDue;
+        
 
         // CRR counts RND
         function countCustomerRequirementsRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {

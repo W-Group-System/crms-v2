@@ -14,7 +14,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Remarks</label>
-                                <textarea name="return_to_sales_remarks" class="form-control" cols="50" rows="10" placeholder="Enter remarks" required></textarea>
+                                <textarea name="return_to_sales_remarks" class="form-control" cols="50" rows="10" placeholder="Enter remarks"></textarea>
                             </div>
                         </div>
                     </div>
