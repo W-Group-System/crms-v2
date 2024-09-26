@@ -564,7 +564,7 @@
                                 return $matches[0];
                             }, $crr_recommendation);
                             @endphp  
-                            {{$crr_linked}}
+                            {!! nl2br(e($crr_linked)) !!}
                         </p>
                     </div>
                     <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Date Completed :</b></p></div>
