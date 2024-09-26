@@ -105,7 +105,7 @@
                                 <select class="form-control js-example-basic-single" name="PaymentTerm" style="position: relative !important" title="Select Payment Term">
                                     <option value="" disabled selected>Select Payment Term</option>
                                     @foreach($payment_terms as $paymentTerm)
-                                        <option value="{{ $paymentTerm->id }}">{{ $paymentTerm->Name }}</option>
+                                        <option value="{{ $paymentTerm->id }}" @if ($price_monitorings->PaymentTermId == $paymentTerm->id) selected @endif>{{ $paymentTerm->Name }}</option>
                                     @endforeach
                                 </select>
                             </div>
