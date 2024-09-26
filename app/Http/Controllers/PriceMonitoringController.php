@@ -71,10 +71,14 @@ class PriceMonitoringController extends Controller
 
         $clients = Client::where(function($query) {
             if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                if (auth()->user()->role->type == "LS"){
+                    $query->where('Type', 1);
+                } else {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
                     ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                }
             }
         })
         ->get();
@@ -645,10 +649,14 @@ class PriceMonitoringController extends Controller
         $progresses = PrfProgress::all();
         $clients = Client::where(function($query) {
             if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                if (auth()->user()->role->type == "LS"){
+                    $query->where('Type', 1);
+                } else {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
                     ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                }
             }
         })
         ->get();
