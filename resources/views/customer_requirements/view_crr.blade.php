@@ -578,9 +578,13 @@
                         </p>
                     </div>
                 </div>
-                <div class="form-group row mb-3">
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Days Late : </b></p></div>
+                <div class="row mb-3">
                     <div class="col-sm-3 col-md-2">
+                    </div>
+                    <div class="col-sm-3 col-md-3">
+                    </div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Days Late : </b></p></div>
+                    <div class="col-sm-3 col-md-3">
                         @php
                             $today = new DateTime();
                             $due_date = new DateTime($crr->DueDate);
@@ -1017,7 +1021,10 @@
         });
 
         $(document).on('click', '.removeRow', function() {
-            $(this).closest('.input-group').remove();
+            if ($('.input-group').length > 1)
+            {
+                $(this).closest('.input-group').remove();
+            }
         });
 
         $('[name="crr_file"]').on('change', function(e) {
