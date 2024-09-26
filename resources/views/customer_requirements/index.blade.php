@@ -461,7 +461,10 @@
         });
 
         $(document).on('click', '.removeRow', function() {
-            $(this).closest('.input-group').remove();
+            if ($('.natureOfRequestContainer .input-group').length > 1)
+            {
+                $(this).closest('.input-group').remove();
+            }
         });
 
         $('#copy_btn').click(function() {

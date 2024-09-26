@@ -1017,7 +1017,10 @@
         });
 
         $(document).on('click', '.removeRow', function() {
-            $(this).closest('.input-group').remove();
+            if ($('.input-group').length > 1)
+            {
+                $(this).closest('.input-group').remove();
+            }
         });
 
         $('[name="crr_file"]').on('change', function(e) {
