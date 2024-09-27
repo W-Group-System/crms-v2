@@ -292,7 +292,7 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>CRR</p>
                                 <h5 class="font-weight-medium text-white">
-                                    <a href="{{ route('customer_requirement.index', ['progress' => 57, 'status' => 10]) }}" class="text-white">
+                                    <a href="{{ route('customer_requirement.index', ['progress' => 57]) }}" class="text-white" onclick="show()">
                                         {{ $crrRNDInitialReview ?? '0' }}
                                     </a>
                                 </h5>
@@ -300,7 +300,7 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>RPE</p>
                                 <h5 class="font-weight-medium text-white">
-                                    <a href="{{ route('product_evaluation.index', ['progress' => 57, 'status' => 10]) }}" class="text-white">
+                                    <a href="{{ route('product_evaluation.index', ['progress' => 57]) }}" class="text-white" onclick="show()">
                                         {{ $rpeRNDInitialReview ?? '0' }}
                                     </a>
                                 </h5>
@@ -308,7 +308,7 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>SRF</p>
                                 <h5 class="font-weight-medium text-white">
-                                    <a href="{{ route('sample_request.index', ['progress' => 57, 'status' => 10]) }}" class="text-white">
+                                    <a href="{{ route('sample_request.index', ['progress' => 57]) }}" class="text-white" onclick="show()">
                                         {{ $srfRNDInitialReview ?? '0' }}
                                     </a>
                                 </h5>
@@ -332,7 +332,7 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>CRR</p>
                                 <h5 class="text-primary font-weight-medium">
-                                    <a href="{{ route('customer_requirement.index', ['progress' => 81, 'status' => 10]) }}" class="text-white">
+                                    <a href="{{ route('customer_requirement.index', ['progress' => 81]) }}" class="text-white" onclick="show()">
                                         {{ $crrRNDFinallReview ?? '0' }}
                                     </a>
                                 </h5>
@@ -340,7 +340,7 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>RPE</p>
                                 <h5 class="text-primary font-weight-medium">
-                                    <a href="{{ route('product_evaluation.index', ['progress' => 81, 'status' => 10]) }}" class="text-white">
+                                    <a href="{{ route('product_evaluation.index', ['progress' => 81]) }}" class="text-white" onclick="show()">
                                         {{ $rpeRNDFinallReview ?? '0' }}
                                     </a>
                                 </h5>
@@ -348,7 +348,7 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>SRF</p>
                                 <h5 class="text-primary font-weight-medium">
-                                    <a href="{{ route('sample_request.index', ['progress' => 81, 'status' => 10]) }}" class="text-white">
+                                    <a href="{{ route('sample_request.index', ['progress' => 81]) }}" class="text-white" onclick="show()">
                                         {{ $srfRNDFinallReview ?? '0' }}
                                     </a>
                                 </h5>
@@ -359,12 +359,12 @@
                 @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'RND'))
                     <div class="card mb-2 card-tale">
                         <div class="card-body">
-                            <p class="card-title text-white">Initial Review</p>
+                            <p class="card-title text-white">Open Transactions</p>
                             <div class="d-flex justify-content-between">
                                 <div class="mb-3 mt-2">
                                     <h3 class="text-white fs-30 font-weight-medium">
-                                        {{ $totalInitialReview ?? '0' }}
-                                        <i class="ti ti-check"></i>
+                                        {{ $totalOpenRND ?? '0' }}
+                                        <i class="ti ti-check-box"></i>
                                     </h3>
                                 </div>
                                 <!-- <div class="mt-3">
@@ -373,43 +373,67 @@
                             </div>
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>CRR</p>
-                                <h5 class="text-white font-weight-medium">{{ $crrRNDInitialReview ?? '0' }}</h5>
+                                <h5 class="text-primary font-weight-medium">
+                                    <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
+                                        {{ $rndCrrOpen ?? '0' }}
+                                    </a>
+                                </h5>
                             </div>
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>RPE</p>
-                                <h5 class="text-white font-weight-medium">{{ $rpeRNDInitialReview ?? '0' }}</h5>
+                                <h5 class="text-primary font-weight-medium">
+                                    <a href="{{ route('product_evaluation.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
+                                        {{ $rndRpeOpen ?? '0' }}
+                                    </a>
+                                </h5>
                             </div>
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>SRF</p>
-                                <h5 class="text-white font-weight-medium">{{ $srfRNDInitialReview ?? '0' }}</h5>
+                                <h5 class="text-primary font-weight-medium">
+                                    <a href="{{ route('sample_request.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
+                                        {{ $rndSrfOpen ?? '0' }}
+                                    </a>
+                                </h5>
                             </div>
                         </div>
                     </div>
                     <div class="card card-light-blue">
                         <div class="card-body">
-                            <p class="card-title text-white">Final Review</p>
+                            <p class="card-title text-white">Closed Transactions</p>
                             <div class="d-flex justify-content-between">
                                 <div class="mb-3 mt-2">
                                     <h3 class="text-white fs-30 font-weight-medium">
-                                        {{ $totalFinalReview ?? '0'}}
-                                        <i class="ti ti-check-box"></i>
+                                        {{ $totalClosedRND ?? '0'}}
+                                        <i class="ti ti-folder"></i>
                                     </h3>
                                 </div>
                                 <!-- <div class="mt-3">
                                     <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
                                 </div> -->
                             </div>
-                            <div class="mb-2 d-flex justify-content-between">
+                            <div class="mb-1 d-flex justify-content-between">
                                 <p>CRR</p>
-                                <h5 class="text-white font-weight-medium">{{ $crrRNDFinallReview ?? '0' }}</h5>
+                                <h5 class="text-primary font-weight-medium">
+                                    <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
+                                        {{ $rndCrrClosed ?? '0' }}
+                                    </a>
+                                </h5>
                             </div>
-                            <div class="mb-2 d-flex justify-content-between">
+                            <div class="mb-1 d-flex justify-content-between">
                                 <p>RPE</p>
-                                <h5 class="text-white font-weight-medium">{{ $rpeRNDFinallReview ?? '0' }}</h5>
+                                <h5 class="text-primary font-weight-medium">
+                                    <a href="{{ route('product_evaluation.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
+                                        {{ $rndRpeClosed ?? '0' }}
+                                    </a>
+                                </h5>
                             </div>
-                            <div class="mb-2 d-flex justify-content-between">
+                            <div class="mb-1 d-flex justify-content-between">
                                 <p>SRF</p>
-                                <h5 class="text-white font-weight-medium">{{ $srfRNDFinallReview ?? '0' }}</h5>
+                                <h5 class="text-primary font-weight-medium">
+                                    <a href="{{ route('sample_request.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
+                                        {{ $rndSrfClosed ?? '0' }}
+                                    </a>
+                                </h5>
                             </div>
                         </div>
                     </div>
@@ -435,7 +459,7 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>CRR</p>
                                 <h5 class="font-weight-medium text-white">
-                                    <a href="{{ route('customer_requirement.index', ['progress' => 30, 'status' => 10]) }}" class="text-white">
+                                    <a href="{{ route('customer_requirement.index', ['progress' => 30]) }}" class="text-white" onclick="show()">
                                         {{ $crrRNDNew ?? '0' }}
                                     </a>
                                 </h5>
@@ -443,7 +467,7 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>RPE</p>
                                 <h5 class="font-weight-medium text-white">
-                                    <a href="{{ route('product_evaluation.index', ['progress' => 30, 'status' => 10]) }}" class="text-white">
+                                    <a href="{{ route('product_evaluation.index', ['progress' => 30]) }}" class="text-white" onclick="show()">
                                         {{ $rpeRNDNew ?? '0' }}
                                     </a>
                                 </h5>
@@ -451,7 +475,7 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>SRF</p>
                                 <h5 class="font-weight-medium text-white">
-                                    <a href="{{ route('sample_request.index', ['progress' => 30, 'status' => 10]) }}" class="text-white">
+                                    <a href="{{ route('sample_request.index', ['progress' => 30]) }}" class="text-white" onclick="show()">
                                         {{ $srfRNDNew ?? '0' }}
                                     </a>
                                 </h5>
@@ -464,7 +488,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="mb-3 mt-2">
                                     <h3 class="fs-30 font-weight-medium">
-                                        {{ $totalDue ?? '0'}}
+                                        {{ $totalDueToday ?? '0'}}
                                         <i class="ti ti-bell"></i>
                                     </h3>
                                 </div>
@@ -475,24 +499,24 @@
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>CRR</p>
                                 <h5 class="text-primary font-weight-medium">
-                                    <a href="{{ route('customer_requirement.index', ['status' => 10, 'DueDate' => 'past']) }}" class="text-white">
-                                        {{ $crrDue ?? '0' }}
+                                    <a href="{{ route('customer_requirement.index', ['DueDate' => 'past']) }}" class="text-white">
+                                        {{ $crrDueToday ?? '0' }}
                                     </a>
                                 </h5>
                             </div>
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>RPE</p>
                                 <h5 class="text-primary font-weight-medium">
-                                    <a href="{{ route('product_evaluation.index', ['status' => 10, 'DueDate' => 'past']) }}" class="text-white">
-                                        {{ $rpeDue ?? '0' }}
+                                    <a href="{{ route('product_evaluation.index', ['DueDate' => 'past']) }}" class="text-white">
+                                        {{ $rpeDueToday ?? '0' }}
                                     </a>
                                 </h5>
                             </div>
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>SRF</p>
                                 <h5 class="text-primary font-weight-medium">
-                                    <a href="{{ route('sample_request.index', ['status' => 10, 'DateRequired' => 'past']) }}" class="text-white">
-                                        {{ $srfDue ?? '0' }}
+                                    <a href="{{ route('sample_request.index', ['DateRequired' => 'past']) }}" class="text-white">
+                                        {{ $srfDueToday ?? '0' }}
                                     </a>
                                 </h5>
                             </div>
@@ -515,27 +539,30 @@
                             </div>
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>CRR</p>
-                                <h5 class="font-weight-medium text-white">
+                                <!-- <h5 class="font-weight-medium text-white">
                                     <a href="{{ route('customer_requirement.index', ['progress' => 30, 'status' => 10]) }}" class="text-white">
                                         {{ $crrRNDNew ?? '0' }}
                                     </a>
-                                </h5>
+                                </h5> -->
+                                <h5 class="font-weight-medium text-white">{{ $crrRNDNew ?? '0' }}</h5>
                             </div>
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>RPE</p>
-                                <h5 class="font-weight-medium text-white">
+                                <!-- <h5 class="font-weight-medium text-white">
                                     <a href="{{ route('product_evaluation.index', ['progress' => 30, 'status' => 10]) }}" class="text-white">
                                         {{ $rpeRNDNew ?? '0' }}
                                     </a>
-                                </h5>
+                                </h5> -->
+                                <h5 class="font-weight-medium text-white">{{ $rpeRNDNew ?? '0' }}</h5>
                             </div>
                             <div class="mb-1 d-flex justify-content-between">
                                 <p>SRF</p>
-                                <h5 class="font-weight-medium text-white">
+                                <!-- <h5 class="font-weight-medium text-white">
                                     <a href="{{ route('sample_request.index', ['progress' => 30, 'status' => 10]) }}" class="text-white">
                                         {{ $srfRNDNew ?? '0' }}
                                     </a>
-                                </h5>
+                                </h5> -->
+                                <h5 class="font-weight-medium text-white">{{ $srfRNDNew ?? '0' }}</h5>
                             </div>
                         </div>
                     </div>
@@ -553,17 +580,29 @@
                                     <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
                                 </div> -->
                             </div>
-                            <div class="mb-2 d-flex justify-content-between">
+                            <div class="mb-1 d-flex justify-content-between">
                                 <p>CRR</p>
-                                <h5 class="text-white font-weight-medium">{{ $crrDue ?? '0' }}</h5>
+                                <h5 class="text-primary font-weight-medium">
+                                    <a href="{{ route('customer_requirement.index', ['status' => 10, 'DueDate' => 'past']) }}" class="text-white" onclick="show()">
+                                        {{ $crrDue ?? '0' }}
+                                    </a>
+                                </h5>
                             </div>
-                            <div class="mb-2 d-flex justify-content-between">
+                            <div class="mb-1 d-flex justify-content-between">
                                 <p>RPE</p>
-                                <h5 class="text-white font-weight-medium">{{ $rpeDue ?? '0' }}</h5>
+                                <h5 class="text-primary font-weight-medium">
+                                    <a href="{{ route('product_evaluation.index', ['status' => 10, 'DueDate' => 'past']) }}" class="text-white" onclick="show()">
+                                        {{ $rpeDue ?? '0' }}
+                                    </a>
+                                </h5>
                             </div>
-                            <div class="mb-2 d-flex justify-content-between">
+                            <div class="mb-1 d-flex justify-content-between">
                                 <p>SRF</p>
-                                <h5 class="text-white font-weight-medium">{{ $srfDue ?? '0' }}</h5>
+                                <h5 class="text-primary font-weight-medium">
+                                    <a href="{{ route('sample_request.index', ['status' => 10, 'DateRequired' => 'past']) }}" class="text-white" onclick="show()">
+                                        {{ $srfDue ?? '0' }}
+                                    </a>
+                                </h5>
                             </div>
                         </div>
                     </div>
@@ -760,6 +799,14 @@
                             </div> -->
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}">
+                                    {{ $crrRndOpen ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
                             <p>Cancelled</p>
                             <h5 class="text-primary font-weight-medium">
                                 <a href="{{ route('customer_requirement.index', ['status' => 50]) }}">
@@ -820,6 +867,14 @@
                             <!-- <div class="mt-3">
                                 <a href="#" class="text-info">View all</a>
                             </div> -->
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('product_evaluation.index', ['status' => 10]) }}">
+                                    {{ $rndRpeOpen ?? '0' }}
+                                </a>
+                            </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Cancelled</p>
@@ -883,6 +938,14 @@
                             <!-- <div class="mt-3">
                                 <a href="#" class="text-info">View all</a>
                             </div> -->
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" onclick='show()'>
+                                    {{ $rndSrfOpen ?? '0' }}
+                                </a>
+                            </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Cancelled</p>

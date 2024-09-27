@@ -42,19 +42,74 @@ class RequestProductEvaluationController extends Controller
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
 
-        $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application'])
-            ->when($status, function($query) use ($status, $userId, $userByUser) {
+        $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application', 'rpe_personnels'])
+            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                
                 if ($status == '50') {
-                    // When filtering by '50', include all cancelled status records
-                    $query->where(function ($query) use ($userId, $userByUser) {
-                        $query->where('Status', '50')
-                            ->where(function($query) use ($userId, $userByUser) {
+                    // Filter for status '50' (cancelled) with relevant user filtering
+                    $query->where('Status', '50')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where(function($query) use ($userId, $userByUser) {
                                 $query->where('PrimarySalesPersonId', $userId)
                                     ->orWhere('SecondarySalesPersonId', $userId)
                                     ->orWhere('PrimarySalesPersonId', $userByUser)
                                     ->orWhere('SecondarySalesPersonId', $userByUser);
                             });
-                    });
+                            
+                            // Filter using a whereHas for 'rpe_personnels' related records
+                            $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
+                                $query->where('PersonnelUserId', $userId)
+                                    ->orWhere('PersonnelUserId', $userByUser);
+                            });
+                        });
+                } else {
+                    // Apply status filter if it's not '50'
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '10') {
+                    // Filter for status '50' (cancelled) with relevant user filtering
+                    $query->where('Status', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                            
+                            // Filter using a whereHas for 'rpe_personnels' related records
+                            $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
+                                $query->where('PersonnelUserId', $userId)
+                                    ->orWhere('PersonnelUserId', $userByUser);
+                            });
+                        });
+                } else {
+                    // Apply status filter if it's not '50'
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '30') {
+                    $query->where('Status', '30')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                            
+                            // Filter using a whereHas for 'rpe_personnels' related records
+                            $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
+                                $query->where('PersonnelUserId', $userId)
+                                    ->orWhere('PersonnelUserId', $userByUser);
+                            });
+                        });
                 } else {
                     // Apply status filter if it's not '50'
                     $query->where('Status', $status);
@@ -65,9 +120,9 @@ class RequestProductEvaluationController extends Controller
                     // When filtering by '10', include all relevant progress status records
                     $query->where('Progress', '10')
                         ->where(function($query) use ($userId, $userByUser) {
-                            $query->where('PrimarySalesPersonId', $userId)
-                                ->orWhere('SecondarySalesPersonId', $userId)
-                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                            $query->where('SecondarySalesPersonId', $userId)
+                                // ->orWhere('SecondarySalesPersonId', $userId)
+                                // ->orWhere('PrimarySalesPersonId', $userByUser)
                                 ->orWhere('SecondarySalesPersonId', $userByUser);
                         });
                 } else {
@@ -76,7 +131,8 @@ class RequestProductEvaluationController extends Controller
                 }
             })
             ->when($request->input('DueDate') === 'past', function($query) {
-                $query->where('DueDate', '<', now());  // Fetch only records with past due dates
+                $query->where('DueDate', '<', now())
+                        ->where('Status', '10'); 
             })
             ->when($request->has('open') && $request->has('close'), function($query)use($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);
@@ -98,6 +154,18 @@ class RequestProductEvaluationController extends Controller
             //     $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%')
             //         ->orWhere('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
             // })
+            ->when($progress == '30', function($query) {
+                $query->where('Progress', '30')
+                      ->where('Status', '10');
+            })
+            ->when($progress == '57', function($query) {
+                $query->where('Progress', '57')
+                      ->where('Status', '10');
+            })
+            ->when($progress == '81', function($query) {
+                $query->where('Progress', '81')
+                      ->where('Status', '10');
+            })
             ->where(function($query)use($search){
                 $query->where('RpeNumber', 'LIKE', '%'.$search.'%')
                     ->orWhere('DateCreated', 'LIKE','%'.$search.'%')

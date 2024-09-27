@@ -63,7 +63,7 @@
                 </div>
             </div>
             <div class="table-responsive" style="overflow: auto; height: 80vh;">
-                <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%" >
+                <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%">
                     @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == "RND" || auth()->user()->role->type == "QCD-MRDC" || auth()->user()->role->type == "QCD-PBI" || auth()->user()->role->type == "QCD-WHI" || auth()->user()->role->type == "QCD-CCC")
                     <thead>
                         <tr>

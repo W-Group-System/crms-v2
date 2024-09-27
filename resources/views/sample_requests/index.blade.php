@@ -90,54 +90,60 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($sampleRequests as $srf)
-                            <tr>
-                                <!-- <td align="center">
-                                    <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
-                                    @php
-                                        $user = auth()->user();
-                                    @endphp
-                                    <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
-                                        data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF' @if($user->id != $srf->PrimarySalesPersonId && $user->user_id != $srf->PrimarySalesPersonId) disabled @endif>
-                                        <i class="ti-pencil"></i>
-                                    </button>    
-                                </td> -->
-                                <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}" title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
-                                <td>
-                                    @if($srf->RefCode == 1)
-                                        RND
-                                    @elseif($srf->RefCode == 2)
-                                        QCD-WHI
-                                    @elseif($srf->RefCode == 3)
-                                        QCD-PBI
-                                    @elseif($srf->RefCode == 4)
-                                        QCD-MRDC
-                                        @elseif($srf->RefCode == 5)
-                                        QCD-CCC
-                                    @else
-                                        {{ $srf->RefCode }}
-                                    @endif
-                                </td>
-                                <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
-                                <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
-                                <td>{{ optional($srf->client)->Name }}</td>
-                                <td>
-                                    @foreach ($srf->requestProducts as $product)
-                                        {{ optional($product->productApplicationsId)->Name }}<br>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    @if($srf->Status == 10)
-                                        <div class="badge badge-success">Open</div>
-                                    @elseif($srf->Status == 30)
-                                        <div class="badge badge-warning">Closed</div>
-                                    @elseif($srf->Status == 50)
-                                        <div class="badge badge-danger">Cancelled</div>
-                                    @endif
-                                </td>
-                                <td>{{ optional($srf->progressStatus)->name }}</td>
-                            </tr>
-                        @endforeach
+                            @if(count($sampleRequests) > 0)
+                                @foreach ($sampleRequests as $srf)
+                                <tr>
+                                    <!-- <td align="center">
+                                        <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
+                                        @php
+                                            $user = auth()->user();
+                                        @endphp
+                                        <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
+                                            data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF' @if($user->id != $srf->PrimarySalesPersonId && $user->user_id != $srf->PrimarySalesPersonId) disabled @endif>
+                                            <i class="ti-pencil"></i>
+                                        </button>    
+                                    </td> -->
+                                    <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}" title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
+                                    <td>
+                                        @if($srf->RefCode == 1)
+                                            RND
+                                        @elseif($srf->RefCode == 2)
+                                            QCD-WHI
+                                        @elseif($srf->RefCode == 3)
+                                            QCD-PBI
+                                        @elseif($srf->RefCode == 4)
+                                            QCD-MRDC
+                                            @elseif($srf->RefCode == 5)
+                                            QCD-CCC
+                                        @else
+                                            {{ $srf->RefCode }}
+                                        @endif
+                                    </td>
+                                    <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
+                                    <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
+                                    <td>{{ optional($srf->client)->Name }}</td>
+                                    <td>
+                                        @foreach ($srf->requestProducts as $product)
+                                            {{ optional($product->productApplicationsId)->Name }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @if($srf->Status == 10)
+                                            <div class="badge badge-success">Open</div>
+                                        @elseif($srf->Status == 30)
+                                            <div class="badge badge-warning">Closed</div>
+                                        @elseif($srf->Status == 50)
+                                            <div class="badge badge-danger">Cancelled</div>
+                                        @endif
+                                    </td>
+                                    <td>{{ optional($srf->progressStatus)->name }}</td>
+                                </tr>
+                                @endforeach
+                            @else 
+                                <tr>
+                                    <td colspan="8" class="text-center">No data available</td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
                     {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
@@ -184,117 +190,123 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($sampleRequests as $srf)
-                                <tr>
-                                    <!-- <td align="center">
-                                        <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
-                                        <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
-                                            data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
-                                            <i class="ti-pencil"></i>
-                                        </button>
-                                    </td> -->
-                                    <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
-                                    {{-- <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
-                                    <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td> --}}
-                                    <td>
-                                        @if($srf->RefCode == 1)
-                                            RND
-                                        @elseif($srf->RefCode == 2)
-                                            QCD-WHI
-                                        @elseif($srf->RefCode == 3)
-                                            QCD-PBI
-                                        @elseif($srf->RefCode == 4)
-                                            QCD-MRDC
-                                            @elseif($srf->RefCode == 5)
-                                            QCD-CCC
-                                        @else
-                                            {{ $srf->RefCode }}
-                                        @endif
-                                    </td>
-                                    <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
-                                    <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
-                                    <td>
-                                        @if($srf->SrfType == 1)
-                                            Regular
-                                        @elseif($srf->SrfType == 2)
-                                            PSS
-                                        @elseif($srf->SrfType == 3)
-                                            CSS
-                                        @else
-                                            {{ $srf->SrfType }}
-                                        @endif
-                                    </td>
-                                    <td>{{ optional($srf->client)->Name }}</td>
-                                    <td>{{ optional(optional($srf->client)->clientregion)->Name }}</td>
-                                    <td>{{ optional(optional($srf->client)->clientcountry)->Name }}</td>
-                                    <td>
-                                        {{-- {{ $srf->primarySalesPerson->full_name ?? 'N/A' }} --}}
-                                        @if($srf->primarySalesPerson)
-                                            {{$srf->primarySalesPerson->full_name}}
-                                        @elseif($srf->primarySalesById)
-                                            {{$srf->primarySalesById->full_name}}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @foreach ($srf->requestProducts as $product)
-                                            {{ $product->ProductIndex }}<br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($srf->requestProducts as $product)
-                                            {{ $product->NumberOfPackages }}<br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($srf->requestProducts as $product)
-                                            {{ $product->Quantity }}<br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($srf->requestProducts as $product)
-                                            {{ $product->ProductCode }}<br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($srf->requestProducts as $product)
-                                            {{ $product->Label }}<br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($srf->requestProducts as $product)
-                                            {{ optional($product->productApplicationsId)->Name }}<br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($srf->requestProducts as $product)
-                                            {{ $product->ProductDescription }}<br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($srf->requestProducts as $product)
-                                            {{ $product->RpeNumber }}<br>
-                                        @endforeach
-                                    </td>
-                                    <td>
-                                        @foreach ($srf->requestProducts as $product)
-                                            {{ $product->CrrNumber }}<br>
-                                        @endforeach
-                                    </td>   
-                                    <td>{{ $srf->DateSampleReceived ? date('m/d/y', strtotime($srf->DateSampleReceived)) : 'NA' }}</td>
-                                    <td>{{ $srf->DateDispatched ? date('m/d/y', strtotime($srf->DateDispatched)) : 'NA' }}</td>
+                            @if(count($sampleRequests) > 0)
+                                @foreach ($sampleRequests as $srf)
+                                    <tr>
+                                        <!-- <td align="center">
+                                            <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
+                                            <button type="button" id="editSrf{{ $srf->Id }}" class="btn btn-sm btn-outline-warning"
+                                                data-target="#edit{{ $srf->Id }}" data-toggle="modal" title='Edit SRF'>
+                                                <i class="ti-pencil"></i>
+                                            </button>
+                                        </td> -->
+                                        <td><a href="{{ url('samplerequest/view/' . $srf->Id) }}"  title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
+                                        {{-- <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
+                                        <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td> --}}
+                                        <td>
+                                            @if($srf->RefCode == 1)
+                                                RND
+                                            @elseif($srf->RefCode == 2)
+                                                QCD-WHI
+                                            @elseif($srf->RefCode == 3)
+                                                QCD-PBI
+                                            @elseif($srf->RefCode == 4)
+                                                QCD-MRDC
+                                                @elseif($srf->RefCode == 5)
+                                                QCD-CCC
+                                            @else
+                                                {{ $srf->RefCode }}
+                                            @endif
+                                        </td>
+                                        <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
+                                        <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
+                                        <td>
+                                            @if($srf->SrfType == 1)
+                                                Regular
+                                            @elseif($srf->SrfType == 2)
+                                                PSS
+                                            @elseif($srf->SrfType == 3)
+                                                CSS
+                                            @else
+                                                {{ $srf->SrfType }}
+                                            @endif
+                                        </td>
+                                        <td>{{ optional($srf->client)->Name }}</td>
+                                        <td>{{ optional(optional($srf->client)->clientregion)->Name }}</td>
+                                        <td>{{ optional(optional($srf->client)->clientcountry)->Name }}</td>
+                                        <td>
+                                            {{-- {{ $srf->primarySalesPerson->full_name ?? 'N/A' }} --}}
+                                            @if($srf->primarySalesPerson)
+                                                {{$srf->primarySalesPerson->full_name}}
+                                            @elseif($srf->primarySalesById)
+                                                {{$srf->primarySalesById->full_name}}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ $product->ProductIndex }}<br>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ $product->NumberOfPackages }}<br>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ $product->Quantity }}<br>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ $product->ProductCode }}<br>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ $product->Label }}<br>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ optional($product->productApplicationsId)->Name }}<br>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ $product->ProductDescription }}<br>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ $product->RpeNumber }}<br>
+                                            @endforeach
+                                        </td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ $product->CrrNumber }}<br>
+                                            @endforeach
+                                        </td>   
+                                        <td>{{ $srf->DateSampleReceived ? date('m/d/y', strtotime($srf->DateSampleReceived)) : 'NA' }}</td>
+                                        <td>{{ $srf->DateDispatched ? date('m/d/y', strtotime($srf->DateDispatched)) : 'NA' }}</td>
 
-                                    <td>
-                                        @if($srf->Status == 10)
-                                            <div class="badge badge-success">Open</div>
-                                        @elseif($srf->Status == 30)
-                                            <div class="badge badge-warning">Closed</div>
-                                        @elseif($srf->Status == 50)
-                                            <div class="badge badge-danger">Cancelled</div>
-                                        @endif
-                                    </td>
-                                    <td>{{ optional($srf->progressStatus)->name }}</td>
+                                        <td>
+                                            @if($srf->Status == 10)
+                                                <div class="badge badge-success">Open</div>
+                                            @elseif($srf->Status == 30)
+                                                <div class="badge badge-warning">Closed</div>
+                                            @elseif($srf->Status == 50)
+                                                <div class="badge badge-danger">Cancelled</div>
+                                            @endif
+                                        </td>
+                                        <td>{{ optional($srf->progressStatus)->name }}</td>
+                                    </tr>
+                                @endforeach
+                            @else 
+                                <tr>
+                                    <td colspan="22" class="text-center">No data available</td>
                                 </tr>
-                            @endforeach
+                            @endif
                         </tbody>
                     </table>
                     <!-- {!! $products->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
@@ -309,7 +321,8 @@
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                     </div> -->
-                    {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                    <!-- {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
+                    {{ $sampleRequests->appends(request()->query())->links() }}
                     @php
                         $total = $sampleRequests->total();
                         $currentPage = $sampleRequests->currentPage();
@@ -370,7 +383,8 @@
                         @endforeach
                         </tbody>
                     </table>
-                     {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                    <!-- $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
+                    {{ $sampleRequests->appends(request()->query())->links() }}
                     @php
                         $total = $sampleRequests->total();
                         $currentPage = $sampleRequests->currentPage();

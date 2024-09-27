@@ -22,7 +22,7 @@ class DashboardController extends Controller
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id; // Safely access user_id
         $role = optional(Auth::user())->role;
-
+      
         if (!$userId && !$userByUser && !$role) {
             // Handle case where there is no authenticated user
             return redirect()->route('login'); // Or handle it in another appropriate way
@@ -48,8 +48,6 @@ class DashboardController extends Controller
         // Total activities
         $totalActivitiesCount = $openActivitiesCount + $closedActivitiesCount;
 
-
-        
         // Generic function to count records across models
         function countRecords($model, $userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
             return $model::where(function($query) use ($userId, $userByUser) {
@@ -242,9 +240,10 @@ class DashboardController extends Controller
         $srfSalesForApproval = countApproval(SampleRequest::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
         $prfSalesForApproval = countApproval(PriceMonitoring::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
 
-
         // Total approval count
         $totalApproval = $crrSalesForApproval + $rpeSalesForApproval + $srfSalesForApproval + $prfSalesForApproval;
+
+        /************* RND *************/
 
         // RND Approval
         $crrRNDInitialReview = CustomerRequirement::where('Status', '10')->where('Progress', '57')->count();
@@ -260,45 +259,18 @@ class DashboardController extends Controller
         $totalFinalReview = $crrRNDFinallReview + $rpeRNDFinallReview + $srfRNDFinallReview;
 
         // RND New Request
-        // $crrRNDNew = CustomerRequirement::where('Status', '10')->where('Progress', '30')->count();
-        // $rpeRNDNew = RequestProductEvaluation::where('Status', '10')->where('Progress', '30')->count();
-        // $srfRNDNew = SampleRequest::where('Status', '10')->where('Progress', '30')->count();
-        $crrRNDNew = CustomerRequirement::where('Status', '10')
-            ->where('Progress', '30')
-            ->whereIn('id', function($query) use ($userId, $userByUser) {
-                $query->select('CustomerRequirementId')
-                    ->from('crrpersonnels')
-                    ->where('PersonnelUserId', $userId)
-                    ->orWhere('PersonnelUserId', $userByUser);
-            })
-            ->count(); // Count the records that match the criteria
-
-        $rpeRNDNew = RequestProductEvaluation::where('Status', '10')
-            ->where('Progress', '30')
-            ->whereIn('id', function($query) use ($userId, $userByUser) {
-                $query->select('RequestProductEvaluationId')
-                    ->from('rpepersonnels')
-                    ->where('PersonnelUserId', $userId)
-                    ->orWhere('PersonnelUserId', $userByUser);
-            })
-            ->count(); // Count the records that match the criteria
-        
-        $srfRNDNew = SampleRequest::where('Status', '10')
-            ->where('Progress', '30')
-            ->whereIn('id', function($query) use ($userId, $userByUser) {
-                $query->select('SampleRequestId')
-                    ->from('srfpersonnels')
-                    ->where('PersonnelUserId', $userId)
-                    ->orWhere('PersonnelUserId', $userByUser);
-            })
-            ->count(); // Count the records that match the criteria
+        $crrRNDNew = CustomerRequirement::where('Status', '10')->where('Progress', '30')->count();
+        $rpeRNDNew = RequestProductEvaluation::where('Status', '10')->where('Progress', '30')->count();
+        $srfRNDNew = SampleRequest::where('Status', '10')->where('Progress', '30')->count();
 
         $totalNewRequest = $crrRNDNew + $rpeRNDNew + $srfRNDNew;
 
         // RND Due 
-        // $crrDue = CustomerRequirement::where('Status', '10')->where('DueDate', '<', now())->count();
-        // $rpeDue = RequestProductEvaluation::where('Status', '10')->where('DueDate', '<', now())->count();
-        // $srfDue = SampleRequest::where('Status', '10')->where('DateRequired', '<', now())->count();
+        $crrDueToday = CustomerRequirement::where('Status', '10')->where('DueDate', '<', now())->count();
+        $rpeDueToday = RequestProductEvaluation::where('Status', '10')->where('DueDate', '<', now())->count();
+        $srfDueToday = SampleRequest::where('Status', '10')->where('DateRequired', '<', now())->count();
+
+        $totalDueToday = $crrDueToday + $rpeDueToday + $srfDueToday;
 
         $crrDue = CustomerRequirement::where('Status', '10')
             ->where('DueDate', '<', now())
@@ -331,7 +303,76 @@ class DashboardController extends Controller
             ->count(); // Count the records that match the criteria
         
         $totalDue = $crrDue + $rpeDue + $srfDue;
-           
+        
+        // Open Transaction
+        $crrRndOpen = CustomerRequirement::where('Status', '10')->count();
+        $rpeRndOpen = RequestProductEvaluation::where('Status', '10')->count();
+        $srfRndOpen = SampleRequest::where('Status', '10')->count();
+
+        // Closed Transaction
+        $crrRndClosed = CustomerRequirement::where('Status', '30')->count();
+        $rpeRndClosed = RequestProductEvaluation::where('Status', '30')->count();
+        $srfRndClosed = SampleRequest::where('Status', '30')->count();
+        
+        // Open 
+        $rndCrrOpen = CustomerRequirement::where('Status', '10')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('CustomerRequirementId')
+                    ->from('crrpersonnels')
+                    ->where('PersonnelUserId', '=',  $userId)
+                    ->orWhere('PersonnelUserId', '=', $userByUser);
+            })
+            ->count(); 
+
+        $rndRpeOpen = RequestProductEvaluation::where('Status', '10')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('RequestProductEvaluationId')
+                    ->from('rpepersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); 
+            
+        $rndSrfOpen = SampleRequest::where('Status', '10')
+            ->whereIn('Id', function($query) use ($userId, $userByUser) {
+                $query->select('SampleRequestId')
+                    ->from('srfpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); 
+              
+        $totalOpenRND = $rndCrrOpen + $rndRpeOpen + $rndSrfOpen;
+
+        // Closed
+        $rndCrrClosed = CustomerRequirement::where('Status', '30')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('CustomerRequirementId')
+                    ->from('crrpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); 
+
+        $rndRpeClosed = RequestProductEvaluation::where('Status', '30')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('RequestProductEvaluationId')
+                    ->from('rpepersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); 
+
+        $rndSrfClosed = SampleRequest::where('Status', '30')
+            ->whereIn('Id', function($query) use ($userId, $userByUser) {
+                $query->select('SampleRequestId')
+                    ->from('srfpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count();
+
+        $totalClosedRND = $rndCrrClosed + $rndRpeClosed + $rndSrfClosed;
         // New Products
         $newProducts = Product::where(function($query) {
                 $query->whereMonth('created_at', Carbon::now()->month)
@@ -343,9 +384,6 @@ class DashboardController extends Controller
             })
             ->orderBy('created_at', 'desc') 
             ->get();
-        // dd($newProducts);
-
-        
 
         // CRR counts RND
         function countCustomerRequirementsRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
@@ -448,7 +486,7 @@ class DashboardController extends Controller
             'crrRnDFinal', 'crrRnDCompleted', 'totalCustomerServiceCount', 
             'customerComplaintsCount', 'customerFeedbackCount', 'totalRPECount', 'rpeCancelled', 'rpeSalesApproval',
             'rpeSalesApproved', 'rpeSalesAccepted', 'rpeRnDOngoing', 'rpeRnDPending', 'rpeRnDInitial', 'rpeRnDFinal', 'rpeRnDCompleted', 'totalSRFCount', 'srfCancelled', 'srfSalesApproval',
-            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND'
+            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalOpenRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday', 'crrRndOpen'
         ));
     }
 }
