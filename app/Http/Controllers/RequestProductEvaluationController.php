@@ -454,7 +454,7 @@ class RequestProductEvaluationController extends Controller
                 } elseif (isset($audit->new_values['Status']) && $audit->new_values['Status'] == 30) {
                     $details = "Closed request product evaluation transaction";
                 } else {
-                    $details = $audit->event . " " . 'Sample Request';
+                    $details = $audit->event . " " . 'Product Evaluation Request';
                 }
             }
             return (object) [
