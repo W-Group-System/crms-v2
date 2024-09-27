@@ -334,18 +334,17 @@
                                                     </button>
                                                 </form>
                                             </td>
-                                            <td>{{$pf->Name}}</td>
                                             <td>
-                                                @if($pf->IsConfidential == 0)
-                                                    {{$pf->Description}}
+                                                @if($pf->IsConfidential == 1)
+                                                <i class="mdi mdi-eye-off-outline text-danger"></i>
                                                 @endif
+                                                {{$pf->Name}}
                                             </td>
                                             <td>
-                                                @if($pf->IsConfidential == 0)
-                                                    @if($pf->client)
-                                                        {{$pf->client->Name}}
-                                                    @endif
-                                                @endif
+                                                {{$pf->Description}}
+                                            </td>
+                                            <td>
+                                                {{optional($pf->client)->Name}}
                                             </td>
                                             <td>
                                                 @if($pf->IsConfidential == 0)
