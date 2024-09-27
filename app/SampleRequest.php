@@ -93,7 +93,10 @@ class SampleRequest extends Model implements Auditable
     {
         return $this->hasMany(SrfPersonnel::class,'SampleRequestId');
     }
-
+    public function srf_personnel()
+    {
+        return $this->belongsTo(SrfPersonnel::class, 'Id', 'SampleRequestId');
+    }
     public function srfTransactionApprovals()
     {
         return $this->hasMany(TransactionApproval::class,'TransactionId','Id')->where('Type', 30);

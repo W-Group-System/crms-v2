@@ -27,6 +27,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use Collective\Html\FormFacade as Form;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class CustomerRequirementController extends Controller
 {
@@ -42,12 +43,12 @@ class CustomerRequirementController extends Controller
 
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
-        // dd($userByUser);
+
+        $crrRndOpen = CustomerRequirement::where('Status', '10')->count();
         // Fetch customer requirements with applied filters
         $customer_requirements = CustomerRequirement::with(['client', 'product_application', 'crr_personnels'])
             ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
-                
                 if ($status == '50') {
                     // Filter for status '50' (cancelled) with relevant user filtering
                     $query->where('Status', '50')
@@ -70,6 +71,49 @@ class CustomerRequirementController extends Controller
                     $query->where('Status', $status);
                 }
             })
+            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '10') {
+                    $query->where('Status', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                            // Filter using a whereHas for 'crr_personnels' related records
+                            $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                $query->where('PersonnelUserId', $userId)
+                                    ->orWhere('PersonnelUserId', $userByUser);
+                            });
+                        });
+                } else {
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '30') {
+                    $query->where('Status', '30')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                            
+                            // Filter using a whereHas for 'crr_personnels' related records
+                            $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                $query->where('PersonnelUserId', $userId)
+                                    ->orWhere('PersonnelUserId', $userByUser);
+                            });
+                        });
+                } else {
+                    $query->where('Status', $status);
+                }
+            })
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
                     // When filtering by '10', include all relevant progress status records
@@ -86,7 +130,8 @@ class CustomerRequirementController extends Controller
                 }
             })
             ->when($request->input('DueDate') === 'past', function($query) {
-                $query->where('DueDate', '<', now());  // Fetch only records with past due dates
+                $query->where('DueDate', '<', now())
+                        ->where('Status', '10');  
             })
             ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);
@@ -131,9 +176,13 @@ class CustomerRequirementController extends Controller
                     });
                 }  
             })
-                ->orderBy($sort, $direction)
-                ->paginate($request->entries ?? 10);
-            
+            ->when($progress == '30' || $progress == '57' || $progress == '81', function ($query) use ($progress) {
+                $query->where('Progress', $progress)
+                      ->where('Status', '10');
+            })
+            ->orderBy($sort, $direction)
+            ->paginate($request->entries ?? 10);
+
         // Fetch related data for filters and dropdowns
         $product_applications = ProductApplication::all();
         $clients = Client::where(function($query) {

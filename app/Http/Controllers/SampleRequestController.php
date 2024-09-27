@@ -49,7 +49,7 @@ class SampleRequestController extends Controller
         $role = $loggedInUser->role;
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id;
-
+        
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
         $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
 
@@ -110,7 +110,7 @@ class SampleRequestController extends Controller
         })
         ->get();
 
-        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
+        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles', 'srf_personnel']) 
             ->when($status, function($query) use ($status, $userId, $userByUser) {
                 if ($status == '50') {
                     // When filtering by '50', include all cancelled status records
@@ -123,6 +123,50 @@ class SampleRequestController extends Controller
                                     ->orWhere('SecondarySalesPersonId', $userByUser);
                             });
                     });
+                } else {
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '10') {
+                    $query->where('Status', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                            
+                            // Filter using a whereHas for 'crr_personnels' related records
+                            $query->orWhereHas('srf_personnel', function($query) use ($userId, $userByUser) {
+                                $query->where('PersonnelUserId', $userId)
+                                    ->orWhere('PersonnelUserId', $userByUser);
+                            });
+                        });
+                } else {
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '30') {
+                    $query->where('Status', '30')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where(function($query) use ($userId, $userByUser) {
+                                $query->where('PrimarySalesPersonId', $userId)
+                                    ->orWhere('SecondarySalesPersonId', $userId)
+                                    ->orWhere('PrimarySalesPersonId', $userByUser)
+                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                            });
+                            
+                            // Filter using a whereHas for 'crr_personnels' related records
+                            $query->orWhereHas('srf_personnel', function($query) use ($userId, $userByUser) {
+                                $query->where('PersonnelUserId', $userId)
+                                    ->orWhere('PersonnelUserId', $userByUser);
+                            });
+                        });
                 } else {
                     $query->where('Status', $status);
                 }
@@ -143,7 +187,8 @@ class SampleRequestController extends Controller
                 }
             })
             ->when($request->input('DateRequired') === 'past', function($query) {
-                $query->where('DateRequired', '<', now());  // Fetch only records with past due dates
+                $query->where('DateRequired', '<', now())
+                        ->where('Status', '10'); 
             })
             ->when($open && $close, function($query) use ($open, $close) {
                 $query->whereIn('Status', [$open, $close]);
@@ -170,6 +215,18 @@ class SampleRequestController extends Controller
             })
             ->when(auth()->user()->role->type == 'IS', function($query) {
                 $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
+            })
+            ->when($progress == '30', function($query) {
+                $query->where('Progress', '30')
+                    ->where('Status', '10');
+            })
+            ->when($progress == '57', function($query) {
+                $query->where('Progress', '57')
+                      ->where('Status', '10');
+            })
+            ->when($progress == '81', function($query) {
+                $query->where('Progress', '81')
+                      ->where('Status', '10');
             })
             ->orderBy($sort, $direction)
             ->paginate($request->entries ?? 10);
@@ -220,11 +277,12 @@ class SampleRequestController extends Controller
                     ->where('Status', '10');
             })
             ->when($request->input('DateRequired') === 'past', function($query) {
-                $query->where('DateRequired', '<', now());  // Fetch only records with past due dates
+                $query->where('DateRequired', '<', now())
+                        ->where('Status', '10');  // Fetch only records with past due dates
             })
             ->orderBy($sort, $direction)
             ->paginate($request->entries ?? 10);
-            // dd($rndSrf);
+          
        
         return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users'));
     }
