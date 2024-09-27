@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_sample_request" enctype="multipart/form-data" action="{{ url('srfFiles') }}">
+                <form method="POST" id="form_sample_request" enctype="multipart/form-data" action="{{ url('uploadsrfFiles') }}">
                     @csrf
                     <div class="srf-file">
                         <div class="row">

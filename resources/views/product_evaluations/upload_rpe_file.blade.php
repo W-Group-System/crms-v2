@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('rpeFiles') }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('uploadrpeFiles') }}">
                     @csrf
                     <div class="rpe-file">
                         <div class="col-lg-12 mb-3">

@@ -98,10 +98,14 @@ class SampleRequestController extends Controller
         // ->get(); 
         $clients = Client::where(function($query) {
             if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+                if (auth()->user()->role->type == "LS"){
+                    $query->where('Type', 1);
+                } else {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
                     ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                }
             }
         })
         ->get();
@@ -339,26 +343,15 @@ class SampleRequestController extends Controller
         }
 
         $clients = Client::where(function($query) {
-            if (auth()->user()->role->name == "Department Admin")
-            {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
+            if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
+                if (auth()->user()->role->type == "LS"){
+                    $query->where('Type', 1);
+                } else {
+                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
                     ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
                     ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-            }
-            if (auth()->user()->role->name == "Staff L2")
-            {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-            }
-            if (auth()->user()->role->name == "Staff L1")
-            {
-                $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                }
             }
         })
         ->get();

@@ -191,7 +191,7 @@
                             <p class="col-sm-2 col-form-label"><b>Validity Date:</b></p>
                             <p class="col-sm-3 col-form-label">{{  $price_monitorings->ValidityDate }}</p>
                             <p class="offset-sm-2 col-sm-2 col-form-label"><b>Payment Term:</b></p>
-                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->PaymentTermId}}</p>
+                            <p class="col-sm-3 col-form-label">{{ $price_monitorings->paymentterms->Name}}</p>
                         </div>
                         <div class="form-group row">
                             <p class="col-sm-2 col-form-label"><b>Packaging Type:</b></p>

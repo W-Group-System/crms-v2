@@ -547,28 +547,10 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Recommendation : </b></p></div>
-                    <div class="col-sm-3 col-md-3">
-                        <p class="mb-0">
-                            @php
-                            $crr_recommendation = $crr->Recommendation;
-                            $pattern = '/\[(.*?)\]/';
-                        
-                            $crr_linked = preg_replace_callback($pattern, function($matches) {
-                                $code = $matches[1];
-                                $productId = getProductIdByCode($code);
-                                
-                                if ($productId != null) {
-                                    return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
-                                }
-                                return $matches[0];
-                            }, $crr_recommendation);
-                            @endphp  
-                            {{$crr_linked}}
-                        </p>
-                    </div>
+                    <div class="col-sm-3 col-md-2"></div>
+                    <div class="col-sm-3 col-md-3"></div>
                     <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Date Completed :</b></p></div>
-                    <div class="col-sm-3 col-md-2">
+                    <div class="col-sm-3 col-md-3">
                         <p class="mb-0">
                             @if($crr->DateCompleted != null)
                             {{date('Y-m-d', strtotime($crr->DateCompleted))}}
@@ -578,9 +560,11 @@
                         </p>
                     </div>
                 </div>
-                <div class="form-group row mb-3">
+                <div class="row">
+                    <div class="col-sm-3 col-md-2"></div>
+                    <div class="col-sm-3 col-md-3"></div>
                     <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Days Late : </b></p></div>
-                    <div class="col-sm-3 col-md-2">
+                    <div class="col-sm-3 col-md-3">
                         @php
                             $today = new DateTime();
                             $due_date = new DateTime($crr->DueDate);
@@ -597,6 +581,28 @@
                         @endphp
                         <p class="mb-0">
                             {{$days_late .' day' .$s}}
+                        </p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Recommendation : </b></p></div>
+                    <div class="col-sm-3 col-md-3">
+                        <p class="mb-0">
+                            @php
+                            $crr_recommendation = $crr->Recommendation;
+                            $pattern = '/\[(.*?)\]/';
+                        
+                            $crr_linked = preg_replace_callback($pattern, function($matches) {
+                                $code = $matches[1];
+                                $productId = getProductIdByCode($code);
+                                
+                                if ($productId != null) {
+                                    return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
+                                }
+                                return $matches[0];
+                            }, $crr_recommendation);
+                            @endphp
+                            {!! nl2br($crr_linked ) !!}
                         </p>
                     </div>
                 </div>
@@ -1017,7 +1023,10 @@
         });
 
         $(document).on('click', '.removeRow', function() {
-            $(this).closest('.input-group').remove();
+            if ($('.input-group').length > 1)
+            {
+                $(this).closest('.input-group').remove();
+            }
         });
 
         $('[name="crr_file"]').on('change', function(e) {
