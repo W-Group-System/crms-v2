@@ -432,7 +432,7 @@ class CustomerRequirementController extends Controller
         return back();
     }
 
-    public function view($id)
+    public function view($id, $crrNumber)
     {
         $customerRequirement = CustomerRequirement::with('client', 'product_application', 'progressStatus', 'crrNature', 'primarySales', 'secondarySales', 'priority', 'crrDetails')->findOrFail($id);
         $clients = Client::where(function($query) {

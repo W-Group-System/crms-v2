@@ -344,7 +344,11 @@
                                     </button>
                                 </form>
                             </td> -->
-                            <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements">{{ optional($customerRequirement)->CrrNumber }}</a></td>
+                            <td>
+                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id.'/'.$customerRequirement->CrrNumber)}}" title="View Customer Requirements">
+                                    {{$customerRequirement->CrrNumber}}
+                                </a>
+                            </td>
                             <td>
                                 @if($customerRequirement->RefCode != null)
                                 {{$customerRequirement->RefCode}}

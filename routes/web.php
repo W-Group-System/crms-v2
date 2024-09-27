@@ -159,7 +159,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::post('update_customer_requirement/{id}', 'CustomerRequirementController@update');
     Route::post('update_crr/{id}', 'CustomerRequirementController@updateCrr');
     Route::post('/delete_crr/{id}', 'CustomerRequirementController@delete');
-    Route::get('view_customer_requirement/{id}', 'CustomerRequirementController@view')->name('viewCrr');
+    Route::get('view_customer_requirement/{id}/{crrNumber}', 'CustomerRequirementController@view')->name('viewCrr');
     Route::get('customer_requirement_export', 'CustomerRequirementController@export');
     Route::post('close_remarks/{id}', 'CustomerRequirementController@closeRemarks');
     Route::post('cancel_remarks/{id}', 'CustomerRequirementController@cancelRemarks');
