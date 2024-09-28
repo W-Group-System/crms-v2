@@ -514,13 +514,12 @@ class DashboardController extends Controller
                     ->orWhere('PersonnelUserId', $userByUser);
             })
             ->count(); // Count the records that match the criteria
-        
         $totalDue = $crrDue + $rpeDue + $srfDue;
         
         // Open Transaction
         $crrImmediateOpen = CustomerRequirement::where('Status', '10')->count();
         $rpeImmediateOpen = RequestProductEvaluation::where('Status', '10')->count();
-        $srfImmediateOpen = SampleRequest::where('Status', '10')->count();
+        $srfImmediateOpen = SampleRequest::where('Status', '10')->count();     
 
         // Closed Transaction
         $crrImmediateClosed = CustomerRequirement::where('Status', '30')->count();
@@ -531,7 +530,11 @@ class DashboardController extends Controller
         $crrImmediateCancelled = CustomerRequirement::where('Status', '50')->count();
         $rpeImmediateCancelled = RequestProductEvaluation::where('Status', '50')->count();
         $srfImmediateCancelled = SampleRequest::where('Status', '50')->count();
-        
+
+        $totalImmediateCRR = $crrImmediateOpen + $crrImmediateClosed + $crrImmediateCancelled;
+        $totalImmediateRPE = $rpeImmediateOpen + $rpeImmediateClosed + $srfImmediateCancelled;
+        $totalImmediateSRF = $srfImmediateOpen + $srfImmediateClosed + $srfImmediateCancelled;
+
         // Open 
         $rndCrrOpen = CustomerRequirement::where('Status', '10')
             ->whereIn('id', function($query) use ($userId, $userByUser) {
@@ -684,6 +687,6 @@ class DashboardController extends Controller
         // $srfRnDCompletedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '60');
         // $totalSRFCountRND = $srfCancelledRND + $srfSalesApprovalRND + $srfSalesApprovedRND + $srfSalesAcceptedRND + $srfRnDReceivedRND + $srfRnDOngoingRND + $srfRnDPendingRND + $srfRnDInitialRND + $srfRnDFinalRND + $srfRnDCompletedRND;
 
-        return view('dashboard.rnd', compact('role', 'newProducts', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDFinalReview', 'rpeRNDFinalReview', 'srfRNDFinalReview', 'totalFinalReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday', 'totalOpenRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalClosedRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'crrImmediateOpen', 'rpeImmediateOpen', 'srfImmediateOpen', 'crrImmediateClosed', 'rpeImmediateClosed', 'srfImmediateClosed', 'crrImmediateCancelled', 'rpeImmediateCancelled', 'srfImmediateCancelled'));
+        return view('dashboard.rnd', compact('role', 'newProducts', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDFinalReview', 'rpeRNDFinalReview', 'srfRNDFinalReview', 'totalFinalReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday', 'totalOpenRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalClosedRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'crrImmediateOpen', 'rpeImmediateOpen', 'srfImmediateOpen', 'crrImmediateClosed', 'rpeImmediateClosed', 'srfImmediateClosed', 'crrImmediateCancelled', 'rpeImmediateCancelled', 'srfImmediateCancelled', 'totalImmediateCRR', 'totalImmediateRPE', 'totalImmediateSRF'));
     }
 }
