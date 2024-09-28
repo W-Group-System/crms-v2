@@ -150,7 +150,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['DueDate' => 'past']) }}" class="text-white">
+                                <a href="{{ route('customer_requirement.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
                                     {{ $crrDueToday ?? '0' }}
                                 </a>
                             </h5>
@@ -158,7 +158,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>RPE</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['DueDate' => 'past']) }}" class="text-white">
+                                <a href="{{ route('product_evaluation.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
                                     {{ $rpeDueToday ?? '0' }}
                                 </a>
                             </h5>
@@ -166,7 +166,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['DateRequired' => 'past']) }}" class="text-white">
+                                <a href="{{ route('sample_request.index', ['DateRequired' => 'past']) }}" class="text-white" onclick="show()">
                                     {{ $srfDueToday ?? '0' }}
                                 </a>
                             </h5>
@@ -385,7 +385,7 @@
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-primary fs-30 font-weight-medium">
-                                    {{ $totalCRRCountRND ?? '0'}}
+                                    {{ $totalImmediateCRR ?? '0'}}
                                     <i class="ti ti-user"></i>
                                 </h3>
                             </div>
@@ -427,7 +427,7 @@
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-primary fs-30 font-weight-medium">
-                                    {{ $totalRPECountRND ?? '0'}}
+                                    {{ $totalImmediateRPE ?? '0'}}
                                     <i class="ti ti-file"></i>
                                 </h3>
                             </div>
@@ -438,7 +438,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Open</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['status' => 10]) }}">
+                                <a href="{{ route('product_evaluation.index', ['status' => 10]) }}" onclick="show()">
                                     {{ $rpeImmediateOpen ?? '0' }}
                                 </a>
                             </h5>
@@ -446,7 +446,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Closed</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['status' => 30]) }}">
+                                <a href="{{ route('product_evaluation.index', ['status' => 30]) }}" onclick="show()">
                                     {{ $rpeImmediateClosed ?? '0' }}
                                 </a>
                             </h5>
@@ -469,7 +469,7 @@
                         <div class="d-flex justify-content-between">
                             <div class="mb-4 mt-2">
                                 <h3 class="text-primary fs-30 font-weight-medium">
-                                    {{ $totalSRFCountRND ?? '0'}}
+                                    {{ $totalImmediateSRF ?? '0'}}
                                     <i class="ti ti-package"></i>
                                 </h3>
                             </div>
