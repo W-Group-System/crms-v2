@@ -127,7 +127,7 @@
                 <nav class="sidebar sidebar-offcanvas" id="sidebar">
                     <ul class="nav">
                         <li class="nav-item">
-                            @if(Auth::check() && optional(Auth::user()->role)->type == 'RND')
+                            @if(Auth::check() && optional(Auth::user()->role)->type == 'RND' || optional(Auth::user()->role)->type == 'ITD')
                                 <a class="nav-link" href="{{ route('dashboard.rnd') }}">
                                     <i class="icon-grid menu-icon"></i>
                                     <span class="menu-title">Dashboard</span>

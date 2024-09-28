@@ -943,7 +943,7 @@
                             <p>Open</p>
                             <h5 class="text-primary font-weight-medium">
                                 <a href="{{ route('sample_request.index', ['status' => 10]) }}" onclick='show()'>
-                                    {{ $rndSrfOpen ?? '0' }}
+                                    {{ $srfImmediateOpen ?? '0' }}
                                 </a>
                             </h5>
                         </div>

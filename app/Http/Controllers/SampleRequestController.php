@@ -110,86 +110,120 @@ class SampleRequestController extends Controller
         })
         ->get();
 
-        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles', 'srf_personnel']) 
-            ->when($status, function($query) use ($status, $userId, $userByUser) {
+        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles', 'srf_personnel'])
+            // Filter by status if provided
+            ->when($status, function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;
+                $userName = $role->name;
+
+                // Status 50 with role filtering for RND L2 Staff
                 if ($status == '50') {
-                    // When filtering by '50', include all cancelled status records
-                    $query->where(function ($query) use ($userId, $userByUser) {
+                    if ($userType == 'RND' && $userName == 'Staff L2') {
+                        $query->where('Status', '50');
+                    } else {
+                        // Default for other users on Status 50
                         $query->where('Status', '50')
                             ->where(function($query) use ($userId, $userByUser) {
-                                $query->where('PrimarySalesPersonId', $userId)
-                                    ->orWhere('SecondarySalesPersonId', $userId)
-                                    ->orWhere('PrimarySalesPersonId', $userByUser)
-                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                                $query->where(function($query) use ($userId, $userByUser) {
+                                    $query->where('PrimarySalesPersonId', $userId)
+                                            ->orWhere('SecondarySalesPersonId', $userId)
+                                            ->orWhere('PrimarySalesPersonId', $userByUser)
+                                            ->orWhere('SecondarySalesPersonId', $userByUser);
+                                })->orWhereHas('srf_personnel', function($query) use ($userId, $userByUser) {
+                                    $query->where('PersonnelUserId', $userId)
+                                            ->orWhere('PersonnelUserId', $userByUser);
+                                });
                             });
-                    });
+                    }
                 } else {
+                    // Other status conditions
                     $query->where('Status', $status);
                 }
             })
-            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+
+            // Filter for status 10 (Open)
+            ->when($request->input('status') == '10', function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name;
+
                 if ($status == '10') {
-                    $query->where('Status', '10')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where(function($query) use ($userId, $userByUser) {
-                                $query->where('PrimarySalesPersonId', $userId)
-                                    ->orWhere('SecondarySalesPersonId', $userId)
-                                    ->orWhere('PrimarySalesPersonId', $userByUser)
-                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userType == 'RND' && $userName == 'Staff L2') {
+                        $query->where('Status', '10');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '10')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where(function($query) use ($userId, $userByUser) {
+                                    $query->where('PrimarySalesPersonId', $userId)
+                                        ->orWhere('SecondarySalesPersonId', $userId)
+                                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                                });
+                                // Check for related 'srf_personnel' entries
+                                $query->orWhereHas('srf_personnel', function($query) use ($userId, $userByUser) {
+                                    $query->where('PersonnelUserId', $userId)
+                                        ->orWhere('PersonnelUserId', $userByUser);
+                                });
                             });
-                            
-                            // Filter using a whereHas for 'crr_personnels' related records
-                            $query->orWhereHas('srf_personnel', function($query) use ($userId, $userByUser) {
-                                $query->where('PersonnelUserId', $userId)
-                                    ->orWhere('PersonnelUserId', $userByUser);
-                            });
-                        });
+                    }
                 } else {
+                    // Apply other status filters
                     $query->where('Status', $status);
                 }
             })
-            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+
+            // Filter for status 30 (Custom logic for status 30)
+            ->when($request->input('status') == '30', function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name;
+
                 if ($status == '30') {
-                    $query->where('Status', '30')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where(function($query) use ($userId, $userByUser) {
-                                $query->where('PrimarySalesPersonId', $userId)
-                                    ->orWhere('SecondarySalesPersonId', $userId)
-                                    ->orWhere('PrimarySalesPersonId', $userByUser)
-                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userType == 'RND' && $userName == 'Staff L2') {
+                        $query->where('Status', '30');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '30')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where(function($query) use ($userId, $userByUser) {
+                                    $query->where('PrimarySalesPersonId', $userId)
+                                        ->orWhere('SecondarySalesPersonId', $userId)
+                                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                                });
+                                // Check for related 'crr_personnels' entries
+                                $query->orWhereHas('srf_personnel', function($query) use ($userId, $userByUser) {
+                                    $query->where('PersonnelUserId', $userId)
+                                        ->orWhere('PersonnelUserId', $userByUser);
+                                });
                             });
-                            
-                            // Filter using a whereHas for 'crr_personnels' related records
-                            $query->orWhereHas('srf_personnel', function($query) use ($userId, $userByUser) {
-                                $query->where('PersonnelUserId', $userId)
-                                    ->orWhere('PersonnelUserId', $userByUser);
-                            });
-                        });
+                    }
                 } else {
                     $query->where('Status', $status);
                 }
             })
-            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
-                if ($progress == '10') {
-                    // When filtering by '10', include all relevant progress status records
-                    $query->where('Progress', '10')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where('SecondarySalesPersonId', $userId)
-                                ->orWhere('SecondarySalesPersonId', $userId)
-                                ->orWhere('PrimarySalesPersonId', $userByUser)
+
+            // Filter by progress (Progress 10 logic)
+            ->when($progress == '10', function($query) use ($userId, $userByUser) {
+                $query->where('Progress', '10')
+                    ->where(function($query) use ($userId, $userByUser) {
+                        $query->where('SecondarySalesPersonId', $userId)
                                 ->orWhere('SecondarySalesPersonId', $userByUser);
-                        });
-                } else {
-                    // Apply progress filter if it's not '10'
-                    $query->where('Progress', $progress);
-                }
+                    });
             })
+
+            // Filter by past dates
             ->when($request->input('DateRequired') === 'past', function($query) {
                 $query->where('DateRequired', '<', now())
-                        ->where('Status', '10'); 
+                    ->where('Status', '10');
             })
+
+            // Open and Close status filters
             ->when($open && $close, function($query) use ($open, $close) {
                 $query->whereIn('Status', [$open, $close]);
             })
@@ -199,37 +233,42 @@ class SampleRequestController extends Controller
             ->when($close && !$open, function($query) use ($close) {
                 $query->where('Status', $close);
             })
-            ->where(function ($query) use ($search){
+
+            // Search filter for SrfNumber, DateRequested, and DateRequired
+            ->when($search, function($query) use ($search) {
                 $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
                     ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
                     ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('client', function ($q) use ($search) {
+                    ->orWhereHas('client', function($q) use ($search) {
                         $q->where('name', 'LIKE', '%' . $search . '%');
                     });
-                // ->orWhereHas('client', function ($q) use ($search) {
-                //     $q->where('name', 'LIKE', '%' . $search . '%');
-                // });
             })
+
+            // Role-based filters for SrfNumber patterns
             ->when(auth()->user()->role->type == 'LS', function($query) {
-                $query->where('SrfNumber', 'LIKE', '%' . 'SRF-LS' . '%');
+                $query->where('SrfNumber', 'LIKE', '%SRF-LS%');
             })
             ->when(auth()->user()->role->type == 'IS', function($query) {
-                $query->where('SrfNumber', 'LIKE', '%' . 'SRF-IS' . '%');
+                $query->where('SrfNumber', 'LIKE', '%SRF-IS%');
             })
+
+            // Additional filters for progress status
             ->when($progress == '30', function($query) {
-                $query->where('Progress', '30')
-                    ->where('Status', '10');
+                $query->where('Progress', '30')->where('Status', '10');
             })
             ->when($progress == '57', function($query) {
-                $query->where('Progress', '57')
-                      ->where('Status', '10');
+                $query->where('Progress', '57')->where('Status', '10');
             })
             ->when($progress == '81', function($query) {
-                $query->where('Progress', '81')
-                      ->where('Status', '10');
+                $query->where('Progress', '81')->where('Status', '10');
             })
+
+            // Order by sort and direction
             ->orderBy($sort, $direction)
+
+            // Paginate with entries per page
             ->paginate($request->entries ?? 10);
+
         
         // $openStatus = request('open');
         // $closeStatus = request('close');
@@ -262,23 +301,32 @@ class SampleRequestController extends Controller
                 ->orWhere('DateRequired', 'LIKE', '%' . $search . '%');
             })
             ->when($progress == '57', function($query) {
-                // Specific condition: Progress = 57 and Status = 10
                 $query->where('Progress', '57')
                     ->where('Status', '10');
             })
             ->when($progress == '81', function($query) {
-                // Specific condition: Progress = 57 and Status = 10
                 $query->where('Progress', '81')
                     ->where('Status', '10');
             })
             ->when($progress == '30', function($query) {
-                // Specific condition: Progress = 57 and Status = 10
                 $query->where('Progress', '30')
                     ->where('Status', '10');
             })
             ->when($request->input('DateRequired') === 'past', function($query) {
                 $query->where('DateRequired', '<', now())
                         ->where('Status', '10');  // Fetch only records with past due dates
+            })
+            ->when(optional($role)->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('SrfNumber', 'LIKE', "%SRF-IS%");
+                } elseif ($role->type == "LS") {
+                    $q->where('SrfNumber', 'LIKE', '%SRF-LS%');
+                } elseif ($role->type == "RND") {
+                    $q->where(function($query) {
+                        $query->where('SrfNumber', 'LIKE', '%SRF-LS%')
+                              ->orWhere('SrfNumber', 'LIKE', '%SRF-IS%');
+                    });
+                }  
             })
             ->orderBy($sort, $direction)
             ->paginate($request->entries ?? 10);

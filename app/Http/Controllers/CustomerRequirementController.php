@@ -49,23 +49,30 @@ class CustomerRequirementController extends Controller
         $customer_requirements = CustomerRequirement::with(['client', 'product_application', 'crr_personnels'])
             ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name;  
+
                 if ($status == '50') {
-                    // Filter for status '50' (cancelled) with relevant user filtering
-                    $query->where('Status', '50')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where(function($query) use ($userId, $userByUser) {
-                                $query->where('PrimarySalesPersonId', $userId)
-                                    ->orWhere('SecondarySalesPersonId', $userId)
-                                    ->orWhere('PrimarySalesPersonId', $userByUser)
-                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userType == 'RND' && $userName == 'Staff L2') {
+                        $query->where('Status', '50');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '50')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where(function($query) use ($userId, $userByUser) {
+                                    $query->where('PrimarySalesPersonId', $userId)
+                                        ->orWhere('SecondarySalesPersonId', $userId)
+                                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                                });
+                                // Check for related 'crr_personnels' entries
+                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                    $query->where('PersonnelUserId', $userId)
+                                        ->orWhere('PersonnelUserId', $userByUser);
+                                });
                             });
-                            
-                            // Filter using a whereHas for 'crr_personnels' related records
-                            $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
-                                $query->where('PersonnelUserId', $userId)
-                                    ->orWhere('PersonnelUserId', $userByUser);
-                            });
-                        });
+                    }
                 } else {
                     // Apply status filter if it's not '50'
                     $query->where('Status', $status);
@@ -73,43 +80,61 @@ class CustomerRequirementController extends Controller
             })
             ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name;  
+
                 if ($status == '10') {
-                    $query->where('Status', '10')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where(function($query) use ($userId, $userByUser) {
-                                $query->where('PrimarySalesPersonId', $userId)
-                                    ->orWhere('SecondarySalesPersonId', $userId)
-                                    ->orWhere('PrimarySalesPersonId', $userByUser)
-                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userType == 'RND' && $userName == 'Staff L2') {
+                        $query->where('Status', '10');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '10')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where(function($query) use ($userId, $userByUser) {
+                                    $query->where('PrimarySalesPersonId', $userId)
+                                        ->orWhere('SecondarySalesPersonId', $userId)
+                                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                                });
+                                // Check for related 'crr_personnels' entries
+                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                    $query->where('PersonnelUserId', $userId)
+                                        ->orWhere('PersonnelUserId', $userByUser);
+                                });
                             });
-                            // Filter using a whereHas for 'crr_personnels' related records
-                            $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
-                                $query->where('PersonnelUserId', $userId)
-                                    ->orWhere('PersonnelUserId', $userByUser);
-                            });
-                        });
+                    }
                 } else {
+                    // Apply other status filters
                     $query->where('Status', $status);
                 }
             })
             ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
+
                 if ($status == '30') {
-                    $query->where('Status', '30')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where(function($query) use ($userId, $userByUser) {
-                                $query->where('PrimarySalesPersonId', $userId)
-                                    ->orWhere('SecondarySalesPersonId', $userId)
-                                    ->orWhere('PrimarySalesPersonId', $userByUser)
-                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userType == 'RND' && $userName == 'Staff L2') {
+                        $query->where('Status', '30');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '30')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where(function($query) use ($userId, $userByUser) {
+                                    $query->where('PrimarySalesPersonId', $userId)
+                                        ->orWhere('SecondarySalesPersonId', $userId)
+                                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                                });
+                                // Check for related 'crr_personnels' entries
+                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                    $query->where('PersonnelUserId', $userId)
+                                        ->orWhere('PersonnelUserId', $userByUser);
+                                });
                             });
-                            
-                            // Filter using a whereHas for 'crr_personnels' related records
-                            $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
-                                $query->where('PersonnelUserId', $userId)
-                                    ->orWhere('PersonnelUserId', $userByUser);
-                            });
-                        });
+                    }
                 } else {
                     $query->where('Status', $status);
                 }
@@ -1035,5 +1060,6 @@ class CustomerRequirementController extends Controller
         $crrFile = FileCrr::findOrFail($request->id);
         $crrFile->delete();
     }
+    
 }
 
