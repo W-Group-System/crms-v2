@@ -15,16 +15,23 @@ class CheckUserType
      */
     public function handle($request, Closure $next)
     {
-        $role = optional(Auth::user())->role;
+        
+        $user = Auth::user();
 
-        // Check if the role object exists before accessing its 'type' property
-        if ($role && $role->type == 'RND') {
-            return redirect('/dashboard-rnd');
-        } elseif ($role && $role->type == 'IS') {
-            return redirect('/dashboard-sales');
+        // Check if the user is authenticated and has a role
+        if ($user && $user->role) {
+            $roleType = $user->role->type; // Get the role type
+
+            // Check the role type and redirect accordingly
+            if ($roleType == 'RND' || $roleType == 'ITD') {
+                return redirect('/dashboard-rnd');
+            } elseif ($roleType == 'IS' || $roleType == 'LS') {
+                return redirect('/dashboard-sales');
+            }
         }
-        return redirect()->route('login');
 
-        return $next($request);
+        // If no valid user or role, redirect to the login page
+        return redirect()->route('login');
     }
+
 }

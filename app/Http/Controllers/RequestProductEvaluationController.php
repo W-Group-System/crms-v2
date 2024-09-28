@@ -45,24 +45,30 @@ class RequestProductEvaluationController extends Controller
         $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application', 'rpe_personnels'])
             ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name;  
                 
                 if ($status == '50') {
-                    // Filter for status '50' (cancelled) with relevant user filtering
-                    $query->where('Status', '50')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where(function($query) use ($userId, $userByUser) {
-                                $query->where('PrimarySalesPersonId', $userId)
-                                    ->orWhere('SecondarySalesPersonId', $userId)
-                                    ->orWhere('PrimarySalesPersonId', $userByUser)
-                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userType == 'RND' && $userName == 'Staff L2') {
+                        $query->where('Status', '50');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '50')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where(function($query) use ($userId, $userByUser) {
+                                    $query->where('PrimarySalesPersonId', $userId)
+                                        ->orWhere('SecondarySalesPersonId', $userId)
+                                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                                });
+                                // Check for related 'crr_personnels' entries
+                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                    $query->where('PersonnelUserId', $userId)
+                                        ->orWhere('PersonnelUserId', $userByUser);
+                                });
                             });
-                            
-                            // Filter using a whereHas for 'rpe_personnels' related records
-                            $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
-                                $query->where('PersonnelUserId', $userId)
-                                    ->orWhere('PersonnelUserId', $userByUser);
-                            });
-                        });
+                    }
                 } else {
                     // Apply status filter if it's not '50'
                     $query->where('Status', $status);
@@ -70,23 +76,30 @@ class RequestProductEvaluationController extends Controller
             })
             ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name;
+
                 if ($status == '10') {
-                    // Filter for status '50' (cancelled) with relevant user filtering
-                    $query->where('Status', '10')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where(function($query) use ($userId, $userByUser) {
-                                $query->where('PrimarySalesPersonId', $userId)
-                                    ->orWhere('SecondarySalesPersonId', $userId)
-                                    ->orWhere('PrimarySalesPersonId', $userByUser)
-                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userType == 'RND' && $userName == 'Staff L2') {
+                        $query->where('Status', '10');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '10')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where(function($query) use ($userId, $userByUser) {
+                                    $query->where('PrimarySalesPersonId', $userId)
+                                        ->orWhere('SecondarySalesPersonId', $userId)
+                                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                                });
+                                // Check for related 'crr_personnels' entries
+                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                    $query->where('PersonnelUserId', $userId)
+                                        ->orWhere('PersonnelUserId', $userByUser);
+                                });
                             });
-                            
-                            // Filter using a whereHas for 'rpe_personnels' related records
-                            $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
-                                $query->where('PersonnelUserId', $userId)
-                                    ->orWhere('PersonnelUserId', $userByUser);
-                            });
-                        });
+                    }
                 } else {
                     // Apply status filter if it's not '50'
                     $query->where('Status', $status);
@@ -94,22 +107,30 @@ class RequestProductEvaluationController extends Controller
             })
             ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
+
                 if ($status == '30') {
-                    $query->where('Status', '30')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where(function($query) use ($userId, $userByUser) {
-                                $query->where('PrimarySalesPersonId', $userId)
-                                    ->orWhere('SecondarySalesPersonId', $userId)
-                                    ->orWhere('PrimarySalesPersonId', $userByUser)
-                                    ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userType == 'RND' && $userName == 'Staff L2') {
+                        $query->where('Status', '30');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '30')
+                            ->where(function($query) use ($userId, $userByUser) {
+                                $query->where(function($query) use ($userId, $userByUser) {
+                                    $query->where('PrimarySalesPersonId', $userId)
+                                        ->orWhere('SecondarySalesPersonId', $userId)
+                                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                                });
+                                // Check for related 'crr_personnels' entries
+                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                    $query->where('PersonnelUserId', $userId)
+                                        ->orWhere('PersonnelUserId', $userByUser);
+                                });
                             });
-                            
-                            // Filter using a whereHas for 'rpe_personnels' related records
-                            $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
-                                $query->where('PersonnelUserId', $userId)
-                                    ->orWhere('PersonnelUserId', $userByUser);
-                            });
-                        });
+                    }
                 } else {
                     // Apply status filter if it's not '50'
                     $query->where('Status', $status);

@@ -22,7 +22,7 @@ class DashboardController extends Controller
         $role = optional(Auth::user())->role;
         
         // Check user role and redirect accordingly
-        if ($role && $role->type == 'RND') {
+        if ($role && $role->type == 'RND' || $role->type == 'ITD') {
             return redirect('/dashboard-rnd');
         } elseif ($role && $role->type == 'IS' || $role->type == 'LS') {
             return redirect('/dashboard-sales');
@@ -518,14 +518,19 @@ class DashboardController extends Controller
         $totalDue = $crrDue + $rpeDue + $srfDue;
         
         // Open Transaction
-        $crrRndOpen = CustomerRequirement::where('Status', '10')->count();
-        $rpeRndOpen = RequestProductEvaluation::where('Status', '10')->count();
-        $srfRndOpen = SampleRequest::where('Status', '10')->count();
+        $crrImmediateOpen = CustomerRequirement::where('Status', '10')->count();
+        $rpeImmediateOpen = RequestProductEvaluation::where('Status', '10')->count();
+        $srfImmediateOpen = SampleRequest::where('Status', '10')->count();
 
         // Closed Transaction
-        $crrRndClosed = CustomerRequirement::where('Status', '30')->count();
-        $rpeRndClosed = RequestProductEvaluation::where('Status', '30')->count();
-        $srfRndClosed = SampleRequest::where('Status', '30')->count();
+        $crrImmediateClosed = CustomerRequirement::where('Status', '30')->count();
+        $rpeImmediateClosed = RequestProductEvaluation::where('Status', '30')->count();
+        $srfImmediateClosed = SampleRequest::where('Status', '30')->count();
+
+        // Cancelled Transaction
+        $crrImmediateCancelled = CustomerRequirement::where('Status', '50')->count();
+        $rpeImmediateCancelled = RequestProductEvaluation::where('Status', '50')->count();
+        $srfImmediateCancelled = SampleRequest::where('Status', '50')->count();
         
         // Open 
         $rndCrrOpen = CustomerRequirement::where('Status', '10')
@@ -598,87 +603,87 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc') 
             ->get();
 
-        // CRR counts RND
-        function countCustomerRequirementsRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
-            return CustomerRequirement::whereIn('id', function($query) use ($userId, $userByUser) {
-                        $query->select('CustomerRequirementId')
-                            ->from('crrpersonnels')
-                            ->where('PersonnelUserId', $userId)
-                            ->orWhere('PersonnelUserId', $userByUser);
-                    })
-                    ->where($field, $value)
-                    ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
-                        return $query->where($excludeField, '!=', $excludeValue); // Exclude records where this condition matches
-                    })
-                    ->count();
-        }
+        // // CRR counts RND
+        // function countCustomerRequirementsRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
+        //     return CustomerRequirement::whereIn('id', function($query) use ($userId, $userByUser) {
+        //                 $query->select('CustomerRequirementId')
+        //                     ->from('crrpersonnels')
+        //                     ->where('PersonnelUserId', $userId)
+        //                     ->orWhere('PersonnelUserId', $userByUser);
+        //             })
+        //             ->where($field, $value)
+        //             ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
+        //                 return $query->where($excludeField, '!=', $excludeValue); // Exclude records where this condition matches
+        //             })
+        //             ->count();
+        // }
 
-        $crrCancelledRND = countCustomerRequirementsRND($userId, $userByUser, 'Status', '50', );
-        $crrSalesApprovalRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '10', 'Status', 10);
-        $crrSalesApprovedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '20');
-        $crrSalesAcceptedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '70');
-        $crrRnDReceivedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '35');
-        $crrRnDOngoingRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '50');
-        $crrRnDPendingRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '55');
-        $crrRnDInitialRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '57');
-        $crrRnDFinalRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '81');
-        $crrRnDCompletedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '60');
-        $totalCRRCountRND = $crrCancelledRND + $crrSalesApprovalRND + $crrSalesApprovedRND + $crrSalesAcceptedRND + $crrRnDReceivedRND + $crrRnDOngoingRND + $crrRnDPendingRND + $crrRnDInitialRND + $crrRnDFinalRND + $crrRnDCompletedRND;
+        // $crrCancelledRND = countCustomerRequirementsRND($userId, $userByUser, 'Status', '50', );
+        // $crrSalesApprovalRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '10', 'Status', 10);
+        // $crrSalesApprovedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '20');
+        // $crrSalesAcceptedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '70');
+        // $crrRnDReceivedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '35');
+        // $crrRnDOngoingRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '50');
+        // $crrRnDPendingRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '55');
+        // $crrRnDInitialRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '57');
+        // $crrRnDFinalRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '81');
+        // $crrRnDCompletedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '60');
+        // $totalCRRCountRND = $crrCancelledRND + $crrSalesApprovalRND + $crrSalesApprovedRND + $crrSalesAcceptedRND + $crrRnDReceivedRND + $crrRnDOngoingRND + $crrRnDPendingRND + $crrRnDInitialRND + $crrRnDFinalRND + $crrRnDCompletedRND;
 
-        // RPE counts RND
-        function countProductEvaluationRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
-            return RequestProductEvaluation::whereIn('id', function($query) use ($userId, $userByUser) {
-                        $query->select('RequestProductEvaluationId')
-                            ->from('rpepersonnels')
-                            ->where('PersonnelUserId', $userId)
-                            ->orWhere('PersonnelUserId', $userByUser);
-                    })
-                    ->where($field, $value)
-                    ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
-                        return $query->where($excludeField, '!=', $excludeValue); // Exclude records where this condition matches
-                    })
-                    ->count();
-        }
+        // // RPE counts RND
+        // function countProductEvaluationRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
+        //     return RequestProductEvaluation::whereIn('id', function($query) use ($userId, $userByUser) {
+        //                 $query->select('RequestProductEvaluationId')
+        //                     ->from('rpepersonnels')
+        //                     ->where('PersonnelUserId', $userId)
+        //                     ->orWhere('PersonnelUserId', $userByUser);
+        //             })
+        //             ->where($field, $value)
+        //             ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
+        //                 return $query->where($excludeField, '!=', $excludeValue); // Exclude records where this condition matches
+        //             })
+        //             ->count();
+        // }
 
-        $rpeCancelledRND = countProductEvaluationRND($userId, $userByUser, 'Status', '50', );
-        $rpeSalesApprovalRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '10', 'Status', 10);
-        $rpeSalesApprovedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '20');
-        $rpeSalesAcceptedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '70');
-        $rpeRnDReceivedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '35');
-        $rpeRnDOngoingRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '50');
-        $rpeRnDPendingRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '55');
-        $rpeRnDInitialRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '57');
-        $rpeRnDFinalRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '81');
-        $rpeRnDCompletedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '60');
-        $totalRPECountRND = $rpeCancelledRND + $rpeSalesApprovalRND + $rpeSalesApprovedRND + $rpeSalesAcceptedRND + $rpeRnDReceivedRND + $rpeRnDOngoingRND + $rpeRnDPendingRND + $rpeRnDInitialRND + $rpeRnDFinalRND + $rpeRnDCompletedRND;
+        // $rpeCancelledRND = countProductEvaluationRND($userId, $userByUser, 'Status', '50', );
+        // $rpeSalesApprovalRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '10', 'Status', 10);
+        // $rpeSalesApprovedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '20');
+        // $rpeSalesAcceptedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '70');
+        // $rpeRnDReceivedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '35');
+        // $rpeRnDOngoingRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '50');
+        // $rpeRnDPendingRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '55');
+        // $rpeRnDInitialRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '57');
+        // $rpeRnDFinalRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '81');
+        // $rpeRnDCompletedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '60');
+        // $totalRPECountRND = $rpeCancelledRND + $rpeSalesApprovalRND + $rpeSalesApprovedRND + $rpeSalesAcceptedRND + $rpeRnDReceivedRND + $rpeRnDOngoingRND + $rpeRnDPendingRND + $rpeRnDInitialRND + $rpeRnDFinalRND + $rpeRnDCompletedRND;
 
-        // SRF counts RND
-        function countSampleRequestRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
-            return SampleRequest::whereIn('id', function($query) use ($userId, $userByUser) {
-                        $query->select('SampleRequestId')
-                            ->from('srfpersonnels')
-                            ->where('PersonnelUserId', $userId)
-                            ->orWhere('PersonnelUserId', $userByUser);
-                    })
-                    ->where($field, $value)
-                    ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
-                        return $query->where($excludeField, '!=', $excludeValue); // Exclude records where this condition matches
-                    })
-                    ->count();
-        }
+        // // SRF counts RND
+        // function countSampleRequestRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
+        //     return SampleRequest::whereIn('id', function($query) use ($userId, $userByUser) {
+        //                 $query->select('SampleRequestId')
+        //                     ->from('srfpersonnels')
+        //                     ->where('PersonnelUserId', $userId)
+        //                     ->orWhere('PersonnelUserId', $userByUser);
+        //             })
+        //             ->where($field, $value)
+        //             ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
+        //                 return $query->where($excludeField, '!=', $excludeValue); // Exclude records where this condition matches
+        //             })
+        //             ->count();
+        // }
 
-        $srfCancelledRND = countSampleRequestRND($userId, $userByUser, 'Status', '50', );
-        $srfSalesApprovalRND = countSampleRequestRND($userId, $userByUser, 'Progress', '10', 'Status', 10);
-        $srfSalesApprovedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '20');
-        $srfSalesAcceptedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '70');
-        $srfRnDReceivedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '35');
-        $srfRnDOngoingRND = countSampleRequestRND($userId, $userByUser, 'Progress', '50');
-        $srfRnDPendingRND = countSampleRequestRND($userId, $userByUser, 'Progress', '55');
-        $srfRnDInitialRND = countSampleRequestRND($userId, $userByUser, 'Progress', '57');
-        $srfRnDFinalRND = countSampleRequestRND($userId, $userByUser, 'Progress', '81');
-        $srfRnDCompletedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '60');
-        $totalSRFCountRND = $srfCancelledRND + $srfSalesApprovalRND + $srfSalesApprovedRND + $srfSalesAcceptedRND + $srfRnDReceivedRND + $srfRnDOngoingRND + $srfRnDPendingRND + $srfRnDInitialRND + $srfRnDFinalRND + $srfRnDCompletedRND;
+        // $srfCancelledRND = countSampleRequestRND($userId, $userByUser, 'Status', '50', );
+        // $srfSalesApprovalRND = countSampleRequestRND($userId, $userByUser, 'Progress', '10', 'Status', 10);
+        // $srfSalesApprovedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '20');
+        // $srfSalesAcceptedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '70');
+        // $srfRnDReceivedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '35');
+        // $srfRnDOngoingRND = countSampleRequestRND($userId, $userByUser, 'Progress', '50');
+        // $srfRnDPendingRND = countSampleRequestRND($userId, $userByUser, 'Progress', '55');
+        // $srfRnDInitialRND = countSampleRequestRND($userId, $userByUser, 'Progress', '57');
+        // $srfRnDFinalRND = countSampleRequestRND($userId, $userByUser, 'Progress', '81');
+        // $srfRnDCompletedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '60');
+        // $totalSRFCountRND = $srfCancelledRND + $srfSalesApprovalRND + $srfSalesApprovedRND + $srfSalesAcceptedRND + $srfRnDReceivedRND + $srfRnDOngoingRND + $srfRnDPendingRND + $srfRnDInitialRND + $srfRnDFinalRND + $srfRnDCompletedRND;
 
-        return view('dashboard.rnd', compact('role', 'newProducts', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDFinalReview', 'rpeRNDFinalReview', 'srfRNDFinalReview', 'totalFinalReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday',));
+        return view('dashboard.rnd', compact('role', 'newProducts', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDFinalReview', 'rpeRNDFinalReview', 'srfRNDFinalReview', 'totalFinalReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday', 'totalOpenRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalClosedRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'crrImmediateOpen', 'rpeImmediateOpen', 'srfImmediateOpen', 'crrImmediateClosed', 'rpeImmediateClosed', 'srfImmediateClosed', 'crrImmediateCancelled', 'rpeImmediateCancelled', 'srfImmediateCancelled'));
     }
 }

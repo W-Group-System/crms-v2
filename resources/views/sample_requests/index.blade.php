@@ -146,7 +146,8 @@
                             @endif
                         </tbody>
                     </table>
-                    {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                    <!-- {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
+                    {{ $sampleRequests->appends(request()->query())->links() }}
                     @php
                         $total = $sampleRequests->total();
                         $currentPage = $sampleRequests->currentPage();
@@ -351,7 +352,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($rndSrf as $srf)
+                            @foreach ($sampleRequests as $srf)
                             <tr>
                                 <!-- <td align="center">
                                     <a href="{{ url('samplerequest/view/' . $srf->Id) }}" class="btn btn-sm btn-outline-info" title="View Request"><i class="ti-eye"></i></a>
