@@ -79,8 +79,7 @@
             <!-- partial:partials/_navbar.html -->
             <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
                 <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                    <a class="navbar-brand brand-logo mr-5" href="{{ url('/') }}"><img src="{{ asset('/images/crms2.png')}}" class="mr-2" alt="logo"/></a>
-                    <a class="navbar-brand brand-logo-mini" href="{{ url('/') }}"><img src="{{ asset('/images/crms2.png')}}" alt="logo"/></a>
+                    <h3 class="logo-crms">CRMS 2.0</h3>
                 </div>
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
                     <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -128,10 +127,17 @@
                 <nav class="sidebar sidebar-offcanvas" id="sidebar">
                     <ul class="nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/dashboard') }}">
-                                <i class="icon-grid menu-icon"></i>
-                                <span class="menu-title">Dashboard</span>
-                            </a>
+                            @if(Auth::check() && optional(Auth::user()->role)->type == 'RND')
+                                <a class="nav-link" href="{{ route('dashboard.rnd') }}">
+                                    <i class="icon-grid menu-icon"></i>
+                                    <span class="menu-title">Dashboard</span>
+                                </a>
+                            @elseif(Auth::check() && optional(Auth::user()->role)->type == 'LS' || optional(Auth::user()->role)->type == 'IS')
+                                <a class="nav-link" href="{{ route('dashboard.index') }}">
+                                    <i class="icon-grid menu-icon"></i>
+                                    <span class="menu-title">Dashboard</span>
+                                </a>
+                            @endif
                         </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#table_supplier" aria-expanded="false" aria-controls="table_supplier" onclick="toggleSupplier(event)">

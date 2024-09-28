@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomerFeedbackController;
 use App\Http\Controllers\SampleRequestController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\PriceMonitoringController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,8 +20,13 @@ use App\Http\Controllers\PriceMonitoringController;
 Auth::routes();
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 Route::group(['middleware' => 'inactive_users'], function() {
-    Route::get('/', 'DashboardController@index');
-    Route::get('/dashboard','DashboardController@index');
+    Route::get('/logout', 'LoginController@logout');
+    // Apply middleware to check user type
+    Route::get('/', 'DashboardController@index')->middleware('checkUserType');
+
+    // Separate routes for RND and LS users
+    Route::get('/dashboard-rnd', 'DashboardController@RNDindex')->name('dashboard.rnd');
+    Route::get('/dashboard-sales', 'DashboardController@salesIndex')->name('dashboard.index');
 
     // change password
     Route::get('my_account','HomeController@myAccount')->name('my_account');
@@ -550,6 +556,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
     Route::get('/export-transaction-activity', 'ReportsController@exportTransactionActivity')->name('export_transaction_activity');
     Route::get('/copy-transaction-activity', 'ReportsController@copyTransactionActivity')->name('copy_transaction_activity');
+
 });
 
 

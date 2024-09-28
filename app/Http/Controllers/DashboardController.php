@@ -19,10 +19,22 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $role = optional(Auth::user())->role;
+        
+        // Check user role and redirect accordingly
+        if ($role && $role->type == 'RND') {
+            return redirect('/dashboard-rnd');
+        } elseif ($role && $role->type == 'IS' || $role->type == 'LS') {
+            return redirect('/dashboard-sales');
+        }
+    }
+
+    public function salesIndex()
+    {
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id; // Safely access user_id
         $role = optional(Auth::user())->role;
-      
+        
         if (!$userId && !$userByUser && !$role) {
             // Handle case where there is no authenticated user
             return redirect()->route('login'); // Or handle it in another appropriate way
@@ -488,5 +500,18 @@ class DashboardController extends Controller
             'rpeSalesApproved', 'rpeSalesAccepted', 'rpeRnDOngoing', 'rpeRnDPending', 'rpeRnDInitial', 'rpeRnDFinal', 'rpeRnDCompleted', 'totalSRFCount', 'srfCancelled', 'srfSalesApproval',
             'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalOpenRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday', 'crrRndOpen'
         ));
+    }
+
+    public function RNDindex()
+    {
+        $userId = Auth::id(); 
+        $userByUser = optional(Auth::user())->user_id; // Safely access user_id
+        $role = optional(Auth::user())->role;
+        
+        if (!$userId && !$userByUser && !$role) {
+            // Handle case where there is no authenticated user
+            return redirect()->route('login'); // Or handle it in another appropriate way
+        }
+        return view('dashboard.rnd', compact('role'));
     }
 }
