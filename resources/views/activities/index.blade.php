@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Activity List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#addActivity">Add Activity</button>
+            <button type="button" class="btn btn-md btn-outline-primary" data-toggle="modal" data-target="#addActivity">New</button>
             @include('activities.new_activities')
             </h4>
             <div class="form-group">
@@ -50,18 +50,18 @@
                         @foreach ($activities as $a)
                             <tr>
                                 <td>
-                                    <a href="{{url('view_activity/'.$a->id)}}" class="btn btn-info btn-sm" title="View Activity" target="_blank">
+                                    <!-- <a href="{{url('view_activity/'.$a->id)}}" class="btn btn-info btn-sm" title="View Activity" target="_blank">
                                         <i class="ti-eye"></i>
-                                    </a> 
-                                    <button type="button" class="btn btn-warning btn-sm edit_activity" title="Edit Activity" data-clientid="{{$a->ClientId}}" data-clientcontact="{{$a->ClientContactId}}" data-toggle="modal" data-target="#editActivity-{{$a->id}}">
+                                    </a>  -->
+                                    <button type="button" class="btn btn-outline-warning btn-sm edit_activity" title="Edit Activity" data-clientid="{{$a->ClientId}}" data-clientcontact="{{$a->ClientContactId}}" data-toggle="modal" data-target="#editActivity-{{$a->id}}">
                                         <i class="ti-pencil"></i>
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm delete_activity" title="Delete Activity" data-id="{{$a->id}}">
+                                    <!-- <button type="button" class="btn btn-danger btn-sm delete_activity" title="Delete Activity" data-id="{{$a->id}}">
                                         <i class="ti-trash"></i>
-                                    </button>
+                                    </button> -->
                                 </td>
                                 <td>
-                                    <a href="{{url('view_activity/'.$a->id)}}" target="_blank">{{$a->ActivityNumber}}</a>
+                                    <a href="{{url('view_activity/'.$a->id)}}">{{$a->ActivityNumber}}</a>
                                 </td>
                                 <td>{{$a->ScheduleFrom}}</td>
                                 <td>
@@ -74,7 +74,7 @@
                                     @if($a->Status == 10)
                                         <div class="badge badge-success">Open</div>
                                     @else
-                                        <div class="badge badge-danger">Close</div>
+                                        <div class="badge badge-danger">Closed</div>
                                     @endif
                                 </td>
                             </tr>
@@ -84,9 +84,8 @@
                     </tbody>
                 </table>
             </div>
-
             {!! $activities->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
-            @php
+                @php
                     $total = $activities->total();
                     $currentPage = $activities->currentPage();
                     $perPage = $activities->perPage();

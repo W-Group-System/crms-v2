@@ -62,8 +62,8 @@ class RequestProductEvaluationController extends Controller
                                         ->orWhere('PrimarySalesPersonId', $userByUser)
                                         ->orWhere('SecondarySalesPersonId', $userByUser);
                                 });
-                                // Check for related 'crr_personnels' entries
-                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                // Check for related 'rpe_personnels' entries
+                                $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
                                     $query->where('PersonnelUserId', $userId)
                                         ->orWhere('PersonnelUserId', $userByUser);
                                 });
@@ -93,8 +93,8 @@ class RequestProductEvaluationController extends Controller
                                         ->orWhere('PrimarySalesPersonId', $userByUser)
                                         ->orWhere('SecondarySalesPersonId', $userByUser);
                                 });
-                                // Check for related 'crr_personnels' entries
-                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                // Check for related 'rpe_personnels' entries
+                                $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
                                     $query->where('PersonnelUserId', $userId)
                                         ->orWhere('PersonnelUserId', $userByUser);
                                 });
@@ -124,8 +124,8 @@ class RequestProductEvaluationController extends Controller
                                         ->orWhere('PrimarySalesPersonId', $userByUser)
                                         ->orWhere('SecondarySalesPersonId', $userByUser);
                                 });
-                                // Check for related 'crr_personnels' entries
-                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                // Check for related 'rpe_personnels' entries
+                                $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
                                     $query->where('PersonnelUserId', $userId)
                                         ->orWhere('PersonnelUserId', $userByUser);
                                 });

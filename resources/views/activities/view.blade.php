@@ -15,11 +15,20 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Activity</h4>
                 </div>
                 <div class="col-lg-6" align="right">
-                    <a href="{{ url('/activities?open=10') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
-                    @if ($data->Status == 10)
-                        <button class="btn btn-md btn-primary close-activity" data-id="{{ $data->id }}">Close</button>
+                    @if(url()->previous() == url()->current())
+                    <a href="{{ url('/activities?open=10') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
                     @else
-                        <button class="btn btn-md btn-primary open-activity" data-id="{{ $data->id }}">Open</button>
+                    <a href="{{ url()->previous() ?: url('/activities') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @endif
+                    <!-- <a href="{{ url('/activities?open=10') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a> -->
+                    @if ($data->Status == 10)
+                        <button class="btn btn-md btn-outline-primary close-activity" data-id="{{ $data->id }}">Close</button>
+                    @else
+                        <button class="btn btn-md btn-outline-primary open-activity" data-id="{{ $data->id }}">Open</button>
                     @endif
                 </div>
             </div>

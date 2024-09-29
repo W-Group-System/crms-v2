@@ -9,6 +9,7 @@ use App\CustomerFeedback;
 use App\CustomerRequirement;
 use App\PriceMonitoring;
 use App\Product;
+use App\ProductEvaluation;
 use App\RequestProductEvaluation;
 use App\SampleRequest;
 use Illuminate\Support\Facades\Auth;
@@ -255,21 +256,142 @@ class DashboardController extends Controller
         // Total approval count
         $totalApproval = $crrSalesForApproval + $rpeSalesForApproval + $srfSalesForApproval + $prfSalesForApproval;
 
-        /************* RND *************/
-
-        // RND Approval
-
-
+        // Open Transactions
+        $salesCrrOpen = CustomerRequirement::where('Status', '10')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PrimarySalesPersonId', $userId)
+                        ->orWhere('SecondarySalesPersonId', $userId)
+                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                });
+            })
+            ->count(); 
         
-        // Open Transaction
-        $crrRndOpen = CustomerRequirement::where('Status', '10')->count();
-        $rpeRndOpen = RequestProductEvaluation::where('Status', '10')->count();
-        $srfRndOpen = SampleRequest::where('Status', '10')->count();
+        $salesRpeOpen = RequestProductEvaluation::where('Status', '10')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PrimarySalesPersonId', $userId)
+                        ->orWhere('SecondarySalesPersonId', $userId)
+                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                });
+            })
+            ->count();
+        
+        $salesSrfOpen = SampleRequest::where('Status', '10')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PrimarySalesPersonId', $userId)
+                        ->orWhere('SecondarySalesPersonId', $userId)
+                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                });
+            })
+            ->count();
+        
+        $salesPrfOpen = PriceMonitoring::where('Status', '10')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PrimarySalesPersonId', $userId)
+                        ->orWhere('SecondarySalesPersonId', $userId)
+                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                });
+            })
+            ->count();
 
-        // Closed Transaction
-        $crrRndClosed = CustomerRequirement::where('Status', '30')->count();
-        $rpeRndClosed = RequestProductEvaluation::where('Status', '30')->count();
-        $srfRndClosed = SampleRequest::where('Status', '30')->count();
+        $totalSalesOpen = $salesCrrOpen + $salesRpeOpen + $salesSrfOpen + $salesPrfOpen;
+
+        // CRR Transactions
+        function getCustomerRequirementCount($status, $progress = null, $userId, $userByUser) {
+            return CustomerRequirement::where('Status', $status)
+                ->when($progress, function($query) use ($progress) {
+                    $query->where('Progress', $progress);
+                })
+                ->where(function($query) use ($userId, $userByUser) {
+                    $query->where(function($query) use ($userId, $userByUser) {
+                        $query->where('PrimarySalesPersonId', $userId)
+                            ->orWhere('SecondarySalesPersonId', $userId)
+                            ->orWhere('PrimarySalesPersonId', $userByUser)
+                            ->orWhere('SecondarySalesPersonId', $userByUser);
+                    });
+                })
+                ->count();
+        }
+        $salesCrrClosed = getCustomerRequirementCount(30, null, $userId, $userByUser);
+        $salesCrrCancelled = getCustomerRequirementCount(50, null, $userId, $userByUser);
+        $salesCrrApproval = getCustomerRequirementCount(10, 10, $userId, $userByUser);
+        $salesCrrApproved = getCustomerRequirementCount(10, 20, $userId, $userByUser);
+        $salesCrrAccepted = getCustomerRequirementCount(10, 70, $userId, $userByUser);
+
+        $totalSalesCRR = $salesCrrClosed + $salesCrrCancelled + $salesCrrApproval + $salesCrrApproved + $salesCrrAccepted;
+
+        // RPE Transactions
+        function getRequestProductCount($status, $progress = null, $userId, $userByUser) {
+            return RequestProductEvaluation::where('Status', $status)
+                ->when($progress, function($query) use ($progress) {
+                    $query->where('Progress', $progress);
+                })
+                ->where(function($query) use ($userId, $userByUser) {
+                    $query->where(function($query) use ($userId, $userByUser) {
+                        $query->where('PrimarySalesPersonId', $userId)
+                            ->orWhere('SecondarySalesPersonId', $userId)
+                            ->orWhere('PrimarySalesPersonId', $userByUser)
+                            ->orWhere('SecondarySalesPersonId', $userByUser);
+                    });
+                })
+                ->count();
+        }
+        $salesRpeClosed = getRequestProductCount(30, null, $userId, $userByUser);
+        $salesRpeCancelled = getRequestProductCount(50, null, $userId, $userByUser);
+        $salesRpeApproval = getRequestProductCount(10, 10, $userId, $userByUser);
+        $salesRpeApproved = getRequestProductCount(10, 20, $userId, $userByUser);
+        $salesRpeAccepted = getRequestProductCount(10, 70, $userId, $userByUser);
+
+        $totalSalesRPE = $salesRpeClosed + $salesRpeCancelled + $salesRpeApproval + $salesRpeApproved + $salesRpeAccepted;
+
+        // SRF Transactions
+        function getSampleRequestCount($status, $progress = null, $userId, $userByUser) {
+            return SampleRequest::where('Status', $status)
+                ->when($progress, function($query) use ($progress) {
+                    $query->where('Progress', $progress);
+                })
+                ->where(function($query) use ($userId, $userByUser) {
+                    $query->where(function($query) use ($userId, $userByUser) {
+                        $query->where('PrimarySalesPersonId', $userId)
+                            ->orWhere('SecondarySalesPersonId', $userId)
+                            ->orWhere('PrimarySalesPersonId', $userByUser)
+                            ->orWhere('SecondarySalesPersonId', $userByUser);
+                    });
+                })
+                ->count();
+        }
+        $salesSrfClosed = getSampleRequestCount(30, null, $userId, $userByUser);
+        $salesSrfCancelled = getSampleRequestCount(50, null, $userId, $userByUser);
+        $salesSrfApproval = getSampleRequestCount(10, 10, $userId, $userByUser);
+        $salesSrfApproved = getSampleRequestCount(10, 20, $userId, $userByUser);
+        $salesSrfAccepted = getSampleRequestCount(10, 70, $userId, $userByUser);
+
+        $totalSalesSRF = $salesSrfClosed + $salesSrfCancelled + $salesSrfApproval + $salesSrfApproved + $salesSrfAccepted;
+
+        // Customer Service
+        function getCustomerServiceCount($model, $status, $type, $userId, $userByUser) {
+            return $model::where('Status', $status)
+                ->where('Type', $type)
+                ->where(function($query) use ($userId, $userByUser) {
+                    $query->where('ReceivedByUserId', $userId)
+                        ->orWhere('ReceivedByUserId', $userByUser);
+                })
+                ->count();
+        }
+        $customerComplaintsCount = getCustomerServiceCount(CustomerComplaint::class, 10, 20, $userId, $userByUser);
+        $customerFeedbackCount = getCustomerServiceCount(CustomerFeedback::class, 10, 30, $userId, $userByUser);
+
+        $totalCustomerServiceCount = $customerComplaintsCount + $customerFeedbackCount;
+
+
+        /************* RND *************/
         
         // Open 
         $rndCrrOpen = CustomerRequirement::where('Status', '10')
@@ -423,27 +545,14 @@ class DashboardController extends Controller
         $srfRnDCompletedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '60');
         $totalSRFCountRND = $srfCancelledRND + $srfSalesApprovalRND + $srfSalesApprovedRND + $srfSalesAcceptedRND + $srfRnDReceivedRND + $srfRnDOngoingRND + $srfRnDPendingRND + $srfRnDInitialRND + $srfRnDFinalRND + $srfRnDCompletedRND;
 
-        // Customer Service
-        $customerComplaintsCount = CustomerComplaint::where(function($query) use ($userId, $userByUser) {
-            $query->where('ReceivedByUserId', $userId)
-                ->orWhere('ReceivedByUserId', $userByUser);
-        })->where('Status', '10')->where('Type', '20')->count();
-        
-        $customerFeedbackCount = CustomerFeedback::where(function($query) use ($userId, $userByUser) {
-            $query->where('ReceivedByUserId', $userId)
-                ->orWhere('ReceivedByUserId', $userByUser);
-        })->where('status', '10')->count();
-
-        $totalCustomerServiceCount = $customerComplaintsCount + $customerFeedbackCount;
-
         return view('dashboard.index', compact(
-            'totalActivitiesCount', 'openActivitiesCount', 'closedActivitiesCount', 
+            'totalActivitiesCount', 'openActivitiesCount', 'closedActivitiesCount', 'salesCrrOpen', 'salesRpeOpen', 'salesSrfOpen', 'salesPrfOpen', 'totalSalesOpen', 'salesCrrClosed', 'salesCrrCancelled', 'salesCrrApproval', 'salesCrrApproved', 'salesCrrAccepted', 'totalSalesCRR', 'totalSalesRPE', 'salesRpeClosed', 'salesRpeCancelled', 'salesRpeApproval', 'salesRpeApproved', 'salesRpeAccepted', 'totalSalesSRF', 'salesSrfClosed', 'salesSrfCancelled', 'salesSrfApproval', 'salesSrfApproved', 'salesSrfAccepted',
             'totalCRRCount', 'crrCancelled', 'crrSalesAccepted', 'crrSalesApproval', 
-            'crrSalesApproved', 'crrRnDOngoing', 'crrRnDPending', 'crrRnDInitial', 
+            'crrSalesApproved', 'crrRnDOngoing', 'crrRnDPending', 'crrRnDInitial',
             'crrRnDFinal', 'crrRnDCompleted', 'totalCustomerServiceCount', 
             'customerComplaintsCount', 'customerFeedbackCount', 'totalRPECount', 'rpeCancelled', 'rpeSalesApproval',
             'rpeSalesApproved', 'rpeSalesAccepted', 'rpeRnDOngoing', 'rpeRnDPending', 'rpeRnDInitial', 'rpeRnDFinal', 'rpeRnDCompleted', 'totalSRFCount', 'srfCancelled', 'srfSalesApproval',
-            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalOpenRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'crrRndOpen'
+            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalOpenRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 
         ));
     }
 

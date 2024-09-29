@@ -42,6 +42,7 @@ class PriceMonitoringController extends Controller
         $productApplications = ProductApplication::all(); 
         $products = Product::where('status', '4')->get();
         $users = User::where('is_active', 1)->get();
+        $status = $request->query('status'); // Get the status from the query parameters
 
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
@@ -101,19 +102,18 @@ class PriceMonitoringController extends Controller
                     $query->where('Status', $status);
                 }
             })
-            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
-                if ($progress == '10') {
-                    // When filtering by '10', include all relevant progress status records
-                    $query->where('Progress', '10')
+            ->when($request, function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '10') {
+                    $query->where('Status', '10')
                         ->where(function($query) use ($userId, $userByUser) {
                             $query->where('SecondarySalesPersonId', $userId)
-                                // ->orWhere('SecondarySalesPersonId', $userId)
-                                // ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('PrimarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
                                 ->orWhere('SecondarySalesPersonId', $userByUser);
                         });
                 } else {
-                    // Apply progress filter if it's not '10'
-                    $query->where('Progress', $progress);
+                    $query->where('Status', $status);
                 }
             })
             ->when($open && $close, function($query) use ($open, $close) {

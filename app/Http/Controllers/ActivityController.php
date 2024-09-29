@@ -19,7 +19,40 @@ class ActivityController extends Controller
     // List
     public function index(Request $request)
     {   
+        $status = $request->query('status'); // Get the status from the query parameters
+
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id; 
+
         $activities = Activity::with(['client'])
+            ->when($request, function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '10') {
+                    $query->where('Status', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('SecondaryResponsibleUserId', $userId)
+                                ->orWhere('PrimaryResponsibleUserId', $userId)
+                                ->orWhere('PrimaryResponsibleUserId', $userByUser)
+                                ->orWhere('SecondaryResponsibleUserId', $userByUser);
+                        });
+                } else {
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request, function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '20') {
+                    $query->where('Status', '20')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('SecondaryResponsibleUserId', $userId)
+                                ->orWhere('PrimaryResponsibleUserId', $userId)
+                                ->orWhere('PrimaryResponsibleUserId', $userByUser)
+                                ->orWhere('SecondaryResponsibleUserId', $userByUser);
+                        });
+                } else {
+                    $query->where('Status', $status);
+                }
+            })
             ->when($request->has('open') && $request->has('close'), function($query)use($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);
             })

@@ -216,7 +216,20 @@ class SampleRequestController extends Controller
                                 ->orWhere('SecondarySalesPersonId', $userByUser);
                     });
             })
-
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '20') {
+                    $query->where('Progress', '20')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('SecondarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    // Apply progress filter if it's not '10'
+                    $query->where('Progress', $progress);
+                }
+            })
             // Filter by past dates
             ->when($request->input('DateRequired') === 'past', function($query) {
                 $query->where('DateRequired', '<', now())
