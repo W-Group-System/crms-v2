@@ -94,7 +94,8 @@
                         @endforeach
                     </tbody>
                 </table>
-                {!! $price_monitorings->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                <!-- {!! $price_monitorings->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
+                {{ $price_monitorings->appends(request()->query())->links() }}
                 @php
                     $total = $price_monitorings->total();
                     $currentPage = $price_monitorings->currentPage();
@@ -166,7 +167,8 @@
                         @endforeach
                     </tbody>
                 </table>
-                {!! $price_monitorings->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!}
+                <!-- {!! $price_monitorings->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
+                {{ $price_monitorings->appends(request()->query())->links() }}
                 @php
                     $total = $price_monitorings->total();
                     $currentPage = $price_monitorings->currentPage();

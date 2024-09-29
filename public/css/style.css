@@ -26909,7 +26909,7 @@ div.tagsinput span.tag a {
   flex-direction: row;
   padding-left: 0;
   padding-right: 0;
-  padding-top: 60px;
+  padding-top: 50px;
 }
 
 .page-body-wrapper.full-page-wrapper {
@@ -27284,7 +27284,7 @@ div.tagsinput span.tag a {
   -moz-transition: width 0.25s ease, background 0.25s ease;
   -ms-transition: width 0.25s ease, background 0.25s ease;
   width: 235px;
-  height: 60px;
+  height: 50px;
 }
 
 .sidebar-dark .navbar .navbar-brand-wrapper {
@@ -27334,7 +27334,7 @@ div.tagsinput span.tag a {
   padding-right: 2.375rem;
   padding-left: 2.375rem;
   width: calc(100% - 235px);
-  height: 60px;
+  height: 50px;
 }
 
 @media (max-width: 991px) {
@@ -27517,7 +27517,7 @@ div.tagsinput span.tag a {
   margin-top: 0;
   right: 0;
   left: auto;
-  top: 70px;
+  top: 50px;
 }
 
 .rtl .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .navbar-dropdown {
@@ -28810,7 +28810,7 @@ div.tagsinput span.tag a {
 .logo-crms
 {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 25px;
+  font-size: 24px;
   letter-spacing: -0.4px;
   word-spacing: 2px;
   color: #FFF;

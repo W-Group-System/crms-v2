@@ -145,8 +145,22 @@ class CustomerRequirementController extends Controller
                     $query->where('Progress', '10')
                         ->where(function($query) use ($userId, $userByUser) {
                             $query->where('SecondarySalesPersonId', $userId)
-                                // ->orWhere('SecondarySalesPersonId', $userId)
-                                // ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    // Apply progress filter if it's not '10'
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '20') {
+                    $query->where('Progress', '20')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('SecondarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
                                 ->orWhere('SecondarySalesPersonId', $userByUser);
                         });
                 } else {
