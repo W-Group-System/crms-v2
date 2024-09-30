@@ -239,13 +239,13 @@
                                     <label>{{auth()->user()->username}}</label>
                                 </div>
                             </div>
-                            <div class="form-group row mb-2" style="margin-top: 2.5em">
+                            <!-- <div class="form-group row mb-2" style="margin-top: 2.5em">
                                 <div class="col-md-12">
                                     <a href="{{ route('change_password') }}" class="btn btn-info">
                                         <i style="color: #fff" class="ti ti-unlock"></i>&nbsp;Change Password
                                     </a>
                                 </div>
-                            </div>
+                            </div> -->
                         </form>
                     </div>
                 </div>

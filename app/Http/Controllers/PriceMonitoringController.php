@@ -85,11 +85,11 @@ class PriceMonitoringController extends Controller
         ->get();
         
         $price_monitorings = PriceMonitoring::with(['client', 'product_application', 'requestPriceProducts'])
-            ->when($status, function($query) use ($status, $userId, $userByUser) {
-                if ($status == '50') {
-                    // When filtering by '50', include all cancelled status records
+            ->when($status, function($query) use ($request, $userId, $userByUser) {
+                $status = $request->input('status');
+                if ($status == '30') {
                     $query->where(function ($query) use ($userId, $userByUser) {
-                        $query->where('Status', '50')
+                        $query->where('Status', '30')
                             ->where(function($query) use ($userId, $userByUser) {
                                 $query->where('PrimarySalesPersonId', $userId)
                                     ->orWhere('SecondarySalesPersonId', $userId)
@@ -98,7 +98,6 @@ class PriceMonitoringController extends Controller
                             });
                     });
                 } else {
-                    // Apply status filter if it's not '50'
                     $query->where('Status', $status);
                 }
             })
@@ -114,6 +113,32 @@ class PriceMonitoringController extends Controller
                         });
                 } else {
                     $query->where('Status', $status);
+                }
+            })
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '10') {
+                    $query->where('Progress', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('SecondarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+                if ($progress == '10') {
+                    $query->where('Progress', '10')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('SecondarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    $query->where('Progress', $progress);
                 }
             })
             ->when($open && $close, function($query) use ($open, $close) {
