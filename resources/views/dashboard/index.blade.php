@@ -38,13 +38,13 @@
                                     <label>{{auth()->user()->username}}</label>
                                 </div>
                             </div>
-                            <div class="form-group row mb-2" style="margin-top: 2.5em">
+                            <!-- <div class="form-group row mb-2" style="margin-top: 2.5em">
                                 <div class="col-md-12">
                                     <a href="{{ route('change_password') }}" class="btn btn-info">
                                         <i style="color: #fff" class="ti ti-unlock"></i>&nbsp;Change Password
                                     </a>
                                 </div>
-                            </div>
+                            </div> -->
                         </form>
                     </div>
                 </div>
@@ -543,26 +543,44 @@
                         </div>
                     </div>
                     <div class="mb-1 d-flex justify-content-between">
+                        <p>Closed</p>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('price_monitoring.index', ['status' => 30]) }}" onclick='show()'>
+                                {{ $salesPrfClosed ?? '0' }}
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="mb-1 d-flex justify-content-between">
+                        <p>Reopened</p>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('price_monitoring.index', ['status' => 10, 'progress' => 25 ]) }}" onclick='show()'>
+                                {{ $salesPrfReopened ?? '0' }}
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="mb-1 d-flex justify-content-between">
                         <p>For Approval</p>
                         <h5 class="text-primary font-weight-medium">
-                            {{ $prfSalesApproval ?? '0' }}
+                            <a href="{{ route('price_monitoring.index', ['status' => 10, 'progress' => 10 ]) }}" onclick='show()'>
+                                {{ $salesPrfApproval ?? '0' }}
+                            </a>
                         </h5>
                     </div>
                     <div class="mb-1 d-flex justify-content-between">
                         <p>Waiting Disposition</p>
-                        <h5 class="text-primary font-weight-medium">{{ $prfWaiting ?? '0' }}</h5>
-                    </div>
-                    <div class="mb-1 d-flex justify-content-between">
-                        <p>Reopened</p>
-                        <h5 class="text-primary font-weight-medium">{{ $prfReopened ?? '0' }}</h5>
-                    </div>
-                    <div class="mb-1 d-flex justify-content-between">
-                        <p>Closed</p>
-                        <h5 class="text-primary font-weight-medium">{{ $prfClosed ?? '0' }}</h5>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('price_monitoring.index', ['status' => 10, 'progress' => 20 ]) }}" onclick='show()'>
+                                {{ $salesPrfWaiting ?? '0' }}
+                            </a>
+                        </h5>
                     </div>
                     <div class="mb-1 d-flex justify-content-between">
                         <p>Manager Approval</p>
-                        <h5 class="text-primary font-weight-medium">{{ $prfManagerApproval ?? '0' }}</h5>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('price_monitoring.index', ['status' => 10, 'progress' => 40 ]) }}" onclick='show()'>
+                                {{ $salesPrfManager ?? '0' }}
+                            </a>
+                        </h5>
                     </div>
                 </div>
             </div>
