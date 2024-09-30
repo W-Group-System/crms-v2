@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use OwenIt\Auditing\Models\Audit;
 use App\ProductMaterialsComposition;
 use App\SalesApprovers;
+use App\SecondarySalesPerson;
 use PDF;
 use Illuminate\Support\Facades\View;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -102,20 +103,20 @@ class PriceMonitoringController extends Controller
                     $query->where('Status', $status);
                 }
             })
-            ->when($request, function($query) use ($request, $userId, $userByUser) {
-                $status = $request->input('status');
-                if ($status == '10') {
-                    $query->where('Status', '10')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where('SecondarySalesPersonId', $userId)
-                                ->orWhere('PrimarySalesPersonId', $userId)
-                                ->orWhere('PrimarySalesPersonId', $userByUser)
-                                ->orWhere('SecondarySalesPersonId', $userByUser);
-                        });
-                } else {
-                    $query->where('Status', $status);
-                }
-            })
+            // ->when($request, function($query) use ($request, $userId, $userByUser) {
+            //     $status = $request->input('status');
+            //     if ($status == '10') {
+            //         $query->where('Status', '10')
+            //             ->where(function($query) use ($userId, $userByUser) {
+            //                 $query->where('SecondarySalesPersonId', $userId)
+            //                     ->orWhere('PrimarySalesPersonId', $userId)
+            //                     ->orWhere('PrimarySalesPersonId', $userByUser)
+            //                     ->orWhere('SecondarySalesPersonId', $userByUser);
+            //             });
+            //     } else {
+            //         $query->where('Status', $status);
+            //     }
+            // })
             ->when($open && $close, function($query) use ($open, $close) {
                 $query->whereIn('Status', [$open, $close]);
             })
@@ -404,8 +405,8 @@ class PriceMonitoringController extends Controller
             foreach ($files as $index => $file) {
             $name = $names[$index];
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('public/prfFiles', $fileName);
-            $fileUrl = '/storage/prfFiles/' . $fileName;       
+            $file->move(public_path('prfFiles'), $fileName);
+            $fileUrl = '/prfFiles/' . $fileName;       
             $uploadedFile = new PrfFile();
             $uploadedFile->PriceRequestFormId = $prfId;
             $uploadedFile->Name = $name;
@@ -426,8 +427,9 @@ class PriceMonitoringController extends Controller
         if ($request->hasFile('prf_file')) {
             $file = $request->file('prf_file');
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('public/prfFiles', $fileName);
-            $fileUrl = '/storage/prfFiles/' . $fileName;
+            // $filePath = $file->storeAs('public/prfFiles', $fileName);
+            $file->move(public_path('prfFiles'),$fileName);
+            $fileUrl = '/prfFiles/' . $fileName;
 
             $prfFile->Path = $fileUrl;
         }
@@ -577,6 +579,7 @@ class PriceMonitoringController extends Controller
 
     public function LocalSalesUpdate(Request $request, $id)
     {
+        // dd($request->all());
         $priceMonitoringData = PriceMonitoring::with('requestPriceProducts')->findOrFail($id);
     
         $priceMonitoringData->PrimarySalesPersonId = $request->input('PrimarySalesPersonId');
@@ -601,7 +604,7 @@ class PriceMonitoringController extends Controller
     
         foreach ($request->input('Product') as $key => $value) {
             $productId = $request->input('product_id.' . $key); 
-    
+            
             $priceMonitoringData->requestPriceProducts()->updateOrCreate(
                 ['id' => $productId],
                 [
@@ -759,8 +762,7 @@ class PriceMonitoringController extends Controller
             $product->delete();
             return response()->json(['success' => true]);
         }
-
-        return response()->json(['success' => false]);
+        // return response()->json(['success' => false]);
     }
 
     public function ClosePrf( Request $request , $id)
@@ -941,26 +943,30 @@ class PriceMonitoringController extends Controller
 
     public function refreshUserApprover(Request $request)
     {
-        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
-        if ($user != null)
-        {
-            if($user->salesApproverById)
-            {
-                $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
-                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
+        // $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        // if ($user != null)
+        // {
+        //     if($user->salesApproverById)
+        //     {
+        //         $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+        //         $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
 
-                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
-            }
-            elseif($user->salesApproverByUserId)
-            {
-                $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
-                $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
+        //         return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+        //     }
+        //     elseif($user->salesApproverByUserId)
+        //     {
+        //         $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
+        //         $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
                 
-                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
-            }
-        }
+        //         return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+        //     }
+        // }
 
-        return "";
+        // return "";
+        $secondary_sales_person = SecondarySalesPerson::where('PrimarySalesPersonId', $request->ps)->pluck('SecondarySalesPersonId')->toArray();
+        $users = User::whereIn('id', $secondary_sales_person)->pluck('full_name', 'id');
+        
+        return Form::select('SecondarySalesPersonId', $users, null, array('class' => 'form-control'));
     }
 
 }

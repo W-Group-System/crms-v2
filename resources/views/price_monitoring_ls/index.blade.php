@@ -272,7 +272,7 @@
             
             $.ajax({
                 type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
+                url: "{{url('refresh_secondary_persons_prf')}}",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
@@ -299,7 +299,7 @@
         {
             $.ajax({
                 type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
+                url: "{{url('refresh_secondary_persons_prf')}}",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
