@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" action="{{ url('pause_rpe/'.$requestEvaluation->id) }}">
+                <form method="POST" action="{{ url('pause_rpe/'.$requestEvaluation->id) }}" onsubmit="show()">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">

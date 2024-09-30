@@ -8,7 +8,7 @@
                 </button>
             </div>
             
-            <form method="POST" enctype="multipart/form-data" action="{{ url('update_rpe_sales_files/'.$file->Id) }}">
+            <form method="POST" enctype="multipart/form-data" action="{{ url('update_rpe_sales_files/'.$file->Id) }}" onsubmit="show()">
                 @csrf
                 
                 <div class="modal-body" style="padding: 20px">

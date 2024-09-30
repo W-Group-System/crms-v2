@@ -15,6 +15,7 @@ use App\RpeFile;
 use App\RpePersonnel;
 use App\SalesApprovers;
 use App\SalesUser;
+use App\SecondarySalesPerson;
 use App\TransactionApproval;
 use App\TransactionLogs;
 use App\User;
@@ -255,31 +256,35 @@ class RequestProductEvaluationController extends Controller
         // $rpeNo = "RPE-{$type}-{$year}-{$newIncrement}";
 
         $user = Auth::user(); 
-        if (($user->department_id == 5) || ($user->department_id == 38))
+        $type = "";
+        $year = date('y');
+        
+        if ($user->role->type == "IS")
         {
-            $type = "";
-            $year = date('y');
-            if ($user->department_id == 5)
+            $type = "IS";
+            $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-IS%')->orderBy('id', 'desc')->first();
+            $count = substr($rpeList->RpeNumber, 10);
+            $totalCount = $count + 1;
+            if ($totalCount < 1000)
             {
-                $type = "IS";
-                $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-IS%')->orderBy('id', 'desc')->first();
-                $count = substr($rpeList->RpeNumber, 10);
-                $totalCount = $count + 1;
-                
-                $rpeNo = "RPE-".$type.'-'.$year.'-0'.$totalCount;
+                $rpe_series = str_pad($totalCount, 4,'0', STR_PAD_LEFT);
             }
-
-            if ($user->department_id == 38)
-            {
-                $type = "LS";
-                $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-LS%')->orderBy('id', 'desc')->first();
-                $count = substr($rpeList->RpeNumber, 10);
-                $totalCount = $count + 1;
-                
-                $rpeNo = "RPE-".$type.'-'.$year.'-0'.$totalCount;
-            }
+            $rpeNo = "RPE-".$type.'-'.$year.'-'.$rpe_series;
         }
-
+        
+        if ($user->role->type == "LS")
+        {
+            $type = "LS";
+            $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-LS%')->orderBy('id', 'desc')->first();
+            $count = substr($rpeList->RpeNumber, 10);
+            $totalCount = $count + 1;
+            if ($totalCount < 1000)
+            {
+                $rpe_series = str_pad($totalCount, 4,'0', STR_PAD_LEFT);
+            }
+            $rpeNo = "RPE-".$type.'-'.$year.'-'.$rpe_series;
+        }
+        
         $productEvaluationData = RequestProductEvaluation::create([
             'RpeNumber' => $rpeNo,
             // 'CreatedDate' => $request->input('CreatedDate'),
@@ -833,26 +838,31 @@ class RequestProductEvaluationController extends Controller
 
     public function refreshUserApprover(Request $request)
     {
-        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
-        if ($user != null)
-        {
-            if($user->salesApproverById)
-            {
-                $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
-                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
+        // $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        // if ($user != null)
+        // {
+        //     if($user->salesApproverById)
+        //     {
+        //         $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+        //         $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
 
-                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
-            }
-            elseif($user->salesApproverByUserId)
-            {
-                $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
-                $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
+        //         return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+        //     }
+        //     elseif($user->salesApproverByUserId)
+        //     {
+        //         $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
+        //         $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
                 
-                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
-            }
-        }
+        //         return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+        //     }
+        // }
 
-        return "";
+        // return "";
+
+        $secondary_sales_person = SecondarySalesPerson::where('PrimarySalesPersonId', $request->ps)->pluck('SecondarySalesPersonId')->toArray();
+        $users = User::whereIn('id', $secondary_sales_person)->pluck('full_name', 'id');
+        
+        return Form::select('SecondarySalesPersonId', $users, null, array('class' => 'form-control'));
     }
     public function editsalesRpeFiles(Request $request, $id)
     {

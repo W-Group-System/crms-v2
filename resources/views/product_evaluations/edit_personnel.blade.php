@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_sample_request" action="{{ url('UpdateAssignedRpePersonnel/'.$Personnel->Id) }}">
+                <form method="POST" id="form_sample_request" action="{{ url('UpdateAssignedRpePersonnel/'.$Personnel->Id) }}" onsubmit="show()">
                     @csrf
                     <div class="form-group">
                         <label>R&D Personnel:</label>

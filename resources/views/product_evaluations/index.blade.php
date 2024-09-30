@@ -6,7 +6,6 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Evaluation List
             <button type="button" class="btn btn-md btn-outline-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
-            @include('product_evaluations.create')
             </h4>
             <div class="form-group">
                 <form method="GET" onsubmit="show()">
@@ -247,6 +246,8 @@
     </div>
 </div>
 
+@include('product_evaluations.create')
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
 <script>
@@ -340,11 +341,9 @@
             var primarySales = $(this).data('primarysales')
             var secondarySales = $(this).data('secondarysales');
 
-            console.log(primarySales);
-            
             $.ajax({
                 type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
+                url: "{{url('refresh_rpe_secondary_persons')}}",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
@@ -371,7 +370,7 @@
         {
             $.ajax({
                 type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
+                url: "{{url('refresh_rpe_secondary_persons')}}",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
