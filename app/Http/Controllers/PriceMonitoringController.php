@@ -85,8 +85,7 @@ class PriceMonitoringController extends Controller
         ->get();
         
         $price_monitorings = PriceMonitoring::with(['client', 'product_application', 'requestPriceProducts'])
-            ->when($status, function($query) use ($request, $userId, $userByUser) {
-                $status = $request->input('status');
+            ->when($status, function($query) use ($status, $userId, $userByUser) {;
                 if ($status == '30') {
                     $query->where(function ($query) use ($userId, $userByUser) {
                         $query->where('Status', '30')
@@ -101,8 +100,7 @@ class PriceMonitoringController extends Controller
                     $query->where('Status', $status);
                 }
             })
-            ->when($request, function($query) use ($request, $userId, $userByUser) {
-                $status = $request->input('status');
+            ->when($status, function($query) use ($status, $userId, $userByUser) {
                 if ($status == '10') {
                     $query->where('Status', '10')
                         ->where(function($query) use ($userId, $userByUser) {
@@ -129,8 +127,8 @@ class PriceMonitoringController extends Controller
                 }
             })
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
-                if ($progress == '10') {
-                    $query->where('Progress', '10')
+                if ($progress == '30') {
+                    $query->where('Progress', '30')
                         ->where(function($query) use ($userId, $userByUser) {
                             $query->where('SecondarySalesPersonId', $userId)
                                 ->orWhere('SecondarySalesPersonId', $userId)
@@ -141,14 +139,14 @@ class PriceMonitoringController extends Controller
                     $query->where('Progress', $progress);
                 }
             })
-            ->when($open && $close, function($query) use ($open, $close) {
-                $query->whereIn('Status', [$open, $close]);
+            ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
+                $query->whereIn('Status', [$request->open, $request->close]);
             })
-            ->when($open && !$close, function($query) use ($open) {
-                $query->where('Status', $open);
+            ->when($request->has('open') && !$request->has('close'), function($query) use ($request) {
+                $query->where('Status', $request->open);
             })
-            ->when($close && !$open, function($query) use ($close) {
-                $query->where('Status', $close);
+            ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
+                $query->where('Status', $request->close);
             })
             // ->when($request->has('open') && $request->has('close'), function ($query) use ($request) {
             //     $query->whereIn('Status', [$request->open, $request->close]);
