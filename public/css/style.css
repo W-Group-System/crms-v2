@@ -18003,51 +18003,25 @@ h6, .h6 {
   font-size: 3.75rem;
 }
 
-@media (max-width: 991px) {
-  .display-1 {
-    font-size: 3rem;
-  }
-}
-
 .display-2 {
   font-size: 3.125rem;
 }
 
-@media (max-width: 991px) {
-  .display-2 {
-    font-size: 2.5rem;
-  }
-}
 
 .display-3 {
   font-size: 2.5rem;
 }
 
-@media (max-width: 991px) {
-  .display-3 {
-    font-size: 2rem;
-  }
-}
 
 .display-4 {
   font-size: 1.875rem;
 }
 
-@media (max-width: 991px) {
-  .display-4 {
-    font-size: 1.5rem;
-  }
-}
 
 .display-5 {
   font-size: 1.25rem;
 }
 
-@media (max-width: 991px) {
-  .display-5 {
-    font-size: 1rem;
-  }
-}
 
 .blockquote {
   padding: 1.25rem;
@@ -18126,11 +18100,6 @@ address p {
   font-size: 12rem;
 }
 
-@media (max-width: 991px) {
-  .error-page h1 {
-    font-size: 8rem;
-  }
-}
 
 .text-twitter {
   color: #4747A1;
@@ -18238,13 +18207,6 @@ code {
 .footer a {
   color: #4B49AC;
   font-size: inherit;
-}
-
-@media (max-width: 991px) {
-  .footer {
-    margin-left: 0;
-    width: 100%;
-  }
 }
 
 /* Utilities */
@@ -26485,13 +26447,6 @@ div.tagsinput span.tag a {
   padding-right: 0;
 }
 
-@media (max-width: 991px) {
-  .editable-container.editable-inline .editableform .control-group .editable-buttons {
-    display: block;
-    margin-top: 10px;
-  }
-}
-
 /* Wizard */
 .wizard {
   display: block;
@@ -26928,13 +26883,6 @@ div.tagsinput span.tag a {
   flex-direction: column;
 }
 
-@media (max-width: 991px) {
-  .main-panel {
-    margin-left: 0;
-    width: 100%;
-  }
-}
-
 .content-wrapper {
   background: #F5F7FF;
   padding: 1.375rem 1.175rem;
@@ -27337,14 +27285,6 @@ div.tagsinput span.tag a {
   height: 50px;
 }
 
-@media (max-width: 991px) {
-  .navbar .navbar-menu-wrapper {
-    width: calc(100% - 55px);
-    padding-left: 15px;
-    padding-right: 11px;
-  }
-}
-
 .navbar .navbar-menu-wrapper .navbar-toggler {
   border: 0;
   color: inherit;
@@ -27362,11 +27302,6 @@ div.tagsinput span.tag a {
   transition: transform 0.3s linear;
 }
 
-@media (max-width: 991px) {
-  .navbar .navbar-menu-wrapper .navbar-toggler:not(.navbar-toggler-right) {
-    display: none;
-  }
-}
 
 .sidebar-icon-only .navbar .navbar-menu-wrapper .navbar-toggler:not(.navbar-toggler-right) {
   transform: rotate(180deg);
@@ -27376,6 +27311,88 @@ div.tagsinput span.tag a {
   .navbar .navbar-menu-wrapper .navbar-toggler.navbar-toggler-right {
     padding-left: 15px;
     padding-right: 0;
+    color: #FFF;
+  }
+  .navbar .navbar-menu-wrapper {
+    width: calc(100% - 55px);
+    padding-left: 15px;
+    padding-right: 11px;
+  }
+  .navbar .navbar-menu-wrapper .navbar-toggler:not(.navbar-toggler-right) {
+    display: none;
+  }
+  .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown {
+    position: static;
+  }
+  .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .navbar-dropdown     {
+    left: 20px;
+    right: 20px;
+    top: 60px;
+    width: calc(100% - 40px);
+  }
+  .navbar {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+  }
+  .navbar .navbar-brand-wrapper {
+    width: 55px;
+  }
+  .navbar .navbar-brand-wrapper .navbar-brand.brand-logo {
+    display: none;
+  }
+  .navbar .navbar-brand-wrapper .navbar-brand.brand-logo-mini {
+    display: inline-block;
+  }
+  .navbar-collapse {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin-top: 0.5rem;
+  }
+  #settings-trigger {
+    display: none;
+  }
+  .display-1 {
+    font-size: 3rem;
+  }
+  .display-2 {
+    font-size: 2.5rem;
+  }
+  .display-3 {
+    font-size: 2rem;
+  }
+  .display-4 {
+    font-size: 1.5rem;
+  }
+  .display-5 {
+    font-size: 1rem;
+  }
+  .error-page h1 {
+    font-size: 8rem;
+  }
+  .footer {
+    margin-left: 0;
+    width: 100%;
+  }
+  .editable-container.editable-inline .editableform .control-group .editable-buttons {
+    display: block;
+    margin-top: 10px;
+  }
+  .main-panel {
+    margin-left: 0;
+    width: 100%;
+  }
+  .logo-crms
+  {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    letter-spacing: -0.4px;
+    word-spacing: 2px;
+    color: #FFF;
+    font-weight: 700;
+    margin-bottom: 0px;
   }
 }
 
@@ -27563,17 +27580,7 @@ div.tagsinput span.tag a {
   vertical-align: middle;
 }
 
-@media (max-width: 991px) {
-  .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown {
-    position: static;
-  }
-  .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .navbar-dropdown {
-    left: 20px;
-    right: 20px;
-    top: 60px;
-    width: calc(100% - 40px);
-  }
-}
+
 
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .count-indicator {
   position: relative;
@@ -28358,29 +28365,6 @@ div.tagsinput span.tag a {
   text-align: center;
 }
 
-@media (max-width: 991px) {
-  .navbar {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-  }
-  .navbar .navbar-brand-wrapper {
-    width: 55px;
-  }
-  .navbar .navbar-brand-wrapper .navbar-brand.brand-logo {
-    display: none;
-  }
-  .navbar .navbar-brand-wrapper .navbar-brand.brand-logo-mini {
-    display: inline-block;
-  }
-  .navbar-collapse {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    margin-top: 0.5rem;
-  }
-}
 
 @media (max-width: 480px) {
   .navbar .navbar-brand-wrapper {
@@ -28807,16 +28791,7 @@ div.tagsinput span.tag a {
   left: 30px;
 }
 
-.logo-crms
-{
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  letter-spacing: -0.4px;
-  word-spacing: 2px;
-  color: #FFF;
-  font-weight: 700;
-  margin-bottom: 0px;
-}
+
 /********************************************** Media Screen **********************************************/
 @media (min-width: 1200px) {
   .container, .container-sm, .container-md, .container-lg, .container-xl {
@@ -29546,6 +29521,16 @@ div.tagsinput span.tag a {
   }
   .navbar .navbar-menu-wrapper .navbar-toggler {
     display: none;
+  }
+  .logo-crms
+  {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    letter-spacing: -0.4px;
+    word-spacing: 2px;
+    color: #FFF;
+    font-weight: 700;
+    margin-bottom: 0px;
   }
 }
 
@@ -30553,11 +30538,15 @@ div.tagsinput span.tag a {
   .navbar .navbar-menu-wrapper .navbar-toggler {
     display: none;
   }
-}
-
-@media (max-width: 991px) {
-  #settings-trigger {
-    display: none;
+  .logo-crms
+  {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    letter-spacing: -0.4px;
+    word-spacing: 2px;
+    color: #FFF;
+    font-weight: 700;
+    margin-bottom: 0px;
   }
 }
 
