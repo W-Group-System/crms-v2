@@ -227,7 +227,6 @@
                                             break;
                                         @endphp
                                     @endif
-                                    {{$requestProduct->Quantity }}
                                 @endforeach
 
                                 @if ($showApproveButton)
