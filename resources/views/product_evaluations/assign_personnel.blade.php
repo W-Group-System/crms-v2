@@ -7,7 +7,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form method="POST" action="{{ url('assignRpePersonnel') }}">
+			<form method="POST" action="{{ url('assignRpePersonnel') }}" onsubmit="show()">
                 @csrf
                 <div class="modal-body">
                     <div class="form-card">

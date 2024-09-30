@@ -247,7 +247,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
 
     Route::get('product_evaluation_export', 'RequestProductEvaluationController@export');
 
-    Route::post('refresh_user_approvers', 'RequestProductEvaluationController@refreshUserApprover');
+    Route::post('refresh_rpe_secondary_persons', 'RequestProductEvaluationController@refreshUserApprover');
 
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');

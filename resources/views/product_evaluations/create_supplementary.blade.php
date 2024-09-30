@@ -7,7 +7,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form method="POST" action="{{ url('addRpeSupplementary') }}">
+			<form method="POST" action="{{ url('addRpeSupplementary') }}" onsubmit="show()">
                 @csrf
 
                 <input type="hidden" name="rpe_id" value="{{$requestEvaluation->id}}">
