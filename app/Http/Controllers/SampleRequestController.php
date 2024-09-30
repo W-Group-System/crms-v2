@@ -688,181 +688,181 @@ class SampleRequestController extends Controller
     }
 
     public function store(Request $request)
-{
-   $srfNumber = null;
-    $currentYear = date('y');
-    $deptCode = '';
+    {
+    $srfNumber = null;
+        $currentYear = date('y');
+        $deptCode = '';
 
-    if (auth()->user()->role->type == 'LS') {
-        $deptCode = 'LS';
-    } elseif (auth()->user()->role->type == 'IS') {
-        $deptCode = 'IS';
-    }
-
-    if ($deptCode) {
-        $checkSrf = SampleRequest::select('SrfNumber')
-            ->where('SrfNumber', 'LIKE', "SRF-$deptCode-$currentYear%")
-            ->orderBy('SrfNumber', 'desc')
-            ->first();
-
-        if ($checkSrf) {
-            $count = (int)substr($checkSrf->SrfNumber, -4);
-        } else {
-            $count = 0; 
+        if (auth()->user()->role->type == 'LS') {
+            $deptCode = 'LS';
+        } elseif (auth()->user()->role->type == 'IS') {
+            $deptCode = 'IS';
         }
 
-        $totalCount = str_pad($count + 1, 4, '0', STR_PAD_LEFT); 
-        $srfNumber = 'SRF' . '-' . $deptCode . '-' . $currentYear . '-' . $totalCount;
+        if ($deptCode) {
+            $checkSrf = SampleRequest::select('SrfNumber')
+                ->where('SrfNumber', 'LIKE', "SRF-$deptCode-$currentYear%")
+                ->orderBy('SrfNumber', 'desc')
+                ->first();
+
+            if ($checkSrf) {
+                $count = (int)substr($checkSrf->SrfNumber, -4);
+            } else {
+                $count = 0; 
+            }
+
+            $totalCount = str_pad($count + 1, 4, '0', STR_PAD_LEFT); 
+            $srfNumber = 'SRF' . '-' . $deptCode . '-' . $currentYear . '-' . $totalCount;
+        }
+
+
+            $samplerequest = SampleRequest::create([
+                'SrfNumber' => $srfNumber,
+                'DateRequested' => $request->input('DateRequested'),
+                'DateRequired' => $request->input('DateRequired'),
+                'DateStarted' => $request->input('DateStarted'),
+                'PrimarySalesPersonId' => $request->input('PrimarySalesPerson'),
+                'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
+                'SoNumber' => $request->input('SoNumber'),
+                'RefCode' => $request->input('RefCode'),
+                'Status' => '10',
+                'Progress' => '10',
+                'SrfType' => $request->input('SrfType'),
+                'ClientId' => $request->input('ClientId'),
+                'ContactId' => $request->input('ClientContactId'),
+                'InternalRemarks' => $request->input('Remarks'),
+                'Courier' => $request->input('Courier'),
+                'AwbNumber' => $request->input('AwbNumber'),
+                'DateDispatched' => $request->input('DateDispatched'),
+                'DateSampleReceived' => $request->input('DateSampleReceived'),
+                'DeliveryRemarks' => $request->input('DeliveryRemarks'),
+                'Note' => $request->input('Note'),
+            ]);
+
+
+            foreach ($request->input('ProductCode', []) as $key => $value) {
+                SampleRequestProduct::create([
+                    'SampleRequestId' => $samplerequest->Id,
+                    'ProductType' => $request->input('ProductType')[$key],
+                    'ApplicationId' => $request->input('ApplicationId')[$key],
+                    'ProductCode' => $request->input('ProductCode')[$key],
+                    'ProductDescription' => $request->input('ProductDescription')[$key],
+                    'NumberOfPackages' => $request->input('NumberOfPackages')[$key],
+                    'Quantity' => $request->input('Quantity')[$key],
+                    'UnitOfMeasureId' => $request->input('UnitOfMeasure')[$key],
+                    'ProductIndex' => $key + 1,
+                    'Label' => $request->input('Label')[$key],
+                    'RpeNumber' => $request->input('RpeNumber')[$key],
+                    'CrrNumber' => $request->input('CrrNumber')[$key],
+                    'Remarks' => $request->input('RemarksProduct')[$key],
+                ]);
+            }
+
+            if ($request->has('SalesSrfFile'))
+            {
+                $attachments = $request->file('SalesSrfFile');
+                foreach($attachments as $attachment)
+                {
+                    $name = time().'_'.$attachment->getClientOriginalName();
+                    $attachment->move(public_path('srfFiles'), $name);
+                    $path = '/srfFiles/'.$name;
+
+                    $srfFiles = new SrfFile();
+                    $srfFiles->Name = $name;
+                    $srfFiles->Path = $path;
+                    $srfFiles->SampleRequestId = $samplerequest['Id'];
+
+                    if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                    {
+                        $srfFiles->UserType = "Sales";
+                    }
+                    if (auth()->user()->role->type == "RND")
+                    {
+                        $srfFiles->UserType = "RND";
+                    }
+                    
+                    $srfFiles->save();
+                }
+            }
+
+            return redirect()->route('sample_request.index')->with('success', 'Sample Request created successfully.');
     }
 
-
-        $samplerequest = SampleRequest::create([
-            'SrfNumber' => $srfNumber,
-            'DateRequested' => $request->input('DateRequested'),
-            'DateRequired' => $request->input('DateRequired'),
-            'DateStarted' => $request->input('DateStarted'),
-            'PrimarySalesPersonId' => $request->input('PrimarySalesPerson'),
-            'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
-            'SoNumber' => $request->input('SoNumber'),
-            'RefCode' => $request->input('RefCode'),
-            'Status' => '10',
-            'Progress' => '10',
-            'SrfType' => $request->input('SrfType'),
-            'ClientId' => $request->input('ClientId'),
-            'ContactId' => $request->input('ClientContactId'),
-            'InternalRemarks' => $request->input('Remarks'),
-            'Courier' => $request->input('Courier'),
-            'AwbNumber' => $request->input('AwbNumber'),
-            'DateDispatched' => $request->input('DateDispatched'),
-            'DateSampleReceived' => $request->input('DateSampleReceived'),
-            'DeliveryRemarks' => $request->input('DeliveryRemarks'),
-            'Note' => $request->input('Note'),
-        ]);
-
+    public function update(Request $request, $id)
+    {
+        $srf = SampleRequest::with('requestProducts')->findOrFail($id);
+        $srf->DateRequired = $request->input('DateRequired');
+        $srf->DateStarted = $request->input('DateStarted');
+        $srf->PrimarySalesPersonId = $request->input('PrimarySalesPerson');
+        $srf->SecondarySalesPersonId = $request->input('SecondarySalesPerson');
+        $srf->RefCode = $request->input('RefCode');
+        $srf->SrfType = $request->input('SrfType');
+        $srf->SoNumber = $request->input('SoNumber');
+        $srf->ClientId = $request->input('ClientId');
+        $srf->ContactId = $request->input('ClientContactId');
+        $srf->InternalRemarks = $request->input('Remarks');
+        $srf->Courier = $request->input('Courier');
+        $srf->AwbNumber = $request->input('AwbNumber');
+        $srf->DateDispatched = $request->input('DateDispatched');
+        $srf->DateSampleReceived = $request->input('DateSampleReceived');
+        $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
+        $srf->Note = $request->input('Note');
+        $srf->save();
 
         foreach ($request->input('ProductCode', []) as $key => $value) {
-            SampleRequestProduct::create([
-                'SampleRequestId' => $samplerequest->Id,
-                'ProductType' => $request->input('ProductType')[$key],
-                'ApplicationId' => $request->input('ApplicationId')[$key],
-                'ProductCode' => $request->input('ProductCode')[$key],
-                'ProductDescription' => $request->input('ProductDescription')[$key],
-                'NumberOfPackages' => $request->input('NumberOfPackages')[$key],
-                'Quantity' => $request->input('Quantity')[$key],
-                'UnitOfMeasureId' => $request->input('UnitOfMeasure')[$key],
-                'ProductIndex' => $key + 1,
-                'Label' => $request->input('Label')[$key],
-                'RpeNumber' => $request->input('RpeNumber')[$key],
-                'CrrNumber' => $request->input('CrrNumber')[$key],
-                'Remarks' => $request->input('RemarksProduct')[$key],
-            ]);
+            $productId = $request->input('product_id.' . $key); 
+
+            $srf->requestProducts()->updateOrCreate(
+                ['id' => $productId],  
+                [
+                    'SampleRequestId' => $id, 
+                    'ProductIndex' => $key + 1,
+                    'ProductType' => $request->input('ProductType.' . $key),
+                    'ApplicationId' => $request->input('ApplicationId.' . $key),
+                    'ProductCode' =>  $value,
+                    'ProductDescription' => $request->input('ProductDescription.' . $key),
+                    'NumberOfPackages' => $request->input('NumberOfPackages.' . $key),
+                    'Quantity' => $request->input('Quantity.' . $key),
+                    'UnitOfMeasureId' => $request->input('UnitOfMeasure.' . $key),
+                    'Label' => $request->input('Label.' . $key),
+                    'RpeNumber' => $request->input('RpeNumber.' . $key),
+                    'CrrNumber' => $request->input('CrrNumber.' . $key),
+                    'Remarks' => $request->input('RemarksProduct.' . $key),
+                    'Disposition' => $request->input('Disposition.' . $key),
+                    'DispositionRejectionDescription' => $request->input('DispositionRejectionDescription.' . $key),
+                ]
+            );
         }
 
         if ($request->has('SalesSrfFile'))
-        {
-            $attachments = $request->file('SalesSrfFile');
-            foreach($attachments as $attachment)
             {
-                $name = time().'_'.$attachment->getClientOriginalName();
-                $attachment->move(public_path('srfFiles'), $name);
-                $path = '/srfFiles/'.$name;
-
-                $srfFiles = new SrfFile();
-                $srfFiles->Name = $name;
-                $srfFiles->Path = $path;
-                $srfFiles->SampleRequestId = $samplerequest['Id'];
-
-                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                $attachments = $request->file('SalesSrfFile');
+                foreach($attachments as $attachment)
                 {
-                    $srfFiles->UserType = "Sales";
+                    $name = time().'_'.$attachment->getClientOriginalName();
+                    $attachment->move(public_path('srfFiles'), $name);
+                    $path = '/srfFiles/'.$name;
+
+                    $srfFiles = new SrfFile();
+                    $srfFiles->Name = $name;
+                    $srfFiles->Path = $path;
+                    $srfFiles->SampleRequestId = $id;
+                    
+                    if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
+                    {
+                        $srfFiles->UserType = "Sales";
+                    }
+                    if (auth()->user()->role->type == "RND")
+                    {
+                        $srfFiles->UserType = "Rnd";
+                    }
+                    
+                    $srfFiles->save();
                 }
-                if (auth()->user()->role->type == "RND")
-                {
-                    $srfFiles->UserType = "RND";
-                }
-                
-                $srfFiles->save();
             }
-        }
 
-        return redirect()->route('sample_request.index')->with('success', 'Sample Request created successfully.');
-}
-    public function update(Request $request, $id)
-{
-    $srf = SampleRequest::with('requestProducts')->findOrFail($id);
-    $srf->DateRequired = $request->input('DateRequired');
-    $srf->DateStarted = $request->input('DateStarted');
-    $srf->PrimarySalesPersonId = $request->input('PrimarySalesPerson');
-    $srf->SecondarySalesPersonId = $request->input('SecondarySalesPerson');
-    $srf->RefCode = $request->input('RefCode');
-    $srf->SrfType = $request->input('SrfType');
-    $srf->SoNumber = $request->input('SoNumber');
-    $srf->ClientId = $request->input('ClientId');
-    $srf->ContactId = $request->input('ClientContactId');
-    $srf->InternalRemarks = $request->input('Remarks');
-    $srf->Courier = $request->input('Courier');
-    $srf->AwbNumber = $request->input('AwbNumber');
-    $srf->DateDispatched = $request->input('DateDispatched');
-    $srf->DateSampleReceived = $request->input('DateSampleReceived');
-    $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
-    $srf->Note = $request->input('Note');
-    $srf->save();
-
-    foreach ($request->input('ProductCode', []) as $key => $value) {
-        $productId = $request->input('product_id.' . $key); 
-
-        $srf->requestProducts()->updateOrCreate(
-            ['id' => $productId],  
-            [
-                'SampleRequestId' => $id, 
-                'ProductIndex' => $key + 1,
-                'ProductType' => $request->input('ProductType.' . $key),
-                'ApplicationId' => $request->input('ApplicationId.' . $key),
-                'ProductCode' =>  $value,
-                'ProductDescription' => $request->input('ProductDescription.' . $key),
-                'NumberOfPackages' => $request->input('NumberOfPackages.' . $key),
-                'Quantity' => $request->input('Quantity.' . $key),
-                'UnitOfMeasureId' => $request->input('UnitOfMeasure.' . $key),
-                'Label' => $request->input('Label.' . $key),
-                'RpeNumber' => $request->input('RpeNumber.' . $key),
-                'CrrNumber' => $request->input('CrrNumber.' . $key),
-                'Remarks' => $request->input('RemarksProduct.' . $key),
-                'Disposition' => $request->input('Disposition.' . $key),
-                'DispositionRejectionDescription' => $request->input('DispositionRejectionDescription.' . $key),
-            ]
-        );
+        return redirect()->back()->with('success', 'Sample Request updated successfully');
     }
-
-    if ($request->has('SalesSrfFile'))
-        {
-            $attachments = $request->file('SalesSrfFile');
-            foreach($attachments as $attachment)
-            {
-                $name = time().'_'.$attachment->getClientOriginalName();
-                $attachment->move(public_path('srfFiles'), $name);
-                $path = '/srfFiles/'.$name;
-
-                $srfFiles = new SrfFile();
-                $srfFiles->Name = $name;
-                $srfFiles->Path = $path;
-                $srfFiles->SampleRequestId = $id;
-                
-                if (auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS")
-                {
-                    $srfFiles->UserType = "Sales";
-                }
-                if (auth()->user()->role->type == "RND")
-                {
-                    $srfFiles->UserType = "Rnd";
-                }
-                
-                $srfFiles->save();
-            }
-        }
-
-    return redirect()->back()->with('success', 'Sample Request updated successfully');
-}
-
     
     public function approveSrfSales($id)
     {
