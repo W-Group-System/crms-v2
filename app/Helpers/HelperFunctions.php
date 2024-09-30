@@ -739,3 +739,15 @@ function productManagementLogs($action, $product_code)
 
     $userEventLogs->save();
 }
+
+function primarySalesApprover($primary_sales,$user_login)
+{
+    $sales_approvers = SalesApprovers::where('SalesApproverId', $user_login)->where('UserId', $primary_sales)->get();
+    
+    if ($sales_approvers->isNotEmpty())
+    {
+        return true;
+    }
+
+    return false;
+}

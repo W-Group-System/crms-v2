@@ -76,58 +76,63 @@
                         @endif
                     @endif
 
-                    @if(auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId)
-                        @if($crr->Status == 10)
-                            @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
-                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
-                                <i class="ti ti-pencil"></i>&nbsp;Update
-                            </button>
+                    @if(auth()->user()->role->name == "Staff L1")
+                        @if((auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId) || (auth()->user()->id == $crr->SecondarySalesPersonId || auth()->user()->user_id == $crr->SecondarySalesPersonId))
+                            @if($crr->Status == 10)
+                                @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
+                                <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                                    <i class="ti ti-pencil"></i>&nbsp;Update
+                                </button>
+                                @endif
+
+                                @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38)
+                                <button type="button" class="btn btn-outline-warning" id="update2Crr" data-toggle="modal" data-target="#editCrr{{$crr->id}}" data-secondarysales="{{$crr->SecondarySalesPersonId}}">
+                                    <i class="ti ti-pencil"></i>&nbsp;Update
+                                </button>
+                                @endif
                             @endif
 
-                            @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38)
-                            <button type="button" class="btn btn-outline-warning" id="update2Crr" data-toggle="modal" data-target="#editCrr{{$crr->id}}" data-secondarysales="{{$crr->SecondarySalesPersonId}}">
-                                <i class="ti ti-pencil"></i>&nbsp;Update
-                            </button>
-                            @endif
-                        @endif
-
-                        @if($crr->Status == 10 && $crr->Progress == 60)
-                        <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}" onsubmit="show()">
-                            @csrf
-
-                            <button type="button" class="btn btn-outline-info returnToRnd">
-                                <i class="ti ti-check-box"></i>&nbsp;Return to RND
-                            </button>
-                        </form>
-                        @endif
-
-                        @if($crr->Progress == 60)
-                        <form method="POST" class="d-inline-block" action="{{url('sales_accepted/'.$crr->id)}}" onsubmit="show()">
-                            @csrf
-
-                            <button type="button" class="btn btn-outline-success salesAccepted">
-                                <i class="ti ti-check-box"></i>&nbsp;Accept
-                            </button>
-                        </form>
-                        @endif
-                        
-                        @if($crr->Status == 30)
-                            {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
+                            @if($crr->Status == 10 && $crr->Progress == 60)
+                            <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}" onsubmit="show()">
                                 @csrf
 
-                            </form> --}}
-                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#openStatus{{$crr->id}}">
-                                <i class="mdi mdi-open-in-new"></i>&nbsp;Open
-                            </button>
-                        @endif
-                        
-                        @if($crr->Status == 10 && ($crr->Progress == 60 || $crr->Progress == 10 || $crr->Progress == 20 || $crr->Progress == 30))
-                            <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
-                                <i class="ti ti-close"></i>&nbsp;Close
-                            </button>
-                            <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
-                                <i class="mdi mdi-cancel"></i>&nbsp;Cancel
-                            </button>
+                                <button type="button" class="btn btn-outline-info returnToRnd">
+                                    <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                </button>
+                            </form>
+                            @endif
+
+                            @if($crr->Progress == 60)
+                            <form method="POST" class="d-inline-block" action="{{url('sales_accepted/'.$crr->id)}}" onsubmit="show()">
+                                @csrf
+
+                                <button type="button" class="btn btn-outline-success salesAccepted">
+                                    <i class="ti ti-check-box"></i>&nbsp;Accept
+                                </button>
+                            </form>
+                            @endif
+                            
+
+                            @if(auth()->user()->id != $crr->SecondarySalesPersonId && auth()->user()->user_id != $crr->SecondarySalesPersonId)
+                                @if($crr->Status == 30)
+                                    {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
+                                        @csrf
+
+                                    </form> --}}
+                                    <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#openStatus{{$crr->id}}">
+                                        <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                                    </button>
+                                @endif
+                                
+                                @if($crr->Status == 10 && ($crr->Progress == 60 || $crr->Progress == 10 || $crr->Progress == 20 || $crr->Progress == 30))
+                                    <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
+                                        <i class="ti ti-close"></i>&nbsp;Close
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                                        <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                                    </button>
+                                @endif
+                            @endif
                         @endif
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                     
@@ -147,127 +152,127 @@
                             @endif
                         @endif
 
-                        @if(authCheckIfItsSales(auth()->user()->department_id))
+                        {{-- @if(authCheckIfItsSales(auth()->user()->department_id))
                             @if($crr->Status == 10)
                             <button type="button" class="btn btn-outline-warning" id="update2Crr" data-toggle="modal" data-target="#editCrr{{$crr->id}}" data-secondarysales="{{$crr->SecondarySalesPersonId}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
                             @endif
-                        @endif
+                        @endif --}}
                         
                         {{-- @if(checkIfItsApprover(auth()->user()->id, $crr->PrimarySalesPersonId, "CRR") == "yes") --}}
-                        @if($crr->SecondarySalesPersonId == auth()->user()->id || $crr->SecondarySalesPersonId == auth()->user()->user_id)
+                        @if(primarySalesApprover($crr->PrimarySalesPersonId, auth()->user()->id))
                             @if($crr->Progress == 10 && $crr->Status == 10)
                             <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
                                 <i class="ti ti-check-box"></i>&nbsp;Approve
                             </button>
                             @endif
+                            @if(authCheckIfItsSales(auth()->user()->department_id))
+    
+                                @if($crr->Progress == 60 && $crr->Status == 10)
+                                <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}" onsubmit="show()">
+                                    @csrf
+    
+                                    <button type="button" class="btn btn-outline-info returnToRnd">
+                                        <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                    </button>
+                                </form>
+                                @endif 
+    
+                                @if($crr->Progress == 60)
+                                    <form method="POST" class="d-inline-block" action="{{url('sales_accepted/'.$crr->id)}}" onsubmit="show()">
+                                        @csrf
+    
+                                        <button type="button" class="btn btn-outline-success salesAccepted">
+                                            <i class="ti ti-check-box"></i>&nbsp;Accept
+                                        </button>
+                                    </form>
+                                @endif
+    
+                                @if($crr->Status == 30)
+                                {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
+                                    @csrf
+    
+                                </form> --}}
+                                <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#openStatus{{$crr->id}}">
+                                    <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                                </button>
+                                @endif
+    
+                                @if($crr->Status == 10 && ($crr->Progress == 60 || $crr->Progress == 10 || $crr->Progress == 20 || $crr->Progress == 30))
+                                    <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
+                                        <i class="ti ti-close"></i>&nbsp;Close
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                                        <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                                    </button>
+                                @endif
+                            
+                            @endif
                         @endif
                         {{-- @endif --}}
                         
-                        @if(authCheckIfItsSales(auth()->user()->department_id))
-
-                            @if($crr->Progress == 60 && $crr->Status == 10)
-                            <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}" onsubmit="show()">
+                        @if($crr->RefCode == auth()->user()->role->type)
+                            @if($crr->Progress == 57 || $crr->Progress == 81)
+                            <form action="{{url('start_crr/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
                                 @csrf
 
-                                <button type="button" class="btn btn-outline-info returnToRnd">
-                                    <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                <button type="button" class="btn btn-outline-danger returnBtn">
+                                    <i class="ti-back-left">&nbsp;</i> Return To Specialist
                                 </button>
                             </form>
-                            @endif 
+                            @endif
 
-                            @if($crr->Progress == 60)
-                                <form method="POST" class="d-inline-block" action="{{url('sales_accepted/'.$crr->id)}}" onsubmit="show()">
+                            @if($crr->Progress == 30)
+                                <form action="{{url('rnd_received/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
                                     @csrf
 
-                                    <button type="button" class="btn btn-outline-success salesAccepted">
-                                        <i class="ti ti-check-box"></i>&nbsp;Accept
+                                    <button type="button" class="btn btn-outline-success receivedBtn">
+                                        <i class="ti-bookmark">&nbsp;</i> Received
                                     </button>
                                 </form>
                             @endif
 
-                            @if($crr->Status == 30)
-                            {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
-                                @csrf
+                            @if($crr->Progress == 35)
+                                <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
+                                    @csrf 
 
-                            </form> --}}
-                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#openStatus{{$crr->id}}">
-                                <i class="mdi mdi-open-in-new"></i>&nbsp;Open
-                            </button>
-                            @endif
-
-                            @if($crr->Status == 10 && ($crr->Progress == 60 || $crr->Progress == 10 || $crr->Progress == 20 || $crr->Progress == 30))
-                                <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
-                                    <i class="ti ti-close"></i>&nbsp;Close
-                                </button>
-                                <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
-                                    <i class="mdi mdi-cancel"></i>&nbsp;Cancel
-                                </button>
-                            @endif
-                        @else
-                            @if($crr->RefCode == auth()->user()->role->type)
-                                @if($crr->Progress == 57 || $crr->Progress == 81)
-                                <form action="{{url('start_crr/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
-                                    @csrf
-
-                                    <button type="button" class="btn btn-outline-danger returnBtn">
-                                        <i class="ti-back-left">&nbsp;</i> Return To Specialist
+                                    <button type="button" class="btn btn-outline-success startCrrBtn">
+                                        <i class="ti-control-play"></i>&nbsp; Start
                                     </button>
                                 </form>
-                                @endif
+                            @endif
 
-                                @if($crr->Progress == 30)
-                                    <form action="{{url('rnd_received/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
-                                        @csrf
+                            @if($crr->Progress == 50)
+                                <button type="button" class="btn btn-outline-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
+                                    <i class="ti-control-pause"></i>&nbsp; Pause
+                                </button>
+                            @endif
 
-                                        <button type="button" class="btn btn-outline-success receivedBtn">
-                                            <i class="ti-bookmark">&nbsp;</i> Received
-                                        </button>
-                                    </form>
-                                @endif
+                            @if($crr->Progress == 55)
+                                <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#continueStatus{{$crr->id}}">
+                                    <i class="ti-control-play"></i>&nbsp; Continue
+                                </button>
+                            @endif
 
-                                @if($crr->Progress == 35)
-                                    <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
-                                        @csrf 
+                            @if($crr->Progress == 57)
+                                <form method="POST" action="{{url('submit_final_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
+                                    @csrf 
 
-                                        <button type="button" class="btn btn-outline-success startCrrBtn">
-                                            <i class="ti-control-play"></i>&nbsp; Start
-                                        </button>
-                                    </form>
-                                @endif
-
-                                @if($crr->Progress == 50)
-                                    <button type="button" class="btn btn-outline-success pauseCrrBtn" data-toggle="modal" data-target="#pauseModal{{$crr->id}}">
-                                        <i class="ti-control-pause"></i>&nbsp; Pause
+                                    <button type="button" class="btn btn-outline-success submitFinalCrr">
+                                        <i class="ti-check"></i>&nbsp; Submit
                                     </button>
-                                @endif
+                                </form>
+                            @endif
 
-                                @if($crr->Progress == 55)
-                                    <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#continueStatus{{$crr->id}}">
-                                        <i class="ti-control-play"></i>&nbsp; Continue
+                            @if($crr->Progress == 57 || $crr->Progress == 81)
+                                <form method="POST" action="{{url('complete_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
+                                    @csrf 
+
+                                    <button type="button" class="btn btn-outline-primary completeCrr">
+                                        <i class="ti-pencil-alt"></i>&nbsp; Completed
                                     </button>
-                                @endif
-
-                                @if($crr->Progress == 57)
-                                    <form method="POST" action="{{url('submit_final_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
-                                        @csrf 
-
-                                        <button type="button" class="btn btn-outline-success submitFinalCrr">
-                                            <i class="ti-check"></i>&nbsp; Submit
-                                        </button>
-                                    </form>
-                                @endif
-
-                                @if($crr->Progress == 57 || $crr->Progress == 81)
-                                    <form method="POST" action="{{url('complete_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
-                                        @csrf 
-
-                                        <button type="button" class="btn btn-outline-primary completeCrr">
-                                            <i class="ti-pencil-alt"></i>&nbsp; Completed
-                                        </button>
-                                    </form>
-                                @endif
+                                </form>
                             @endif
                         @endif
                     @endif
@@ -279,7 +284,7 @@
 
                 <div class="row mb-0">
                     <div class="col-sm-3 col-md-2">
-                        <p class="mb-0"><b>Client :</b></p>
+                        <p class="mb-0 text-right"><b>Client :</b></p>
                     </div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0"><a href="{{url('view_client/'.$crr->ClientId)}}" >{{optional($crr->client)->Name}}</a></p>
@@ -287,7 +292,7 @@
                 </div>
                 <div class="row mb-0">
                     <div class="col-sm-3 col-md-2">
-                        <p class="mb-0"><b>Client Trade Name :</b></p>
+                        <p class="mb-0 text-right"><b>Client Trade Name :</b></p>
                     </div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">
@@ -298,13 +303,13 @@
                     </div>
                 </div>
                 <div class="row mb-0">
-                    <p class="col-sm-3 mb-0 col-md-2"><b>Region :</b></p>
+                    <p class="col-sm-3 mb-0 col-md-2 text-right"><b>Region :</b></p>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{optional($crr->client->clientregion)->Name}}</p>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <p class="col-sm-3 mb-0 col-md-2"><b>Country :</b></p>
+                    <p class="col-sm-3 mb-0 col-md-2 text-right"><b>Country :</b></p>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{optional($crr->client->clientcountry)->Name}}</p>
                     </div>
@@ -315,13 +320,13 @@
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
 
                 <div class="row mb-0">
-                    <div class="col-sm-3 col-md-2">
+                    <div class="col-sm-3 col-md-2 text-right">
                         <p class="mb-0"><b>CRR # :</b></p>
                     </div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{$crr->CrrNumber}}</p>
                     </div>
-                    <div class="col-sm-3 col-md-2">
+                    <div class="col-sm-3 col-md-2 text-right">
                         <p class="mb-0"><b>Primary Sales Person :</b></p>
                     </div>
                     <div class="col-sm-3 col-md-2">
@@ -335,14 +340,14 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3 col-md-2">
+                    <div class="col-sm-3 col-md-2 text-right">
                         <p class="mb-0"><b>Date Created :</b></p>
                     </div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{date('Y-m-d H:i A', strtotime($crr->DateCreated))}}</p>
                     </div>
                     <div class="col-sm-3 col-md-2">
-                        <p class="mb-0"><b>Secondary Sales Person :</b></p>
+                        <p class="mb-0 text-right"><b>Secondary Sales Person :</b></p>
                     </div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">
@@ -356,7 +361,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-3 col-md-2">
-                        <p class="mb-0"><b>Priority :</b></p>
+                        <p class="mb-0 text-right"><b>Priority :</b></p>
                     </div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">
@@ -370,7 +375,7 @@
                         </p>
                     </div>
                     <div class="col-sm-3 col-md-2">
-                        <p class="mb-0"><b>Status :</b></p>
+                        <p class="mb-0 text-right"><b>Status :</b></p>
                     </div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">
@@ -385,21 +390,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Due Date :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Due Date :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{date('Y-m-d', strtotime($crr->DueDate))}}</p>
                     </div>
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Progress :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Progress :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{optional($crr->progressStatus)->name}}</p>
                     </div>
                 </div>
                 <div class="row">
-                    <label class="col-sm-3 col-md-2"><p class="mb-0"><b>Application : </b></p></label>
+                    <label class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Application : </b></p></label>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{optional($crr->product_application)->Name}}</p>
                     </div>
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Nature of Request :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Nature of Request :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         @if($crr->crrNature)
                             @foreach ($crr->crrNature as $natureOfRequests)
@@ -409,11 +414,11 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Competitor :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Competitor :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{$crr->Competitor}}</p>
                     </div>
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>REF CRR Number :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>REF CRR Number :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         @php
                             $id = linkToCrr($crr->RefCrrNumber);
@@ -426,11 +431,11 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Competitor Price :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Competitor Price :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{$crr->CompetitorPrice}}</p>
                     </div>
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>REF RPE Number :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>REF RPE Number :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         @php
                             $id = linkToRpe($crr->RefRpeNumber);
@@ -443,18 +448,18 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Potential Volume :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Potential Volume :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{$crr->PotentialVolume}} {{optional($crr->unitOfMeasure)->Symbol}}</p>
                     </div>
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Ref Code :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Ref Code :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{$crr->RefCode}}</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-3 col-md-2">
-                        <p><b>Sales Approved Date :</b></p>
+                        <p class="text-right"><b>Sales Approved Date :</b></p>
                     </div>
                     <div class="col-sm-3 col-md-2">
                         <p>
@@ -465,13 +470,13 @@
                             @endif
                         </p>
                     </div>
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Target Price :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Target Price :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">{{$crr->TargetPrice}} {{optional($crr->price)->Name}}</p>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Details of Requirement :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Details of Requirement :</b></p></div>
                     <div class="col-sm-3 col-md-10">
                         <p class="mb-0">{!! nl2br(e($crr->DetailsOfRequirement)) !!}</p>
                     </div>
@@ -512,18 +517,35 @@
                 <label><strong>Approver Remarks</strong></label>
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
                 <div class="row mb-3">
-                    <label class="col-sm-3">
+                    <div class="col-sm-2">
+                        {{-- @if(auth()->user()->salesApproverById != null)
+                            @foreach (auth()->user()->salesApproverById as $approver)
+                                <p style="font-weight: bold;">{{$approver->salesApprover->full_name}} :</p>
+                            @endforeach
+                        @else
+                            @foreach (auth()->user()->secondarySales as $approver)
+                                <p style="font-weight: bold;">{{$approver->salesApprover->full_name}}</p>
+                            @endforeach
+                        @endif --}}
+                        @if($crr->primarySalesById != null)
+                            @foreach (optional($crr->primarySalesById)->salesApproverById as $approver)
+                                <p style="font-weight: bold;" class="mb-0 text-right">{{$approver->salesApprover->full_name}} :</p>
+                            @endforeach
+                        @else 
+                        @endif
+                    </div>
+                    <div class="col-sm-3">
                         @if($crr->approver)
                             @php
                                 $acceptRemarks = $crr->crrTransactionApprovals->sortByDesc('Id')->firstWhere('RemarksType', 'accept');
                             @endphp
                             @if($acceptRemarks != null)
-                            <p class="mb-0"><b>{{$crr->approver->full_name}} :</b> {{$acceptRemarks->Remarks}}</p>
+                            <p class="mb-0">{{$acceptRemarks->Remarks}}</p>
                             @endif
                         @else
                             <p class="mb-0">No approver remarks yet</p>
                         @endif
-                    </label>
+                    </div>
                 </div>
             </div>
             <div class="col-md-12">
@@ -531,11 +553,11 @@
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
 
                 <div class="row">
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>DDW Number : </b></p></div>
-                    <div class="col-sm-3 col-md-3">
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>DDW Number : </b></p></div>
+                    <div class="col-sm-3 col-md-2">
                         <p class="mb-0">@if($crr->DdwNumber != null){{$crr->DdwNumber}}@else N/A @endif</p>
                     </div>
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Date Received :</b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Date Received :</b></p></div>
                     <div class="col-sm-3 col-md-2">
                         <p class="mb-0">
                             @if($crr->DateReceived != null)
@@ -548,9 +570,9 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-3 col-md-2"></div>
-                    <div class="col-sm-3 col-md-3"></div>
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Date Completed :</b></p></div>
-                    <div class="col-sm-3 col-md-3">
+                    <div class="col-sm-3 col-md-2"></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Date Completed :</b></p></div>
+                    <div class="col-sm-3 col-md-2">
                         <p class="mb-0">
                             @if($crr->DateCompleted != null)
                             {{date('Y-m-d', strtotime($crr->DateCompleted))}}
@@ -562,9 +584,9 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-3 col-md-2"></div>
-                    <div class="col-sm-3 col-md-3"></div>
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Days Late : </b></p></div>
-                    <div class="col-sm-3 col-md-3">
+                    <div class="col-sm-3 col-md-2"></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Days Late : </b></p></div>
+                    <div class="col-sm-3 col-md-2">
                         @php
                             $today = new DateTime();
                             $due_date = new DateTime($crr->DueDate);
@@ -585,7 +607,7 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-sm-3 col-md-2"><p class="mb-0"><b>Recommendation : </b></p></div>
+                    <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Recommendation : </b></p></div>
                     <div class="col-sm-3 col-md-3">
                         <p class="mb-0">
                             @php
@@ -1314,17 +1336,17 @@
             refreshSecondaryApprovers(secondarySales, primarySales)
         })
         
-        $('[name="PrimarySalesPersonId"]').on('change', function() {
-            var primarySales = $(this).val();
+        // $('[name="PrimarySalesPersonId"]').on('change', function() {
+        //     var primarySales = $(this).val();
 
-            refreshSecondaryApproversv2(primarySales)
-        })
+        //     refreshSecondaryApproversv2(primarySales)
+        // })
 
         function refreshSecondaryApprovers(secondarySales, primarySales)
         {
             $.ajax({
                 type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
+                url: "{{url('refresh_crr_secondary_sales_person')}}",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
@@ -1335,31 +1357,31 @@
                 {
                     setTimeout(() => {
                         $('[name="SecondarySalesPersonId"]').html(data)
-                        // $('[name="SecondarySalesPersonId"]').val(secondarySales)
+                        $('[name="SecondarySalesPersonId"]').val(secondarySales)
                     }, 500);
                 }
             })
         }
 
-        function refreshSecondaryApproversv2(primarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                    }, 500);
-                }
-            })
-        }
+        // function refreshSecondaryApproversv2(primarySales)
+        // {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_user_approvers')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //             }, 500);
+        //         }
+        //     })
+        // }
 
         // $(".returnToSalesBtn").on('click', function() {
         //     var form = $(this).closest('form')

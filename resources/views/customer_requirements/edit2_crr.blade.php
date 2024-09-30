@@ -76,20 +76,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                {{-- <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->id }}" @if($user->user_id == $crr->PrimarySalesPersonId || $user->id == $crr->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select> --}}
-                                {{-- <input type="hidden" name="PrimarySalesPersonId" value="{{$crr->PrimarySalesPersonId}}">
-
-                                @if($crr->primarySalesById)
-                                <input type="text" class="form-control" value="{{$crr->primarySalesById->full_name}}" readonly>
-                                @elseif($crr->primarySales)
-                                <input type="text" class="form-control" value="{{$crr->primarySales->full_name}}" readonly>
-                                @endif --}}
-                                @if(auth()->user()->role->name == "Staff L1")
+                                {{-- @if(auth()->user()->role->name == "Staff L1")
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
                                 <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
                                 @elseif (auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
@@ -102,7 +89,20 @@
                                         <option value="{{ $user->id }}" @if($user->user_id == $crr->PrimarySalesPersonId || $user->id == $crr->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
-                                @endif
+                                @endif --}}
+                                @php
+                                    $primary_sales = "";
+                                    if ($crr->primarySalesById == null)
+                                    {
+                                        $primary_sales = $crr->primarySales;
+                                    }
+                                    else
+                                    {
+                                        $primary_sales = $crr->primarySalesById;
+                                    }
+                                @endphp
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{$primary_sales->id}}">
+                                <input type="text" class="form-control" value="{{$primary_sales->full_name}}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -129,12 +129,34 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                {{-- <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $crr->SecondarySalesPersonId || $user->id == $crr->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
+                                @php
+                                    $secondary_sales = "";
+                                    if ($crr->secondarySalesById == null)
+                                    {
+                                        $secondary_sales = $crr->secondarySales;
+                                    }
+                                    else
+                                    {
+                                        $secondary_sales = $crr->secondarySalesById;
+                                    }
+                                @endphp
+                                @if($crr->SecondarySalesPersonId == auth()->user()->id || $crr->SecondarySalesPersonId == auth()->user()->user_id)
+                                <input type="hidden" name="SecondarySalesPersonId" value="{{$secondary_sales->id}}">
+                                <input type="text" class="form-control" value="{{$secondary_sales->full_name}}" readonly>
+                                @else
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" @if($user->id == $crr->SecondarySalesPersonId || $user->user_id == $crr->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select> 
+                                @endif
                             </div>
                         </div>
                         <div class="col-lg-6">

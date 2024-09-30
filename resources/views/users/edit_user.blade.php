@@ -75,6 +75,18 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="name">Secondary Sales Approvers</label>
+                        @php
+                            $secondary_person = $user->secondarySalesPerson->pluck('SecondarySalesPersonId')->toArray();
+                            
+                        @endphp
+                        <select class="form-control js-example-basic-multiple" name="secondary_sales[]" style="position: relative !important" multiple>
+                            @foreach ($sales as $sale)
+                                <option value="{{$sale->id}}" @if(in_array($sale->id, $secondary_person)) selected @endif>{{$sale->full_name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-success">Update</button>
