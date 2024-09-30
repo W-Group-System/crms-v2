@@ -157,7 +157,12 @@
                                     </button>
                                 </form>
                             </td> -->
-                            <td><a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements">{{ optional($customerRequirement)->CrrNumber }}</a></td>
+                            <td>
+                                {{-- <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements">{{ optional($customerRequirement)->CrrNumber }}</a> --}}
+                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id.'/'.$customerRequirement->CrrNumber)}}" title="View Customer Requirements">
+                                    {{$customerRequirement->CrrNumber}}
+                                </a>
+                            </td>
                             <td>
                                 @if($customerRequirement->RefCode != null)
                                 {{$customerRequirement->RefCode}}
@@ -536,28 +541,28 @@
             refreshSecondaryApprovers(primarySales)
         })
 
-        $('.editBtn').on('click', function() {
-            var primarySales = $(this).data('primarysales')
-            var secondarySales = $(this).data('secondarysales');
+        // $('.editBtn').on('click', function() {
+        //     var primarySales = $(this).data('primarysales')
+        //     var secondarySales = $(this).data('secondarysales');
             
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
-                    }, 500);
-                }
-            })
-        })
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_user_approvers')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //                 // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+        //             }, 500);
+        //         }
+        //     })
+        // })
 
         $('[name="PrimarySalesPersonId"]').on('change', function() {
             var primarySales = $(this).val();
@@ -569,7 +574,7 @@
         {
             $.ajax({
                 type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
+                url: "{{url('refresh_crr_secondary_sales_person')}}",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
