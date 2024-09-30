@@ -8,7 +8,7 @@ class PriceRequestProduct extends Model
 {
     use SoftDeletes;
     protected $table = "pricerequestproducts";
-    protected $primaryKey = "Id";
+    // protected $primaryKey = "Id";
 
     const UPDATED_AT = "ModifiedDate";
     const CREATED_AT = "CreatedDate";

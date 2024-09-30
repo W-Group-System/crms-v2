@@ -290,7 +290,7 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
                                     @endif --}}
                                     @if(viewModule('Price Monitoring', $department, $role) == "yes")
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring_ls') }}">Price Monitoring</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring_ls?open=10') }}">Price Monitoring</a></li>
                                     @endif
                                     
                                     @if((viewModule('Categorization', $department, $role) == "yes") || (viewModule('Project Name', $department, $role) == "yes") || (viewModule('Nature of Request', $department, $role) == "yes") || (viewModule('CRR Priority', $department, $role) == "yes"))
