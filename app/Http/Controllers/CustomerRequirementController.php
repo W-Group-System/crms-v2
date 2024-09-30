@@ -19,6 +19,7 @@ use App\FileCrr;
 use App\ProductApplication;
 use App\SalesApprovers;
 use App\SalesUser;
+use App\SecondarySalesPerson;
 use App\TransactionApproval;
 use App\TransactionLogs;
 use App\UnitOfMeasure;
@@ -978,27 +979,32 @@ class CustomerRequirementController extends Controller
     
     public function refreshUserApprover(Request $request)
     {
-        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
-        // dd($user);
-        if ($user != null)
-        {
-            if($user->salesApproverById)
-            {
-                $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
-                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
+        // dd($request->all());
+        // $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        // // dd($user);
+        // if ($user != null)
+        // {
+        //     if($user->salesApproverById)
+        //     {
+        //         $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+        //         $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
 
-                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
-            }
-            elseif($user->salesApproverByUserId)
-            {
-                $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
-                $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
+        //         return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+        //     }
+        //     elseif($user->salesApproverByUserId)
+        //     {
+        //         $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
+        //         $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
                 
-                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
-            }
-        }
+        //         return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+        //     }
+        // }
 
-        return "";
+        // return "";
+        $secondary_sales_person = SecondarySalesPerson::where('PrimarySalesPersonId', $request->ps)->pluck('SecondarySalesPersonId')->toArray();
+        $users = User::whereIn('id', $secondary_sales_person)->pluck('full_name', 'id');
+        
+        return Form::select('SecondarySalesPersonId', $users, null, array('class' => 'form-control'));
     }
 
     public function returnToSales(Request $request, $id)

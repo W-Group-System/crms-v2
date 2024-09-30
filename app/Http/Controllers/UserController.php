@@ -8,6 +8,7 @@ use App\Department;
 use App\Exports\UserExport;
 use App\RndApprovers;
 use App\SalesApprovers;
+use App\SecondarySalesPerson;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -25,7 +26,10 @@ class UserController extends Controller
             $companies = Company::where('status', 'Active')->get();
             $approvers = User::with('salesApproverByUserId', 'salesApproverById')->where('is_active', 1)->get();
             $search = $request->input('search');
-        
+            $sales = User::with('secondarySalesPerson')->whereHas('role', function($query) {
+                $query->whereIn('type', ['LS', 'IS']);
+            })->get();
+            
             $users = User::with(['role', 'company', 'department'])
                     ->when($search, function ($query) use ($search) {
                         $query->where('username', 'LIKE', '%' . $search . '%')
@@ -61,7 +65,8 @@ class UserController extends Controller
                     'departments' => $departments,
                     'approvers' => $approvers,
                     'entries' => $request->entries,
-                    'user_status' => ['1' => 'Active', '0' => 'Inactive']
+                    'user_status' => ['1' => 'Active', '0' => 'Inactive'],
+                    'sales' => $sales
                 ]);
             }
         }
@@ -135,7 +140,7 @@ class UserController extends Controller
     // Update
     public function update(Request $request, $id)
     {
-        // dd($request->all());
+        // dd($request->all(), $id);
         $request->validate([
             // 'password' => 'confirmed|min:6',
             'email' => 'email|unique:users,email,' . $id
@@ -190,7 +195,20 @@ class UserController extends Controller
                     $rndApprover->save();
                 }
             }
+        }
 
+        if ($request->has('secondary_sales'))
+        {
+            // dd($id);
+            $secondary_sales = SecondarySalesPerson::where('PrimarySalesPersonId', $id)->delete();
+            foreach($request->secondary_sales as $key=>$secondarySales)
+            {
+                $secondary_sales = new SecondarySalesPerson;
+                $secondary_sales->PrimarySalesPersonId = $id;
+                $secondary_sales->Type = null;
+                $secondary_sales->SecondarySalesPersonId = $secondarySales;
+                $secondary_sales->save();
+            }
         }
 
         Alert::success('Successfully Update')->persistent('Dismiss');
