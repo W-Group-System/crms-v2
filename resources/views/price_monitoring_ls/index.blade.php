@@ -34,7 +34,7 @@
                     </div>
                 </div>
             </form>
-            @if (auth()->user()->role->type == 'LS')
+            @if (auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'ITD')
             <div class="table-responsive" style="overflow: auto; height: 80vh;">
                 <table class="table table-striped table-bordered table-hover" id="price_monitoring_table">
                     <thead>

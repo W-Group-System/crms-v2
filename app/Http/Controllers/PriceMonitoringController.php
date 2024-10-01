@@ -987,6 +987,7 @@ class PriceMonitoringController extends Controller
 
         // return "";
         $secondary_sales_person = SecondarySalesPerson::where('PrimarySalesPersonId', $request->ps)->pluck('SecondarySalesPersonId')->toArray();
+        
         $users = User::whereIn('id', $secondary_sales_person)->pluck('full_name', 'id');
         
         return Form::select('SecondarySalesPersonId', $users, null, array('class' => 'form-control'));
