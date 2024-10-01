@@ -43,7 +43,9 @@
 
                     <div class="form-group">
                         <label>Primary Sales Person</label>
-                        @if(auth()->user()->role->name == "Staff L1")
+                        <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                        <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                        {{-- @if(auth()->user()->role->name == "Staff L1")
                             <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
                             <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
                         @elseif(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
@@ -56,7 +58,7 @@
                                     <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPersonId') == $subordinate->id || auth()->user()->id == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
                                 @endforeach
                             </select>
-                        @endif
+                        @endif --}}
                     </div>
                     {{-- <div class="form-group">
                         <label>Primary Salesperson:</label>

@@ -51,7 +51,7 @@
                                     $primary_sales = "";
                                     if ($sampleRequest->primarySalesById == null)
                                     {
-                                        $primary_sales = $sampleRequest->primarySales;
+                                        $primary_sales = $sampleRequest->primarySalesPerson;
                                     }
                                     else
                                     {
@@ -73,7 +73,7 @@
                                     $secondary_sales = "";
                                     if ($sampleRequest->secondarySalesById == null)
                                     {
-                                        $secondary_sales = $sampleRequest->secondarySales;
+                                        $secondary_sales = $sampleRequest->secondarySalesPerson;
                                     }
                                     else
                                     {

@@ -140,7 +140,7 @@
                                     </td>
                                     <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
                                 </tr>
-                                @include('product_evaluations.edit')
+                                {{-- @include('product_evaluations.edit') --}}
                                 @endforeach
                             @else 
                                 <tr>
@@ -218,7 +218,7 @@
                                     </td>
                                     <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
                                 </tr>
-                                @include('product_evaluations.edit')
+                                {{-- @include('product_evaluations.edit') --}}
                                 @endforeach
                             @else 
                                 <tr>
@@ -333,6 +333,7 @@
         
         $("#addRpeBtn").on('click', function() {
             var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            console.log(primarySales);
             
             refreshSecondaryApprovers(primarySales)
         })

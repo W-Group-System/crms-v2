@@ -78,7 +78,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                @if(auth()->user()->role->name == "Staff L1")
+                                {{-- @if(auth()->user()->role->name == "Staff L1")
                                     <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
                                     <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
                                 @elseif(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
@@ -91,18 +91,9 @@
                                             <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPersonId') == $subordinate->id || auth()->user()->id == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
                                         @endforeach
                                     </select>
-                                @endif
-                                {{-- @if(auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($primarySalesPersons as $user)
-                                        <option value="{{ $user->user_id }}" @if(auth()->user()->id == $user->id) selected @endif>{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
-                                @else
-                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->user_id}}">
-                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" disabled>
                                 @endif --}}
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -219,75 +210,75 @@
             });
         @endif
 
-        document.addEventListener('DOMContentLoaded', function() {
-        var validityDateInput = document.querySelector('.CreatedDate');
-        var dateRequestedInput = document.querySelector('.DueDate');
+    //     document.addEventListener('DOMContentLoaded', function() {
+    //     var validityDateInput = document.querySelector('.CreatedDate');
+    //     var dateRequestedInput = document.querySelector('.DueDate');
 
 
 
-        var now = new Date();
-        var date = now.toISOString().split('T')[0];
-        var time = now.toTimeString().split(' ')[0]; 
+    //     var now = new Date();
+    //     var date = now.toISOString().split('T')[0];
+    //     var time = now.toTimeString().split(' ')[0]; 
 
-        var todayWithTime = date + 'T' + time;
+    //     var todayWithTime = date + 'T' + time;
 
-        validityDateInput.setAttribute('min', todayWithTime);
-        validityDateInput.value = todayWithTime;
-        dateRequestedInput.setAttribute('min', date);
+    //     validityDateInput.setAttribute('min', todayWithTime);
+    //     validityDateInput.value = todayWithTime;
+    //     dateRequestedInput.setAttribute('min', date);
 
-    });
+    // });
 
-    $(document).ready(function() {
-        function addRpeFileForm() {
-            var newProductForm = `
-            <div class="rpe-file">
-                <div class="form-group">
-                    <label for="name"><b>Name</b></label>
-                    <input type="text" name="name[]" class="form-control" placeholder="">
-                </div>
-                <div class="form-group">
-                    <label for="rpe_file"><b>Browse Files</b></label>
-                    <input type="file" class="form-control" name="rpe_file[]" multiple>
-                </div>
-                <div class="form-group">
-                    <button type="button" class="btn btn-sm btn-primary addRpeFile"><i class="ti-plus"></i></button>
-                    <button type="button" class="btn btn-sm btn-danger deleteRowBtn"><i class="ti-trash"></i></button>
-                </div>
-            </div>`;
+    // $(document).ready(function() {
+    //     function addRpeFileForm() {
+    //         var newProductForm = `
+    //         <div class="rpe-file">
+    //             <div class="form-group">
+    //                 <label for="name"><b>Name</b></label>
+    //                 <input type="text" name="name[]" class="form-control" placeholder="">
+    //             </div>
+    //             <div class="form-group">
+    //                 <label for="rpe_file"><b>Browse Files</b></label>
+    //                 <input type="file" class="form-control" name="rpe_file[]" multiple>
+    //             </div>
+    //             <div class="form-group">
+    //                 <button type="button" class="btn btn-sm btn-primary addRpeFile"><i class="ti-plus"></i></button>
+    //                 <button type="button" class="btn btn-sm btn-danger deleteRowBtn"><i class="ti-trash"></i></button>
+    //             </div>
+    //         </div>`;
     
-            $('.rpe-file').last().find('.addRpeFile').hide();
-            $('.rpe-file').last().find('.deleteRowBtn').show();
-            $('.rpe-file').last().after(newProductForm);
-        }
+    //         $('.rpe-file').last().find('.addRpeFile').hide();
+    //         $('.rpe-file').last().find('.deleteRowBtn').show();
+    //         $('.rpe-file').last().after(newProductForm);
+    //     }
     
-        $(document).on('click', '.addRpeFile', function() {
-            addRpeFileForm();
-        });
+    //     $(document).on('click', '.addRpeFile', function() {
+    //         addRpeFileForm();
+    //     });
     
-        $(document).on('click', '.deleteRowBtn', function() {
-            var currentRow = $(this).closest('.rpe-file');
+    //     $(document).on('click', '.deleteRowBtn', function() {
+    //         var currentRow = $(this).closest('.rpe-file');
             
-            if ($('.rpe-file').length > 1) {
-                if ($('.rpe-file').last().is(currentRow)) {
-                    currentRow.prev().find('.addRpeFile').show();
-                    currentRow.prev().find('.deleteRowBtn').show();
-                }
-                currentRow.remove();
-            }
+    //         if ($('.rpe-file').length > 1) {
+    //             if ($('.rpe-file').last().is(currentRow)) {
+    //                 currentRow.prev().find('.addRpeFile').show();
+    //                 currentRow.prev().find('.deleteRowBtn').show();
+    //             }
+    //             currentRow.remove();
+    //         }
             
-            if ($('.rpe-file').length === 1) {
-                $('.rpe-file').find('.addRpeFile').show();
-                $('.rpe-file').find('.deleteRowBtn').hide();
-            }
-        });
+    //         if ($('.rpe-file').length === 1) {
+    //             $('.rpe-file').find('.addRpeFile').show();
+    //             $('.rpe-file').find('.deleteRowBtn').hide();
+    //         }
+    //     });
     
-        $(document).on('change', 'input[type="file"]', function() {
-            var filename = $(this).val().split('\\').pop();
-            $(this).closest('.rpe-file').find('input[name="name[]"]').val(filename);
-        });
+    //     $(document).on('change', 'input[type="file"]', function() {
+    //         var filename = $(this).val().split('\\').pop();
+    //         $(this).closest('.rpe-file').find('input[name="name[]"]').val(filename);
+    //     });
     
-        if ($('.rpe-file').length === 1) {
-            $('.rpe-file').find('.deleteRowBtn').hide();
-        }
-    });
+    //     if ($('.rpe-file').length === 1) {
+    //         $('.rpe-file').find('.deleteRowBtn').hide();
+    //     }
+    // });
 </script>
