@@ -536,7 +536,7 @@ class RequestProductEvaluationController extends Controller
             ]);
 
             Alert::success('Successfully Saved')->persistent('Dismiss');
-            return back();
+            return back()->with(['tab' => 'supplementary_details']);
     }
 
     public function editSupplementary(Request $request, $id)
@@ -546,7 +546,7 @@ class RequestProductEvaluationController extends Controller
         $rpeDetail->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'supplementary_details']);
     }
 
     public function deleteRpeDetails($id)
@@ -570,7 +570,7 @@ class RequestProductEvaluationController extends Controller
             ]);
         
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'personnel']);
     }
     public function editPersonnel(Request $request, $id)
     {
@@ -579,7 +579,7 @@ class RequestProductEvaluationController extends Controller
         $rpePersonnel->save();
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
-        return back();
+        return back()->with(['tab' => 'personnel']);
     }
     public function deleteSrfPersonnel($id)
     {
@@ -605,18 +605,27 @@ class RequestProductEvaluationController extends Controller
     }
     public function uploadFile(Request $request)
     {
+        $request->validate([
+            'rpe_file[]' => 'array',
+            'rpe_file.*' => 'max:1024'
+        ], 
+        [
+            'rpe_files.max' =>'The files may not be greater than 1MB',
+        ]);
+
         $files = $request->file('rpe_file');
         $names = $request->input('name');
         $rpeId = $request->input('rpe_id');
         $isConfidential = $request->input('is_confidential') ? 1 : 0;
         $isForReview = $request->input('is_for_review') ? 1 : 0;
-        
+
         if ($files) {
             foreach ($files as $index => $file) {
             $name = $names[$index];
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('public/rpeFiles', $fileName);
-            $fileUrl = '/storage/rpeFiles/' . $fileName;       
+            $file->move(public_path('rpeFiles'), $fileName);
+            $fileUrl = '/rpeFiles/' . $fileName;     
+            
             $uploadedFile = new RpeFile();
             $uploadedFile->RequestProductEvaluationId = $rpeId;
             $uploadedFile->Name = $name;
@@ -628,7 +637,8 @@ class RequestProductEvaluationController extends Controller
             }
         }
         
-        return redirect()->back()->with('success', 'File(s) Stored successfully');
+        Alert::success('Successfully Uploaded')->persistent('Dismiss');
+        return back()->with(['tab' => 'files']);
     }
 
     public function editFile(Request $request, $id)
@@ -653,7 +663,9 @@ class RequestProductEvaluationController extends Controller
 
         $rpeFile->save();
 
-        return redirect()->back()->with('success', 'File updated successfully');
+        // return redirect()->back()->with('success', 'File updated successfully');
+        Alert::success('Successfully Uploaded')->persistent('Dismiss');
+        return back()->with(['tab' => 'files']);
     }
     public function deleteFile($id)
     {
