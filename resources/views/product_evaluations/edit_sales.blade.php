@@ -79,7 +79,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Primary Sales Person</label>
-                                @if(auth()->user()->role->name == "Staff L1")
+                                {{-- @if(auth()->user()->role->name == "Staff L1")
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
                                 <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
                                 @elseif (auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
@@ -92,18 +92,20 @@
                                         <option value="{{ $user->id }}" @if($user->user_id == $requestEvaluation->PrimarySalesPersonId || $user->id == $requestEvaluation->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
-                                @endif
-                                {{-- @if(auth()->user()->role->name == "Staff L2" || auth()->user()->role->name == "Department Admin")
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($primarySalesPersons as $user)
-                                        <option value="{{ $user->user_id }}" @if ( $requestEvaluation->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select>
-                                @else 
-                                <input type="hidden" name="PrimarySalesPersonId" value="{{$requestEvaluation->PrimarySalesPersonId}}">
-                                <input type="text" class="form-control" value="{{optional($requestEvaluation->primarySalesPerson)->full_name}}" readonly>
                                 @endif --}}
+                                @php
+                                    $primary_sales = "";
+                                    if ($requestEvaluation->primarySalesById == null)
+                                    {
+                                        $primary_sales = $requestEvaluation->primarySalesPerson;
+                                    }
+                                    else
+                                    {
+                                        $primary_sales = $requestEvaluation->primarySalesById;
+                                    }
+                                @endphp
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{$primary_sales->id}}">
+                                <input type="text" class="form-control" value="{{$primary_sales->full_name}}" readonly>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -130,13 +132,35 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                {{-- <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" @if($user->user_id == $requestEvaluation->SecondarySalesPersonId || $user->id == $requestEvaluation->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
-                                        {{-- <option value="{{ $user->user_id }}" @if ( $requestEvaluation->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option> --}}
+                                        <option value="{{ $user->user_id }}" @if ( $requestEvaluation->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
+                                @php
+                                    $secondary_sales = "";
+                                    if ($requestEvaluation->secondarySalesById == null)
+                                    {
+                                        $secondary_sales = $requestEvaluation->secondarySalesPerson;
+                                    }
+                                    else
+                                    {
+                                        $secondary_sales = $requestEvaluation->secondarySalesById;
+                                    }
+                                @endphp
+                                @if($requestEvaluation->SecondarySalesPersonId == auth()->user()->id || $requestEvaluation->SecondarySalesPersonId == auth()->user()->user_id)
+                                <input type="hidden" name="SecondarySalesPersonId" value="{{$secondary_sales->id}}">
+                                <input type="text" class="form-control" value="{{$secondary_sales->full_name}}" readonly>
+                                @else
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" @if($user->id == $requestEvaluation->SecondarySalesPersonId || $user->user_id == $requestEvaluation->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select> 
+                                @endif
                             </div>
                         </div>
                         <div class="col-lg-6">

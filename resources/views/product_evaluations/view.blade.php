@@ -50,7 +50,7 @@
                     </a>
 
                     {{-- Sales Button --}}
-                    @if((auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->user_id == $requestEvaluation->PrimarySalesPersonId) || (auth()->user()->id == $requestEvaluation->SecondarySalesPersonId || auth()->user()->user_id == $requestEvaluation->SecondarySalesPersonId) && auth()->user()->role->type == 'Staff L1')
+                    @if((auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->user_id == $requestEvaluation->PrimarySalesPersonId) || (auth()->user()->id == $requestEvaluation->SecondarySalesPersonId || auth()->user()->user_id == $requestEvaluation->SecondarySalesPersonId) && auth()->user()->role->name == 'Staff L1')
 
                         @if($requestEvaluation->Status == 10)
                             <button type="button" class="btn btn-outline-warning editBtn" data-toggle="modal" data-target="#editRpe{{$requestEvaluation->id}}" data-secondarysales="{{$requestEvaluation->SecondarySalesPersonId}}">
@@ -67,6 +67,17 @@
                                 </button>
                             </form>
                         @endif --}}
+                        @if(checkRolesIfHaveApprove('Request for Product Evaluation', auth()->user()->department_id, auth()->user()->role_id))
+                            @if($requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 40 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && $requestEvaluation->Progress != 70)
+                            <button type="button" class="btn btn-md btn-outline-success"
+                                data-target="#approveRpe{{ $requestEvaluation->id }}" 
+                                data-toggle="modal" 
+                                title='Approve RPE'>
+                                <i class="ti ti-check-box">&nbsp;</i>Approve
+                            </button>
+                            @endif
+                        @endif
+                        
                         @if(auth()->user()->id != $requestEvaluation->SecondarySalesPersonId && auth()->user()->user_id != $requestEvaluation->SecondarySalesPersonId)
                             @if($requestEvaluation->Progress == 60 && $requestEvaluation->Progress != 70)
                                 <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">

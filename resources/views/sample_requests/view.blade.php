@@ -114,8 +114,7 @@
                             </button>
                         @endif
                     @endif
-
-                    @if((auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId) || (auth()->user()->id == $sampleRequest->SecondarySalesPersonId || auth()->user()->user_id == $sampleRequest->SecondarySalesPersonId ) && auth()->user()->role->type == 'Staff L1')
+                    @if((auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId) || (auth()->user()->id == $sampleRequest->SecondarySalesPersonId || auth()->user()->user_id == $sampleRequest->SecondarySalesPersonId ) && auth()->user()->role->name == 'Staff L1')
                             @if(auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'LS')
                             @if(empty($sampleRequest->Courier) && empty($sampleRequest->AwbNumber) && empty($sampleRequest->DateDispatched) && empty($sampleRequest->DateSampleReceived))
                             <button type="button" class="btn btn-outline-warning editBtn"
@@ -128,14 +127,7 @@
                             @endif
                             @endif
                         {{-- @endif --}}
-
-                        {{-- @if($sampleRequest->Progress == 70 && $sampleRequest->Status == 10)
-                            <button type="button" class="btn btn-outline-warning returnToRnd" data-id="{{ $sampleRequest->Id }}">
-                                <i class="ti ti-check-box"></i>&nbsp;Return to RND
-                            </button>
-                        @endif --}}
-
-                        @if(checkRolesIfHaveApprove('Sample Request', auth()->user()->department_id, auth()->user()->role_id) == "yes")
+                        @if(checkRolesIfHaveApprove('Sample Request Form', auth()->user()->department_id, auth()->user()->role_id) == "yes")
                             <button type="button" class="btn btn-md btn-outline-success"
                                 data-target="#approveSrf{{ $sampleRequest->Id }}" 
                                 data-toggle="modal" 
@@ -143,6 +135,12 @@
                                 <i class="ti ti-check-box">&nbsp;</i>Approve
                             </button>
                         @endif
+                        
+                        {{-- @if($sampleRequest->Progress == 70 && $sampleRequest->Status == 10)
+                            <button type="button" class="btn btn-outline-warning returnToRnd" data-id="{{ $sampleRequest->Id }}">
+                                <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                            </button>
+                        @endif --}}
 
                         @if($sampleRequest->Progress == 60)
                             <button type="button" class="btn btn-outline-warning returnToRnd" data-id="{{ $sampleRequest->Id }}">
@@ -823,7 +821,7 @@
                     <br>
                 </div>
             @endforeach
-            <div class="col-md-12">
+            <div class="col-md-12 mb-3">
                 <label><strong>Approver Remarks</strong></label>
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
                 <div class="row mb-0">
