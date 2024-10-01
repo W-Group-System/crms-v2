@@ -44,16 +44,16 @@
                     <div class="form-group">
                         <label>Primary Sales Person</label>
                         @if(auth()->user()->role->name == "Staff L1")
-                            <input type="hidden" name="PrimarySalesPerson" value="{{auth()->user()->id}}">
+                            <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
                             <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
                         @elseif(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
                             @php
                                 $subordinates = getUserApprover(auth()->user()->getSalesApprover);
                             @endphp
-                            <select class="form-control js-example-basic-single" name="PrimarySalesPerson" id="PrimarySalesPerson" style="position: relative !important" title="Select Sales Person">
+                            <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
                                 <option value="" disabled selected>Select Sales Person</option>
                                 @foreach($subordinates as $subordinate)
-                                    <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPerson') == $subordinate->id || auth()->user()->id == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
+                                    <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPersonId') == $subordinate->id || auth()->user()->id == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
                                 @endforeach
                             </select>
                         @endif
@@ -81,10 +81,10 @@
                     
                     <div class="form-group">
                         <label>Secondary Sales Person:</label>
-                        <select class="form-control js-example-basic-single" name="SecondarySalesPerson"  style="position: relative !important" title="Select SecondarySalesPerson" required>
+                        <select class="form-control js-example-basic-single" name="SecondarySalesPersonId"  style="position: relative !important" title="Select SecondarySalesPerson" required>
                             <option value="" disabled selected>Secondary Sales Person</option>
                             @foreach ($users as $salesPerson)
-                                <option value="{{ $salesPerson->user_id }}" {{ old('SecondarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }}>{{ $salesPerson->full_name }}</option>
+                                <option value="{{ $salesPerson->user_id }}" {{ old('SecondarySalesPersonId') == $salesPerson->user_id ? 'selected' : '' }}>{{ $salesPerson->full_name }}</option>
                             @endforeach
                         </select>
                     </div>

@@ -459,7 +459,7 @@
         });
 
         $("#addSrfBtn").on('click', function() {
-            var primarySales = $('[name="PrimarySalesPerson"]').val();
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
             
             refreshSecondaryApprovers(primarySales)
         })
@@ -482,14 +482,14 @@
                 success: function(data)
                 {
                     setTimeout(() => {
-                        $('[name="SecondarySalesPerson"]').html(data) 
+                        $('[name="SecondarySalesPersonId"]').html(data) 
                         // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
                     }, 500);
                 }
             })
         })
 
-        $('[name="PrimarySalesPerson"]').on('change', function() {
+        $('[name="PrimarySalesPersonId"]').on('change', function() {
             var primarySales = $(this).val();
 
             refreshSecondaryApprovers(primarySales)
@@ -509,7 +509,7 @@
                 success: function(data)
                 {
                     setTimeout(() => {
-                        $('[name="SecondarySalesPerson"]').html(data) 
+                        $('[name="SecondarySalesPersonId"]').html(data) 
                     }, 500);
                 }
             })
