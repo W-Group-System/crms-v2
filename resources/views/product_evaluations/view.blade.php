@@ -751,23 +751,23 @@
             </div>
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active p-2" id="supplementary-tab" data-toggle="tab" href="#supplementary" role="tab" aria-controls="supplementary" aria-selected="true">Supplementary Details</a>
+                    <a class="nav-link p-2 @if(session('tab') === 'supplementary_details' || session('tab') == null) active @endif" id="supplementary-tab" data-toggle="tab" href="#supplementary" role="tab" aria-controls="supplementary" aria-selected="true">Supplementary Details</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="srfPersonnel-tab" data-toggle="tab" href="#srfPersonnel" role="tab" aria-controls="srfPersonnel" aria-selected="true">Assigned R&D Personnel</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'personnel') active @endif" id="srfPersonnel-tab" data-toggle="tab" href="#srfPersonnel" role="tab" aria-controls="srfPersonnel" aria-selected="true">Assigned R&D Personnel</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li> --}}
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
+                    <a class="nav-link p-2  @if(session('tab') == 'files') active @endif" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="supplementary" role="tabpanel" aria-labelledby="supplementary-tab">
+                <div class="tab-pane fade  @if(session('tab') == 'supplementary_details' || session('tab') == null) active show @endif" id="supplementary" role="tabpanel" aria-labelledby="supplementary-tab">
                     {{-- <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Add Supplementary Details" data-toggle="modal" data-target="#addRpeSuplementary">
                             <i class="ti-plus"></i>
@@ -775,8 +775,8 @@
                     </div> --}}
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         @if($requestEvaluation->Progress != 60)
-                        <button type="button" class="btn btn-primary float-right mb-3" data-toggle="modal" data-target="#addRpeSuplementary">
-                            Add Supplementary Details
+                        <button type="button" class="btn btn-outline-primary float-right mb-3" data-toggle="modal" data-target="#addRpeSuplementary">
+                            New 
                         </button>
                         {{-- @include('customer_requirements.add_supplementary_details') --}}
                         @endif
@@ -821,7 +821,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="srfPersonnel" role="tabpanel" aria-labelledby="srfPersonnel-tab">
+                <div class="tab-pane fade  " id="srfPersonnel" role="tabpanel" aria-labelledby="srfPersonnel-tab">
                     {{-- <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Assign R&D"  data-toggle="modal" data-target="#addRpePersonnel">
                             <i class="ti-plus"></i>
@@ -829,8 +829,8 @@
                     </div> --}}
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && rndManager(auth()->user()->role))
-                        <button type="button" class="btn btn-primary float-right mb-3" data-toggle="modal" data-target="#addRpePersonnel">
-                            Add Personnel
+                        <button type="button" class="btn btn-outline-primary float-right mb-3" data-toggle="modal" data-target="#addRpePersonnel">
+                            New
                         </button>
                         {{-- @include('customer_requirements.new_personnel') --}}
                         @endif
@@ -928,10 +928,10 @@
                     </div>
                 </div>
                 @if(authCheckIfItsRnd(auth()->user()->department_id))
-                <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
+                <div class="tab-pane fade  @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
-                        <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Upload File"  data-toggle="modal" data-target="#uploadFile">
-                            <i class="ti-plus"></i>
+                        <button type="button" class="btn btn-sm btn-outline-primary ml-auto m-3" title="Upload File"  data-toggle="modal" data-target="#uploadFile">
+                            New
                         </button>
                     </div>
                     <div class="table-responsive">
@@ -947,7 +947,7 @@
                                 @foreach ($rpeFileUploads as $fileupload)
                                 @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $fileupload->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                     <tr>
-                                        <td align="center">
+                                        <td>
                                             {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes") --}}
                                             @if(authCheckIfItsRnd(auth()->user()->department_id))
                                                 <button type="button"  class="btn btn-sm btn-warning btn-outline"
