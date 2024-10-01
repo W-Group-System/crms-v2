@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('local_price_monitoring') }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('local_price_monitoring') }}" onsubmit="show()">
                     @csrf
                     @if ($errors->any())
                         <div class="alert alert-danger">

@@ -8,7 +8,7 @@
 				</button>
 			</div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('price_monitoring_local/edit/' . $price_monitorings->id) }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('price_monitoring_local/edit/' . $price_monitorings->id) }}" onsubmit="show()">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -138,15 +138,15 @@
                         <div class="prfForm{{ $price_monitorings->id }}">
                             @foreach ($price_monitorings->requestPriceProducts as $index => $priceProducts)
                             <div class="create_prf_form{{ $price_monitorings->id }} col-lg-12 row">
-                                <div class="create_prf_forms{{ $priceProducts->Id }} col-lg-12 row" data-row-index="{{ $index }}">
+                                <div class="create_prf_forms{{ $priceProducts->id }} col-lg-12 row" data-row-index="{{ $index }}">
                                     <div class="col-lg-12">
-                                        <button type="button" class="btn btn-danger delete-product" data-id="{{ $priceProducts->Id }}" style="float: right;">Delete</button>
+                                        <button type="button" class="btn btn-danger delete-product" data-id="{{ $priceProducts->id }}" style="float: right;">Delete</button>
                                     </div>
                                     <div class="col-lg-4">
                                         <div><label>PRODUCT</label></div>
                                         <div class="form-group">
                                             <label>Product</label>
-                                            <input type="hidden" class="form-control" name="product_id[]" value="{{ $priceProducts->Id }}">
+                                            <input type="hidden" class="form-control" name="product_id[]" value="{{ $priceProducts->id }}">
                                             <select class="form-control js-example-basic-single product-select" name="Product[]" style="position: relative !important" title="Select Product" required>
                                                 <option value="" disabled selected>Select Product</option>
                                                 @foreach($products as $product)
@@ -206,7 +206,7 @@
                                         <div><label>OPERATING COST</label></div>
                                         <div class="form-group">
                                             <label>Delivery Type</label>
-                                            <select class="form-control js-example-basic-single delivery-type" name="DeliveryType[]" style="position: relative !important" title="Select Delivery Type">
+                                            <select class="form-control js-example-basic-single delivery-type" name="DeliveryType[]" title="Select Delivery Type">
                                                 <option value="10">Courier</option>
                                                 <option value="20">Delivery</option>
                                                 <option value="30">Pickup</option>
@@ -222,7 +222,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>GAE Type:</label>
-                                            <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" style="position: relative !important" title="Select GAE Type">
+                                            <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" title="Select GAE Type">
                                                 @foreach ($pricegaes as $gaeType)
                                                     <option value="{{ $gaeType->id }}" >{{ $gaeType->ExpenseName }}</option>
                                                 @endforeach
@@ -801,31 +801,31 @@ $(document).ready(function() {
         }
     });
 
-    $(document).ready(function() {
-    $(document).off('click', '.delete-product');
-    $(document).on('click', '.delete-product', function() {
-        var productId = $(this).data('id'); 
-        var row = $(this).closest('.create_prf_forms' + productId);
-        var deleteButton = $(this);
-        deleteButton.prop('disabled', true);
+// $(document).ready(function() {
+//     // $(document).off('click', '.delete-product');
+// });
+$(document).on('click', '.delete-product', function() {
+    var productId = $(this).data('id'); 
+    var row = $(this).closest('.create_prf_forms' + productId);
+    var deleteButton = $(this);
+    deleteButton.prop('disabled', true);
 
-        $.ajax({
-            url: "{{ url('delete-product') }}/" + productId,
-            type: 'DELETE',
-            data: {
-                '_token': '{{ csrf_token() }}', 
-            },
-            success: function(response) {
-                if (response.success) {
-                    row.remove();
-                } else {
-                    alert('Failed to delete the product.');
-                }
-            },
-            complete: function() {
-                deleteButton.prop('disabled', false);
+    $.ajax({
+        url: "{{ url('delete-product') }}/" + productId,
+        type: 'DELETE',
+        data: {
+            '_token': '{{ csrf_token() }}', 
+        },
+        success: function(response) {
+            if (response.success) {
+                row.remove();
+            } else {
+                alert('Failed to delete the product.');
             }
-        });
+        },
+        complete: function() {
+            deleteButton.prop('disabled', false);
+        }
     });
 });
 

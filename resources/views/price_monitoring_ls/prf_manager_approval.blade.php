@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="{{ url('ApproveManagerPrf/'.$price_monitorings->id) }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ url('ApproveManagerPrf/'.$price_monitorings->id) }}" onsubmit="show()">
                     @csrf
                     <div class="form-group">
                         <label for="ApprovalRemark">Comment/Remark</label>
