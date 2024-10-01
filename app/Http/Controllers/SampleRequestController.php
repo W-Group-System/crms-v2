@@ -15,6 +15,8 @@ use App\ProductApplication;
 use App\RndUser;
 use App\SalesApprovers;
 use App\SampleRequestProduct;
+use App\SecondarySalesPerson;
+use App\SecondarySalesPersonId;
 use App\SrfDetail;
 use App\SrfFile;
 use App\SrfPersonnel;
@@ -497,8 +499,8 @@ class SampleRequestController extends Controller
     //     // $srf->DateRequested = Carbon::createFromFormat('m/d/Y', $request->input('DateRequested'))->format('Y-m-d');
     //     $srf->DateRequired = $request->input('DateRequired');
     //     $srf->DateStarted = $request->input('DateStarted');
-    //     $srf->PrimarySalesPersonId = $request->input('PrimarySalesPerson');
-    //     $srf->SecondarySalesPersonId = $request->input('SecondarySalesPerson');
+    //     $srf->PrimarySalesPersonId = $request->input('PrimarySalesPersonId');
+    //     $srf->SecondarySalesPersonId = $request->input('SecondarySalesPersonId');
     //     $srf->RefCode = $request->input('RefCode');
     //     $srf->SrfType = $request->input('SrfType');
     //     $srf->SoNumber = $request->input('SoNumber');
@@ -721,8 +723,8 @@ class SampleRequestController extends Controller
                 'DateRequested' => $request->input('DateRequested'),
                 'DateRequired' => $request->input('DateRequired'),
                 'DateStarted' => $request->input('DateStarted'),
-                'PrimarySalesPersonId' => $request->input('PrimarySalesPerson'),
-                'SecondarySalesPersonId' => $request->input('SecondarySalesPerson'),
+                'PrimarySalesPersonId' => $request->input('PrimarySalesPersonId'),
+                'SecondarySalesPersonId' => $request->input('SecondarySalesPersonId'),
                 'SoNumber' => $request->input('SoNumber'),
                 'RefCode' => $request->input('RefCode'),
                 'Status' => '10',
@@ -793,8 +795,8 @@ class SampleRequestController extends Controller
         $srf = SampleRequest::with('requestProducts')->findOrFail($id);
         $srf->DateRequired = $request->input('DateRequired');
         $srf->DateStarted = $request->input('DateStarted');
-        $srf->PrimarySalesPersonId = $request->input('PrimarySalesPerson');
-        $srf->SecondarySalesPersonId = $request->input('SecondarySalesPerson');
+        $srf->PrimarySalesPersonId = $request->input('PrimarySalesPersonId');
+        $srf->SecondarySalesPersonId = $request->input('SecondarySalesPersonId');
         $srf->RefCode = $request->input('RefCode');
         $srf->SrfType = $request->input('SrfType');
         $srf->SoNumber = $request->input('SoNumber');
@@ -1277,26 +1279,30 @@ public function export(Request $request)
     }
     public function refreshUserApprover(Request $request)
     {
-        $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
-        if ($user != null)
-        {
-            if($user->salesApproverById)
-            {
-                $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
-                $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
+        // $user = User::where('id', $request->ps)->orWhere('user_id', $request->ps)->first();
+        // if ($user != null)
+        // {
+        //     if($user->salesApproverById)
+        //     {
+        //         $approvers = $user->salesApproverById->pluck('SalesApproverId')->toArray();
+        //         $sales_approvers = User::whereIn('id', $approvers)->pluck('full_name', 'id')->toArray();
 
-                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
-            }
-            elseif($user->salesApproverByUserId)
-            {
-                $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
-                $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
+        //         return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+        //     }
+        //     elseif($user->salesApproverByUserId)
+        //     {
+        //         $approvers = $user->salesApproverByUserId->pluck('SalesApproverId')->toArray();
+        //         $sales_approvers = User::whereIn('user_id', $approvers)->pluck('full_name', 'user_id')->toArray();
                 
-                return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
-            }
-        }
+        //         return Form::select('SecondarySalesPersonId', $sales_approvers, null, array('class' => 'form-control'));
+        //     }
+        // }
 
-        return "";
+        // return "";
+        $secondary_sales_person = SecondarySalesPerson::where('PrimarySalesPersonId', $request->ps)->pluck('SecondarySalesPersonId')->toArray();
+        $users = User::whereIn('id', $secondary_sales_person)->pluck('full_name', 'id');
+        
+        return Form::select('SecondarySalesPersonId', $users, null, array('class' => 'form-control'));
     }
     public function editsalesSrfFiles(Request $request, $id)
     {

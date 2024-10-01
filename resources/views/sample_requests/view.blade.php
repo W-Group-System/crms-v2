@@ -115,12 +115,13 @@
                         @endif
                     @endif
 
-                    @if(auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId)
+                    @if((auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId) || auth()->user()->id == $sampleRequest->SecondarySalesPersonId || auth()->user()->user_id == $sampleRequest->SecondarySalesPersonId )
                             @if(auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'LS')
                             @if(empty($sampleRequest->Courier) && empty($sampleRequest->AwbNumber) && empty($sampleRequest->DateDispatched) && empty($sampleRequest->DateSampleReceived))
                             <button type="button" class="btn btn-outline-warning editBtn"
                                 data-target="#salesEdit{{$sampleRequest->Id}}" 
                                 data-toggle="modal" 
+                                data-secondarysales={{$sampleRequest->SecondarySalesPersonId}}
                                 title='Update SRF'>
                                 <i class="ti ti-pencil">&nbsp;</i>Update
                             </button>
@@ -165,21 +166,23 @@
                             </button>
                         @endif
                         
-                        @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 70 || $sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
-                                <button type="button" class="btn btn-outline-warning"
-                                    data-target="#closeSrf{{ $sampleRequest->Id }}" 
-                                    data-toggle="modal" 
-                                    title='Close SRF'>
-                                    <i class="ti ti-close">&nbsp;</i>Close
-                                </button>
-                            @endif
-                            @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
-                                <button type="button" class="btn btn-outline-warning"
-                                    data-target="#cancelSrf{{ $sampleRequest->Id }}" 
-                                    data-toggle="modal" 
-                                    title='Cancel SRF'>
-                                    <i class="mdi mdi-cancel">&nbsp;</i>Cancel
-                                </button>
+                            @if(auth()->user()->id != $sampleRequest->SecondarySalesPersonId && auth()->user()->user_id != $sampleRequest->SecondarySalesPersonId)
+                                @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 70 || $sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                                    <button type="button" class="btn btn-outline-warning"
+                                        data-target="#closeSrf{{ $sampleRequest->Id }}" 
+                                        data-toggle="modal" 
+                                        title='Close SRF'>
+                                        <i class="ti ti-close">&nbsp;</i>Close
+                                    </button>
+                                @endif
+                                @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                                    <button type="button" class="btn btn-outline-warning"
+                                        data-target="#cancelSrf{{ $sampleRequest->Id }}" 
+                                        data-toggle="modal" 
+                                        title='Cancel SRF'>
+                                        <i class="mdi mdi-cancel">&nbsp;</i>Cancel
+                                    </button>
+                                @endif
                             @endif
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
@@ -198,6 +201,7 @@
                             <button type="button" class="btn btn-outline-warning editBtn"
                                 data-target="#salesEdit{{ $sampleRequest->Id }}" 
                                 data-toggle="modal" 
+                                data-secondarysales={{$sampleRequest->SecondarySalesPersonId}}
                                 title='Update SRF'>
                                 <i class="ti ti-pencil">&nbsp;</i>Update
                             </button>
@@ -270,42 +274,46 @@
                         @endif
                         @if(authCheckIfItsSales(auth()->user()->department_id))
 
-                            @if($sampleRequest->Progress == 60  && $sampleRequest->Status == 10)
-                                <button type="button" class="btn btn-outline-warning returnToRnd" data-id="{{ $sampleRequest->Id }}">
-                                    <i class="ti ti-check-box"></i>&nbsp;Return to RND
-                                </button>
-                            @endif 
+                            @if(primarySalesApprover($sampleRequest->PrimarySalesPersonId, auth()->user()->id))
 
-                            @if($sampleRequest->Progress == 60)
-                                <button type="button" class="btn btn-outline-success salesAccepted" data-id="{{ $sampleRequest->Id }}">
-                                    <i class="ti ti-check-box"></i>&nbsp;Accept
-                                </button>
-                            @endif
+                                @if($sampleRequest->Progress == 60  && $sampleRequest->Status == 10)
+                                    <button type="button" class="btn btn-outline-warning returnToRnd" data-id="{{ $sampleRequest->Id }}">
+                                        <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                    </button>
+                                @endif 
 
-                            @if($sampleRequest->Status == 30)
-                            <button type="button" class="btn btn-outline-warning"
-                                data-target="#updateDisposition{{ $sampleRequest->Id }}" 
-                                data-toggle="modal" 
-                                title='Open SRF'>
-                                <i class="mdi mdi-open-in-new">&nbsp;</i>Update Disposition
-                            </button>
-                            @endif
+                                @if($sampleRequest->Progress == 60)
+                                    <button type="button" class="btn btn-outline-success salesAccepted" data-id="{{ $sampleRequest->Id }}">
+                                        <i class="ti ti-check-box"></i>&nbsp;Accept
+                                    </button>
+                                @endif
 
-                            @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 70 || $sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                                @if($sampleRequest->Status == 30)
                                 <button type="button" class="btn btn-outline-warning"
-                                    data-target="#closeSrf{{ $sampleRequest->Id }}" 
+                                    data-target="#updateDisposition{{ $sampleRequest->Id }}" 
                                     data-toggle="modal" 
-                                    title='Close SRF'>
-                                    <i class="ti ti-close">&nbsp;</i>Close
+                                    title='Open SRF'>
+                                    <i class="mdi mdi-open-in-new">&nbsp;</i>Update Disposition
                                 </button>
-                            @endif
-                            @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
-                                <button type="button" class="btn btn-outline-warning"
-                                    data-target="#cancelSrf{{ $sampleRequest->Id }}" 
-                                    data-toggle="modal" 
-                                    title='Cancel SRF'>
-                                    <i class="mdi mdi-cancel">&nbsp;</i>Cancel
-                                </button>
+                                @endif
+
+                                @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 70 || $sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                                    <button type="button" class="btn btn-outline-warning"
+                                        data-target="#closeSrf{{ $sampleRequest->Id }}" 
+                                        data-toggle="modal" 
+                                        title='Close SRF'>
+                                        <i class="ti ti-close">&nbsp;</i>Close
+                                    </button>
+                                @endif
+                                @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                                    <button type="button" class="btn btn-outline-warning"
+                                        data-target="#cancelSrf{{ $sampleRequest->Id }}" 
+                                        data-toggle="modal" 
+                                        title='Cancel SRF'>
+                                        <i class="mdi mdi-cancel">&nbsp;</i>Cancel
+                                    </button>
+                                @endif
+
                             @endif
                         @else
                         <?php 
@@ -331,6 +339,7 @@
                                     break;
                             }
                         ?> 
+                        {{-- RND and QCD Button --}}
                         @if($refCodeType == auth()->user()->role->type)
                             @if($sampleRequest->Progress == 55 || $sampleRequest->Progress == 57 || $sampleRequest->Progress == 81)
                                 {{-- <button type="button" class="btn btn-outline-warning returnBtn">
@@ -818,7 +827,7 @@
                 <label><strong>Approver Remarks</strong></label>
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
                 <div class="row mb-0">
-                    <label class="col-sm-12 col-form-label">
+                    {{-- <label class="col-sm-12 col-form-label">
                         @if($sampleRequest->srfTransactionApprovals->isEmpty())
                             @if($sampleRequest->approver)
                             <b>{{$sampleRequest->approver->full_name}} :</b> {{$sampleRequest->AcceptRemarks}}
@@ -843,7 +852,27 @@
                                 <p>No approver remarks yet</p>
                             @endif
                         @endif
-                    </label>
+                    </label> --}}
+                    <div class="col-sm-2">
+                        @if($sampleRequest->primarySalesById != null)
+                            @foreach (optional($sampleRequest->primarySalesById)->salesApproverById as $approver)
+                                <p style="font-weight: bold;" class="mb-0 text-right">{{$approver->salesApprover->full_name}} :</p>
+                            @endforeach
+                        @else 
+                        @endif
+                    </div>
+                    <div class="col-sm-3">
+                        @if($sampleRequest->approver)
+                            @php
+                                $acceptRemarks = $sampleRequest->crrTransactionApprovals->sortByDesc('Id')->firstWhere('RemarksType', 'accept');
+                            @endphp
+                            @if($acceptRemarks != null)
+                            <p class="mb-0">{{$acceptRemarks->Remarks}}</p>
+                            @endif
+                        @else
+                            <p class="mb-0">No approver remarks yet</p>
+                        @endif
+                    </div>
                 </div>
             </div>
             <div class="col-md-12">
@@ -1700,15 +1729,15 @@
 
         $(".editBtn").on('click', function() {
             var secondarySales = $(this).data('secondarysales');
-            var primarySales = $('[name="PrimarySalesPerson"]').val();
-
+            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            
             refreshSecondaryApprovers(primarySales,secondarySales)
         })
-        $('[name="PrimarySalesPerson"]').on('change', function() {
-            var primarySales = $(this).val();
+        // $('[name="PrimarySalesPerson"]').on('change', function() {
+        //     var primarySales = $(this).val();
 
-            refreshSecondaryApproversv2(primarySales)
-        })
+        //     refreshSecondaryApproversv2(primarySales)
+        // })
         function refreshSecondaryApprovers(primarySales,secondarySales)
         {
             $.ajax({
@@ -1723,31 +1752,31 @@
                 success: function(data)
                 {
                     setTimeout(() => {
-                        $('[name="SecondarySalesPerson"]').html(data) 
-                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+                        $('[name="SecondarySalesPersonId"]').html(data) 
+                        $('[name="SecondarySalesPersonId"]').val(secondarySales) 
                     }, 500);
                 }
             })
         }
-        function refreshSecondaryApproversv2(primarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPerson"]').html(data) 
-                    }, 500);
-                }
-            })
-        }
+        // function refreshSecondaryApproversv2(primarySales)
+        // {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_user_approvers')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPerson"]').html(data) 
+        //             }, 500);
+        //         }
+        //     })
+        // }
     });
 
     </script>
