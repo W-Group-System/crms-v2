@@ -233,13 +233,14 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
+                                        {{-- {{dd($price_monitorings)}} --}}
                                         <div><label>OPERATING COST</label></div>
                                         <div class="form-group">
                                             <label>Delivery Type</label>
                                             <select class="form-control js-example-basic-single delivery-type" name="DeliveryType[]" title="Select Delivery Type">
-                                                <option value="10">Courier</option>
-                                                <option value="20">Delivery</option>
-                                                <option value="30">Pickup</option>
+                                                <option value="10" @if($price_monitorings->priceRequestProduct->LsalesDeliveryType == 10) selected @endif>Courier</option>
+                                                <option value="20" @if($price_monitorings->priceRequestProduct->LsalesDeliveryType == 20) selected @endif>Delivery</option>
+                                                <option value="30" @if($price_monitorings->priceRequestProduct->LsalesDeliveryType == 30) selected @endif>Pickup</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -254,7 +255,7 @@
                                             <label>GAE Type:</label>
                                             <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" title="Select GAE Type">
                                                 @foreach ($pricegaes as $gaeType)
-                                                    <option value="{{ $gaeType->id }}" >{{ $gaeType->ExpenseName }}</option>
+                                                    <option value="{{ $gaeType->id }}" @if($price_monitorings->priceRequestProduct->PriceRequestGaeId == $gaeType->id) selected @endif>{{ $gaeType->ExpenseName }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
