@@ -28,23 +28,22 @@
                     </a>
                     @endif
 
-                    @if(authCheckIfItsRndStaff(auth()->user()->role))
-                        @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
-                            @if($crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81)
-                                <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
-                                    <i class="ti ti-pencil"></i>&nbsp;Update
-                                </button>
-                            @endif
-                            
-                            @if($crr->Progress == 35)
-                            <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
-                                @csrf 
+                    {{-- @if(authCheckIfItsRndStaff(auth()->user()->role)) --}}
+                    @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
+                        @if($crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81)
+                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Update
+                            </button>
+                        @endif
+                        
+                        @if($crr->Progress == 35)
+                        <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
+                            @csrf 
 
-                                <button type="button" class="btn btn-outline-success startCrrBtn">
-                                    <i class="ti-control-play"></i>&nbsp; Start
-                                </button>
-                            </form>
-                            @endif
+                            <button type="button" class="btn btn-outline-success startCrrBtn">
+                                <i class="ti-control-play"></i>&nbsp; Start
+                            </button>
+                        </form>
                         @endif
 
                         @if($crr->Progress == 50)
@@ -52,17 +51,18 @@
                                 <i class="ti-control-pause"></i>&nbsp; Pause
                             </button>
                         @endif
-
+    
                         @if($crr->Progress == 55)
                             <form method="POST" action="{{url('start_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
                                 @csrf 
-
+    
                                 <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#continueStatus{{$crr->id}}">
                                     <i class="ti-control-play"></i>&nbsp; Continue
                                 </button>
                             </form>
                         @endif
                     @endif
+                    {{-- @endif --}}
 
                     @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
                         @if($crr->Progress == 50)
@@ -253,6 +253,16 @@
                                 <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#continueStatus{{$crr->id}}">
                                     <i class="ti-control-play"></i>&nbsp; Continue
                                 </button>
+                            @endif
+
+                            @if($crr->Progress == 50)
+                            <form method="POST" action="{{url('submit_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
+                                @csrf 
+
+                                <button type="button" class="btn btn-outline-warning submitCrrBtn">
+                                    <i class="ti-check"></i>&nbsp; Submit
+                                </button>
+                            </form>
                             @endif
 
                             @if($crr->Progress == 57)
