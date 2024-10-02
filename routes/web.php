@@ -211,7 +211,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/request_product_evaluation', 'RequestProductEvaluationController@index')->name('product_evaluation.index');
     Route::post('new_product_evaluation', 'RequestProductEvaluationController@store')->name('product_evaluation.store'); 
     Route::post('product_evaluation/edit/{id}', 'RequestProductEvaluationController@update');
-    Route::get('product_evaluation/view/{id}', 'RequestProductEvaluationController@view');
+    Route::get('product_evaluation/view/{id}/{RpeNumber}', 'RequestProductEvaluationController@view');
     Route::delete('request_evaluation/{id}', 'RequestProductEvaluationController@destroy');
 
     Route::post('addRpeSupplementary', 'RequestProductEvaluationController@addSupplementary');
