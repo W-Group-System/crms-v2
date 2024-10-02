@@ -252,7 +252,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
     Route::post('/new_sample_request', 'SampleRequestController@store')->name('sample_request.store');
-    Route::get('samplerequest/view/{id}', 'SampleRequestController@view');
+    Route::get('samplerequest/view/{id}/{SrfNumber}', 'SampleRequestController@view');
     Route::post('sample_request/edit/{id}', 'SampleRequestController@update');
     Route::delete('samplerequest/view/supp-delete/{id}', 'SampleRequestController@deleteSrfDetails');
 
