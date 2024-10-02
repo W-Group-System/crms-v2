@@ -238,11 +238,13 @@
                     </tr>
                     <tr>
                         <td class="label">VALIDITY:</td>
-                        <td class="detail">{{ \Carbon\Carbon::parse($price_monitoring_ls->ValidityDate)->format('F j, Y') }}</td>
+                        {{-- <td class="detail">{{ \Carbon\Carbon::parse($price_monitoring_ls->ValidityDate)->format('F j, Y') }}</td> --}}
+                        <td class="detail">{{date('F j, Y', strtotime($price_monitoring_ls->ValidityDate))}}</td>
                     </tr>
                     <tr>
                         <td class="label">DELIVERY SCHEDULE</td>
-                        <td class="detail">{{ \Carbon\Carbon::parse($price_monitoring_ls->PriceLockPeriod)->format('F j, Y') }}</td>
+                        {{-- <td class="detail">{{ \Carbon\Carbon::parse($price_monitoring_ls->PriceLockPeriod)->format('F j, Y') }}</td> --}}
+                        <td class="detail">{{date('F j, Y', strtotime($price_monitoring_ls->PriceLockPeriod))}}</td>
                     </tr>
                 </table>
                 <p class="right-p">NOTE: Above price may change without prior notice</p>

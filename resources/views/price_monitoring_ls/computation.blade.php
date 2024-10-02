@@ -244,12 +244,12 @@
             <tr>
                 <td class="bold-line">Total Manufacturing Cost per Unit (kg)</td>
                 <td class="no-border"></td>
-                <td class="bold-line"><div class="values">{{ number_format($item->ProductRmc + $item->LsalesDirectLabor + $item->LsalesFactoryOverhead, 2) }}</div></td>
+                <td><div class="values" style="border-bottom:1px solid black;">{{ number_format($item->ProductRmc + $item->LsalesDirectLabor + $item->LsalesFactoryOverhead, 2) }}</div></td>
             </tr>
             <tr style="margin-top: 20px">
                 <td class="bold-line">Blending Loss (1% of Raw Materials)</td>
                 <td class="no-border"></td>
-                <td class="bold-line"><div class="values">{{ $item->LsalesBlendingLoss }}</div></td>
+                <td><div class="values" style="border-bottom:1px solid black;">{{ $item->LsalesBlendingLoss }}</div></td>
             </tr>
             <tr>
                 <th colspan="3" class="heading">2. Operating Cost</th>
@@ -277,7 +277,7 @@
             <tr>
                 <td class="bold-line">Total Operating Cost per Unit (kg)</td>
                 <td class="no-border"></td>
-                <td class="bold-line"><div class="values">{{ number_format($item->LsalesDeliveryCost + $item->LsalesFinancingCost + $item->LsalesGaeValue + $item->OtherCostRequirements, 2) }}</div></td>
+                <td><div class="values" style="border-bottom:1px solid black;">{{ number_format($item->LsalesDeliveryCost + $item->LsalesFinancingCost + $item->LsalesGaeValue + $item->OtherCostRequirements, 2) }}</div></td>
             </tr>
             @php
                 $totalCost = $item->ProductRmc +
@@ -303,7 +303,7 @@
             <tr>
                 <td class="heading bold-line">Total Product Cost per Unit (kg)</td>
                 <td class="no-border"></td>
-                <td class="bold-line"><div class="values">{{ number_format($totalCost, 2) }}</div></td>
+                <td><div class="values" style="border-bottom:1px solid black;">{{ number_format($totalCost, 2) }}</div></td>
             </tr>
         </table>
     </div>

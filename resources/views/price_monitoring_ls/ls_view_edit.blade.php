@@ -14,13 +14,6 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 {{-- <label>Primary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($primarySalesPersons as $user)
-                                        <option value="{{ $user->user_id }}" @if ($price_monitorings->PrimarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
-                                    @endforeach
-                                </select> --}}
-                                <label>Primary Sales Person</label>
                                 @if(auth()->user()->role->name == "Staff L1")
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
                                 <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
@@ -34,17 +27,53 @@
                                         <option value="{{ $user->id }}" @if($user->user_id == $price_monitorings->PrimarySalesPersonId || $user->id == $price_monitorings->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select>
-                                @endif
+                                @endif --}}
+                                @php
+                                    $primary_sales = "";
+                                    if ($price_monitorings->primarySalesPersonById == null)
+                                    {
+                                        $primary_sales = $price_monitorings->primarySalesPerson;
+                                    }
+                                    else
+                                    {
+                                        $primary_sales = $price_monitorings->primarySalesPersonById;
+                                    }
+                                @endphp
+                                <label>Primary Sales Person</label>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{$primary_sales->id}}">
+                                <input type="text" class="form-control" value="{{$primary_sales->full_name}}" readonly>
                             </div>
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
-                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId"  style="position: relative !important" title="Select Sales Person">
+                                {{-- <select class="form-control js-example-basic-single" name="SecondarySalesPersonId"  style="position: relative !important" title="Select Sales Person">
                                     <option value="" disabled selected>Select Sales Person</option>
                                     @foreach($users as $user)
-                                        {{-- <option value="{{ $user->user_id }}" @if ($price_monitorings->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option> --}}
+                                        <option value="{{ $user->user_id }}" @if ($price_monitorings->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                         <option value="{{ $user->id }}" @if($user->user_id == $price_monitorings->SecondarySalesPersonId || $user->id == $price_monitorings->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
+                                @php
+                                    $secondary_sales = "";
+                                    if ($price_monitorings->secondarySalesPersonById == null)
+                                    {
+                                        $secondary_sales = $price_monitorings->secondarySalesPerson;
+                                    }
+                                    else
+                                    {
+                                        $secondary_sales = $price_monitorings->secondarySalesPersonById;
+                                    }
+                                @endphp
+                                @if($price_monitorings->SecondarySalesPersonId == auth()->user()->id || $price_monitorings->SecondarySalesPersonId == auth()->user()->user_id)
+                                <input type="hidden" name="SecondarySalesPersonId" value="{{$secondary_sales->id}}">
+                                <input type="text" class="form-control" value="{{$secondary_sales->full_name}}" readonly>
+                                @else
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" @if($user->id == $price_monitorings->SecondarySalesPersonId || $user->user_id == $price_monitorings->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select> 
+                                @endif
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -173,7 +202,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Quantity Required</label>
-                                            <input type="number" class="form-control" name="QuantityRequired[]" value="{{ $priceProducts->QuantityRequired ?? 0 }}">
+                                            {{-- <input type="number" class="form-control" name="QuantityRequired[]" value="{{ $priceProducts->QuantityRequired ?? 0 }}"> --}}
+                                            <input type="text" class="form-control" name="QuantityRequired[]" value="{{ $priceProducts->QuantityRequired ?? 0 }}">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
