@@ -22,28 +22,23 @@
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label>Primary Account Manager</label>
-                            <!-- <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Account Manager">
-                                <option value="" disabled {{ $data->PrimaryAccountManagerId ? '' : 'selected' }}>Select Account Manager</option>
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ $data->PrimaryAccountManagerId == $user->user_id || $data->PrimaryAccountManagerId == $user->id ? 'selected' : '' }}>
-                                        {{ $user->full_name }}
-                                    </option>
-                                @endforeach
-                            </select> -->
-                            @if(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
-                                @php
-                                    $subordinates = getUserApprover(auth()->user()->getSalesApprover);
-                                @endphp
+                            @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
                                 <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Sales Person">
-                                    <option value="" disabled selected>Select Sales Person</option>
-                                    @foreach($subordinates as $subordinate)
-                                        <option value="{{ $subordinate->id }}" {{ $data->PrimaryAccountManagerId == $subordinate->user_id || $data->PrimaryAccountManagerId == $subordinate->id ? 'selected' : '' }}>{{ $subordinate->full_name }}</option>
+                                    @foreach($user_is as $userSales)
+                                        <option value="{{ $userSales->id }}" {{ $data->PrimaryAccountManagerId == $userSales->user_id || $data->PrimaryAccountManagerId == $userSales->id ? 'selected' : '' }}>
+                                            {{ $userSales->full_name }}
+                                        </option>
                                     @endforeach
                                 </select>
-                            @else 
-                                @php
-                                    $subordinates = getUserApprover(auth()->user()->getSalesApprover);
-                                @endphp
+                            @elseif(auth()->user()->role->type == 'LS' && auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
+                                <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Sales Person">
+                                    @foreach($user_ls as $userSales)
+                                        <option value="{{ $userSales->id }}" {{ $data->PrimaryAccountManagerId == $userSales->user_id || $data->PrimaryAccountManagerId == $userSales->id ? 'selected' : '' }}>
+                                            {{ $userSales->full_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @else
                                 <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Sales Person" disabled="true">
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}" {{ $data->PrimaryAccountManagerId == $user->user_id || $data->PrimaryAccountManagerId == $user->id ? 'selected' : '' }}>
@@ -63,39 +58,31 @@
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label>Secondary Account Manager</label>
-                                @if(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
-                                    @php
-                                        $subordinates = getUserApprover(auth()->user()->getSalesApprover);
-                                    @endphp
-                                    <select class="form-control js-example-basic-single" name="SecondaryAccountManagerId" id="SecondaryAccountManagerId" style="position: relative !important" title="Select Sales Person">
-                                        <option value="" disabled selected>Select Sales Person</option>
-                                        @foreach($subordinates as $subordinate)
-                                            <option value="{{ $subordinate->id }}" 
-                                                {{ 
-                                                    $data->SecondaryAccountManagerId == $subordinate->id || 
-                                                    ($data->secondaryAccountManager && $data->secondaryAccountManager->full_name == $subordinate->full_name) 
-                                                    ? 'selected' 
-                                                    : '' 
-                                                }}>
-                                                {{ $subordinate->full_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @else 
-                                    <select class="form-control js-example-basic-single" name="SecondaryAccountManagerId" id="SecondaryAccountManagerId" style="position: relative !important" title="Select Sales Person" disabled="true">
-                                        @foreach($users as $user)
-                                            <option value="{{ $user->id }}" {{ $data->SecondaryAccountManagerId == $user->user_id || $data->SecondaryAccountManagerId == $user->id ? 'selected' : '' }}>
-                                                {{ $user->full_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                @endif
-                                <!-- @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ $data->SecondaryAccountManagerId == $user->user_id || $data->SecondaryAccountManagerId == $user->id ? 'selected' : '' }}>
-                                        {{ $user->full_name }}
-                                    </option>
-                                @endforeach -->
-                            </select>
+                            @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
+                                <select class="form-control js-example-basic-single" name="SecondaryAccountManagerId" id="SecondaryAccountManagerId" style="position: relative !important" title="Select Sales Person">
+                                    @foreach($user_is as $userSales)
+                                        <option value="{{ $userSales->id }}" {{ $data->SecondaryAccountManagerId == $userSales->user_id || $data->SecondaryAccountManagerId == $userSales->id ? 'selected' : '' }}>
+                                            {{ $userSales->full_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @elseif(auth()->user()->role->type == 'LS' && auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
+                                <select class="form-control js-example-basic-single" name="SecondaryAccountManagerId" id="SecondaryAccountManagerId" style="position: relative !important" title="Select Sales Person">
+                                    @foreach($user_ls as $userSales)
+                                        <option value="{{ $userSales->id }}" {{ $data->SecondaryAccountManagerId == $userSales->user_id || $data->SecondaryAccountManagerId == $userSales->id ? 'selected' : '' }}>
+                                            {{ $userSales->full_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <select class="form-control js-example-basic-single" name="SecondaryAccountManagerId" id="SecondaryAccountManagerId" style="position: relative !important" title="Select Sales Person" disabled="true">
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" {{ $data->SecondaryAccountManagerId == $user->user_id || $data->SecondaryAccountManagerId == $user->id ? 'selected' : '' }}>
+                                            {{ $user->full_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endif
                         </div>
                     </div>
                     <div class="col-lg-6">

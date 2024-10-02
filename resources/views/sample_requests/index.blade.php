@@ -296,7 +296,7 @@
                                                 <div class="badge badge-success">Open</div>
                                             @elseif($srf->Status == 30)
                                                 <div class="badge badge-warning">Closed</div>
-                                            @elseif($srf->Status == 50)
+                                            @else
                                                 <div class="badge badge-danger">Cancelled</div>
                                             @endif
                                         </td>
@@ -372,11 +372,11 @@
                                 </td>
                                 <td>
                                     @if($srf->Status == 10)
-                                        Open
+                                        <div class="badge badge-success">Open</div>
                                     @elseif($srf->Status == 30)
-                                        Closed
+                                        <div class="badge badge-warning">Closed</div>
                                     @else
-                                        {{ $srf->Status }}
+                                        <div class="badge badge-danger">Cancelled</div>
                                     @endif
                                 </td>
                                 <td>{{ optional($srf->progressStatus)->name }}</td>

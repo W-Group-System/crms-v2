@@ -137,6 +137,11 @@
                                     <i class="icon-grid menu-icon"></i>
                                     <span class="menu-title">Dashboard</span>
                                 </a>
+                            @elseif(Auth::check() && optional(Auth::user()->role)->type == 'QCD-WHI' || optional(Auth::user()->role)->type == 'QCD-PBI' || optional(Auth::user()->role)->type == 'QCD-MRDC' || optional(Auth::user()->role)->type == 'QCD-CCC')
+                                <a class="nav-link" href="{{ route('dashboard.qcd') }}">
+                                    <i class="icon-grid menu-icon"></i>
+                                    <span class="menu-title">Dashboard</span>
+                                </a>
                             @endif
                         </li>
                         <!-- <li class="nav-item">

@@ -24,9 +24,9 @@ Route::group(['middleware' => 'inactive_users'], function() {
     // Apply middleware to check user type
     Route::get('/', 'DashboardController@index')->middleware('checkUserType');
 
-    // Separate routes for RND and LS users
     Route::get('/dashboard-rnd', 'DashboardController@RNDindex')->name('dashboard.rnd');
     Route::get('/dashboard-sales', 'DashboardController@salesIndex')->name('dashboard.index');
+    Route::get('/dashboard-qcd', 'DashboardController@qcdIndex')->name('dashboard.qcd');
 
     // change password
     Route::get('my_account','HomeController@myAccount')->name('my_account');

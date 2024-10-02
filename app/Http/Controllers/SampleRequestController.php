@@ -153,8 +153,21 @@ class SampleRequestController extends Controller
                 $userName = $role->name;
 
                 if ($status == '10') {
-                    if ($userType == 'RND' && $userName == 'Staff L2') {
-                        $query->where('Status', '10');
+                    if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                              ->where('RefCode', '1');
+                    } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                              ->where('RefCode', '2');
+                    } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('RefCode', '3');
+                    } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('RefCode', '4');
+                    } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('RefCode', '5');
                     } else {
                         // Default logic for other users
                         $query->where('Status', '10')
@@ -186,8 +199,21 @@ class SampleRequestController extends Controller
                 $userName = $role->name;
 
                 if ($status == '30') {
-                    if ($userType == 'RND' && $userName == 'Staff L2') {
-                        $query->where('Status', '30');
+                    if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                              ->where('RefCode', '1');
+                    } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                              ->where('RefCode', '2');
+                    } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                                ->where('RefCode', '3');
+                    } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                                ->where('RefCode', '4');
+                    } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                                ->where('RefCode', '5');
                     } else {
                         // Default logic for other users
                         $query->where('Status', '30')
@@ -234,10 +260,36 @@ class SampleRequestController extends Controller
             })
             // Filter by past dates
             ->when($request->input('DateRequired') === 'past', function($query) {
-                $query->where('DateRequired', '<', now())
-                    ->where('Status', '10');
-            })
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
 
+                if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DateRequired', '<', now())
+                          ->where('Status', '10')
+                          ->where('RefCode', '1');
+                } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DateRequired', '<', now())
+                          ->where('Status', '10')
+                          ->where('RefCode', '2');
+                } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DateRequired', '<', now())
+                            ->where('Status', '10')
+                            ->where('RefCode', '4');
+                } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DateRequired', '<', now())
+                            ->where('Status', '10')
+                            ->where('RefCode', '3');
+                } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DateRequired', '<', now())
+                            ->where('Status', '10')
+                            ->where('RefCode', '5');
+                } else {
+                    $query->where('DateRequired', '<', now())
+                    ->where('Status', '10');
+                }
+            })
+            
             // Open and Close status filters
             ->when($open && $close, function($query) use ($open, $close) {
                 $query->whereIn('Status', [$open, $close]);
@@ -266,17 +318,45 @@ class SampleRequestController extends Controller
             ->when(auth()->user()->role->type == 'IS', function($query) {
                 $query->where('SrfNumber', 'LIKE', '%SRF-IS%');
             })
-
-            // Additional filters for progress status
-            ->when($progress == '30', function($query) {
-                $query->where('Progress', '30')->where('Status', '10');
+            ->when(in_array($progress, ['30', '57', '81']), function ($query) use ($progress) {
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
+                
+                if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                          ->where('Status', '10')
+                          ->where('RefCode', '1');
+                } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                          ->where('Status', '10')
+                          ->where('RefCode', '2');
+                } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                            ->where('Status', '10')
+                            ->where('RefCode', '4');
+                } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                            ->where('Status', '10')
+                            ->where('RefCode', '3');
+                } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                            ->where('Status', '10')
+                            ->where('RefCode', '5');
+                } else {
+                    $query->where('Progress', $progress)
+                      ->where('Status', '10');
+                }
             })
-            ->when($progress == '57', function($query) {
-                $query->where('Progress', '57')->where('Status', '10');
-            })
-            ->when($progress == '81', function($query) {
-                $query->where('Progress', '81')->where('Status', '10');
-            })
+            // ->when($progress == '30', function($query) {
+            //     $query->where('Progress', '30')->where('Status', '10');
+            // })
+            // ->when($progress == '57', function($query) {
+            //     $query->where('Progress', '57')->where('Status', '10');
+            // })
+            // ->when($progress == '81', function($query) {
+            //     $query->where('Progress', '81')->where('Status', '10');
+            // })
 
             // Order by sort and direction
             ->orderBy($sort, $direction)
