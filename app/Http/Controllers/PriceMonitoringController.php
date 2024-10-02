@@ -609,7 +609,7 @@ class PriceMonitoringController extends Controller
         $priceMonitoringData->SecondarySalesPersonId = $request->input('SecondarySalesPersonId');
         $priceMonitoringData->DateRequested = $request->input('DateRequested');
         $priceMonitoringData->ClientId = $request->input('ClientId');
-        $priceMonitoringData->ContactId = $request->input('ContactId');
+        $priceMonitoringData->ContactId = $request->input('ClientContactId');
         $priceMonitoringData->ValidityDate = $request->input('ValidityDate');
         $priceMonitoringData->PackagingType = $request->input('PackagingType');
         $priceMonitoringData->Moq = $request->input('Moq');

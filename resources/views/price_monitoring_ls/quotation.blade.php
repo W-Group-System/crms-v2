@@ -131,6 +131,7 @@
                 <p>{{ \Carbon\Carbon::parse($price_monitoring_ls->DateRequested)->format('F j, Y') }}</p>
                 <br>
                 <br>
+                <b style="margin-bottom: 0;">{{optional($price_monitoring_ls->clientContact)->ContactName}}</b> <br>
                 <b>{{ optional($price_monitoring_ls->client)->Name }}</b>
                 <p class="right-p" style="margin-top: 0">{{ optional($price_monitoring_ls->clientCompanyAddress)->Address }}</p>
                 <br><br><br>
@@ -230,7 +231,7 @@
                     </tr>
                     <tr>
                         <td class="label">TERMS OF PAYMENT:</td>
-                        <td class="detail">{{ $price_monitoring_ls->PaymentTermId}}</td>
+                        <td class="detail">{{ $price_monitoring_ls->paymentterms->Name}}</td>
                     </tr>
                     <tr>
                         <td class="label">PACKAGING:</td>
@@ -244,7 +245,7 @@
                     <tr>
                         <td class="label">DELIVERY SCHEDULE</td>
                         {{-- <td class="detail">{{ \Carbon\Carbon::parse($price_monitoring_ls->PriceLockPeriod)->format('F j, Y') }}</td> --}}
-                        <td class="detail">{{date('F j, Y', strtotime($price_monitoring_ls->PriceLockPeriod))}}</td>
+                        <td class="detail">{{$price_monitoring_ls->PriceLockPeriod}}</td>
                     </tr>
                 </table>
                 <p class="right-p">NOTE: Above price may change without prior notice</p>
