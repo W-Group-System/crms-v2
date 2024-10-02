@@ -95,13 +95,13 @@
                                 @endif --}}
                                 @php
                                     $primary_sales = "";
-                                    if ($requestEvaluation->primarySalesById == null)
+                                    if ($requestEvaluation->primarySalesPersonById == null)
                                     {
                                         $primary_sales = $requestEvaluation->primarySalesPerson;
                                     }
                                     else
                                     {
-                                        $primary_sales = $requestEvaluation->primarySalesById;
+                                        $primary_sales = $requestEvaluation->primarySalesPersonById;
                                     }
                                 @endphp
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{$primary_sales->id}}">
@@ -141,13 +141,13 @@
                                 </select> --}}
                                 @php
                                     $secondary_sales = "";
-                                    if ($requestEvaluation->secondarySalesById == null)
+                                    if ($requestEvaluation->secondarySalesPersonById == null)
                                     {
                                         $secondary_sales = $requestEvaluation->secondarySalesPerson;
                                     }
                                     else
                                     {
-                                        $secondary_sales = $requestEvaluation->secondarySalesById;
+                                        $secondary_sales = $requestEvaluation->secondarySalesPersonById;
                                     }
                                 @endphp
                                 @if($requestEvaluation->SecondarySalesPersonId == auth()->user()->id || $requestEvaluation->SecondarySalesPersonId == auth()->user()->user_id)
