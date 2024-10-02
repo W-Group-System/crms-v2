@@ -82,30 +82,43 @@ class CustomerRequirementController extends Controller
                 $status = $request->input('status');
                 $role = auth()->user()->role;
                 $userType = $role->type;  
-                $userName = $role->name;  
-
+                $userName = $role->name;
+            
                 if ($status == '10') {
-                    if ($userType == 'RND' && $userName == 'Staff L2') {
-                        $query->where('Status', '10');
+                    if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                              ->where('RefCode', 'RND');
+                    } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                              ->where('RefCode', 'QCD-WHI');
+                    } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('RefCode', 'QCD-PBI');
+                    } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('RefCode', 'QCD-MRDC');
+                    } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('RefCode', 'QCD-CCC');
                     } else {
                         // Default logic for other users
                         $query->where('Status', '10')
-                            ->where(function($query) use ($userId, $userByUser) {
-                                $query->where(function($query) use ($userId, $userByUser) {
-                                    $query->where('PrimarySalesPersonId', $userId)
-                                        ->orWhere('SecondarySalesPersonId', $userId)
-                                        ->orWhere('PrimarySalesPersonId', $userByUser)
-                                        ->orWhere('SecondarySalesPersonId', $userByUser);
-                                });
-                                // Check for related 'crr_personnels' entries
-                                $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
-                                    $query->where('PersonnelUserId', $userId)
-                                        ->orWhere('PersonnelUserId', $userByUser);
-                                });
-                            });
+                              ->where(function($query) use ($userId, $userByUser) {
+                                  $query->where(function($query) use ($userId, $userByUser) {
+                                      $query->where('PrimarySalesPersonId', $userId)
+                                            ->orWhere('SecondarySalesPersonId', $userId)
+                                            ->orWhere('PrimarySalesPersonId', $userByUser)
+                                            ->orWhere('SecondarySalesPersonId', $userByUser);
+                                  });
+                                  // Check for related 'crr_personnels' entries
+                                  $query->orWhereHas('crr_personnels', function($query) use ($userId, $userByUser) {
+                                      $query->where('PersonnelUserId', $userId)
+                                            ->orWhere('PersonnelUserId', $userByUser);
+                                  });
+                              });
                     }
                 } else {
-                    // Apply other status filters
+                    // Apply other status filters if status is not '10'
                     $query->where('Status', $status);
                 }
             })
@@ -116,8 +129,21 @@ class CustomerRequirementController extends Controller
                 $userName = $role->name; 
 
                 if ($status == '30') {
-                    if ($userType == 'RND' && $userName == 'Staff L2') {
-                        $query->where('Status', '30');
+                    if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                              ->where('RefCode', 'RND');
+                    } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                              ->where('RefCode', 'QCD-WHI');
+                    } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                                ->where('RefCode', 'QCD-PBI');
+                    } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                                ->where('RefCode', 'QCD-MRDC');
+                    } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '30')
+                                ->where('RefCode', 'QCD-CCC');
                     } else {
                         // Default logic for other users
                         $query->where('Status', '30')
@@ -169,8 +195,34 @@ class CustomerRequirementController extends Controller
                 }
             })
             ->when($request->input('DueDate') === 'past', function($query) {
-                $query->where('DueDate', '<', now())
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
+
+                if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DueDate', '<', now())
+                          ->where('Status', '10')
+                          ->where('RefCode', 'RND');
+                } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DueDate', '<', now())
+                          ->where('Status', '10')
+                          ->where('RefCode', 'QCD-WHI');
+                } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DueDate', '<', now())
+                          ->where('Status', '10')
+                          ->where('RefCode', 'QCD-MRDC');
+                } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DueDate', '<', now())
+                          ->where('Status', '10')
+                          ->where('RefCode', 'QCD-PBI');
+                } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('DueDate', '<', now())
+                          ->where('Status', '10')
+                          ->where('RefCode', 'QCD-CCC');;
+                } else {
+                    $query->where('DueDate', '<', now())
                         ->where('Status', '10');  
+                }                
             })
             ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);
@@ -215,9 +267,35 @@ class CustomerRequirementController extends Controller
                     });
                 }  
             })
-            ->when($progress == '30' || $progress == '57' || $progress == '81', function ($query) use ($progress) {
-                $query->where('Progress', $progress)
+            ->when(in_array($progress, ['30', '57', '81']), function ($query) use ($progress) {
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
+                
+                if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                          ->where('Status', '10')
+                          ->where('RefCode', 'RND');
+                } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                          ->where('Status', '10')
+                          ->where('RefCode', 'QCD-WHI');
+                } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                            ->where('Status', '10')
+                            ->where('RefCode', 'QCD-MRDC');
+                } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                            ->where('Status', '10')
+                            ->where('RefCode', 'QCD-PBI');
+                } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', $progress)
+                            ->where('Status', '10')
+                            ->where('RefCode', 'QCD-CCC');
+                } else {
+                    $query->where('Progress', $progress)
                       ->where('Status', '10');
+                }
             })
             ->orderBy($sort, $direction)
             ->paginate($request->entries ?? 10);

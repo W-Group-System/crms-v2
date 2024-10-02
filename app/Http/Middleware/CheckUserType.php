@@ -27,7 +27,10 @@ class CheckUserType
                 return redirect('/dashboard-rnd');
             } elseif ($roleType == 'IS' || $roleType == 'LS') {
                 return redirect('/dashboard-sales');
+            } elseif ($roleType == 'QCD-WHI' || $roleType == 'QCD-PBI' || $roleType == 'QCD-MRDC' || $roleType == 'QCD-CCC') {
+                return redirect('/dashboard-qcd');
             }
+
         }
 
         // If no valid user or role, redirect to the login page

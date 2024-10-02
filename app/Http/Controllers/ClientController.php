@@ -392,7 +392,16 @@ class ClientController extends Controller
         $contacts = Contact::where('CompanyId', $id)->get();
         $files = FileClient::where('ClientId', $id)->get();
         $users = User::where('is_active', '1')->whereNull('deleted_at')->get();
-       
+        $user_is = User::whereIn('department_id', ['5', '76'])
+                  ->where('is_active', '1')
+                  ->whereNull('deleted_at')
+                  ->get();
+        $users_ls = User::whereIn('department_id', ['38', '76'])
+                  ->where('is_active', '1')
+                  ->whereNull('deleted_at')
+                  ->get();
+        // dd($user_sales);
+
         $collections = [
             'business_types' => BusinessType::all(),
             'payment_terms' => PaymentTerms::all(),
@@ -405,6 +414,8 @@ class ClientController extends Controller
         return view('clients.edit', array_merge([
             'data' => $data,
             'users' => $users,
+            'user_is' => $user_is,
+            'users_ls' => $users_ls,
             'addresses' => $addresses,
             'contacts' => $contacts,
             'files' => $files

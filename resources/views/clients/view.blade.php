@@ -504,6 +504,9 @@
     .viewTab .nav-link {
         padding: 15px;
     }
+    .swal-wide{
+        width:350px !important;
+    }
 </style>
 <script>
     $(document).ready(function() {
@@ -635,12 +638,13 @@
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You want to activate this client!",
-                icon: 'warning',
+                icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Yes',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, confirmed it!',
+                cancelButtonText: "No",
+                customClass: 'swal-wide',
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -672,12 +676,15 @@
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You want to pursue this prospect client!",
+                // text: "You want to pursue this prospect client!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
+                // confirmButtonText: 'Yes, confirmed it!',
+                confirmButtonText: 'Yes',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, confirmed it!',
+                cancelButtonText: "No",
+                customClass: 'swal-wide',
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -716,12 +723,16 @@
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You want to archive this client!",
-                icon: 'warning',
+                // text: "You want to archive this client!",
+                icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
+                // cancelButtonColor: '#d33',
+                // confirmButtonText: 'Yes, confirmed it!',
+                confirmButtonText: 'Yes',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, confirmed it!',
+                cancelButtonText: "No",
+                customClass: 'swal-wide',
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
