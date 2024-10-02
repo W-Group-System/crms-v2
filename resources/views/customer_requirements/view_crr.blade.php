@@ -28,7 +28,7 @@
                     </a>
                     @endif
 
-                    {{-- @if(authCheckIfItsRndStaff(auth()->user()->role)) --}}
+                    @if(authCheckIfItsRndStaff(auth()->user()->role))
                     @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
                         @if($crr->Progress != 57 && $crr->Progress != 60 && $crr->Progress != 81)
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
@@ -62,7 +62,7 @@
                             </form>
                         @endif
                     @endif
-                    {{-- @endif --}}
+                    @endif
 
                     @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
                         @if($crr->Progress == 50)
