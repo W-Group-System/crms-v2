@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $role = optional(Auth::user())->role;
         
         // Check user role and redirect accordingly
-        if ($role && $role->type == 'RND' || $role->type == 'ITD') {
+        if ($role && $role->type == 'RND' || $role->type == 'ITD' || $role->type == 'ACCTG') {
             return redirect('/dashboard-rnd');
         } elseif ($role && $role->type == 'IS' || $role->type == 'LS') {
             return redirect('/dashboard-sales');
