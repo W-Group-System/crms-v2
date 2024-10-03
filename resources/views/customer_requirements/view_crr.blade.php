@@ -541,7 +541,7 @@
                             @foreach (optional($crr->primarySalesById)->salesApproverById as $approver)
                                 <p style="font-weight: bold;" class="mb-0 text-right">{{$approver->salesApprover->full_name}} :</p>
                             @endforeach
-                        @else 
+                        {{-- @else  --}}
                         @endif
                     </div>
                     <div class="col-sm-3">

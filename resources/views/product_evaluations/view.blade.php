@@ -630,7 +630,7 @@
                             @endif
                         </div>
                         <div class="col-sm-12 col-md-2">
-                            @if($requestEvaluation->rpeTransactionApprovals->isEmpty())
+                            {{-- @if($requestEvaluation->rpeTransactionApprovals->isEmpty())
                                 @if($requestEvaluation->approver)
                                 <b>{{$requestEvaluation->approver->full_name}} :</b> {{$requestEvaluation->AcceptRemarks}}
                                 @else
@@ -653,6 +653,16 @@
                                 @else
                                     <p>No approver remarks yet</p>
                                 @endif
+                            @endif --}}
+                            @if($requestEvaluation->approver)
+                                @php
+                                    $acceptRemarks = $requestEvaluation->rpeTransactionApprovals->sortByDesc('Id')->firstWhere('RemarksType', 'accept');
+                                @endphp
+                                @if($acceptRemarks != null)
+                                <p class="mb-0">{{$acceptRemarks->Remarks}}</p>
+                                @endif
+                            @else
+                                <p class="mb-0">No approver remarks yet</p>
                             @endif
                         </div>
                     </div>
