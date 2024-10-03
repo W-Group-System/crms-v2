@@ -626,7 +626,10 @@
                                 @foreach (optional($requestEvaluation->primarySalesPersonById)->salesApproverById as $approver)
                                     <p style="font-weight: bold;" class="mb-0 text-right">{{$approver->salesApprover->full_name}} :</p>
                                 @endforeach
-                            {{-- @else --}}
+                            @else
+                                @foreach (optional($requestEvaluation->primarySalesPerson)->salesApproverById as $approver)
+                                    <p style="font-weight: bold;" class="mb-0 text-right">{{$approver->salesApprover->full_name}} :</p>
+                                @endforeach
                             @endif
                         </div>
                         <div class="col-sm-12 col-md-2">
