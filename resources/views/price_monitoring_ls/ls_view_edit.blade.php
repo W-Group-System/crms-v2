@@ -284,7 +284,7 @@
                                         <div><label>MARKUP COST</label></div>
                                         <div class="form-group">
                                             <label>Markup (%)</label>
-                                            <input type="number" step=".01" class="form-control markup-percent" name="MarkupPercent[]" value="{{ $priceProducts->LsalesMarkupPercent ?? 0 }}">
+                                            <input type="number" step=".001" class="form-control markup-percent" name="MarkupPercent[]" value="{{ $priceProducts->LsalesMarkupPercent ?? 0 }}">
                                         </div>
                                         <div class="form-group">
                                             <label>Markup (PHP)</label>
@@ -438,8 +438,8 @@ $(document).ready(function() {
     function calculateCosts($row, rmc) {
         var directLabor = parseFloat($row.find('.direct-labor-input').val());
         var factoryOverhead = parseFloat($row.find('.factory-overhead-input').val());
-        var totalManufacturingCost = rmc + directLabor + factoryOverhead;
-        
+        var totalMC = rmc + directLabor + factoryOverhead;
+        var totalManufacturingCost = Math.round((totalMC + Number.EPSILON) * 100) / 100;
         $row.find('.total-manufacturing-cost-input').val(totalManufacturingCost.toFixed(2));
         
         var blendingLoss = 0.01 * rmc;
@@ -527,7 +527,7 @@ $(document).ready(function() {
     var blendingLoss = parseFloat($row.find('.blending-loss').val()) || 0;
     
     var totalProductCost = totalManufacturing + totalOperating + blendingLoss;
-    $row.find('.total-product-cost').val(totalProductCost.toFixed(2));
+    $row.find('.total-product-cost').val(totalProductCost);
 
     updateMarkupPHP($row);
     updateSellingPrice($row);
@@ -575,7 +575,7 @@ $(document).ready(function() {
 
         if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
             var markupPercent = (markupPHP / totalProductCost) * 100;
-            $row.find('.markup-percent').val(markupPercent.toFixed(2));
+            $row.find('.markup-percent').val(markupPercent.toFixed(3));
             updateSellingPrice($row);
             updateSellingPriceWithVAT($row);
         }
@@ -609,7 +609,7 @@ $(document).on('input', '.selling-price-php', function() {
            var sellingPriceWithVAT = sellingPrice + (sellingPrice * 0.12);
 
            $row.find('.markup-php').val(markupPHP.toFixed(2));
-           $row.find('.markup-percent').val(markupPercent.toFixed(2));
+           $row.find('.markup-percent').val(markupPercent.toFixed(3));
            $row.find('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
        }
    });
@@ -626,7 +626,7 @@ $(document).on('input', '.selling-price-php', function() {
             
             $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
             $row.find('.markup-php').val(markupPHP.toFixed(2));
-            $row.find('.markup-percent').val(markupPercent.toFixed(2));
+            $row.find('.markup-percent').val(markupPercent.toFixed(3));
         }
     });
 
