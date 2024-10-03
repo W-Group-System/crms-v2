@@ -294,10 +294,15 @@
                                 $prcieProduct->OtherCostRequirements +
                                 $prcieProduct->LsalesBlendingLoss;
                     
+                    $totalCost = round($totalCost, 2);
+                    
                     $markupPercent = $prcieProduct->LsalesMarkupPercent;
                     $markupValue = $prcieProduct->LsalesMarkupValue;
 
-                    $sellingPrice = number_format($totalCost, 2) + $markupValue;
+                   
+                    $markupValue = (float) $markupValue;
+
+                    $sellingPrice = $totalCost + $markupValue;
                     $sellingPriceWithVAT = $sellingPrice * 0.12;
                     $sumWithVat = $sellingPrice + $sellingPriceWithVAT;
 
