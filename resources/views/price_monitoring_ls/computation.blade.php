@@ -289,10 +289,14 @@
                                         $item->OtherCostRequirements +
                                         $item->LsalesBlendingLoss;
 
+                            $totalCost = round($totalCost, 2);
+
                             $markupPercent = $item->LsalesMarkupPercent;
                             $markupValue = $item->LsalesMarkupValue;
 
-                            $sellingPrice = number_format($totalCost, 2) + $markupValue;
+                            $markupValue = (float) $markupValue;
+
+                            $sellingPrice = $totalCost + $markupValue;
                             $sellingPriceWithVAT = $sellingPrice * 0.12;
                             $sumWithVat = $sellingPrice + $sellingPriceWithVAT;
 
