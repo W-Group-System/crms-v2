@@ -405,7 +405,8 @@
                                         <td>{{ $productFile->Name ?? 'N/A' }}</td>
                                         <td>{{ $productFile->Description ?? 'N/A' }}</td>
                                         <td>
-                                        <a href="{{ url('view_product/'.$productFile->product->id) }}" target="_blank">
+                                        <!-- <a href="{{ url('view_product/'.$productFile->product->id) }}" target="_blank"> -->
+                                        <a href="{{ $productFile->product ? url('view_product/'.$productFile->product->id) : '#' }}" target="_blank">
                                             {{ $productFile->product->code ?? 'N/A' }}
                                         </a>
                                         </td>
