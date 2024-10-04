@@ -58,10 +58,15 @@
                     @php
                         $showButton = false;
                         foreach ($price_monitorings->requestPriceProducts as $product) {
+                            if ($product->PriceRequestGaeId == "6") {
+                                $showButton = false;
+                                break; 
+                            }
                             if ($product->LsalesMarkupPercent > 15) {
                                 $showButton = true;
                                 break; 
                             }
+                           
                         }
                     @endphp
     
@@ -265,22 +270,30 @@
                     <p class="col-md-2 mb-0">{{ optional($prcieProduct->product_application)->Name }} </p>
                     <p class="col-md-2 mb-0 text-right"><b>Factory Overhead:</b></p>
                     <p class="col-md-2 mb-0">{{ $prcieProduct->LsalesFactoryOverhead }}</p>
-                    <p class="col-md-2 mb-0 text-right"><b>GAE:</b></p>
-                    <p class="col-md-2 mb-0">{{ $prcieProduct->LsalesGaeValue }}</p>
+                    <p class="col-md-2 mb-0 text-right"><b>GAE Type:</b></p>
+                    <p class="col-md-2 mb-0">{{ $prcieProduct->gaeType->ExpenseName }}</p>
                 </div>
                 <div class="row">
                     <p class="col-md-2 mb-0 text-right"><b>Quantity Required:</b></p>
                     <p class="col-md-2 mb-0">{{ $prcieProduct->QuantityRequired }} </p>
                     <p class="col-md-2 mb-0 text-right"><b>Total Manufacturing Cost:</b></p>
                     <p class="col-md-2 mb-0">{{ number_format($prcieProduct->ProductRmc + $prcieProduct->LsalesDirectLabor + $prcieProduct->LsalesFactoryOverhead, 2) }}</p>
-                    <p class="col-md-2 mb-0 text-right"><b>Other Cost Requirements :</b></p>
-                    <p class="col-md-2 mb-0">{{$prcieProduct->OtherCostRequirements}}</p>
+                    <p class="col-md-2 mb-0 text-right"><b>GAE Cost:</b></p>
+                    <p class="col-md-2 mb-0">{{ $prcieProduct->LsalesGaeValue }}</p>
                 </div>
                 <div class="form-group row">
                     <p class="col-md-2 mb-0"></p>
                     <p class="col-md-2 mb-0"></p>
                     <p class="col-md-2 mb-0 text-right"><b>Blending Loss:</b></p>
                     <p class="col-md-2 mb-0">{{ $prcieProduct->LsalesBlendingLoss }}</p>
+                    <p class="col-md-2 mb-0 text-right"><b>Other Cost Requirements :</b></p>
+                    <p class="col-md-2 mb-0">{{$prcieProduct->OtherCostRequirements}}</p>
+                </div>
+                <div class="form-group row">
+                    <p class="col-md-2 mb-0"></p>
+                    <p class="col-md-2 mb-0"></p>
+                    <p class="col-md-2 mb-0 text-right"></p>
+                    <p class="col-md-2 mb-0"></p>
                     <p class="col-md-2 mb-0 text-right"><b>Total Operating Cost:</b></p>
                     <p class="col-md-2 mb-0">{{ number_format($prcieProduct->LsalesDeliveryCost + $prcieProduct->LsalesFinancingCost + $prcieProduct->LsalesGaeValue + $prcieProduct->OtherCostRequirements, 2) }}</p>
                 </div>
