@@ -25,6 +25,11 @@ class SrfPersonnel extends Model implements Auditable
         return $this->belongsTo(User::class, 'PersonnelUserId', 'user_id');
     }
 
+    public function userId()
+    {
+        return $this->belongsTo(User::class, 'PersonnelUserId', 'id');
+    }
+
     public function transformAudit(array $data): array
     {
         if (isset($data['auditable_id'])) {

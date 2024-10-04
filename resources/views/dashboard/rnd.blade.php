@@ -396,7 +396,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Open</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" onclick="show()">
+                                <a href="{{ route('open_rnd_transactions', ['status' => 10]) }}" onclick="show()">
                                     {{ $crrImmediateOpen ?? '0' }}
                                 </a>
                             </h5>
@@ -404,7 +404,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Closed</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" onclick="show()">
+                                <a href="{{ route('open_rnd_transactions', ['status' => 30]) }}" onclick="show()">
                                     {{ $crrImmediateClosed ?? '0' }}
                                 </a>
                             </h5>
@@ -412,7 +412,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Cancelled</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 50]) }}" onclick="show()">
+                                <a href="{{ route('open_rnd_transactions', ['status' => 50]) }}" onclick="show()">
                                     {{ $crrImmediateCancelled ?? '0' }}
                                 </a>
                             </h5>
@@ -438,7 +438,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Open</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['status' => 10]) }}" onclick="show()">
+                                <a href="{{ route('open_rpe_transactions', ['status' => 10]) }}" onclick="show()">
                                     {{ $rpeImmediateOpen ?? '0' }}
                                 </a>
                             </h5>
@@ -446,7 +446,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Closed</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['status' => 30]) }}" onclick="show()">
+                                <a href="{{ route('open_rpe_transactions', ['status' => 30]) }}" onclick="show()">
                                     {{ $rpeImmediateClosed ?? '0' }}
                                 </a>
                             </h5>
@@ -454,7 +454,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Cancelled</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['status' => 50]) }}" onclick="show()">
+                                <a href="{{ route('open_rpe_transactions', ['status' => 50]) }}" onclick="show()">
                                     {{ $rpeImmediateCancelled ?? '0' }}
                                 </a>
                             </h5>
@@ -480,7 +480,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Open</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" onclick='show()'>
+                                <a href="{{ route('open_srf_transactions', ['status' => 10]) }}" onclick='show()'>
                                     {{ $srfImmediateOpen ?? '0' }}
                                 </a>
                             </h5>
@@ -488,7 +488,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Closed</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 30]) }}" onclick='show()'>
+                                <a href="{{ route('open_srf_transactions', ['status' => 30]) }}" onclick='show()'>
                                     {{ $srfImmediateClosed ?? '0' }}
                                 </a>
                             </h5>
@@ -496,7 +496,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Cancelled</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 50]) }}" onclick="show()">
+                                <a href="{{ route('open_srf_transactions', ['status' => 50]) }}" onclick="show()">
                                     {{ $srfImmediateCancelled ?? '0' }}
                                 </a>
                             </h5>
