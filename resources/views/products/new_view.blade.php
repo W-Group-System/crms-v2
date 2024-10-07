@@ -109,7 +109,17 @@
             </div>
             <div class="row">
                 <div class="col-md-2"><p class="mb-0"><b>Created By:</b></p></div>
-                <div class="col-md-3"><p class="mb-0">{{ $userAccounts->full_name }}</p></div>
+                {{-- <div class="col-md-3"><p class="mb-0">{{ $userAccounts->full_name }}</p></div> --}}
+                <div class="col-md-3">
+                    <p class="mb-0">
+                    {{-- {{ $userAccounts->full_name }} --}}
+                        @if($data->userById != null)
+                        {{$data->userById->full_name}}
+                        @elseif($data->userByUserId != null)
+                        {{$data->userByUserId->full_name}}
+                        @endif
+                    </p>
+                </div>
             </div>
             <div class="row">
                 <div class="col-sm-2 col-form-label"><p class="mb-0"><b>Date Created:</b></p></div>
