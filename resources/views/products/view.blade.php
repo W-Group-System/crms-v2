@@ -491,9 +491,9 @@
                                         <td>
                                             @if($ic->products)
                                                 @if($ic->products->userByUserId)
-                                                    {{$ic->products->userByUserId->full_name}}
+                                                    {{optional($ic->products->userByUserId)->full_name}}
                                                 @else
-                                                    {{$ic->products->userById->full_name}}
+                                                    {{optional($ic->products->userById)->full_name}}
                                                 @endif
                                             @endif
                                         </td>
