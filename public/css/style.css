@@ -9068,8 +9068,8 @@ h6, .h6 {
 }
 
 hr {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  /* margin-top: 1rem;
+  margin-bottom: 1rem; */
   border: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -20782,10 +20782,18 @@ code {
   padding-left: 0;
 }
 
-.form-check .form-check-label {
+/* .form-check .form-check-label {
   min-height: 18px;
   display: block;
   margin-left: 1.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+} */
+
+.form-check .form-check-label {
+  min-height: 18px;
+  display: inline-flex;
+  margin-right: 1.75rem;
   font-size: 0.875rem;
   line-height: 1.5;
 }
@@ -27049,8 +27057,8 @@ div.tagsinput span.tag a {
 
 .sidebar .nav:not(.sub-menu) {
   margin-top: 1.45rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .sidebar .nav:not(.sub-menu) > .nav-item {
@@ -27081,7 +27089,7 @@ div.tagsinput span.tag a {
   margin-bottom: 0;
   margin-top: 0;
   list-style: none;
-  padding: 0.25rem 0 0 3.07rem;
+  padding: 0.25rem 0 0 3rem;
   background: #428bca;
   padding-bottom: 12px;
 }

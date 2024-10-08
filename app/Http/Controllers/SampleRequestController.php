@@ -555,19 +555,19 @@ class SampleRequestController extends Controller
         ];
     });
 
-    $mappedLogs = $transactionLogs->map(function ($log) {
-        return (object) [
-            'CreatedDate' => $log->ActionDate,
-            'full_name' => $log->historyUser->full_name,
-            'Details' => $log->Details,
-        ];
-    });
+        $mappedLogs = $transactionLogs->map(function ($log) {
+            return (object) [
+                'CreatedDate' => $log->ActionDate,
+                'full_name' => $log->historyUser->full_name,
+                'Details' => $log->Details,
+            ];
+        });
 
-    $mappedLogsCollection = collect($mappedLogs);
-    $mappedAuditsCollection = collect($mappedAudits);
+        $mappedLogsCollection = collect($mappedLogs);
+        $mappedAuditsCollection = collect($mappedAudits);
 
-    $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-    $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate');
+        $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
+        $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate');
         return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'orderedCombinedLogs', 'srfProgress', 'clients', 'users', 'primarySalesPersons', 'secondarySalesPersons', 'productApplications', 'productCodes','transactionApprovals'));
     }               
 
@@ -1238,7 +1238,7 @@ class SampleRequestController extends Controller
 
     return redirect()->back()->with('success', 'Dispositions updated successfully.');
 }
-public function export(Request $request)
+    public function export(Request $request)
     {
         return Excel::download(new SampleRequestExport($request->open, $request->close), 'Sample Request.xlsx');
     }

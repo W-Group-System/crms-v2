@@ -543,7 +543,7 @@ class ClientController extends Controller
         $rpeClientFiles = $data->rpeClientFiles;
         $productEvaluations = $data->productEvaluations;
         $productFiles = $data->productFiles;
-
+        
         return view('clients.view', compact(
             'data', 'primaryAccountManager', 'secondaryAccountManager', 'payment_terms', 
             'regions', 'countries', 'areas', 'business_types', 'industries', 'addresses', 'activities', 'srfClients', 'crrClients', 'rpeClients', 'srfClientFiles', 'sampleRequests', 'crrClientFiles', 'customerRequirements', 'rpeClientFiles', 'productEvaluations', 'productFiles'

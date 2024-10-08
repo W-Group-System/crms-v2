@@ -19,143 +19,142 @@
                     <span id="form_result"></span>
                     @csrf
                     <?php
-                     $now = date('Y-m-d\TH:i');
-                     $today = date('Y-m-d');
+                        $now = date('Y-m-d\TH:i');
+                        $today = date('Y-m-d');
                     ?>
                     <div class="form-header">
                         <span class="header-label">Request Details</span>
                         <hr class="form-divider">
                     </div>
                     <div class="row">    
-                    <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="DateRequested">Date Requested (MM/DD/YYYY Hour Min):</label>
-                        <input type="datetime-local" class="form-control DateRequested"  name="DateRequested" value="{{  old('DateRequested', $now) }}" placeholder="" readonly>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="DateRequested">Date Requested (MM/DD/YYYY Hour Min):</label>
+                                <input type="datetime-local" class="form-control DateRequested"  name="DateRequested" value="{{  old('DateRequested', $now) }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="DateRequired">Date Required (MM/DD/YYYY):</label>
+                                <input type="date" class="form-control" name="DateRequired" value="{{  old('DateRequired', $today) }}" min="<?php echo $today; ?>" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="DateStarted">Date Started (MM/DD/YYYY):</label>
+                                <input type="date" class="form-control" name="DateStarted" value="" placeholder="" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Primary Sales Person</label>
+                                <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                {{-- @if(auth()->user()->role->name == "Staff L1")
+                                    <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
+                                    <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
+                                @elseif(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
+                                    @php
+                                        $subordinates = getUserApprover(auth()->user()->getSalesApprover);
+                                    @endphp
+                                    <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
+                                        <option value="" disabled selected>Select Sales Person</option>
+                                        @foreach($subordinates as $subordinate)
+                                            <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPersonId') == $subordinate->id || auth()->user()->id == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
+                                        @endforeach
+                                    </select>
+                                @endif --}}
+                            </div>
+                            {{-- <div class="form-group">
+                                <label>Primary Salesperson:</label>
+                                <select 
+                                    class="form-control js-example-basic-single" 
+                                    name="PrimarySalesPerson" 
+                                    style="position: relative !important" 
+                                    title="Select PrimarySalesPerson" 
+                                    required 
+                                    @if (!(auth()->user()->role->name == 'Staff L2')) 
+                                        disabled 
+                                    @endif
+                                >
+                                    @if ((auth()->user()->role->name == 'Staff L2'))
+                                        <option value="" disabled selected>Primary Sales Person</option>
+                                    @endif
+                                    @foreach ($primarySalesPersons as $salesPerson)
+                                        <option value="{{ $salesPerson->user_id }}"{{ old('PrimarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }} >{{ $salesPerson->full_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div> --}}
+                            
+                            <div class="form-group">
+                                <label>Secondary Sales Person:</label>
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId"  style="position: relative !important" title="Select SecondarySalesPerson" required>
+                                    <option value="" disabled selected>Secondary Sales Person</option>
+                                    @foreach ($users as $salesPerson)
+                                        <option value="{{ $salesPerson->user_id }}" {{ old('SecondarySalesPersonId') == $salesPerson->user_id ? 'selected' : '' }}>{{ $salesPerson->full_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Files</label>
+                                <input type="file" name="SalesSrfFile[]" class="form-control" multiple>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>REF Code:</label>
+                                <select class="form-control js-example-basic-single" name="RefCode" id="RefCode" style="position: relative !important" title="Select Ref Code" required>
+                                    <option value="" disabled selected>Select REF Code</option>
+                                    <option value="1" {{ old('RefCode') == '1' ? 'selected' : '' }}>RND</option>
+                                    <option value="2" {{ old('RefCode') == '2' ? 'selected' : '' }}>QCD-WHI</option>
+                                    <option value="3" {{ old('RefCode') == '3' ? 'selected' : '' }}>QCD-PBI</option>
+                                    <option value="4" {{ old('RefCode') == '4' ? 'selected' : '' }}>QCD-MRDC</option>
+                                    <option value="5" {{ old('RefCode') == '5' ? 'selected' : '' }}>QCD-CCC</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Type:</label>
+                                <select class="form-control js-example-basic-single SrfType" name="SrfType" id="" style="position: relative !important" title="Select Type" required>
+                                    <option value="" disabled selected>Select Type</option>
+                                    <option value="1" {{ old('SrfType') == '1' ? 'selected' : '' }}>Regular</option>
+                                    <option value="2" {{ old('SrfType') == '2' ? 'selected' : '' }}>PSS</option>
+                                    <option value="3" {{ old('SrfType') == '3' ? 'selected' : '' }}>CSS</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="SoNumberGroup" style="display: none;">
+                                <label for="SoNumber">SO Number</label>
+                                <input type="text" class="form-control" name="SoNumber" placeholder="Enter SO Number" value="{{ old('SoNumber') }}">
+                            </div>
+                        
+                            <div class="form-group">
+                                <label>Client:</label>
+                                <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select ClientId" required>
+                                    <option value="" disabled selected>Select Client</option>
+                                    @foreach ($clients as $client)
+                                    <option value="{{ $client->id }}" {{ old('ClientId') ==  $client->id ? 'selected' : '' }} data-type="{{ $client->Type }}">{{ $client->Name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Contact:</label>
+                                <select class="form-control js-example-basic-single" name="ClientContactId" id="ClientContactId" style="position: relative !important" title="Select ClientContacId" required>
+                                    <option value="" disabled selected>Select Contact</option>
+                                    @if(old('ClientContactId'))
+                                        @foreach ($contacts as $contact)
+                                            <option value="{{ $contact->id }}" {{ old('ClientContactId') ==  $contact->id ? 'selected' : '' }}>{{ $contact->Name }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="Remarks">Remarks (Internal)</label>
+                                <textarea class="form-control" name="Remarks" placeholder="Enter Remarks" >{{ old('Remarks') }}</textarea>
+                            </div>
+                            {{-- <div class="form-group" hidden >
+                                <label for="SrfNumber">Unique ID:</label>
+                                <input type="text" class="form-control" id="SrfNumber" name="SrfNumber" readonly>
+                            </div> --}}
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="DateRequired">Date Required (MM/DD/YYYY):</label>
-                        <input type="date" class="form-control" name="DateRequired" value="{{  old('DateRequired', $today) }}" min="<?php echo $today; ?>" placeholder="">
+                    <div class="modal-footer"></div>
+                    <div class="form-header">
+                        <span class="header-label">Product</span>
+                        <hr class="form-divider">
                     </div>
-                    <div class="form-group">
-                        <label for="DateStarted">Date Started (MM/DD/YYYY):</label>
-                        <input type="date" class="form-control" name="DateStarted" value="" placeholder="" readonly>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Primary Sales Person</label>
-                        <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
-                        <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
-                        {{-- @if(auth()->user()->role->name == "Staff L1")
-                            <input type="hidden" name="PrimarySalesPersonId" value="{{auth()->user()->id}}">
-                            <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>
-                        @elseif(auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
-                            @php
-                                $subordinates = getUserApprover(auth()->user()->getSalesApprover);
-                            @endphp
-                            <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" id="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person">
-                                <option value="" disabled selected>Select Sales Person</option>
-                                @foreach($subordinates as $subordinate)
-                                    <option value="{{ $subordinate->id }}" @if(old('PrimarySalesPersonId') == $subordinate->id || auth()->user()->id == $subordinate->id) selected @endif>{{ $subordinate->full_name }}</option>
-                                @endforeach
-                            </select>
-                        @endif --}}
-                    </div>
-                    {{-- <div class="form-group">
-                        <label>Primary Salesperson:</label>
-                        <select 
-                            class="form-control js-example-basic-single" 
-                            name="PrimarySalesPerson" 
-                            style="position: relative !important" 
-                            title="Select PrimarySalesPerson" 
-                            required 
-                            @if (!(auth()->user()->role->name == 'Staff L2')) 
-                                disabled 
-                            @endif
-                        >
-                            @if ((auth()->user()->role->name == 'Staff L2'))
-                                <option value="" disabled selected>Primary Sales Person</option>
-                            @endif
-                            @foreach ($primarySalesPersons as $salesPerson)
-                                <option value="{{ $salesPerson->user_id }}"{{ old('PrimarySalesPerson') == $salesPerson->user_id ? 'selected' : '' }} >{{ $salesPerson->full_name }}</option>
-                            @endforeach
-                        </select>
-                    </div> --}}
-                    
-                    <div class="form-group">
-                        <label>Secondary Sales Person:</label>
-                        <select class="form-control js-example-basic-single" name="SecondarySalesPersonId"  style="position: relative !important" title="Select SecondarySalesPerson" required>
-                            <option value="" disabled selected>Secondary Sales Person</option>
-                            @foreach ($users as $salesPerson)
-                                <option value="{{ $salesPerson->user_id }}" {{ old('SecondarySalesPersonId') == $salesPerson->user_id ? 'selected' : '' }}>{{ $salesPerson->full_name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Upload Files</label>
-                        <input type="file" name="SalesSrfFile[]" class="form-control" multiple>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>REF Code:</label>
-                        <select class="form-control js-example-basic-single" name="RefCode" id="RefCode" style="position: relative !important" title="Select Ref Code" required>
-                            <option value="" disabled selected>Select REF Code</option>
-                            <option value="1" {{ old('RefCode') == '1' ? 'selected' : '' }}>RND</option>
-                            <option value="2" {{ old('RefCode') == '2' ? 'selected' : '' }}>QCD-WHI</option>
-                            <option value="3" {{ old('RefCode') == '3' ? 'selected' : '' }}>QCD-PBI</option>
-                            <option value="4" {{ old('RefCode') == '4' ? 'selected' : '' }}>QCD-MRDC</option>
-                            <option value="5" {{ old('RefCode') == '5' ? 'selected' : '' }}>QCD-CCC</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Type:</label>
-                        <select class="form-control js-example-basic-single SrfType" name="SrfType" id="" style="position: relative !important" title="Select Type" required>
-                            <option value="" disabled selected>Select Type</option>
-                            <option value="1" {{ old('SrfType') == '1' ? 'selected' : '' }}>Regular</option>
-                            <option value="2" {{ old('SrfType') == '2' ? 'selected' : '' }}>PSS</option>
-                            <option value="3" {{ old('SrfType') == '3' ? 'selected' : '' }}>CSS</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="SoNumberGroup" style="display: none;">
-                        <label for="SoNumber">SO Number</label>
-                        <input type="text" class="form-control" name="SoNumber" placeholder="Enter SO Number" value="{{ old('SoNumber') }}">
-                    </div>
-                   
-                    <div class="form-group">
-                        <label>Client:</label>
-                        <select class="form-control js-example-basic-single ClientId" name="ClientId"  style="position: relative !important" title="Select ClientId" required>
-                            <option value="" disabled selected>Select Client</option>
-                            @foreach ($clients as $client)
-                            <option value="{{ $client->id }}" {{ old('ClientId') ==  $client->id ? 'selected' : '' }} data-type="{{ $client->Type }}">{{ $client->Name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Contact:</label>
-                        <select class="form-control js-example-basic-single" name="ClientContactId" id="ClientContactId" style="position: relative !important" title="Select ClientContacId" required>
-                            <option value="" disabled selected>Select Contact</option>
-                            @if(old('ClientContactId'))
-                                @foreach ($contacts as $contact)
-                                    <option value="{{ $contact->id }}" {{ old('ClientContactId') ==  $contact->id ? 'selected' : '' }}>{{ $contact->Name }}</option>
-                                @endforeach
-                            @endif
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Remarks">Remarks (Internal)</label>
-                        <textarea class="form-control" name="Remarks" placeholder="Enter Remarks" >{{ old('Remarks') }}</textarea>
-                    </div>
-                    {{-- <div class="form-group" hidden >
-                        <label for="SrfNumber">Unique ID:</label>
-                        <input type="text" class="form-control" id="SrfNumber" name="SrfNumber" readonly>
-                    </div> --}}
-                </div>
-            </div>
-            <div class="modal-footer"></div>
-            <div class="form-header">
-                <span class="header-label">Product</span>
-                <hr class="form-divider">
-            </div>
             <div class="row form_request_product" >  
                 <div class="col-lg-12">
                     <button type="button" class="btn btn-danger deleteRowBtn" hidden style="float: right;">Delete Row</button>
@@ -179,86 +178,86 @@
                         @endforeach
                     </select>
                 </div>
-            <div class="form-group">
-                <label>Product Code:</label>
-                <input type="text" class="form-control" name="ProductCode[]" >
-                {{-- <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
-                    <option value="" disabled selected>Product Code</option>
-                    @foreach ($productCodes as $productCode)
-                        <option value="{{ $productCode->code }}" {{ in_array($productCode->code, old('ProductCode', [])) ? 'selected' : '' }}>{{ $productCode->code }}</option>
-                    @endforeach
-                </select> --}}
-            </div>
+                <div class="form-group">
+                    <label>Product Code:</label>
+                    <input type="text" class="form-control" name="ProductCode[]" >
+                    {{-- <select class="form-control js-example-basic-single" name="ProductCode[]"  style="position: relative !important" title="Select Product Code" required>
+                        <option value="" disabled selected>Product Code</option>
+                        @foreach ($productCodes as $productCode)
+                            <option value="{{ $productCode->code }}" {{ in_array($productCode->code, old('ProductCode', [])) ? 'selected' : '' }}>{{ $productCode->code }}</option>
+                        @endforeach
+                    </select> --}}
+                </div>
             @foreach(old('ProductDescription', ['']) as $index => $description)
                 <div class="form-group">
                     <label for="ProductDescription">Product Description:</label>
                     <textarea class="form-control" name="ProductDescription[]" placeholder="Enter Product Description" rows="8">{{ $description }}</textarea>
                 </div>
             @endforeach
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="NumberOfPackages">Number Of Packages</label>
-                @if(old('NumberOfPackages'))
-                    @foreach(old('NumberOfPackages') as $index => $numberOfPackage)
-                        <input type="number" class="form-control" name="NumberOfPackages[]" value="{{ $numberOfPackage }}">
-                    @endforeach
-                @else
-                    <input type="number" class="form-control" name="NumberOfPackages[]">
-                @endif
             </div>
-            
-            <div class="row">
-                <div class="col-md-7">
-                    @foreach(old('Quantity', ['']) as $index => $quantity)
-                    <div class="form-group">
-                        <label for="Quantity">Quantity</label>
-                        <input type="number" class="form-control" name="Quantity[]" value="{{ $quantity !== '' ? $quantity : 0 }}">
-                    </div>
-                    @endforeach
-                </div>
-                <div class="col-md-5">
-                    <div class="form-group">
-                        <label>Unit</label>
-                        <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit" required>
-                            <option value="1" {{ old('UnitOfMeasure') == '1' ? 'selected' : '' }}>Grams</option>
-                            <option value="2" {{ old('UnitOfMeasure') == '2' ? 'selected' : '' }}>Kilograms</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            @foreach(old('Label', ['']) as $index => $label)
-                <div class="form-group" >
-                    <label for="Label">Label:</label>
-                    <input type="text" class="form-control" name="Label[]" value="{{ $label }}">
-                </div>
-            @endforeach
-            @foreach(old('RpeNumber', ['']) as $index => $rpe)
-                <div class="form-group" >
-                    <label for="RpeNumber">RPE Number:</label>
-                    <input type="text" class="form-control" name="RpeNumber[]" value="{{ $rpe }}">
-                </div>
-            @endforeach
-            @foreach(old('CrrNumber', ['']) as $index => $crr)
-                <div class="form-group" >
-                    <label for="CrrNumber">CRR Number:</label>
-                    <input type="text" class="form-control" name="CrrNumber[]" value="{{ $crr }}">
-                </div>
-            @endforeach
-        </div>
-        <div class="col-md-12">
-            @foreach(old('RemarksProduct', ['']) as $index => $remarksproduct)
+            <div class="col-md-6">
                 <div class="form-group">
-                    <label for="RemarksProduct">Remarks</label>
-                    <textarea class="form-control" name="RemarksProduct[]" placeholder="Enter Remarks">{{ $remarksproduct }}</textarea>
+                    <label for="NumberOfPackages">Number Of Packages</label>
+                    @if(old('NumberOfPackages'))
+                        @foreach(old('NumberOfPackages') as $index => $numberOfPackage)
+                            <input type="number" class="form-control" name="NumberOfPackages[]" value="{{ $numberOfPackage }}">
+                        @endforeach
+                    @else
+                        <input type="number" class="form-control" name="NumberOfPackages[]">
+                    @endif
                 </div>
-            @endforeach
+                
+                <div class="row">
+                    <div class="col-md-7">
+                        @foreach(old('Quantity', ['']) as $index => $quantity)
+                        <div class="form-group">
+                            <label for="Quantity">Quantity</label>
+                            <input type="number" class="form-control" name="Quantity[]" value="{{ $quantity !== '' ? $quantity : 0 }}">
+                        </div>
+                        @endforeach
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Unit</label>
+                            <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit" required>
+                                <option value="1" {{ old('UnitOfMeasure') == '1' ? 'selected' : '' }}>Grams</option>
+                                <option value="2" {{ old('UnitOfMeasure') == '2' ? 'selected' : '' }}>Kilograms</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                @foreach(old('Label', ['']) as $index => $label)
+                    <div class="form-group" >
+                        <label for="Label">Label:</label>
+                        <input type="text" class="form-control" name="Label[]" value="{{ $label }}">
+                    </div>
+                @endforeach
+                @foreach(old('RpeNumber', ['']) as $index => $rpe)
+                    <div class="form-group" >
+                        <label for="RpeNumber">RPE Number:</label>
+                        <input type="text" class="form-control" name="RpeNumber[]" value="{{ $rpe }}">
+                    </div>
+                @endforeach
+                @foreach(old('CrrNumber', ['']) as $index => $crr)
+                    <div class="form-group" >
+                        <label for="CrrNumber">CRR Number:</label>
+                        <input type="text" class="form-control" name="CrrNumber[]" value="{{ $crr }}">
+                    </div>
+                @endforeach
+            </div>
+            <div class="col-md-12">
+                @foreach(old('RemarksProduct', ['']) as $index => $remarksproduct)
+                    <div class="form-group">
+                        <label for="RemarksProduct">Remarks</label>
+                        <textarea class="form-control" name="RemarksProduct[]" placeholder="Enter Remarks">{{ $remarksproduct }}</textarea>
+                    </div>
+                @endforeach
+            </div>
+            <div class="col-lg-12">
+                <button type="button" class="btn btn-primary addProductRowBtn" id="addProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
+                <button type="button" class="btn btn-info duplicateProductForm"  style="float: left; margin:5px;">Duplicate</button>
+            </div>
         </div>
-        <div class="col-lg-12">
-            <button type="button" class="btn btn-primary addProductRowBtn" id="addProductRowBtn" style="float: left; margin:5px;">Add Row</button> 
-            <button type="button" class="btn btn-info duplicateProductForm"  style="float: left; margin:5px;">Duplicate</button>
-        </div>
-    </div>
     
 
     {{-- <div class="modal-footer product-footer"></div> --}}

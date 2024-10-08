@@ -552,7 +552,14 @@ Route::group(['middleware' => 'inactive_users'], function() {
 
     // Supplier Product Evaluation 
     Route::get('/supplier_product', 'SupplierProductController@index')->name('supplier_product.index');
-    Route::post('/new_spe', 'SupplierProductController@store')->name('supplier_product.store');
+    Route::post('/new_spe', 'SupplierProductController@store')->name('supplier_product.store');  
+    Route::get('/edit_spe/{id}', 'SupplierProductController@edit')->name('edit_spe');
+    Route::post('update_spe/{id}', 'SupplierProductController@update')->name('update_spe');
+    Route::get('spe/view/{id}', 'SupplierProductController@view');   
+
+    // Shipment Sample Evaluation
+    Route::get('/shipment_sample', 'ShipmentSampleController@index')->name('shipment_sample.index');
+    Route::post('/new_shipment_sample', 'ShipmentSampleController@store')->name('shipment_sample.store');  
 
     # Reports
     Route::get('/price_request', 'ReportsController@price_summary')->name('reports.price_request');

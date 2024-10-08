@@ -128,7 +128,7 @@ class CustomerRequirementController extends Controller
                 $role = auth()->user()->role;
                 $userType = $role->type;  
                 $userName = $role->name; 
-
+                
                 if ($status == '30') {
                     if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
                         $query->where('Status', '30')
