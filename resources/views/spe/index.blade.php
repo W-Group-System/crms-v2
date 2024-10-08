@@ -295,8 +295,8 @@
             if($('#action').val() == 'Save') {
                 action_url = "{{ route('supplier_product.store') }}";
             } else if ($('#action').val() == 'Edit') {
-                var id = $('#hidden_id').val();  // Get the hidden ID for editing
-                action_url = "{{ route('update_spe', ':id') }}".replace(':id', id);  // Replace :id with the actual ID
+                var id = $('#hidden_id').val();  
+                action_url = "{{ route('update_spe', ':id') }}".replace(':id', id);  
             }
 
             $.ajax({

@@ -240,9 +240,6 @@
                                     <i class="ti ti-file"></i>
                                 </h3>
                             </div>
-                            <!-- <div class="mt-3">
-                                <a href="#" class="text-info">View all</a>
-                            </div> -->
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
