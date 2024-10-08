@@ -568,6 +568,8 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/export-transaction-activity', 'ReportsController@exportTransactionActivity')->name('export_transaction_activity');
     Route::get('/copy-transaction-activity', 'ReportsController@copyTransactionActivity')->name('copy_transaction_activity');
 
+    Route::get('audits','AuditController@index');
+
 });
 
 
