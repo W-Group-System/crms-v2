@@ -155,7 +155,7 @@
                                     <li class="nav-item"><a class="nav-link" href="">Request Form</a></li> 
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/supplier') }}">Supplier Information</a></li> 
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/supplier_product') }}">Supplier Product Evaluation</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="">Shipment Sample Evaluation</a></li> 
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/shipment_sample') }}">Shipment Sample Evaluation</a></li> 
                                 </ul>
                             </div>
                         </li> -->

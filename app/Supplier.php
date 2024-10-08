@@ -23,6 +23,6 @@ class Supplier extends Model
 
     public function supplier_contacts() 
     {
-        return $this->hasMany(SupplierContact::class, 'SupplierId', 'Id');
+        return $this->hasMany(SupplierContact::class, 'SupplierId', 'id');
     }
 }
