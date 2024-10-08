@@ -113,10 +113,8 @@
                                             QCD-PBI
                                         @elseif($srf->RefCode == 4)
                                             QCD-MRDC
-                                            @elseif($srf->RefCode == 5)
+                                        @elseif($srf->RefCode == 5)
                                             QCD-CCC
-                                        @else
-                                            {{ $srf->RefCode }}
                                         @endif
                                     </td>
                                     <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
@@ -213,10 +211,8 @@
                                                 QCD-PBI
                                             @elseif($srf->RefCode == 4)
                                                 QCD-MRDC
-                                                @elseif($srf->RefCode == 5)
+                                            @elseif($srf->RefCode == 5)
                                                 QCD-CCC
-                                            @else
-                                                {{ $srf->RefCode }}
                                             @endif
                                         </td>
                                         <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
@@ -343,6 +339,7 @@
                             <tr>
                                 <!-- <th>Action</th> -->
                                 <th>SRF #</th>
+                                <th>Ref Code</th>
                                 <th>Date Requested</th>
                                 <th>Date Required</th>
                                 <th>Client Name</th>
@@ -362,6 +359,19 @@
                                     </button>    
                                 </td> -->
                                 <td><a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber) }}"  title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
+                                <td>
+                                    @if($srf->RefCode == 1)
+                                        RND
+                                    @elseif($srf->RefCode == 2)
+                                        QCD-WHI
+                                    @elseif($srf->RefCode == 3)
+                                        QCD-PBI
+                                    @elseif($srf->RefCode == 4)
+                                        QCD-MRDC
+                                    @elseif($srf->RefCode == 5)
+                                        QCD-CCC
+                                    @endif
+                                </td>
                                 <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                 <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
                                 <td>{{ optional($srf->client)->Name }}</td>
