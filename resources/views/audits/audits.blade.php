@@ -49,7 +49,7 @@
                         </tbody>
                     </table>
 
-                    {!! $audits->links() !!}
+                    {!! $audits->appends(['search' => $search])->links() !!}
                     @php
                         $total = $audits->total();
                         $currentPage = $audits->currentPage();
