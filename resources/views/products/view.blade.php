@@ -107,9 +107,9 @@
                 <div class="col-md-3">
                     <p class="mb-0">
                         @if($data->userById != null)
-                        {{$data->userById->full_name}}
+                        {{optional($data->userById)->full_name}}
                         @elseif($data->userByUserId != null)
-                        {{$data->userByUserId->full_name}}
+                        {{optional($data->userByUserId)->full_name}}
                         @endif
                     </p>
                 </div>
