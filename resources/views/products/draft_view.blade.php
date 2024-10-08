@@ -17,12 +17,17 @@
                         <input type="hidden" name="id" value="{{$data->id}}">
                         <button type="submit" class="btn btn-md btn-secondary submit_approval" name="action" value="New" title="Submit to archive products">Archive</button>
                     </form> --}}
-
+                    
                     <form method="POST" action="{{url('/add_to_new_products')}}" class="d-inline-block" onsubmit="show()">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
+
+                        @if(count($data->productMaterialComposition) > 0)
                         <button type="button" class="btn btn-md btn-primary" id="moveToNew" name="action" value="New">Move to New</button>
+                        @else
+                        <button type="submit" class="btn btn-md btn-primary" name="action" value="New">Move to New</button>
+                        @endif
                     </form>
                 </div>
             </div>
