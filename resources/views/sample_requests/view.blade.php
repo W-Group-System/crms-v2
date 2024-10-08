@@ -136,7 +136,7 @@
                             @endif
                             @endif
                         {{-- @endif --}}
-                        @if(checkRolesIfHaveApprove('Sample Request Form', auth()->user()->department_id, auth()->user()->role_id) == "yes")
+                        @if(primarySalesApprover($sampleRequest->PrimarySalesPersonId, auth()->user()->id))
                             <button type="button" class="btn btn-md btn-outline-success"
                                 data-target="#approveSrf{{ $sampleRequest->Id }}" 
                                 data-toggle="modal" 
