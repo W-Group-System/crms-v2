@@ -24,10 +24,10 @@ class OpenTransactionController extends Controller
                         ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
                         ->orWhere('DueDate', 'LIKE','%'.$search.'%')
                         ->orWhereHas('client', function($query)use($search){
-                            $query->where('Name', $search);
+                            $query->where('Name', 'LIKE', '%'.$search.'%');
                         })
                         ->orWhereHas('product_application', function($query)use($search){
-                            $query->where('Name', $search);
+                            $query->where('Name', 'LIKE', '%'.$search.'%');
                         })
                         ->orWhereHas('crrPersonnel', function($query)use($search){
                             $query->whereHas('crrPersonnelByUserId', function($q)use($search) {
@@ -69,10 +69,10 @@ class OpenTransactionController extends Controller
                         ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
                         ->orWhere('DueDate', 'LIKE','%'.$search.'%')
                         ->orWhereHas('client', function($query)use($search){
-                            $query->where('Name', $search);
+                            $query->where('Name', 'LIKE', '%'.$search.'%');
                         })
                         ->orWhereHas('product_application', function($query)use($search){
-                            $query->where('Name', $search);
+                            $query->where('Name', 'LIKE', '%'.$search.'%');
                         })
                         ->orWhereHas('rpePersonnel', function($query)use($search){
                             $query->whereHas('assignedPersonnel', function($q)use($search) {
@@ -114,10 +114,10 @@ class OpenTransactionController extends Controller
                         ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
                         ->orWhere('DueDate', 'LIKE','%'.$search.'%')
                         ->orWhereHas('client', function($query)use($search){
-                            $query->where('Name', $search);
+                            $query->where('Name', 'LIKE', '%'.$search.'%');
                         })
                         ->orWhereHas('productApplicationsId', function($query)use($search){
-                            $query->where('Name', $search);
+                            $query->where('Name', 'LIKE', '%'.$search.'%');
                         })
                         ->orWhereHas('srfPersonnel', function($query)use($search){
                             $query->whereHas('assignedPersonnel', function($q)use($search) {
