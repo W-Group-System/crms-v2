@@ -49,8 +49,8 @@
                     </div>
                 </div>
                 <div class="modal-footer" style="padding: 0.6875rem">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-success">Submit</button>
                 </div>
             </form>
         </div>

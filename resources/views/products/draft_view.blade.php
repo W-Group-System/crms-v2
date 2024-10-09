@@ -9,7 +9,7 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div>
                 <div class="col-lg-6" align="right">
-                    <a href="{{ url('/draft_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a href="{{ url('/draft_products') }}" class="btn btn-md btn-outline-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
                     {{-- <form method="POST" class="d-inline-block" id="archiveForm">
                         {{csrf_field()}}
@@ -20,9 +20,8 @@
 
                     <form method="POST" action="{{url('/add_to_new_products')}}" class="d-inline-block" onsubmit="show()">
                         {{csrf_field()}}
-
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        <button type="button" class="btn btn-md btn-primary" id="moveToNew" name="action" value="New">Move to New</button>
+                        <button type="button" class="btn btn-md btn-outline-warning" id="moveToNew" name="action" value="New">Move to New</button>
                     </form>
                 </div>
             </div>
@@ -171,7 +170,7 @@
                 <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @include('components.error')
                     <div class="col-lg-12" align="right">
-                        <button type="submit" class="btn btn-md btn-primary submit_approval mb-3" data-toggle="modal" data-target="#rawMaterials{{$data->id}}">Update</button>
+                        <button type="submit" class="btn btn-md btn-outline-primary submit_approval mb-3" data-toggle="modal" data-target="#rawMaterials{{$data->id}}">Update</button>
                     </div>
     
                     {{-- <button type="button" class="btn btn-sm btn-success mb-4" id="addBtn">
@@ -230,7 +229,7 @@
                 {{-- <div class="tab-pane fade" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     @include('components.error')
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">New</button>
+                        <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">New</button>
                         <button class="btn btn-warning btn-md mb-2" type="button" data-toggle="modal" data-target="#updateAll" title="Update All">
                             Update All
                         </button>
@@ -281,7 +280,7 @@
                 </div> --}}
                 <div class="tab-pane fade @if(session('tab') == 'pds') active show @endif" id="pds" role="tabpanel" aria-labelledby="pds-tab">
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">New</button>
+                        <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">New</button>
                     </div>
                     @include('products.add_pds')
                     
@@ -330,8 +329,8 @@
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
                     @include('components.error')
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">New</button>
-                        <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
+                        <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#file">New</button>
+                        <button type="button" class="btn btn-md btn-outline-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
                     </div>
                     @include('products.add_file')
                     @include('products.edit_all_product_files')
@@ -648,13 +647,19 @@
                 </div>
 
                 <div class="modal-footer" style="padding: 0.6875rem">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-success">Submit</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<style>
+    .swal-wide {
+        width: 400px;
+    }
+</style>
 
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
@@ -1074,12 +1079,14 @@
 
             Swal.fire({
                 title: "Are you sure you want to archive?",
-                text: "You won't be able to undo this!",
-                icon: "warning",
+                // text: "You won't be able to undo this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#28a745",
                 cancelButtonColor: "#dc3545",
-                confirmButtonText: "Yes, archive it!"
+                confirmButtonText: "Yes, archive it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -1107,12 +1114,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -1126,12 +1135,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -1145,12 +1156,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -1164,11 +1177,13 @@
             Swal.fire({
                 title: "Are you sure?",
                 // text: "You won't be able to revert this!",
-                icon: "warning",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Move to New"
+                confirmButtonText: "Move to New",
+                customClass: 'swal-wide',
+                reverseButtons: true
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

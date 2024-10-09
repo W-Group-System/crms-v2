@@ -6,8 +6,8 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">Product List (New)</h4>
 
             <div class="mb-3">
-                <button class="btn btn-md btn-info">Copy</button>
-                <a href="{{url('export_new_products')}}" class="btn btn-md btn-success">Excel</a>
+                <button class="btn btn-md btn-outline-info">Copy</button>
+                <a href="{{url('export_new_products')}}" class="btn btn-md btn-outline-success">Excel</a>
             </div>
 
             <div class="row">
@@ -42,9 +42,9 @@
                 <table class="table table-striped table-bordered table-hover" id="product_table" width="100%">
                     <thead>
                         <tr>
-                            <th width="10%">Action</th>
+                            <th width="8%">Action</th>
                             <th width="15%">DDW Number</th>
-                            <th width="30%">Code</th>
+                            <th width="32%">Code</th>
                             <th width="30%">Created By</th>
                             <th width="15%">Date Created</th>
                         </tr>
@@ -53,12 +53,12 @@
                         @if(count($products) > 0)
                         @foreach ($products as $product)
                             <tr>
-                                <td>
+                                <td align="center">
                                     {{-- <a href="{{url('view_new_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product">
                                         <i class="ti-eye"></i>
                                     </a> --}}
 
-                                    <button class="btn btn-warning btn-sm" type="button" title="Edit" data-toggle="modal" data-target="#formProduct-{{$product->id}}">
+                                    <button class="btn btn-outline-warning btn-sm" type="button" title="Edit" data-toggle="modal" data-target="#formProduct-{{$product->id}}">
                                         <i class="ti-pencil"></i>
                                     </button>
 

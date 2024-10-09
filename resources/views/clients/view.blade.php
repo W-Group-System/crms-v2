@@ -506,7 +506,7 @@
         padding: 15px;
     }
     .swal-wide{
-        width:350px !important;
+        width:400px !important;
     }
 </style>
 <script>

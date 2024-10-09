@@ -24,11 +24,8 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        &nbsp;
-                        <div>
-                            <button class="btn btn-md btn-primary" type="submit">Filter</button>
-                        </div>
+                    <div class="col-md-3" style="margin-top: 30px;">
+                        <button class="btn btn-md btn-primary" type="submit">Filter</button>
                     </div>
                 </div>
             </form>

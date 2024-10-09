@@ -6,8 +6,8 @@
             <h4 class="card-title d-flex justify-content-between align-items-center">Product List (Archived)</h4>
 
             <div class="mb-3">
-                <button class="btn btn-md btn-info">Copy</button>
-                <a href="{{url('export_archive_products')}}" class="btn btn-md btn-success">Export</a>
+                <button class="btn btn-md btn-outline-info">Copy</button>
+                <a href="{{url('export_archive_products')}}" class="btn btn-md btn-outline-success">Export</a>
             </div>
 
             <div class="row">
@@ -42,9 +42,9 @@
                 <table class="table table-striped table-bordered table-hover table-bordered" id="archived_table" width="100%">
                     <thead>
                         <tr>
-                            <th width="10%">Action</th>
+                            <th width="8%">Action</th>
                             <th width="15%">DDW Number</th>
-                            <th width="30%">Code</th>
+                            <th width="32%">Code</th>
                             <th width="30%">Created By</th>
                             <th width="15%">Date Created</th>
                         </tr>
@@ -53,7 +53,7 @@
                         @if(count($products) > 0)
                         @foreach ($products as $product)
                             <tr>
-                                <td>
+                                <td align="center">
                                     {{-- <a href="{{url('view_archive_products/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
                                         <i class="ti-eye"></i>
                                     </a> --}}
@@ -69,13 +69,11 @@
 
                                     <form method="POST" class="d-inline-block" action="{{url('delete_product')}}">
                                         {{csrf_field()}}
-
                                         <input type="hidden" name="id" value="{{$product->id}}">
-                                        <button class="btn btn-sm btn-danger deleteProduct" type="button" title="Delete" data-id="{{$product->id}}">
+                                        <button class="btn btn-sm btn-outline-danger deleteProduct" type="button" title="Delete" data-id="{{$product->id}}">
                                             <i class="ti-trash"></i>
                                         </button>
                                     </form>
-                                    
                                 </td>
                                 <td>{{$product->ddw_number}}</td>
                                 <td>
@@ -134,6 +132,11 @@
         </div>
     </div>
 </div>
+<style>
+    .swal-wide{
+        width: 400px;
+    }
+</style>
 
 {{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
@@ -142,6 +145,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 
 <script>
     $(document).ready(function(){
@@ -257,12 +261,14 @@ $(document).ready(function() {
 
         Swal.fire({
             title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
+            // text: "You won't be able to revert this!",
+            icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "Yes, delete it!",
+            customClass: 'swal-wide',
+            reverseButtons: true
             }).then((result) => {
             if (result.isConfirmed) {
                 form.submit()
