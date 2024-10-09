@@ -7,6 +7,8 @@
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
+            padding: 0;
+            margin: 0;
         }
         table {
             width: 100%;
@@ -42,7 +44,10 @@
             font-size: 12px;
             font-weight: bold;
         }
-
+        p {
+            text-align: justify;
+            text-justify: inter-word;
+        }
         .detail {
             font-size: 12px;
             padding-left: 10px;
@@ -96,46 +101,45 @@
         <tr>
             <td class="left-column">
                 <div style="text-align: center; margin-bottom: 10px;">
-                    <img src="images/mrdc-logo.png" alt="Description of Image" style="max-width: 80%; height: auto;">
+                    <img src="images/mrdc-logo.png" alt="Description of Image" style="max-width: 85%; height: auto;">
                 </div>
                 <div class="left-div">
-                    <b style="color: green; font-size:22px">
+                    <b style="color: green; font-size:15px">
                         MARINE<br>
                         RESOURCES<br>
                         DEVELOPMENT<br>
                         CORPORATION
                     </b>
                 </div>       
-                <div class="left-div" style="padding-top:20px; padding-left:10px;">
-                    <b style="font-size:12px">
+                <div class="left-div" style="margin-top: 15;">
+                    <b style="font-size:9;">
                         26th Floor, W Building,
                         Fifth Avenue, BGC, 1634,
-                        Taguig City, Philippine
+                        Taguig City, Philippines
                     </b>
                 </div>     
-                <div class="left-div">
-                    <p style="font-size:12px">T: +632.856.3838 F: +632.856.1033</p>
+                <div class="left-div" style="margin-top: 10;">
+                    <p style="font-size:7; text-align:right;">T: +632.856.3838</p>
                 </div>    
                 <div class="left-div">
-                    <p style="font-size:12px">info@mrdccarageenan.com
+                    <p style="font-size:8; text-align:right; margin-top: 0;">info@mrdccarageenan.com
                         www.mrdccarageenan.com</p>
                 </div>   
                 <div class="left-div">
-                    <b style="font-size:20px">
+                    <b style="font-size:10;">
                         WE NEVER STOP
                         INNOVATING
                     </b>
                 </div>          
             </td>            
             <td class="right-column">
-                <p>{{ \Carbon\Carbon::parse($price_monitoring_ls->DateRequested)->format('F j, Y') }}</p>
+                <p style="font-size: 9;">{{ \Carbon\Carbon::parse($price_monitoring_ls->DateRequested)->format('F j, Y') }}</p>
+                <p style="margin-bottom: 0; font-size:9; font-weight:bold;">{{optional($price_monitoring_ls->clientContact)->ContactName}}</p>
+                <p style="font-size: 9; font-weight:bold; margin-bottom:0; line-height:-10px;">{{ optional($price_monitoring_ls->client)->Name }}</p>
+                <p style="line-height:0.5; font-size:8">{{ optional($price_monitoring_ls->clientCompanyAddress)->Address }}</p>
                 <br>
-                <br>
-                <b style="margin-bottom: 0;">{{optional($price_monitoring_ls->clientContact)->ContactName}}</b> <br>
-                <b>{{ optional($price_monitoring_ls->client)->Name }}</b>
-                <p class="right-p" style="margin-top: 0">{{ optional($price_monitoring_ls->clientCompanyAddress)->Address }}</p>
-                <br><br><br>
-                <p class="right-p">Greetings!</p><br>
+                <p style="font-size: 9;">Dear {{optional($price_monitoring_ls->clientContact)->ContactName}},</p>
+                <p class="right-p">Greetings!</p>
                 <p class="right-p">We are pleased to submit for your consideration our price offer for the following product/s indicated below:</p>
                 @if ($price_monitoring_ls->TaxType == "20")
                 <table class="table1">
@@ -224,7 +228,7 @@
                 </table>
                 @endif
                 <br>
-                <table class="details-table">
+                <table class="details-table" style="margin-top:-10;">
                     <tr>
                         <td class="label">LEAD TIME(if available):</td>
                         <td class="detail">approximately 15 working days</td>
@@ -256,10 +260,58 @@
                 <p class="right-p">We are looking forward to your favorable feedback.</p>
                 <p class="right-p">Thank you for your time and cosideration!</p>
                 <p class="right-p">Sincerely,</p>
-                <b style="color: green; font-size:14px">
-                    Marine Resources Development Corporation
-                </b> 
-                <p  class="right-p">---This is a computer-generated and no signature is required---</p>
+                @foreach ($price_monitoring_ls->requestPriceProducts as $price_products)
+                    @if($price_products->LsalesMarkupPercent >= 15)
+                        <p class="right-p">{{auth()->user()->full_name}}</p>
+                    @else
+                        <p class="right-p">Maricris J. Ribon</p>
+                    @endif
+                @endforeach
+                <br>
+                <br>
+                {{-- {{dd($price_monitoring_ls->requestPriceProducts)}} --}}
+                @foreach ($price_monitoring_ls->requestPriceProducts as $price_products)
+                    @if($price_products->LsalesMarkupPercent >= 15)
+                    <b style="color: green; font-size:14px">
+                        Marine Resources Development Corporation
+                    </b> 
+                    <p  class="right-p">---This is a computer-generated and no signature is required---</p>
+                    @else
+
+                    <table cellpadding="0" border="0" cellspacing="0" style="width:100%;">
+                        <tr>
+                            <td>
+                                <p style="font-size:9;">Noted by</p>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin: 35 10 0 10;">[signature over printed name]</p>
+                            </td>
+                            <td>
+                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin: 35 10 0 10;">[signature over printed name]</p>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p style="font-size:9; margin-top:20;">Approved by</p>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin: 35 10 0 10;">[signature over printed name]</p>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    @endif
+                @endforeach
             </td>
         </tr>
     </table>

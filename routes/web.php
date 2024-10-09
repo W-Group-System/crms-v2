@@ -251,7 +251,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('product_evaluation_export', 'RequestProductEvaluationController@export');
 
     Route::post('refresh_rpe_secondary_persons', 'RequestProductEvaluationController@refreshUserApprover');
-
+    Route::post('update_rnd/{id}', 'RequestProductEvaluationController@updateRnd');
     // Sample Request 
     Route::get('/sample_request', 'SampleRequestController@index')->name('sample_request.index');
     Route::post('/new_sample_request', 'SampleRequestController@store')->name('sample_request.store');
@@ -570,6 +570,8 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
     Route::get('/export-transaction-activity', 'ReportsController@exportTransactionActivity')->name('export_transaction_activity');
     Route::get('/copy-transaction-activity', 'ReportsController@copyTransactionActivity')->name('copy_transaction_activity');
+
+    Route::get('audits','AuditController@index');
 
 });
 
