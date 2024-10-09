@@ -60,8 +60,8 @@
                     
                 </div>
                 <div class="modal-footer" style="padding: 0.6875rem">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Update</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-success">Update</button>
                 </div>
             </form>
         </div>

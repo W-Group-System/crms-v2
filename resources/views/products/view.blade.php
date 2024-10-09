@@ -9,15 +9,13 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div>
                 <div class="col-lg-6" align="right">
-                    <a href="{{ url('/current_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a href="{{ url('/current_products') }}" class="btn btn-md btn-outline-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
                         <form method="POST" action="{{url('add_to_archive_products')}}" class="d-inline-block" onsubmit="show()">
                             {{csrf_field()}}
-
                             <input type="hidden" name="id" value="{{$data->id}}">
-                            
-                            <button type="button" class="btn btn-md btn-primary" id="archiveBtn" name="action" value="Archive">Move to Archive</button>
+                            <button type="button" class="btn btn-md btn-outline-warning" id="archiveBtn" name="action" value="Archive">Move to Archive</button>
                         </form>
                     @endif
                    
@@ -207,8 +205,8 @@
                 {{-- <div class="tab-pane fade " id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     @include('components.error')
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">Add</button>
-                        <button class="btn btn-warning btn-md mb-2" type="button" data-toggle="modal" data-target="#updateAll" title="Update All">
+                        <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">Add</button>
+                        <button class="btn btn-outline-warning btn-md mb-2" type="button" data-toggle="modal" data-target="#updateAll" title="Update All">
                             Update All
                         </button>
                     </div>
@@ -259,7 +257,7 @@
                 </div> --}}
                 <div class="tab-pane fade @if(session('tab') == 'pds') active show @endif" id="pds" role="tabpanel" aria-labelledby="pds-tab">
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
+                        <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
                     </div>
                     @include('products.add_pds')
                     
@@ -312,8 +310,8 @@
                     @include('components.error')
                     @endif
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
-                        <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
+                        <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
+                        <button type="button" class="btn btn-md btn-outline-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
                     </div>
                     @include('products.add_file')
                     @include('products.edit_all_product_files')
@@ -321,11 +319,11 @@
                         <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
-                                    <th>Actions</th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Client</th>
-                                    <th>File</th>
+                                    <th width="10%">Actions</th>
+                                    <th width="30%">Name</th>
+                                    <th width="30%">Description</th>
+                                    <th width="20%">Client</th>
+                                    <th width="10%">File</th>
                                 </tr>
                             </thead>
                             
@@ -334,13 +332,13 @@
                                     @foreach ($data->productFiles as $pf)
                                         <tr>
                                             <td>
-                                                <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
                                                     <i class="ti-pencil"></i>
                                                 </button>
                                                 <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
                                                     {{csrf_field()}}
     
-                                                    <button type="button" class="btn btn-sm btn-danger deleteProductFiles" title="Delete">
+                                                    <button type="button" class="btn btn-sm btn-outline-danger deleteProductFiles" title="Delete">
                                                         <i class="ti-trash"></i>
                                                     </button>
                                                 </form>
@@ -564,6 +562,9 @@
     }
     #productTab .nav-link {
         padding: 15px;
+    }
+    .swal-wide {
+        width: 400px;
     }
 </style>
 
@@ -897,12 +898,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -916,12 +919,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -935,12 +940,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -954,11 +961,13 @@
             Swal.fire({
                 title: "Are you sure?",
                 // text: "You won't be able to revert this!",
-                icon: "warning",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Move to Archived"
+                confirmButtonText: "Move to Archived",
+                customClass: 'swal-wide',
+                reverseButtons: true                
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

@@ -9,7 +9,7 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div>
                 <div class="col-lg-6" align="right">
-                    <a href="{{ url('new_products') }}" class="btn btn-md btn-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a href="{{ url('new_products') }}" class="btn btn-md btn-outline-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
 
                     @if(auth()->user()->role->type == "RND" && (auth()->user()->role->name == "Staff L2") || (auth()->user()->role->name == "Department Admin"))
                     <form method="post" class="d-inline-block" id="rejectForm">
@@ -17,14 +17,14 @@
 
                         <input type="hidden" name="id" value="{{$data->id}}">
                         <input type="hidden" name="action" value="reject">
-                        <button type="submit" class="btn btn-md btn-danger" title="Reject">Reject</button>
+                        <button type="submit" class="btn btn-md btn-outline-danger" title="Reject">Reject</button>
                     </form>
 
                     <form method="POST" action="{{url('add_to_current_products')}}" class="d-inline-block" onsubmit="show()">
                         {{csrf_field()}}
 
                         <input type="hidden" name="id" value="{{$data->id}}">
-                        <button type="button" class="btn btn-md btn-primary" id="currentBtn">Move to Current</button>
+                        <button type="button" class="btn btn-md btn-outline-primary" id="currentBtn">Move to Current</button>
                     </form>
                     @endif
                 </div>
@@ -177,7 +177,7 @@
                     @include('components.error')
                     @endif
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval" data-toggle="modal" data-target="#rawMaterials{{$data->id}}">Update</button>
+                        <button type="button" class="btn btn-md btn-outline-primary submit_approval" data-toggle="modal" data-target="#rawMaterials{{$data->id}}">Update</button>
                     </div>
 
                     <div class="table-responsive">
@@ -257,7 +257,7 @@
                 </div> --}}
                 <div class="tab-pane fade @if(session('tab') == 'pds') active show @endif" id="pds" role="tabpanel" aria-labelledby="pds-tab">
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
+                        <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
                     </div>
                     @include('products.add_pds')
                     
@@ -310,8 +310,8 @@
                     @include('components.error')
                     @endif
                     <div class="col-lg-12" align="right">
-                        <button type="button" class="btn btn-md btn-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
-                        <button type="button" class="btn btn-md btn-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
+                        <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
+                        <button type="button" class="btn btn-md btn-outline-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
                     </div>
                     @include('products.add_file')
                     @include('products.edit_all_product_files')
@@ -627,8 +627,8 @@
                 </div>
 
                 <div class="modal-footer" style="padding: 0.6875rem">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-success">Submit</button>
                 </div>
             </form>
         </div>
@@ -644,6 +644,9 @@
     }
     #productTab .nav-link {
         padding: 15px;
+    }
+    .swal-wide {
+        width: 400px;
     }
 </style>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
@@ -1060,11 +1063,13 @@
             Swal.fire({
                 title: "Are you sure you want to reject?",
                 // text: "You won't be able to undo this!",
-                icon: "warning",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#28a745",
                 cancelButtonColor: "#dc3545",
-                confirmButtonText: "Yes, reject it!"
+                confirmButtonText: "Yes, reject it!",
+                customClass: 'swal-wide',
+                reverseButtons: true
                 }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -1099,12 +1104,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -1118,12 +1125,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -1137,12 +1146,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
@@ -1155,12 +1166,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Move to Current"
+                confirmButtonText: "Move to Current",
+                customClass: 'swal-wide',
+                reverseButtons: true    
                 }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

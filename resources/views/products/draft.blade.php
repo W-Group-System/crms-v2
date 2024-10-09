@@ -5,12 +5,12 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
                 Product List (Draft)
-            <button type="button" class="btn btn-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">New</button>
+            <button type="button" class="btn btn-outline-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">New</button>
             </h4>
             
             <div class="mb-3">
-                <button type="button" class="btn btn-md btn-info">Copy</button>
-                <a href="{{url('draft_new_products')}}" class="btn btn-md btn-success">Excel</a>
+                <button type="button" class="btn btn-md btn-outline-info">Copy</button>
+                <a href="{{url('draft_new_products')}}" class="btn btn-md btn-outline-success">Excel</a>
             </div>
 
             <div class="row">
@@ -45,9 +45,9 @@
                 <table class="table table-bordered table-striped table-hover mt-3" id="draft_table">
                     <thead>
                         <tr>
-                            <th width="10%">Action</th>
-                            <th width="25%">DDW Number</th>
-                            <th width="25%">Code</th>
+                            <th width="8%">Action</th>
+                            <th width="20%">DDW Number</th>
+                            <th width="32%">Code</th>
                             <th width="25%">Created By</th>
                             <th width="15%">Date Created</th>
                         </tr>
@@ -56,12 +56,12 @@
                         @if(count($products) > 0)
                         @foreach ($products as $p)
                             <tr>
-                                <td>
+                                <td align="center">
                                     {{-- <a href="{{url('view_draft_product/'.$p->id)}}" type="submit" class="btn btn-info btn-sm" title="View Products">
                                         <i class="ti-eye"></i>
                                     </a> --}}
 
-                                    <button class="btn btn-sm btn-warning" title="Edit" type="button" data-toggle="modal" data-target="#formProduct-{{$p->id}}">
+                                    <button class="btn btn-sm btn-outline-warning" title="Edit" type="button" data-toggle="modal" data-target="#formProduct-{{$p->id}}">
                                         <i class="ti-pencil"></i>
                                     </button>
                                     
@@ -179,8 +179,8 @@
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
                         <input type="hidden" name="hidden_id" id="hidden_id">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" name="action_button" id="action_button" class="btn btn-outline-success" value="Save">
                     </div>
                 </form>
             </div>
