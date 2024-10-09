@@ -5,14 +5,12 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Product Application List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" id="addBtn" data-target="#formProductApplication">New</button>
+            <button type="button" class="btn btn-md btn-outline-primary" data-toggle="modal" id="addBtn" data-target="#formProductApplication">New</button>
             </h4>
-
             <div class="mb-3">
-                <button class="btn btn-md btn-info" id="copy_issue_btn">Copy</button>
-                <a href="{{url('export_product_application')}}" class="btn btn-md btn-success">Excel</a>
+                <button class="btn btn-md btn-outline-info" id="copy_issue_btn">Copy</button>
+                <a href="{{url('export_product_application')}}" class="btn btn-md btn-outline-success">Excel</a>
             </div>
-
             <div class="row">
                 <div class="col-lg-6">
                     <span>Showing</span>
@@ -45,20 +43,20 @@
                 <table class="table table-striped table-bordered table-hover table-bordered" id="product_application_table" width="100%">
                     <thead>
                         <tr>
-                            <th width="15%">Action</th>
-                            <th width="35%">Application</th>
+                            <th width="10%">Action</th>
+                            <th width="40%">Application</th>
                             <th width="50%">Description</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($productApplications as $pa)
                             <tr>
-                                <td>
-                                    <button class="btn btn-warning btn-sm editBtn" data-toggle="modal" data-target="#productApplication-{{$pa->id}}" data-id="{{$pa->id}}" title="Edit">
+                                <td align="center">
+                                    <button class="btn btn-outline-warning btn-sm editBtn" data-toggle="modal" data-target="#productApplication-{{$pa->id}}" data-id="{{$pa->id}}" title="Edit">
                                         <i class="ti-pencil"></i>
                                     </button>
 
-                                    <button class="btn btn-danger btn-sm deleteProductApplication" title="Delete" data-id="{{$pa->id}}">
+                                    <button class="btn btn-outline-danger btn-sm deleteProductApplication" title="Delete" data-id="{{$pa->id}}">
                                         <i class="ti-trash"></i>
                                     </button>
                                 </td>
@@ -106,8 +104,8 @@
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
                         <input type="hidden" name="hidden_id" id="hidden_id">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" name="action_button" id="action_button" class="btn btn-success" value="Save">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" name="action_button" id="action_button" class="btn btn-outline-success" value="Save">
                     </div>
                 </form>
             </div>
@@ -119,6 +117,11 @@
     @include('product_applications.edit_product_application')
 @endforeach
 
+<style>
+    .swal-wide {
+        width: 400px;
+    }
+</style>
 {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>  --}}
 
@@ -301,12 +304,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({

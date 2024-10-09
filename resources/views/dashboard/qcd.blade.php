@@ -45,28 +45,28 @@
             <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
-                        <p class="card-title text-white">Open Transactions</p>
+                        <p class="card-title text-white">Initial Review</p>
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-white fs-30 font-weight-medium">
-                                    {{ $totalImmediateOpen2 ?? '0' }}
-                                    <i class="ti ti-check-box"></i>
+                                    {{ $totalQCDInitialReview2 ?? '0' }}
+                                    <i class="ti ti-check"></i>
                                 </h3>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
-                                    {{ $crrImmediateOpen2 ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 57]) }}" class="text-white" onclick='show()'>
+                                    {{ $crrQCDInitialReview2 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
-                                    {{ $srfImmediateOpen2 ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 57]) }}" class="text-white" onclick='show()'>
+                                    {{ $srfQCDInitialReview2 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -74,28 +74,28 @@
                 </div>
                 <div class="card card-light-blue">
                     <div class="card-body">
-                        <p class="card-title text-white">Closed Transactions</p>
+                        <p class="card-title text-white">Final Review</p>
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-white fs-30 font-weight-medium">
-                                    {{ $totalImmediateClosed2 ?? '0'}}
-                                    <i class="ti ti-folder"></i>
+                                    {{ $totalQCDFinalReview2 ?? '0'}}
+                                    <i class="ti ti-check-box"></i>
                                 </h3>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
-                                    {{ $crrImmediateClosed2 ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $crrQCDFinalReview2 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
-                                    {{ $srfImmediateClosed2 ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $srfQCDFinalReview2 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -172,28 +172,28 @@
             <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
-                        <p class="card-title text-white">Open Transactions</p>
+                        <p class="card-title text-white">Initial Review</p>
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-white fs-30 font-weight-medium">
-                                    {{ $totalImmediateOpen3 ?? '0' }}
-                                    <i class="ti ti-check-box"></i>
+                                    {{ $totalQCDInitialReview3 ?? '0' }}
+                                    <i class="ti ti-check"></i>
                                 </h3>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
-                                    {{ $crrImmediateOpen3 ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 57]) }}" class="text-white" onclick='show()'>
+                                    {{ $crrQCDInitialReview3 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
-                                    {{ $srfImmediateOpen3 ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 57]) }}" class="text-white" onclick='show()'>
+                                    {{ $srfQCDInitialReview3 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -201,28 +201,28 @@
                 </div>
                 <div class="card card-light-blue">
                     <div class="card-body">
-                        <p class="card-title text-white">Closed Transactions</p>
+                        <p class="card-title text-white">Final Review</p>
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-white fs-30 font-weight-medium">
-                                    {{ $totalImmediateClosed3 ?? '0'}}
-                                    <i class="ti ti-folder"></i>
+                                    {{ $totalQCDFinalReview3 ?? '0'}}
+                                    <i class="ti ti-check-box"></i>
                                 </h3>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
-                                    {{ $crrImmediateClosed3 ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $crrQCDFinalReview3 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
-                                    {{ $srfImmediateClosed3 ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $srfQCDFinalReview3 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -296,28 +296,28 @@
             <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
-                        <p class="card-title text-white">Open Transactions</p>
+                        <p class="card-title text-white">Initial Review</p>
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-white fs-30 font-weight-medium">
-                                    {{ $totalImmediateOpen4 ?? '0' }}
-                                    <i class="ti ti-check-box"></i>
+                                    {{ $totalQCDInitialReview4 ?? '0' }}
+                                    <i class="ti ti-check"></i>
                                 </h3>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
-                                    {{ $crrImmediateOpen4 ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 57]) }}" class="text-white" onclick='show()'>
+                                    {{ $crrQCDInitialReview4 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
-                                    {{ $srfImmediateOpen4 ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 57]) }}" class="text-white" onclick='show()'>
+                                    {{ $srfQCDInitialReview4 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -325,28 +325,28 @@
                 </div>
                 <div class="card card-light-blue">
                     <div class="card-body">
-                        <p class="card-title text-white">Closed Transactions</p>
+                        <p class="card-title text-white">Final Review</p>
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-white fs-30 font-weight-medium">
-                                    {{ $totalImmediateClosed4 ?? '0'}}
-                                    <i class="ti ti-folder"></i>
+                                    {{ $totalQCDFinalReview4 ?? '0'}}
+                                    <i class="ti ti-check-box"></i>
                                 </h3>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
-                                    {{ $crrImmediateClosed4 ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $crrQCDFinalReview4 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
-                                    {{ $srfImmediateClosed4 ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $srfQCDFinalReview4 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -423,28 +423,28 @@
             <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
-                        <p class="card-title text-white">Open Transactions</p>
+                        <p class="card-title text-white">Initial Review</p>
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-white fs-30 font-weight-medium">
-                                    {{ $totalImmediateOpen5 ?? '0' }}
-                                    <i class="ti ti-check-box"></i>
+                                    {{ $totalQCDInitialReview5 ?? '0' }}
+                                    <i class="ti ti-check"></i>
                                 </h3>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
-                                    {{ $crrImmediateOpen5 ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 57]) }}" class="text-white" onclick='show()'>
+                                    {{ $crrQCDInitialReview5 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
-                                    {{ $srfImmediateOpen5 ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 57]) }}" class="text-white" onclick='show()'>
+                                    {{ $srfQCDInitialReview5 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -452,28 +452,28 @@
                 </div>
                 <div class="card card-light-blue">
                     <div class="card-body">
-                        <p class="card-title text-white">Closed Transactions</p>
+                        <p class="card-title text-white">Final Review</p>
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="text-white fs-30 font-weight-medium">
-                                    {{ $totalImmediateClosed5 ?? '0'}}
-                                    <i class="ti ti-folder"></i>
+                                    {{ $totalQCDFinalReview5 ?? '0'}}
+                                    <i class="ti ti-check-box"></i>
                                 </h3>
                             </div>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
-                                    {{ $crrImmediateClosed5 ?? '0' }}
+                                <a href="{{ route('customer_requirement.index', ['progress' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $crrQCDFinalReview5 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('sample_request.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
-                                    {{ $srfImmediateClosed5 ?? '0' }}
+                                <a href="{{ route('sample_request.index', ['progress' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $srfQCDFinalReview5 ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -540,6 +540,325 @@
                             <h5 class="text-primary font-weight-medium">
                                 <a href="{{ route('sample_request.index', ['DateRequired' => 'past']) }}" class="text-white" onclick="show()">
                                     {{ $srfDueToday5 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+    <div class="row">
+        @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-WHI'))
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Customer Requirement</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-3 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalCrrImmediate2 ?? '0'}}
+                                    <i class="ti ti-user"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" onclick="show()">
+                                    {{ $crrImmediateOpen2 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Closed</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" onclick="show()">
+                                    {{ $crrImmediateClosed2 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Cancelled</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 50]) }}" onclick="show()">
+                                    {{ $crrImmediateCancelled2 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Sample Request</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-4 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalSrfImmediate2 ?? '0'}}
+                                    <i class="ti ti-package"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" onclick='show()'>
+                                    {{ $srfImmediateOpen2 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Closed</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 30]) }}" onclick='show()'>
+                                    {{ $srfImmediateClosed2 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Cancelled</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 50]) }}" onclick="show()">
+                                    {{ $srfImmediateCancelled2 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @elseif ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-PBI'))
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Customer Requirement</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-3 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalCrrImmediate3 ?? '0'}}
+                                    <i class="ti ti-user"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" onclick="show()">
+                                    {{ $crrImmediateOpen3 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Closed</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" onclick="show()">
+                                    {{ $crrImmediateClosed3 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Cancelled</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 50]) }}" onclick="show()">
+                                    {{ $crrImmediateCancelled3 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Sample Request</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-4 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalSrfImmediate3 ?? '0'}}
+                                    <i class="ti ti-package"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" onclick='show()'>
+                                    {{ $srfImmediateOpen3 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Closed</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 30]) }}" onclick='show()'>
+                                    {{ $srfImmediateClosed3 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Cancelled</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 50]) }}" onclick="show()">
+                                    {{ $srfImmediateCancelled3 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @elseif ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-MRDC'))
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Customer Requirement</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-3 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalCrrImmediate4 ?? '0'}}
+                                    <i class="ti ti-user"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" onclick="show()">
+                                    {{ $crrImmediateOpen4 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Closed</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" onclick="show()">
+                                    {{ $crrImmediateClosed4 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Cancelled</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 50]) }}" onclick="show()">
+                                    {{ $crrImmediateCancelled4 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Sample Request</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-4 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalSrfImmediate4 ?? '0'}}
+                                    <i class="ti ti-package"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" onclick='show()'>
+                                    {{ $srfImmediateOpen4 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Closed</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 30]) }}" onclick='show()'>
+                                    {{ $srfImmediateClosed4 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Cancelled</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 50]) }}" onclick="show()">
+                                    {{ $srfImmediateCancelled4 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @elseif ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-CCC'))
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Customer Requirement</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-3 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalCrrImmediate5 ?? '0'}}
+                                    <i class="ti ti-user"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 10]) }}" onclick="show()">
+                                    {{ $crrImmediateOpen5 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Closed</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 30]) }}" onclick="show()">
+                                    {{ $crrImmediateClosed5 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Cancelled</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_requirement.index', ['status' => 50]) }}" onclick="show()">
+                                    {{ $crrImmediateCancelled5 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title">Sample Request</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-4 mt-2">
+                                <h3 class="text-primary fs-30 font-weight-medium">
+                                    {{ $totalSrfImmediate5 ?? '0'}}
+                                    <i class="ti ti-package"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Open</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 10]) }}" onclick='show()'>
+                                    {{ $srfImmediateOpen5 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Closed</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 30]) }}" onclick='show()'>
+                                    {{ $srfImmediateClosed5 ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Cancelled</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('sample_request.index', ['status' => 50]) }}" onclick="show()">
+                                    {{ $srfImmediateCancelled5 ?? '0' }}
                                 </a>
                             </h5>
                         </div>

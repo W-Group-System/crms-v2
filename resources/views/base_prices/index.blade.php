@@ -20,8 +20,8 @@
             <table class="table table-striped table-bordered table-hover" id="base_price_table" width="100%">
                 <thead>
                     <tr>
-                        <th width="20%">Action</th>
-                        <th width="20%">Material</th>
+                        <th width="8%">Action</th>
+                        <th width="32%">Material</th>
                         <th width="20%">Price</th>
                         <th width="20%">Approved By</th>
                         <th width="20%">Effective</th>
@@ -31,7 +31,7 @@
                     @foreach ( $currentBasePrice as $currentBase)
                     <tr>
                         <td align="center">
-                            <button type="button" class="btn btn-sm btn-info"
+                            <button type="button" class="btn btn-sm btn-outline-primary"
                                 data-target="#viewBase{{ $currentBase->Id }}" data-toggle="modal" title='View Base Price'>
                                 <i class="ti-eye"></i>
                             </button>    
@@ -41,7 +41,6 @@
                         <td>{{ optional($currentBase->userApproved)->full_name }}</td>
                         <td>{{ $currentBase->EffectiveDate }}</td>
                     </tr>
-                        
                     @endforeach
                 </tbody>
             </table>

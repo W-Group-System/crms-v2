@@ -393,7 +393,6 @@
             });
         });
 
-
         // Handle file deletion
         $(document).on('click', '.removeRowBtn', function() {
             var attachmentRow = $(this).closest('.attachment-row');

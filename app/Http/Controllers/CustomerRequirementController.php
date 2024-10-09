@@ -261,22 +261,51 @@ class CustomerRequirementController extends Controller
                 } elseif ($role->type == "LS") {
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
                 } elseif ($role->type == "RND") {
-                    // Use 'orWhere' to allow either 'CRR-LS' or 'CRR-IS'
-                    $q->where(function($query) {
+                    $q->where('RefCode', 'RND')
+                        ->orWhere('RefCode', Null)
+                      ->where(function($query) {
+                            $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
+                                ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
+                      });
+                } elseif ($role->type == "QCD-WHI") {
+                    $q->where('RefCode', 'QCD-WHI')
+                      ->where(function($query) {
                         $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
-                              ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
-                    });
+                            ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
+                      });
+                } elseif ($role->type == "QCD-PBI") {
+                    $q->where('RefCode', 'QCD-PBI')
+                      ->where(function($query) {
+                            $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
+                                ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');;
+                      });
+                } elseif ($role->type == "QCD-MRDC") {
+                    $q->where('RefCode', 'QCD-MRDC')
+                      ->where(function($query) {
+                            $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
+                                ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
+                      });
+                } elseif ($role->type == "QCD-CCC") {
+                    $q->where('RefCode', 'QCD-CCC')
+                      ->where(function($query) {
+                            $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
+                                ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
+                      });
                 }  
             })
+            
             ->when(in_array($progress, ['30', '57', '81']), function ($query) use ($progress) {
                 $role = auth()->user()->role;
                 $userType = $role->type;  
                 $userName = $role->name; 
                 
                 if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where(function($q) {
+                        $q->where('RefCode', 'RND')
+                          ->orWhereNull('RefCode');
+                    });
                     $query->where('Progress', $progress)
-                          ->where('Status', '10')
-                          ->where('RefCode', 'RND');
+                          ->where('Status', '10');
                 } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
                     $query->where('Progress', $progress)
                           ->where('Status', '10')

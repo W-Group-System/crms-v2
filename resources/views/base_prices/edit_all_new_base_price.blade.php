@@ -61,8 +61,8 @@
                         <div class="d-flex justify-content-between align-items-center w-100 mt-3">
                             <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                             <div>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <input type="submit" class="btn btn-success" value="Save">
+                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-outline-success" value="Save">
                             </div>
                         </div>
                     </div>

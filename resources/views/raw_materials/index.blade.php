@@ -8,13 +8,13 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Raw Material List
-            <button type="button" class="btn btn-primary" data-toggle="modal" id="addBtn" data-target="#formRawMaterial">New</button>
+            <button type="button" class="btn btn-outline-primary" data-toggle="modal" id="addBtn" data-target="#formRawMaterial">New</button>
             </h4>
             @include('components.error')
             
             <div class="mb-3">
-                <button type="button" id="copy_issue_btn" class="btn btn-md btn-info mb-1">Copy</button>
-                <a href="{{url('export_raw_materials')}}" id="excel_btn" class="btn btn-md btn-success mb-1">Excel</a>
+                <button type="button" id="copy_issue_btn" class="btn btn-md btn-outline-info mb-1">Copy</button>
+                <a href="{{url('export_raw_materials')}}" id="excel_btn" class="btn btn-md btn-outline-success mb-1">Excel</a>
             </div>
             
             <div class="row">
@@ -59,19 +59,19 @@
                     <tbody>
                         @foreach ($rawMaterials as $rm)
                             <tr>
-                                <td>
-                                    <a href="{{url('view_raw_materials/'.$rm->id)}}" class="btn btn-sm btn-info" title="View Raw Material Details">
+                                <td align="center">
+                                    <a href="{{url('view_raw_materials/'.$rm->id)}}" class="btn btn-sm btn-outline-info" title="View Raw Material Details">
                                         <i class="ti-eye"></i>
                                     </a>
 
-                                    <button type="button" data-toggle="modal" data-target="#editRawMaterials{{$rm->id}}" class="btn btn-sm btn-warning editBtn" data-id="{{$rm->id}}">
+                                    <button type="button" data-toggle="modal" data-target="#editRawMaterials{{$rm->id}}" class="btn btn-sm btn-outline-warning editBtn" data-id="{{$rm->id}}">
                                         <i class="ti-pencil"></i>
                                     </button>
     
                                     <form method="POST" class="d-inline-block" action="{{url('delete_raw_materials/'.$rm->id)}}" onsubmit="show()">
                                         @csrf
 
-                                        <button type="button" class="btn btn-sm btn-danger deleteBtn" data-id="{{$rm->id}}">
+                                        <button type="button" class="btn btn-sm btn-outline-danger deleteBtn" data-id="{{$rm->id}}">
                                             <i class="ti-trash"></i>
                                         </button>
                                     </form>
@@ -147,6 +147,12 @@
     </div>
 </div>
 
+<style>
+    .swal-wide {
+        width: 400px;
+    }
+</style>
+
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
@@ -194,11 +200,13 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                icon: "warning",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true                
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit()

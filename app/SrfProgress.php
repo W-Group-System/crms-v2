@@ -6,7 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class SrfProgress extends Model
 {
-    protected $table = "srfprogresses";
-
-    
+    protected $table = "srfprogresses"; 
 }

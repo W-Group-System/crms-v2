@@ -138,7 +138,6 @@ class SupplierProductController extends Controller
 
         // Handle instructions
         if ($request->has('Instruction') && is_array($request->Instruction)) {
-            // First, delete any existing instructions for the supplier product to avoid duplicates
             SpeInstructions::where('SpeId', $supplier_product->id)->delete();
     
             // Then, save each new instruction

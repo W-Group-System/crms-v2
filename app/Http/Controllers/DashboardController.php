@@ -565,15 +565,15 @@ class DashboardController extends Controller
         }
 
         // RND Approval
-        $crrRNDInitialReview = CustomerRequirement::where('Status', '10')->where('Progress', '57')->count();
+        $crrRNDInitialReview = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'RND')->count();
         $rpeRNDInitialReview = RequestProductEvaluation::where('Status', '10')->where('Progress', '57')->count();
-        $srfRNDInitialReview = SampleRequest::where('Status', '10')->where('Progress', '57')->count();
+        $srfRNDInitialReview = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '1')->count();
 
         $totalInitialReview = $crrRNDInitialReview + $rpeRNDInitialReview + $srfRNDInitialReview;
 
-        $crrRNDFinalReview = CustomerRequirement::where('Status', '10')->where('Progress', '81')->count();
+        $crrRNDFinalReview = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'RND')->count();
         $rpeRNDFinalReview = RequestProductEvaluation::where('Status', '10')->where('Progress', '81')->count();
-        $srfRNDFinalReview = SampleRequest::where('Status', '10')->where('Progress', '81')->count();
+        $srfRNDFinalReview = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '1')->count();
 
         $totalFinalReview = $crrRNDFinalReview + $rpeRNDFinalReview + $srfRNDFinalReview;
 
@@ -827,7 +827,6 @@ class DashboardController extends Controller
         $srfQCD5New = SampleRequest::where('Status', '10')->where('Progress', '30')->where('RefCode', '5')->count();
         $totalQCD5New = $crrQCD5New + $srfQCD5New;
 
-
         // Due Today - QCD-WHI 
         $crrDueToday2 = CustomerRequirement::where('Status', '10')->where('DueDate', '<', now())->where('RefCode', 'QCD-WHI')->count();
         $srfDueToday2 = SampleRequest::where('Status', '10')->where('DateRequired', '<', now())->where('RefCode', '2')->count();
@@ -848,47 +847,87 @@ class DashboardController extends Controller
         $srfDueToday5 = SampleRequest::where('Status', '10')->where('DateRequired', '<', now())->where('RefCode', '5')->count();
         $totalDueToday5 = $crrDueToday5 + $srfDueToday5;
 
-        // Open Transaction - QCD-WHI
+        // CRR Transaction - QCD-WHI
         $crrImmediateOpen2 = CustomerRequirement::where('Status', '10')->where('RefCode', 'QCD-WHI')->count();
-        $srfImmediateOpen2 = SampleRequest::where('Status', '10')->where('RefCode', '2')->count();  
-        $totalImmediateOpen2 = $crrImmediateOpen2 + $srfImmediateOpen2;
+        $crrImmediateClosed2 = CustomerRequirement::where('Status', '30')->where('RefCode', 'QCD-WHI')->count();
+        $crrImmediateCancelled2 = CustomerRequirement::where('Status', '50')->where('RefCode', 'QCD-WHI')->count();
+        $totalCrrImmediate2 = $crrImmediateOpen2 + $crrImmediateClosed2 + $crrImmediateCancelled2;
 
-        // Open Transaction - QCD-PBI
+        // CRR Transaction - QCD-PBI
         $crrImmediateOpen3 = CustomerRequirement::where('Status', '10')->where('RefCode', 'QCD-PBI')->count();
-        $srfImmediateOpen3 = SampleRequest::where('Status', '10')->where('RefCode', '3')->count();  
-        $totalImmediateOpen3 = $crrImmediateOpen3 + $srfImmediateOpen3;
+        $crrImmediateClosed3 = CustomerRequirement::where('Status', '30')->where('RefCode', 'QCD-PBI')->count();
+        $crrImmediateCancelled3 = CustomerRequirement::where('Status', '50')->where('RefCode', 'QCD-PBI')->count();
+        $totalCrrImmediate3 = $crrImmediateOpen3 + $crrImmediateClosed3 + $crrImmediateCancelled3;
 
-        // Open Transaction - QCD-MRDC
+        // CRR Transaction - QCD-MRDC
         $crrImmediateOpen4 = CustomerRequirement::where('Status', '10')->where('RefCode', 'QCD-MRDC')->count();
-        $srfImmediateOpen4 = SampleRequest::where('Status', '10')->where('RefCode', '4')->count();  
-        $totalImmediateOpen4 = $crrImmediateOpen4 + $srfImmediateOpen4;
+        $crrImmediateClosed4 = CustomerRequirement::where('Status', '30')->where('RefCode', 'QCD-MRDC')->count();
+        $crrImmediateCancelled4 = CustomerRequirement::where('Status', '50')->where('RefCode', 'QCD-MRDC')->count();
+        $totalCrrImmediate4 = $crrImmediateOpen4 + $crrImmediateClosed4 + $crrImmediateCancelled4;
+
+        // CRR Transaction - QCD-CCC
+        $crrImmediateOpen5 = CustomerRequirement::where('Status', '10')->where('RefCode', 'QCD-CCC')->count();
+        $crrImmediateClosed5 = CustomerRequirement::where('Status', '30')->where('RefCode', 'QCD-CCC')->count();
+        $crrImmediateCancelled5 = CustomerRequirement::where('Status', '50')->where('RefCode', 'QCD-CCC')->count();
+        $totalCrrImmediate5 = $crrImmediateOpen5 + $crrImmediateClosed5 + $crrImmediateCancelled5;
+
+        // SRF Transaction - QCD-WHI
+        $srfImmediateOpen2 = SampleRequest::where('Status', '10')->where('RefCode', '2')->count();  
+        $srfImmediateClosed2 = SampleRequest::where('Status', '30')->where('RefCode', '2')->count();  
+        $srfImmediateCancelled2 = SampleRequest::where('Status', '50')->where('RefCode', '2')->count();
+        $totalSrfImmediate2 = $srfImmediateOpen2 + $srfImmediateClosed2 + $srfImmediateCancelled2;
+
+        // SRF Transaction - QCD-PBI
+        $srfImmediateOpen3 = SampleRequest::where('Status', '10')->where('RefCode', '3')->count();
+        $srfImmediateClosed3 = SampleRequest::where('Status', '30')->where('RefCode', '3')->count();  $srfImmediateCancelled3 = SampleRequest::where('Status', '50')->where('RefCode', '3')->count();
+        $totalSrfImmediate3 = $srfImmediateOpen3 + $srfImmediateClosed3 + $srfImmediateCancelled3;
+
+        // SRF Transaction - QCD-MRDC
+        $srfImmediateOpen4 = SampleRequest::where('Status', '10')->where('RefCode', '4')->count(); 
+        $srfImmediateClosed4 = SampleRequest::where('Status', '30')->where('RefCode', '4')->count(); 
+        $srfImmediateCancelled4 = SampleRequest::where('Status', '50')->where('RefCode', '4')->count();
+        $totalSrfImmediate4 = $srfImmediateOpen4 + $srfImmediateClosed4 + $srfImmediateCancelled4;
 
         // Open Transaction - QCD-CCC
-        $crrImmediateOpen5 = CustomerRequirement::where('Status', '10')->where('RefCode', 'QCD-CCC')->count();
         $srfImmediateOpen5 = SampleRequest::where('Status', '10')->where('RefCode', '5')->count();  
-        $totalImmediateOpen5 = $crrImmediateOpen5 + $srfImmediateOpen5;
-
-
-        // Closed Transaction - QCD-WHI
-        $crrImmediateClosed2 = CustomerRequirement::where('Status', '30')->where('RefCode', 'QCD-WHI')->count();
-        $srfImmediateClosed2 = SampleRequest::where('Status', '30')->where('RefCode', '2')->count();  
-        $totalImmediateClosed2 = $crrImmediateClosed2 + $srfImmediateClosed2;
-
-        // Closed Transaction - QCD-PBI
-        $crrImmediateClosed3 = CustomerRequirement::where('Status', '30')->where('RefCode', 'QCD-PBI')->count();
-        $srfImmediateClosed3 = SampleRequest::where('Status', '30')->where('RefCode', '3')->count();  
-        $totalImmediateClosed3 = $crrImmediateClosed3 + $srfImmediateClosed3;
-
-        // Closed Transaction - QCD-MRDC
-        $crrImmediateClosed4 = CustomerRequirement::where('Status', '30')->where('RefCode', 'QCD-MRDC')->count();
-        $srfImmediateClosed4 = SampleRequest::where('Status', '30')->where('RefCode', '4')->count();  
-        $totalImmediateClosed4 = $crrImmediateClosed4 + $srfImmediateClosed4;
-
-        // Closed Transaction - QCD-CCC
-        $crrImmediateClosed5 = CustomerRequirement::where('Status', '30')->where('RefCode', 'QCD-CCC')->count();
         $srfImmediateClosed5 = SampleRequest::where('Status', '30')->where('RefCode', '5')->count();  
-        $totalImmediateClosed5 = $crrImmediateClosed5 + $srfImmediateClosed5;
+        $srfImmediateCancelled5 = SampleRequest::where('Status', '50')->where('RefCode', '5')->count();
+        $totalSrfImmediate5 = $srfImmediateOpen5 + $srfImmediateClosed5 + $srfImmediateCancelled5;
 
-        return view('dashboard.qcd', compact('role', 'crrQCD2New', 'srfQCD2New', 'totalQCD2New', 'crrQCD3New', 'srfQCD3New', 'totalQCD3New', 'crrQCD4New', 'srfQCD4New', 'totalQCD4New', 'crrQCD5New', 'srfQCD5New', 'totalQCD5New', 'crrDueToday2', 'srfDueToday2', 'totalDueToday2', 'crrDueToday3', 'srfDueToday3', 'totalDueToday3', 'crrDueToday4', 'srfDueToday4', 'totalDueToday4', 'crrDueToday5', 'srfDueToday5', 'totalDueToday5', 'totalImmediateOpen2', 'crrImmediateOpen2', 'srfImmediateOpen2', 'totalImmediateOpen3', 'crrImmediateOpen3', 'srfImmediateOpen3', 'totalImmediateOpen4', 'crrImmediateOpen4', 'srfImmediateOpen4', 'totalImmediateOpen5', 'crrImmediateOpen5', 'srfImmediateOpen5', 'totalImmediateClosed2', 'crrImmediateClosed2', 'srfImmediateClosed2', 'totalImmediateClosed3', 'crrImmediateClosed3', 'srfImmediateClosed3', 'totalImmediateClosed4', 'crrImmediateClosed4', 'srfImmediateClosed4', 'totalImmediateClosed5', 'crrImmediateClosed5', 'srfImmediateClosed5'));
+        // QCD Approval
+        $crrQCDInitialReview2 = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'QCD-WHI')->count();
+        $srfQCDInitialReview2 = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '2')->count();
+        $totalQCDInitialReview2 = $crrQCDInitialReview2 + $srfQCDInitialReview2;
+
+        $crrQCDFinalReview2 = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'QCD-WHI')->count();
+        $srfQCDFinalReview2 = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '2')->count();
+        $totalQCDFinalReview2 = $crrQCDFinalReview2 + $srfQCDFinalReview2;
+
+        $crrQCDInitialReview3 = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'QCD-PBI')->count();
+        $srfQCDInitialReview3 = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '3')->count();
+        $totalQCDInitialReview3 = $crrQCDInitialReview3 + $srfQCDInitialReview3;
+
+        $crrQCDFinalReview3 = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'QCD-PBI')->count();
+        $srfQCDFinalReview3 = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '3')->count();
+        $totalQCDFinalReview3 = $crrQCDFinalReview3 + $srfQCDFinalReview3;
+
+        $crrQCDInitialReview4 = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'QCD-MRDC')->count();
+        $srfQCDInitialReview4 = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '4')->count();
+        $totalQCDInitialReview4 = $crrQCDInitialReview4 + $srfQCDInitialReview4;
+
+        $crrQCDFinalReview4 = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'QCD-MRDC')->count();
+        $srfQCDFinalReview4 = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '4')->count();
+        $totalQCDFinalReview4 = $crrQCDFinalReview4 + $srfQCDFinalReview4;
+
+        $crrQCDInitialReview5 = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'QCD-CCC')->count();
+        $srfQCDInitialReview5 = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '5')->count();
+        $totalQCDInitialReview5 = $crrQCDInitialReview5 + $srfQCDInitialReview5;
+
+        $crrQCDFinalReview5 = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'QCD-CCC')->count();
+        $srfQCDFinalReview5 = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '5')->count();
+        $totalQCDFinalReview5 = $crrQCDFinalReview5 + $srfQCDFinalReview5;
+
+
+        return view('dashboard.qcd', compact('role', 'crrQCD2New', 'srfQCD2New', 'totalQCD2New', 'crrQCD3New', 'srfQCD3New', 'totalQCD3New', 'crrQCD4New', 'srfQCD4New', 'totalQCD4New', 'crrQCD5New', 'srfQCD5New', 'totalQCD5New', 'crrDueToday2', 'srfDueToday2', 'totalDueToday2', 'crrDueToday3', 'srfDueToday3', 'totalDueToday3', 'crrDueToday4', 'srfDueToday4', 'totalDueToday4', 'crrDueToday5', 'srfDueToday5', 'totalDueToday5', 'crrImmediateOpen2', 'srfImmediateOpen2', 'crrImmediateOpen3', 'srfImmediateOpen3', 'crrImmediateOpen4', 'srfImmediateOpen4', 'crrImmediateOpen5', 'srfImmediateOpen5', 'crrImmediateClosed2', 'srfImmediateClosed2', 'crrImmediateClosed3', 'srfImmediateClosed3', 'crrImmediateClosed4', 'srfImmediateClosed4', 'crrImmediateClosed5', 'srfImmediateClosed5', 'crrImmediateCancelled2', 'totalCrrImmediate2', 'crrImmediateCancelled3', 'totalCrrImmediate3', 'crrImmediateCancelled4', 'totalCrrImmediate4', 'crrImmediateCancelled5', 'totalCrrImmediate5', 'srfImmediateCancelled2', 'totalSrfImmediate2', 'srfImmediateCancelled3', 'totalSrfImmediate3', 'srfImmediateCancelled4', 'totalSrfImmediate4', 'srfImmediateCancelled5', 'totalSrfImmediate5', 'totalQCDInitialReview2', 'crrQCDInitialReview2', 'srfQCDInitialReview2', 'totalQCDFinalReview2', 'crrQCDFinalReview2', 'srfQCDFinalReview2', 'totalQCDInitialReview3', 'crrQCDInitialReview3', 'srfQCDInitialReview3', 'totalQCDFinalReview3', 'crrQCDFinalReview3', 'srfQCDFinalReview3', 'totalQCDInitialReview4', 'crrQCDInitialReview4', 'srfQCDInitialReview4', 'totalQCDFinalReview4', 'crrQCDFinalReview4', 'srfQCDFinalReview4', 'totalQCDInitialReview5', 'crrQCDInitialReview5', 'srfQCDInitialReview5', 'totalQCDFinalReview5', 'crrQCDFinalReview5', 'srfQCDFinalReview5'));
     }
 }

@@ -95,7 +95,7 @@
                                         @if($crr->Status == 10)
                                         <span class="badge badge-success">Open</span>
                                         @elseif($crr->Status == 30)
-                                        <span class="badge badge-danger">Close</span>
+                                        <span class="badge badge-warning">Close</span>
                                         @elseif($crr->Status == 50)
                                         <span class="badge badge-danger">Cancelled</span>
                                         @endif
