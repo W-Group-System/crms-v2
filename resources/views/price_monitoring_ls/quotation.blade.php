@@ -119,10 +119,10 @@
                     </b>
                 </div>     
                 <div class="left-div" style="margin-top: 10;">
-                    <p style="font-size:7;">T: +632.856.3838</p>
+                    <p style="font-size:7; text-align:right;">T: +632.856.3838</p>
                 </div>    
                 <div class="left-div">
-                    <p style="font-size:8; text-align:right;">info@mrdccarageenan.com
+                    <p style="font-size:8; text-align:right; margin-top: 0;">info@mrdccarageenan.com
                         www.mrdccarageenan.com</p>
                 </div>   
                 <div class="left-div">
@@ -138,7 +138,7 @@
                 <p style="font-size: 9; font-weight:bold; margin-bottom:0; line-height:-10px;">{{ optional($price_monitoring_ls->client)->Name }}</p>
                 <p style="line-height:0.5; font-size:8">{{ optional($price_monitoring_ls->clientCompanyAddress)->Address }}</p>
                 <br>
-                <p style="font-size: 9;">Dear, {{optional($price_monitoring_ls->clientContact)->ContactName}}</p>
+                <p style="font-size: 9;">Dear {{optional($price_monitoring_ls->clientContact)->ContactName}},</p>
                 <p class="right-p">Greetings!</p>
                 <p class="right-p">We are pleased to submit for your consideration our price offer for the following product/s indicated below:</p>
                 @if ($price_monitoring_ls->TaxType == "20")
