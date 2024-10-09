@@ -312,42 +312,100 @@ class SampleRequestController extends Controller
             })
 
             // Role-based filters for SrfNumber patterns
-            ->when(auth()->user()->role->type == 'LS', function($query) {
-                $query->where('SrfNumber', 'LIKE', '%SRF-LS%');
-            })
-            ->when(auth()->user()->role->type == 'IS', function($query) {
-                $query->where('SrfNumber', 'LIKE', '%SRF-IS%');
+            // ->when(auth()->user()->role->type == 'LS', function($query) {
+            //     $query->where('SrfNumber', 'LIKE', '%SRF-LS%');
+            // })
+            // ->when(auth()->user()->role->type == 'IS', function($query) {
+            //     $query->where('SrfNumber', 'LIKE', '%SRF-IS%');
+            // })
+            ->when(optional($role)->type, function($q) use ($role) {
+                if ($role->type == "IS") {
+                    $q->where('SrfNumber', 'LIKE', "%SRF-IS%");
+                } elseif ($role->type == "LS") {
+                    $q->where('SrfNumber', 'LIKE', '%SRF-LS%');
+                } elseif ($role->type == "RND") {
+                    $q->where('RefCode', '1')
+                      ->where(function($query) {
+                          $query->where('SrfNumber', 'LIKE', '%SRF-LS%')
+                                ->orWhere('SrfNumber', 'LIKE', '%SRF-IS%');
+                      });
+                } elseif ($role->type == "QCD-WHI") {
+                    $q->where('RefCode', '2')
+                      ->where(function($query) {
+                          $query->where('SrfNumber', 'LIKE', '%SRF-LS%')
+                                ->orWhere('SrfNumber', 'LIKE', '%SRF-IS%');
+                      });
+                } elseif ($role->type == "QCD-PBI") {
+                    $q->where('RefCode', '3')
+                      ->where(function($query) {
+                          $query->where('SrfNumber', 'LIKE', '%SRF-LS%')
+                                ->orWhere('SrfNumber', 'LIKE', '%SRF-IS%');
+                      });
+                } elseif ($role->type == "QCD-MRDC") {
+                    $q->where('RefCode', '4')
+                      ->where(function($query) {
+                          $query->where('SrfNumber', 'LIKE', '%SRF-LS%')
+                                ->orWhere('SrfNumber', 'LIKE', '%SRF-IS%');
+                      });
+                } elseif ($role->type == "QCD-CCC") {
+                    $q->where('RefCode', '5')
+                      ->where(function($query) {
+                          $query->where('SrfNumber', 'LIKE', '%SRF-LS%')
+                                ->orWhere('SrfNumber', 'LIKE', '%SRF-IS%');
+                      });
+                }  
             })
             ->when(in_array($progress, ['30', '57', '81']), function ($query) use ($progress) {
                 $role = auth()->user()->role;
-                $userType = $role->type;  
-                $userName = $role->name; 
-                
-                if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
-                    $query->where('Progress', $progress)
-                          ->where('Status', '10')
-                          ->where('RefCode', '1');
-                } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
-                    $query->where('Progress', $progress)
-                          ->where('Status', '10')
-                          ->where('RefCode', '2');
-                } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
-                    $query->where('Progress', $progress)
-                            ->where('Status', '10')
-                            ->where('RefCode', '4');
-                } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
-                    $query->where('Progress', $progress)
-                            ->where('Status', '10')
-                            ->where('RefCode', '3');
-                } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
-                    $query->where('Progress', $progress)
-                            ->where('Status', '10')
-                            ->where('RefCode', '5');
-                } else {
-                    $query->where('Progress', $progress)
-                      ->where('Status', '10');
+                $userType = $role->type;
+                $userName = $role->name;
+            
+                $refCodes = [
+                    'RND' => '1',
+                    'QCD-WHI' => '2',
+                    'QCD-MRDC' => '4',
+                    'QCD-PBI' => '3',
+                    'QCD-CCC' => '5',
+                ];
+            
+                if (in_array($userType, array_keys($refCodes)) && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('RefCode', $refCodes[$userType])
+                          ->where('Progress', $progress);
                 }
+            
+                $query->where('Status', '10')
+                      ->where('Progress', $progress);
             })
+            // ->when(in_array($progress, ['30', '57', '81']), function ($query) use ($progress) {
+            //     $role = auth()->user()->role;
+            //     $userType = $role->type;  
+            //     $userName = $role->name; 
+                
+            //     if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+            //         $query->where('Progress', $progress)
+            //               ->where('Status', '10')
+            //               ->where('RefCode', '1');
+            //     } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+            //         $query->where('Progress', $progress)
+            //               ->where('Status', '10')
+            //               ->where('RefCode', '2');
+            //     } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+            //         $query->where('Progress', $progress)
+            //                 ->where('Status', '10')
+            //                 ->where('RefCode', '4');
+            //     } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+            //         $query->where('Progress', $progress)
+            //                 ->where('Status', '10')
+            //                 ->where('RefCode', '3');
+            //     } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+            //         $query->where('Progress', $progress)
+            //                 ->where('Status', '10')
+            //                 ->where('RefCode', '5');
+            //     } else {
+            //         $query->where('Progress', $progress)
+            //           ->where('Status', '10');
+            //     }
+            // })
             // ->when($progress == '30', function($query) {
             //     $query->where('Progress', '30')->where('Status', '10');
             // })
@@ -517,52 +575,52 @@ class SampleRequestController extends Controller
 
         $mappedAudits = $audits->map(function ($audit) {
         $details = '';
-        if ($audit->auditable_type === 'App\SrfRawMaterial') {
-            $details = $audit->event . " " . 'SRF Raw Material';
-        } elseif ($audit->auditable_type === 'App\SrfFile') {
-            $details = $audit->event . " " . 'SRF Files';
-        } elseif ($audit->auditable_type === 'App\SrfDetail') {
-            $details = $audit->event . " " . 'SRF Supplementary';
-        } elseif ($audit->auditable_type === 'App\SrfPersonnel') {
-            $details = $audit->event . " " . 'SRF R&D Personnel';
-        } elseif ($audit->auditable_type === 'App\SampleRequest') {
-            if (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 20) {
-                $details = "Approve sample request entry";
-            } elseif (isset($audit->new_values['Progress']) && ($audit->new_values['Progress'] == 30 || $audit->new_values['Progress'] == 80)) {
-                $details = "Approve sample request entry";
-            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 35) {
-                $details = "Receive sample request entry";
-            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
-                $details = "Pause sample request transaction." . isset($audit->new_values['Remarks']);
-            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
-                $details = "Start sample request transaction";
-            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
-                $details = "Submitted sample request transaction";
-            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
-                $details = "Completed sample request transaction";
-            } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 70) {
-                $details = "Accepted sample request transaction";
-            } elseif (isset($audit->new_values['Status']) && $audit->new_values['Status'] == 30) {
-                $details = "Closed sample request transaction";
-            }else {
-                $details = $audit->event . " " . 'Sample Request';
+            if ($audit->auditable_type === 'App\SrfRawMaterial') {
+                $details = $audit->event . " " . 'SRF Raw Material';
+            } elseif ($audit->auditable_type === 'App\SrfFile') {
+                $details = $audit->event . " " . 'SRF Files';
+            } elseif ($audit->auditable_type === 'App\SrfDetail') {
+                $details = $audit->event . " " . 'SRF Supplementary';
+            } elseif ($audit->auditable_type === 'App\SrfPersonnel') {
+                $details = $audit->event . " " . 'SRF R&D Personnel';
+            } elseif ($audit->auditable_type === 'App\SampleRequest') {
+                if (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 20) {
+                    $details = "Approve sample request entry";
+                } elseif (isset($audit->new_values['Progress']) && ($audit->new_values['Progress'] == 30 || $audit->new_values['Progress'] == 80)) {
+                    $details = "Approve sample request entry";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 35) {
+                    $details = "Receive sample request entry";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
+                    $details = "Pause sample request transaction." . isset($audit->new_values['Remarks']);
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
+                    $details = "Start sample request transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
+                    $details = "Submitted sample request transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
+                    $details = "Completed sample request transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 70) {
+                    $details = "Accepted sample request transaction";
+                } elseif (isset($audit->new_values['Status']) && $audit->new_values['Status'] == 30) {
+                    $details = "Closed sample request transaction";
+                }else {
+                    $details = $audit->event . " " . 'Sample Request';
+                }
             }
-        }
-        return (object) [
-            'CreatedDate' => $audit->created_at,
-            'full_name' => $audit->user->full_name,
-            'Details' => $details,
-        ];
-    });
+            return (object) [
+                'CreatedDate' => $audit->created_at,
+                'full_name' => $audit->user->full_name,
+                'Details' => $details,
+            ];
+        });
 
         $mappedLogs = $transactionLogs->map(function ($log) {
             return (object) [
                 'CreatedDate' => $log->ActionDate,
-                'full_name' => $log->historyUser->full_name,
+                'full_name' => optional($log->historyUser)->full_name, // Use optional() to avoid null errors
                 'Details' => $log->Details,
             ];
         });
-
+        
         $mappedLogsCollection = collect($mappedLogs);
         $mappedAuditsCollection = collect($mappedAudits);
 

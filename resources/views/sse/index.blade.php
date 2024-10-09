@@ -56,27 +56,51 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <a href="#" title="View Sample Request"></a>
-                            </td>
-                            <td>
-                                <a href="#" class="edit" data-id="" title="Edit Supplier Product">
-                                    
-                                </a>
-                            </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>
-                               
-                            </td>
-                            <td></td>
-                        </tr>                    
+                        @if($data->count() > 0)
+                            @foreach($data as $shipment_sample)
+                                <tr>
+                                    <td>
+                                        <a href="{{ url('sse/view/' . $shipment_sample->id) }}" title="View Sample Request">{{ $shipment_sample->DateSubmitted }}</a>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0);" class="edit" data-id="{{ $shipment_sample->id }}" title="Edit Shipment Sample">
+                                            {{ $shipment_sample->SseNumber }}
+                                        </a>
+                                    </td>
+                                    <td>{{ $shipment_sample->AttentionTo }}</td>
+                                    <td>{{ $shipment_sample->RmType }}</td>
+                                    <td>{{ $shipment_sample->Grade }}</td>
+                                    <td>{{ $shipment_sample->Origin }}</td>
+                                    <td>{{ $shipment_sample->Supplier }}</td>
+                                    <td>
+                                        @if($shipment_sample->Status == 10)
+                                            <div class="badge badge-success">Open</div>
+                                        @else
+                                            <div class="badge badge-warning">Closed</div>
+                                        @endif
+                                    </td>
+                                    <td></td>
+                                </tr>   
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="9" align="center">No matching records found</td>
+                            </tr>
+                        @endif                 
                     </tbody>
                 </table>
+            </div>
+            {!! $data->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
+            @php
+                $total = $data->total();
+                $currentPage = $data->currentPage();
+                $perPage = $data->perPage();
+                
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
             </div>
         </div>
     </div>
@@ -95,7 +119,7 @@
                 <form method="POST" enctype="multipart/form-data" id="form_shipment_sample">
                     <span id="form_result"></span>
                     @csrf
-                    <input type="hidden" name="SseNumber" value="">
+                    <input type="text" name="SseNumber" value="{{ $newSseNo }}">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -159,7 +183,14 @@
                             </div>
                             <div class="form-group">
                                 <label>Product ordered is:</label>
-                                <input type="text" class="form-control" id="ProductOrdered" name="ProductOrdered" placeholder="Enter Product Ordered">
+                                <select class="form-control js-example-basic-single" id="ProductOrdered" name="ProductOrdered" style="position: relative !important" title="Select Product Ordered">
+                                    <option value="" disabled selected>Select Product Ordered</option>
+                                    <option value="1">For Shipment by supplier</option>
+                                    <option value="2">In transit to Manila or Plant</option>
+                                    <option value="3">Delivered to plant & on stock</option>
+                                    <option value="4">Shipped out to buyer</option>
+                                    <option value="5">Others</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -170,49 +201,6 @@
                             <div class="form-group">
                                 <label>Ordered:</label>
                                 <input type="text" class="form-control" id="Ordered" name="Ordered" placeholder="Enter Ordered">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-header">
-                        <span class="header-label font-weight-bold">Sample Details</span>
-                        <hr class="form-divider alert-dark">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-check form-check-inline text-center">
-                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="1">
-                                <label class="form-check-label">Pre-ship sample</label>
-                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="2">
-                                <label class="form-check-label">Co-ship sample</label>
-                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="3">
-                                <label class="form-check-label">Complete samples</label>
-                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="4">
-                                <label class="form-check-label">Partial samples. More samples to follow</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group" id="lotNoContainer">
-                                <label>No of pack:</label>
-                                <div class="input-group">         
-                                    <input type="text" class="form-control" id="LotNumber" name="LotNumber[]" placeholder="Enter Lot Number">
-                                    <button class="btn btn-sm btn-primary addRowBtn1" style="border-radius: 0px;" type="button">+</button>
-                                </div>
-                                <input type="text" class="form-control" id="QtyRepresented" name="QtyRepresented[]" placeholder="Enter Qty Represented">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group" id="attachmentsContainer">
-                                <label>Attachments:</label>
-                                <div class="input-group">         
-                                    <select class="form-control js-example-basic-single" name="Name[]" id="Name" title="Select Attachment Name" >
-                                        <option value="" disabled selected>Select Attachment Name</option>
-                                        <option value="COA">COA</option>
-                                        <option value="Specifications">Specifications</option>
-                                        <option value="Others">Others</option>
-                                    </select>
-                                    <button class="btn btn-sm btn-primary addRowBtn2" style="border-radius: 0px;" type="button">+</button>
-                                </div>
-                                <input type="file" class="form-control" id="Path" name="Path[]">
                             </div>
                         </div>
                     </div>
@@ -247,6 +235,49 @@
                             <div class="form-group">
                                 <label>Lot Numbers on bags:</label>
                                 <input type="text" class="form-control" id="LnBags" name="LnBags" placeholder="Enter Lot Number on Bags">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-header">
+                        <span class="header-label font-weight-bold">Sample Details</span>
+                        <hr class="form-divider alert-dark">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-check form-check-inline text-center">
+                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="Pre-ship sample">
+                                <label class="form-check-label">Pre-ship sample</label>
+                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="Co-ship sample">
+                                <label class="form-check-label">Co-ship sample</label>
+                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="Complete samples">
+                                <label class="form-check-label">Complete samples</label>
+                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="Partial samples. More samples to follow">
+                                <label class="form-check-label">Partial samples. More samples to follow</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" id="lotNoContainer">
+                                <label>No of pack:</label>
+                                <div class="input-group">         
+                                    <input type="text" class="form-control" id="LotNumber" name="LotNumber[]" placeholder="Enter Lot Number">
+                                    <button class="btn btn-sm btn-primary addRowBtn1" style="border-radius: 0px;" type="button">+</button>
+                                </div>
+                                <input type="text" class="form-control" id="QtyRepresented" name="QtyRepresented[]" placeholder="Enter Qty Represented">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" id="attachmentsContainer">
+                                <label>Attachments:</label>
+                                <div class="input-group">         
+                                    <select class="form-control js-example-basic-single" name="Name[]" id="Name" title="Select Attachment Name" >
+                                        <option value="" disabled selected>Select Attachment Name</option>
+                                        <option value="COA">COA</option>
+                                        <option value="Specifications">Specifications</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-primary addRowBtn2" style="border-radius: 0px;" type="button">+</button>
+                                </div>
+                                <input type="file" class="form-control" id="Path" name="Path[]">
                             </div>
                         </div>
                     </div>
@@ -331,7 +362,7 @@
 
         $('#addSseBtn').click(function(){
             $('#formSampleShipment').modal('show'); 
-            $('.modal-title').text("Add New Sample Shipment"); 
+            $('.modal-title').text("Add New Shipment Sample"); 
             $('#form_result').html(''); 
             $('#Sample Shipment')[0].reset(); 
             $('#action_button').val("Save"); 
@@ -347,7 +378,7 @@
                 action_url = "{{ route('shipment_sample.store') }}";
             } else if ($('#action').val() == 'Edit') {
                 var id = $('#hidden_id').val();  
-                action_url = "{{ route('update_spe', ':id') }}".replace(':id', id);  
+                action_url = "{{ route('update_shipment_sample', ':id') }}".replace(':id', id);  
             }
 
             $.ajax({
@@ -387,6 +418,65 @@
                             $('#form_result').empty(); 
                         });
                     }
+                }
+            });
+        });
+
+        $(document).on('click', '.edit', function() {
+            var id = $(this).data('id');
+            $('#hidden_id').val(id);
+            $('#action').val('Edit');
+
+            $.ajax({
+                url: "{{ route('edit_shipment_sample', ':id') }}".replace(':id', id),
+                dataType: "json",
+                success: function(data) {
+                    $('#RmType').val(data.data.RmType);
+                    $('#DateSubmitted').val(data.data.DateSubmitted);
+                    $('#AttentionTo').val(data.data.AttentionTo).trigger('change');
+                    $('#ProductCode').val(data.data.ProductCode);
+                    $('#Quantity').val(data.data.Quantity);
+                    $('#Supplier').val(data.data.Supplier).trigger('change');
+                    $('#SseResult').val(data.data.SseResult).trigger('change');
+                    $('#Grade').val(data.data.Grade);
+                    $('#Origin').val(data.data.Origin);
+                    $('#ResultSpeNo').val(data.data.ResultSpeNo);
+                    $('#PoNumber').val(data.data.PoNumber);
+                    $('#Ordered').val(data.data.Ordered);
+                    $('#Buyer').val(data.data.Buyer);
+                    $('#BuyersPo').val(data.data.BuyersPo);
+                    $('#SalesAgreement').val(data.data.SalesAgreement);
+                    $('#ProductDeclared').val(data.data.ProductDeclared);
+                    $('#Instruction').val(data.data.Instruction);
+                    $('#LnBags').val(data.data.LnBags);
+                    $('#hidden_id').val(data.data.id);    
+                    $('#attachmentsContainer .form-group').remove();
+
+                    // Add all attachments dynamically
+                    $.each(data.shipment_attachments, function(index, attachment) {
+                        var attachmentRow = `
+                            <div class="form-group attachment-row" style="margin-top: 10px" data-id="${attachment.id}">
+                                <div class="input-group">
+                                    <select class="form-control js-example-basic-single" name="Name[]" title="Select Attachment Name">
+                                        <option value="Sample" ${attachment.name == 'Sample' ? 'selected' : ''}>Sample</option>
+                                        <option value="Specifications" ${attachment.name == 'Specifications' ? 'selected' : ''}>Specifications</option>
+                                        <option value="COA" ${attachment.name == 'COA' ? 'selected' : ''}>COA</option>
+                                        <option value="Recipe" ${attachment.name == 'Recipe' ? 'selected' : ''}>Recipe</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-danger removeRowBtn" style="border-radius: 0px;" type="button">-</button>
+                                </div>
+                                <input type="hidden" name="FileId[]" value="${attachment.id}">
+                                <input type="file" class="form-control" name="Path[]">
+                                <a href="{{ url('storage/${attachment.path}') }}" target="_blank">${attachment.path}</a>
+                            </div>
+                        `;
+                        $('#attachmentsContainer').append(attachmentRow);
+                    });
+
+                    $('.modal-title').text("Edit Shipment Sample");
+                    $('#action_button').val("Update");
+                    $('#action').val("Edit");
+                    $('#formSampleShipment').modal('show');
                 }
             });
         });
