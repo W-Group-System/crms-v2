@@ -46,8 +46,8 @@
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit"  class="btn btn-success" value="Save">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit"  class="btn btn-outline-success" value="Save">
                     </div>
                 </form>
             </div>

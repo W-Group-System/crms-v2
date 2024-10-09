@@ -29,8 +29,8 @@
                         <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description" value="{{$sub->Description}}" required>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" id="action_button" class="btn btn-success" value="Save">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" id="action_button" class="btn btn-outline-success" value="Save">
                     </div>
                 </form>
             </div>

@@ -57,7 +57,7 @@
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Raw Material Details</h4>
                 </div>
                 <div class="col-lg-6" align="right">
-                    <a href="{{ url('raw_material') }}" class="btn btn-md btn-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <a href="{{ url('raw_material') }}" class="btn btn-md btn-outline-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
                 </div>
             </div>
             <form class="form-horizontal" id="form_product" enctype="multipart/form-data">

@@ -5,7 +5,7 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             Application Sub Categories
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#formProductSubcategories" id="addBtn">New</button>
+            <button type="button" class="btn btn-md btn-outline-primary" data-toggle="modal" data-target="#formProductSubcategories" id="addBtn">New</button>
             </h4>
             {{-- <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
@@ -19,8 +19,8 @@
                 </div>
             </form> --}}
             <div class="mb-3">
-                <button type="button" id="copy_btn" class="btn btn-info">Copy</button>
-                <a href="{{url('export_application_subcategories')}}" class="btn btn-success" target="_blank">Excel</a>
+                <button type="button" id="copy_btn" class="btn btn-outline-info">Copy</button>
+                <a href="{{url('export_application_subcategories')}}" class="btn btn-outline-success" target="_blank">Excel</a>
             </div>
 
             <div class="row">
@@ -54,8 +54,8 @@
             <table class="table table-striped table-bordered table-hover table-bordered" id="product_subcategories_table" width="100%">
                 <thead>
                     <tr>
-                        <th width="10%">Action</th>
-                        <th width="25%">Application</th>
+                        <th width="8%">Action</th>
+                        <th width="27%">Application</th>
                         <th width="30%">Subcategory</th>
                         <th width="35%">Description</th>
                     </tr>
@@ -63,12 +63,12 @@
                 <tbody>
                     @foreach ($subcategories as $sub)
                         <tr>
-                            <td>
-                                <button class="btn btn-warning btn-sm editBtn" data-toggle="modal" data-target="#formProductSubcategories-{{$sub->id}}" title="Edit" data-id="{{$sub->id}}">
+                            <td align="center">
+                                <button class="btn btn-outline-warning btn-sm editBtn" data-toggle="modal" data-target="#formProductSubcategories-{{$sub->id}}" title="Edit" data-id="{{$sub->id}}">
                                     <i class="ti-pencil"></i>
                                 </button>
 
-                                <button class="btn btn-danger btn-sm deleteSub" title="Delete" data-id="{{$sub->id}}">
+                                <button class="btn btn-outline-danger btn-sm deleteSub" title="Delete" data-id="{{$sub->id}}">
                                     <i class="ti-trash"></i>
                                 </button>
                             </td>
@@ -140,6 +140,12 @@
     @include('product_subcategories.edit_product_application_subcategories')
 @endforeach
 
+<style>
+    .swal-wide {
+        width: 400px;
+    }
+</style>
+
 <script>
     $(document).ready(function() {
         $('.deleteSub').on('click', function() {
@@ -147,12 +153,14 @@
 
             Swal.fire({
                 title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
+                // text: "You won't be able to revert this!",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Yes, delete it!",
+                customClass: 'swal-wide',
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
