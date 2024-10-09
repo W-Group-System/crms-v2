@@ -119,7 +119,7 @@
                     </b>
                 </div>     
                 <div class="left-div" style="margin-top: 10;">
-                    <p style="font-size:7;">T: +632.856.3838 F: +632.856.1033</p>
+                    <p style="font-size:7;">T: +632.856.3838</p>
                 </div>    
                 <div class="left-div">
                     <p style="font-size:8; text-align:right;">info@mrdccarageenan.com
