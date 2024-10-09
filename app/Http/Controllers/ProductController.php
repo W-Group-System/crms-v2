@@ -399,6 +399,14 @@ class ProductController extends Controller
 
     public function addToNewProducts(Request $request)
     {
+        $productMaterialComposition = ProductMaterialsComposition::where('ProductId', $request->id)->get();
+
+        if ($productMaterialComposition->isEmpty())
+        {
+            Alert::error('Error! Unable to move products into current');
+            return back();
+        }
+        
         $product = Product::findOrFail($request->id);
         $product->status = 2;
         $product->save();

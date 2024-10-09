@@ -556,6 +556,14 @@
                             </div>
                         </li>
                         @endif
+                        @if(auth()->user()->role->type == 'ITD')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/audits') }}">
+                            <i class="icon-paper menu-icon"></i>
+                            <span class="menu-title">Logs</span>
+                            </a>
+                        </li>
+                        @endif
                     </ul>
                 </nav>
                 <!-- partial -->
