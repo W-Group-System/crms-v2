@@ -260,6 +260,13 @@
                 <p class="right-p">We are looking forward to your favorable feedback.</p>
                 <p class="right-p">Thank you for your time and cosideration!</p>
                 <p class="right-p">Sincerely,</p>
+                @foreach ($price_monitoring_ls->requestPriceProducts as $price_products)
+                    @if($price_products->LsalesMarkupPercent >= 15)
+                        <p class="right-p">{{auth()->user()->full_name}}</p>
+                    @else
+                        <p class="right-p">Maricris J. Ribon</p>
+                    @endif
+                @endforeach
                 <br>
                 <br>
                 {{-- {{dd($price_monitoring_ls->requestPriceProducts)}} --}}
