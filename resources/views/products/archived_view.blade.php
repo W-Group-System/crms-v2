@@ -98,7 +98,15 @@
             </div>
             <div class="row">
                 <div class="col-md-2"><p class="mb-0"><b>Created By:</b></p></div>
-                <div class="col-md-3"><p class="mb-0">{{ $userAccounts->full_name }}</p></div>
+                <div class="col-md-3">
+                    <p class="mb-0">
+                        @if($data->userById != null)
+                        {{optional($data->userById)->full_name}}
+                        @elseif($data->userByUserId != null)
+                        {{optional($data->userByUserId)->full_name}}
+                        @endif
+                    </p>
+                </div>
             </div>
             <div class="row">
                 <div class="col-sm-2 col-form-label"><p class="mb-0"><b>Date Created:</b></p></div>
@@ -108,9 +116,9 @@
                 <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
                 <div class="col-md-3">
                     @if($data->approveById)
-                    <p class="mb-0">{{ $data->approveById->full_name}}</p>
+                    <p class="mb-0">{{ optional($data->approveById)->full_name}}</p>
                     @elseif($data->approveByUserId)
-                    <p class="mb-0">{{ $data->userByUserId->full_name }}</p>
+                    <p class="mb-0">{{ optional($data->userByUserId)->full_name }}</p>
                     @else
                     N/A
                     @endif
@@ -473,9 +481,9 @@
                                         <td>
                                             @if($ic->products)
                                             @if($ic->products->userByUserId)
-                                                {{$ic->products->userByUserId->full_name}}
+                                                {{optional($ic->products->userByUserId)->full_name}}
                                             @else
-                                                {{$ic->products->userById->full_name}}
+                                                {{optional($ic->products->userById)->full_name}}
                                             @endif
                                             @endif
                                         </td>
@@ -505,7 +513,7 @@
                                                 @if($logs->userByUserId)
                                                 {{optional($logs->userByUserId)->full_name}}
                                                 @elseif($logs->userById)
-                                                {{$logs->userById->full_name}}
+                                                {{optional($logs->userById)->full_name}}
                                                 @endif
                                             </td>
                                             <td>{{$logs->Details}}</td>
