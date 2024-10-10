@@ -7,6 +7,7 @@ use App\ProductMaterialsComposition;
 use App\UserAccessModule;
 use App\RequestProductEvaluation;
 use App\SalesApprovers;
+use App\TransactionLogs;
 use App\User;
 use App\UserEventLogs;
 use Illuminate\Support\Facades\DB;
@@ -750,4 +751,108 @@ function primarySalesApprover($primary_sales,$user_login)
     }
 
     return false;
+}
+
+function crrHistoryLogs($action, $crr)
+{
+    $transaction_logs = new TransactionLogs;
+    $transaction_logs->Type = 10;
+    $transaction_logs->TransactionId = $crr;
+    $transaction_logs->ActionDate = date('Y-m-d h:i:s');
+    $transaction_logs->UserId = auth()->user()->id;
+
+    if ($action == 'create')
+    {
+        $transaction_logs->Details = "Create new customer requirement entry.";
+    }
+    if ($action == 'update')
+    {
+        $transaction_logs->Details = "Update customer requirement entry.";
+    }
+    if ($action == 'close')
+    {
+        $transaction_logs->Details = "Close customer requirement entry.";
+    }
+    if ($action == 'open')
+    {
+        $transaction_logs->Details = "Open customer requirement entry.";
+    }
+    if ($action == 'cancel')
+    {
+        $transaction_logs->Details = "Cancel customer requirement entry.";
+    }
+    if ($action == 'approve')
+    {
+        $transaction_logs->Details = "Approve customer requirement entry.";
+    }
+    if ($action == 'return_to_sales')
+    {
+        $transaction_logs->Details = "Return customer requirement entry.";
+    }
+    if ($action == 'received')
+    {
+        $transaction_logs->Details = "Received customer requirement entry.";
+    }
+    if ($action == 'add_supplementary')
+    {
+        $transaction_logs->Details = "Add new customer requirement supplementary details entry.";
+    }
+    if ($action == 'update_supplementary')
+    {
+        $transaction_logs->Details = "Update customer requirement supplementary details entry.";
+    }
+    if ($action == 'delete_supplementary')
+    {
+        $transaction_logs->Details = "Delete customer requirement supplementary details entry.";
+    }
+    if ($action == 'add_personnel')
+    {
+        $transaction_logs->Details = "Add new customer requirement personnel entry.";
+    }
+    if ($action == 'update_personnel')
+    {
+        $transaction_logs->Details = "Update assigned customer requirement personnel entry.";
+    }
+    if ($action == 'delete_personnel')
+    {
+        $transaction_logs->Details = "Delete customer requirement personnel entry.";
+    }
+    if ($action == 'start')
+    {
+        $transaction_logs->Details = "Start customer requirement transaction.";
+    }
+    if ($action == 'pause')
+    {
+        $transaction_logs->Details = "Pause customer requirement transaction.";
+    }
+    if ($action == 'submit_initial' || $action == 'submit_final')
+    {
+        $transaction_logs->Details = "Submit customer requirement transaction for review.";
+    }
+    if ($action == 'return_to_specialist')
+    {
+        $transaction_logs->Details = "Return customer requirement transaction.";
+    }
+    if ($action == 'complete')
+    {
+        $transaction_logs->Details = "Complete customer requirement transaction.";
+    }
+    if ($action == 'sales_accepted')
+    {
+        $transaction_logs->Details = "Accept customer requirement transaction.";
+    }
+    if ($action == 'add_files')
+    {
+        $transaction_logs->Details = "Add new customer requirement file entry.";
+    }
+    if ($action == 'update_files')
+    {
+        $transaction_logs->Details = "Update customer requirement file entry.";
+    }
+    if ($action == 'delete_files')
+    {
+        $transaction_logs->Details = "Delete customer requirement file entry.";
+    }
+
+    $transaction_logs->save();
 }
