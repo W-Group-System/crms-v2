@@ -221,7 +221,7 @@ function checkIfHaveFiles($role)
 
 function checkIfItsManagerOrSupervisor($role)
 {
-    if (($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-MRDC' || $role->type == 'QCD-PBI' || $role->type == 'QCD-CCC') && ($role->name == "Department Admin" || $role->name == "Staff L2"))
+    if (($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-MRDC' || $role->type == 'QCD-PBI' || $role->type == 'QCD-CCC' || $role->type == 'LS' || $role->type == 'IS') && ($role->name == "Department Admin" || $role->name == "Staff L2"))
     {
         return "yes";
     }
