@@ -501,6 +501,8 @@ class CustomerRequirementController extends Controller
                 $crrFiles->save();
             }
         }
+
+        crrHistoryLogs("create", $customerRequirementData->id);
         
         Alert::success('Successfully Save')->persistent('Dismiss');
         return back();
@@ -574,6 +576,8 @@ class CustomerRequirementController extends Controller
                 $crrFiles->save();
             }
         }
+
+        crrHistoryLogs("update", $id);
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
@@ -687,6 +691,8 @@ class CustomerRequirementController extends Controller
         $crrFile->Path = $file_name;
         $crrFile->save();
 
+        crrHistoryLogs('add_files', $request->customer_requirements_id);
+
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back()->with(['tab' => 'files']);
     }
@@ -729,6 +735,8 @@ class CustomerRequirementController extends Controller
             $fileCrr->save();
         }
 
+        crrHistoryLogs('update_files', $request->customer_requirements_id);
+
         Alert::success('Successfully Uploaded')->persistent('Dismiss');
         return back()->with(['tab' => 'files']);
     }
@@ -768,6 +776,8 @@ class CustomerRequirementController extends Controller
 
         $crrFile->save();
 
+        crrHistoryLogs('update_files', $crrFile->CustomerRequirementId);
+
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back()->with(['tab' => 'files']);
     }
@@ -776,6 +786,8 @@ class CustomerRequirementController extends Controller
     {
         $crrFile = FileCrr::findOrFail($id);
         $crrFile->delete();
+
+        crrHistoryLogs('delete_files', $crrFile->CustomerRequirementId);
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
         return back()->with(['tab' => 'files']);
@@ -791,6 +803,8 @@ class CustomerRequirementController extends Controller
         // $customerRequirement->Status = $request->Status;
         // $customerRequirement->Progress = $request->progress;
         $customerRequirement->save();
+
+        crrHistoryLogs('update', $id);
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
@@ -837,6 +851,8 @@ class CustomerRequirementController extends Controller
         $transactionApproval->RemarksType = "closed";
         $transactionApproval->save();
 
+        crrHistoryLogs('close', $id);
+
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
@@ -856,6 +872,8 @@ class CustomerRequirementController extends Controller
         $transactionApproval->Remarks = $request->cancel_remarks;
         $transactionApproval->RemarksType = "cancelled";
         $transactionApproval->save();
+
+        crrHistoryLogs('cancel', $id);
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
@@ -899,6 +917,8 @@ class CustomerRequirementController extends Controller
             $transactionApproval->save();
         }
 
+        crrHistoryLogs('approve', $id);
+
         Alert::success('Successfully Approved')->persistent('Dismiss');
         return back();
     }
@@ -918,6 +938,8 @@ class CustomerRequirementController extends Controller
         $transactionApproval->RemarksType = "open";
         $transactionApproval->save();
 
+        crrHistoryLogs('open', $id);
+
         Alert::success('The status are now open')->persistent('Dismiss');
         return back();
     }
@@ -928,6 +950,8 @@ class CustomerRequirementController extends Controller
         $crr->Progress = 35;
         $crr->DateReceived = date('Y-m-d h:i:s');
         $crr->save();
+
+        crrHistoryLogs('received', $id);
 
         Alert::success('Successfully received')->persistent('Dismiss');
         return back();
@@ -954,6 +978,8 @@ class CustomerRequirementController extends Controller
             }
         }
 
+        crrHistoryLogs('start', $id);
+
         Alert::success('Successfully Start')->persistent('Dismiss');
         return back();
     }
@@ -973,6 +999,8 @@ class CustomerRequirementController extends Controller
         $transactionApproval->RemarksType = "paused";
         $transactionApproval->save();
 
+        crrHistoryLogs('pause', $id);
+
         Alert::success('Successfully Paused')->persistent('Dismiss');
         return back();
     }
@@ -983,6 +1011,8 @@ class CustomerRequirementController extends Controller
         $crr->Progress = 57;
         $crr->save();
 
+        crrHistoryLogs('submit_initial', $id);
+
         Alert::success('Successfully Submitted')->persistent('Dismiss');
         return back();
     }
@@ -992,6 +1022,8 @@ class CustomerRequirementController extends Controller
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 81;
         $crr->save();
+
+        crrHistoryLogs('submit_final', $id);
 
         Alert::success('Successfully Final Review')->persistent('Dismiss');
         return back();
@@ -1009,6 +1041,8 @@ class CustomerRequirementController extends Controller
             $crr->Progress = 60;
             $crr->DateCompleted = date('Y-m-d h:i:s');
             $crr->save();
+
+            crrHistoryLogs('complete', $id);
     
             Alert::success('Successfully Completed')->persistent('Dismiss');
         }
@@ -1028,6 +1062,8 @@ class CustomerRequirementController extends Controller
         $crrDetails->DetailsOfRequirement = $request->details;
         $crrDetails->save();
 
+        crrHistoryLogs('add_supplementary', $request->customer_requirement_id);
+
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back()->with(['tab' => 'supplementary_details']);
     }
@@ -1040,6 +1076,8 @@ class CustomerRequirementController extends Controller
         $crrDetails->DetailsOfRequirement = $request->details;
         $crrDetails->save();
 
+        crrHistoryLogs('update_supplementary', $request->customer_requirement_id);
+
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back()->with(['tab' => 'supplementary_details']);
     }
@@ -1048,6 +1086,8 @@ class CustomerRequirementController extends Controller
     {
         $crrDetails = CrrDetail::findOrFail($id);
         $crrDetails->delete();
+
+        crrHistoryLogs('delete_supplementary', $crrDetails->CustomerRequirementId);
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back()->with(['tab' => 'supplementary_details']);
@@ -1060,6 +1100,8 @@ class CustomerRequirementController extends Controller
         $personnel->PersonnelUserId = $request->personnel;
         $personnel->save(); 
 
+        crrHistoryLogs('add_personnel', $request->customer_requirement_id);
+
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back()->with(['tab' => 'personnel']);
     }
@@ -1071,6 +1113,8 @@ class CustomerRequirementController extends Controller
         $personnel->PersonnelUserId = $request->personnel;
         $personnel->save(); 
 
+        crrHistoryLogs('update_personnel', $request->customer_requirement_id);
+
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back()->with(['tab' => 'personnel']);
     }
@@ -1079,6 +1123,8 @@ class CustomerRequirementController extends Controller
     {
         $personnel = CrrPersonnel::findOrFail($id);
         $personnel->delete();
+
+        crrHistoryLogs('delete_personnel', $personnel->CustomerRequirementId);
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
         return back()->with(['tab' => 'personnel']);
@@ -1129,6 +1175,8 @@ class CustomerRequirementController extends Controller
         $transactionApproval->RemarksType = "returned";
         $transactionApproval->save();
 
+        crrHistoryLogs('return_to_sales', $id);
+
         Alert::success('Successfully return to sales')->persistent('Dismiss');
         return back();
     }
@@ -1138,6 +1186,8 @@ class CustomerRequirementController extends Controller
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 50;
         $crr->save(); 
+
+        crrHistoryLogs('return_to_specialist', $id);
 
         Alert::success('Successfully return to rnd')->persistent('Dismiss');
         return back();
@@ -1149,14 +1199,20 @@ class CustomerRequirementController extends Controller
         $crr->Progress = 70;
         $crr->save(); 
 
+        crrHistoryLogs('sales_accepted', $id);
+
         Alert::success('Sales Accepted')->persistent('Dismiss');
         return back();
     }
 
-    public function printCrr()
+    public function printCrr($id)
     {
+        $crr = CustomerRequirement::findOrFail($id);
+        $data = [];
+        $data['crr'] = $crr;
+
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('customer_requirements.crr_pdf');
+        $pdf->loadView('customer_requirements.crr_pdf', $data);
 
         return $pdf->stream();
     }

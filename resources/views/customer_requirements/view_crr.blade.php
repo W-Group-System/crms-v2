@@ -22,7 +22,7 @@
                     </a> -->
 
                     @if(auth()->user()->role->type != "LS")
-                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_crr')}}" target="_blank">
+                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_crr/'.$crr->id)}}" target="_blank">
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
                     </a>
