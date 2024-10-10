@@ -1153,10 +1153,14 @@ class CustomerRequirementController extends Controller
         return back();
     }
 
-    public function printCrr()
+    public function printCrr($id)
     {
+        $crr = CustomerRequirement::findOrFail($id);
+        $data = [];
+        $data['crr'] = $crr;
+
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('customer_requirements.crr_pdf');
+        $pdf->loadView('customer_requirements.crr_pdf', $data);
 
         return $pdf->stream();
     }
