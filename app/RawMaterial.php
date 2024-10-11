@@ -19,4 +19,8 @@ class RawMaterial extends Model
     {
         return $this->hasMany(ProductMaterialsComposition::class, 'MaterialId');
     }
+    public function basePrice()
+    {
+        return $this->hasMany(BasePrice::class,'MaterialId');
+    }
 }
