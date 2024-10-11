@@ -11,7 +11,7 @@ class ShipmentSample extends Model
 
     protected $table = "sse";
     protected $fillable = [
-        'SseNumber', 'DateSubmitted', 'AttentionTo', 'RmType', 'Grade', 'ProductCode', 'Origin', 'Supplier'
+        'SseNumber', 'DateSubmitted', 'AttentionTo', 'RmType', 'Grade', 'ProductCode', 'Origin', 'Supplier', 'SampleType'
     ];
 
     public function shipment_pack() 
@@ -22,5 +22,10 @@ class ShipmentSample extends Model
     public function shipment_attachments() 
     {
         return $this->hasMany(SseFiles::class, 'SseId', 'id');
+    }
+
+    public function shipment_work() 
+    {
+        return $this->hasMany(SseWork::class, 'SseId', 'id');
     }
 }
