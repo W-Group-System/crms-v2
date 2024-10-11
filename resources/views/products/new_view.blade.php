@@ -34,6 +34,7 @@
                 $identicalComposition = identicalComposition($data->productMaterialComposition, $data->id);
                 $customerRequirements = customerRequirements($data->code);
                 $productRps = productRps($data->code);
+                $history_rmc = historyRmc($data->productMaterialComposition, $data->id);
             @endphp
             <div class="row">
                 <div class="col-md-2">
@@ -389,6 +390,14 @@
                                     <th>RMC (PHP)</th>
                                 </tr>
                                 <tbody>
+                                    @foreach ($history_rmc as $rmc)
+                                    <tr>
+                                        <td>{{date('Y-m-d', strtotime($rmc['effective_dates']))}}</td>
+                                        <td>{{$rmc['total_price']}}</td>
+                                        <td>{{number_format(usdToEur($rmc['total_price']), 2)}}</td>
+                                        <td>{{number_format(usdToPhp($rmc['total_price']), 2)}}</td>
+                                    </tr>
+                                    @endforeach
                                 </tbody>
                             </thead>
                         </table>
