@@ -44,6 +44,7 @@
                 <table class="table table-striped table-bordered table-hover" id="spe_table" width="100%">
                     <thead>
                         <tr>
+                            <th>Action</th>
                             <th>Date Requested</th>
                             <th>SPE #</th>
                             <th>Attention To</th>
@@ -58,13 +59,12 @@
                         @if($data->count() > 0)
                             @foreach($data as $supplier_products)
                                 <tr>
-                                    <td>
-                                        <a href="{{ url('spe/view/' . $supplier_products->id) }}" title="View Sample Request">{{ $supplier_products->DateRequested }}</a>
+                                    <td align="center">
+                                        <a href="javascript:void(0);" class="edit btn btn-sm btn-outline-warning" data-id="{{ $supplier_products->id }}" title="Edit Supplier Product"><i class="ti-pencil"></i></a>
                                     </td>
+                                    <td>{{ $supplier_products->DateRequested }}</td>
                                     <td>
-                                        <a href="javascript:void(0);" class="edit" data-id="{{ $supplier_products->id }}" title="Edit Supplier Product">
-                                            {{ $supplier_products->SpeNumber }}
-                                        </a>
+                                        <a href="{{ url('spe/view/' . $supplier_products->id) }}" title="View Sample Request">{{ $supplier_products->SpeNumber }}</a>
                                     </td>
                                     <td>{{ $supplier_products->AttentionTo }}</td>
                                     <td>{{ $supplier_products->ProductName }}</td>
@@ -201,7 +201,7 @@
                                     <option value="Mesh Analysis">Mesh Analysis</option>
                                 </select>
                             </div>
-                            @if(auth()->user()->role->type == 'RND' || auth()->user()->role->type == 'QCD')
+                            @if(auth()->user()->role->type == 'RND' || auth()->user()->role->type == 'QCD-WHI' || auth()->user()->role->type == 'QCD-PBI' || auth()->user()->role->type == 'QCD-MRDC' || auth()->user()->role->type == 'QCD-CCC')
                                 <div class="form-group">
                                     <label>Disposition:</label>
                                     <select class="form-control js-example-basic-single" id="Disposition" name="Disposition" style="position: relative !important" title="Select Disposition">

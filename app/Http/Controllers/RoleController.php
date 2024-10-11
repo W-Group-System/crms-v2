@@ -857,49 +857,49 @@ class RoleController extends Controller
                     }
                 }
 
-                if ($module == "Supplier Product Evaluation")
-                {
-                    if ($request->has('Supplier_Product_Evaluation'))
-                    {
-                        $access->edit = $request->Supplier_Product_Evaluation['edit'] ?? null;
-                        $access->create = $request->Supplier_Product_Evaluation['create'] ?? null; 
-                        $access->update = $request->Supplier_Product_Evaluation['update'] ?? null; 
-                        $access->view = $request->Supplier_Product_Evaluation['view'] ?? null; 
-                        $access->delete = $request->Supplier_Product_Evaluation['delete'] ?? null; 
-                        $access->approve = $request->Supplier_Product_Evaluation['approve'] ?? null; 
-                    }
-                    else
-                    {
-                        $access->create = null;
-                        $access->edit = null;
-                        $access->update = null; 
-                        $access->view = null; 
-                        $access->delete = null; 
-                        $access->approve = null;
-                    }
-                }
+                // if ($module == "Supplier Product Evaluation")
+                // {
+                //     if ($request->has('Supplier_Product_Evaluation'))
+                //     {
+                //         $access->edit = $request->Supplier_Product_Evaluation['edit'] ?? null;
+                //         $access->create = $request->Supplier_Product_Evaluation['create'] ?? null; 
+                //         $access->update = $request->Supplier_Product_Evaluation['update'] ?? null; 
+                //         $access->view = $request->Supplier_Product_Evaluation['view'] ?? null; 
+                //         $access->delete = $request->Supplier_Product_Evaluation['delete'] ?? null; 
+                //         $access->approve = $request->Supplier_Product_Evaluation['approve'] ?? null; 
+                //     }
+                //     else
+                //     {
+                //         $access->create = null;
+                //         $access->edit = null;
+                //         $access->update = null; 
+                //         $access->view = null; 
+                //         $access->delete = null; 
+                //         $access->approve = null;
+                //     }
+                // }
 
-                if ($module == "Supplier Shipment Evaluation")
-                {
-                    if ($request->has('Supplier_Shipment_Evaluation'))
-                    {
-                        $access->edit = $request->Supplier_Shipment_Evaluation['edit'] ?? null;
-                        $access->create = $request->Supplier_Shipment_Evaluation['create'] ?? null; 
-                        $access->update = $request->Supplier_Shipment_Evaluation['update'] ?? null; 
-                        $access->view = $request->Supplier_Shipment_Evaluation['view'] ?? null; 
-                        $access->delete = $request->Supplier_Shipment_Evaluation['delete'] ?? null; 
-                        $access->approve = $request->Supplier_Shipment_Evaluation['approve'] ?? null; 
-                    }
-                    else
-                    {
-                        $access->create = null;
-                        $access->edit = null;
-                        $access->update = null; 
-                        $access->view = null; 
-                        $access->delete = null; 
-                        $access->approve = null;
-                    }
-                }
+                // if ($module == "Supplier Shipment Evaluation")
+                // {
+                //     if ($request->has('Supplier_Shipment_Evaluation'))
+                //     {
+                //         $access->edit = $request->Supplier_Shipment_Evaluation['edit'] ?? null;
+                //         $access->create = $request->Supplier_Shipment_Evaluation['create'] ?? null; 
+                //         $access->update = $request->Supplier_Shipment_Evaluation['update'] ?? null; 
+                //         $access->view = $request->Supplier_Shipment_Evaluation['view'] ?? null; 
+                //         $access->delete = $request->Supplier_Shipment_Evaluation['delete'] ?? null; 
+                //         $access->approve = $request->Supplier_Shipment_Evaluation['approve'] ?? null; 
+                //     }
+                //     else
+                //     {
+                //         $access->create = null;
+                //         $access->edit = null;
+                //         $access->update = null; 
+                //         $access->view = null; 
+                //         $access->delete = null; 
+                //         $access->approve = null;
+                //     }
+                // }
 
                 if ($module == "User Setup")
                 {
@@ -1832,16 +1832,38 @@ class RoleController extends Controller
                     }
                 }
 
-                if ($module == "Supplier Transaction Module")
+                // if ($module == "Supplier Transaction Module")
+                // {
+                //     if ($request->has('Supplier_Transaction_Module'))
+                //     {
+                //         $access->edit = $request->Supplier_Transaction_Module['edit'] ?? null;
+                //         $access->create = $request->Supplier_Transaction_Module['create'] ?? null; 
+                //         $access->update = $request->Supplier_Transaction_Module['update'] ?? null; 
+                //         $access->view = $request->Supplier_Transaction_Module['view'] ?? null; 
+                //         $access->delete = $request->Supplier_Transaction_Module['delete'] ?? null; 
+                //         $access->approve = $request->Supplier_Transaction_Module['approve'] ?? null; 
+                //     }
+                //     else
+                //     {
+                //         $access->create = null;
+                //         $access->edit = null;
+                //         $access->update = null; 
+                //         $access->view = null; 
+                //         $access->delete = null; 
+                //         $access->approve = null;
+                //     }
+                // }
+
+                if ($module == "Supplier Information")
                 {
-                    if ($request->has('Supplier_Transaction_Module'))
+                    if ($request->has('Supplier_Information'))
                     {
-                        $access->edit = $request->Supplier_Transaction_Module['edit'] ?? null;
-                        $access->create = $request->Supplier_Transaction_Module['create'] ?? null; 
-                        $access->update = $request->Supplier_Transaction_Module['update'] ?? null; 
-                        $access->view = $request->Supplier_Transaction_Module['view'] ?? null; 
-                        $access->delete = $request->Supplier_Transaction_Module['delete'] ?? null; 
-                        $access->approve = $request->Supplier_Transaction_Module['approve'] ?? null; 
+                        $access->edit = $request->Supplier_Information['edit'] ?? null;
+                        $access->create = $request->Supplier_Information['create'] ?? null; 
+                        $access->update = $request->Supplier_Information['update'] ?? null; 
+                        $access->view = $request->Supplier_Information['view'] ?? null; 
+                        $access->delete = $request->Supplier_Information['delete'] ?? null; 
+                        $access->approve = $request->Supplier_Information['approve'] ?? null; 
                     }
                     else
                     {
@@ -2151,7 +2173,8 @@ class RoleController extends Controller
             'Currency Exchange Rates',
             'Price Request Fixed Cost',
             'Price Request GAE',
-            'Supplier Transaction Module',
+            // 'Supplier Transaction Module',
+            'Supplier Information',
             'Supplier Product Evaluation',
             'Supplier Shipment Evaluation',
             'Payment Terms'

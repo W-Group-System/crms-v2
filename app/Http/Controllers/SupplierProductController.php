@@ -190,7 +190,7 @@ class SupplierProductController extends Controller
                     'path' => $attachment->Path,
                 ];
             });
-
+            
             return response()->json([
                 'data' => $data,
                 'instructions' => $data->supplier_instruction->pluck('Instruction')->toArray(), 
@@ -302,7 +302,7 @@ class SupplierProductController extends Controller
                 $supplierInstruction->save();
             }
         }
-
+        dd($request);
         // Return a success response
         return response()->json(['success' => 'Data is successfully updated.']);
     }

@@ -98,6 +98,15 @@
                         </div>
                     </div>
                     <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Status:</b></label>
+                        <div class="col-sm-3">
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Progress:</b></label>
+                        <div class="col-sm-3">
+                            <label></label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Attachments:</b></label>
                         <div class="col-sm-3">
                             @if($data->attachments && count($data->attachments) > 0)
@@ -118,6 +127,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div align="right" class="mt-3">
+                <a href="{{ url('supplier_product') }}" class="btn btn-outline-secondary">Close</a>
             </div>
         </div>
     </div>

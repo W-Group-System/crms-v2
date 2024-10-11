@@ -44,6 +44,7 @@
                 <table class="table table-striped table-bordered table-hover" id="spe_table" width="100%">
                     <thead>
                         <tr>
+                            <th>Action</th>
                             <th>Date Submitted</th>
                             <th>SSE #</th>
                             <th>Attention To</th>
@@ -59,11 +60,12 @@
                         @if($data->count() > 0)
                             @foreach($data as $shipment_sample)
                                 <tr>
-                                    <td>
-                                        <a href="{{ url('sse/view/' . $shipment_sample->id) }}" title="View Sample Request">{{ $shipment_sample->DateSubmitted }}</a>
+                                    <td align="center">
+                                        <a href="javascript:void(0);" class="edit btn btn-sm btn-outline-warning" data-id="{{ $shipment_sample->id }}" title="Edit Shipment Sample"><i class="ti-pencil"></i></a>
                                     </td>
+                                    <td>{{ $shipment_sample->DateSubmitted }}</td>
                                     <td>
-                                        <a href="javascript:void(0);" class="edit" data-id="{{ $shipment_sample->id }}" title="Edit Shipment Sample">
+                                    <a href="{{ url('shipment_sample/view/' . $shipment_sample->id) }}" title="View Shipment Sample">
                                             {{ $shipment_sample->SseNumber }}
                                         </a>
                                     </td>
@@ -119,7 +121,7 @@
                 <form method="POST" enctype="multipart/form-data" id="form_shipment_sample">
                     <span id="form_result"></span>
                     @csrf
-                    <input type="text" name="SseNumber" value="{{ $newSseNo }}">
+                    <input type="hidden" name="SseNumber" value="{{ $newSseNo }}">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -134,13 +136,13 @@
                                 <label>Grade:</label>
                                 <input type="text" class="form-control" id="Grade" name="Grade" placeholder="Enter Grade">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-0">
                                 <label>Result:</label>
                                 <select class="form-control js-example-basic-single" id="SseResult" name="SseResult" style="position: relative !important" title="Select Result">
                                     <option value="" disabled selected>Select Result</option>
                                     <option value="1">Old alternative product/ supplier</option>
                                     <option value="2">New Product WITHOUT SPE Result</option>
-                                    <option value="3">First shipment with SPE result.</option>
+                                    <option value="3">First shipment with SPE result</option>
                                 </select>
                             </div>
                             <div class="form-group" id="otherResult" style="display: none;">
@@ -238,53 +240,69 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-header">
-                        <span class="header-label font-weight-bold">Sample Details</span>
-                        <hr class="form-divider alert-dark">
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-check form-check-inline text-center">
-                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="Pre-ship sample">
-                                <label class="form-check-label">Pre-ship sample</label>
-                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="Co-ship sample">
-                                <label class="form-check-label">Co-ship sample</label>
-                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="Complete samples">
-                                <label class="form-check-label">Complete samples</label>
-                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType" value="Partial samples. More samples to follow">
-                                <label class="form-check-label">Partial samples. More samples to follow</label>
-                            </div>
+                    @if(auth()->user()->role->type == 'RND' || auth()->user()->role->type == 'QCD-WHI' || auth()->user()->role->type == 'QCD-PBI' || auth()->user()->role->type == 'QCD-MRDC' || auth()->user()->role->type == 'QCD-CCC')
+                        <div class="form-header">
+                            <span class="header-label font-weight-bold">Sample Details</span>
+                            <hr class="form-divider alert-dark">
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group" id="lotNoContainer">
-                                <label>No of pack:</label>
-                                <div class="input-group">         
-                                    <input type="text" class="form-control" id="LotNumber" name="LotNumber[]" placeholder="Enter Lot Number">
-                                    <button class="btn btn-sm btn-primary addRowBtn1" style="border-radius: 0px;" type="button">+</button>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-check form-check-inline text-center">
+                                    <input class="form-check-input" type="radio" name="SampleType" id="SampleType1" value="Pre-ship sample">
+                                    <label class="form-check-label" for="SampleType1">Pre-ship sample</label>
+
+                                    <input class="form-check-input" type="radio" name="SampleType" id="SampleType2" value="Co-ship sample">
+                                    <label class="form-check-label" for="SampleType2">Co-ship sample</label>
+
+                                    <input class="form-check-input" type="radio" name="SampleType" id="SampleType3" value="Complete samples">
+                                    <label class="form-check-label" for="SampleType3">Complete samples</label>
+
+                                    <input class="form-check-input" type="radio" name="SampleType" id="SampleType4" value="Partial samples. More samples to follow">
+                                    <label class="form-check-label" for="SampleType4">Partial samples. More samples to follow</label>
                                 </div>
-                                <input type="text" class="form-control" id="QtyRepresented" name="QtyRepresented[]" placeholder="Enter Qty Represented">
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group" id="attachmentsContainer">
-                                <label>Attachments:</label>
-                                <div class="input-group">         
-                                    <select class="form-control js-example-basic-single" name="Name[]" id="Name" title="Select Attachment Name" >
-                                        <option value="" disabled selected>Select Attachment Name</option>
-                                        <option value="COA">COA</option>
-                                        <option value="Specifications">Specifications</option>
-                                        <option value="Others">Others</option>
+                            <div class="col-md-6">
+                                <div class="form-group" id="lotNoContainer">
+                                    <label>No of pack:</label>
+                                    <div class="input-group">
+                                        <input type="hidden" name="PackId[]" value="">
+                                        <input type="text" class="form-control" name="LotNumber[]" placeholder="Enter Lot Number">
+                                        <button class="btn btn-sm btn-primary addRowBtn1" style="border-radius: 0px;" type="button">+</button>
+                                    </div>
+                                    <input type="text" class="form-control" name="QtyRepresented[]" placeholder="Enter Qty Represented">
+                                </div>
+                                <div class="form-group">
+                                    <label>Laboratory work required:</label>
+                                    <select class="form-control js-example-basic-multiple" id="Work" name="Work[]" style="position: relative !important" multiple>
+                                        <option value="Standard QUALITY CONTROL test: pH, Viscosity, WGS, KGS">Standard QUALITY CONTROL test: pH, Viscosity, WGS, KGS</option>
+                                        <option value="Particle size distribution">Particle size distribution</option>
+                                        <option value="Microbacteria test">Microbacteria test</option>
+                                        <option value="Other tests">Other tests</option>
                                     </select>
-                                    <button class="btn btn-sm btn-primary addRowBtn2" style="border-radius: 0px;" type="button">+</button>
                                 </div>
-                                <input type="file" class="form-control" id="Path" name="Path[]">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group" id="attachmentsContainer">
+                                    <label>Attachments:</label>
+                                    <div class="input-group">         
+                                        <select class="form-control js-example-basic-single" name="Name[]" id="Name" title="Select Attachment Name" >
+                                            <option value="" disabled selected>Select Attachment Name</option>
+                                            <option value="COA">COA</option>
+                                            <option value="Specifications">Specifications</option>
+                                            <option value="Others">Others</option>
+                                        </select>
+                                        <button class="btn btn-sm btn-primary addRowBtn2" style="border-radius: 0px;" type="button">+</button>
+                                    </div>
+                                    <input type="file" class="form-control" id="Path" name="Path[]">
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
                         <input type="hidden" name="hidden_id" id="hidden_id">
                         <input type="hidden" id="deletedFiles" name="deletedFiles">
+                        <input type="hidden" id="deletedPacks" name="deletedPacks">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
                         <input type="submit" name="action_button" id="action_button" class="btn btn-outline-success" value="Save">
                     </div>
@@ -318,15 +336,15 @@
         });
 
         $(document).on('click', '.addRowBtn1', function() {
-            var newRow = $('<div class="form-group" style="margin-top: 10px">' +
-                        '<div class="input-group">' +         
-                            '<input type="text" class="form-control" id="LotNumber" name="LotNumber[]" placeholder="Enter Lot Number">' +
-                           '<button class="btn btn-sm btn-danger removeRowBtn1" style="border-radius: 0px;" type="button">-</button>' +
-                        '</div>' +
-                        '<input type="text" class="form-control" id="QtyRepresented" name="QtyRepresented[]" placeholder="Enter Qty Represented">' +
-                    '</div>');
-
-            // Append the new row to the container where addresses are listed
+            var newRow = `
+                <div class="form-group" style="margin-top: 10px">
+                    <div class="input-group">
+                        <input type="hidden" name="PackId[]" value=""> <!-- Empty for new rows -->
+                        <input type="text" class="form-control" name="LotNumber[]" placeholder="Enter Lot Number">
+                        <button class="btn btn-sm btn-danger removeRowBtn1" style="border-radius: 0px;" type="button">-</button>
+                    </div>
+                    <input type="text" class="form-control" name="QtyRepresented[]" placeholder="Enter Qty Represented">
+                </div>`;
             $('#lotNoContainer').append(newRow);
         });
 
@@ -339,10 +357,9 @@
                         '<div class="input-group">' +         
                             '<select class="form-control js-example-basic-single" name="Name[]" id="Name" title="Select Attachment Name">' +
                                 '<option value="" disabled selected>Select Attachment Name</option>' +
-                                '<option value="Sample">Sample</option>' +
-                                '<option value="Specifications">Specifications</option>' +
                                 '<option value="COA">COA</option>' +
-                                '<option value="Recipe">Recipe</option>' +
+                                '<option value="Specifications">Specifications</option>' +
+                                '<option value="Others">Others</option>' +
                             '</select>' +
                            '<button class="btn btn-sm btn-danger removeRowBtn2" style="border-radius: 0px;" type="button">-</button>' +
                         '</div>' +
@@ -355,16 +372,22 @@
              // Reinitialize select2 for the new row
             $('.js-example-basic-single').select2();
         });
-
+        
         $(document).on('click', '.removeRowBtn2', function() {
             $(this).closest('.form-group').remove();
         });
+
+        $("#formSampleShipment").on('hidden.bs.modal', function() {
+            $("[name='AttentionTo']").val(null).trigger('change');
+            $("[name='Supplier']").val(null).trigger('change');
+            $("[name='Work']").val(null).trigger('change');
+        })
 
         $('#addSseBtn').click(function(){
             $('#formSampleShipment').modal('show'); 
             $('.modal-title').text("Add New Shipment Sample"); 
             $('#form_result').html(''); 
-            $('#Sample Shipment')[0].reset(); 
+            $('#form_shipment_sample')[0].reset(); 
             $('#action_button').val("Save"); 
             $('#action').val("Save");
             $('#hidden_id').val(''); 
@@ -442,6 +465,7 @@
                     $('#Origin').val(data.data.Origin);
                     $('#ResultSpeNo').val(data.data.ResultSpeNo);
                     $('#PoNumber').val(data.data.PoNumber);
+                    $('#ProductOrdered').val(data.data.ProductOrdered).trigger('change');
                     $('#Ordered').val(data.data.Ordered);
                     $('#Buyer').val(data.data.Buyer);
                     $('#BuyersPo').val(data.data.BuyersPo);
@@ -449,25 +473,40 @@
                     $('#ProductDeclared').val(data.data.ProductDeclared);
                     $('#Instruction').val(data.data.Instruction);
                     $('#LnBags').val(data.data.LnBags);
-                    $('#hidden_id').val(data.data.id);    
+                    if (data && data.data && data.data.SampleType) {
+                        $('input[name="SampleType"][value="' + data.data.SampleType + '"]').prop('checked', true);
+                    }
+                    $('#Work').val(data.work).trigger('change');
+                    $('#hidden_id').val(data.data.id);   
+                    $('#lotNoContainer .form-group').remove();
                     $('#attachmentsContainer .form-group').remove();
+                    
+                    $.each(data.data.shipment_pack, function(index, pack) {
+                        var newRow = $('<div class="form-group pack-row" style="margin-top: 10px" data-id="' + pack.id + '">' +
+                            '<div class="input-group">' +
+                            '<input type="hidden" name="PackId[]" value="' + (pack.id ? pack.id : '') + '"> ' +
+                            '<input type="text" class="form-control" name="LotNumber[]" value="' + pack.LotNumber + '" placeholder="Enter Lot Number">' +
+                            '<button class="btn btn-sm btn-danger removeRowBtn1" style="border-radius: 0px;" type="button">-</button>' +
+                            '</div>' +
+                            '<input type="text" class="form-control" name="QtyRepresented[]" value="' + pack.QtyRepresented + '" placeholder="Enter Qty Represented">' +
+                            '</div>');
+                        $('#lotNoContainer').append(newRow);
+                    });
 
-                    // Add all attachments dynamically
                     $.each(data.shipment_attachments, function(index, attachment) {
                         var attachmentRow = `
                             <div class="form-group attachment-row" style="margin-top: 10px" data-id="${attachment.id}">
                                 <div class="input-group">
                                     <select class="form-control js-example-basic-single" name="Name[]" title="Select Attachment Name">
-                                        <option value="Sample" ${attachment.name == 'Sample' ? 'selected' : ''}>Sample</option>
                                         <option value="Specifications" ${attachment.name == 'Specifications' ? 'selected' : ''}>Specifications</option>
                                         <option value="COA" ${attachment.name == 'COA' ? 'selected' : ''}>COA</option>
-                                        <option value="Recipe" ${attachment.name == 'Recipe' ? 'selected' : ''}>Recipe</option>
+                                        <option value="Recipe" ${attachment.name == 'Others' ? 'selected' : ''}>Others</option>
                                     </select>
-                                    <button class="btn btn-sm btn-danger removeRowBtn" style="border-radius: 0px;" type="button">-</button>
+                                    <button class="btn btn-sm btn-danger removeRowBtn2" style="border-radius: 0px;" type="button">-</button>
                                 </div>
                                 <input type="hidden" name="FileId[]" value="${attachment.id}">
                                 <input type="file" class="form-control" name="Path[]">
-                                <a href="{{ url('storage/${attachment.path}') }}" target="_blank">${attachment.path}</a>
+                                <a class="text-break" href="{{ url('storage/${attachment.path}') }}" target="_blank">${attachment.path}</a>
                             </div>
                         `;
                         $('#attachmentsContainer').append(attachmentRow);
@@ -479,6 +518,38 @@
                     $('#formSampleShipment').modal('show');
                 }
             });
+        });
+
+        $(document).on('click', '.removeRowBtn2', function() {
+            var attachmentRow = $(this).closest('.attachment-row');
+            var fileId = attachmentRow.data('id');
+
+            if (fileId) {
+                // Store the file ID in a hidden input to delete it later
+                var deletedFiles = $('#deletedFiles').val();
+                deletedFiles = deletedFiles ? deletedFiles.split(',') : [];
+                deletedFiles.push(fileId);
+                $('#deletedFiles').val(deletedFiles.join(','));
+            }
+
+            // Remove the file row from the form
+            attachmentRow.remove();
+        });
+
+        $(document).on('click', '.removeRowBtn1', function() {
+            var packsRow = $(this).closest('.pack-row'); // Get the closest parent row
+            var packId = packsRow.find('input[name="PackId[]"]').val(); // Get the PackId from the input
+
+            // If packId exists, store it in the hidden input for later deletion
+            if (packId) {
+                var deletedPacks = $('#deletedPacks').val(); // Get current deleted packs
+                deletedPacks = deletedPacks ? deletedPacks.split(',') : []; // Split into array
+                deletedPacks.push(packId); // Add the current packId to the array
+                $('#deletedPacks').val(deletedPacks.join(',')); // Update hidden input with new list
+            }
+
+            // Remove the file row from the form
+            packsRow.remove(); // Remove the row visually
         });
 
     });

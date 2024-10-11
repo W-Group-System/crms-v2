@@ -328,7 +328,6 @@
             <div class="col-md-12">
                 <label><strong>Request Details</strong></label>
                 <hr style="margin-top: 0px; color: black; border-top-color: black;">
-
                 <div class="row mb-0">
                     <div class="col-sm-3 col-md-2 text-right">
                         <p class="mb-0"><b>CRR # :</b></p>

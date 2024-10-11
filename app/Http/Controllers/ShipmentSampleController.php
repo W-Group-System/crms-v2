@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\ShipmentSample;
 use App\SseFiles;
 use App\SsePacks;
+use App\SseWork;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class ShipmentSampleController extends Controller
@@ -154,28 +156,175 @@ class ShipmentSampleController extends Controller
 
     public function edit($id)
     {
-        if(request()->ajax()) {
-            $data = ShipmentSample::with('shipment_pack', 'shipment_attachments')->findOrFail($id);
-            
-            $shipment_attachments = $data->shipment_attachments->map(function($shipment_attachments) {
+        if (request()->ajax()) {
+            $data = ShipmentSample::with('shipment_pack', 'shipment_attachments', 'shipment_work')->findOrFail($id);
+            // dd($data);
+            $shipment_pack = $data->shipment_pack->map(function($pack) {
                 return [
-                    'id' => $shipment_attachments->id, 
-                    'name' => $shipment_attachments->Name,
-                    'path' => $shipment_attachments->Path,
+                    'LotNumber' => $pack->LotNumber,
+                    'QtyRepresented' => $pack->QtyRepresented,
                 ];
             });
 
+            $shipment_attachments = $data->shipment_attachments->map(function($attachment) {
+                return [
+                    'id' => $attachment->id, 
+                    'name' => $attachment->Name,
+                    'path' => $attachment->Path,
+                ];
+            });
+    
             return response()->json([
                 'data' => $data,
-                'LotNumber' => $data->shipment_attachments->pluck('LotNumber')->toArray(), 
+                'shipment_pack' => $shipment_pack,
                 'shipment_attachments' => $shipment_attachments,
+                'work' => $data->shipment_work->pluck('Work')->toArray(), 
             ]);
         }
     }
 
+    public function update(Request $request, $id)
+    {
+        $rules = [
+            'RmType' => 'required|string|max:255',
+            'Supplier' => 'required|string|max:255',
+            'SseResult' => 'required|string|max:255',
+            'SampleType' => 'required|string|max:255',
+            'AttentionTo' => 'nullable|string|max:255',
+            'ProductCode' => 'nullable|string|max:255',
+            'Grade' => 'nullable|string|max:255',
+            'Origin' => 'nullable|string|max:255',  
+        ];
+
+        $customMessages = [
+            'RmType.required' => 'The raw material type is required.',
+            'SseResult.required' => 'The result is required.',
+            'Supplier.required' => 'The supplier is required.',      
+            'SampleType.required' => 'The sample type is required.',     
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $customMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $shipmentSample = ShipmentSample::findOrFail($id);
+        $shipmentSample->update($request->only([
+            'DateSubmitted',
+            'AttentionTo',
+            'RmType',
+            'Grade',
+            'ProductCode',
+            'Origin',
+            'Supplier',
+            'SseResult',
+            'ResultSpeNo',
+            'PoNumber',
+            'Quantity',
+            'Ordered',
+            'ProductOrdered',
+            'SampleType',
+            'Instruction',
+            'Buyer',
+            'BuyersPo',
+            'SalesAgreement',
+            'ProductDeclared',
+            'LnBags'
+        ]));
+
+        if ($request->has('Name') && is_array($request->Name)) {
+            foreach ($request->Name as $index => $name) {
+                if ($request->hasFile('Path.' . $index)) {
+                    // Delete old file if a new one is uploaded
+                    $existingFile = SseFiles::where('SseId', $shipmentSample->id)
+                                            ->where('Name', $name)
+                                            ->first();
+                    if ($existingFile && Storage::exists('public/' . $existingFile->Path)) {
+                        Storage::delete('public/' . $existingFile->Path);
+                        $existingFile->delete(); // Remove record from database
+                    }
+                    // Upload and save new file
+                    $file = $request->file('Path.' . $index);
+                    if ($file->isValid()) {
+                        $fileName = time() . '_' . $file->getClientOriginalName();
+                        $filePath = $file->storeAs('uploads', $fileName, 'public');
+        
+                        SseFiles::updateOrCreate([
+                            'SseId' => $shipmentSample->id,
+                            'Name' => $name,
+                            'Path' => $filePath,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        if ($request->has('deletedFiles')) {
+            $deletedFilesArray = explode(',', $request->deletedFiles);
+            foreach ($deletedFilesArray as $deletedFileId) {
+                $file = SseFiles::find($deletedFileId);
+                if ($file && Storage::exists('public/' . $file->Path)) {
+                    Storage::delete('public/' . $file->Path); // Delete file from storage
+                    $file->delete(); // Remove from database
+                }
+            }
+        }
+
+        if ($request->has('LotNumber') && is_array($request->LotNumber)) {
+            foreach ($request->LotNumber as $index => $lotNumber) {
+                $packId = $request->PackId[$index] ?? null; // Fetch PackId if it exists
+                
+                if ($packId) {
+                    // Update existing record using PackId
+                    SsePacks::updateOrCreate(
+                        ['id' => $packId], // Find by PackId for updating
+                        [
+                            'SseId' => $shipmentSample->id,
+                            'LotNumber' => $lotNumber, // Update LotNumber
+                            'QtyRepresented' => $request->QtyRepresented[$index] ?? null
+                        ]
+                    );
+                } else {
+                    if (!empty($lotNumber)) {
+                        // Create new pack if PackId is not provided
+                        SsePacks::create([
+                            'SseId' => $shipmentSample->id,
+                            'LotNumber' => $lotNumber,
+                            'QtyRepresented' => $request->QtyRepresented[$index] ?? null
+                        ]);
+                    }
+                }    
+            }
+        } 
+
+        if ($request->has('deletedPacks')) {
+            $deletedPacksArray = explode(',', $request->deletedPacks);
+            foreach ($deletedPacksArray as $deletedPackId) {
+                $pack = SsePacks::find($deletedPackId);
+                if ($pack) {
+                    $pack->delete(); // Remove pack record from database
+                }
+            }
+        }
+
+        if ($request->has('Work') && is_array($request->Work)) {
+            SseWork::where('SseId', $shipmentSample->id)->delete();
+
+            foreach ($request->Work as $shipment_work) {
+                $shipmentWork = new SseWork();
+                $shipmentWork->SseId = $shipmentSample->id;
+                $shipmentWork->Work = $shipment_work;
+                $shipmentWork->save();
+            }
+        }
+                    
+        return response()->json(['success' => 'Data is successfully updated.']);
+    }
+
     public function view($id)
     {
-        $data = ShipmentSample::with('shipment_pack', 'shipment_attachments')->findOrFail($id);
+        $data = ShipmentSample::with('shipment_pack', 'shipment_attachments', 'shipment_work')->findOrFail($id);
         return view('sse.view', compact('data'));
     }
 
