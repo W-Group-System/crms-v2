@@ -49,7 +49,7 @@
                                 @endif --}}
                                 @php
                                     $primary_sales = "";
-                                    if ($sampleRequest->primarySalesById == null)
+                                    if ($sampleRequest->primarySalesPerson != null)
                                     {
                                         $primary_sales = $sampleRequest->primarySalesPerson;
                                     }
@@ -58,8 +58,17 @@
                                         $primary_sales = $sampleRequest->primarySalesById;
                                     }
                                 @endphp
+                                @if(auth()->user()->role->name !== 'Staff L2' && auth()->user()->role->name !== 'Department Admin')
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{$primary_sales->id}}">
                                 <input type="text" class="form-control" value="{{$primary_sales->full_name}}" readonly>
+                                @else
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" title="Select Sales Person" required>
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" @if($user->id == $sampleRequest->PrimarySalesPersonId || $user->user_id == $sampleRequest->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select> 
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label>Secondary Sales Person:</label>
