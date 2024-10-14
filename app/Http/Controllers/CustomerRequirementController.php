@@ -396,9 +396,12 @@ class CustomerRequirementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'NatureOfRequestId' => 'required'
+            'NatureOfRequestId' => 'required',
+            'sales_upload_crr' => 'array',
+            'sales_upload_crr.*' => 'max:1024'
         ], [
-            'NatureOfRequestId.required' => 'The Nature of Request is required.'
+            'NatureOfRequestId.required' => 'The Nature of Request is required.',
+            'sales_upload_crr.*.max' => 'The file size must not exceed 1MB.'
         ]);
 
         $user = Auth::user(); 
@@ -511,10 +514,14 @@ class CustomerRequirementController extends Controller
 
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $request->validate([
-            'NatureOfRequestId' => 'required'
+            'NatureOfRequestId' => 'required',
+            'sales_upload_crr' => 'array',
+            'sales_upload_crr.*' => 'max:1024'
         ], [
-            'NatureOfRequestId.required' => 'The Nature of Request is required.'
+            'NatureOfRequestId.required' => 'The Nature of Request is required.',
+            'sales_upload_crr.*.max' => 'The file size must not exceed 1MB.'
         ]);
 
         $customerRequirements = CustomerRequirement::findOrFail($id);
