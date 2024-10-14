@@ -101,8 +101,17 @@
                                         $primary_sales = $crr->primarySalesById;
                                     }
                                 @endphp
+                                @if(auth()->user()->role->name == 'Staff L1')
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{$primary_sales->id}}">
                                 <input type="text" class="form-control" value="{{$primary_sales->full_name}}" readonly>
+                                @else
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" @if($user->id == $crr->PrimarySalesPersonId || $user->user_id == $crr->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select> 
+                                @endif
                             </div>
                         </div>
                         <div class="col-lg-6">
