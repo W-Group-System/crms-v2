@@ -58,7 +58,7 @@ class SampleRequest extends Model implements Auditable
     }
     public function primarySalesById()
     {
-        return $this->belongsTo(User::class, 'PrimarySalesPersonId','id');
+        return $this->belongsTo(User::class, 'PrimarySalesPersonId', 'id');
     }
     public function secondarySalesPerson()
     {

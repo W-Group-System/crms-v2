@@ -535,12 +535,12 @@ class SampleRequestController extends Controller
         $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
 
         if ($role->name == 'Staff L2' ) {
-            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApproverById->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->get();
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->where('is_active', 1)->get();
+            $secondarySalesPersons = User::whereIn('id',$loggedInUser->salesApproverById->pluck('SalesApproverId'))->orWhere('id', $loggedInUser->id)->where('is_active', 1)->get();
             
         } else {
-            $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
+            $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->where('is_active', 1)->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->where('is_active', 1)->pluck('SalesApproverId'))->get();
         }
 
         $clients = Client::where(function($query) {
@@ -558,7 +558,7 @@ class SampleRequestController extends Controller
         ->get();
         $productApplications = ProductApplication::all(); 
         $productCodes = Product::where('status', '4')->get();
-        $users = User::wherehas('localsalespersons')->get();
+        $users = User::where('is_active', 1)->get();
         $rawMaterials = RawMaterial::where('IsDeleted', '0')
         ->orWhere('deleted_at', '=', '')->get();
         $transactionApprovals = TransactionApproval::where('Type', '30')

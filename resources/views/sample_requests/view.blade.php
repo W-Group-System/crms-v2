@@ -130,6 +130,7 @@
                                 data-target="#salesEdit{{$sampleRequest->Id}}" 
                                 data-toggle="modal" 
                                 data-secondarysales={{$sampleRequest->SecondarySalesPersonId}}
+                                data-primarysales={{$sampleRequest->PrimarySalesPersonId}}
                                 title='Update SRF'>
                                 <i class="ti ti-pencil">&nbsp;</i>Update
                             </button>
@@ -209,6 +210,7 @@
                                 data-target="#salesEdit{{ $sampleRequest->Id }}" 
                                 data-toggle="modal" 
                                 data-secondarysales={{$sampleRequest->SecondarySalesPersonId}}
+                                data-primarysales={{$sampleRequest->PrimarySalesPersonId}}
                                 title='Update SRF'>
                                 <i class="ti ti-pencil">&nbsp;</i>Update
                             </button>
@@ -1736,15 +1738,16 @@
 
         $(".editBtn").on('click', function() {
             var secondarySales = $(this).data('secondarysales');
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            // var primarySales = $('[name="PrimarySalesPersonId"]').val();
+            var primarySales = $(this).data('primarysales');
             
             refreshSecondaryApprovers(primarySales,secondarySales)
         })
-        // $('[name="PrimarySalesPerson"]').on('change', function() {
-        //     var primarySales = $(this).val();
+        $('[name="PrimarySalesPersonId"]').on('change', function() {
+            var primarySales = $(this).val();
 
-        //     refreshSecondaryApproversv2(primarySales)
-        // })
+            refreshSecondaryApprovers(primarySales,"")
+        })
         function refreshSecondaryApprovers(primarySales,secondarySales)
         {
             $.ajax({
