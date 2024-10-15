@@ -289,7 +289,7 @@
                                             <td>{{ $srfClient->DateRequested }}</td>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{ url('samplerequest/view/'.$srfClient->Id) }}" target="_blank">
+                                                <a href="{{ url('samplerequest/view/'.$srfClient->Id.'/'.$srfClient->SrfNumber) }}" target="_blank">
                                                     {{ $srfClient->SrfNumber }}
                                                 </a>
                                             </td>
@@ -303,7 +303,7 @@
                                             <td>{{ $crrClient->DateCreated }}</td>
                                             <td>Customer Requirement</td>
                                             <td>
-                                                <a href="{{ url('view_customer_requirement/'.$crrClient->id) }}" target="_blank">
+                                                <a href="{{ url('view_customer_requirement/'.$crrClient->id.'/'.$crrClient->CrrNumber) }}" target="_blank">
                                                     {{ $crrClient->CrrNumber }}
                                                 </a>
                                             </td>                                            
@@ -317,7 +317,7 @@
                                             <td>{{ $rpeClient->DateCreated }}</td>
                                             <td>Request Product Evaluation</td>
                                             <td>
-                                                <a href="{{ url('product_evaluation/view/'.$rpeClient->id) }}" target="_blank">
+                                                <a href="{{ url('product_evaluation/view/'.$rpeClient->id.'/'.$rpeClient->RpeNumber) }}" target="_blank">
                                                     {{ $rpeClient->RpeNumber }}
                                                 </a>
                                             </td>   
