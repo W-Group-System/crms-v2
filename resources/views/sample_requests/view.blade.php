@@ -283,7 +283,7 @@
                         @endif
                         @if(authCheckIfItsSales(auth()->user()->department_id))
 
-                            @if(primarySalesApprover($sampleRequest->PrimarySalesPersonId, auth()->user()->id))
+                            @if((checkIfItsApprover2(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, $sampleRequest->SecondarySalesPersonId, "SRF") == "yes"))
 
                                 @if($sampleRequest->Progress == 60  && $sampleRequest->Status == 10)
                                     <button type="button" class="btn btn-outline-warning returnToRnd" data-id="{{ $sampleRequest->Id }}">
