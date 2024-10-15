@@ -76,23 +76,30 @@
                         @endif
                     @endif
 
-                    @if(auth()->user()->role->name == "Staff L1")
-                        @if((auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId) || (auth()->user()->id == $crr->SecondarySalesPersonId || auth()->user()->user_id == $crr->SecondarySalesPersonId))
-                            @if($crr->Status == 10)
-                                @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
-                                <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
-                                    <i class="ti ti-pencil"></i>&nbsp;Update
-                                </button>
-                                @endif
-
-                                @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38)
-                                <button type="button" class="btn btn-outline-warning" id="update2Crr" data-toggle="modal" data-target="#editCrr{{$crr->id}}" data-secondarysales="{{$crr->SecondarySalesPersonId}}">
-                                    <i class="ti ti-pencil"></i>&nbsp;Update
-                                </button>
-                                @endif
+                    @if((auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId) || (auth()->user()->id == $crr->SecondarySalesPersonId || auth()->user()->user_id == $crr->SecondarySalesPersonId))
+                        @if($crr->Status == 10)
+                            @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
+                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Update
+                            </button>
                             @endif
 
-                            @if($crr->Status == 10 && $crr->Progress == 60)
+                            @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38)
+                            <button type="button" class="btn btn-outline-warning" id="update2Crr" data-toggle="modal" data-target="#editCrr{{$crr->id}}" data-secondarysales="{{$crr->SecondarySalesPersonId}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Update
+                            </button>
+                            @endif
+                        @endif
+
+                        @if(primarySalesApprover($crr->PrimarySalesPersonId, auth()->user()->id))
+                            @if($crr->Progress == 10 && $crr->Status == 10)
+                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#acceptModal{{$crr->id}}">
+                                <i class="ti ti-check-box"></i>&nbsp;Approve
+                            </button>
+                            @endif
+                        @endif
+
+                        @if($crr->Status == 10 && $crr->Progress == 60)
                             <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}" onsubmit="show()">
                                 @csrf
 
@@ -100,9 +107,9 @@
                                     <i class="ti ti-check-box"></i>&nbsp;Return to RND
                                 </button>
                             </form>
-                            @endif
+                        @endif
 
-                            @if($crr->Progress == 60)
+                        @if($crr->Progress == 60)
                             <form method="POST" class="d-inline-block" action="{{url('sales_accepted/'.$crr->id)}}" onsubmit="show()">
                                 @csrf
 
@@ -110,32 +117,31 @@
                                     <i class="ti ti-check-box"></i>&nbsp;Accept
                                 </button>
                             </form>
+                        @endif
+                        
+
+                        @if(auth()->user()->id != $crr->SecondarySalesPersonId && auth()->user()->user_id != $crr->SecondarySalesPersonId)
+                            @if($crr->Status == 30)
+                                {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
+                                    @csrf
+
+                                </form> --}}
+                                <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#openStatus{{$crr->id}}">
+                                    <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                                </button>
                             @endif
                             
-
-                            @if(auth()->user()->id != $crr->SecondarySalesPersonId && auth()->user()->user_id != $crr->SecondarySalesPersonId)
-                                @if($crr->Status == 30)
-                                    {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
-                                        @csrf
-
-                                    </form> --}}
-                                    <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#openStatus{{$crr->id}}">
-                                        <i class="mdi mdi-open-in-new"></i>&nbsp;Open
-                                    </button>
-                                @endif
-                                
-                                @if($crr->Status == 10 && ($crr->Progress == 60 || $crr->Progress == 10 || $crr->Progress == 20 || $crr->Progress == 30))
-                                    <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
-                                        <i class="ti ti-close"></i>&nbsp;Close
-                                    </button>
-                                    <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
-                                        <i class="mdi mdi-cancel"></i>&nbsp;Cancel
-                                    </button>
-                                @endif
+                            @if($crr->Status == 10 && ($crr->Progress == 60 || $crr->Progress == 10 || $crr->Progress == 20 || $crr->Progress == 30))
+                                <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
+                                    <i class="ti ti-close"></i>&nbsp;Close
+                                </button>
+                                <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                                    <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                                </button>
                             @endif
                         @endif
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
-                    
+                        
                         @if($crr->Progress != 30 && $crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60)
                             @if(auth()->user()->role->type == $crr->RefCode)
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
