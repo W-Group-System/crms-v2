@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Auth;
 */
 Auth::routes();
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+Route::get('customer_service', 'CustomerSatisfactionController@header');
+Route::get('customer_satisfaction', 'CustomerSatisfactionController@index');
 Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/logout', 'LoginController@logout');
     // Apply middleware to check user type
