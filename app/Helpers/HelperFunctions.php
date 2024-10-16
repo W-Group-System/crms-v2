@@ -770,9 +770,34 @@ function srfPrimarySalesApprover($user_id, $primary_sales_person, $secondary_sal
                                          ->first();
     
     if ($salesApprovers != null) {
+       
+            return "true"; 
+        
+    }
+
+    return false;
+}
+
+function srfSecondary($user_id, $primary_sales_person, $secondary_sales_person)
+{
+    // $primary_sales_person = strtolower(trim($primary_sales_person));
+
+    // $primaryUser = User::whereRaw('LOWER(TRIM(user_id)) = ?', [ $primary_sales_person ])
+    //                        ->orWhereRaw('LOWER(TRIM(id)) = ?', [ $primary_sales_person ])
+    //                        ->first();
+
+    // $currentUser = User::whereRaw('LOWER(TRIM(user_id)) = ?', [ $user_id ])
+    //                        ->orWhereRaw('LOWER(TRIM(id)) = ?', [ $user_id ])
+    //                        ->first();
+
+    // $salesApprovers = SalesApprovers::where('SalesApproverId', $currentUser->id)
+    //                                      ->where('UserId', $primaryUser->id)
+    //                                      ->first();
+    
+    // if ($salesApprovers != null) {
         if ($user_id == $secondary_sales_person || auth()->user()->user_id == $secondary_sales_person ) {
             return "true"; 
-        }
+        // }
     }
 
     return false;
@@ -938,4 +963,18 @@ function historyRmc($product_material_composition, $product_id)
     }
     
     return $history_rmc;
+}
+
+function checkIfItsUserId($secondarySale)
+{
+    $secondaryTrim = strtolower(trim($secondarySale));
+
+    $currentUser = User::whereRaw('LOWER(TRIM(user_id)) = ?', [$secondaryTrim] )
+                           ->first();
+    
+    if ($currentUser != null) {
+        return "true"; 
+    }
+
+    return false;
 }

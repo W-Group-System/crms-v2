@@ -163,9 +163,6 @@
                         @endif
                         
                         @if($sampleRequest->Status == 30)
-                            <!-- <button type="button" class="btn btn-success openStatus" data-id="{{ $sampleRequest->Id }}">
-                                <i class="mdi mdi-open-in-new"></i>&nbsp;Open
-                            </button> -->
                             <button type="button" class="btn btn-outline-warning"
                                 data-target="#updateDisposition{{ $sampleRequest->Id }}" 
                                 data-toggle="modal" 
@@ -204,7 +201,7 @@
                             @endif
                         @endif
 
-                        @if(authCheckIfItsSales(auth()->user()->department_id))
+                        {{-- @if(authCheckIfItsSales(auth()->user()->department_id))
                             @if($sampleRequest->Status == 10)
                             <button type="button" class="btn btn-outline-warning editBtn"
                                 data-target="#salesEdit{{ $sampleRequest->Id }}" 
@@ -215,9 +212,9 @@
                                 <i class="ti ti-pencil">&nbsp;</i>Update
                             </button>
                             @endif
-                        @endif
+                        @endif --}}
                         @if(
-                            (checkIfItsApprover2(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, $sampleRequest->SecondarySalesPersonId, "SRF") == "yes") && 
+                            (srfPrimarySalesApprover(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, $sampleRequest->SecondarySalesPersonId) == "true") && 
                             $sampleRequest->Progress == 10
                         )
 
@@ -283,7 +280,27 @@
                         @endif
                         @if(authCheckIfItsSales(auth()->user()->department_id))
 
-                            @if((checkIfItsApprover2(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, $sampleRequest->SecondarySalesPersonId, "SRF") == "yes"))
+                            @if((srfPrimarySalesApprover(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, $sampleRequest->SecondarySalesPersonId) == "true") || (srfSecondary(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, $sampleRequest->SecondarySalesPersonId) == "true"))
+
+                                @if($sampleRequest->Status == 30)
+                                <button type="button" class="btn btn-outline-warning"
+                                    data-target="#updateDisposition{{ $sampleRequest->Id }}" 
+                                    data-toggle="modal" 
+                                    title='Open SRF'>
+                                    <i class="mdi mdi-open-in-new">&nbsp;</i>Update Disposition
+                                </button>
+                                @endif
+
+                                <button type="button" class="btn btn-outline-warning editBtn"
+                                data-target="#salesEdit{{ $sampleRequest->Id }}" 
+                                data-toggle="modal" 
+                                data-secondarysales={{$sampleRequest->SecondarySalesPersonId}}
+                                data-primarysales={{$sampleRequest->PrimarySalesPersonId}}
+                                title='Update SRF'>
+                                <i class="ti ti-pencil">&nbsp;</i>Update
+                            </button>
+                            @endif
+                            @if((srfPrimarySalesApprover(auth()->user()->id, $sampleRequest->PrimarySalesPersonId, $sampleRequest->SecondarySalesPersonId) == "true"))
 
                                 @if($sampleRequest->Progress == 60  && $sampleRequest->Status == 10)
                                     <button type="button" class="btn btn-outline-warning returnToRnd" data-id="{{ $sampleRequest->Id }}">
@@ -297,14 +314,7 @@
                                     </button>
                                 @endif
 
-                                @if($sampleRequest->Status == 30)
-                                <button type="button" class="btn btn-outline-warning"
-                                    data-target="#updateDisposition{{ $sampleRequest->Id }}" 
-                                    data-toggle="modal" 
-                                    title='Open SRF'>
-                                    <i class="mdi mdi-open-in-new">&nbsp;</i>Update Disposition
-                                </button>
-                                @endif
+                               
 
                                 @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 70 || $sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
                                     <button type="button" class="btn btn-outline-warning"

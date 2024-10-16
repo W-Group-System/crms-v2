@@ -80,7 +80,7 @@
                                 </select> --}}
                                 @php
                                     $secondary_sales = "";
-                                    if ($sampleRequest->secondarySalesById == null)
+                                    if (checkIfItsUserId($sampleRequest->SecondarySalesPersonId) == "true") 
                                     {
                                         $secondary_sales = $sampleRequest->secondarySalesPerson;
                                     }
