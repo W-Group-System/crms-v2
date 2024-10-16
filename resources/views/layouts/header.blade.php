@@ -285,7 +285,7 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/account_targeting') }}">Account Targeting</a></li> 
                                     @endif
                                     @if(viewModule('Sample Request Form', $department, $role) == "yes")
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request') }}">Sample Request Form</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request?open=10') }}">Sample Request Form</a></li>
                                     @endif
                                     @if(viewModule('Customer Service SRF', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request_cs_local') }}">Sample Request Local</a></li>

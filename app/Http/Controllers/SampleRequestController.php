@@ -74,30 +74,7 @@ class SampleRequestController extends Controller
         $status = $request->query('status'); // Get the status from the query parameters
         $progress = $request->query('progress'); // Get the status from the query parameters
 
-        // $clients = Client::where(function($query) {
-        //     if (auth()->user()->role->name == "Department Admin")
-        //     {
-        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
-        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-        //     }
-        //     if (auth()->user()->role->name == "Staff L2")
-        //     {
-        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
-        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-        //     }
-        //     if (auth()->user()->role->name == "Staff L1")
-        //     {
-        //         $query->where('PrimaryAccountManagerId', auth()->user()->id)
-        //             ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-        //             ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
-        //     }
-        // })
-        // ->get(); 
+        
         $clients = Client::where(function($query) {
             if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
                 if (auth()->user()->role->type == "LS"){
@@ -559,6 +536,16 @@ class SampleRequestController extends Controller
         $productApplications = ProductApplication::all(); 
         $productCodes = Product::where('status', '4')->get();
         $users = User::where('is_active', 1)->get();
+
+        $users = User::where(function($query) {
+                if (auth()->user()->role->type == "LS"){
+                    $query->where('department_id', 38);
+                } elseif (auth()->user()->role->type == "IS") {
+                    $query->where('department_id', 5);
+            }
+        })
+        ->get();
+
         $rawMaterials = RawMaterial::where('IsDeleted', '0')
         ->orWhere('deleted_at', '=', '')->get();
         $transactionApprovals = TransactionApproval::where('Type', '30')
