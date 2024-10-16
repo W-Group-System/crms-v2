@@ -727,7 +727,7 @@
                                 $rpeNumber = $requestProducts->RpeNumber;
                                 $rpeId = getRpeIdByNumber($rpeNumber);
                                 if ($rpeId) {
-                                 echo '<a href="'.url('product_evaluation/view/'.$rpeId).'">'.$rpeNumber.'</a>';
+                                 echo '<a href="'.url('product_evaluation/view/'.$rpeId . '/' .$requestProducts->RpeNumber).'">'.$rpeNumber.'</a>';
                                 } else {
                                 echo $rpeNumber;
                             }
@@ -749,9 +749,10 @@
                                 $crrNumber = $requestProducts->CrrNumber;
                                 $crr = getCrrIdByNumber($crrNumber);
                                 if ($crr) {
-                                 echo '<a href="'.url('view_customer_requirement/'.$crr).'">'.$crrNumber.'</a>';
+                                 echo '<a href="'.url('view_customer_requirement/'.$crr . '/' .$crr ).'">'.$requestProducts->CrrNumber.'</a>';
                                 } else {
                                 echo $crrNumber;
+                                echo $crr;
                             }
                         @endphp</p>
                         </div>
