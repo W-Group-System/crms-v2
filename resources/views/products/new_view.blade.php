@@ -419,7 +419,7 @@
                                         <tr>
                                             <td>Customer Requirement</td>
                                             <td>
-                                                <a href="{{url('view_customer_requirement/'.$cr->id)}}" target="_blank">
+                                                <a href="{{url('view_customer_requirement/'.$cr->id.'/'.$cr->CrrNumber)}}" target="_blank">
                                                     {{$cr->CrrNumber}}
                                                 </a>
                                             </td>
@@ -432,7 +432,7 @@
                                         <tr>
                                             <td>Request Product Evaluation</td>
                                             <td>
-                                                <a href="{{url('product_evaluation/view/'.$rps->id)}}" target="_blank">
+                                                <a href="{{url('product_evaluation/view/'.$rps->id.'/'.$rps->RpeNumber)}}" target="_blank">
                                                     {{$rps->RpeNumber}}
                                                 </a>
                                             </td>
@@ -445,7 +445,7 @@
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{url('samplerequest/view/'.$item->sampleRequest->Id)}}" target="_blank">
+                                                <a href="{{url('samplerequest/view/'.$item->sampleRequest->Id.'/'.$item->SrfNumber)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
                                             </td>
