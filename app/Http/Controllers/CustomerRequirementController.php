@@ -971,6 +971,7 @@ class CustomerRequirementController extends Controller
         $customerRequirement->Recommendation = $request->recommendation;
         // $customerRequirement->Status = $request->Status;
         // $customerRequirement->Progress = $request->progress;
+        $customerRequirement->DateCompleted = $request->date_completed;
         $customerRequirement->save();
 
         crrHistoryLogs('update', $id);

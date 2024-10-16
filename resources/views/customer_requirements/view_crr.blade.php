@@ -439,7 +439,7 @@
                             $id = linkToCrr($crr->RefCrrNumber);
                         @endphp
                         <p class="mb-0">
-                            <a href="{{url('view_customer_requirement/'.$id)}}" target="_blank">
+                            <a href="{{url('view_customer_requirement/'.$id.'/'.$crr->CrrNumber)}}" target="_blank">
                                 {{$crr->RefCrrNumber}}
                             </a>
                         </p>
@@ -456,7 +456,7 @@
                             $id = linkToRpe($crr->RefRpeNumber);
                         @endphp
                         <p class="mb-0">
-                            <a href="{{url('product_evaluation/view/'.$id)}}" target="_blank">
+                            <a href="{{url('product_evaluation/view/'.$id.'/'.$crr->CrrNumber)}}" target="_blank">
                                 {{$crr->RefRpeNumber}}
                             </a>
                         </p>
