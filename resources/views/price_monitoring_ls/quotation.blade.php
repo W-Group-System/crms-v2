@@ -177,7 +177,11 @@
                          @endphp
                              <td>{{ optional($prcieProduct->products)->code }}</td>
                              <td>{{ $formattedSellingPrice }}</td>
-                             <td>{{ $prcieProduct->QuantityRequired }}</td>
+                             <td> @if (strpos($prcieProduct->QuantityRequired, ',') !== false)
+                            {{ $prcieProduct->QuantityRequired }}
+                        @else
+                            {{ number_format($prcieProduct->QuantityRequired) }}
+                        @endif</td>
                          </tr>
                         @endforeach
                      </tbody>
@@ -221,7 +225,11 @@
                         @endphp
                             <td>{{ optional($prcieProduct->products)->code }}</td>
                             <td>{{ $formattedSumWithVat }}</td>
-                            <td>{{ $prcieProduct->QuantityRequired }}</td>
+                            <td> @if (strpos($prcieProduct->QuantityRequired, ',') !== false)
+                            {{ $prcieProduct->QuantityRequired }}
+                        @else
+                            {{ number_format($prcieProduct->QuantityRequired) }}
+                        @endif</td>
                         </tr>
                        @endforeach
                     </tbody>
