@@ -259,7 +259,13 @@ class CustomerRequirementController extends Controller
             ->when(optional($role)->type, function($q) use ($role, $request, $search) {
                 if ($role->type == "IS") {
                     $q->where('CrrNumber', 'LIKE', "%CRR-IS%")
-                    ->where(function ($query) use ($search){
+                    ->when($request->status == 10 || $request->open, function ($query)use($request) {
+                        $query->where('Status', 10);
+                    })
+                    ->when($request->status == 30 || $request->close, function ($query)use($request) {
+                        $query->where('Status', 30);
+                    })
+                    ->orWhere(function ($query) use ($search){
                         if (trim($search) != null)
                         {
                             $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
@@ -279,12 +285,18 @@ class CustomerRequirementController extends Controller
                                 $query->where('full_name', 'LIKE', '%'.$search.'%');
                             });
                         }
-                    })
-                    ->where('Status', $request->open)
-                    ->orWhere('Status', $request->close);
+                    });
+                    // ->orWhere('Status', $request->open)
+                    // ->orWhere('Status', $request->close);
                 } elseif ($role->type == "LS") {
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%')
-                    ->where(function ($query) use ($search){
+                    ->when($request->status == 10 || $request->open, function ($query)use($request) {
+                        $query->where('Status', 10);
+                    })
+                    ->when($request->status == 30 || $request->close, function ($query)use($request) {
+                        $query->where('Status', 30);
+                    })
+                    ->orWhere(function ($query) use ($search){
                         if (trim($search) != null)
                         {
                             $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
@@ -304,17 +316,23 @@ class CustomerRequirementController extends Controller
                                 $query->where('full_name', 'LIKE', '%'.$search.'%');
                             });
                         }
-                    })
-                    ->where('Status', $request->open)
-                    ->orWhere('Status', $request->close);
+                    });
+                    // ->orWhere('Status', $request->open)
+                    // ->orWhere('Status', $request->close);
                 } elseif ($role->type == "RND") {
                     $q->where('RefCode', 'RND')
-                        ->orWhere('RefCode', Null)
+                        ->when($request->status == 10, function ($query)use($request) {
+                            $query->where('Status', 10);
+                        })
+                        ->when($request->status == 30, function ($query)use($request) {
+                            $query->where('Status', 30);
+                        })
                         ->where(function($query) {
                             $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                                 ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
                         })
-                        ->where(function ($query) use ($search){
+                        ->orWhere('RefCode', Null)
+                        ->orWhere(function ($query) use ($search){
                             if (trim($search) != null)
                             {
                                 $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
@@ -334,16 +352,20 @@ class CustomerRequirementController extends Controller
                                     $query->where('full_name', 'LIKE', '%'.$search.'%');
                                 });
                             }
-                        })
-                        ->where('Status', $request->open)
-                        ->orWhere('Status', $request->close);
+                        });
                 } elseif ($role->type == "QCD-WHI") {
                     $q->where('RefCode', 'QCD-WHI')
                         ->where(function($query) {
                         $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                             ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
                         })
-                        ->where(function ($query) use ($search){
+                        ->when($request->status == 10, function ($query)use($request) {
+                            $query->where('Status', 10);
+                        })
+                        ->when($request->status == 30, function ($query)use($request) {
+                            $query->where('Status', 30);
+                        })
+                        ->orWhere(function ($query) use ($search){
                             if (trim($search) != null)
                             {
                                 $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
@@ -363,16 +385,20 @@ class CustomerRequirementController extends Controller
                                     $query->where('full_name', 'LIKE', '%'.$search.'%');
                                 });
                             }
-                        })
-                        ->where('Status', $request->open)
-                        ->orWhere('Status', $request->close);
+                        });
                 } elseif ($role->type == "QCD-PBI") {
                     $q->where('RefCode', 'QCD-PBI')
                         ->where(function($query) {
                             $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                                 ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');;
                         })
-                        ->where(function ($query) use ($search){
+                        ->when($request->status == 10, function ($query)use($request) {
+                            $query->where('Status', 10);
+                        })
+                        ->when($request->status == 30, function ($query)use($request) {
+                            $query->where('Status', 30);
+                        })
+                        ->orWhere(function ($query) use ($search){
                             if (trim($search) != null)
                             {
                                 $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
@@ -392,16 +418,20 @@ class CustomerRequirementController extends Controller
                                     $query->where('full_name', 'LIKE', '%'.$search.'%');
                                 });
                             }
-                        })
-                        ->where('Status', $request->open)
-                        ->orWhere('Status', $request->close);
+                        });
                 } elseif ($role->type == "QCD-MRDC") {
                     $q->where('RefCode', 'QCD-MRDC')
                         ->where(function($query) {
                             $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                                 ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
                         })
-                        ->where(function ($query) use ($search){
+                        ->when($request->status == 10, function ($query)use($request) {
+                            $query->where('Status', 10);
+                        })
+                        ->when($request->status == 30, function ($query)use($request) {
+                            $query->where('Status', 30);
+                        })
+                        ->orWhere(function ($query) use ($search){
                             if (trim($search) != null)
                             {
                                 $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
@@ -421,16 +451,20 @@ class CustomerRequirementController extends Controller
                                     $query->where('full_name', 'LIKE', '%'.$search.'%');
                                 });
                             }
-                        })
-                        ->where('Status', $request->open)
-                        ->orWhere('Status', $request->close);
+                        });
                 } elseif ($role->type == "QCD-CCC") {
                     $q->where('RefCode', 'QCD-CCC')
                         ->where(function($query) {
                             $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                                 ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
                         })
-                        ->where(function ($query) use ($search){
+                        ->when($request->status == 10, function ($query)use($request) {
+                            $query->where('Status', 10);
+                        })
+                        ->when($request->status == 30, function ($query)use($request) {
+                            $query->where('Status', 30);
+                        })
+                        ->orWhere(function ($query) use ($search){
                             if (trim($search) != null)
                             {
                                 $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
@@ -450,13 +484,11 @@ class CustomerRequirementController extends Controller
                                     $query->where('full_name', 'LIKE', '%'.$search.'%');
                                 });
                             }
-                        })
-                        ->where('Status', $request->open)
-                        ->orWhere('Status', $request->close);
+                        });
                 }  
             })
             // ->where('RefCode', $role->type)
-            ->when(in_array($progress, ['30', '57', '81']), function ($query) use ($progress) {
+            ->when(in_array($progress, ['30', '57', '81']), function ($query) use ($progress, $search) {
                 $role = auth()->user()->role;
                 $userType = $role->type;  
                 $userName = $role->name; 
@@ -464,14 +496,14 @@ class CustomerRequirementController extends Controller
                 if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
                     $query->where(function($q) {
                         $q->where('RefCode', 'RND')
-                          ->orWhereNull('RefCode');
+                            ->orWhereNull('RefCode');
                     });
                     $query->where('Progress', $progress)
-                          ->where('Status', '10');
+                        ->where('Status', '10');
                 } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
                     $query->where('Progress', $progress)
-                          ->where('Status', '10')
-                          ->where('RefCode', 'QCD-WHI');
+                            ->where('Status', '10')
+                            ->where('RefCode', 'QCD-WHI');
                 } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
                     $query->where('Progress', $progress)
                             ->where('Status', '10')
@@ -486,7 +518,7 @@ class CustomerRequirementController extends Controller
                             ->where('RefCode', 'QCD-CCC');
                 } else {
                     $query->where('Progress', $progress)
-                      ->where('Status', '10');
+                        ->where('Status', '10');
                 }
             })
             ->orderBy($sort, $direction)
@@ -549,9 +581,10 @@ class CustomerRequirementController extends Controller
         $entries = $request->entries;
         $refCode = $this->refCode();
         $unitOfMeasure = UnitOfMeasure::get();
-
+        $status = $request->status;
+        $progress = $request->progress;
         // Return view with all necessary data
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure')); 
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress')); 
     }
 
     // Store

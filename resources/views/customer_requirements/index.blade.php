@@ -14,13 +14,13 @@
             @endif
 
             <div class="form-group">
-                <form method="GET" >
+                <form method="GET" onsubmit="show()">
                     <label>Show : </label>
                     <label class="checkbox-inline">
-                        <input name="open" class="activity_status" type="checkbox" value="10" @if($open == 10) checked @endif> Open
+                        <input name="{{$open ? 'open' : 'status'}}" class="activity_status" type="checkbox" value="10" @if($open == 10 || $status == 10) checked @endif> Open
                     </label>
                     <label class="checkbox-inline">
-                        <input name="close" class="activity_status" type="checkbox" value="30" @if($close == 30) checked @endif> Closed
+                        <input name="{{$close ? 'close' : 'status'}}" class="activity_status" type="checkbox" value="30" @if($close == 30 || $status == 30) checked @endif> Closed
                     </label>
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
@@ -50,8 +50,14 @@
                 </div>
                 <div class="col-lg-6">
                     <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
+                        @if($status)
+                        <input type="hidden" name="status" value="{{$status}}">
+                        @elseif($open || $close)
                         <input type="hidden" name="open" value="{{$open}}">
                         <input type="hidden" name="close" value="{{$close}}">
+                        @elseif($progress)
+                        <input type="hidden" name="progress" value="{{$progress}}">
+                        @endif
 
                         <div class="row height d-flex justify-content-end align-items-end">
                             <div class="col-md-10">
@@ -420,18 +426,18 @@
                     @endif
                 </table>
                 <!-- {!! $customer_requirements->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
-                {{ $customer_requirements->appends(request()->query())->links() }}
-                @php
-                    $total = $customer_requirements->total();
-                    $currentPage = $customer_requirements->currentPage();
-                    $perPage = $customer_requirements->perPage();
-    
-                    $from = ($currentPage - 1) * $perPage + 1;
-                    $to = min($currentPage * $perPage, $total);
-                @endphp
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-                </div>
+            </div>
+            {{ $customer_requirements->appends(request()->query())->links() }}
+            @php
+                $total = $customer_requirements->total();
+                $currentPage = $customer_requirements->currentPage();
+                $perPage = $customer_requirements->perPage();
+
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
             </div>
         </div>
     </div>
