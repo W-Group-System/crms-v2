@@ -275,7 +275,13 @@
                 </div>
                 <div class="row">
                     <p class="col-md-2 mb-0 text-right"><b>Quantity Required:</b></p>
-                    <p class="col-md-2 mb-0">{{ $prcieProduct->QuantityRequired }} </p>
+                    <p class="col-md-2 mb-0">
+                        @if (strpos($prcieProduct->QuantityRequired, ',') !== false)
+                            {{ $prcieProduct->QuantityRequired }}
+                        @else
+                            {{ number_format($prcieProduct->QuantityRequired) }}
+                        @endif
+                    </p>                    
                     <p class="col-md-2 mb-0 text-right"><b>Total Manufacturing Cost:</b></p>
                     <p class="col-md-2 mb-0">{{ number_format($prcieProduct->ProductRmc + $prcieProduct->LsalesDirectLabor + $prcieProduct->LsalesFactoryOverhead, 2) }}</p>
                     <p class="col-md-2 mb-0 text-right"><b>GAE Cost:</b></p>

@@ -202,8 +202,9 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Quantity Required</label>
-                                            {{-- <input type="number" class="form-control" name="QuantityRequired[]" value="{{ $priceProducts->QuantityRequired ?? 0 }}"> --}}
-                                            <input type="text" class="form-control" name="QuantityRequired[]" value="{{ $priceProducts->QuantityRequired ?? 0 }}">
+                                            <input type="text" class="form-control" name="QuantityRequired[]" 
+                                                value="{{ number_format($priceProducts->QuantityRequired ?? 0) }}" 
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
