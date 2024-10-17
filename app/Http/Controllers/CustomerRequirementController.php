@@ -35,6 +35,7 @@ class CustomerRequirementController extends Controller
     // List
     public function index(Request $request)
     {
+        // dd($request->all());
         $search = $request->input('search');
         $sort = $request->get('sort', 'id');
         $direction = $request->get('direction', 'desc');
@@ -235,65 +236,226 @@ class CustomerRequirementController extends Controller
                 $query->where('Status', $request->close);
             })
             ->where(function ($query) use ($search){
-                if ($search != null)
+                if (trim($search) != null)
                 {
                     $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
                     ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
                     ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                    ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
                     ->orWhereHas('client', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
+                        $q->where('Name', 'LIKE', '%' . $search . '%');
                     })
                     ->orWhereHas('product_application', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
+                        $q->where('Name', 'LIKE', '%' . $search . '%');
                     })
                     ->orWhereHas('primarySales', function($query)use($search) {
                         $query->where('full_name', 'LIKE', '%'.$search.'%');
                     })
                     ->orWhereHas('primarySalesById', function($query)use($search) {
                         $query->where('full_name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhere('Recommendation', 'LIKE', '%' . $search . '%');
+                    });
                 }
             })
-            ->when(optional($role)->type, function($q) use ($role) {
+            ->when(optional($role)->type, function($q) use ($role, $request, $search) {
                 if ($role->type == "IS") {
-                    $q->where('CrrNumber', 'LIKE', "%CRR-IS%");
+                    $q->where('CrrNumber', 'LIKE', "%CRR-IS%")
+                    ->where(function ($query) use ($search){
+                        if (trim($search) != null)
+                        {
+                            $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                            ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                            ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                            ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
+                            ->orWhereHas('client', function ($q) use ($search) {
+                                $q->where('Name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhereHas('product_application', function ($q) use ($search) {
+                                $q->where('Name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhereHas('primarySales', function($query)use($search) {
+                                $query->where('full_name', 'LIKE', '%'.$search.'%');
+                            })
+                            ->orWhereHas('primarySalesById', function($query)use($search) {
+                                $query->where('full_name', 'LIKE', '%'.$search.'%');
+                            });
+                        }
+                    })
+                    ->where('Status', $request->open)
+                    ->orWhere('Status', $request->close);
                 } elseif ($role->type == "LS") {
-                    $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
+                    $q->where('CrrNumber', 'LIKE', '%CRR-LS%')
+                    ->where(function ($query) use ($search){
+                        if (trim($search) != null)
+                        {
+                            $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                            ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                            ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                            ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
+                            ->orWhereHas('client', function ($q) use ($search) {
+                                $q->where('Name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhereHas('product_application', function ($q) use ($search) {
+                                $q->where('Name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhereHas('primarySales', function($query)use($search) {
+                                $query->where('full_name', 'LIKE', '%'.$search.'%');
+                            })
+                            ->orWhereHas('primarySalesById', function($query)use($search) {
+                                $query->where('full_name', 'LIKE', '%'.$search.'%');
+                            });
+                        }
+                    })
+                    ->where('Status', $request->open)
+                    ->orWhere('Status', $request->close);
                 } elseif ($role->type == "RND") {
                     $q->where('RefCode', 'RND')
                         ->orWhere('RefCode', Null)
-                      ->where(function($query) {
+                        ->where(function($query) {
                             $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                                 ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
-                      });
+                        })
+                        ->where(function ($query) use ($search){
+                            if (trim($search) != null)
+                            {
+                                $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
+                                ->orWhereHas('client', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('product_application', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('primarySales', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                })
+                                ->orWhereHas('primarySalesById', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                });
+                            }
+                        })
+                        ->where('Status', $request->open)
+                        ->orWhere('Status', $request->close);
                 } elseif ($role->type == "QCD-WHI") {
                     $q->where('RefCode', 'QCD-WHI')
-                      ->where(function($query) {
+                        ->where(function($query) {
                         $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                             ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
-                      });
+                        })
+                        ->where(function ($query) use ($search){
+                            if (trim($search) != null)
+                            {
+                                $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
+                                ->orWhereHas('client', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('product_application', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('primarySales', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                })
+                                ->orWhereHas('primarySalesById', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                });
+                            }
+                        })
+                        ->where('Status', $request->open)
+                        ->orWhere('Status', $request->close);
                 } elseif ($role->type == "QCD-PBI") {
                     $q->where('RefCode', 'QCD-PBI')
-                      ->where(function($query) {
+                        ->where(function($query) {
                             $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                                 ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');;
-                      });
+                        })
+                        ->where(function ($query) use ($search){
+                            if (trim($search) != null)
+                            {
+                                $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
+                                ->orWhereHas('client', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('product_application', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('primarySales', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                })
+                                ->orWhereHas('primarySalesById', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                });
+                            }
+                        })
+                        ->where('Status', $request->open)
+                        ->orWhere('Status', $request->close);
                 } elseif ($role->type == "QCD-MRDC") {
                     $q->where('RefCode', 'QCD-MRDC')
-                      ->where(function($query) {
+                        ->where(function($query) {
                             $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                                 ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
-                      });
+                        })
+                        ->where(function ($query) use ($search){
+                            if (trim($search) != null)
+                            {
+                                $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
+                                ->orWhereHas('client', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('product_application', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('primarySales', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                })
+                                ->orWhereHas('primarySalesById', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                });
+                            }
+                        })
+                        ->where('Status', $request->open)
+                        ->orWhere('Status', $request->close);
                 } elseif ($role->type == "QCD-CCC") {
                     $q->where('RefCode', 'QCD-CCC')
-                      ->where(function($query) {
+                        ->where(function($query) {
                             $query->where('CrrNumber', 'LIKE', '%CRR-LS%')
                                 ->orWhere('CrrNumber', 'LIKE', '%CRR-IS%');
-                      });
+                        })
+                        ->where(function ($query) use ($search){
+                            if (trim($search) != null)
+                            {
+                                $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
+                                ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
+                                ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
+                                ->orWhereHas('client', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('product_application', function ($q) use ($search) {
+                                    $q->where('Name', 'LIKE', '%' . $search . '%');
+                                })
+                                ->orWhereHas('primarySales', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                })
+                                ->orWhereHas('primarySalesById', function($query)use($search) {
+                                    $query->where('full_name', 'LIKE', '%'.$search.'%');
+                                });
+                            }
+                        })
+                        ->where('Status', $request->open)
+                        ->orWhere('Status', $request->close);
                 }  
             })
-            
+            // ->where('RefCode', $role->type)
             ->when(in_array($progress, ['30', '57', '81']), function ($query) use ($progress) {
                 $role = auth()->user()->role;
                 $userType = $role->type;  
@@ -809,6 +971,7 @@ class CustomerRequirementController extends Controller
         $customerRequirement->Recommendation = $request->recommendation;
         // $customerRequirement->Status = $request->Status;
         // $customerRequirement->Progress = $request->progress;
+        $customerRequirement->DateCompleted = $request->date_completed;
         $customerRequirement->save();
 
         crrHistoryLogs('update', $id);

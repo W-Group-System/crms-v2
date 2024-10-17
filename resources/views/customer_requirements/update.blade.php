@@ -29,10 +29,16 @@
                                 <textarea name="recommendation" cols="30" rows="10" class="form-control">{{$crr->Recommendation}}</textarea>
                             </div>
                         </div>
-                        <div class="col-lg-12">
+                        {{-- <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="name">Due Date :</label>
                                 <input type="date" class="form-control" name="due_date" value="{{$crr->DueDate}}">
+                            </div>
+                        </div> --}}
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="name">Completion Date :</label>
+                                <input type="date" class="form-control" name="date_completed" value="{{$crr->DateCompleted}}">
                             </div>
                         </div>
                         {{-- <div class="col-lg-12">

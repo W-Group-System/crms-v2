@@ -50,6 +50,9 @@
                 </div>
                 <div class="col-lg-6">
                     <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
+                        <input type="hidden" name="open" value="{{$open}}">
+                        <input type="hidden" name="close" value="{{$close}}">
+
                         <div class="row height d-flex justify-content-end align-items-end">
                             <div class="col-md-10">
                                 <div class="search">
