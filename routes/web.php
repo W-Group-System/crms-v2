@@ -19,8 +19,13 @@ use Illuminate\Support\Facades\Auth;
 */
 Auth::routes();
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+// Customer Service
 Route::get('customer_service', 'CustomerSatisfactionController@header');
 Route::get('customer_satisfaction', 'CustomerSatisfactionController@index');
+Route::post('/new_customer_satisfaction', 'CustomerSatisfactionController@store')->name('customer_satisfaction.store');
+Route::get('contacts_by_client/{clientId}', 'CustomerSatisfactionController@getContactsByClient');
+
+Route::get('customer_complaint2', 'CustomerComplaint2Controller@index');
 Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('/logout', 'LoginController@logout');
     // Apply middleware to check user type
@@ -337,7 +342,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('product-rmc/{id}', 'PriceMonitoringController@getProductRmc');
     Route::get('/get-payment-term/{clientId}', 'PriceMonitoringController@getClientDetailsL');
     Route::post('/local_price_monitoring', 'PriceMonitoringController@storeLocalSalePre');
-    Route::get('price_monitoring_local/view/{id}', 'PriceMonitoringController@localview');
+    Route::get('price_monitoring_local/view/{id}/{prfNumber}', 'PriceMonitoringController@localview');
     Route::delete('delete-product/{id}', 'PriceMonitoringController@deleteProduct');
     Route::post('price_monitoring_local/edit/{id}', 'PriceMonitoringController@LocalSalesUpdate');
     Route::post('ClosePrf/{id}', 'PriceMonitoringController@ClosePrf');
@@ -353,7 +358,7 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('computation/{id}', 'PriceMonitoringController@computation');
     Route::post('refresh_secondary_persons_prf', 'PriceMonitoringController@refreshUserApprover');
     // Customer Complaint 
-    Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');
+    Route::get('/2', 'CustomerComplaintController@index')->name('customer_complaint.index');
     Route::post('/new_customer_complaint', 'CustomerComplaintController@store')->name('customer_complaint.store');
     Route::get('customer_complaint/{id}/edit', 'CustomerComplaintController@edit');
     Route::put('customer_complaint/{id}', 'CustomerComplaintController@update');
@@ -374,6 +379,16 @@ Route::group(['middleware' => 'inactive_users'], function() {
     Route::get('contacts-by-client-f/{clientId}', [CustomerFeedbackController::class, 'getContactsByClientF']);
     Route::get('get-last-increment-f/{year}/{clientCode}', [CustomerFeedbackController::class, 'getLastIncrementF']);
 
+    // Customer Satisfaction
+    Route::get('/cs_list', 'CustomerSatisfactionController@list')->name('customer_satisfaction.list'); 
+    Route::get('customer_satisfaction/view/{id}', 'CustomerSatisfactionController@view');  
+    Route::post('/update_customer_satisfaction/{id}', 'CustomerSatisfactionController@update')->name('update_customer_satisfaction');
+    Route::post('cs_received/{id}', 'CustomerSatisfactionController@received');
+    Route::post('cs_closed/{id}', 'CustomerSatisfactionController@close');
+
+    // Customer Complaint
+    Route::get('/cc_list', 'CustomerSatisfactionController@list')->name('customer_satisfaction.list');
+    
     // Categorization
     Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    
     Route::post('/new_categorization', 'CategorizationController@store')->name('categorizations.store'); 

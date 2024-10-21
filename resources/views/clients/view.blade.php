@@ -324,6 +324,20 @@
                                         </tr>
                                     @endforeach
                                 @endif
+
+                                @if($prfClients->isNotEmpty())
+                                    @foreach ($prfClients as $prfClient)
+                                        <tr>
+                                            <td>{{ $prfClient->DateRequested }}</td>
+                                            <td>Price Request</td>
+                                            <td>
+                                                <a href="{{ url('price_monitoring_local/view/'.$prfClient->id.'/'.$prfClient->PrfNumber) }}" target="_blank">
+                                                    {{ $prfClient->PrfNumber }}
+                                                </a>
+                                            </td>   
+                                        </tr>
+                                    @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>

@@ -505,6 +505,7 @@ class ClientController extends Controller
                 'srfClients', 
                 'crrClients', 
                 'rpeClients', 
+                'prfClients',
                 'srfClientFiles', 
                 'sampleRequests',
                 'crrClientFiles',
@@ -536,6 +537,7 @@ class ClientController extends Controller
         $srfClients = $data->srfClients;
         $crrClients = $data->crrClients;
         $rpeClients = $data->rpeClients;
+        $prfClients = $data->prfClients;
         $srfClientFiles = $data->srfClientFiles;
         $sampleRequests = $data->sampleRequests;
         $crrClientFiles = $data->crrClientFiles;
@@ -546,7 +548,7 @@ class ClientController extends Controller
         
         return view('clients.view', compact(
             'data', 'primaryAccountManager', 'secondaryAccountManager', 'payment_terms', 
-            'regions', 'countries', 'areas', 'business_types', 'industries', 'addresses', 'activities', 'srfClients', 'crrClients', 'rpeClients', 'srfClientFiles', 'sampleRequests', 'crrClientFiles', 'customerRequirements', 'rpeClientFiles', 'productEvaluations', 'productFiles'
+            'regions', 'countries', 'areas', 'business_types', 'industries', 'addresses', 'activities', 'srfClients', 'crrClients', 'rpeClients', 'srfClientFiles', 'sampleRequests', 'crrClientFiles', 'customerRequirements', 'rpeClientFiles', 'productEvaluations', 'productFiles', 'prfClients'
         ));
     }
 

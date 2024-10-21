@@ -114,4 +114,5 @@ class CustomerRequirement extends Model implements Auditable
     {
         return $this->belongsTo(PriceCurrency::class,'CurrencyId','id');
     }
+        
 }

@@ -6,11 +6,13 @@
 </div>
 <div class="row text-center" style="margin-top: 5em">
     <div class="col-6 text-right">
-        <div class="btn button">Customer Complaint</div>  
+        <a href="{{ url('/customer_complaint2') }}">
+            <div class="btn button">Customer Complaint</div>  
+        </a>
     </div>
     <div class="col-6 text-left">
         <a href="{{ url('/customer_satisfaction') }}">
-            <div class="btn button">Customer Feedback</div>
+            <div class="btn button">Customer Satisfaction</div>
         </a>
     </div>
 </div>
