@@ -62,7 +62,7 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </td> -->
-                                <td><a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id) }}" title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a></td>
+                                <td><a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id.'/'.$priceMonitoring->PrfNumber) }}" title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a></td>
                                 <td>{{  date('m-d-y', strtotime($priceMonitoring->DateRequested)) }}</td>
                                 <td>{{ optional($priceMonitoring->client)->Name }}</td>
                                 <td>
@@ -131,7 +131,7 @@
                                     <i class="ti-trash"></i>
                                 </button>
                             </td> -->
-                            <td><a href="{{ url('price_monitoring/view/' . $priceMonitoring->id) }}"  title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a></td>
+                            <td><a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id.'/'.$priceMonitoring->PrfNumber) }}"  title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a></td>
                             <td>{{  date('m-d-y', strtotime($priceMonitoring->DateRequested)) }}</td>
                             <td>{{ optional($priceMonitoring->client)->Name }}</td>
                             <td>

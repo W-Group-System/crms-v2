@@ -46,7 +46,7 @@
                         @foreach ( $price_monitorings as $priceMonitoring)
                         <tr>
                             <td align="center">
-                                <a href="{{ url('price_monitoring/view/' . $priceMonitoring->id) }}" class="btn btn-sm btn-info btn-outline" title="View Price Request"><i class="ti-eye"></i></a>
+                                <a href="{{ url('price_monitoring/view/' . $priceMonitoring->id.'/'.$priceMonitoring->PrfNumber) }}" class="btn btn-sm btn-info btn-outline" title="View Price Request"><i class="ti-eye"></i></a>
                                 <button type="button" class="btn btn-sm btn-warning"
                                     data-target="#editPriceRequest{{ $priceMonitoring->id }}" data-toggle="modal" title='Edit Price Request'>
                                     <i class="ti-pencil"></i>
