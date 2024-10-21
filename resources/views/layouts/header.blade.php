@@ -343,6 +343,7 @@
                                     @if(viewModule('Customer Feedback', $department, $role) == "yes")
                                     <li class="nav-item"> <a class="nav-link" href="{{ url('/customer_feedback') }}">Customer Feedbacks</a></li>
                                     @endif
+                                    <li class="nav-item"> <a class="nav-link" href="{{ url('/cs_list') }}">Customer Satisfaction</a></li>
                                     
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#table_service2" aria-expanded="false" aria-controls="table_service2" onclick="toggleSetupService(event)">

@@ -85,6 +85,11 @@ class Client extends Model
         return $this->hasMany(SampleRequest::class, 'ClientId', 'id');
     }
 
+    public function prfClients()
+    {
+        return $this->hasMany(PriceMonitoring::class, 'ClientId', 'id');
+    }   
+
     public function srfClientFiles()
     {
         return $this->hasManyThrough(SrfFile::class, SampleRequest::class, 'ClientId', 'SampleRequestId');

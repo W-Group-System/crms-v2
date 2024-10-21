@@ -92,7 +92,7 @@
         <div class="body_cs">
             @yield('content')
         </div>
-
+        @include('sweetalert::alert')
         <!-- Add common scripts here -->
         <script src="{{ asset('js/app.js') }}"></script>
         <script>
@@ -116,7 +116,7 @@
 
         <script src="{{ asset('js/off-canvas.js') }}"></script>
         <script src="{{ asset('js/hoverable-collapse.js') }}"></script>
-
+        <script src="{{asset('js/sweetalert2.min.js')}}"></script>
         <script src="{{ asset('js/dashboard.js') }}"></script>
         @yield('scripts') <!-- For additional page-specific scripts -->
     </body>
