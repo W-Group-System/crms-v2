@@ -271,7 +271,7 @@
                     <p class="col-md-2 mb-0 text-right"><b>Factory Overhead:</b></p>
                     <p class="col-md-2 mb-0">{{ $prcieProduct->LsalesFactoryOverhead }}</p>
                     <p class="col-md-2 mb-0 text-right"><b>GAE Type:</b></p>
-                    <p class="col-md-2 mb-0">{{ $prcieProduct->gaeType->ExpenseName }}</p>
+                    <p class="col-md-2 mb-0">{{ optional($prcieProduct->gaeType)->ExpenseName }}</p>
                 </div>
                 <div class="row">
                     <p class="col-md-2 mb-0 text-right"><b>Quantity Required:</b></p>
