@@ -239,9 +239,7 @@ class DashboardController extends Controller
         // Sales Approval
         function countApproval($model, $userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
             return $model::where(function($query) use ($userId, $userByUser) {
-                        $query->where('PrimarySalesPersonId', $userId)
-                            ->orWhere('PrimarySalesPersonId', $userByUser)
-                            ->orWhere('SecondarySalesPersonId', $userId)
+                        $query->where('SecondarySalesPersonId', $userId)
                             ->orWhere('SecondarySalesPersonId', $userByUser);
                     })
                     ->where($field, $value)
