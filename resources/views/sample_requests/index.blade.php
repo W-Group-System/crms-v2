@@ -1,5 +1,5 @@
 @extends('layouts.header')
-@section('content')
+@section('css')
 <style>
     .form-header {
     align-items: center;
@@ -16,11 +16,17 @@
     border-top: 1px solid black;
 }
 </style>
+@endsection
+@section('content')
+
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
-            Sample Request List
+    <div class="card border border-1 border-primary rounded-0" style="max-height: 80vh;">
+        <div class="card-header bg-primary rounded-0 font-weight-bold text-white">
+            Sample Request
+        </div>
+        <div class="card-body" style="overflow: auto;">
+            <h4 class="card-title d-flex justify-content-end align-items-center">
+            {{-- Sample Request List --}}
             @if(checkRolesIfHaveCreate('Sample Request Form', auth()->user()->department_id, auth()->user()->role_id) == "yes")
                 <button type="button" class="btn btn-md btn-outline-primary" id="addSrfBtn" data-toggle="modal" data-target="#formSampleRequest">New</button>
             @endif
@@ -395,18 +401,18 @@
                         </tbody>
                     </table>
                     <!-- $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
-                    {{ $sampleRequests->appends(request()->query())->links() }}
-                    @php
-                        $total = $sampleRequests->total();
-                        $currentPage = $sampleRequests->currentPage();
-                        $perPage = $sampleRequests->perPage();
+                </div>
+                {{ $sampleRequests->appends(request()->query())->links() }}
+                @php
+                    $total = $sampleRequests->total();
+                    $currentPage = $sampleRequests->currentPage();
+                    $perPage = $sampleRequests->perPage();
 
-                        $from = ($currentPage - 1) * $perPage + 1;
-                        $to = min($currentPage * $perPage, $total);
-                    @endphp
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-                    </div>
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                 </div>
             @endif 
         </div>
