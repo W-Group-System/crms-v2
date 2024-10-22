@@ -30,8 +30,11 @@
     }
 </style>
 <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
+    <div class="card rounded-0 border border-1 border-primary p-0" style="max-height: 80vh;">
+        <div class="card-header rounded-0 bg-primary text-white font-weight-bold">
+            Price Request Details
+        </div>
+        <div class="card-body" style="overflow: auto;">
             <h4 class="card-title d-flex justify-content-between align-items-center">View Product Details
                 <div align="right">
                     <a href="{{ url('/price_monitoring_ls') }}" class="btn btn-md btn-outline-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>

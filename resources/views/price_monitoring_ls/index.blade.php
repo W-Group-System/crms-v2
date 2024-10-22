@@ -1,10 +1,13 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
-            Price Monitoring List
+    <div class="card rounded-0 border border-1 border-primary" style="max-height: 80vh;">
+        <div class="card-header bg-primary rounded-0 font-weight-bold text-white">
+            Price Request
+        </div>
+        <div class="card-body" style="overflow: auto;">
+            <h4 class="card-title d-flex justify-content-end align-items-center">
+            {{-- Price Monitoring List --}}
             @if(auth()->user()->role->type == 'LS')
             <button type="button" class="btn btn-md btn-outline-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoringLs">New</button>
             @elseif (auth()->user()->role->type == 'IS')
@@ -93,17 +96,17 @@
                 </table>
                 <!-- {!! $price_monitorings->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
                 {{ $price_monitorings->appends(request()->query())->links() }}
-                @php
-                    $total = $price_monitorings->total();
-                    $currentPage = $price_monitorings->currentPage();
-                    $perPage = $price_monitorings->perPage();
-    
-                    $from = ($currentPage - 1) * $perPage + 1;
-                    $to = min($currentPage * $perPage, $total);
-                @endphp
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-                </div>
+            </div>
+            @php
+                $total = $price_monitorings->total();
+                $currentPage = $price_monitorings->currentPage();
+                $perPage = $price_monitorings->perPage();
+
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
             </div>
             @elseif (auth()->user()->role->type == 'IS')
             <div class="table-responsive" style="overflow: auto; height: 80vh;">
@@ -156,18 +159,18 @@
                     </tbody>
                 </table>
                 <!-- {!! $price_monitorings->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
-                {{ $price_monitorings->appends(request()->query())->links() }}
-                @php
-                    $total = $price_monitorings->total();
-                    $currentPage = $price_monitorings->currentPage();
-                    $perPage = $price_monitorings->perPage();
-    
-                    $from = ($currentPage - 1) * $perPage + 1;
-                    $to = min($currentPage * $perPage, $total);
-                @endphp
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-                </div>
+            </div>
+            {{ $price_monitorings->appends(request()->query())->links() }}
+            @php
+                $total = $price_monitorings->total();
+                $currentPage = $price_monitorings->currentPage();
+                $perPage = $price_monitorings->perPage();
+
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
             </div>
             @endif
         </div>
