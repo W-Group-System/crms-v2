@@ -2,8 +2,8 @@
 @section('content')
 
 <div class="col-12 grid-margin stretch-card">
-    <div class="card rounded-0" style="max-height: 80vh;">
-        <div class="card-header border border-1 border-primary font-weight-bold text-white bg-primary">
+    <div class="card rounded-0 border border-1 border-primary" style="max-height: 80vh;">
+        <div class="card-header rounded-0 font-weight-bold text-white bg-primary">
             Customer Requirement Details
         </div>
         <div class="card-body" style="overflow: auto;">

@@ -149,7 +149,11 @@
                 <!-- partial -->
                 <!-- partial:partials/_sidebar.html -->
                 <nav class="sidebar sidebar-offcanvas" id="sidebar">
-                    <ul class="nav">
+                    <div class="app-logo text-center">
+                        <img src="{{asset('images/wgroup.png')}}" alt="" height="120" width="170">
+                    </div>
+                    <hr class="m-0">
+                    <ul class="nav mt-2">
                         <li class="nav-item">
                             @if(Auth::check() && optional(Auth::user()->role)->type == 'RND' || optional(Auth::user()->role)->type == 'ITD')
                                 <a class="nav-link" href="{{ route('dashboard.rnd') }}">
