@@ -1424,9 +1424,14 @@ class SampleRequestController extends Controller
         // }
 
         // return "";
-        $secondary_sales_person = SecondarySalesPerson::where('PrimarySalesPersonId', $request->ps)->pluck('SecondarySalesPersonId')->toArray();
-        $users = User::whereIn('id', $secondary_sales_person)->pluck('full_name', 'id')
-                        ->orWhereIn('user_id', $secondary_sales_person)->pluck('full_name', 'id');
+        $ps_id = $request->ps;
+        if (!is_numeric($ps_id)) {
+            $ps_id = User::where('user_id', $request->ps)->value('id');
+        }
+
+        $secondary_sales_person = SecondarySalesPerson::where('PrimarySalesPersonId', $ps_id)->pluck('SecondarySalesPersonId')->toArray();
+        $users = User::whereIn('id', $secondary_sales_person)
+                        ->pluck('full_name', 'id');
         
         return Form::select('SecondarySalesPersonId', $users, null, array('class' => 'form-control'));
     }
