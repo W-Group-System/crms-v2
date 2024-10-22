@@ -8,7 +8,7 @@
         <div class="card-body" style=" overflow:auto;">
             @include('components.error')
             @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
-            <h4 class="card-title d-flex justify-content-between align-items-center">
+            <h4 class="card-title d-flex justify-content-end align-items-center">
             {{-- Customer Requirement List --}}
             <button type="button" class="btn btn-md btn-outline-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement">New</button>
             </h4>

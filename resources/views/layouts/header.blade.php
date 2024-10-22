@@ -90,6 +90,22 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+
+        .table-responsive::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
     @yield('css')
     @php
