@@ -114,10 +114,10 @@
                 <div class="col-md-3">
                     <p class="mb-0">
                     {{-- {{ $userAccounts->full_name }} --}}
-                        @if($data->userById != null)
-                        {{$data->userById->full_name}}
-                        @elseif($data->userByUserId != null)
+                        @if($data->userByUserId != null)
                         {{$data->userByUserId->full_name}}
+                        @elseif($data->userById != null)
+                        {{$data->userById->full_name}}
                         @endif
                     </p>
                 </div>

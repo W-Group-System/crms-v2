@@ -100,10 +100,10 @@
                 <div class="col-md-2"><p class="mb-0"><b>Created By:</b></p></div>
                 <div class="col-md-3">
                     <p class="mb-0">
-                        @if($data->userById != null)
-                        {{optional($data->userById)->full_name}}
-                        @elseif($data->userByUserId != null)
+                        @if($data->userByUserId != null)
                         {{optional($data->userByUserId)->full_name}}
+                        @elseif($data->userById != null)
+                        {{optional($data->userById)->full_name}}
                         @endif
                     </p>
                 </div>
@@ -115,10 +115,10 @@
             <div class="row">
                 <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
                 <div class="col-md-3">
-                    @if($data->approveById)
-                    <p class="mb-0">{{ optional($data->approveById)->full_name}}</p>
-                    @elseif($data->approveByUserId)
+                    @if($data->approveByUserId)
                     <p class="mb-0">{{ optional($data->userByUserId)->full_name }}</p>
+                    @elseif($data->approveById)
+                    <p class="mb-0">{{ optional($data->approveById)->full_name}}</p>
                     @else
                     N/A
                     @endif
