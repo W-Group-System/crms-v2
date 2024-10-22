@@ -743,7 +743,17 @@ function productManagementLogs($action, $product_code)
 
 function primarySalesApprover($primary_sales,$user_login)
 {
-    $sales_approvers = SalesApprovers::where('SalesApproverId', $user_login)->where('UserId', $primary_sales)->get();
+    $user_data = User::where('user_id', $primary_sales)->first();
+    if ($user_data != null)
+    {
+        $user_id = $user_data->id;
+        
+        $sales_approvers = SalesApprovers::where('SalesApproverId', $user_login)->where('UserId', $user_id)->get();
+    }
+    else
+    {
+        $sales_approvers = SalesApprovers::where('SalesApproverId', $user_login)->where('UserId', $primary_sales)->get();
+    }
     
     if ($sales_approvers->isNotEmpty())
     {
