@@ -2,10 +2,13 @@
 @section('content')
 
 <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
+    <div class="card rounded-0" style="max-height: 80vh;">
+        <div class="card-header border border-1 border-primary font-weight-bold text-white bg-primary">
+            Customer Requirement Details
+        </div>
+        <div class="card-body" style="overflow: auto;">
             @include('components.error')
-            <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
+            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details --}}
                 <div align="right">
                     {{-- {{dd(url()->previous(), url()->current())}} --}}
                     @if(url()->previous() == url()->current())

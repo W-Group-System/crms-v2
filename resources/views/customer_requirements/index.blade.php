@@ -1,16 +1,19 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
+    <div class="card rounded-0 border border-1 border-primary" style="max-height: 80vh;">
+        <div class="card-header bg-primary text-white font-weight-bold rounded-0">
+            Customer Requirement List
+        </div>
+        <div class="card-body" style=" overflow:auto;">
             @include('components.error')
             @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
             <h4 class="card-title d-flex justify-content-between align-items-center">
-            Customer Requirement List
+            {{-- Customer Requirement List --}}
             <button type="button" class="btn btn-md btn-outline-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement">New</button>
             </h4>
             @else
-            <h4 class="card-title d-flex justify-content-between align-items-center">Customer Requirement List</h4>
+            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">Customer Requirement List</h4> --}}
             @endif
 
             <div class="form-group">
@@ -71,7 +74,7 @@
                     </form>
                 </div>
             </div>
-            <div class="table-responsive" style="overflow: auto; height: 80vh;">
+            <div class="table-responsive" >
                 <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%" >
                     @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == "RND" || auth()->user()->role->type == "QCD-MRDC" || auth()->user()->role->type == "QCD-PBI" || auth()->user()->role->type == "QCD-WHI" || auth()->user()->role->type == "QCD-CCC" || auth()->user()->role->type == "ITD")
                     <thead>
