@@ -1,10 +1,12 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
-            Product Evaluation List
+    <div class="card rounded-0 border border-1 border-primary" style="max-height:80vh;">
+        <div class="card-header bg-primary text-white font-weight-bold">
+            Request Product Evaluations
+        </div>
+        <div class="card-body" style="overflow:auto;">
+            <h4 class="card-title d-flex justify-content-end align-items-center">
             @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
             <button type="button" class="btn btn-md btn-outline-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
             @endif
@@ -230,19 +232,19 @@
                         </tbody>
                     @endif
                 </table>
-                <!-- {!! $request_product_evaluations->appends(['search' => $search])->links() !!} -->
-                {{ $request_product_evaluations->appends(request()->query())->links() }}
-                @php
-                    $total = $request_product_evaluations->total();
-                    $currentPage = $request_product_evaluations->currentPage();
-                    $perPage = $request_product_evaluations->perPage();
-    
-                    $from = ($currentPage - 1) * $perPage + 1;
-                    $to = min($currentPage * $perPage, $total);
-                @endphp
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-                </div>
+            </div>
+            <!-- {!! $request_product_evaluations->appends(['search' => $search])->links() !!} -->
+            {{ $request_product_evaluations->appends(request()->query())->links() }}
+            @php
+                $total = $request_product_evaluations->total();
+                $currentPage = $request_product_evaluations->currentPage();
+                $perPage = $request_product_evaluations->perPage();
+
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
             </div>
         </div>
     </div>
