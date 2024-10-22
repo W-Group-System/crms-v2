@@ -65,7 +65,31 @@
             background: url("{{ asset('images/loading.gif') }}") 50% 50% no-repeat white;
             opacity: .8;
             background-size: 120px 120px;
-        }   
+        }
+        
+        /* html, body {
+            overflow: hidden;
+        } */
+
+        /* width */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
     @yield('css')
     @php
