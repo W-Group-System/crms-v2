@@ -121,7 +121,7 @@
                 <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
                 <div class="col-md-3">
                     @if($data->approveByUserId)
-                    <p class="mb-0">{{ optional($data->userByUserId)->full_name }}</p>
+                    <p class="mb-0">{{ optional($data->approveByUserId)->full_name }}</p>
                     @elseif($data->approveById)
                     <p class="mb-0">{{ optional($data->approveById)->full_name}}</p>
                     @endif
