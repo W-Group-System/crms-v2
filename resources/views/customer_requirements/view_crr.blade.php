@@ -410,7 +410,13 @@
                 <div class="row">
                     <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Due Date :</b></p></div>
                     <div class="col-sm-3 col-md-2">
-                        <p class="mb-0">{{date('Y-m-d', strtotime($crr->DueDate))}}</p>
+                        <p class="mb-0">
+                            @if($crr->DueDate != null)
+                            {{date('Y-m-d', strtotime($crr->DueDate))}}
+                            @else
+                            N/A
+                            @endif
+                        </p>
                     </div>
                     <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Progress :</b></p></div>
                     <div class="col-sm-3 col-md-2">
