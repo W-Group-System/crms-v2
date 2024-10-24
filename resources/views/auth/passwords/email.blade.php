@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+{{-- <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -39,6 +39,57 @@
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> --}}
+
+
+
+<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="content-wrapper d-flex align-items-center auth px-0">
+            <div class="row w-100 mx-0">
+                <div class="col-lg-4 mx-auto">
+                    @if(session('alert.error'))
+                        <div class="alert alert-danger">
+                            {{ session('alert.error') }}
+                        </div>
+                    @endif
+
+                    <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+                        <div class="brand-logo">
+                            <img src="{{ asset('/images/crms2.png')}}" alt="logo">
+                        </div>
+                        @if(session('status'))
+                        <p class="alert alert-success">{{ session('status') }}</p>
+                        @endif
+                        <h4 class="font-weight-bold mb-3">Forgot Password</h4>
+                        {{-- <h6 class="font-weight-light">Sign in to continue.</h6> --}}
+                        <form method="POST" action="{{ route('password.email') }}" onsubmit='show()'>
+                            @csrf   
+                            <label for="email">Email</label>
+                            <div class="form-group">
+                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus placeholder="Enter Email">
+                                @if ($errors->has('email'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('email') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">
+                                    {{ __('SIGN IN') }}
+                                </button>
+                            </div>
+                            <div class="my-2 d-flex justify-content-between align-items-center">
+                                <a class="auth-link text-black" href="{{ route('login') }}">
+                                    {{ __('Back to login') }}
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
