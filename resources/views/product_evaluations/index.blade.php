@@ -3,7 +3,7 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card rounded-0 border border-1 border-primary" style="max-height:80vh;">
         <div class="card-header bg-primary text-white font-weight-bold">
-            Request Product Evaluations
+            Request Product Evaluation
         </div>
         <div class="card-body" style="overflow:auto;">
             <h4 class="card-title d-flex justify-content-end align-items-center">
