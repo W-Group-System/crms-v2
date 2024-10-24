@@ -359,7 +359,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('computation/{id}', 'PriceMonitoringController@computation');
         Route::post('refresh_secondary_persons_prf', 'PriceMonitoringController@refreshUserApprover');
         // Customer Complaint 
-        Route::get('/2', 'CustomerComplaintController@index')->name('customer_complaint.index');
+        Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');
         Route::post('/new_customer_complaint', 'CustomerComplaintController@store')->name('customer_complaint.store');
         Route::get('customer_complaint/{id}/edit', 'CustomerComplaintController@edit');
         Route::put('customer_complaint/{id}', 'CustomerComplaintController@update');

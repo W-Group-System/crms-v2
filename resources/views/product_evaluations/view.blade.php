@@ -38,7 +38,7 @@
             <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details
                 <div align="right">
                     @if(url()->previous() == url()->current())
-                    <a href="{{ url('product_evaluation?open=10') }}" class="btn btn-md btn-outline-secondary">
+                    <a href="{{ url('request_product_evaluation?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @else
