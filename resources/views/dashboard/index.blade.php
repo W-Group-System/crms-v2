@@ -80,7 +80,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>SRF</p>
                             <h5 class="font-weight-medium text-white">
-                                <a href="{{ route('sample_request.index', ['progress' => 10, 'status' => 10]) }}" class="text-white" onclick="show()">
+                                <a href="{{ route('sample_request.index', ['progress' => 10, 'open' => 10]) }}" class="text-white" onclick="show()">
                                     {{ $srfSalesForApproval ?? '0' }}
                                 </a>
                             </h5>
