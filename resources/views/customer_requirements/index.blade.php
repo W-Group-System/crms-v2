@@ -3,7 +3,7 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card rounded-0 border border-1 border-primary" style="max-height: 80vh;">
         <div class="card-header bg-primary text-white font-weight-bold rounded-0">
-            Customer Requirement List
+            Customer Requirement
         </div>
         <div class="card-body" style=" overflow:auto;">
             @include('components.error')
