@@ -254,7 +254,7 @@ class DashboardController extends Controller
             ->where('customerrequirements.Progress', '10') 
             ->where('customerrequirements.Status', '10') 
             ->where('salesapprovers.SalesApproverId', $userId)
-            ->count('customerrequirements.PrimarySalesPersonId'); 
+            ->count(); 
 
         $rpeSalesForApproval = RequestProductEvaluation::join('users', function($join) {
                 $join->on('requestproductevaluations.PrimarySalesPersonId', '=', 'users.user_id')
@@ -279,7 +279,7 @@ class DashboardController extends Controller
             ->where('samplerequests.Progress', '10') 
             ->where('samplerequests.Status', '10') 
             ->where('salesapprovers.SalesApproverId', $userId)
-            ->count('samplerequests.PrimarySalesPersonId');
+            ->count();
 
         $prfSalesForApproval = PriceMonitoring::join('users', function($join) {
             $join->on('pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
