@@ -216,13 +216,13 @@
                         @endif
                         @if(authCheckIfItsSales(auth()->user()->department_id))
                             @if(primarySalesApprover($requestEvaluation->PrimarySalesPersonId, auth()->user()->id))
-
+                                
                                 @if($requestEvaluation->Status == 10)
                                     <button type="button" class="btn btn-outline-warning editBtn" data-toggle="modal" data-target="#editRpe{{$requestEvaluation->id}}" data-secondarysales="{{$requestEvaluation->SecondarySalesPersonId}}">
                                         <i class="ti ti-pencil"></i>&nbsp;Update
                                     </button>
 
-                                    @if($requestEvaluation->SecondarySalesPersonId == auth()->user()->id || $requestEvaluation->SecondarySalesPersonId == auth()->user()->user_id)
+                                    {{-- @if($requestEvaluation->SecondarySalesPersonId == auth()->user()->id || $requestEvaluation->SecondarySalesPersonId == auth()->user()->user_id) --}}
                                         @if($requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 40 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && $requestEvaluation->Progress != 70)
                                         <button type="button" class="btn btn-md btn-outline-success"
                                             data-target="#approveRpe{{ $requestEvaluation->id }}" 
@@ -231,7 +231,7 @@
                                             <i class="ti ti-check-box">&nbsp;</i>Approve
                                         </button>
                                         @endif
-                                    @endif
+                                    {{-- @endif --}}
                                 @endif
 
                                 @if($requestEvaluation->Progress == 60 && $requestEvaluation->Progress != 70)
