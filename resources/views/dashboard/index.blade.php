@@ -64,7 +64,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
                             <h5 class="font-weight-medium text-white">
-                            <a href="{{ route('customer_requirement.index', ['progress' => 10, 'status' => 10]) }}" class="text-white" onclick="show()">
+                            <a href="{{ route('customer_requirement.index', ['progress' => 10, 'open' => 10]) }}" class="text-white" onclick="show()">
                                     {{ $crrSalesForApproval ?? '0' }}
                                 </a>
                             </h5>
@@ -364,7 +364,7 @@
         @endif
     </div>
 
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-md-3 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
@@ -585,7 +585,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     
 </div>

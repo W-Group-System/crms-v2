@@ -280,7 +280,6 @@ class RequestProductEvaluationController extends Controller
                     $query->where('Status', $status);
                 }
             })
-            // Filter by progress
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
                     $query->where('Progress', '10')
