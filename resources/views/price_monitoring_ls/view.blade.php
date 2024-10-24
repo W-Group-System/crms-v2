@@ -37,7 +37,17 @@
         <div class="card-body" style="overflow: auto;">
             <h4 class="card-title d-flex justify-content-between align-items-center">View Product Details
                 <div align="right">
-                    <a href="{{ url('/price_monitoring_ls') }}" class="btn btn-md btn-outline-light"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+                    <!-- <a href="{{ url('/price_monitoring_ls') }}" class="btn btn-md btn-outline-light"><i class="icon-arrow-left"></i>&nbsp;Back</a> -->
+
+                    @if(url()->previous() == url()->current())
+                    <a href="{{ url('price_monitoring_ls?open=10') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @else
+                    <a href="{{ url()->previous() ?: url('/price_monitoring_ls') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @endif
                     <a target='_blank' href="{{ url('quotation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Quotation</a>
                     <a target='_blank' href="{{ url('computation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Computation</a>
                     @if ($price_monitorings->Progress != 30)
@@ -189,7 +199,7 @@
                 <p class="col-md-2 text-right mb-0"><b>Client Name:</b></p>
                 <p class="col-md-2 mb-0">
                     <a href="{{ url('view_client/' . $price_monitorings->client->id) }}">
-                        {{ $price_monitorings->client->Name }}
+                        {{ optional($price_monitorings->client)->Name }}
                     </a>
                 </p>
                 <p class="col-md-2 mb-0 text-right"><b>Destination:</b></p>
@@ -199,7 +209,7 @@
                 <p class="col-md-2 mb-0 text-right"><b>Validity Date:</b></p>
                 <p class="col-md-2 mb-0">{{  $price_monitorings->ValidityDate }}</p>
                 <p class="col-md-2 mb-0 text-right"><b>Payment Term:</b></p>
-                <p class="col-md-2 mb-0">{{ $price_monitorings->paymentterms->Name}}</p>
+                <p class="col-md-2 mb-0">{{ optional($price_monitorings->paymentterms)->Name}}</p>
             </div>
             <div class="row">
                 <p class="col-md-2 mb-0 text-right"><b>Packaging Type:</b></p>
@@ -413,7 +423,7 @@
                                             </button> 
                                             @endif
                                         </td>
-                                        <td>{{ $fileupload->Name }}</td>
+                                        <td>{{ optional($fileupload)->Name }}</td>
                                         <td>
                                             @if ($fileupload->Path)
                                             <a href="{{ url($fileupload->Path) }}" target="_blank">

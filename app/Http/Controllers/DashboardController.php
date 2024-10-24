@@ -10,6 +10,7 @@ use App\CustomerRequirement;
 use App\PriceMonitoring;
 use App\Product;
 use App\ProductEvaluation;
+use App\SalesApprovers;
 use App\RequestProductEvaluation;
 use App\SampleRequest;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +38,8 @@ class DashboardController extends Controller
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id; // Safely access user_id
         $role = optional(Auth::user())->role;
-        
+      
+       
         if (!$userId && !$userByUser && !$role) {
             // Handle case where there is no authenticated user
             return redirect()->route('login'); // Or handle it in another appropriate way
@@ -234,26 +236,82 @@ class DashboardController extends Controller
         // $prfClosed = countPriceRequest($userId, $userByUser, 'Progress', '30', );
         // $prfManagerApproval = countPriceRequest($userId, $userByUser, 'Progress', '40', );
 
-        // $totalPRFCount = $prfSalesApproval + $prfWaiting + $prfReopened + $prfClosed + $prfManagerApproval;
+        // $totalPRFCount = $prfSalesApproval + $prfWaiting + $prfReopened + $prfClosed + $prfManagerApproval
+
+        // $primarySalesCount = CustomerRequirement::join('salesapprovers', 'users', 'customerrequirements.PrimarySalesPersonId', '=', 'salesapprovers.UserId')
+        //             ->where('customerrequirements.Progress', '10') 
+        //             ->where('customerrequirements.Status', '10') 
+        //             ->where('salesapprovers.SalesApproverId', $userId) 
+        //             ->count('customerrequirements.PrimarySalesPersonId'); 
+
+        // dd($primarySalesCount);
+
+        $crrSalesForApproval = CustomerRequirement::join('users', function($join) {
+            $join->on('customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
+                 ->orOn('customerrequirements.PrimarySalesPersonId', '=', 'users.id');
+            }) 
+            ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+            ->where('customerrequirements.Progress', '10') 
+            ->where('customerrequirements.Status', '10') 
+            ->where('salesapprovers.SalesApproverId', $userId)
+            ->count('customerrequirements.PrimarySalesPersonId'); 
+
+        $rpeSalesForApproval = RequestProductEvaluation::join('users', function($join) {
+                $join->on('requestproductevaluations.PrimarySalesPersonId', '=', 'users.user_id')
+                     ->orOn('requestproductevaluations.PrimarySalesPersonId', '=', 'users.id');
+            })
+            ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId')
+            ->where('requestproductevaluations.Progress', '10')  // Filter by progress 10
+            ->where('requestproductevaluations.Status', '10')    // Filter by status 10
+            ->where(function($query) use ($userId) {
+                // Ensure correct filtering by SalesApproverId for the logged-in user
+                $query->where('salesapprovers.SalesApproverId', $userId)
+                      ->whereNotNull('salesapprovers.SalesApproverId');
+            })
+            ->count(); // Correct count of rows based on the filters
+        
+
+        $srfSalesForApproval = SampleRequest::join('users', function($join) {
+            $join->on('samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
+                    ->orOn('samplerequests.PrimarySalesPersonId', '=', 'users.id');
+            }) 
+            ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+            ->where('samplerequests.Progress', '10') 
+            ->where('samplerequests.Status', '10') 
+            ->where('salesapprovers.SalesApproverId', $userId)
+            ->count('samplerequests.PrimarySalesPersonId');
+
+        $prfSalesForApproval = PriceMonitoring::join('users', function($join) {
+            $join->on('pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
+                    ->orOn('pricerequestforms.PrimarySalesPersonId', '=', 'users.id');
+            }) 
+            ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+            ->where('pricerequestforms.Progress', '10') 
+            ->where('pricerequestforms.Status', '10') 
+            ->where('salesapprovers.SalesApproverId', $userId)
+            ->count();
+
+        // Display the result
+        // dd($prfSalesForApproval);
 
         // Sales Approval
-        function countApproval($model, $userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
-            return $model::where(function($query) use ($userId, $userByUser) {
-                        $query->where('SecondarySalesPersonId', $userId)
-                            ->orWhere('SecondarySalesPersonId', $userByUser);
-                    })
-                    ->where($field, $value)
-                    ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
-                        return $query->where($excludeField, '=', $excludeValue);
-                    })
-                    ->count();
-        }
-
+        // function countApproval($model, $userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
+        //     return $model::where(function($query) use ($userId, $userByUser) {
+        //                 $query->where('PrimarySalesPersonId', $userId)
+        //                       ->orWhere('PrimarySalesPersonId', $userByUser);
+        //             })
+        //             ->where($field, $value)
+        //             ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
+        //                 return $query->where($excludeField, '=', $excludeValue);
+        //             })
+        //             ->count();
+        // }
+        
         // Counting approvals for different models
-        $crrSalesForApproval = countApproval(CustomerRequirement::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
-        $rpeSalesForApproval = countApproval(RequestProductEvaluation::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
-        $srfSalesForApproval = countApproval(SampleRequest::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
-        $prfSalesForApproval = countApproval(PriceMonitoring::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
+        // $crrSalesForApproval = countApproval(CustomerRequirement::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
+        // $rpeSalesForApproval = countApproval(RequestProductEvaluation::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
+        // $srfSalesForApproval = countApproval(SampleRequest::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
+        // $prfSalesForApproval = countApproval(PriceMonitoring::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
 
         // Total approval count
         $totalApproval = $crrSalesForApproval + $rpeSalesForApproval + $srfSalesForApproval + $prfSalesForApproval;

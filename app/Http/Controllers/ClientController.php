@@ -323,11 +323,11 @@ class ClientController extends Controller
             'ClientCountryId'           => 'required|string',        
             'ClientAreaId'              => 'required|string|max:255',
             'BusinessTypeId'            => 'required|string|max:255',
-            'AddressType'               => 'required|array',
-            'AddressType.*'             => 'required|string|max:255',
-            'Address'                   => 'required|array',
-            'Address.*'                 => 'required|string|max:255',
-            'ContactName.*'             => 'required|string|max:255',
+            // 'AddressType'               => 'required|array',
+            // 'AddressType.*'             => 'required|string|max:255',
+            // 'Address'                   => 'required|array',
+            // 'Address.*'                 => 'required|string|max:255',
+            // 'ContactName.*'             => 'required|string|max:255',
         ];  
 
         $customMessages = [
@@ -338,8 +338,8 @@ class ClientController extends Controller
             'ClientAreaId.required'             => 'The area field is required.',
             'BusinessTypeId.required'           => 'The business type is required.',
             'ClientIndustryId.required'         => 'The industry is required.',
-            'AddressType.*.required'            => 'Each address type is required.',
-            'Address.*.required'                => 'Each address is required.',
+            // 'AddressType.*.required'            => 'Each address type is required.',
+            // 'Address.*.required'                => 'Each address is required.',
             'ContactName.*.required'            => 'Contact Name is required.'
         ];
 
@@ -433,12 +433,12 @@ class ClientController extends Controller
             'ClientAreaId'              => 'required|string',
             'ClientCountryId'           => 'required|string',
             'BusinessTypeId'            => 'required|string|max:255',
-            'AddressIds'                => 'array', // Validate address IDs
-            'AddressIds.*'              => 'nullable|integer|exists:clientcompanyaddresses,id',
-            'AddressType'               => 'array|required',
-            'AddressType.*'             => 'required|string|max:255',
-            'Address'                   => 'array|required',
-            'Address.*'                 => 'required|string|max:255',
+            // 'AddressIds'                => 'array', // Validate address IDs
+            // 'AddressIds.*'              => 'nullable|integer|exists:clientcompanyaddresses,id',
+            // 'AddressType'               => 'array|required',
+            // 'AddressType.*'             => 'required|string|max:255',
+            // 'Address'                   => 'array|required',
+            // 'Address.*'                 => 'required|string|max:255',
         ];
 
         $customMessages = [
@@ -449,9 +449,9 @@ class ClientController extends Controller
             'ClientAreaId.required'             => 'The area field is required.',
             'BusinessTypeId.required'           => 'The business type is required.',
             'ClientIndustryId.required'         => 'The industry is required.',
-            'AddressIds.*.exists'               => 'The address ID is invalid.',
-            'AddressType.*.required'            => 'Each address type is required.',
-            'Address.*.required'                => 'Each address is required.'
+            // 'AddressIds.*.exists'               => 'The address ID is invalid.',
+            // 'AddressType.*.required'            => 'Each address type is required.',
+            // 'Address.*.required'                => 'Each address is required.'
         ];
 
         $validator = Validator::make($request->all(), $rules, $customMessages);

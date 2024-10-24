@@ -72,7 +72,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>RPE</p>
                             <h5 class="font-weight-medium text-white">
-                                <a href="{{ route('product_evaluation.index', ['progress' => 10, 'status' => 10]) }}" class="text-white" onclick="show()">
+                                <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}" class="text-white" onclick="show()">
                                     {{ $rpeSalesForApproval ?? '0' }}
                                 </a>
                             </h5>
@@ -88,7 +88,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>PRF</p>
                             <h5 class="font-weight-medium text-white">
-                                <a href="{{ route('price_monitoring.index', ['progress' => 10, 'status' => 10]) }}" class="text-white" onclick="show()">
+                                <a href="{{ route('price_monitoring.index', ['progress' => 10]) }}" class="text-white" onclick="show()">
                                     {{ $prfSalesForApproval ?? '0' }}
                                 </a>
                             </h5>

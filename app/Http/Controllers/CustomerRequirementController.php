@@ -167,21 +167,38 @@ class CustomerRequirementController extends Controller
                     $query->where('Status', $status);
                 }
             })
-            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+            ->when($progress, function($query) use ($progress, $userId) {
                 if ($progress == '10') {
-                    // When filtering by '10', include all relevant progress status records
-                    $query->where('Progress', '10')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where('SecondarySalesPersonId', $userId)
-                                ->orWhere('SecondarySalesPersonId', $userId)
-                                ->orWhere('PrimarySalesPersonId', $userByUser)
-                                ->orWhere('SecondarySalesPersonId', $userByUser);
-                        });
+                    $query->join('users', function($join) {
+                            $join->on('customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
+                                 ->orOn('customerrequirements.PrimarySalesPersonId', '=', 'users.id');
+                        })
+                        ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId')
+                        ->where('salesapprovers.SalesApproverId', $userId) 
+                        ->orWhere(function ($query) use ($userId) {
+                            $query->where('salesapprovers.SalesApproverId', $userId)
+                                  ->whereNotNull('salesapprovers.SalesApproverId');
+                        })
+                        ->select('customerrequirements.*'); 
                 } else {
-                    // Apply progress filter if it's not '10'
-                    $query->where('Progress', $progress);
+                    $query->where('customerrequirements.Progress', $progress); 
                 }
-            })
+            })	
+            // ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+            //     if ($progress == '10') {
+            //         // When filtering by '10', include all relevant progress status records
+            //         $query->where('Progress', '10')
+            //             ->where(function($query) use ($userId, $userByUser) {
+            //                 $query->where('SecondarySalesPersonId', $userId)
+            //                     ->orWhere('SecondarySalesPersonId', $userId)
+            //                     ->orWhere('PrimarySalesPersonId', $userByUser)
+            //                     ->orWhere('SecondarySalesPersonId', $userByUser);
+            //             });
+            //     } else {
+            //         // Apply progress filter if it's not '10'
+            //         $query->where('Progress', $progress);
+            //     }
+            // })
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '20') {
                     $query->where('Progress', '20')
