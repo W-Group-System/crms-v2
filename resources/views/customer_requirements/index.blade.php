@@ -6,17 +6,7 @@
             Customer Requirement
         </div>
         <div class="card-body" style=" overflow:auto;">
-            @include('components.error')
-            @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
-            <h4 class="card-title d-flex justify-content-end align-items-center">
-            {{-- Customer Requirement List --}}
-            <button type="button" class="btn btn-md btn-outline-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement">New</button>
-            </h4>
-            @else
-            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">Customer Requirement List</h4> --}}
-            @endif
-
-            <div class="form-group">
+            <div class="card-title d-flex justify-content-between align-items-center">
                 <form method="GET" onsubmit="show()">
                     <label>Show : </label>
                     <label class="checkbox-inline">
@@ -27,8 +17,17 @@
                     </label>
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
+                @include('components.error')
+                @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
+                <h4 class="card-title d-flex justify-content-end align-items-center">
+                {{-- Customer Requirement List --}}
+                <button type="button" class="btn btn-md btn-outline-primary" id="addCustomerRequirement" data-toggle="modal" data-target="#AddCustomerRequirement">New</button>
+                </h4>
+                @else
+                {{-- <h4 class="card-title d-flex justify-content-between align-items-center">Customer Requirement List</h4> --}}
+                @endif
             </div>
-
+            
             <div class="mb-3">
                 <a href="#" id="copy_btn" class="btn btn-md btn-outline-info">Copy</a>
                 <form method="GET" action="{{url('customer_requirement_export')}}" class="d-inline-block">

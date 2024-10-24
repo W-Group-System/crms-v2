@@ -32,7 +32,7 @@
                                 </select>
                             @elseif(auth()->user()->role->type == 'LS' && auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
                                 <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Sales Person">
-                                    @foreach($user_ls as $userSales)
+                                    @foreach($users_ls as $userSales)
                                         <option value="{{ $userSales->id }}" {{ $data->PrimaryAccountManagerId == $userSales->user_id || $data->PrimaryAccountManagerId == $userSales->id ? 'selected' : '' }}>
                                             {{ $userSales->full_name }}
                                         </option>
@@ -68,7 +68,7 @@
                                 </select>
                             @elseif(auth()->user()->role->type == 'LS' && auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L2")
                                 <select class="form-control js-example-basic-single" name="SecondaryAccountManagerId" id="SecondaryAccountManagerId" style="position: relative !important" title="Select Sales Person">
-                                    @foreach($user_ls as $userSales)
+                                    @foreach($users_ls as $userSales)
                                         <option value="{{ $userSales->id }}" {{ $data->SecondaryAccountManagerId == $userSales->user_id || $data->SecondaryAccountManagerId == $userSales->id ? 'selected' : '' }}>
                                             {{ $userSales->full_name }}
                                         </option>
