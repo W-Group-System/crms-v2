@@ -32,214 +32,345 @@ use Collective\Html\FormFacade as Form;
 class RequestProductEvaluationController extends Controller
 {
     // List
+    // public function index(Request $request)
+    // {   
+    //     $search = $request->input('search');
+    //     $open = $request->open;
+    //     $close = $request->close;
+    //     $status = $request->query('status'); // Get the status from the query parameters
+    //     $progress = $request->query('progress'); // Get the status from the query parameters
+
+    //     $userId = Auth::id(); 
+    //     $userByUser = Auth::user()->user_id; 
+
+    //     $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application', 'rpe_personnels'])
+    //         ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+    //             $status = $request->input('status');
+    //             $role = auth()->user()->role;
+    //             $userType = $role->type;  
+    //             $userName = $role->name;  
+                
+    //             if ($status == '50') {
+    //                 if ($userType == 'RND' && $userName == 'Staff L2') {
+    //                     $query->where('Status', '50');
+    //                 } else {
+    //                     // Default logic for other users
+    //                     $query->where('Status', '50')
+    //                         ->where(function($query) use ($userId, $userByUser) {
+    //                             $query->where(function($query) use ($userId, $userByUser) {
+    //                                 $query->where('PrimarySalesPersonId', $userId)
+    //                                     ->orWhere('SecondarySalesPersonId', $userId)
+    //                                     ->orWhere('PrimarySalesPersonId', $userByUser)
+    //                                     ->orWhere('SecondarySalesPersonId', $userByUser);
+    //                             });
+    //                             // Check for related 'rpe_personnels' entries
+    //                             $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
+    //                                 $query->where('PersonnelUserId', $userId)
+    //                                     ->orWhere('PersonnelUserId', $userByUser);
+    //                             });
+    //                         });
+    //                 }
+    //             } else {
+    //                 // Apply status filter if it's not '50'
+    //                 $query->where('Status', $status);
+    //             }
+    //         })
+    //         ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+    //             $status = $request->input('status');
+    //             $role = auth()->user()->role;
+    //             $userType = $role->type;  
+    //             $userName = $role->name;
+
+    //             if ($status == '10') {
+    //                 if ($userType == 'RND' && $userName == 'Staff L2') {
+    //                     $query->where('Status', '10');
+    //                 } else {
+    //                     // Default logic for other users
+    //                     $query->where('Status', '10')
+    //                         ->where(function($query) use ($userId, $userByUser) {
+    //                             $query->where(function($query) use ($userId, $userByUser) {
+    //                                 $query->where('PrimarySalesPersonId', $userId)
+    //                                     ->orWhere('SecondarySalesPersonId', $userId)
+    //                                     ->orWhere('PrimarySalesPersonId', $userByUser)
+    //                                     ->orWhere('SecondarySalesPersonId', $userByUser);
+    //                             });
+    //                             // Check for related 'rpe_personnels' entries
+    //                             $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
+    //                                 $query->where('PersonnelUserId', $userId)
+    //                                     ->orWhere('PersonnelUserId', $userByUser);
+    //                             });
+    //                         });
+    //                 }
+    //             } else {
+    //                 // Apply status filter if it's not '50'
+    //                 $query->where('Status', $status);
+    //             }
+    //         })
+    //         ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
+    //             $status = $request->input('status');
+    //             $role = auth()->user()->role;
+    //             $userType = $role->type;  
+    //             $userName = $role->name; 
+
+    //             if ($status == '30') {
+    //                 if ($userType == 'RND' && $userName == 'Staff L2') {
+    //                     $query->where('Status', '30');
+    //                 } else {
+    //                     // Default logic for other users
+    //                     $query->where('Status', '30')
+    //                         ->where(function($query) use ($userId, $userByUser) {
+    //                             $query->where(function($query) use ($userId, $userByUser) {
+    //                                 $query->where('PrimarySalesPersonId', $userId)
+    //                                     ->orWhere('SecondarySalesPersonId', $userId)
+    //                                     ->orWhere('PrimarySalesPersonId', $userByUser)
+    //                                     ->orWhere('SecondarySalesPersonId', $userByUser);
+    //                             });
+    //                             // Check for related 'rpe_personnels' entries
+    //                             $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
+    //                                 $query->where('PersonnelUserId', $userId)
+    //                                     ->orWhere('PersonnelUserId', $userByUser);
+    //                             });
+    //                         });
+    //                 }
+    //             } else {
+    //                 // Apply status filter if it's not '50'
+    //                 $query->where('Status', $status);
+    //             }
+    //         })
+    //         ->when($progress, function($query) use ($progress, $userId) {
+    //             if ($progress == '10') {
+    //                 $query->where('Progress', '10')
+    //                       ->whereHas('salesapprovers', function ($query) use ($userId) {
+    //                           $query->where('SalesApproverId', $userId);
+    //                       });
+    //             } else {
+    //                 $query->where('Progress', $progress);
+    //             }
+    //         })
+    //         ->when($request->input('DueDate') === 'past', function($query) {
+    //             $query->where('DueDate', '<', now())
+    //                     ->where('Status', '10'); 
+    //         })
+    //         ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+    //             $query->whereIn('Status', [$request->open, $request->close]);
+    //         })
+    //         ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+    //             $query->where('Status', $request->open);
+    //         })
+    //         ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+    //             $query->where('Status', $request->close);
+    //         })
+    //         // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%')
+    //         ->when(auth()->user()->role->type == 'LS', function($query) {
+    //             $query->where('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
+    //         })
+    //         ->when(auth()->user()->role->type == 'IS', function($query) {
+    //             $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%');
+    //         })
+    //         // ->when(auth()->user()->role->type == 'RND', function($query) {
+    //         //     $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%')
+    //         //         ->orWhere('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
+    //         // })
+    //         ->when($progress == '30', function($query) {
+    //             $query->where('Progress', '30')
+    //                   ->where('Status', '10');
+    //         })
+    //         ->when($progress == '57', function($query) {
+    //             $query->where('Progress', '57')
+    //                   ->where('Status', '10');
+    //         })
+    //         ->when($progress == '81', function($query) {
+    //             $query->where('Progress', '81')
+    //                   ->where('Status', '10');
+    //         })
+    //         ->where(function($query)use($search){
+    //             $query->where('RpeNumber', 'LIKE', '%'.$search.'%')
+    //                 ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
+    //                 ->orWhere('DueDate', 'LIKE','%'.$search.'%')
+    //                 ->orWhereHas('client', function($query)use($search) {
+    //                     $query->where('Name', 'LIKE','%'.$search.'%');
+    //                 })
+    //                 ->orWhereHas('product_application', function($query)use($search) {
+    //                     $query->where('Name', 'LIKE','%'.$search.'%');
+    //                 })
+    //                 ->orWhere('RpeResult', 'LIKE','%'.$search.'%');
+    //         })
+    //         ->orderBy('id', 'desc')
+    //         ->paginate($request->entries ?? 10);
+
+    //     // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
+    //     // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
+    //     // ->get();
+    //     $clients = Client::where(function($query) {
+    //         if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
+    //             if (auth()->user()->role->type == "LS"){
+    //                 $query->where('Type', 1);
+    //             } else {
+    //                 $query->where('PrimaryAccountManagerId', auth()->user()->id)
+    //                 ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
+    //                 ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
+    //                 ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+    //             }
+    //         }
+    //     })
+    //     ->get();
+    //     // $users = User::all();
+    //     $loggedInUser = Auth::user(); 
+    //     $role = $loggedInUser->role;
+    //     $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+    //     if ($role->name == 'Staff L2' ) {
+    //         $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+    //         $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->where('is_active', 1)->get();
+    //         $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->where('is_active', 1)->get();
+            
+    //     } else {
+    //         $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->where('is_active', 1)->get();
+    //         $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->where('is_active', 1)->get();
+    //     }
+    //     $price_currencies = PriceCurrency::all();
+    //     $project_names = ProjectName::all();
+
+    //     $product_applications = ProductApplication::all();
+    //     $entries = $request->entries;
+    //     $users = User::where('is_active', 1)->get();
+
+    //     return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications',  'price_currencies', 'project_names', 'search' , 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons', 'entries', 'users')); 
+    // }
     public function index(Request $request)
     {   
         $search = $request->input('search');
         $open = $request->open;
         $close = $request->close;
         $status = $request->query('status'); // Get the status from the query parameters
-        $progress = $request->query('progress'); // Get the status from the query parameters
+        $progress = $request->query('progress'); // Get the progress from the query parameters
 
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
 
-        $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application', 'rpe_personnels'])
-            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
-                $status = $request->input('status');
-                $role = auth()->user()->role;
-                $userType = $role->type;  
-                $userName = $role->name;  
-                
-                if ($status == '50') {
-                    if ($userType == 'RND' && $userName == 'Staff L2') {
-                        $query->where('Status', '50');
-                    } else {
-                        // Default logic for other users
-                        $query->where('Status', '50')
-                            ->where(function($query) use ($userId, $userByUser) {
-                                $query->where(function($query) use ($userId, $userByUser) {
-                                    $query->where('PrimarySalesPersonId', $userId)
-                                        ->orWhere('SecondarySalesPersonId', $userId)
-                                        ->orWhere('PrimarySalesPersonId', $userByUser)
-                                        ->orWhere('SecondarySalesPersonId', $userByUser);
-                                });
-                                // Check for related 'rpe_personnels' entries
-                                $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
-                                    $query->where('PersonnelUserId', $userId)
-                                        ->orWhere('PersonnelUserId', $userByUser);
-                                });
-                            });
-                    }
-                } else {
-                    // Apply status filter if it's not '50'
-                    $query->where('Status', $status);
-                }
-            })
-            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
-                $status = $request->input('status');
-                $role = auth()->user()->role;
-                $userType = $role->type;  
-                $userName = $role->name;
+        $loggedInUser = Auth::user();
+        $role = $loggedInUser->role;
+        $userType = $role->type;
+        $userName = $role->name;
 
-                if ($status == '10') {
+        // Base query with necessary relationships
+        $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application', 'rpe_personnels', 'salesapprovers.user'])
+            // Filter by status
+            ->when($status, function($query) use ($status, $userId, $userByUser, $userType, $userName) {
+                // Check for specific status filters
+                if (in_array($status, ['10', '30', '50'])) {
                     if ($userType == 'RND' && $userName == 'Staff L2') {
-                        $query->where('Status', '10');
+                        $query->where('Status', $status);
                     } else {
-                        // Default logic for other users
-                        $query->where('Status', '10')
+                        $query->where('Status', $status)
                             ->where(function($query) use ($userId, $userByUser) {
                                 $query->where(function($query) use ($userId, $userByUser) {
                                     $query->where('PrimarySalesPersonId', $userId)
                                         ->orWhere('SecondarySalesPersonId', $userId)
                                         ->orWhere('PrimarySalesPersonId', $userByUser)
                                         ->orWhere('SecondarySalesPersonId', $userByUser);
-                                });
-                                // Check for related 'rpe_personnels' entries
-                                $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
+                                })
+                                ->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
                                     $query->where('PersonnelUserId', $userId)
                                         ->orWhere('PersonnelUserId', $userByUser);
                                 });
                             });
                     }
                 } else {
-                    // Apply status filter if it's not '50'
+                    // For other statuses, just filter by the status field
                     $query->where('Status', $status);
                 }
             })
-            ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
-                $status = $request->input('status');
-                $role = auth()->user()->role;
-                $userType = $role->type;  
-                $userName = $role->name; 
-
-                if ($status == '30') {
-                    if ($userType == 'RND' && $userName == 'Staff L2') {
-                        $query->where('Status', '30');
-                    } else {
-                        // Default logic for other users
-                        $query->where('Status', '30')
-                            ->where(function($query) use ($userId, $userByUser) {
-                                $query->where(function($query) use ($userId, $userByUser) {
-                                    $query->where('PrimarySalesPersonId', $userId)
-                                        ->orWhere('SecondarySalesPersonId', $userId)
-                                        ->orWhere('PrimarySalesPersonId', $userByUser)
-                                        ->orWhere('SecondarySalesPersonId', $userByUser);
-                                });
-                                // Check for related 'rpe_personnels' entries
-                                $query->orWhereHas('rpe_personnels', function($query) use ($userId, $userByUser) {
-                                    $query->where('PersonnelUserId', $userId)
-                                        ->orWhere('PersonnelUserId', $userByUser);
-                                });
-                            });
-                    }
-                } else {
-                    // Apply status filter if it's not '50'
-                    $query->where('Status', $status);
-                }
-            })
+            // Filter by progress
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
-                    // When filtering by '10', include all relevant progress status records
                     $query->where('Progress', '10')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where('SecondarySalesPersonId', $userId)
-                                // ->orWhere('SecondarySalesPersonId', $userId)
-                                // ->orWhere('PrimarySalesPersonId', $userByUser)
-                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        ->whereHas('salesapprovers', function ($query) use ($userId) {
+                            $query->where('SalesApproverId', $userId);
                         });
                 } else {
-                    // Apply progress filter if it's not '10'
                     $query->where('Progress', $progress);
                 }
             })
-            ->when($request->input('DueDate') === 'past', function($query) {
-                $query->where('DueDate', '<', now())
-                        ->where('Status', '10'); 
-            })
-            ->when($request->has('open') && $request->has('close'), function($query)use($request) {
+            // Handle filtering for open and close status
+            ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);
             })
-            ->when($request->has('open') && !$request->has('close'), function($query)use($request) {
+            ->when($request->has('open') && !$request->has('close'), function($query) use ($request) {
                 $query->where('Status', $request->open);
             })
-            ->when($request->has('close') && !$request->has('open'), function($query)use($request) {
+            ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
                 $query->where('Status', $request->close);
             })
-            // ->orWhere('RpeResult', 'LIKE', '%' . $search . '%')
-            ->when(auth()->user()->role->type == 'LS', function($query) {
-                $query->where('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
-            })
-            ->when(auth()->user()->role->type == 'IS', function($query) {
-                $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%');
-            })
-            // ->when(auth()->user()->role->type == 'RND', function($query) {
-            //     $query->where('RpeNumber', 'LIKE', '%' . 'RPE-IS' . '%')
-            //         ->orWhere('RpeNumber', 'LIKE', '%' . 'RPE-LS' . '%');
-            // })
-            ->when($progress == '30', function($query) {
-                $query->where('Progress', '30')
-                      ->where('Status', '10');
-            })
-            ->when($progress == '57', function($query) {
-                $query->where('Progress', '57')
-                      ->where('Status', '10');
-            })
-            ->when($progress == '81', function($query) {
-                $query->where('Progress', '81')
-                      ->where('Status', '10');
-            })
-            ->where(function($query)use($search){
-                $query->where('RpeNumber', 'LIKE', '%'.$search.'%')
-                    ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
-                    ->orWhere('DueDate', 'LIKE','%'.$search.'%')
-                    ->orWhereHas('client', function($query)use($search) {
-                        $query->where('Name', 'LIKE','%'.$search.'%');
-                    })
-                    ->orWhereHas('product_application', function($query)use($search) {
-                        $query->where('Name', 'LIKE','%'.$search.'%');
-                    })
-                    ->orWhere('RpeResult', 'LIKE','%'.$search.'%');
+            // Apply search filters
+            ->when($search, function($query) use ($search) {
+                $query->where(function($query) use ($search) {
+                    $query->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
+                        ->orWhere('DueDate', 'LIKE','%'.$search.'%')
+                        ->orWhereHas('client', function($query) use ($search) {
+                            $query->where('Name', 'LIKE','%'.$search.'%');
+                        })
+                        ->orWhereHas('product_application', function($query) use ($search) {
+                            $query->where('Name', 'LIKE','%'.$search.'%');
+                        })
+                        ->orWhere('RpeResult', 'LIKE','%'.$search.'%');
+                });
             })
             ->orderBy('id', 'desc')
             ->paginate($request->entries ?? 10);
-
-        // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
-        // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
-        // ->get();
+      
+        // Fetch clients based on user role
         $clients = Client::where(function($query) {
-            if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
-                if (auth()->user()->role->type == "LS"){
+            $loggedInUser = Auth::user();
+            $role = $loggedInUser->role;
+            
+            if (in_array($role->name, ["Department Admin", "Staff L1", "Staff L2"])) {
+                if ($role->type == "LS") {
                     $query->where('Type', 1);
                 } else {
-                    $query->where('PrimaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('PrimaryAccountManagerId', auth()->user()->user_id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->id)
-                    ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id);
+                    $query->where('PrimaryAccountManagerId', $loggedInUser->id)
+                        ->orWhere('PrimaryAccountManagerId', $loggedInUser->user_id)
+                        ->orWhere('SecondaryAccountManagerId', $loggedInUser->id)
+                        ->orWhere('SecondaryAccountManagerId', $loggedInUser->user_id);
                 }
             }
-        })
-        ->get();
-        // $users = User::all();
-        $loggedInUser = Auth::user(); 
-        $role = $loggedInUser->role;
-        $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
-        if ($role->name == 'Staff L2' ) {
+        })->get();
+
+        // Handle fetching sales approvers based on role
+        $primarySalesPersons = [];
+        $secondarySalesPersons = [];
+
+        if ($role->name == 'Staff L2') {
             $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
-            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->where('is_active', 1)->get();
-            $secondarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->where('is_active', 1)->get();
-            
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)
+                                    ->orWhere('id', $loggedInUser->id)
+                                    ->where('is_active', 1)
+                                    ->get();
+            $secondarySalesPersons = $primarySalesPersons;
         } else {
-            $primarySalesPersons = User::with($withRelation)->where('id', $loggedInUser->id)->where('is_active', 1)->get();
-            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->where('is_active', 1)->get();
+            $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+            $primarySalesPersons = User::with($withRelation)
+                                    ->where('id', $loggedInUser->id)
+                                    ->where('is_active', 1)
+                                    ->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))
+                                        ->where('is_active', 1)
+                                        ->get();
         }
+
+        // Fetch additional data
         $price_currencies = PriceCurrency::all();
         $project_names = ProjectName::all();
-
         $product_applications = ProductApplication::all();
-        $entries = $request->entries;
         $users = User::where('is_active', 1)->get();
+        $entries = $request->entries;
 
-        return view('product_evaluations.index', compact('request_product_evaluations','clients', 'product_applications',  'price_currencies', 'project_names', 'search' , 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons', 'entries', 'users')); 
+        // Return view with compacted variables
+        return view('product_evaluations.index', compact(
+            'request_product_evaluations', 'clients', 'product_applications', 'price_currencies',
+            'project_names', 'search', 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons', 
+            'entries', 'users'
+        ));
     }
 
     public function store(Request $request)

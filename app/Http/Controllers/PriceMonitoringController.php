@@ -37,9 +37,8 @@ class PriceMonitoringController extends Controller
     // List 
     public function index(Request $request)
     {   
-        $payment_terms = PaymentTerms::all();
+        $payment_terms = PaymentTerms::where('Type', 1)->get();
         $pricegaes = PriceRequestGae::get();
-        $payment_terms = PaymentTerms::all();
         $productApplications = ProductApplication::all(); 
         $products = Product::where('status', '4')->get();
         $users = User::where('is_active', 1)->get();
@@ -48,7 +47,7 @@ class PriceMonitoringController extends Controller
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
         $userId = Auth::id(); 
-        $userByUser = Auth::user()->user_id;
+        $userByUser = Auth::user()->user_id;   
 
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
         if ($role->name == 'Staff L2') {
@@ -114,17 +113,36 @@ class PriceMonitoringController extends Controller
                     $query->where('Status', $status);
                 }
             })
-            ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+            // ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+            //     if ($progress == '10') {
+            //         $query->where('Progress', '10')
+            //             ->where(function($query) use ($userId, $userByUser) {
+            //                 $query->where('SecondarySalesPersonId', $userId)
+            //                     ->orWhere('SecondarySalesPersonId', $userId)
+            //                     ->orWhere('PrimarySalesPersonId', $userByUser)
+            //                     ->orWhere('SecondarySalesPersonId', $userByUser);
+            //             });
+            //     } else {
+            //         $query->where('Progress', $progress);
+            //     }
+            // })
+            ->when($progress, function($query) use ($progress, $userId) {
                 if ($progress == '10') {
-                    $query->where('Progress', '10')
-                        ->where(function($query) use ($userId, $userByUser) {
-                            $query->where('SecondarySalesPersonId', $userId)
-                                ->orWhere('SecondarySalesPersonId', $userId)
-                                ->orWhere('PrimarySalesPersonId', $userByUser)
-                                ->orWhere('SecondarySalesPersonId', $userByUser);
-                        });
+                    // Join users and filter by SalesApproverId
+                    $query->join('users', function($join) {
+                            $join->on('pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
+                                 ->orOn('pricerequestforms.PrimarySalesPersonId', '=', 'users.id');
+                        })
+                        ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId')
+                        ->where(function($query) use ($userId) {
+                            // Grouped where for SalesApproverId
+                            $query->where('salesapprovers.SalesApproverId', $userId)
+                                  ->whereNotNull('salesapprovers.SalesApproverId'); // Ensure SalesApproverId is not null
+                        })
+                        ->select('pricerequestforms.*');
                 } else {
-                    $query->where('Progress', $progress);
+                    // Apply progress filter when not '10'
+                    $query->where('pricerequestforms.Progress', $progress);
                 }
             })
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {

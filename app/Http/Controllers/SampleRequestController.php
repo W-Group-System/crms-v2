@@ -214,12 +214,31 @@ class SampleRequestController extends Controller
             })
 
             // Filter by progress (Progress 10 logic)
-            ->when($progress == '10', function($query) use ($userId, $userByUser) {
-                $query->where('Progress', '10')
-                    ->where(function($query) use ($userId, $userByUser) {
-                        $query->where('SecondarySalesPersonId', $userId)
-                                ->orWhere('SecondarySalesPersonId', $userByUser);
-                    });
+            // ->when($progress == '10', function($query) use ($userId, $userByUser) {
+            //     $query->where('Progress', '10')
+            //         ->where(function($query) use ($userId, $userByUser) {
+            //             $query->where('SecondarySalesPersonId', $userId)
+            //                     ->orWhere('SecondarySalesPersonId', $userByUser);
+            //         });
+            // })
+            ->when($progress, function($query) use ($progress, $userId) {
+                if ($progress == '10') {
+                    // Join users and filter by SalesApproverId
+                    $query->join('users', function($join) {
+                            $join->on('samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
+                                 ->orOn('samplerequests.PrimarySalesPersonId', '=', 'users.id');
+                        })
+                        ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId')
+                        ->where(function($query) use ($userId) {
+                            // Ensure that SalesApproverId is filtered correctly
+                            $query->where('salesapprovers.SalesApproverId', $userId)
+                                  ->whereNotNull('salesapprovers.SalesApproverId'); // Only include records where SalesApproverId is not null
+                        })
+                        ->select('samplerequests.*');
+                } else {
+                    // Apply progress filter for other than '10'
+                    $query->where('samplerequests.Progress', $progress);
+                }
             })
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '20') {
