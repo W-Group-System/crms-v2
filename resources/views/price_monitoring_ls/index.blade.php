@@ -6,15 +6,7 @@
             Price Request
         </div>
         <div class="card-body" style="overflow: auto;">
-            <h4 class="card-title d-flex justify-content-end align-items-center">
-            {{-- Price Monitoring List --}}
-            @if(auth()->user()->role->type == 'LS')
-            <button type="button" class="btn btn-md btn-outline-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoringLs">New</button>
-            @elseif (auth()->user()->role->type == 'IS')
-            <button type="button" class="btn btn-md btn-outline-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoring">Add</button>
-            @endif
-            </h4>
-            <div class="form-group">
+            <div class="card-title d-flex justify-content-between align-items-center">
                 <form method="GET" >
                     <label>Show : </label>
                     <label class="checkbox-inline">
@@ -25,7 +17,14 @@
                     </label>
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
+                {{-- Price Monitoring List --}}
+                @if(auth()->user()->role->type == 'LS')
+                <button type="button" class="btn btn-md btn-outline-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoringLs">New</button>
+                @elseif (auth()->user()->role->type == 'IS')
+                <button type="button" class="btn btn-md btn-outline-primary" name="add_price_monitoring" id="addPrfBtn" data-toggle="modal" data-target="#AddPriceMonitoring">Add</button>
+                @endif
             </div>
+
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-5">

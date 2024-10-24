@@ -20469,8 +20469,8 @@ code {
 .card .card-title {
   color: #010101;
   text-transform: capitalize;
-  font-size: 1.125rem;
-  font-weight: 600;
+  /* font-size: 1.125rem;
+  font-weight: 600; */
 }
 
 .card .card-subtitle {

@@ -25,13 +25,7 @@
             Sample Request
         </div>
         <div class="card-body" style="overflow: auto;">
-            <h4 class="card-title d-flex justify-content-end align-items-center">
-            {{-- Sample Request List --}}
-            @if(checkRolesIfHaveCreate('Sample Request Form', auth()->user()->department_id, auth()->user()->role_id) == "yes")
-                <button type="button" class="btn btn-md btn-outline-primary" id="addSrfBtn" data-toggle="modal" data-target="#formSampleRequest">New</button>
-            @endif
-            </h4>
-            <div class="form-group">
+            <div class="card-title d-flex justify-content-between align-items-center">
                 <form method="GET" >
                     <label>Show : </label>
                     <label class="checkbox-inline">
@@ -42,6 +36,10 @@
                     </label>
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
+                {{-- Sample Request List --}}
+                @if(checkRolesIfHaveCreate('Sample Request Form', auth()->user()->department_id, auth()->user()->role_id) == "yes")
+                    <button type="button" class="btn btn-md btn-outline-primary" id="addSrfBtn" data-toggle="modal" data-target="#formSampleRequest">New</button>
+                @endif
             </div>
             <div class="mb-3">
                 <a href="#" id="copy_btn" class="btn btn-md btn-outline-info">Copy</a>
