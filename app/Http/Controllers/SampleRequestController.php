@@ -287,16 +287,24 @@ class SampleRequestController extends Controller
             })
             
             // Open and Close status filters
-            ->when($open && $close, function($query) use ($open, $close) {
-                $query->whereIn('Status', [$open, $close]);
+            // ->when($open && $close, function($query) use ($open, $close) {
+            //     $query->whereIn('Status', [$open, $close]);
+            // })
+            // ->when($open && !$close, function($query) use ($open) {
+            //     $query->where('Status', $open);
+            // })
+            // ->when($close && !$open, function($query) use ($close) {
+            //     $query->where('Status', $close);
+            // })
+            ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
+                $query->whereIn('Status', [$request->open, $request->close]);
             })
-            ->when($open && !$close, function($query) use ($open) {
-                $query->where('Status', $open);
+            ->when($request->has('open') && !$request->has('close'), function($query) use ($request) {
+                $query->where('Status', $request->open);
             })
-            ->when($close && !$open, function($query) use ($close) {
-                $query->where('Status', $close);
+            ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
+                $query->where('Status', $request->close);
             })
-
             // Search filter for SrfNumber, DateRequested, and DateRequired
             ->when($search, function($query) use ($search) {
                 $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
