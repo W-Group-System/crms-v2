@@ -122,40 +122,46 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ( $price_monitorings as $priceMonitoring)
-                        <tr>
-                            <!-- <td align="center">
-                                <a href="{{ url('price_monitoring/view/' . $priceMonitoring->id) }}" class="btn btn-sm btn-outline-info" title="View Price Request"><i class="ti-eye"></i></a>
-                                <button type="button" class="btn btn-sm btn-outline-warning"
-                                    data-target="#editPriceRequest{{ $priceMonitoring->id }}" data-toggle="modal" title='Edit Price Request'>
-                                    <i class="ti-pencil"></i>
-                                </button>  
-                                <button type="button" class="btn btn-sm btn-outline-danger delete-btn" onclick="confirmDelete({{ $priceMonitoring->id }})" title='Delete Request'>
-                                    <i class="ti-trash"></i>
-                                </button>
-                            </td> -->
-                            <td><a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id.'/'.$priceMonitoring->PrfNumber) }}"  title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a></td>
-                            <td>{{  date('m-d-y', strtotime($priceMonitoring->DateRequested)) }}</td>
-                            <td>{{ optional($priceMonitoring->client)->Name }}</td>
-                            <td>
-                                <!-- @if($priceMonitoring->Status == 10)
-                                        Open
-                                @elseif($priceMonitoring->Status == 30)
-                                    Closed
-                                @else
-                                    {{ $priceMonitoring->Status }}
-                                @endif -->
-                                @if($priceMonitoring->Status == 10)
-                                    <div class="badge badge-success">Open</div>
-                                @elseif($priceMonitoring->Status == 30)
-                                    <div class="badge badge-warning">Closed</div>
-                                @elseif($priceMonitoring->Status == 50)
-                                    <div class="badge badge-danger">Cancelled</div>
-                                @endif
-                            </td>
-                            <td>{{ optional($priceMonitoring->progressStatus)->name }}</td>
-                        </tr>
-                        @endforeach
+                        @if(count($price_monitorings) > 0)
+                            @foreach ( $price_monitorings as $priceMonitoring)
+                            <tr>
+                                <!-- <td align="center">
+                                    <a href="{{ url('price_monitoring/view/' . $priceMonitoring->id) }}" class="btn btn-sm btn-outline-info" title="View Price Request"><i class="ti-eye"></i></a>
+                                    <button type="button" class="btn btn-sm btn-outline-warning"
+                                        data-target="#editPriceRequest{{ $priceMonitoring->id }}" data-toggle="modal" title='Edit Price Request'>
+                                        <i class="ti-pencil"></i>
+                                    </button>  
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete-btn" onclick="confirmDelete({{ $priceMonitoring->id }})" title='Delete Request'>
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                </td> -->
+                                <td><a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id.'/'.$priceMonitoring->PrfNumber) }}"  title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a></td>
+                                <td>{{  date('m-d-y', strtotime($priceMonitoring->DateRequested)) }}</td>
+                                <td>{{ optional($priceMonitoring->client)->Name }}</td>
+                                <td>
+                                    <!-- @if($priceMonitoring->Status == 10)
+                                            Open
+                                    @elseif($priceMonitoring->Status == 30)
+                                        Closed
+                                    @else
+                                        {{ $priceMonitoring->Status }}
+                                    @endif -->
+                                    @if($priceMonitoring->Status == 10)
+                                        <div class="badge badge-success">Open</div>
+                                    @elseif($priceMonitoring->Status == 30)
+                                        <div class="badge badge-warning">Closed</div>
+                                    @elseif($priceMonitoring->Status == 50)
+                                        <div class="badge badge-danger">Cancelled</div>
+                                    @endif
+                                </td>
+                                <td>{{ optional($priceMonitoring->progressStatus)->name }}</td>
+                            </tr>
+                            @endforeach
+                        @else 
+                            <tr>
+                                <td colspan="5" class="text-center">No data available.</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
                 <!-- {!! $price_monitorings->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
