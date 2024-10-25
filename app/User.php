@@ -83,6 +83,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(SecondarySalesPerson::class,'PrimarySalesPersonId');
     }
+    public function groupSales()
+    {
+        return $this->hasMany(GroupSales::class);
+    }
     /**
      * The attributes that are mass assignable.
      *

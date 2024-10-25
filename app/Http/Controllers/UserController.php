@@ -6,6 +6,7 @@ use App\Role;
 use App\Company;
 use App\Department;
 use App\Exports\UserExport;
+use App\GroupSales;
 use App\RndApprovers;
 use App\SalesApprovers;
 use App\SecondarySalesPerson;
@@ -183,18 +184,18 @@ class UserController extends Controller
                 }
             }
 
-            if ($request->department_id == 15)
-            {
-                $rndApprover = RndApprovers::where('UserId', $id)->delete();
+            // if ($request->department_id == 15)
+            // {
+            //     $rndApprover = RndApprovers::where('UserId', $id)->delete();
                 
-                foreach($approvers as $key=>$approver)
-                {
-                    $rndApprover = new RndApprovers;
-                    $rndApprover->UserId = $user->id;
-                    $rndApprover->RndApproverId = $approver->id;
-                    $rndApprover->save();
-                }
-            }
+            //     foreach($approvers as $key=>$approver)
+            //     {
+            //         $rndApprover = new RndApprovers;
+            //         $rndApprover->UserId = $user->id;
+            //         $rndApprover->RndApproverId = $approver->id;
+            //         $rndApprover->save();
+            //     }
+            // }
         }
 
         if ($request->has('secondary_sales'))
@@ -208,6 +209,18 @@ class UserController extends Controller
                 $secondary_sales->Type = null;
                 $secondary_sales->SecondarySalesPersonId = $secondarySales;
                 $secondary_sales->save();
+            }
+        }
+
+        if ($request->has('group_sales'))
+        {
+            $sales_group = GroupSales::where('user_id', $id)->delete();
+            foreach($request->group_sales as $value)
+            {
+                $sales_group = new GroupSales;
+                $sales_group->user_id =$id;
+                $sales_group->members = $value;
+                $sales_group->save();
             }
         }
 

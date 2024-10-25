@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_user" action="{{url('update_user/'.$user->id)}}">
+                <form method="POST" id="form_user" action="{{url('update_user/'.$user->id)}}" onsubmit="show()">
                     @csrf
                     <div class="form-group">
                         <label for="name">Username</label>
@@ -84,6 +84,17 @@
                         <select class="form-control js-example-basic-multiple" name="secondary_sales[]" style="position: relative !important" multiple>
                             @foreach ($sales as $sale)
                                 <option value="{{$sale->id}}" @if(in_array($sale->id, $secondary_person)) selected @endif>{{$sale->full_name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Groups</label>
+                        @php
+                            $group_sales = $user->groupSales->pluck('members')->toArray();
+                        @endphp
+                        <select class="form-control js-example-basic-multiple" name="group_sales[]" style="position: relative !important" multiple>
+                            @foreach ($sales as $sale)
+                                <option value="{{$sale->id}}" @if(in_array($sale->id, $group_sales)) selected @endif>{{$sale->full_name}}</option>
                             @endforeach
                         </select>
                     </div>
