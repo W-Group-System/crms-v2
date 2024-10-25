@@ -352,7 +352,7 @@ function authCheckIfItsSales($department)
 
 function authCheckIfItsSalesManager($role)
 {
-    if ($role == 21)
+    if ($role == 10)
     {
         return true;
     }
@@ -809,6 +809,40 @@ function srfSecondary($user_id, $primary_sales_person, $secondary_sales_person)
         if ($user_id == $secondary_sales_person || auth()->user()->user_id == $secondary_sales_person ) {
             return "true"; 
         // }
+    }
+
+    return false;
+}
+function prfPrimarySalesApprover($user_id, $primary_sales_person, $secondary_sales_person)
+{
+    $primary_sales_person = strtolower(trim($primary_sales_person));
+
+    $primaryUser = User::whereRaw('LOWER(TRIM(user_id)) = ?', [ $primary_sales_person ])
+                           ->orWhereRaw('LOWER(TRIM(id)) = ?', [ $primary_sales_person ])
+                           ->first();
+
+    $currentUser = User::whereRaw('LOWER(TRIM(user_id)) = ?', [ $user_id ])
+                           ->orWhereRaw('LOWER(TRIM(id)) = ?', [ $user_id ])
+                           ->first();
+
+    $salesApprovers = SalesApprovers::where('SalesApproverId', $currentUser->id)
+                                         ->where('UserId', $primaryUser->id)
+                                         ->first();
+    
+    if ($salesApprovers != null) {
+       
+            return "true"; 
+        
+    }
+
+    return false;
+}
+
+function prfSecondary($user_id, $primary_sales_person, $secondary_sales_person)
+{
+    
+        if ($user_id == $secondary_sales_person || auth()->user()->user_id == $secondary_sales_person ) {
+            return "true";
     }
 
     return false;
