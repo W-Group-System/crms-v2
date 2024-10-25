@@ -79,7 +79,8 @@
                         @endif
                     @endif
 
-                    @if((auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId) || (auth()->user()->id == $crr->SecondarySalesPersonId || auth()->user()->user_id == $crr->SecondarySalesPersonId))
+                    {{-- @if((auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId) || (auth()->user()->id == $crr->SecondarySalesPersonId || auth()->user()->user_id == $crr->SecondarySalesPersonId)) --}}
+                    @if(checkIfInGroup($crr->PrimarySalesPersonId, auth()->user()->id))
                         @if($crr->Status == 10)
                             @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
@@ -122,8 +123,7 @@
                             </form>
                         @endif
                         
-
-                        @if(auth()->user()->id != $crr->SecondarySalesPersonId && auth()->user()->user_id != $crr->SecondarySalesPersonId)
+                        @if(auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId)
                             @if($crr->Status == 30)
                                 {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
                                     @csrf
@@ -1353,12 +1353,12 @@
             });
         })
 
-        $("#update2Crr").on('click', function() {
-            var secondarySales = $(this).data('secondarysales');
-            var primarySales = $("[name='PrimarySalesPersonId']").val()
+        // $("#update2Crr").on('click', function() {
+        //     var secondarySales = $(this).data('secondarysales');
+        //     var primarySales = $("[name='PrimarySalesPersonId']").val()
             
-            refreshSecondaryApprovers(secondarySales, primarySales)
-        })
+        //     refreshSecondaryApprovers(secondarySales, primarySales)
+        // })
         
         // $('[name="PrimarySalesPersonId"]').on('change', function() {
         //     var primarySales = $(this).val();
@@ -1366,42 +1366,22 @@
         //     refreshSecondaryApproversv2(primarySales)
         // })
 
-        function refreshSecondaryApprovers(secondarySales, primarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_crr_secondary_sales_person')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data)
-                        $('[name="SecondarySalesPersonId"]').val(secondarySales)
-                    }, 500);
-                }
-            })
-        }
-
-        // function refreshSecondaryApproversv2(primarySales)
+        // function refreshSecondaryApprovers(secondarySales, primarySales)
         // {
         //     $.ajax({
         //         type: "POST",
-        //         url: "{{url('refresh_user_approvers')}}",
+        //         url: "{{url('refresh_crr_secondary_sales_person')}}",
         //         headers: {
         //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         //         },
         //         data: {
-        //             ps: primarySales,
+        //             ps: primarySales
         //         },
         //         success: function(data)
         //         {
         //             setTimeout(() => {
-        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //                 $('[name="SecondarySalesPersonId"]').html(data)
+        //                 $('[name="SecondarySalesPersonId"]').val(secondarySales)
         //             }, 500);
         //         }
         //     })

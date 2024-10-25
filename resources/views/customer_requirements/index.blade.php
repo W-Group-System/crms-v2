@@ -542,16 +542,11 @@
             $(this).closest('form').submit()
         })
 
-        // $('.deleteBtn').on('click', function() {
-        //     console.log('asdad');
+        // $("#addCustomerRequirement").on('click', function() {
+        //     var primarySales = $('[name="PrimarySalesPersonId"]').val();
             
+        //     refreshSecondaryApprovers(primarySales)
         // })
-
-        $("#addCustomerRequirement").on('click', function() {
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
-            
-            refreshSecondaryApprovers(primarySales)
-        })
 
         // $('.editBtn').on('click', function() {
         //     var primarySales = $(this).data('primarysales')
@@ -576,31 +571,31 @@
         //     })
         // })
 
-        $('[name="PrimarySalesPersonId"]').on('change', function() {
-            var primarySales = $(this).val();
+        // $('[name="PrimarySalesPersonId"]').on('change', function() {
+        //     var primarySales = $(this).val();
 
-            refreshSecondaryApprovers(primarySales)
-        })
+        //     refreshSecondaryApprovers(primarySales)
+        // })
 
-        function refreshSecondaryApprovers(primarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_crr_secondary_sales_person')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                    }, 500);
-                }
-            })
-        }
+        // function refreshSecondaryApprovers(primarySales)
+        // {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_crr_secondary_sales_person')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //             }, 500);
+        //         }
+        //     })
+        // }
     })
 </script>
 @endsection

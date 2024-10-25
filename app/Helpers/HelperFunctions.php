@@ -2,6 +2,7 @@
 use App\BasePrice;
 use App\CurrencyExchange;
 use App\CustomerRequirement;
+use App\GroupSales;
 use App\Product;
 use App\ProductMaterialsComposition;
 use App\UserAccessModule;
@@ -987,4 +988,13 @@ function checkIfItsUserId($secondarySale)
     }
 
     return false;
+}
+
+function checkIfInGroup($primary_sales, $auth_user)
+{
+    $user = User::where('id', $primary_sales)->orWhere('user_id', $primary_sales)->first();
+    
+    $group_sales_list = GroupSales::where('user_id', $user->id)->pluck('members')->toArray();
+    
+    return collect($group_sales_list)->contains($auth_user);
 }

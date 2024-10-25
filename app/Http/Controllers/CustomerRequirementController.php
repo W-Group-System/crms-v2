@@ -16,6 +16,7 @@ use App\CrrNature;
 use App\CrrPersonnel;
 use App\Exports\CustomerRequirementExport;
 use App\FileCrr;
+use App\GroupSales;
 use App\ProductApplication;
 use App\SalesApprovers;
 use App\SalesUser;
@@ -600,8 +601,9 @@ class CustomerRequirementController extends Controller
         $unitOfMeasure = UnitOfMeasure::get();
         $status = $request->status;
         $progress = $request->progress;
+        $currentUser = auth()->user();
         // Return view with all necessary data
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress')); 
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress', 'currentUser')); 
     }
 
     // Store
