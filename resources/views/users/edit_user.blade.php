@@ -75,7 +75,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="name">Secondary Sales Approvers</label>
                         @php
                             $secondary_person = $user->secondarySalesPerson->pluck('SecondarySalesPersonId')->toArray();
@@ -86,7 +86,7 @@
                                 <option value="{{$sale->id}}" @if(in_array($sale->id, $secondary_person)) selected @endif>{{$sale->full_name}}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                         <label for="name">Groups</label>
                         @php

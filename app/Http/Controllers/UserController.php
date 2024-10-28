@@ -121,16 +121,16 @@ class UserController extends Controller
                 }
             }
 
-            if ($request->department_id == 15)
-            {
-                foreach($approvers as $key=>$approver)
-                {
-                    $rndApprover = new RndApprovers;
-                    $rndApprover->UserId = $user->id;
-                    $rndApprover->RndApproverId = $approver->id;
-                    $rndApprover->save();
-                }
-            }
+            // if ($request->department_id == 15)
+            // {
+            //     foreach($approvers as $key=>$approver)
+            //     {
+            //         $rndApprover = new RndApprovers;
+            //         $rndApprover->UserId = $user->id;
+            //         $rndApprover->RndApproverId = $approver->id;
+            //         $rndApprover->save();
+            //     }
+            // }
 
         }
 
@@ -198,19 +198,19 @@ class UserController extends Controller
             // }
         }
 
-        if ($request->has('secondary_sales'))
-        {
-            // dd($id);
-            $secondary_sales = SecondarySalesPerson::where('PrimarySalesPersonId', $id)->delete();
-            foreach($request->secondary_sales as $key=>$secondarySales)
-            {
-                $secondary_sales = new SecondarySalesPerson;
-                $secondary_sales->PrimarySalesPersonId = $id;
-                $secondary_sales->Type = null;
-                $secondary_sales->SecondarySalesPersonId = $secondarySales;
-                $secondary_sales->save();
-            }
-        }
+        // if ($request->has('secondary_sales'))
+        // {
+        //     // dd($id);
+        //     $secondary_sales = SecondarySalesPerson::where('PrimarySalesPersonId', $id)->delete();
+        //     foreach($request->secondary_sales as $key=>$secondarySales)
+        //     {
+        //         $secondary_sales = new SecondarySalesPerson;
+        //         $secondary_sales->PrimarySalesPersonId = $id;
+        //         $secondary_sales->Type = null;
+        //         $secondary_sales->SecondarySalesPersonId = $secondarySales;
+        //         $secondary_sales->save();
+        //     }
+        // }
 
         if ($request->has('group_sales'))
         {
