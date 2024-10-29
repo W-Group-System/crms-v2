@@ -158,6 +158,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
+                    $('input[name="CsNumber"]').val(response.newCsNo);
                     if (response.success) {
                         // Display a Swal success message
                         Swal.fire({
@@ -165,7 +166,7 @@
                             title: 'Saved',
                             text: response.success,
                             timer: 2000,
-                            showConfirmButton: false
+                            showConfirmButton: false,
                         }).then((result) => {
                             $('#form_satisfaction')[0].reset();
                             window.location.href = "{{ url('customer_service') }}";
