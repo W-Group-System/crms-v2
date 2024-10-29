@@ -891,6 +891,7 @@ class SampleRequestController extends Controller
                 'DateSampleReceived' => $request->input('DateSampleReceived'),
                 'DeliveryRemarks' => $request->input('DeliveryRemarks'),
                 'Note' => $request->input('Note'),
+                'Eta' => $request->input('Eta'),
             ]);
 
 
@@ -961,6 +962,7 @@ class SampleRequestController extends Controller
         $srf->DateSampleReceived = $request->input('DateSampleReceived');
         $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
         $srf->Note = $request->input('Note');
+        $srf->Eta = $request->input('Eta');
         $srf->save();
 
         foreach ($request->input('ProductCode', []) as $key => $value) {
@@ -1375,6 +1377,7 @@ class SampleRequestController extends Controller
         $srf->DateSampleReceived = $request->input('DateSampleReceived');
         $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
         $srf->Note = $request->input('Note');
+        $srf->Eta = $request->input('Eta');
         $srf->save();
         
         return redirect()->back()->with('success', 'Sample Request updated successfully');

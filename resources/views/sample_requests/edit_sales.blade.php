@@ -303,6 +303,10 @@
                                     <label for="Note">Notes</label>
                                     <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes">{{ old('Note',  $sampleRequest->Note) }}</textarea>
                                 </div>
+                                <div class="form-group">
+                                    <label for="ETA">ETA</label>
+                                    <input type="date" class="form-control Eta{{$sampleRequest->Id }}" name="Eta" value="{{ old('Eta', !empty( $sampleRequest->Eta) ? date('Y-m-d', strtotime( $sampleRequest->Eta)) : '') }}">
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
