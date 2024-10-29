@@ -35,7 +35,8 @@ class SampleRequest extends Model implements Auditable
         'DateDispatched',
         'DateSampleReceived',
         'DeliveryRemarks',
-        'Note'
+        'Note', 
+        'Eta'
     ];
 
     public function client()

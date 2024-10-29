@@ -951,8 +951,11 @@
                     <div class="col-sm-3">
                         <p class="mb-0">{{ $sampleRequest->DateSampleReceived }}</p>
                     </div>
+                    <div class="col-sm-3 text-right">
+                        <p class="mb-0"><b>ETA&nbsp;:</b></p>
+                    </div>
                     <div class="col-sm-3">
-                        <p></p>
+                        <p class="mb-0">{{ $sampleRequest->Eta}}</p>
                     </div>
                 </div>
             </div>
