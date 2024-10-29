@@ -25,7 +25,7 @@ class CheckUserType
             // Check the role type and redirect accordingly
             if ($roleType == 'RND' || $roleType == 'ITD' || $roleType == 'ACCTG') {
                 return redirect('/dashboard-rnd');
-            } elseif ($roleType == 'IS' || $roleType == 'LS') {
+            } elseif ($roleType == 'IS' || $roleType == 'LS' || $roleType == 'CS') {
                 return redirect('/dashboard-sales');
             } elseif ($roleType == 'QCD-WHI' || $roleType == 'QCD-PBI' || $roleType == 'QCD-MRDC' || $roleType == 'QCD-CCC') {
                 return redirect('/dashboard-qcd');
