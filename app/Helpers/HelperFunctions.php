@@ -958,15 +958,14 @@ function historyRmc($product_material_composition, $product_id)
     $material_id = $product_material_composition->sortBy('MaterialId')->pluck('MaterialId')->toArray();
     $product_material_composition = ProductMaterialsComposition::whereIn('MaterialId', $material_id)
         ->where('ProductId', $product_id)
-        // ->orderBy('MaterialId', 'asc')
-        ->get()
-        ->pluck('Percentage');
-    
-    $basePrice = BasePrice::whereIn('MaterialId', $material_id)
-        ->where('IsDeleted', 0)
-        ->where('Status', 3)
-        ->orderBy('EffectiveDate', 'asc')
+        ->orderBy('MaterialId', 'asc')
         ->get();
+    
+    // $basePrice = BasePrice::whereIn('MaterialId', $material_id)
+    //     ->where('IsDeleted', 0)
+    //     ->where('Status', 3)
+    //     ->orderBy('EffectiveDate', 'asc')
+    //     ->get();
 
     // dd($basePrice);
 
@@ -985,10 +984,11 @@ function historyRmc($product_material_composition, $product_id)
     // });
 
     // return $multiply->sum();
-
+    
     $rmc_array = [];
     foreach($product_material_composition as $product_composition)
     {
+        // dd($product_composition);
         $total_percentage = $product_composition->Percentage / 100;
         
         foreach($product_composition->rawMaterials->basePrice->groupBy('MaterialId') as $key=>$base_price)
