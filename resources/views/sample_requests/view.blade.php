@@ -1144,7 +1144,8 @@
                 <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
                         {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes") --}}
-                        @if(authCheckIfItsRnd(auth()->user()->department_id))
+                        {{-- @if(authCheckIfItsRnd(auth()->user()->department_id)) --}}
+                        @if(auth()->user()->role->type != 'IS' && auth()->user()->role->type != 'LS')
                         <button type="button" class="btn btn-sm btn-primary ml-auto m-3" title="Upload File"  data-toggle="modal" data-target="#uploadFile">
                             <i class="ti-plus"></i>
                         </button>
