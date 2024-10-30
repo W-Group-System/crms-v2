@@ -26,14 +26,11 @@
     }
 </style>
 <div class="col-12 grid-margin stretch-card">
-    <div class="card rounded-0 border border-1 border-primary p-0" style="max-height: 80vh;">
-        <div class="card-header bg-primary rounded-0 text-white font-weight-bold">
-            Sample Request Details
-        </div>
-        <div class="card-body" style="overflow: auto;">
+    <div class="card">
+        <div class="card-body">
             <div class="row">
                 <div class="col-lg-6"> 
-                    {{-- <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4> --}}
+                    <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
                 </div>
                 <div class="col-lg-12" align="right">
                     <!-- <a href="{{ url()->previous() ?: url('/sample_request') }}" class="btn btn-md btn-outline-primary"><i class="icon-arrow-left"></i>&nbsp;Back</a> -->
@@ -128,7 +125,7 @@
                     @endif
                     @if((auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId) || (auth()->user()->id == $sampleRequest->SecondarySalesPersonId || auth()->user()->user_id == $sampleRequest->SecondarySalesPersonId ) && auth()->user()->role->name == 'Staff L1')
                             @if(auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'LS')
-                            @if(empty($sampleRequest->Courier) && empty($sampleRequest->AwbNumber) && empty($sampleRequest->DateDispatched) && empty($sampleRequest->DateSampleReceived))
+                            {{-- @if(empty($sampleRequest->Courier) && empty($sampleRequest->AwbNumber) && empty($sampleRequest->DateDispatched) && empty($sampleRequest->DateSampleReceived)) --}}
                             <button type="button" class="btn btn-outline-warning editBtn"
                                 data-target="#salesEdit{{$sampleRequest->Id}}" 
                                 data-toggle="modal" 
@@ -137,7 +134,7 @@
                                 title='Update SRF'>
                                 <i class="ti ti-pencil">&nbsp;</i>Update
                             </button>
-                            @endif
+                            {{-- @endif --}}
                             @endif
                         {{-- @endif --}}
                         @if(primarySalesApprover($sampleRequest->PrimarySalesPersonId, auth()->user()->id))
@@ -951,11 +948,8 @@
                     <div class="col-sm-3">
                         <p class="mb-0">{{ $sampleRequest->DateSampleReceived }}</p>
                     </div>
-                    <div class="col-sm-3 text-right">
-                        <p class="mb-0"><b>ETA&nbsp;:</b></p>
-                    </div>
                     <div class="col-sm-3">
-                        <p class="mb-0">{{ $sampleRequest->Eta}}</p>
+                        <p></p>
                     </div>
                 </div>
             </div>
