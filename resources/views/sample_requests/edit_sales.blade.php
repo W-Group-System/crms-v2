@@ -646,13 +646,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var storedSampleReceived = '{{ !empty( $sampleRequest->DateSampleReceived) ? date('Y-m-d', strtotime( $sampleRequest->DateSampleReceived)) : '' }}';
     var today = new Date().toISOString().split('T')[0];
 
-    if (dueDateInput) {
-        if (storedDate) {
-            dueDateInput.setAttribute('min', storedDate);
-        } else {
-            dueDateInput.setAttribute('min', today);
-        }
-    }
+    // if (dueDateInput) {
+    //     if (storedDate) {
+    //         dueDateInput.setAttribute('min', storedDate);
+    //     } else {
+    //         dueDateInput.setAttribute('min', today);
+    //     }
+    // }
     
     // if (dispatchInput) {
     //     if (storedDispatched) {
