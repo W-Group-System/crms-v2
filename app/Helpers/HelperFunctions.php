@@ -958,24 +958,23 @@ function historyRmc($product_material_composition, $product_id)
     $material_id = $product_material_composition->sortBy('MaterialId')->pluck('MaterialId')->toArray();
     $product_material_composition = ProductMaterialsComposition::whereIn('MaterialId', $material_id)
         ->where('ProductId', $product_id)
-        // ->orderBy('MaterialId', 'asc')
-        ->get()
-        ->pluck('Percentage');
-    
-    $basePrice = BasePrice::whereIn('MaterialId', $material_id)
-        ->where('IsDeleted', 0)
-        ->where('Status', 3)
-        ->orderBy('EffectiveDate', 'asc')
+        ->orderBy('MaterialId', 'asc')
         ->get();
+    
+    // $basePrice = BasePrice::whereIn('MaterialId', $material_id)
+    //     ->where('IsDeleted', 0)
+    //     ->where('Status', 3)
+    //     ->orderBy('EffectiveDate', 'asc')
+    //     ->get();
 
-    dd($basePrice);
+    // dd($basePrice);
 
-    $getPercent = $product_material_composition->map(function($item, $key) 
-    {
-        $num = $item / 100;
+    // $getPercent = $product_material_composition->map(function($item, $key) 
+    // {
+    //     $num = $item / 100;
 
-        return $num;
-    });
+    //     return $num;
+    // });
         
     // $multiply = $basePrice->map(function($item, $key)use($getPercent) 
     // {
@@ -985,54 +984,55 @@ function historyRmc($product_material_composition, $product_id)
     // });
 
     // return $multiply->sum();
-
-    // $rmc_array = [];
-    // foreach($product_material_composition as $product_composition)
-    // {
-    //     $total_percentage = $product_composition->Percentage / 100;
-        
-    //     foreach($product_composition->rawMaterials->basePrice->groupBy('MaterialId') as $key=>$base_price)
-    //     {
-    //         $object = new StdClass;
-    //         $object->base_price = $base_price;
-    //         $object->total_percentage = $total_percentage;
-    //         $rmc_array[$key] = $object;
-    //     }
-    // }
     
-    // $price_array = [];
-    // foreach($rmc_array as $material_id => $rmc)
-    // {
-    //     $total_product = 0;
-    //     foreach($rmc->base_price as $key=>$price)
-    //     {
-    //         $total_product = $rmc->total_percentage * $price->Price;
-
-    //         $price_array[$material_id][$key] = [
-    //             'price' => round($total_product, 2),
-    //             'effective_date' => $price->EffectiveDate
-    //         ];
-    //     }
-    // }
-
-    // $history_rmc = [];
-    // foreach ($price_array as $material_id => $prices) {
+    $rmc_array = [];
+    foreach($product_material_composition as $product_composition)
+    {
+        // dd($product_composition);
+        $total_percentage = $product_composition->Percentage / 100;
         
-    //     foreach ($prices as $key => $value) {
+        foreach($product_composition->rawMaterials->basePrice->groupBy('MaterialId') as $key=>$base_price)
+        {
+            $object = new StdClass;
+            $object->base_price = $base_price;
+            $object->total_percentage = $total_percentage;
+            $rmc_array[$key] = $object;
+        }
+    }
+    
+    $price_array = [];
+    foreach($rmc_array as $material_id => $rmc)
+    {
+        $total_product = 0;
+        foreach($rmc->base_price as $key=>$price)
+        {
+            $total_product = $rmc->total_percentage * $price->Price;
+
+            $price_array[$material_id][$key] = [
+                'price' => round($total_product, 2),
+                'effective_date' => $price->EffectiveDate
+            ];
+        }
+    }
+
+    $history_rmc = [];
+    foreach ($price_array as $material_id => $prices) {
+        
+        foreach ($prices as $key => $value) {
             
-    //         if (!isset($history_rmc[$key])) {
-    //             $history_rmc[$key] = [
-    //                 'total_price' => 0,
-    //                 'effective_dates' => ''
-    //             ]; 
-    //         }
+            if (!isset($history_rmc[$key])) {
+                $history_rmc[$key] = [
+                    'total_price' => 0,
+                    'effective_dates' => ''
+                ]; 
+            }
 
-    //         $history_rmc[$key]['total_price'] += $value['price'];
-    //         $history_rmc[$key]['effective_dates'] = $value['effective_date'];
-    //     }
-    // }
+            $history_rmc[$key]['total_price'] += $value['price'];
+            $history_rmc[$key]['effective_dates'] = $value['effective_date'];
+        }
+    }
     
-    // return $history_rmc;
+    return $history_rmc;
 }
 
 function checkIfItsUserId($secondarySale)
