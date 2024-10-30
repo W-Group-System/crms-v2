@@ -93,7 +93,7 @@
                                     @endforeach
                                 </select>
                                 @endif --}}
-                                @php
+                                {{-- @php
                                     $primary_sales = "";
                                     if ($requestEvaluation->primarySalesPersonById == null)
                                     {
@@ -114,7 +114,16 @@
                                             <option value="{{ $user->id }}" @if($user->id == $requestEvaluation->PrimarySalesPersonId || $user->user_id == $requestEvaluation->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                         @endforeach
                                     </select> 
-                                @endif
+                                @endif --}}
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($currentUser->groupSales as $group_sales)
+                                        @php
+                                            $user = $group_sales->user;
+                                        @endphp
+                                        <option value="{{ $user->id }}" @if($user->id == $requestEvaluation->PrimarySalesPersonId || $user->user_id == $requestEvaluation->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select> 
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -148,7 +157,7 @@
                                         <option value="{{ $user->user_id }}" @if ( $requestEvaluation->SecondarySalesPersonId == $user->user_id) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select> --}}
-                                @php
+                                {{-- @php
                                     $secondary_sales = "";
                                     if ($requestEvaluation->secondarySalesPersonById == null)
                                     {
@@ -169,7 +178,16 @@
                                         <option value="{{ $user->id }}" @if($user->id == $requestEvaluation->SecondarySalesPersonId || $user->user_id == $requestEvaluation->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select> 
-                                @endif
+                                @endif --}}
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($currentUser->groupSales as $group_sales)
+                                        @php
+                                            $user = $group_sales->user;
+                                        @endphp
+                                        <option value="{{ $user->id }}" @if($user->id == $requestEvaluation->SecondarySalesPersonId || $user->user_id == $requestEvaluation->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select> 
                             </div>
                         </div>
                         <div class="col-lg-6">
