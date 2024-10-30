@@ -2,7 +2,7 @@
 @section('content')
 
 <div class="col-12 grid-margin stretch-card">
-    <div class="card rounded-0 border border-1 border-primary" style="max-height: 80vh;">
+    <div class="card rounded-0 border border-1 border-primary">
         <div class="card-header rounded-0 font-weight-bold text-white bg-primary">
             Customer Requirement Details
         </div>
@@ -857,7 +857,8 @@
                     </div>
                 </div> --}}
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
-                    @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30)
+                    {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30) --}}
+                    @if(auth()->user()->role->type == 'RND' && $crr->Progress != 30)
                     <div align="right">
                         <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addCrrFiles">
                             New

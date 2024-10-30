@@ -56,7 +56,7 @@
                     </form>
                 </div>
             </div>
-            <div class="table-responsive" style="overflow: auto; height: 80vh;">
+            <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="product_evaluation_table">
                     @if(auth()->user()->role->type == "IS")
                         <thead>
@@ -333,61 +333,61 @@
         });
 
         
-        $("#addRpeBtn").on('click', function() {
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
-            console.log(primarySales);
+        // $("#addRpeBtn").on('click', function() {
+        //     var primarySales = $('[name="PrimarySalesPersonId"]').val();
+        //     console.log(primarySales);
             
-            refreshSecondaryApprovers(primarySales)
-        })
+        //     refreshSecondaryApprovers(primarySales)
+        // })
 
-        $('.editBtn').on('click', function() {
-            var primarySales = $(this).data('primarysales')
-            var secondarySales = $(this).data('secondarysales');
+        // $('.editBtn').on('click', function() {
+        //     var primarySales = $(this).data('primarysales')
+        //     var secondarySales = $(this).data('secondarysales');
 
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_rpe_secondary_persons')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
-                    }, 500);
-                }
-            })
-        })
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_rpe_secondary_persons')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //                 // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+        //             }, 500);
+        //         }
+        //     })
+        // })
 
-        $('[name="PrimarySalesPersonId"]').on('change', function() {
-            var primarySales = $(this).val();
+        // $('[name="PrimarySalesPersonId"]').on('change', function() {
+        //     var primarySales = $(this).val();
 
-            refreshSecondaryApprovers(primarySales)
-        })
+        //     refreshSecondaryApprovers(primarySales)
+        // })
 
-        function refreshSecondaryApprovers(primarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_rpe_secondary_persons')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                    }, 500);
-                }
-            })
-        }
+        // function refreshSecondaryApprovers(primarySales)
+        // {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_rpe_secondary_persons')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //             }, 500);
+        //         }
+        //     })
+        // }
     })
 </script>
 @endsection
