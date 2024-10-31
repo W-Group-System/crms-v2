@@ -89,6 +89,19 @@ class SampleRequestController extends Controller
         })
         ->get();
 
+        $refCodeMappings = [
+            1 => 'RND',
+            2 => 'QCD-WHI',
+            3 => 'QCD-PBI',
+            4 => 'QCD-MRDC',
+            5 => 'QCD-CCC',
+        ];
+        $srfTypeMappings = [
+            1 => 'Regular',
+            2 => 'PSS',
+            3 => 'CSS',
+        ];
+
         $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles', 'srf_personnel'])
             // Filter by status if provided
             ->when($status, function($query) use ($request, $userId, $userByUser) {
@@ -222,13 +235,50 @@ class SampleRequestController extends Controller
             //         });
             // })
             // Search filter for SrfNumber, DateRequested, and DateRequired
-            ->when($search, function($query) use ($search) {
+            ->when($search, function($query) use ($search, $refCodeMappings, $srfTypeMappings) {
                 $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
                     ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
                     ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
                     ->orWhere('ProductDescription', 'LIKE', '%' . $search . '%')
                     ->orWhereHas('client', function($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
+                        $q->where('name', 'LIKE', '%' . $search . '%')
+                        ->orWhereHas('clientregion', function($regionQuery) use ($search) {
+                            $regionQuery->where('Name', 'LIKE', '%' . $search . '%');
+                        })
+                        ->orWhereHas('clientcountry', function($countryQuery) use ($search) {
+                            $countryQuery->where('Name', 'LIKE', '%' . $search . '%');
+                        });
+                    })
+                    ->orWhereHas('primarySalesPerson', function($salesQuery) use ($search) {
+                        $salesQuery->where('full_name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('primarySalesById', function($salesQuery) use ($search) {
+                        $salesQuery->where('full_name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhereHas('progressStatus', function($statusQuery) use ($search) {
+                        $statusQuery->where('name', 'LIKE', '%' . $search . '%');
+                    })
+                    ->orWhere(function ($q) use ($search) {
+                        $q->whereHas('requestProducts', function($productQuery) use ($search) {
+                            $productQuery->where('ProductCode', 'LIKE', '%' . $search . '%');
+                        })
+                        ->orWhereHas('productApplicationsId', function($applicationQuery) use ($search) {
+                            $applicationQuery->where('Name', 'LIKE', '%' . $search . '%');
+                        });
+                    })
+                    ->orWhere(function ($q) use ($search, $refCodeMappings) {
+                        foreach ($refCodeMappings as $code => $label) {
+                            if (stripos($label, $search) !== false) {
+                                $q->orWhere('RefCode', $code);
+                            }
+                        }
+                    })
+                    ->orWhere(function ($q) use ($search, $srfTypeMappings) {
+                        foreach ($srfTypeMappings as $code => $label) {
+                            if (stripos($label, $search) !== false) {
+                                $q->orWhere('SrfType', $code);
+                            }
+                        }
                     });
             })
             ->when($progress, function($query) use ($progress, $userId) {
