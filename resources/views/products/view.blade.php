@@ -257,9 +257,12 @@
                     @endforeach
                 </div> --}}
                 <div class="tab-pane fade @if(session('tab') == 'pds') active show @endif" id="pds" role="tabpanel" aria-labelledby="pds-tab">
+                    @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
                     </div>
+                    @endif
+
                     @include('products.add_pds')
                     
                     <div class="table-responsive">
@@ -277,21 +280,23 @@
                                 @if($data->productDataSheet)
                                     <tr>
                                         <td>
-                                            <a href="{{url('view_details/'.$data->productDataSheet->Id)}}" class="btn btn-info btn-sm" title="View Details" target="_blank">
+                                            <a href="{{url('view_details/'.$data->productDataSheet->Id)}}" class="btn btn-outline-info btn-sm" title="View Details" target="_blank">
                                                 <i class="ti-eye"></i>
                                             </a>
 
-                                            <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#pdsModal-{{$data->productDataSheet->Id}}">
+                                            @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
+                                            <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#pdsModal-{{$data->productDataSheet->Id}}">
                                                 <i class="ti-pencil"></i>
                                             </button>
                                             
                                             <form action="{{url('delete_pds/'.$data->productDataSheet->Id)}}" method="post" class="d-inline-block" title="Delete">
                                                 {{csrf_field()}}
 
-                                                <button type="button" class="btn btn-sm btn-danger deletePds" title="Delete">
+                                                <button type="button" class="btn btn-sm btn-outline-danger deletePds" title="Delete">
                                                     <i class="ti-trash"></i>
                                                 </button>
                                             </form>
+                                            @endif
                                         </td>
                                         <td>{{$data->code}}</td>
                                         <td>{{$data->productDataSheet->ControlNumber}}</td>
@@ -310,10 +315,14 @@
                     @if(session('tab') == 'files')
                     @include('components.error')
                     @endif
+                    
+                    @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
                         <button type="button" class="btn btn-md btn-outline-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
                     </div>
+                    @endif
+
                     @include('products.add_file')
                     @include('products.edit_all_product_files')
                     <div class="table-responsive">
@@ -333,6 +342,7 @@
                                     @foreach ($data->productFiles as $pf)
                                         <tr>
                                             <td>
+                                                @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
                                                 <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
                                                     <i class="ti-pencil"></i>
                                                 </button>
@@ -343,6 +353,7 @@
                                                         <i class="ti-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endif
                                             </td>
                                             <td> 
                                                 @if($pf->IsConfidential == 1)
