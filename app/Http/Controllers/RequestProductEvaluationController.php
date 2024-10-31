@@ -315,6 +315,16 @@ class RequestProductEvaluationController extends Controller
                         ->orWhere('RpeResult', 'LIKE','%'.$search.'%');
                 });
             })
+            ->when($role, function($q)use($role){
+                if ($role->type == 'IS')
+                {
+                    $q->where('RpeNumber', 'LIKE', '%RPE-IS%');
+                }
+                elseif($role->type == 'LS')
+                {
+                    $q->where('RpeNumber', 'LIKE', '%RPE-LS%');
+                }
+            })
             ->orderBy('id', 'desc')
             ->paginate($request->entries ?? 10);
       
@@ -368,7 +378,7 @@ class RequestProductEvaluationController extends Controller
         return view('product_evaluations.index', compact(
             'request_product_evaluations', 'clients', 'product_applications', 'price_currencies',
             'project_names', 'search', 'open', 'close', 'primarySalesPersons', 'secondarySalesPersons', 
-            'entries', 'users'
+            'entries', 'users', 'loggedInUser'
         ));
     }
 
@@ -537,7 +547,7 @@ class RequestProductEvaluationController extends Controller
         $rndPersonnel = User::where('is_active', 1)->where('department_id', 15)->whereNotIn('id', [auth()->user()->id])->get();
         // $rndPersonnel = User::whereHas('rndUsers')->get();
         $activities = Activity::where('TransactionNumber', $RequestNumber)->get();
-        $rpeFileUploads = RpeFile::where('RequestProductEvaluationId', $rpeNumber)->where('userType', 'RND')->get();
+        // $rpeFileUploads = RpeFile::where('RequestProductEvaluationId', $rpeNumber)->where('userType', 'RND')->get();
         // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
         // ->get();
@@ -642,7 +652,9 @@ class RequestProductEvaluationController extends Controller
         $project_names = ProjectName::all();
 
         $product_applications = ProductApplication::all();
-        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals','rndPersonnel','activities', 'clients','users','rpeFileUploads', 'combinedLogs', 'project_names', 'price_currencies', 'product_applications','primarySalesPersons', 'secondarySalesPersons'));
+        $currentUser = auth()->user();
+        
+        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals','rndPersonnel','activities', 'clients','users', 'combinedLogs', 'project_names', 'price_currencies', 'product_applications','primarySalesPersons', 'secondarySalesPersons', 'currentUser'));
     }
 
     public function addSupplementary(Request $request)

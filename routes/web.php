@@ -26,6 +26,8 @@ Route::post('/new_customer_satisfaction', 'CustomerSatisfactionController@store'
 Route::get('contacts_by_client/{clientId}', 'CustomerSatisfactionController@getContactsByClient');
 
 Route::get('customer_complaint2', 'CustomerComplaint2Controller@index');
+Route::post('/new_customer_complaint2', 'CustomerComplaint2Controller@store')->name('customer_complaint2.store');
+
 Route::group(['middleware' => ['auth']], function() {
     Route::group(['middleware' => 'inactive_users'], function() {
         Route::get('/logout', 'LoginController@logout');
@@ -359,8 +361,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('computation/{id}', 'PriceMonitoringController@computation');
         Route::post('refresh_secondary_persons_prf', 'PriceMonitoringController@refreshUserApprover');
         // Customer Complaint 
-        Route::get('/2', 'CustomerComplaintController@index')->name('customer_complaint.index');
-        Route::post('/new_customer_complaint', 'CustomerComplaintController@store')->name('customer_complaint.store');
+        Route::get('/customer_complaint', 'CustomerComplaintController@index')->name('customer_complaint.index');
+        Route::post('/2', 'CustomerComplaintController@store')->name('customer_complaint.store');
         Route::get('customer_complaint/{id}/edit', 'CustomerComplaintController@edit');
         Route::put('customer_complaint/{id}', 'CustomerComplaintController@update');
         Route::get('/customer-complaint/view/{id}', 'CustomerComplaintController@view')->name('customer_complaint.view');
@@ -388,7 +390,9 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('cs_closed/{id}', 'CustomerSatisfactionController@close');
     
         // Customer Complaint
-        Route::get('/cc_list', 'CustomerSatisfactionController@list')->name('customer_satisfaction.list');
+        Route::get('/cc_list', 'CustomerComplaint2Controller@list')->name('customer_satisfaction.list');
+        Route::get('customer_complaint/view/{id}', 'CustomerComplaint2Controller@view'); 
+        Route::post('/update_customer_complaint/{id}', 'CustomerComplaint2Controller@update')->name('update_customer_complaint');
         
         // Categorization
         Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    

@@ -303,6 +303,10 @@
                                     <label for="Note">Notes</label>
                                     <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes">{{ old('Note',  $sampleRequest->Note) }}</textarea>
                                 </div>
+                                <div class="form-group">
+                                    <label for="ETA">ETA</label>
+                                    <input type="date" class="form-control Eta{{$sampleRequest->Id }}" name="Eta" value="{{ old('Eta', !empty( $sampleRequest->Eta) ? date('Y-m-d', strtotime( $sampleRequest->Eta)) : '') }}">
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -642,13 +646,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var storedSampleReceived = '{{ !empty( $sampleRequest->DateSampleReceived) ? date('Y-m-d', strtotime( $sampleRequest->DateSampleReceived)) : '' }}';
     var today = new Date().toISOString().split('T')[0];
 
-    if (dueDateInput) {
-        if (storedDate) {
-            dueDateInput.setAttribute('min', storedDate);
-        } else {
-            dueDateInput.setAttribute('min', today);
-        }
-    }
+    // if (dueDateInput) {
+    //     if (storedDate) {
+    //         dueDateInput.setAttribute('min', storedDate);
+    //     } else {
+    //         dueDateInput.setAttribute('min', today);
+    //     }
+    // }
     
     // if (dispatchInput) {
     //     if (storedDispatched) {

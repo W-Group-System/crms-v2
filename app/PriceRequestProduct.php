@@ -42,5 +42,8 @@ class PriceRequestProduct extends Model
     {
         return $this->belongsTo(PriceRequestGae::class, 'PriceRequestGaeId', 'id');
     }
-    
+    public function priceRequestForm()
+    {
+        return $this->belongsTo(PriceMonitoring::class,'PriceRequestFormId');
+    }
 }

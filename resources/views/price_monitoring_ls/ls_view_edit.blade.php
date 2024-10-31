@@ -405,26 +405,10 @@
         }
     });
     
-
-       function fetchGaeCost(priceGae, $row) {
-   if (priceGae) {
-       $.ajax({
-           url: '{{ url("getGaeCost") }}/' + priceGae,
-           type: "GET",
-           dataType: "json",
-           success: function(data) {
-               $row.find('.GaeCost').val(data.Cost);
-               updateTotalOperationCost($row);
-               updateTotalProductCost($row);
-           }
-       });
-   } else {
-       $row.find('.GaeCost').val(0);
-   }
-}
+    // Update 10/28/24
 
 $(document).ready(function() {
-   var $initialRow = $('.create_prf_form{{ $price_monitorings->id }}');
+    var $initialRow = $('.create_prf_form{{ $price_monitorings->id }}');
    var initialGae = $initialRow.find('.PriceGae').val();
    fetchGaeCost(initialGae, $initialRow);
 
@@ -433,9 +417,24 @@ $(document).ready(function() {
        var priceGae = $(this).val();
        fetchGaeCost(priceGae, $row);
    });
-});
 
-$(document).ready(function() {
+   function fetchGaeCost(priceGae, $row) {
+   if (priceGae) {
+       $.ajax({
+           url: '{{ url("getGaeCost") }}/' + priceGae,
+           type: "GET",
+           dataType: "json",
+           success: function(data) {
+               $row.find('.GaeCost').val(data.Cost);
+               updateTotalOperationCost();
+               updateTotalProductCost();
+           }
+       });
+   } else {
+       $row.find('.GaeCost').val(0);
+   }
+}
+
     function calculateCosts($row, rmc) {
         var directLabor = parseFloat($row.find('.direct-labor-input').val());
         var factoryOverhead = parseFloat($row.find('.factory-overhead-input').val());
@@ -481,61 +480,41 @@ $(document).ready(function() {
             calculateCosts($row, rmc);
         }
     });
-});
 
-   $(document).on('change', '.delivery-type', function() {
-       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
-       var deliveryType = $(this).val();
-       var deliveryCostInput = $row.find('.delivery-cost');
+    function updateTotalOperationCost() {
+    $('.create_prf_form{{ $price_monitorings->id }}').each(function() {
+        var $row = $(this);
+        var deliveryCost = parseFloat($row.find('.delivery-cost').val()) || 0;
+        var financingCost = parseFloat($row.find('.financing-cost').val()) || 0;
+        var gaeCost = parseFloat($row.find('.GaeCost').val()) || 0; 
+        var otherCost = parseFloat($row.find('.other-cost').val()) || 0;
 
-       if (deliveryType === '10') {
-           deliveryCostInput.val(0);
-           deliveryCostInput.prop('readonly', false);
-       } else if (deliveryType === '20') {
-           deliveryCostInput.val(1.84);
-           deliveryCostInput.prop('readonly', true);
-       } else if (deliveryType === '30') {
-           deliveryCostInput.val(0);
-           deliveryCostInput.prop('readonly', true);
-       }
-       updateTotalOperationCost($row);
-       updateTotalProductCost($row);
-   });
+        var totalOperationCost = deliveryCost + financingCost + gaeCost + otherCost;
+        $row.find('.total-operation-cost').val(totalOperationCost);
 
-       $('.delivery-type').trigger('change');
-
-       function updateTotalOperationCost($row) {
-       var deliveryCost = parseFloat($row.find('.delivery-cost').val());
-       var financingCost = parseFloat($row.find('.financing-cost').val());
-       var gaeCost = parseFloat($row.find('.GaeCost').val()); 
-       var otherCost = parseFloat($row.find('.other-cost').val()); 
-       
-       var totalOperationCost = deliveryCost + financingCost + gaeCost + otherCost;
-       $row.find('.total-operation-cost').val(totalOperationCost.toFixed(2)); 
-
-       updateTotalProductCost($row);
-   }
-
-   $(document).on('input', '.delivery-cost, .other-cost', function() {
-       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
-       updateTotalOperationCost($row);
-       updateTotalProductCost($row);
-   });
-
-   function updateTotalProductCost($row) {
-    var totalManufacturing = parseFloat($row.find('.total-manufacturing-cost-input').val()) || 0;
-    var totalOperating = parseFloat($row.find('.total-operation-cost').val()) || 0;
-    var blendingLoss = parseFloat($row.find('.blending-loss').val()) || 0;
-    
-    var totalProductCost = totalManufacturing + totalOperating + blendingLoss;
-    $row.find('.total-product-cost').val(totalProductCost);
-
-    updateMarkupPHP($row);
-    updateSellingPrice($row);
-    updateSellingPriceWithVAT($row);
+        updateTotalProductCost($row); 
+    });
 }
 
-    function updateSellingPrice($row) {
+
+function updateTotalProductCost() {
+    $('.create_prf_form{{ $price_monitorings->id }}').each(function() {
+        var $row = $(this);
+        var totalManufacturing = parseFloat($row.find('.total-manufacturing-cost-input').val()) || 0;
+        var totalOperating = parseFloat($row.find('.total-operation-cost').val()) || 0;
+        var blendingLoss = parseFloat($row.find('.blending-loss').val()) || 0;
+
+        var totalProductCost = totalManufacturing + totalOperating + blendingLoss;
+        $row.find('.total-product-cost').val(totalProductCost); 
+
+        updateMarkupPHP($row);
+        updateSellingPrice($row);
+        updateSellingPriceWithVAT($row);
+    });
+}
+
+
+function updateSellingPrice($row) {
         var totalProductCost = parseFloat($row.find('.total-product-cost').val()) || 0;
         var markupPHP = parseFloat($row.find('.markup-php').val()) || 0;
 
@@ -582,7 +561,36 @@ $(document).ready(function() {
         }
     }
 
+    $(document).on('change', '.delivery-type', function() {
+       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
+       var deliveryType = $(this).val();
+       var deliveryCostInput = $row.find('.delivery-cost');
 
+       if (deliveryType === '10') {
+           deliveryCostInput.val(0);
+           deliveryCostInput.prop('readonly', false);
+       } else if (deliveryType === '20') {
+           deliveryCostInput.val(1.84);
+           deliveryCostInput.prop('readonly', true);
+       } else if (deliveryType === '30') {
+           deliveryCostInput.val(0);
+           deliveryCostInput.prop('readonly', true);
+       }
+       updateTotalOperationCost($row);
+       updateTotalProductCost($row);
+   });
+
+       $('.delivery-type').trigger('change');
+
+       
+
+   $(document).on('input', '.delivery-cost, .other-cost', function() {
+       var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
+       updateTotalOperationCost($row);
+       updateTotalProductCost($row);
+   });
+
+   
    $(document).on('input', '.markup-percent', function() {
        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        updateMarkupPHP($row);
@@ -593,13 +601,7 @@ $(document).ready(function() {
        updateMarkupPercent($row);
    });
 
-//    $(document).on('input', '.selling-price-php', function() {
-//         var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
-//         updateSellingPrice($row);
-//         updateSellingPriceWithVAT($row);
-//     });
-
-$(document).on('input', '.selling-price-php', function() {
+   $(document).on('input', '.selling-price-php', function() {
        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
        var sellingPrice = parseFloat($(this).val());
        var totalProductCost = parseFloat($row.find('.total-product-cost').val());
@@ -630,6 +632,18 @@ $(document).on('input', '.selling-price-php', function() {
             $row.find('.markup-percent').val(markupPercent.toFixed(3));
         }
     });
+    
+});
+
+  
+
+//    $(document).on('input', '.selling-price-php', function() {
+//         var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
+//         updateSellingPrice($row);
+//         updateSellingPriceWithVAT($row);
+//     });
+
+
 
 //    $(document).on('input', '.selling-price-php', function() {
 //        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');

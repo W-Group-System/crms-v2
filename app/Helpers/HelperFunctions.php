@@ -2,6 +2,7 @@
 use App\BasePrice;
 use App\CurrencyExchange;
 use App\CustomerRequirement;
+use App\GroupSales;
 use App\Product;
 use App\ProductMaterialsComposition;
 use App\UserAccessModule;
@@ -351,7 +352,7 @@ function authCheckIfItsSales($department)
 
 function authCheckIfItsSalesManager($role)
 {
-    if ($role == 21)
+    if ($role == 10)
     {
         return true;
     }
@@ -812,6 +813,40 @@ function srfSecondary($user_id, $primary_sales_person, $secondary_sales_person)
 
     return false;
 }
+function prfPrimarySalesApprover($user_id, $primary_sales_person, $secondary_sales_person)
+{
+    $primary_sales_person = strtolower(trim($primary_sales_person));
+
+    $primaryUser = User::whereRaw('LOWER(TRIM(user_id)) = ?', [ $primary_sales_person ])
+                           ->orWhereRaw('LOWER(TRIM(id)) = ?', [ $primary_sales_person ])
+                           ->first();
+
+    $currentUser = User::whereRaw('LOWER(TRIM(user_id)) = ?', [ $user_id ])
+                           ->orWhereRaw('LOWER(TRIM(id)) = ?', [ $user_id ])
+                           ->first();
+
+    $salesApprovers = SalesApprovers::where('SalesApproverId', $currentUser->id)
+                                         ->where('UserId', $primaryUser->id)
+                                         ->first();
+    
+    if ($salesApprovers != null) {
+       
+            return "true"; 
+        
+    }
+
+    return false;
+}
+
+function prfSecondary($user_id, $primary_sales_person, $secondary_sales_person)
+{
+    
+        if ($user_id == $secondary_sales_person || auth()->user()->user_id == $secondary_sales_person ) {
+            return "true";
+    }
+
+    return false;
+}
 
 function crrHistoryLogs($action, $crr)
 {
@@ -926,9 +961,34 @@ function historyRmc($product_material_composition, $product_id)
         ->orderBy('MaterialId', 'asc')
         ->get();
     
+    // $basePrice = BasePrice::whereIn('MaterialId', $material_id)
+    //     ->where('IsDeleted', 0)
+    //     ->where('Status', 3)
+    //     ->orderBy('EffectiveDate', 'asc')
+    //     ->get();
+
+    // dd($basePrice);
+
+    // $getPercent = $product_material_composition->map(function($item, $key) 
+    // {
+    //     $num = $item / 100;
+
+    //     return $num;
+    // });
+        
+    // $multiply = $basePrice->map(function($item, $key)use($getPercent) 
+    // {
+    //     $num = $item * $getPercent[$key];
+
+    //     return round($num, 2);
+    // });
+
+    // return $multiply->sum();
+    
     $rmc_array = [];
     foreach($product_material_composition as $product_composition)
     {
+        // dd($product_composition);
         $total_percentage = $product_composition->Percentage / 100;
         
         foreach($product_composition->rawMaterials->basePrice->groupBy('MaterialId') as $key=>$base_price)
@@ -987,4 +1047,13 @@ function checkIfItsUserId($secondarySale)
     }
 
     return false;
+}
+
+function checkIfInGroup($primary_sales, $auth_user)
+{
+    $user = User::where('id', $primary_sales)->orWhere('user_id', $primary_sales)->first();
+    
+    $group_sales_list = GroupSales::where('user_id', $user->id)->pluck('members')->toArray();
+    
+    return collect($group_sales_list)->contains($auth_user);
 }

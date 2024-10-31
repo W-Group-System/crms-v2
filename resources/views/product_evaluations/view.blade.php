@@ -30,7 +30,7 @@
     }
 </style>
 <div class="col-12 grid-margin stretch-card">
-    <div class="card rounded-0 border border-1 border-primary p-0" style="max-height:80vh;">
+    <div class="card rounded-0 border border-1 border-primary p-0">
         <div class="card-header bg-primary text-white font-weight-bold">
             Request for Product Evaluation Details
         </div>
@@ -38,7 +38,7 @@
             <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details
                 <div align="right">
                     @if(url()->previous() == url()->current())
-                    <a href="{{ url('product_evaluation?open=10') }}" class="btn btn-md btn-outline-secondary">
+                    <a href="{{ url('request_product_evaluation?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @else
@@ -53,8 +53,8 @@
                     </a>
 
                     {{-- Sales Button --}}
-                    @if((auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->user_id == $requestEvaluation->PrimarySalesPersonId) || (auth()->user()->id == $requestEvaluation->SecondarySalesPersonId || auth()->user()->user_id == $requestEvaluation->SecondarySalesPersonId) && auth()->user()->role->name == 'Staff L1')
-
+                    {{-- @if((auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->user_id == $requestEvaluation->PrimarySalesPersonId) || (auth()->user()->id == $requestEvaluation->SecondarySalesPersonId || auth()->user()->user_id == $requestEvaluation->SecondarySalesPersonId) && auth()->user()->role->name == 'Staff L1') --}}
+                    @if(checkIfInGroup($requestEvaluation->PrimarySalesPersonId, auth()->user()->id))
                         @if($requestEvaluation->Status == 10)
                             <button type="button" class="btn btn-outline-warning editBtn" data-toggle="modal" data-target="#editRpe{{$requestEvaluation->id}}" data-secondarysales="{{$requestEvaluation->SecondarySalesPersonId}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
@@ -100,7 +100,7 @@
                             @endif
                         @endif
 
-                        @if(auth()->user()->id != $requestEvaluation->SecondarySalesPersonId && auth()->user()->user_id != $requestEvaluation->SecondarySalesPersonId)
+                        @if(auth()->user()->id == $requestEvaluation->PrimarySalesPersonId && auth()->user()->user_id == $requestEvaluation->PrimarySalesPersonId)
                             @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 70 ||  $requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
                                 <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$requestEvaluation->id}}">
                                     <i class="ti ti-close"></i>&nbsp;Close
@@ -971,11 +971,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($rpeFileUploads as $fileupload)
+                                @foreach ($requestEvaluation->rpeFiles as $fileupload)
                                 @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $fileupload->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                     <tr>
                                         <td>
-                                            {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes") --}}
                                             @if(authCheckIfItsRnd(auth()->user()->department_id))
                                                 <button type="button"  class="btn btn-sm btn-warning btn-outline"
                                                     data-target="#editRpeFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
@@ -994,9 +993,9 @@
                                                 <i class="mdi mdi-eye-off-outline text-danger"></i>
                                             @endif{{ $fileupload->Name }}</td>
                                         <td>
-                                            @if ($fileupload->Path)
+                                            {{-- @if ($fileupload->Path)
+                                            @endif --}}
                                             <a href="{{ url($fileupload->Path) }}" target="_blank">View File</a>
-                                            @endif
                                         </td>
                                     </tr>
                                     @endif
@@ -1188,56 +1187,56 @@
             });
         });
 
-        $(".editBtn").on('click', function() {
-            var secondarySales = $(this).data('secondarysales');
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+        // $(".editBtn").on('click', function() {
+        //     var secondarySales = $(this).data('secondarysales');
+        //     var primarySales = $('[name="PrimarySalesPersonId"]').val();
 
-            refreshSecondaryApprovers(primarySales,secondarySales)
-        })
-        $('[name="PrimarySalesPersonId"]').on('change', function() {
-            var primarySales = $(this).val();
+        //     refreshSecondaryApprovers(primarySales,secondarySales)
+        // })
+        // $('[name="PrimarySalesPersonId"]').on('change', function() {
+        //     var primarySales = $(this).val();
 
-            refreshSecondaryApproversv2(primarySales)
-        })
-        function refreshSecondaryApprovers(primarySales,secondarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_rpe_secondary_persons')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                        $('[name="SecondarySalesPersonId"]').val(secondarySales) 
-                    }, 500);
-                }
-            })
-        }
-        function refreshSecondaryApproversv2(primarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_rpe_secondary_persons')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                    }, 500);
-                }
-            })
-        }
+        //     refreshSecondaryApproversv2(primarySales)
+        // })
+        // function refreshSecondaryApprovers(primarySales,secondarySales)
+        // {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_rpe_secondary_persons')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //                 $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+        //             }, 500);
+        //         }
+        //     })
+        // }
+        // function refreshSecondaryApproversv2(primarySales)
+        // {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_rpe_secondary_persons')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //             }, 500);
+        //         }
+        //     })
+        // }
 
         $('.openBtn').on('click', function() {
             var form = $(this).closest('form')
@@ -1535,9 +1534,9 @@
 @foreach ($activities as $activity)
 @include('product_evaluations.edit_activity')
 @endforeach
-@foreach ($rpeFileUploads as $fileupload)
+{{-- @foreach ($rpeFileUploads as $fileupload)
 @include('product_evaluations.edit_files')
-@endforeach
+@endforeach --}}
 {{-- @include('sample_requests.upload_srf_file') --}}
 {{-- @include('sample_requests.create_raw_materials') --}}
 {{-- @foreach ($requestEvaluation as $srf)

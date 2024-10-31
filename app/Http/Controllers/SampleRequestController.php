@@ -221,6 +221,16 @@ class SampleRequestController extends Controller
             //                     ->orWhere('SecondarySalesPersonId', $userByUser);
             //         });
             // })
+            // Search filter for SrfNumber, DateRequested, and DateRequired
+            ->when($search, function($query) use ($search) {
+                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                    ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ProductDescription', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('client', function($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    });
+            })
             ->when($progress, function($query) use ($progress, $userId) {
                 if ($progress == '10') {
                     // Join users and filter by SalesApproverId
@@ -305,15 +315,7 @@ class SampleRequestController extends Controller
             ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
                 $query->where('Status', $request->close);
             })
-            // Search filter for SrfNumber, DateRequested, and DateRequired
-            ->when($search, function($query) use ($search) {
-                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
-                    ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-                    ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('client', function($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    });
-            })
+            
 
             // Role-based filters for SrfNumber patterns
             // ->when(auth()->user()->role->type == 'LS', function($query) {
@@ -525,7 +527,8 @@ class SampleRequestController extends Controller
         $SrfSupplementary = SrfDetail::where('SampleRequestId', $scrfNumber)->get();
         $assignedPersonnel = SrfPersonnel::where('SampleRequestId', $scrfNumber)->get();
         $SrfMaterials = SrfRawMaterial::where('SampleRequestId', $scrfNumber)->get();
-        $rndPersonnel = User::whereHas('rndUsers')->get();
+        // $rndPersonnel = User::whereHas('rndUsers')->get();
+        $rndPersonnel = User::whereIn('department_id', [15, 42, 20, 44, 77, 78, 79])->where('is_active', 1)->get();
         $srfProgress = SrfProgress::all();
         $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)
         ->where(function ($query) {
@@ -891,6 +894,7 @@ class SampleRequestController extends Controller
                 'DateSampleReceived' => $request->input('DateSampleReceived'),
                 'DeliveryRemarks' => $request->input('DeliveryRemarks'),
                 'Note' => $request->input('Note'),
+                'Eta' => $request->input('Eta'),
             ]);
 
 
@@ -961,6 +965,7 @@ class SampleRequestController extends Controller
         $srf->DateSampleReceived = $request->input('DateSampleReceived');
         $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
         $srf->Note = $request->input('Note');
+        $srf->Eta = $request->input('Eta');
         $srf->save();
 
         foreach ($request->input('ProductCode', []) as $key => $value) {
@@ -1375,6 +1380,7 @@ class SampleRequestController extends Controller
         $srf->DateSampleReceived = $request->input('DateSampleReceived');
         $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
         $srf->Note = $request->input('Note');
+        $srf->Eta = $request->input('Eta');
         $srf->save();
         
         return redirect()->back()->with('success', 'Sample Request updated successfully');

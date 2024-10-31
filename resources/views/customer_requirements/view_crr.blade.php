@@ -2,7 +2,7 @@
 @section('content')
 
 <div class="col-12 grid-margin stretch-card">
-    <div class="card rounded-0 border border-1 border-primary" style="max-height: 80vh;">
+    <div class="card rounded-0 border border-1 border-primary">
         <div class="card-header rounded-0 font-weight-bold text-white bg-primary">
             Customer Requirement Details
         </div>
@@ -79,7 +79,8 @@
                         @endif
                     @endif
 
-                    @if((auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId) || (auth()->user()->id == $crr->SecondarySalesPersonId || auth()->user()->user_id == $crr->SecondarySalesPersonId))
+                    {{-- @if((auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId) || (auth()->user()->id == $crr->SecondarySalesPersonId || auth()->user()->user_id == $crr->SecondarySalesPersonId)) --}}
+                    @if(checkIfInGroup($crr->PrimarySalesPersonId, auth()->user()->id))
                         @if($crr->Status == 10)
                             @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id))
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
@@ -122,8 +123,7 @@
                             </form>
                         @endif
                         
-
-                        @if(auth()->user()->id != $crr->SecondarySalesPersonId && auth()->user()->user_id != $crr->SecondarySalesPersonId)
+                        @if(auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->user_id == $crr->PrimarySalesPersonId)
                             @if($crr->Status == 30)
                                 {{-- <form method="POST" class="d-inline-block" action="{{url('open_status/'.$crr->id)}}" onsubmit="show()">
                                     @csrf
@@ -857,7 +857,8 @@
                     </div>
                 </div> --}}
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
-                    @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30)
+                    {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30) --}}
+                    @if(auth()->user()->role->type != 'IS' && auth()->user()->role->type != 'LS' && $crr->Progress != 30)
                     <div align="right">
                         <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addCrrFiles">
                             New
@@ -885,22 +886,22 @@
                                 @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $files->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                 <tbody>
                                     <tr>
-                                        <td>
+                                        <td width="10%" align="center">
                                             @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30)
-                                            <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCrrFiles-{{$files->Id}}" title="Edit">
-                                                <i class="ti-pencil"></i>
-                                            </button>
-
-                                            <form method="POST" class="d-inline-block" action="{{url('delete_crr_file/'.$files->Id)}}" onsubmit="show()">
-                                                @csrf 
-
-                                                <button type="button" class="btn btn-sm btn-danger deleteBtn" title="Delete">
-                                                    <i class="ti-trash"></i>
+                                                <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCrrFiles-{{$files->Id}}" title="Edit">
+                                                    <i class="ti-pencil"></i>
                                                 </button>
-                                            </form>
+                                                @if(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
+                                                <form method="POST" class="d-inline-block" action="{{url('delete_crr_file/'.$files->Id)}}" onsubmit="show()">
+                                                    @csrf 
+                                                    <button type="button" class="btn btn-sm btn-danger deleteBtn" title="Delete">
+                                                        <i class="ti-trash"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
                                             @endif
                                         </td>
-                                        <td>
+                                        <td width="70%">
                                             @if($files->IsForReview)
                                                 <i class="ti-pencil-alt text-danger"></i>
                                             @endif
@@ -910,14 +911,14 @@
 
                                             {{$files->Name}}
                                         </td>
-                                        <td>
+                                        <td width="15%">
                                             @if($files->IsForReview == 1)
                                                 <div class="badge badge-warning">In-Review</div>
                                             @elseif($files->IsForReview == 0)
                                                 <div class="badge badge-success">Approved</div>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td width="5%">
                                             <a href="{{url($files->Path)}}" target="_blank">
                                                 <i class="ti-file"></i>
                                             </a>
@@ -1353,12 +1354,12 @@
             });
         })
 
-        $("#update2Crr").on('click', function() {
-            var secondarySales = $(this).data('secondarysales');
-            var primarySales = $("[name='PrimarySalesPersonId']").val()
+        // $("#update2Crr").on('click', function() {
+        //     var secondarySales = $(this).data('secondarysales');
+        //     var primarySales = $("[name='PrimarySalesPersonId']").val()
             
-            refreshSecondaryApprovers(secondarySales, primarySales)
-        })
+        //     refreshSecondaryApprovers(secondarySales, primarySales)
+        // })
         
         // $('[name="PrimarySalesPersonId"]').on('change', function() {
         //     var primarySales = $(this).val();
@@ -1366,42 +1367,22 @@
         //     refreshSecondaryApproversv2(primarySales)
         // })
 
-        function refreshSecondaryApprovers(secondarySales, primarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_crr_secondary_sales_person')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data)
-                        $('[name="SecondarySalesPersonId"]').val(secondarySales)
-                    }, 500);
-                }
-            })
-        }
-
-        // function refreshSecondaryApproversv2(primarySales)
+        // function refreshSecondaryApprovers(secondarySales, primarySales)
         // {
         //     $.ajax({
         //         type: "POST",
-        //         url: "{{url('refresh_user_approvers')}}",
+        //         url: "{{url('refresh_crr_secondary_sales_person')}}",
         //         headers: {
         //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         //         },
         //         data: {
-        //             ps: primarySales,
+        //             ps: primarySales
         //         },
         //         success: function(data)
         //         {
         //             setTimeout(() => {
-        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //                 $('[name="SecondarySalesPersonId"]').html(data)
+        //                 $('[name="SecondarySalesPersonId"]').val(secondarySales)
         //             }, 500);
         //         }
         //     })

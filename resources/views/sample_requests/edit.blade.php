@@ -275,17 +275,21 @@
                         <label>Date Sample Received (MM/DD/YYYY):</label>
                         <input type="date" class="form-control DateSampleReceived{{ $srf->Id }}" name="DateSampleReceived"  placeholder="Enter Sample Received" value="{{ old('DateSampleReceived', !empty($srf->DateSampleReceived) ? date('Y-m-d', strtotime($srf->DateSampleReceived)) : '') }}" >
                     </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="DeliveryRemarks">Delivery Remarks</label>
-                    <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks" >{{ old('DeliveryRemarks', $srf->DeliveryRemarks) }}</textarea>
                 </div>
-                <div class="form-group">
-                    <label for="Note">Notes</label>
-                    <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes" >{{ old('Note', $srf->Note) }}</textarea>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="DeliveryRemarks">Delivery Remarks</label>
+                        <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks" >{{ old('DeliveryRemarks', $srf->DeliveryRemarks) }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="Note">Notes</label>
+                        <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes" >{{ old('Note', $srf->Note) }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="ETA">ETA</label>
+                        <input type="date" class="form-control Eta{{ $srf->Id }}" name="Eta" value="{{ old('Eta', !empty($srf->Eta) ? date('Y-m-d', strtotime($srf->Eta)) : '') }}" >
+                    </div>
                 </div>
-            </div>
             </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

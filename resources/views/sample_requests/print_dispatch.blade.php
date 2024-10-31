@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 10px;
             margin: 0;
             padding: 20px;
         }
@@ -16,7 +16,7 @@
             border-collapse: collapse;
         }
         th, td {
-            padding: 8px;
+            padding: 5px;
             border: 1px solid black;
         }
         th {
@@ -29,9 +29,8 @@
             border-collapse: collapse;
         }
         .product-table td {
-            padding: 8px;
+            padding: 5px;
             border: 1px solid black;
-            height: 10%;
         }
         .product-table th {
             text-align: left;
@@ -117,7 +116,7 @@
         </tr>
         <tr>
             <td class="highlight">ETA:</td>
-            <td></td>
+            <td>{{ \Carbon\Carbon::parse($sample_requests->Eta)->format('F d, Y') }}
         </tr>
     </table>
 

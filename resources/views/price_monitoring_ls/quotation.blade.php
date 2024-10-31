@@ -269,10 +269,14 @@
                 <p class="right-p">Thank you for your time and cosideration!</p>
                 <p class="right-p">Sincerely,</p>
                 @foreach ($price_monitoring_ls->requestPriceProducts as $price_products)
-                    @if($price_products->LsalesMarkupPercent >= 15)
-                        <p class="right-p">{{auth()->user()->full_name}}</p>
-                    @else
-                        <p class="right-p">Maricris J. Ribon</p>
+                    @if($price_products->LsalesMarkupPercent <= 15)
+                        @if($price_products->priceRequestForm->primarySalesPerson)
+                        <p class="right-p">{{$price_products->priceRequestForm->primarySalesPerson->full_name}}</p>
+                        @elseif($price_products->priceRequestForm->primarySalesPersonById)
+                        <p class="right-p">{{$price_products->priceRequestForm->primarySalesPersonById->full_name}}</p>
+                        @endif
+                    {{-- @else
+                        <p class="right-p">Maricris J. Ribon</p> --}}
                     @endif
                 @endforeach
                 <br>

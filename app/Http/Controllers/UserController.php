@@ -6,6 +6,7 @@ use App\Role;
 use App\Company;
 use App\Department;
 use App\Exports\UserExport;
+use App\GroupSales;
 use App\RndApprovers;
 use App\SalesApprovers;
 use App\SecondarySalesPerson;
@@ -120,16 +121,16 @@ class UserController extends Controller
                 }
             }
 
-            if ($request->department_id == 15)
-            {
-                foreach($approvers as $key=>$approver)
-                {
-                    $rndApprover = new RndApprovers;
-                    $rndApprover->UserId = $user->id;
-                    $rndApprover->RndApproverId = $approver->id;
-                    $rndApprover->save();
-                }
-            }
+            // if ($request->department_id == 15)
+            // {
+            //     foreach($approvers as $key=>$approver)
+            //     {
+            //         $rndApprover = new RndApprovers;
+            //         $rndApprover->UserId = $user->id;
+            //         $rndApprover->RndApproverId = $approver->id;
+            //         $rndApprover->save();
+            //     }
+            // }
 
         }
 
@@ -183,31 +184,43 @@ class UserController extends Controller
                 }
             }
 
-            if ($request->department_id == 15)
-            {
-                $rndApprover = RndApprovers::where('UserId', $id)->delete();
+            // if ($request->department_id == 15)
+            // {
+            //     $rndApprover = RndApprovers::where('UserId', $id)->delete();
                 
-                foreach($approvers as $key=>$approver)
-                {
-                    $rndApprover = new RndApprovers;
-                    $rndApprover->UserId = $user->id;
-                    $rndApprover->RndApproverId = $approver->id;
-                    $rndApprover->save();
-                }
-            }
+            //     foreach($approvers as $key=>$approver)
+            //     {
+            //         $rndApprover = new RndApprovers;
+            //         $rndApprover->UserId = $user->id;
+            //         $rndApprover->RndApproverId = $approver->id;
+            //         $rndApprover->save();
+            //     }
+            // }
         }
 
-        if ($request->has('secondary_sales'))
+        // if ($request->has('secondary_sales'))
+        // {
+        //     // dd($id);
+        //     $secondary_sales = SecondarySalesPerson::where('PrimarySalesPersonId', $id)->delete();
+        //     foreach($request->secondary_sales as $key=>$secondarySales)
+        //     {
+        //         $secondary_sales = new SecondarySalesPerson;
+        //         $secondary_sales->PrimarySalesPersonId = $id;
+        //         $secondary_sales->Type = null;
+        //         $secondary_sales->SecondarySalesPersonId = $secondarySales;
+        //         $secondary_sales->save();
+        //     }
+        // }
+
+        if ($request->has('group_sales'))
         {
-            // dd($id);
-            $secondary_sales = SecondarySalesPerson::where('PrimarySalesPersonId', $id)->delete();
-            foreach($request->secondary_sales as $key=>$secondarySales)
+            $sales_group = GroupSales::where('user_id', $id)->delete();
+            foreach($request->group_sales as $value)
             {
-                $secondary_sales = new SecondarySalesPerson;
-                $secondary_sales->PrimarySalesPersonId = $id;
-                $secondary_sales->Type = null;
-                $secondary_sales->SecondarySalesPersonId = $secondarySales;
-                $secondary_sales->save();
+                $sales_group = new GroupSales;
+                $sales_group->user_id =$id;
+                $sales_group->members = $value;
+                $sales_group->save();
             }
         }
 

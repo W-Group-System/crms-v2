@@ -167,84 +167,129 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
         }
        
 
-        $productApplications = $row->requestProducts->map(function($product) {
-            return optional($product->productApplicationsId)->Name;
-        })->implode(', ');
+        // $productApplications = $row->requestProducts->map(function($product) {
+        //     return optional($product->productApplicationsId)->Name;
+        // })->implode(', ');
 
-        $productPackages = $row->requestProducts->map(function($product) {
-            return ($product->NumberOfPackages);
-        })->implode(', ');
+        // $productPackages = $row->requestProducts->map(function($product) {
+        //     return ($product->NumberOfPackages);
+        // })->implode(', ');
 
-        $productQuantity = $row->requestProducts->map(function($product) {
-            return ($product->Quantity);
-        })->implode(', ');
+        // $productQuantity = $row->requestProducts->map(function($product) {
+        //     return ($product->Quantity);
+        // })->implode(', ');
 
-        $productProductCode = $row->requestProducts->map(function($product) {
-            return ($product->ProductCode);
-        })->implode(', ');
+        // $productProductCode = $row->requestProducts->map(function($product) {
+        //     return ($product->ProductCode);
+        // })->implode(', ');
 
-        $productLabel = $row->requestProducts->map(function($product) {
-            return ($product->Label);
-        })->implode(', ');
+        // $productLabel = $row->requestProducts->map(function($product) {
+        //     return ($product->Label);
+        // })->implode(', ');
 
-        $productDescription = $row->requestProducts->map(function($product) {
-            return ($product->ProductDescription);
-        })->implode(', ');
+        // $productDescription = $row->requestProducts->map(function($product) {
+        //     return ($product->ProductDescription);
+        // })->implode(', ');
 
-        $productRPE = $row->requestProducts->map(function($product) {
-            return ($product->RpeNumber);
-        })->implode(', ');
+        // $productRPE = $row->requestProducts->map(function($product) {
+        //     return ($product->RpeNumber);
+        // })->implode(', ');
 
-        $productCRR = $row->requestProducts->map(function($product) {
-            return ($product->CrrNumber);
-        })->implode(', ');
+        // $productCRR = $row->requestProducts->map(function($product) {
+        //     return ($product->CrrNumber);
+        // })->implode(', ');
 
-        $DateSampleReceived = $row->requestProducts->map(function($product) {
-            return ($product->DateSampleReceived ?? "NA");
-        })->implode(', ');
+        // $DateSampleReceived = $row->requestProducts->map(function($product) {
+        //     return ($product->DateSampleReceived ?? "NA");
+        // })->implode(', ');
 
-        $DateDispatched = $row->requestProducts->map(function($product) {
-            return ($product->DateDispatched ?? "NA");
-        })->implode(', ');
+        // $DateDispatched = $row->requestProducts->map(function($product) {
+        //     return ($product->DateDispatched ?? "NA");
+        // })->implode(', ');
 
         if(auth()->user()->role->type == "IS")
         {
-            return [
-                $row->SrfNumber,
-                $row->DateRequested,
-                $row->DateRequired,
-                $RefCode,
-                $SrfType,
-                optional($row->client)->Name,
-                optional(optional($row->client)->clientregion)->Name,
-                optional(optional($row->client)->clientcountry)->Name,
-                $primarySales,
-                $productPackages,
-                $productQuantity,
-                $productProductCode,
-                $productLabel,
-                $productApplications,
-                $productDescription,
-                $productRPE,
-                $productCRR,
-                $DateSampleReceived,
-                $DateDispatched,
-                $Status,
-                optional($row->progressStatus)->Name,
-            ];
+            $productRows = [];
+
+            foreach ($row->requestProducts as $product) {
+                $productRows[] = [
+                    $row->SrfNumber,
+                    $row->DateRequested,
+                    $row->DateRequired,
+                    $RefCode,
+                    $SrfType,
+                    optional($row->client)->Name,
+                    optional(optional($row->client)->clientregion)->Name,
+                    optional(optional($row->client)->clientcountry)->Name,
+                    $primarySales,
+                    $product->NumberOfPackages,
+                    $product->Quantity,
+                    $product->ProductCode,
+                    $product->Label,
+                    optional($product->productApplicationsId)->Name,
+                    $product->ProductDescription,
+                    $product->RpeNumber,
+                    $product->CrrNumber,
+                    $product->DateSampleReceived ?? "NA",
+                    $product->DateDispatched ?? "NA",
+                    $status,
+                    optional($row->progressStatus)->name,
+                ];
+            }
+    
+            return $productRows;
+            // return [
+            //     $row->SrfNumber,
+            //     $row->DateRequested,
+            //     $row->DateRequired,
+            //     $RefCode,
+            //     $SrfType,
+            //     optional($row->client)->Name,
+            //     optional(optional($row->client)->clientregion)->Name,
+            //     optional(optional($row->client)->clientcountry)->Name,
+            //     $primarySales,
+            //     $productPackages,
+            //     $productQuantity,
+            //     $productProductCode,
+            //     $productLabel,
+            //     $productApplications,
+            //     $productDescription,
+            //     $productRPE,
+            //     $productCRR,
+            //     $DateSampleReceived,
+            //     $DateDispatched,
+            //     $Status,
+            //     optional($row->progressStatus)->Name,
+            // ];
         }
 
         if(auth()->user()->role->type == "LS")
         {
-            return [
-                $row->SrfNumber,
-                $row->DateRequested,
-                $row->DateRequired,
-                optional($row->client)->Name,
-                $productApplications,
-                $Status,
-                optional($row->progressStatus)->Name,
-            ];
+            $productRows = [];
+
+            foreach ($row->requestProducts as $product) {
+                $productRows[] = [
+                    $row->SrfNumber,
+                    $row->DateRequested,
+                    $row->DateRequired,
+                    optional($row->client)->Name,
+                    optional($product->productApplicationsId)->Name,
+                    $primarySales,
+                    $status,
+                    optional($row->progressStatus)->name,
+                ];
+            }
+    
+            return $productRows;
+            // return [
+            //     $row->SrfNumber,
+            //     $row->DateRequested,
+            //     $row->DateRequired,
+            //     optional($row->client)->Name,
+            //     $productApplications,
+            //     $Status,
+            //     optional($row->progressStatus)->Name,
+            // ];
         }
     }
 }
