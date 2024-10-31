@@ -954,7 +954,7 @@
                         </table>
                     </div>
                 </div>
-                @if(authCheckIfItsRnd(auth()->user()->department_id))
+                {{-- @if(authCheckIfItsRnd(auth()->user()->department_id)) --}}
                 <div class="tab-pane fade  @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
                         <button type="button" class="btn btn-sm btn-outline-primary ml-auto m-3" title="Upload File"  data-toggle="modal" data-target="#uploadFile">
@@ -1004,7 +1004,7 @@
                         </table>
                     </div>
                 </div>
-                @endif
+                {{-- @endif --}}
                
                 <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
                     <div class="table-responsive">
@@ -1534,9 +1534,9 @@
 @foreach ($activities as $activity)
 @include('product_evaluations.edit_activity')
 @endforeach
-{{-- @foreach ($rpeFileUploads as $fileupload)
+@foreach ($requestEvaluation->rpeFiles as $fileupload)
 @include('product_evaluations.edit_files')
-@endforeach --}}
+@endforeach
 {{-- @include('sample_requests.upload_srf_file') --}}
 {{-- @include('sample_requests.create_raw_materials') --}}
 {{-- @foreach ($requestEvaluation as $srf)
