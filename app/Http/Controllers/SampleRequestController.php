@@ -221,6 +221,16 @@ class SampleRequestController extends Controller
             //                     ->orWhere('SecondarySalesPersonId', $userByUser);
             //         });
             // })
+            // Search filter for SrfNumber, DateRequested, and DateRequired
+            ->when($search, function($query) use ($search) {
+                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                    ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ProductDescription', 'LIKE', '%' . $search . '%')
+                    ->orWhereHas('client', function($q) use ($search) {
+                        $q->where('name', 'LIKE', '%' . $search . '%');
+                    });
+            })
             ->when($progress, function($query) use ($progress, $userId) {
                 if ($progress == '10') {
                     // Join users and filter by SalesApproverId
@@ -305,15 +315,7 @@ class SampleRequestController extends Controller
             ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
                 $query->where('Status', $request->close);
             })
-            // Search filter for SrfNumber, DateRequested, and DateRequired
-            ->when($search, function($query) use ($search) {
-                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
-                    ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-                    ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('client', function($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%');
-                    });
-            })
+            
 
             // Role-based filters for SrfNumber patterns
             // ->when(auth()->user()->role->type == 'LS', function($query) {
