@@ -16,7 +16,6 @@ use App\CrrNature;
 use App\CrrPersonnel;
 use App\Exports\CustomerRequirementExport;
 use App\FileCrr;
-use App\GroupSales;
 use App\ProductApplication;
 use App\SalesApprovers;
 use App\SalesUser;
@@ -215,10 +214,9 @@ class CustomerRequirementController extends Controller
                     $query->where('ReturnToSales', '1')
                         ->where(function($query) use ($userId, $userByUser) {
                             $query->where('PrimarySalesPersonId', $userId)
-                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                                ->orWhere('PrimarySalesPersonId', $userByUser);
                         });
                 } else {
-                    // Apply ret$return_to_sales filter if it's not '10'
                     $query->where('ReturnToSales', $return_to_sales);
                 }
             })
@@ -609,9 +607,8 @@ class CustomerRequirementController extends Controller
         $unitOfMeasure = UnitOfMeasure::get();
         $status = $request->status;
         $progress = $request->progress;
-        $currentUser = auth()->user();
         // Return view with all necessary data
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress', 'currentUser')); 
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress', 'return_to_sales')); 
     }
 
     // Store
@@ -865,7 +862,7 @@ class CustomerRequirementController extends Controller
         $product_applications = ProductApplication::get();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
-        $rnd_personnel = User::whereIn('department_id', [15, 42, 20, 44, 77, 78, 79])->where('is_active', 1)->get();
+        $rnd_personnel = User::whereIn('department_id', [15, 42])->where('is_active', 1)->get();
         $refCode = $this->refCode();
         $unitOfMeasure = UnitOfMeasure::get();
 
@@ -1116,6 +1113,7 @@ class CustomerRequirementController extends Controller
         if ($request->action == "approved_to_sales")
         {
             $crr->Progress = 20;
+            $crr->returnToSales = 0;
             // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
@@ -1132,6 +1130,7 @@ class CustomerRequirementController extends Controller
         elseif($request->action == "approved_to_RND" || $request->action == "approved_to_QCD-MRDC" || $request->action == "approved_to_QCD-WHI" || $request->action == "approved_to_QCD-PBI")
         {
             $crr->Progress = 30;
+            $crr->returnToSales = 0;
             // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->SalesApprovedDate = date('Y-m-d');

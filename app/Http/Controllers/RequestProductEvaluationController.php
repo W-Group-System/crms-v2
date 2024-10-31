@@ -243,6 +243,7 @@ class RequestProductEvaluationController extends Controller
         $close = $request->close;
         $status = $request->query('status'); // Get the status from the query parameters
         $progress = $request->query('progress'); // Get the progress from the query parameters
+        $return_to_sales = $request->query('return_to_sales');
 
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
@@ -280,6 +281,17 @@ class RequestProductEvaluationController extends Controller
                     $query->where('Status', $status);
                 }
             })
+            ->when($return_to_sales, function($query) use ($return_to_sales, $userId, $userByUser) {
+                if ($return_to_sales == '1') {
+                    $query->where('ReturnToSales', '1')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    $query->where('ReturnToSales', $return_to_sales);
+                }
+            })
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
                     $query->where('Progress', '10')
@@ -290,6 +302,7 @@ class RequestProductEvaluationController extends Controller
                     $query->where('Progress', $progress);
                 }
             })
+            
             // Handle filtering for open and close status
             ->when($request->has('open') && $request->has('close'), function($query) use ($request) {
                 $query->whereIn('Status', [$request->open, $request->close]);
@@ -933,6 +946,7 @@ class RequestProductEvaluationController extends Controller
     {
         $rpeList = RequestProductEvaluation::findOrFail($id);
         $rpeList->Progress = 10;
+        $rpeList->ReturnToSales = 1;
         $rpeList->save(); 
 
         $transactionApproval = new TransactionApproval();
@@ -954,7 +968,7 @@ class RequestProductEvaluationController extends Controller
             $buttonClicked = request()->input('submitbutton');    
             if ($buttonClicked === 'Approve to R&D') {
                 $approveRpeSales->Progress = 30; 
-
+                $approveRpeSales->ReturnToSales = 0; 
                 $transactionApproval = new TransactionApproval();
                 $transactionApproval->Type = '20';
                 $transactionApproval->TransactionId = $id;
