@@ -249,7 +249,7 @@
                 </div>
             </div>
             <div class="col-md-3 grid-margin transparent">
-                <div class="card mb-2 card-dark-blue">
+                <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Open Transactions</p>
                         <div class="d-flex justify-content-between">
@@ -331,6 +331,43 @@
                 </div>
             </div>
             <div class="col-md-3 grid-margin transparent">
+                <div class="card mb-3 card-dark-blue">
+                    <div class="card-body">
+                        <p class="card-title text-white">Returned Transactions</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-3 mt-2">
+                                <h3 class="fs-30 font-weight-medium text-white">
+                                    {{ $totalReturned ?? '0' }}
+                                    <i class="ti ti-share-alt"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>CRR</p>
+                            <h5 class="font-weight-medium text-white">
+                                <a href="{{ route('customer_requirement.index', ['return_to_sales' => 1]) }}" class="text-white" onclick="show()">
+                                    {{ $salesCrrReturn ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>RPE</p>
+                            <h5 class="font-weight-medium text-white">
+                                <a href="{{ route('product_evaluation.index', ['return_to_sales' => 1]) }}" class="text-white" onclick="show()">
+                                    {{ $salesRpeReturn ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SRF</p>
+                            <h5 class="font-weight-medium text-white">
+                                <a href="{{ route('sample_request.index', ['return_to_sales' => 1]) }}" class="text-white" onclick="show()">
+                                    {{ $salesSrfReturn ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
                 <div class="card card-light-blue">
                     <div class="card-body">
                         <p class="card-title text-white">Activities</p>

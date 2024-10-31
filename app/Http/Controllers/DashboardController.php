@@ -363,6 +363,35 @@ class DashboardController extends Controller
 
         $totalSalesOpen = $salesCrrOpen + $salesRpeOpen + $salesSrfOpen + $salesPrfOpen;
 
+        $salesCrrReturn = CustomerRequirement::where('ReturnToSales', '1')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PrimarySalesPersonId', $userId)
+                        ->orWhere('PrimarySalesPersonId', $userByUser);
+                });
+            })
+            ->count();
+
+        $salesRpeReturn = RequestProductEvaluation::where('ReturnToSales', '1')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PrimarySalesPersonId', $userId)
+                        ->orWhere('PrimarySalesPersonId', $userByUser);
+                });
+            })
+            ->count();
+
+        $salesSrfReturn = SampleRequest::where('ReturnToSales', '1')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PrimarySalesPersonId', $userId)
+                        ->orWhere('PrimarySalesPersonId', $userByUser);
+                });
+            })
+            ->count();
+
+        $totalReturned = $salesCrrReturn + $salesRpeReturn + $salesSrfReturn;
+
         // CRR Transactions
         function getCustomerRequirementCount($status, $progress = null, $userId, $userByUser) {
             return CustomerRequirement::where('Status', $status)
@@ -607,7 +636,7 @@ class DashboardController extends Controller
             'crrRnDFinal', 'crrRnDCompleted', 'totalCustomerServiceCount', 
             'customerComplaintsCount', 'customerFeedbackCount', 'totalRPECount', 'rpeCancelled', 'rpeSalesApproval',
             'rpeSalesApproved', 'rpeSalesAccepted', 'rpeRnDOngoing', 'rpeRnDPending', 'rpeRnDInitial', 'rpeRnDFinal', 'rpeRnDCompleted', 'totalSRFCount', 'srfCancelled', 'srfSalesApproval',
-            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 
+            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'salesCrrReturn', 'salesRpeReturn', 'salesSrfReturn', 'totalReturned'
         ));
     }
 

@@ -16,7 +16,6 @@ use App\CrrNature;
 use App\CrrPersonnel;
 use App\Exports\CustomerRequirementExport;
 use App\FileCrr;
-use App\GroupSales;
 use App\ProductApplication;
 use App\SalesApprovers;
 use App\SalesUser;
@@ -43,6 +42,7 @@ class CustomerRequirementController extends Controller
         $role = auth()->user()->role;
         $status = $request->query('status'); // Get the status from the query parameters
         $progress = $request->query('progress'); // Get the status from the query parameters
+        $return_to_sales = $request->query('return_to_sales');
 
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
@@ -207,6 +207,17 @@ class CustomerRequirementController extends Controller
                 } else {
                     // Apply progress filter if it's not '10'
                     $query->where('Progress', $progress);
+                }
+            })
+            ->when($return_to_sales, function($query) use ($return_to_sales, $userId, $userByUser) {
+                if ($return_to_sales == '1') {
+                    $query->where('ReturnToSales', '1')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    $query->where('ReturnToSales', $return_to_sales);
                 }
             })
             ->when($request->input('DueDate') === 'past', function($query) {
@@ -596,9 +607,8 @@ class CustomerRequirementController extends Controller
         $unitOfMeasure = UnitOfMeasure::get();
         $status = $request->status;
         $progress = $request->progress;
-        $currentUser = auth()->user();
         // Return view with all necessary data
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress', 'currentUser')); 
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress', 'return_to_sales')); 
     }
 
     // Store
@@ -852,7 +862,7 @@ class CustomerRequirementController extends Controller
         $product_applications = ProductApplication::get();
         $price_currencies = PriceCurrency::all();
         $nature_requests = NatureRequest::all();
-        $rnd_personnel = User::whereIn('department_id', [15, 42, 20, 44, 77, 78, 79])->where('is_active', 1)->get();
+        $rnd_personnel = User::whereIn('department_id', [15, 42])->where('is_active', 1)->get();
         $refCode = $this->refCode();
         $unitOfMeasure = UnitOfMeasure::get();
 
@@ -1103,6 +1113,7 @@ class CustomerRequirementController extends Controller
         if ($request->action == "approved_to_sales")
         {
             $crr->Progress = 20;
+            $crr->returnToSales = 0;
             // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->save();
@@ -1119,6 +1130,7 @@ class CustomerRequirementController extends Controller
         elseif($request->action == "approved_to_RND" || $request->action == "approved_to_QCD-MRDC" || $request->action == "approved_to_QCD-WHI" || $request->action == "approved_to_QCD-PBI")
         {
             $crr->Progress = 30;
+            $crr->returnToSales = 0;
             // $crr->AcceptRemarks = $request->accept_remarks;
             $crr->ApprovedBy = auth()->user()->id;
             $crr->SalesApprovedDate = date('Y-m-d');
@@ -1381,6 +1393,7 @@ class CustomerRequirementController extends Controller
     {
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 10;
+        $crr->returnToSales = 1;
         $crr->save();
 
         $transactionApproval = new TransactionApproval;

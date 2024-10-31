@@ -45,6 +45,7 @@ class SampleRequestController extends Controller
         $departments = ConcernDepartment::all(); 
         $productApplications = ProductApplication::all();
         $productCodes = Product::where('status', '4')->get();
+        $return_to_sales = $request->query('return_to_sales');
         
         // $salesPersons = User::whereHas('salespersons')->get();
         $loggedInUser = Auth::user(); 
@@ -312,6 +313,17 @@ class SampleRequestController extends Controller
                 } else {
                     // Apply progress filter if it's not '10'
                     $query->where('Progress', $progress);
+                }
+            })
+            ->when($return_to_sales, function($query) use ($return_to_sales, $userId, $userByUser) {
+                if ($return_to_sales == '1') {
+                    $query->where('ReturnToSales', '1')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    $query->where('ReturnToSales', $return_to_sales);
                 }
             })
             // Filter by past dates
@@ -1081,7 +1093,7 @@ class SampleRequestController extends Controller
             $buttonClicked = request()->input('submitbutton');    
             if  ($buttonClicked === 'Approve_to_sales') {
                 $approveSrfSales->Progress = 20; 
-
+                $approveSrfSales->ReturnToSales = 0;
                 $transactionApproval = new TransactionApproval();
                 $transactionApproval->Type = '30';
                 $transactionApproval->TransactionId = $id;
@@ -1094,7 +1106,7 @@ class SampleRequestController extends Controller
                 // $approveSrfSales->InternalRemarks = request()->input('submitbutton'); 
             }elseif ($buttonClicked === 'Approve_to_1' || $buttonClicked === 'Approve_to_2' || $buttonClicked === 'Approve_to_3' || $buttonClicked === 'Approve_to_4' || $buttonClicked === 'Approve_to_5') {
                 $approveSrfSales->Progress = 30;  
-
+                $approveSrfSales->ReturnToSales = 0;
                 $transactionApproval = new TransactionApproval();
                 $transactionApproval->Type = '30';
                 $transactionApproval->TransactionId = $id;
@@ -1199,6 +1211,7 @@ class SampleRequestController extends Controller
     {
         $sampleRequest = SampleRequest::findOrFail($id);
         $sampleRequest->Progress = 10;
+        $sampleRequest->ReturnToSales = 1;
         $sampleRequest->save();
 
         $transactionApproval = new TransactionApproval();
