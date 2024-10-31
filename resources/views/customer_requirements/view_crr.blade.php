@@ -886,22 +886,22 @@
                                 @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $files->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
                                 <tbody>
                                     <tr>
-                                        <td>
+                                        <td width="10%" align="center">
                                             @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30)
-                                            <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCrrFiles-{{$files->Id}}" title="Edit">
-                                                <i class="ti-pencil"></i>
-                                            </button>
-
-                                            <form method="POST" class="d-inline-block" action="{{url('delete_crr_file/'.$files->Id)}}" onsubmit="show()">
-                                                @csrf 
-
-                                                <button type="button" class="btn btn-sm btn-danger deleteBtn" title="Delete">
-                                                    <i class="ti-trash"></i>
+                                                <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCrrFiles-{{$files->Id}}" title="Edit">
+                                                    <i class="ti-pencil"></i>
                                                 </button>
-                                            </form>
+                                                @if(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
+                                                <form method="POST" class="d-inline-block" action="{{url('delete_crr_file/'.$files->Id)}}" onsubmit="show()">
+                                                    @csrf 
+                                                    <button type="button" class="btn btn-sm btn-danger deleteBtn" title="Delete">
+                                                        <i class="ti-trash"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
                                             @endif
                                         </td>
-                                        <td>
+                                        <td width="70%">
                                             @if($files->IsForReview)
                                                 <i class="ti-pencil-alt text-danger"></i>
                                             @endif
@@ -911,14 +911,14 @@
 
                                             {{$files->Name}}
                                         </td>
-                                        <td>
+                                        <td width="15%">
                                             @if($files->IsForReview == 1)
                                                 <div class="badge badge-warning">In-Review</div>
                                             @elseif($files->IsForReview == 0)
                                                 <div class="badge badge-success">Approved</div>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td width="5%">
                                             <a href="{{url($files->Path)}}" target="_blank">
                                                 <i class="ti-file"></i>
                                             </a>
