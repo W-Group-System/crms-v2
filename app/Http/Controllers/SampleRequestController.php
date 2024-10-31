@@ -525,7 +525,8 @@ class SampleRequestController extends Controller
         $SrfSupplementary = SrfDetail::where('SampleRequestId', $scrfNumber)->get();
         $assignedPersonnel = SrfPersonnel::where('SampleRequestId', $scrfNumber)->get();
         $SrfMaterials = SrfRawMaterial::where('SampleRequestId', $scrfNumber)->get();
-        $rndPersonnel = User::whereHas('rndUsers')->get();
+        // $rndPersonnel = User::whereHas('rndUsers')->get();
+        $rndPersonnel = User::whereIn('department_id', [15, 42, 20, 44, 77, 78, 79])->where('is_active', 1)->get();
         $srfProgress = SrfProgress::all();
         $srfFileUploads = SrfFile::where('SampleRequestId', $scrfNumber)
         ->where(function ($query) {
