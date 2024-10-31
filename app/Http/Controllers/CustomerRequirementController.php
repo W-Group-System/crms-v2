@@ -42,6 +42,7 @@ class CustomerRequirementController extends Controller
         $role = auth()->user()->role;
         $status = $request->query('status'); // Get the status from the query parameters
         $progress = $request->query('progress'); // Get the status from the query parameters
+        $return_to_sales = $request->query('return_to_sales');
 
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
@@ -206,6 +207,18 @@ class CustomerRequirementController extends Controller
                 } else {
                     // Apply progress filter if it's not '10'
                     $query->where('Progress', $progress);
+                }
+            })
+            ->when($return_to_sales, function($query) use ($return_to_sales, $userId, $userByUser) {
+                if ($return_to_sales == '1') {
+                    $query->where('ReturnToSales', '1')
+                        ->where(function($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        });
+                } else {
+                    // Apply ret$return_to_sales filter if it's not '10'
+                    $query->where('ReturnToSales', $return_to_sales);
                 }
             })
             ->when($request->input('DueDate') === 'past', function($query) {
@@ -1379,6 +1392,7 @@ class CustomerRequirementController extends Controller
     {
         $crr = CustomerRequirement::findOrFail($id);
         $crr->Progress = 10;
+        $crr->returnToSales = 1;
         $crr->save();
 
         $transactionApproval = new TransactionApproval;
