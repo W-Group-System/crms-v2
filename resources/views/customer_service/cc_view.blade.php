@@ -8,8 +8,17 @@
                     <a href="{{ url()->previous() ?: url('customer_complaint2') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
+                    <form action="{{ url('cs_received/' . $data->id) }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-success receivedBtn">
+                            <i class="ti-bookmark">&nbsp;</i> Received
+                        </button>
+                    </form>
                     <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
-                        <i class="ti ti-pencil"></i>&nbsp;Update
+                        <i class="ti ti-pencil"></i>&nbsp;Investigation
+                    </button>
+                    <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                        <i class="ti ti-pencil"></i>&nbsp;Verification
                     </button>
                 </div>
             </h4>
@@ -352,7 +361,7 @@
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Update Customer Complaint</h5>
+                <h5 class="modal-title">Investigation </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -366,6 +375,24 @@
                             <div class="form-group">
                                 <label for="name">Immediate Action</label>
                                 <textarea type="text" class="form-control" id="ImmediateAction" name="ImmediateAction" rows="3" placeholder="Enter Immediate Action"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">Objective Evidence</label>
+                                <textarea type="text" class="form-control" id="ObjectiveEvidence" name="ObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="name">Investigation/ Root Cause Analysis</label>
+                                <textarea type="text" class="form-control" id="Investigation" name="Investigation" rows="2" placeholder="Enter Immediate Action"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">Corrective Action</label>
+                                <textarea type="text" class="form-control" id="CorrectiveAction" name="CorrectiveAction" rows="3" placeholder="Enter Corrective Action"></textarea>
                             </div>
                         </div>
                         <div class="col-lg-6">
