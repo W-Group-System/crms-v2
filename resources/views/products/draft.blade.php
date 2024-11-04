@@ -298,7 +298,7 @@
                         html += '<p>' + res.error + '</p>';
                         html += '</div>';
                         
-                        $('.update_form_result').append(html);
+                        $('.update_form_result').html(html);
                     }
                     else
                     {
