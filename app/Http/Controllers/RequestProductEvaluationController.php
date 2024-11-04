@@ -340,7 +340,7 @@ class RequestProductEvaluationController extends Controller
             })
             ->orderBy('id', 'desc')
             ->paginate($request->entries ?? 10);
-      
+
         // Fetch clients based on user role
         $clients = Client::where(function($query) {
             $loggedInUser = Auth::user();

@@ -35,7 +35,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>RPE</p>
                             <h5 class="font-weight-medium text-white">
-                                <a href="{{ route('product_evaluation.index', ['progress' => 57]) }}" class="text-white" onclick="show()">
+                                <a href="{{ route('product_evaluation.index', ['progress' => 57, 'status' => 10]) }}" class="text-white" onclick="show()">
                                     {{ $rpeRNDInitialReview ?? '0' }}
                                 </a>
                             </h5>
