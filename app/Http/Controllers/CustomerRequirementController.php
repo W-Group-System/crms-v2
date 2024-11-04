@@ -607,8 +607,9 @@ class CustomerRequirementController extends Controller
         $unitOfMeasure = UnitOfMeasure::get();
         $status = $request->status;
         $progress = $request->progress;
+        $currentUser = auth()->user();
         // Return view with all necessary data
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress', 'return_to_sales')); 
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress', 'return_to_sales', 'currentUser')); 
     }
 
     // Store
