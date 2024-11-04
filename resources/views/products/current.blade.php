@@ -1,9 +1,12 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card rounded-0 border border-1 border-primary">
+        <div class="card-header bg-primary text-white">
+            <p class="font-weight-bold mb-0">List of Products (Current)</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">Product List (Current)</h4>
+            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">Product List (Current)</h4> --}}
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-start align-items-start">
                     <div class="col-md-3">

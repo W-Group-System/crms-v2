@@ -1,10 +1,12 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card rounded-0 border border-1 border-primary">
+        <div class="card-header rounded-0 text-white bg-primary font-weight-bold">
+            <p class="mb-0">List of Products (Draft)</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
-                Product List (Draft)
+            <h4 class="card-title d-flex justify-content-end align-items-center">
             <button type="button" class="btn btn-outline-primary" name="add_product" id="add_product" data-toggle="modal" data-target="#formProduct">New</button>
             </h4>
             
@@ -291,14 +293,14 @@
                 success: function(res)
                 {
                     hide()
-
+                    
                     if(res.status == 0)
                     {
                         html = '<div class="alert alert-danger">';
                         html += '<p>' + res.error + '</p>';
                         html += '</div>';
-
-                        $('#update_form_result').html(html);
+                        
+                        $('.update_form_result').html(html);
                     }
                     else
                     {

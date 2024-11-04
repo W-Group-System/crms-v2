@@ -243,6 +243,7 @@ class ProductController extends Controller
     // Update
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $series_number = 0;
         if(preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $request->code, $matches))
         {
@@ -266,8 +267,8 @@ class ProductController extends Controller
         }
         else
         {
-            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->first();
-    
+            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->where('id', '!=', $id)->first();
+            
             if ($products == null)
             {
                 $product = Product::findOrFail($id);

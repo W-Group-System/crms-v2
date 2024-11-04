@@ -2,11 +2,14 @@
 @section('content')
 
 <div class="col-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card border border-1 border-primary rounded-0">
+        <div class="card-header rounded-0 bg-primary text-white font-weight-bold">
+            <p class="mb-0">Product Details</p>
+        </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6"> 
-                    <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
+                    {{-- <h4 class="card-title d-flex justify-content-end align-items-center" style="margin-top: 10px">View Product Details</h4> --}}
                 </div>
                 <div class="col-lg-6" align="right">
                     <a href="{{ url('/draft_products') }}" class="btn btn-md btn-outline-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
@@ -38,7 +41,7 @@
             @endphp
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0"><b>DDW Number:</b></p>
+                    <p class="mb-0 text-right"><b>DDW Number:</b></p>
                 </div>
                 <div class="col-md-3">
                     @if($data->ddw_number != null)
@@ -48,7 +51,7 @@
                     @endif
                 </div>
                 <div class="col-md-2">
-                    <p class="mb-0"><b>Raw Materials Cost:</b></p>
+                    <p class="mb-0 text-right"><b>Raw Materials Cost:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p>
@@ -58,7 +61,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0"><b>Code:</b></p>
+                    <p class="mb-0 text-right"><b>Code:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $data->code }}</p>
@@ -66,7 +69,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0"><b>Type:</b></p>
+                    <p class="mb-0 text-right"><b>Type:</b></p>
                 </div>
                 <div class="col-md-3">
                     @if($data->type == 1)
@@ -78,7 +81,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0"><b>Reference Number:</b></p>
+                    <p class="mb-0 text-right"><b>Reference Number:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $data->reference_no }}</p>
@@ -86,7 +89,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0"><b>Product Origin:</b></p>
+                    <p class="mb-0 text-right"><b>Product Origin:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $data->product_origin }}</p>
@@ -94,7 +97,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0"><b>Application:</b></p>
+                    <p class="mb-0 text-right"><b>Application:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $product_applications ? $product_applications->Name : 'N/A' }}</p>
@@ -102,14 +105,14 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0"><b>Subcategory:</b></p>
+                    <p class="mb-0 text-right"><b>Subcategory:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $product_subcategories ? $product_subcategories->Name : 'N/A' }}</p>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-2"><p class="mb-0"><b>Created By:</b></p></div>
+                <div class="col-md-2"><p class="mb-0 text-right"><b>Created By:</b></p></div>
                 {{-- <div class="col-md-3"><p class="mb-0">{{ $userAccounts->full_name }}</p></div> --}}
                 <div class="col-md-3">
                     <p class="mb-0">
@@ -122,19 +125,19 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-2 col-form-label"><p class="mb-0"><b>Date Created:</b></p></div>
+                <div class="col-sm-2 col-form-label text-right"><p class="mb-0"><b>Date Created:</b></p></div>
                 <div class="col-sm-3 col-form-label"><p class="mb-0">{{ $data->created_at->format('Y-m-d') }}</p></div>
             </div>
             <div class="row">
-                <div class="col-md-2"><p class="mb-0"><b>Approved By:</b></p></div>
+                <div class="col-md-2"><p class="mb-0 text-right"><b>Approved By:</b></p></div>
                 <div class="col-md-3"><p class="mb-0">N/A</p></div>
             </div>
             <div class="row">
-                <div class="col-md-2 col-form-label"><p class="mb-0"><b>Date Approved:</b></p></div>
+                <div class="col-md-2 col-form-label"><p class="mb-0 text-right"><b>Date Approved:</b></p></div>
                 <div class="col-md-3 col-form-label"><p class="mb-0">{{ $data->date_approved != null ? $data->date_approved : 'N/A' }}</p></div>
             </div>
             <div class="row mb-5">
-                <div class="col-md-2"><p class="mb-0"><b>Status:</b></p></div>
+                <div class="col-md-2"><p class="mb-0 text-right"><b>Status:</b></p></div>
                 @php
                     $statusLabels = [
                         1 => 'Draft',
