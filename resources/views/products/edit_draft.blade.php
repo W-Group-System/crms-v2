@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <form method="POST" class="edit_form_product" action="{{url('update_product/'.$p->id)}}">
-                    <span id="update_form_result"></span>
+                    <span class="update_form_result"></span>
                     @csrf
                     <div class="form-group">
                         <label for="name">DDW Number</label>

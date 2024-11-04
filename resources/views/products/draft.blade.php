@@ -291,14 +291,14 @@
                 success: function(res)
                 {
                     hide()
-
+                    
                     if(res.status == 0)
                     {
                         html = '<div class="alert alert-danger">';
                         html += '<p>' + res.error + '</p>';
                         html += '</div>';
-
-                        $('#update_form_result').html(html);
+                        
+                        $('.update_form_result').append(html);
                     }
                     else
                     {
