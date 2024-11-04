@@ -340,7 +340,7 @@ class RequestProductEvaluationController extends Controller
             })
             ->orderBy('id', 'desc')
             ->paginate($request->entries ?? 10);
-      
+
         // Fetch clients based on user role
         $clients = Client::where(function($query) {
             $loggedInUser = Auth::user();
@@ -918,8 +918,8 @@ class RequestProductEvaluationController extends Controller
     public function completeRpe($id)
     {
         $rpeList = RequestProductEvaluation::find($id);
-        $hasFilesForReview = $rpeList->rndRpeFiles()->where('IsForReview', 1)->exists();
-
+        $hasFilesForReview = $rpeList->rpeFiles()->where('IsForReview', 1)->exists();
+        
         if ($hasFilesForReview) {
             Alert::error('Cannot complete request as there are files still under review.')->persistent('Dismiss');
             return back(); 
