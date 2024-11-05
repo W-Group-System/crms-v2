@@ -1017,4 +1017,42 @@ class DashboardController extends Controller
 
         return view('dashboard.qcd', compact('role', 'crrQCD2New', 'srfQCD2New', 'totalQCD2New', 'crrQCD3New', 'srfQCD3New', 'totalQCD3New', 'crrQCD4New', 'srfQCD4New', 'totalQCD4New', 'crrQCD5New', 'srfQCD5New', 'totalQCD5New', 'crrDueToday2', 'srfDueToday2', 'totalDueToday2', 'crrDueToday3', 'srfDueToday3', 'totalDueToday3', 'crrDueToday4', 'srfDueToday4', 'totalDueToday4', 'crrDueToday5', 'srfDueToday5', 'totalDueToday5', 'crrImmediateOpen2', 'srfImmediateOpen2', 'crrImmediateOpen3', 'srfImmediateOpen3', 'crrImmediateOpen4', 'srfImmediateOpen4', 'crrImmediateOpen5', 'srfImmediateOpen5', 'crrImmediateClosed2', 'srfImmediateClosed2', 'crrImmediateClosed3', 'srfImmediateClosed3', 'crrImmediateClosed4', 'srfImmediateClosed4', 'crrImmediateClosed5', 'srfImmediateClosed5', 'crrImmediateCancelled2', 'totalCrrImmediate2', 'crrImmediateCancelled3', 'totalCrrImmediate3', 'crrImmediateCancelled4', 'totalCrrImmediate4', 'crrImmediateCancelled5', 'totalCrrImmediate5', 'srfImmediateCancelled2', 'totalSrfImmediate2', 'srfImmediateCancelled3', 'totalSrfImmediate3', 'srfImmediateCancelled4', 'totalSrfImmediate4', 'srfImmediateCancelled5', 'totalSrfImmediate5', 'totalQCDInitialReview2', 'crrQCDInitialReview2', 'srfQCDInitialReview2', 'totalQCDFinalReview2', 'crrQCDFinalReview2', 'srfQCDFinalReview2', 'totalQCDInitialReview3', 'crrQCDInitialReview3', 'srfQCDInitialReview3', 'totalQCDFinalReview3', 'crrQCDFinalReview3', 'srfQCDFinalReview3', 'totalQCDInitialReview4', 'crrQCDInitialReview4', 'srfQCDInitialReview4', 'totalQCDFinalReview4', 'crrQCDFinalReview4', 'srfQCDFinalReview4', 'totalQCDInitialReview5', 'crrQCDInitialReview5', 'srfQCDInitialReview5', 'totalQCDFinalReview5', 'crrQCDFinalReview5', 'srfQCDFinalReview5'));
     }
+
+    public function returned(Request $request)
+    {   
+        $entries = $request->input('entries', 10); // Default to 10 if not specified
+        $search = $request->input('search');
+
+        $crrReturned = CustomerRequirement::where('ReturnToSales', '1')
+                        ->when($search, function($query) use ($search) {
+                            $query->where('ClientId', 'LIKE', "%{$search}%")
+                                ->orWhere('CrrNumber', 'LIKE', "%{$search}%")
+                                ->orWhere('ApplicationId', 'LIKE', "%{$search}%")
+                                ->orWhere('Status', 'LIKE', "%{$search}%");
+                        })
+                        ->paginate($entries, ['*'], 'crr_page')
+                        ->appends(['search' => $search, 'entries' => $entries]);
+        
+        $rpeReturned = RequestProductEvaluation::where('ReturnToSales', '1')
+                        ->when($search, function($query) use ($search) {
+                            $query->where('ClientId', 'LIKE', "%{$search}%")
+                                ->orWhere('RpeNumber', 'LIKE', "%{$search}%")
+                                ->orWhere('ApplicationId', 'LIKE', "%{$search}%")
+                                ->orWhere('Status', 'LIKE', "%{$search}%");
+                        })
+                        ->paginate($entries, ['*'], 'rpe_page')
+                        ->appends(['search' => $search, 'entries' => $entries]);
+
+        $srfReturned = SampleRequest::where('ReturnToSales', '1')
+                        ->when($search, function($query) use ($search) {
+                            $query->where('ClientId', 'LIKE', "%{$search}%")
+                                ->orWhere('SrfNumber', 'LIKE', "%{$search}%")
+                                ->orWhere('ApplicationId', 'LIKE', "%{$search}%")
+                                ->orWhere('Status', 'LIKE', "%{$search}%");
+                        })
+                        ->paginate($entries, ['*'], 'srf_page')
+                        ->appends(['search' => $search, 'entries' => $entries]);
+
+        return view('dashboard.return_transactions', compact('entries', 'search', 'crrReturned', 'rpeReturned', 'srfReturned'));
+    }
 }
