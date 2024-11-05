@@ -45,6 +45,9 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('my_account','HomeController@myAccount')->name('my_account');
         Route::get('change_password','HomeController@changePassword')->name('change_password');
         Route::post('change_password','HomeController@updatePassword')->name('update_password');
+
+        // returned
+        Route::get('returned_transaction','DashboardController@returned')->name('returned_transaction');
     
         // Company
         Route::get('/company', 'CompanyController@index')->name('company.index');

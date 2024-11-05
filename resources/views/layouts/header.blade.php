@@ -136,6 +136,12 @@
                                     <i class="ti ti-user text-primary"></i>
                                     My Account
                                 </a>
+                                @if(Auth::check() && optional(Auth::user()->role)->type == 'IS' || optional(Auth::user()->role)->type == 'LS')
+                                <a href="{{ route('returned_transaction') }}" class="dropdown-item">
+                                    <i class="ti ti-share-alt text-primary"></i>
+                                    Returned Transactions
+                                </a>
+                                @endif
                                 <a href="{{ route('change_password') }}" class="dropdown-item">
                                     <i class="ti ti-unlock text-primary"></i>
                                     Change Password
