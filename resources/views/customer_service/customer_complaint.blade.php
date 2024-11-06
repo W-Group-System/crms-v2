@@ -68,7 +68,7 @@
         <div class="col-lg-5 mb-3">
             <div class="form-group">
                 <label class="text-white display-5">Definition of Quality Class</label>
-                <select class="form-control js-example-basic-single" name="QualityClass" id="QualityClass" title="Select Quality Class">
+                <select class="form-control js-example-basic-single" name="QualityClass" id="QualityClass" title="Select Quality Class" required>
                     <option value="" disabled selected>Select Quality Class</option>
                     <option value="1">Critical e.g., Food Safety Hazard</option>
                     <option value="2">Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)</option>

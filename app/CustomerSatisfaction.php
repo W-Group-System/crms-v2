@@ -30,4 +30,9 @@ class CustomerSatisfaction extends Model
     {
         return $this->belongsTo(User::class, 'ReceivedBy', 'id');
     }
+
+    public function clientCompany()
+    {
+        return $this->hasOne(Client::class, 'Name', 'CompanyName');
+    }
 }

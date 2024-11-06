@@ -65,6 +65,22 @@
                         </div>
                     </div>
                     <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Recurring Issue:</b></label>
+                        <div class="col-sm-3">
+                            <label>
+                                @if($data->RecurringIssue == 1)
+                                    Yes
+                                @else
+                                    No 
+                                @endif
+                            </label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Previous CCF No. (If Yes):</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->PreviousCCF }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Date Complaint:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->created_at }}</label>
@@ -477,12 +493,24 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Recurring Issue:</label>
-                                <div class="form-check form-check-inline" id="check-radio2">
-                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault1" value="1">
+                                <div class="form-check form-check-inline" id="issue-radio">
+                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault1" value="1" 
+                                        {{ isset($data->RecurringIssue) && $data->RecurringIssue == 1 ? 'checked' : '' }}>
                                     <label class="form-check-label" for="flexRadioDefault1">Yes</label>
-                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault2" value="2">
+                                    
+                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault2" value="2" 
+                                        {{ isset($data->RecurringIssue) && $data->RecurringIssue != 1 ? 'checked' : '' }}>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="form-group issue-check" style="display: {{ isset($data->RecurringIssue) && $data->RecurringIssue == 1 ? 'block' : 'none' }};">
+                                <label for="name">Previous CCF No. (If Yes):</label>
+                                <input type="text" class="form-control" id="PreviousCCF" name="PreviousCCF" 
+                                    value="{{ isset($data->PreviousCCF) && !empty($data->PreviousCCF) ? $data->PreviousCCF : '' }}" 
+                                    placeholder="Enter CCF No.">
                             </div>
                         </div>
                     </div>
@@ -725,6 +753,15 @@
                     }
                 }
             });
+        });
+
+        $('#issue-radio').on('change', function() {
+            var selectedValue = $('input[name="RecurringIssue"]:checked').val(); 
+            if (selectedValue == "1") {
+                $('.issue-check').show(); 
+            } else {
+                $('.issue-check').hide(); 
+            }
         });
 
         $('#check-radio').on('change', function() {

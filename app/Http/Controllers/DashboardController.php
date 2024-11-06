@@ -5,14 +5,17 @@ namespace App\Http\Controllers;
 use App\Activity;
 use App\CrrPersonnel;
 use App\CustomerComplaint;
+use App\CustomerComplaint2;
 use App\CustomerFeedback;
 use App\CustomerRequirement;
+use App\CustomerSatisfaction;
 use App\PriceMonitoring;
 use App\Product;
 use App\ProductEvaluation;
 use App\SalesApprovers;
 use App\RequestProductEvaluation;
 use App\SampleRequest;
+use App\Client;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -488,25 +491,36 @@ class DashboardController extends Controller
 
         $totalSalesPRF = $salesPrfClosed + $salesPrfReopened + $salesPrfApproval + $salesPrfWaiting + $salesPrfManager;
 
-        // Customer Service
-        function getCustomerServiceCount($model, $status, $type, $userId, $userByUser) {
-            return $model::where('Status', $status)
-                ->where('Type', $type)
-                ->where(function($query) use ($userId, $userByUser) {
-                    $query->where('ReceivedByUserId', $userId)
-                        ->orWhere('ReceivedByUserId', $userByUser);
-                })
-                ->count();
-        }
-        $customerComplaintsCount = getCustomerServiceCount(CustomerComplaint::class, 10, 20, $userId, $userByUser);
-        $customerFeedbackCount = getCustomerServiceCount(CustomerFeedback::class, 10, 30, $userId, $userByUser);
 
-        $totalCustomerServiceCount = $customerComplaintsCount + $customerFeedbackCount;
+        $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')
+            ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
+                $query->whereColumn('clientcompanies.Name', 'like', 'customersatisfaction.CompanyName')
+                    ->where(function ($query) use ($userId, $userByUser) {
+                        $query->where('clientcompanies.PrimaryAccountManagerId', $userId)
+                            ->orWhere('clientcompanies.SecondaryAccountManagerId', $userId)
+                            ->orWhere('clientcompanies.PrimaryAccountManagerId', $userByUser)
+                            ->orWhere('clientcompanies.SecondaryAccountManagerId', $userByUser);
+                    });
+            })
+            ->count();
 
+        $customerComplaintCount = CustomerComplaint2::where('Status', '10')
+            ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
+                $query->whereColumn('clientcompanies.Name', 'like', 'customercomplaint.CompanyName')
+                    ->where(function ($query) use ($userId, $userByUser) {
+                        $query->where('clientcompanies.PrimaryAccountManagerId', $userId)
+                            ->orWhere('clientcompanies.SecondaryAccountManagerId', $userId)
+                            ->orWhere('clientcompanies.PrimaryAccountManagerId', $userByUser)
+                            ->orWhere('clientcompanies.SecondaryAccountManagerId', $userByUser);
+                    });
+            })
+            ->count();
 
+        $totalCs = $customerSatisfactionCount + $customerComplaintCount;
+
+    
         /************* RND *************/
     
-
         // Closed
         $rndCrrClosed = CustomerRequirement::where('Status', '30')
             ->whereIn('id', function($query) use ($userId, $userByUser) {
@@ -633,10 +647,9 @@ class DashboardController extends Controller
             'totalActivitiesCount', 'openActivitiesCount', 'closedActivitiesCount', 'salesCrrOpen', 'salesRpeOpen', 'salesSrfOpen', 'salesPrfOpen', 'totalSalesOpen', 'salesCrrClosed', 'salesCrrCancelled', 'salesCrrApproval', 'salesCrrApproved', 'salesCrrAccepted', 'totalSalesCRR', 'totalSalesRPE', 'salesRpeClosed', 'salesRpeCancelled', 'salesRpeApproval', 'salesRpeApproved', 'salesRpeAccepted', 'totalSalesSRF', 'salesSrfClosed', 'salesSrfCancelled', 'salesSrfApproval', 'salesSrfApproved', 'salesSrfAccepted', 'totalSalesPRF', 'salesPrfClosed', 'salesPrfReopened', 'salesPrfApproval', 'salesPrfWaiting', 'salesPrfManager',
             'totalCRRCount', 'crrCancelled', 'crrSalesAccepted', 'crrSalesApproval', 
             'crrSalesApproved', 'crrRnDOngoing', 'crrRnDPending', 'crrRnDInitial',
-            'crrRnDFinal', 'crrRnDCompleted', 'totalCustomerServiceCount', 
-            'customerComplaintsCount', 'customerFeedbackCount', 'totalRPECount', 'rpeCancelled', 'rpeSalesApproval',
+            'crrRnDFinal', 'crrRnDCompleted', 'totalRPECount', 'rpeCancelled', 'rpeSalesApproval',
             'rpeSalesApproved', 'rpeSalesAccepted', 'rpeRnDOngoing', 'rpeRnDPending', 'rpeRnDInitial', 'rpeRnDFinal', 'rpeRnDCompleted', 'totalSRFCount', 'srfCancelled', 'srfSalesApproval',
-            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'salesCrrReturn', 'salesRpeReturn', 'salesSrfReturn', 'totalReturned'
+            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'salesCrrReturn', 'salesRpeReturn', 'salesSrfReturn', 'totalReturned', 'totalCs', 'customerSatisfactionCount', 'customerComplaintCount'
         ));
     }
 

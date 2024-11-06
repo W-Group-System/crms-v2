@@ -60,4 +60,9 @@ class CustomerComplaint2 extends Model
     {
         return $this->belongsTo(User::class, 'ClosedBy', 'id');
     }
+
+    public function clientCompany()
+    {
+        return $this->hasOne(Client::class, 'Name', 'CompanyName');
+    }
 }
