@@ -180,7 +180,7 @@
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="fs-30 font-weight-medium">
-                                    {{ $totalCustomerServiceCount ?? '0'}}
+                                    {{ $totalCs ?? '0' }}
                                     <i class="ti ti-comments"></i>
                                 </h3>
                             </div>
@@ -191,16 +191,16 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Customer Complaints</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
-                                    {{ $customerComplaintsCount ?? '0' }}
+                                <a href="{{ route('customer_complaint.list', ['status' => 10]) }}" class="text-white" onclick="show()">
+                                    {{ $customerComplaintCount ?? '0' }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
-                            <p>Customer Feedback</p>
+                            <p>Customer Satisfaction</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
-                                    {{ $customerFeedbackCount ?? '0' }}
+                                <a href="{{ route('customer_satisfaction.list', ['status' => '10']) }}" class="text-white" onclick="show()">
+                                    {{ $customerSatisfactionCount ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -303,7 +303,7 @@
                         <div class="d-flex justify-content-between">
                             <div class="mb-3 mt-2">
                                 <h3 class="fs-30 font-weight-medium">
-                                    {{ $totalCustomerServiceCount ?? '0'}}
+                                    {{ $totalCs ?? 0}}
                                     <i class="ti ti-comments"></i>
                                 </h3>
                             </div>
@@ -314,16 +314,16 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Customer Complaints</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
-                                    {{ $customerComplaintsCount ?? '0' }}
+                                <a href="{{ route('customer_complaint.list', ['status' => 10]) }}" class="text-white" onclick="show()">
+                                    {{ $customerComplaintCount ?? 0 }}
                                 </a>
                             </h5>
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
-                            <p>Customer Feedback</p>
+                            <p>Customer Satisfaction</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
-                                    {{ $customerFeedbackCount ?? '0' }}
+                                <a href="{{ route('customer_satisfaction.list', ['status' => 10]) }}" class="text-white" onclick="show()">
+                                    {{ $customerSatisfactionCount ?? 0 }}
                                 </a>
                             </h5>
                         </div>

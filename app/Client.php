@@ -134,4 +134,5 @@ class Client extends Model
     {
         return $this->belongsTo(Role::class);
     }
-}
+
+}   

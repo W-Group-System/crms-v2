@@ -234,6 +234,8 @@ class CustomerComplaint2Controller extends Controller
     public function update(Request $request, $id)
     {
         $data = CustomerComplaint2::findOrFail($id);
+        $data->RecurringIssue = $request->RecurringIssue;
+        $data->PreviousCCF = $request->PreviousCCF;
         $data->ImmediateAction = $request->ImmediateAction;
         $data->ObjectiveEvidence = $request->ObjectiveEvidence;
         $data->Investigation = $request->Investigation;
