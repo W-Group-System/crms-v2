@@ -5,13 +5,13 @@
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-between align-items-center">
             New Client
-            <a href="{{ url('/client_prospect') }}" class="btn btn-md btn-outline-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
+            <a href="{{ url('/client') }}" class="btn btn-md btn-outline-secondary"><i class="icon-arrow-left"></i>&nbsp;Back</a>
             </h4>
             <form id="form_client" method="POST" enctype="multipart/form-data">
                 @csrf
                 <span id="form_result"></span>
                 <div class="row">
-                    <input type="hidden" name="Status" id="Status" value="1">
+                    <input type="hidden" name="Status" id="Status" value="2">
                     <div class="col-lg-6">
                         <div class="form-group">
                             <label>Buyer Code</label>
@@ -41,6 +41,7 @@
                                     @endforeach
                                 </select>
                             @endif -->
+                            <!-- <input type="text" class="form-control" value="{{auth()->user()->full_name}}" readonly>  -->
                             <select class="form-control js-example-basic-single" name="PrimaryAccountManagerId" id="PrimaryAccountManagerId" style="position: relative !important" title="Select Account Manager" required>
                                 <option value="" disabled selected>Select Sales Person</option>
                                 @foreach($currentUser->groupSales as $group_sales)
@@ -65,7 +66,7 @@
                                 <option value="">Select Account Manager</option>
                                 @foreach($secondarySalesPersons as $user)
                                     <option value="{{ $user->user_id }}">{{ $user->full_name }}</option>
-                                @endforeach
+                                @endforeach 
                                 @foreach($secondarySalesPersons as $user)
                                     <option value="{{ $user->user_id }}" {{ $user->salesApproverById ? 'selected' : '' }}>
                                         {{ $user->full_name }}

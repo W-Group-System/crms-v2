@@ -45,4 +45,19 @@ class CustomerComplaint2 extends Model
     {
         return $this->belongsTo(User::class, 'ReceivedBy', 'id');
     }
+
+    public function action_responsible()
+    {
+        return $this->belongsTo(User::class, 'ActionResponsible', 'id');
+    }
+
+    public function noted_by()
+    {
+        return $this->belongsTo(User::class, 'NotedBy', 'id');
+    }
+
+    public function closed()
+    {
+        return $this->belongsTo(User::class, 'ClosedBy', 'id');
+    }
 }
