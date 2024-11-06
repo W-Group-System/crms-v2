@@ -181,7 +181,7 @@ class CustomerSatisfactionController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Customer satisfaction feedback has been successfully closed.'
+            'message' => 'Customer complaint has been successfully closed.'
         ]);
     }
 

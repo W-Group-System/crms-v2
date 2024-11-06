@@ -8,18 +8,38 @@
                     <a href="{{ url()->previous() ?: url('customer_complaint2') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
-                    <form action="{{ url('cs_received/' . $data->id) }}" class="d-inline-block" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-success receivedBtn">
-                            <i class="ti-bookmark">&nbsp;</i> Received
-                        </button>
-                    </form>
+                    @if($data->Status == 10 && $data->ReceivedBy == NULL)
+                        <form action="{{ url('cc_received/' . $data->id) }}" class="d-inline-block" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-success receivedBtn">
+                                <i class="ti-bookmark">&nbsp;</i> Received
+                            </button>
+                        </form>
+                    @endif
+                    @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
+                        <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-success receivedBtn">
+                                <i class="ti-check">&nbsp;</i> Noted By
+                            </button>
+                        </form>
+                    @endif
+                    @if($data->Status == 10 && $data->ReceivedBy != NULL)
                     <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
                     </button>
-                    <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                    <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                         <i class="ti ti-pencil"></i>&nbsp;Verification
                     </button>
+                    @endif
+                    @if($data->Status == 10 && $data->ClosedBy == NULL)
+                    <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary closeBtn">
+                            <i class="ti-close">&nbsp;</i> Close
+                        </button>
+                    </form>
+                    @endif
                 </div>
             </h4>
             <div class="row">
@@ -31,15 +51,17 @@
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Quality Class:</b></label>
                         <div class="col-sm-3">
-                            @if($data->QualityClass == '1')
-                                Critical e.g., Food Safety Hazard
-                            @elseif($data->QualityClass == '2')
-                                Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)
-                            @elseif($data->QualityClass == '3')
-                                Minor/Marginal e.g., Late response
-                            @elseif($data->QualityClass == '4')
-                                Product name.<br>{{$data->ProductName}}
-                            @endif
+                            <label>
+                                @if($data->QualityClass == '1')
+                                    Critical e.g., Food Safety Hazard
+                                @elseif($data->QualityClass == '2')
+                                    Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)
+                                @elseif($data->QualityClass == '3')
+                                    Minor/Marginal e.g., Late response
+                                @elseif($data->QualityClass == '4')
+                                    Product name.<br>{{$data->ProductName}}
+                                @endif
+                            </label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
@@ -49,7 +71,7 @@
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Received By:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->users->full_name ?? 'N/A' }}</label>
+                            <label>{{ optional($data->users)->full_name ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
@@ -109,7 +131,11 @@
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Email:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->Email }}</label>
+                            <label>{{ $data->Email ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ optional($data->noted_by)->full_name }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
@@ -334,21 +360,99 @@
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Immediate Action:</b></label>
                         <div class="col-sm-3">
-                            <label></label>
+                            <label>{{ $data->ImmediateAction ?? 'N/A' }}</label>
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Objective Evidence:</b></label>
                         <div class="col-sm-3">
-                            <label></label>
+                            <label>{{ $data->ObjectiveEvidence ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Action/ Implementation Date:</b></label>
                         <div class="col-sm-3">
-                            <label></label>
+                            <label>{{ $data->ActionDate ?? 'N/A' }}</label>
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Action Responsible:</b></label>
                         <div class="col-sm-3">
-                            <label></label>
+                            <label>{{ optional($data->action_responsible)->full_name ?? 'N/A' }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Investigation of the Problem:</b></label>
+                        <div class="col-sm-9">
+                            <label>{{ $data->Investigation ?? 'N/A' }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label class="col-sm-3 col-form-label text-right"><b>Corrective Action:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->CorrectiveAction ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Objective Evidence:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->ActionObjectiveEvidence ?? 'N/A' }}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label><strong>Verification/ Recommendation</strong></label>
+                        <hr class="alert-dark mt-0">
+                    </div>
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Client Feedback/ Acceptance:</b></label>
+                        <div class="col-sm-9">
+                            <label>{{ $data->Acceptance ?? 'N/A'}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Closed By:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ optional($data->closed)->full_name }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Closed Date:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->ClosedDate }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>With Claims/Credit Note?:</b></label>
+                        <div class="col-sm-3">
+                            <label>
+                                @if($data->Claims == 1)
+                                    Yes
+                                @else
+                                    No 
+                                @endif
+                            </label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>For shipment Return?:</b></label>
+                        <div class="col-sm-3">
+                            <label>
+                                @if($data->Shipment == 1)
+                                    Yes
+                                @else
+                                    No 
+                                @endif
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Credit Note Number:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->CnNumber ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Return Shipment Date:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->ShipmentDate ?? 'N/A' }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Total Amount Incurred:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->AmountIncurred ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Return Shipment Cost:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->ShipmentCost ?? 'N/A' }}</label>
                         </div>
                     </div>
                 </div>
@@ -369,36 +473,131 @@
             <div class="modal-body">
                 <form id="updateCustomerComplaint" method="POST" action="{{ url('update_customer_complaint/' . $data->id) }}">
                     @csrf
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">Recurring Issue:</label>
+                                <div class="form-check form-check-inline" id="check-radio2">
+                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault1" value="1">
+                                    <label class="form-check-label" for="flexRadioDefault1">Yes</label>
+                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault2" value="2">
+                                    <label class="form-check-label" for="flexRadioDefault2">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <label>Immediate Action/Correction:</label>
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Immediate Action</label>
-                                <textarea type="text" class="form-control" id="ImmediateAction" name="ImmediateAction" rows="3" placeholder="Enter Immediate Action"></textarea>
+                                <textarea type="text" class="form-control" id="ImmediateAction" name="ImmediateAction" rows="3" placeholder="Enter Immediate Action" required>{{ $data->ImmediateAction }}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Objective Evidence</label>
-                                <textarea type="text" class="form-control" id="ObjectiveEvidence" name="ObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence"></textarea>
+                                <textarea type="text" class="form-control" id="ObjectiveEvidence" name="ObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence">{{ $data->ObjectiveEvidence }}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-12">
+                            <label>Investigation of the Problem:</label>
                             <div class="form-group">
                                 <label for="name">Investigation/ Root Cause Analysis</label>
-                                <textarea type="text" class="form-control" id="Investigation" name="Investigation" rows="2" placeholder="Enter Immediate Action"></textarea>
+                                <textarea type="text" class="form-control" id="Investigation" name="Investigation" rows="2" placeholder="Enter Immediate Action">{{ $data->Investigation }}</textarea>
                             </div>
                         </div>
+                    </div>
+                    <label>Corrective Action Plan:</label>
+                    <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Corrective Action</label>
-                                <textarea type="text" class="form-control" id="CorrectiveAction" name="CorrectiveAction" rows="3" placeholder="Enter Corrective Action"></textarea>
+                                <textarea type="text" class="form-control" id="CorrectiveAction" name="CorrectiveAction" rows="3" placeholder="Enter Corrective Action">{{ $data->CorrectiveAction }}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Objective Evidence</label>
-                                <textarea type="text" class="form-control" id="ObjectiveEvidence" name="ObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence"></textarea>
+                                <textarea type="text" class="form-control" id="ActionObjectiveEvidence" name="ActionObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence">{{ $data->ActionObjectiveEvidence }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="verificationCc" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Verification/ Recommendation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="customerAcceptance" method="POST" action="{{ url('customer_acceptance/' . $data->id) }}">
+                    @csrf
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="name">Client Feedback/ Acceptance</label>
+                                <textarea type="text" class="form-control" id="Acceptance" name="Acceptance" rows="3" placeholder="Enter Client Feedback/ Acceptance" required>{{ $data->Acceptance }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">With Claims/Credit Note?</label>
+                                <div class="form-check form-check-inline" id="check-radio">
+                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault1" value="1">
+                                    <label class="form-check-label" for="flexRadioDefault1">Yes</label>
+                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault2" value="2">
+                                    <label class="form-check-label" for="flexRadioDefault2">No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">For Shipment Return?</label>
+                                <div class="form-check form-check-inline" id="ship-radio">
+                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault1" value="1">
+                                    <label class="form-check-label" for="flexRadioDefault1">Yes</label>
+                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault2" value="2">
+                                    <label class="form-check-label" for="flexRadioDefault2">No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group cn-check" style="display: none;">
+                                <label for="name">Credit Note Number</label>
+                                <input type="text" class="form-control" id="CnNumber" name="CnNumber" placeholder="Enter Credit Note Number">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group ship-check" style="display: none;">
+                                <label for="name">Return Shipment Date</label>
+                                <input type="date" class="form-control" id="ShipmentDate" name="ShipmentDate" placeholder="Enter Return Shipment Date">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group cn-check" style="display: none;">
+                                <label for="name">Total Amount Incurred</label>
+                                <input type="text" class="form-control" id="AmountIncurred" name="AmountIncurred" placeholder="Enter Total Amount Incurred">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group ship-check" style="display: none;">
+                                <label for="name">Return Shipment Cost</label>
+                                <input type="text" class="form-control" id="ShipmentCost" name="ShipmentCost" placeholder="Enter Return Shipment Cost">
                             </div>
                         </div>
                     </div>
@@ -419,4 +618,132 @@
         text-wrap: wrap !important;
     }
 </style>
+
+<script>
+    $(document).ready(function () {
+        $('#updateCustomerComplaint').on('submit', function (e) {
+            e.preventDefault(); 
+
+            var form = $(this);
+            var actionUrl = form.attr('action');
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Updated",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
+        $('#customerAcceptance').on('submit', function (e) {
+            e.preventDefault(); 
+
+            var form = $(this);
+            var actionUrl = form.attr('action');
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Acceptance",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.receivedBtn').on('click', function (e) {
+            e.preventDefault(); 
+
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action'); 
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(), 
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Received",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            customClass: 'swal-wide',
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.closeBtn').on('click', function (e) {
+            e.preventDefault(); 
+
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action'); 
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(), 
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Closed",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            customClass: 'swal-wide',
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
+        $('#check-radio').on('change', function() {
+            var selectedValue = $('input[name="Claims"]:checked').val(); 
+            if (selectedValue == "1") {
+                $('.cn-check').show(); 
+            } else {
+                $('.cn-check').hide(); 
+            }
+        });
+
+        $('#ship-radio').on('change', function() {
+            var selectedValue = $('input[name="Shipment"]:checked').val(); 
+            if (selectedValue == "1") {
+                $('.ship-check').show(); 
+            } else {
+                $('.ship-check').hide(); 
+            }
+        });
+    });
+</script>
 @endsection
