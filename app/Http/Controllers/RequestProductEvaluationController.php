@@ -749,13 +749,13 @@ class RequestProductEvaluationController extends Controller
     }
     public function uploadFile(Request $request)
     {
-        $request->validate([
-            'rpe_file[]' => 'array',
-            'rpe_file.*' => 'max:1024'
-        ], 
-        [
-            'rpe_files.max' =>'The files may not be greater than 1MB',
-        ]);
+        // $request->validate([
+        //     'rpe_file[]' => 'array',
+        //     'rpe_file.*' => 'max:1024'
+        // ], 
+        // [
+        //     'rpe_files.max' =>'The files may not be greater than 1MB',
+        // ]);
 
         $files = $request->file('rpe_file');
         $names = $request->input('name');
