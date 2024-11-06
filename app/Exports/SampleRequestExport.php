@@ -231,7 +231,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                     $product->RpeNumber,
                     $product->CrrNumber,
                     $product->DateSampleReceived ?? "NA",
-                    $product->DateDispatched ?? "NA",
+                    $row->DateDispatched ?? "NA",
                     $status,
                     optional($row->progressStatus)->name,
                 ];
