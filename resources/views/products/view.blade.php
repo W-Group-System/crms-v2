@@ -46,9 +46,10 @@
                     <p class="mb-0 text-right"><b>Raw Materials Cost:</b></p>
                 </div>
                 <div class="col-md-3">
-                    <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p>
+                    {{-- <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p> --}}
                     {{-- <p class="mb-0"><strong>EUR</strong> {{number_format(usdToEur($rmc), 2)}}</p>
                     <p class="mb-0"><strong>PHP</strong> {{number_format(usdToPhp($rmc), 2)}}</p> --}}
+                    <p class="mb-0" id="usd"></p>
                     <p class="mb-0" id="eur"></p>
                     <p class="mb-0" id="php"></p>
                 </div>
@@ -451,6 +452,7 @@
                                     @endphp
                                 @endforeach
                                 @php
+                                    $usd = number_format($total,2);
                                     $eur = number_format(usdToRMC($total,$key,1), 2);
                                     $php = number_format(usdToRMC($total,$key,3), 2);
                                 @endphp
@@ -656,9 +658,11 @@
             ordering: false
         });
 
+        var usd = "{{$usd}}"
         var eur = "{{$eur}}"
         var php = "{{$php}}"
 
+        $("#usd").html("<b>USD </b>"+usd)
         $("#eur").html("<b>EUR </b>"+eur)
         $("#php").html("<b>PHP </b>"+php)
 
