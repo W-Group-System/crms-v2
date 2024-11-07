@@ -35,6 +35,7 @@ class ClientController extends Controller
         $role = auth()->user()->role;
         $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
         $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
+        $currentUser = auth()->user();
 
         // Validate sort and direction parameters
         $validSorts = ['Name', 'BuyerCode', 'Type', 'ClientIndustryId', 'PrimaryAccountManagerId'];
@@ -99,7 +100,8 @@ class ClientController extends Controller
                 'search' => $search,
                 'currentClient' => $currentClient,
                 'fetchAll' => $fetchAll,
-                'entries' => $entries
+                'entries' => $entries,
+                'currentUser' => $currentUser
             ]);
         }
     }
@@ -114,6 +116,7 @@ class ClientController extends Controller
         $role = auth()->user()->role;
         $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
         $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
+        $currentUser = auth()->user();
 
         // Validate sort and direction parameters
         $validSorts = ['Name', 'BuyerCode', 'Type', 'ClientIndustryId', 'PrimaryAccountManagerId'];
@@ -177,7 +180,8 @@ class ClientController extends Controller
                 'search' => $search,
                 'prospectClient' => $prospectClient,
                 'fetchAll' => $fetchAll,
-                'entries' => $entries
+                'entries' => $entries,
+                'currentUser' => $currentUser
             ]);
         }
     }
@@ -277,6 +281,7 @@ class ClientController extends Controller
         
         $loggedInUser = Auth::user();
         $role = $loggedInUser->role;
+        $currentUser = auth()->user();
         $withRelation = optional($role)->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
         
         if (optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') {
@@ -292,7 +297,45 @@ class ClientController extends Controller
         return view('clients.create', array_merge($data, [
             'primarySalesPersons' => $primarySalesPersons,
             'secondarySalesPersons' => $secondarySalesPersons,
-            'role' => $role
+            'role' => $role,
+            'currentUser' => $currentUser
+        ]));
+    }
+
+    public function create2()
+    {
+        $data = [
+            'clients'           => Client::all(),
+            'users'             => User::all(),
+            'payment_terms'     => PaymentTerms::all(),
+            'regions'           => Region::all(),
+            'countries'         => Country::all(),
+            'areas'             => Area::all(),
+            'business_types'    => BusinessType::all(),
+            'industries'        => Industry::all(),
+            'buyerCode'         => 'BCODE-' . now()->format('Ymd-His'),
+        ];
+        
+        $loggedInUser = Auth::user();
+        $role = $loggedInUser->role;
+        $currentUser = auth()->user();
+        $withRelation = optional($role)->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
+        
+        if (optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') {
+            $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
+            $primarySalesPersons = User::whereIn('id', $salesApprovers)->orWhere('id', $loggedInUser->id)->get();
+            $secondarySalesPersons = User::where('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
+        } else {
+            $primarySalesPersons = User::where('id', $loggedInUser->id)->with($withRelation)->get();
+            $secondarySalesPersons = User::whereIn('id', $loggedInUser->salesApproverById->pluck('SalesApproverId'))->get();
+        }
+
+        // Pass the data, primarySalesPersons, and secondarySalesPersons to the view
+        return view('clients.create2', array_merge($data, [
+            'primarySalesPersons' => $primarySalesPersons,
+            'secondarySalesPersons' => $secondarySalesPersons,
+            'role' => $role,
+            'currentUser' => $currentUser
         ]));
     }
 

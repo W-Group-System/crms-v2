@@ -45,6 +45,9 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('my_account','HomeController@myAccount')->name('my_account');
         Route::get('change_password','HomeController@changePassword')->name('change_password');
         Route::post('change_password','HomeController@updatePassword')->name('update_password');
+
+        // returned
+        Route::get('returned_transaction','DashboardController@returned')->name('returned_transaction');
     
         // Company
         Route::get('/company', 'CompanyController@index')->name('company.index');
@@ -147,7 +150,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/client', 'ClientController@index')->name('client.index');
         Route::get('/client_prospect', 'ClientController@prospect')->name('client.prospect');
         Route::get('/client_archived', 'ClientController@archived')->name('client.archived');
-        Route::get('client/create', 'ClientController@create');    
+        Route::get('client/create', 'ClientController@create'); 
+        Route::get('client/create2', 'ClientController@create2');   
         Route::post('/new_client', 'ClientController@store')->name('client.store');
         Route::get('edit_client/{id}', 'ClientController@edit')->name('client.edit');
         Route::post('client/update/{id}', 'ClientController@update');
@@ -393,6 +397,10 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/cc_list', 'CustomerComplaint2Controller@list')->name('customer_complaint.list');
         Route::get('customer_complaint/view/{id}', 'CustomerComplaint2Controller@view'); 
         Route::post('/update_customer_complaint/{id}', 'CustomerComplaint2Controller@update')->name('update_customer_complaint');
+        Route::post('/customer_acceptance/{id}', 'CustomerComplaint2Controller@acceptance')->name('customer_acceptance');
+        Route::post('cc_received/{id}', 'CustomerComplaint2Controller@received');
+        Route::post('cc_closed/{id}', 'CustomerComplaint2Controller@closed');
+        Route::post('cc_noted/{id}', 'CustomerComplaint2Controller@noted');
         
         // Categorization
         Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    

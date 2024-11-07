@@ -231,9 +231,86 @@ class CustomerComplaint2Controller extends Controller
         ]);
     }
 
+    public function update(Request $request, $id)
+    {
+        $data = CustomerComplaint2::findOrFail($id);
+        $data->RecurringIssue = $request->RecurringIssue;
+        $data->PreviousCCF = $request->PreviousCCF;
+        $data->ImmediateAction = $request->ImmediateAction;
+        $data->ObjectiveEvidence = $request->ObjectiveEvidence;
+        $data->Investigation = $request->Investigation;
+        $data->CorrectiveAction = $request->CorrectiveAction;
+        $data->ActionObjectiveEvidence = $request->ActionObjectiveEvidence;
+        $data->ActionResponsible = auth()->user()->id;
+        $data->ActionDate = now();
+        $data->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer complaint investigation has been successfully updated.'
+        ]);
+    }
+
     public function view($id)
     {
         $data = CustomerComplaint2::with('concerned', 'country', 'product_quality', 'packaging', 'delivery_handling', 'others')->findOrFail($id);
         return view('customer_service.cc_view', compact('data'));
+    }
+
+    public function acceptance(Request $request, $id)
+    {
+        $data = CustomerComplaint2::findOrFail($id);
+        $data->Acceptance = $request->Acceptance;
+        $data->Claims = $request->Claims;
+        $data->Shipment = $request->Shipment;
+        $data->CnNumber = $request->CnNumber;
+        $data->ShipmentDate = $request->ShipmentDate;
+        $data->AmountIncurred = $request->AmountIncurred;
+        $data->ShipmentCost = $request->ShipmentCost;
+        $data->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer complaint acceptance has been successfully updated.'
+        ]);
+    }
+
+    public function received($id)
+    {
+        $data = CustomerComplaint2::findOrFail($id);
+        $data->ReceivedBy = auth()->user()->id;
+        $data->DateReceived = now();
+        $data->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer complaint has been successfully received.'
+        ]);
+    }
+
+    public function noted($id)
+    {
+        $data = CustomerComplaint2::findOrFail($id);
+        $data->NotedBy = auth()->user()->id;
+        $data->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer complaint has been successfully updated.'
+        ]);
+    }
+
+    public function closed($id)
+    {
+        $data = CustomerComplaint2::findOrFail($id);
+        $data->ClosedBy = auth()->user()->id;
+        $data->ClosedDate = now();
+        $data->Status = 30;
+        $data->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer complaint has been successfully closed.'
+        ]);
     }
 }

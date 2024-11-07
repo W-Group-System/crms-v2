@@ -136,6 +136,12 @@
                                     <i class="ti ti-user text-primary"></i>
                                     My Account
                                 </a>
+                                @if(Auth::check() && optional(Auth::user()->role)->type == 'IS' || optional(Auth::user()->role)->type == 'LS')
+                                <a href="{{ route('returned_transaction') }}" class="dropdown-item">
+                                    <i class="ti ti-share-alt text-primary"></i>
+                                    Returned Transactions
+                                </a>
+                                @endif
                                 <a href="{{ route('change_password') }}" class="dropdown-item">
                                     <i class="ti ti-unlock text-primary"></i>
                                     Change Password
@@ -381,14 +387,14 @@
                             </a>
                             <div class="collapse" id="table_service">
                                 <ul class="nav flex-column sub-menu">
-                                    @if(viewModule('Customer Complaints', $department, $role) == "yes")
+                                    {{-- @if(viewModule('Customer Complaints', $department, $role) == "yes")
                                     <li class="nav-item"> <a class="nav-link" href="{{ url('/customer_complaint') }}">Customer Complaints</a></li>
                                     @endif
                                     @if(viewModule('Customer Feedback', $department, $role) == "yes")
                                     <li class="nav-item"> <a class="nav-link" href="{{ url('/customer_feedback') }}">Customer Feedbacks</a></li>
-                                    @endif
-                                    {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/cs_list') }}">Customer Satisfaction</a></li>
-                                    <li class="nav-item"> <a class="nav-link" href="{{ url('/cc_list') }}">Customer Complaint</a></li> --}}
+                                    @endif --}}
+                                    <li class="nav-item"> <a class="nav-link" href="{{ url('/cs_list') }}">Customer Satisfaction</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="{{ url('/cc_list') }}">Customer Complaint</a></li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="javascript:void(0);" data-target="#table_service2" aria-expanded="false" aria-controls="table_service2" onclick="toggleSetupService(event)">
                                             <span class="menu-title">Setup</span>

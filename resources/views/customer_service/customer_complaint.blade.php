@@ -24,13 +24,13 @@
         <div class="offset-lg-1 col-lg-10">
             <div class="form-group">
                 <label class="text-white display-5">Address</label>
-                <input type="text" class="form-control" name="Address" id="Address" placeholder="Enter Address" required>
+                <input type="text" class="form-control" name="Address" id="Address" placeholder="Enter Address">
             </div>
         </div>
         <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Email Address</label>
-                <input type="email" class="form-control" name="Email" id="Email" placeholder="Enter Email Address">
+                <input type="email" class="form-control" name="Email" id="Email" placeholder="Enter Email Address" required>
             </div>
         </div>
         <div class="col-lg-5">
@@ -68,7 +68,7 @@
         <div class="col-lg-5 mb-3">
             <div class="form-group">
                 <label class="text-white display-5">Definition of Quality Class</label>
-                <select class="form-control js-example-basic-single" name="QualityClass" id="QualityClass" title="Select Quality Class">
+                <select class="form-control js-example-basic-single" name="QualityClass" id="QualityClass" title="Select Quality Class" required>
                     <option value="" disabled selected>Select Quality Class</option>
                     <option value="1">Critical e.g., Food Safety Hazard</option>
                     <option value="2">Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)</option>
@@ -80,7 +80,7 @@
                 <input type="text" class="form-control" id="ProductName" name="ProductName" placeholder="Enter Product Name">
             </div>
         </div>
-        <div class="offset-lg-1 col-lg-10">
+        <div class="offset-lg-1 col-lg-10 table-responsive">
             <table class="table table-bordered" style="background: rgb(255 255 255 / 91%)">
                 <thead>
                     <tr>
@@ -269,13 +269,13 @@
         <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Description</label>
-                <input type="text" class="form-control" name="Description" id="Description" placeholder="Enter Description" required>
+                <input type="text" class="form-control" name="Description" id="Description" placeholder="Enter Description">
             </div>
         </div>
         <div class="col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Currency (In PHP/ In US$/ In EUR)</label>
-                <input type="text" class="form-control" name="Currency" id="Currency" placeholder="Enter Currency" required>
+                <input type="text" class="form-control" name="Currency" id="Currency" placeholder="Enter Currency">
             </div>
         </div>
         <div class="offset-lg-1 col-lg-10">
@@ -287,7 +287,7 @@
         <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Site Concerned</label>
-                <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" title="Select Site Concerned">
+                <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" title="Select Site Concerned" required>
                     <option value="" disabled selected>Select Site Concerned</option>
                     <option value="WHI Carmona">WHI Carmona</option>
                     <option value="WHI Head Office">WHI Head Office</option>
@@ -300,7 +300,7 @@
         <div class="col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Department</label>
-                <select class="form-control js-example-basic-single" name="Department" id="Department" title="Select Department">
+                <select class="form-control js-example-basic-single" name="Department" id="Department" title="Select Department" required>
                     <option value="" disabled selected>Select Department</option>
                     @foreach($concern_department as $data)
                         <option value="{{ $data->id }}">{{ $data->Name }}</option>

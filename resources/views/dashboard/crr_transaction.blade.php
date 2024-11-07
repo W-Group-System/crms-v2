@@ -30,7 +30,6 @@
                         <span>Show</span>
                         <form method="GET" class="d-inline-block" onsubmit="show()">
                             <input type="hidden" name="status" value="{{ request()->get('status', '10') }}">
-
                             <select name="entries" class="form-control">
                                 <option value="10" @if($entries == 10) selected @endif>10</option>
                                 <option value="25" @if($entries == 25) selected @endif>25</option>
@@ -43,7 +42,6 @@
                     <div class="col-lg-6">
                         <form method="GET" action="{{url()->current()}}" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                             <input type="hidden" name="status" value="{{ request()->get('status', '10') }}">
-
                             <div class="row height d-flex justify-content-end align-items-end">
                                 <div class="col-md-10">
                                     <div class="search">
