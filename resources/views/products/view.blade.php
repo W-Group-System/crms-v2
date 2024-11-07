@@ -46,9 +46,12 @@
                     <p class="mb-0 text-right"><b>Raw Materials Cost:</b></p>
                 </div>
                 <div class="col-md-3">
-                    <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p>
-                    <p class="mb-0"><strong>EUR</strong> {{number_format(usdToEur($rmc), 2)}}</p>
-                    <p class="mb-0"><strong>PHP</strong> {{number_format(usdToPhp($rmc), 2)}}</p>
+                    {{-- <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p> --}}
+                    {{-- <p class="mb-0"><strong>EUR</strong> {{number_format(usdToEur($rmc), 2)}}</p>
+                    <p class="mb-0"><strong>PHP</strong> {{number_format(usdToPhp($rmc), 2)}}</p> --}}
+                    <p class="mb-0" id="usd"></p>
+                    <p class="mb-0" id="eur"></p>
+                    <p class="mb-0" id="php"></p>
                 </div>
             </div>
             <div class="row">
@@ -409,6 +412,7 @@
                                 @php
                                     $previousValue = null;
                                     $array_values = $history_rmc['materials'];
+                                    $last_total = 0;
                                 @endphp
                                 @foreach ($history_rmc['result'] as $key => $rmc)
                                     <tr>
@@ -429,6 +433,7 @@
                                             @foreach($array_values as $arr)
                                             @php
                                                 $total = $total + $arr->usd;
+                                                $last_total = $total;
                                             @endphp
                                             @endforeach
                                             {{number_format($total,2)}}
@@ -446,6 +451,11 @@
                                     }
                                     @endphp
                                 @endforeach
+                                @php
+                                    $usd = number_format($total,2);
+                                    $eur = number_format(usdToRMC($total,$key,1), 2);
+                                    $php = number_format(usdToRMC($total,$key,3), 2);
+                                @endphp
                             </tbody>
                         </table>
                     </div>
@@ -647,6 +657,14 @@
             pageLength: 10,
             ordering: false
         });
+
+        var usd = "{{$usd}}"
+        var eur = "{{$eur}}"
+        var php = "{{$php}}"
+
+        $("#usd").html("<b>USD </b>"+usd)
+        $("#eur").html("<b>EUR </b>"+eur)
+        $("#php").html("<b>PHP </b>"+php)
 
         // $("#addBtn").on('click', function() {
             
