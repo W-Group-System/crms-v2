@@ -191,7 +191,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Customer Complaints</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
+                                <a href="{{ route('customer_complaint.list', ['Status' => 10]) }}" class="text-white" onclick="show()">
                                     {{ $customerComplaintsCount ?? '0' }}
                                 </a>
                             </h5>
@@ -199,7 +199,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Customer Feedback</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
+                                <a href="{{ route('customer_complaint.list', ['Status' => 10]) }}" class="text-white" onclick="show()">
                                     {{ $customerFeedbackCount ?? '0' }}
                                 </a>
                             </h5>
@@ -314,7 +314,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Customer Complaints</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_requirement.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
+                                <a href="{{ route('customer_complaint.list', ['Status' => 10]) }}" class="text-white" onclick="show()">
                                     {{ $customerComplaintsCount ?? '0' }}
                                 </a>
                             </h5>
@@ -322,7 +322,7 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Customer Feedback</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('product_evaluation.index', ['DueDate' => 'past']) }}" class="text-white" onclick="show()">
+                                <a href="{{ route('customer_satisfaction.list', ['Status' => 10]) }}" class="text-white" onclick="show()">
                                     {{ $customerFeedbackCount ?? '0' }}
                                 </a>
                             </h5>
