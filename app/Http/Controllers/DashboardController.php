@@ -506,7 +506,8 @@ class DashboardController extends Controller
 
         $customerComplaintCount = CustomerComplaint2::where('Status', '10')
             ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
-                $query->whereColumn('clientcompanies.Name', 'like', 'customercomplaint.CompanyName')
+                // Use whereRaw for partial string matching with LIKE
+                $query->whereRaw('LOWER(clientcompanies.Name) LIKE LOWER(CONCAT("%", customercomplaint.CompanyName, "%"))')
                     ->where(function ($query) use ($userId, $userByUser) {
                         $query->where('clientcompanies.PrimaryAccountManagerId', $userId)
                             ->orWhere('clientcompanies.SecondaryAccountManagerId', $userId)
@@ -514,10 +515,27 @@ class DashboardController extends Controller
                             ->orWhere('clientcompanies.SecondaryAccountManagerId', $userByUser);
                     });
             })
+            
             ->count();
 
-        $totalCs = $customerSatisfactionCount + $customerComplaintCount;
+        $ccNotedBy = CustomerComplaint2::join('users', function($join) {
+            $join->on('customercomplaint.ReceivedBy', '=', 'users.id');
+            }) 
+            ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+            ->where('customercomplaint.Progress', '20') 
+            ->where('salesapprovers.SalesApproverId', $userId)
+            ->count();
 
+        $csNotedBy = CustomerSatisfaction::join('users', function($join) {
+                $join->on('customersatisfaction.ReceivedBy', '=', 'users.user_id')
+                     ->orOn('customersatisfaction.ReceivedBy', '=', 'users.id');
+                }) 
+                ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+                ->where('customersatisfaction.Progress', '20') 
+                ->where('salesapprovers.SalesApproverId', $userId)
+                ->count();
+        
+        $totalCs = $customerSatisfactionCount + $customerComplaintCount + $ccNotedBy + $csNotedBy;
     
         /************* RND *************/
     
@@ -649,7 +667,7 @@ class DashboardController extends Controller
             'crrSalesApproved', 'crrRnDOngoing', 'crrRnDPending', 'crrRnDInitial',
             'crrRnDFinal', 'crrRnDCompleted', 'totalRPECount', 'rpeCancelled', 'rpeSalesApproval',
             'rpeSalesApproved', 'rpeSalesAccepted', 'rpeRnDOngoing', 'rpeRnDPending', 'rpeRnDInitial', 'rpeRnDFinal', 'rpeRnDCompleted', 'totalSRFCount', 'srfCancelled', 'srfSalesApproval',
-            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'salesCrrReturn', 'salesRpeReturn', 'salesSrfReturn', 'totalReturned', 'totalCs', 'customerSatisfactionCount', 'customerComplaintCount'
+            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'salesCrrReturn', 'salesRpeReturn', 'salesSrfReturn', 'totalReturned', 'totalCs', 'customerSatisfactionCount', 'customerComplaintCount', 'ccNotedBy', 'csNotedBy'
         ));
     }
 
@@ -1036,12 +1054,21 @@ class DashboardController extends Controller
         $entries = $request->input('entries', 10); // Default to 10 if not specified
         $search = $request->input('search');
 
+        $userId = Auth::id(); 
+        $userByUser = optional(Auth::user())->user_id; // Safely access user_id
+
         $crrReturned = CustomerRequirement::where('ReturnToSales', '1')
                         ->when($search, function($query) use ($search) {
                             $query->where('ClientId', 'LIKE', "%{$search}%")
                                 ->orWhere('CrrNumber', 'LIKE', "%{$search}%")
                                 ->orWhere('ApplicationId', 'LIKE', "%{$search}%")
                                 ->orWhere('Status', 'LIKE', "%{$search}%");
+                        })
+                        ->where(function ($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
                         })
                         ->paginate($entries, ['*'], 'crr_page')
                         ->appends(['search' => $search, 'entries' => $entries]);
@@ -1053,6 +1080,12 @@ class DashboardController extends Controller
                                 ->orWhere('ApplicationId', 'LIKE', "%{$search}%")
                                 ->orWhere('Status', 'LIKE', "%{$search}%");
                         })
+                        ->where(function ($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        })
                         ->paginate($entries, ['*'], 'rpe_page')
                         ->appends(['search' => $search, 'entries' => $entries]);
 
@@ -1062,6 +1095,12 @@ class DashboardController extends Controller
                                 ->orWhere('SrfNumber', 'LIKE', "%{$search}%")
                                 ->orWhere('ApplicationId', 'LIKE', "%{$search}%")
                                 ->orWhere('Status', 'LIKE', "%{$search}%");
+                        })
+                        ->where(function ($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
                         })
                         ->paginate($entries, ['*'], 'srf_page')
                         ->appends(['search' => $search, 'entries' => $entries]);

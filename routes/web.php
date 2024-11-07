@@ -392,6 +392,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('/update_customer_satisfaction/{id}', 'CustomerSatisfactionController@update')->name('update_customer_satisfaction');
         Route::post('cs_received/{id}', 'CustomerSatisfactionController@received');
         Route::post('cs_closed/{id}', 'CustomerSatisfactionController@close');
+        Route::post('cs_noted/{id}', 'CustomerSatisfactionController@noted');
     
         // Customer Complaint
         Route::get('/cc_list', 'CustomerComplaint2Controller@list')->name('customer_complaint.list');
