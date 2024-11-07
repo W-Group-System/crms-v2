@@ -191,8 +191,9 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Customer Complaints</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_complaint.list', ['status' => 10]) }}" class="text-white" onclick="show()">
-                                    {{ $customerComplaintCount ?? '0' }}
+                                <a href="{{ route('customer_complaint.list', ['Status' => 10]) }}" class="text-white" onclick="show()">
+                                    {{ $customerComplaintsCount ?? '0' }}
+
                                 </a>
                             </h5>
                         </div>
@@ -314,8 +315,8 @@
                         <div class="mb-1 d-flex justify-content-between">
                             <p>Customer Complaints</p>
                             <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_complaint.list', ['status' => 10]) }}" class="text-white" onclick="show()">
-                                    {{ $customerComplaintCount ?? 0 }}
+                                <a href="{{ route('customer_complaint.list', ['Status' => 10]) }}" class="text-white" onclick="show()">
+                                    {{ $customerComplaintsCount ?? '0' }}
                                 </a>
                             </h5>
                         </div>
