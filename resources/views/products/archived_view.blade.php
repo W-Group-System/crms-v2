@@ -26,6 +26,7 @@
                 $identicalComposition = identicalComposition($data->productMaterialComposition, $data->id);
                 $customerRequirements = customerRequirements($data->code);
                 $productRps = productRps($data->code);
+                $history_rmc = historyRmc($data->productMaterialComposition, $data->id);
             @endphp
             <div class="row">
                 <div class="col-md-2">
@@ -379,6 +380,46 @@
                                     <th>RMC (PHP)</th>
                                 </tr>
                                 <tbody>
+                                    @php
+                                        $previousValue = null;
+                                        $array_values = $history_rmc['materials'];
+                                    @endphp
+                                    @foreach ($history_rmc['result'] as $key => $rmc)
+                                        <tr>
+                                            <td>{{date('Y-m-d', strtotime($key))}}</td>
+                                            <td>
+                                                @php
+                                                    $total = 0;
+                                                @endphp
+                                                @foreach($rmc as $rm)
+                                                    @foreach($array_values as $key_a => $array)
+                                                        @if($rm->MaterialId == $key_a)
+                                                            @php
+                                                                $array_values[$key_a]->usd = $rm->usd;
+                                                            @endphp
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+                                                @foreach($array_values as $arr)
+                                                @php
+                                                    $total = $total + $arr->usd;
+                                                @endphp
+                                                @endforeach
+                                                {{number_format($total,2)}}
+                                            </td>
+                                            <td>{{number_format(usdToRMC($total,$key,1), 2)}}</td>
+                                            <td>{{number_format(usdToRMC($total,$key,3), 2)}}</td>
+                                            {{-- <td>{{$rmc['total_po']}}</td> --}}
+                                            {{-- <td>{{number_format(usdToEur($rmc['total_price']), 2)}}</td>
+                                            <td>{{number_format(usdToPhp($rmc['total_price']), 2)}}</td> --}}
+                                        </tr>
+                                        @php
+                                        if(count($rmc) > 1)
+                                        {
+                                            $previousValue = $key;
+                                        }
+                                        @endphp
+                                    @endforeach
                                 </tbody>
                             </thead>
                         </table>

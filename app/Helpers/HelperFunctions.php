@@ -958,81 +958,43 @@ function historyRmc($product_material_composition, $product_id)
     $material_id = $product_material_composition->sortBy('MaterialId')->pluck('MaterialId')->toArray();
     $product_material_composition = ProductMaterialsComposition::whereIn('MaterialId', $material_id)
         ->where('ProductId', $product_id)
-        ->orderBy('MaterialId', 'asc')
+        // ->orderBy('MaterialId', 'asc')
         ->get();
+    $final_id = $product_material_composition->sortByDesc('Percentage')->first();
+    $final_id_d = $product_material_composition->sortBy('Percentage')->first();
     
-    // $basePrice = BasePrice::whereIn('MaterialId', $material_id)
-    //     ->where('IsDeleted', 0)
-    //     ->where('Status', 3)
-    //     ->orderBy('EffectiveDate', 'asc')
-    //     ->get();
+    $basePrice = BasePrice::whereIn('MaterialId', $material_id)
+        ->where('IsDeleted', 0)
+        ->where('Status', 3)
+        ->orderBy('EffectiveDate', 'asc')
+        ->get();
+    // $rmc_array = [];
+    $dateUsdMap = [];
 
-    // dd($basePrice);
 
-    // $getPercent = $product_material_composition->map(function($item, $key) 
-    // {
-    //     $num = $item / 100;
-
-    //     return $num;
-    // });
-        
-    // $multiply = $basePrice->map(function($item, $key)use($getPercent) 
-    // {
-    //     $num = $item * $getPercent[$key];
-
-    //     return round($num, 2);
-    // });
-
-    // return $multiply->sum();
-    
-    $rmc_array = [];
-    foreach($product_material_composition as $product_composition)
+    $materials_all = [];
+    foreach($material_id as $mat)
     {
-        // dd($product_composition);
-        $total_percentage = $product_composition->Percentage / 100;
+        $object = new stdClass;
+        $object->usd = 0;
+        $materials_all[$mat] = $object;
+    }
+    foreach ($basePrice as $record) {
+        $henry = new stdClass;
+        $date = substr($record["EffectiveDate"], 0, 10); // Extract the date part (YYYY-MM-DD)
+        if (!isset($dateUsdMap[$date])) {
+            $dateUsdMap[$date] = [];
+        }
+        $percent =  ($product_material_composition->where('MaterialId',$record["MaterialId"])->first())->Percentage;
+        $henry->MaterialId = $record["MaterialId"];
+        $henry->percent = $percent/100;
+        $henry->price = $record["Price"];
+        $henry->usd = $record["Price"]*$henry->percent;
         
-        foreach($product_composition->rawMaterials->basePrice->groupBy('MaterialId') as $key=>$base_price)
-        {
-            $object = new StdClass;
-            $object->base_price = $base_price;
-            $object->total_percentage = $total_percentage;
-            $rmc_array[$key] = $object;
-        }
-    }
-    
-    $price_array = [];
-    foreach($rmc_array as $material_id => $rmc)
-    {
-        $total_product = 0;
-        foreach($rmc->base_price as $key=>$price)
-        {
-            $total_product = $rmc->total_percentage * $price->Price;
-
-            $price_array[$material_id][$key] = [
-                'price' => round($total_product, 2),
-                'effective_date' => $price->EffectiveDate
-            ];
-        }
+        $dateUsdMap[$date][] = $henry;  // Add usd value to the date
     }
 
-    $history_rmc = [];
-    foreach ($price_array as $material_id => $prices) {
-        
-        foreach ($prices as $key => $value) {
-            
-            if (!isset($history_rmc[$key])) {
-                $history_rmc[$key] = [
-                    'total_price' => 0,
-                    'effective_dates' => ''
-                ]; 
-            }
-
-            $history_rmc[$key]['total_price'] += $value['price'];
-            $history_rmc[$key]['effective_dates'] = $value['effective_date'];
-        }
-    }
-    
-    return $history_rmc;
+    return array('materials' => $materials_all, 'result' => $dateUsdMap);
 }
 
 function checkIfItsUserId($secondarySale)
@@ -1056,4 +1018,19 @@ function checkIfInGroup($primary_sales, $auth_user)
     $group_sales_list = GroupSales::where('user_id', $user->id)->pluck('members')->toArray();
     
     return collect($group_sales_list)->contains($auth_user);
+}
+
+function usdToRMC($cost,$effecttiveDate,$currency)
+{
+    $currencyExchangeRates = CurrencyExchange::where('EffectiveDate','<=',$effecttiveDate)
+        ->where('ToCurrencyId', $currency)
+        ->orderBy('EffectiveDate', 'desc')
+        ->first();
+
+    if ($currencyExchangeRates != null){
+
+        $eur = $currencyExchangeRates->ExchangeRate * $cost;
+
+        return $eur;
+    }
 }
