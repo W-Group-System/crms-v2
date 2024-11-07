@@ -31,8 +31,18 @@ class CustomerSatisfaction extends Model
         return $this->belongsTo(User::class, 'ReceivedBy', 'id');
     }
 
+    public function notedBy()
+    {
+        return $this->belongsTo(User::class, 'NotedBy', 'id');
+    }
+
     public function clientCompany()
     {
         return $this->hasOne(Client::class, 'Name', 'CompanyName');
+    }
+
+    public function salesapprovers()
+    {
+        return $this->belongsTo(SalesApprovers::class, 'ReceivedBy', 'UserId'); 
     }
 }

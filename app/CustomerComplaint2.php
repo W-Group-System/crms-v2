@@ -63,6 +63,12 @@ class CustomerComplaint2 extends Model
 
     public function clientCompany()
     {
-        return $this->hasOne(Client::class, 'Name', 'CompanyName');
+        return $this->belongsTo(Client::class, 'CompanyName', 'Name'); 
     }
+
+    public function salesapprovers()
+    {
+        return $this->belongsTo(SalesApprovers::class, 'ReceivedBy', 'UserId'); 
+    }
+    
 }

@@ -16,13 +16,15 @@
                             </button>
                         </form>
                     @endif
-                    @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
-                        <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-success receivedBtn">
-                                <i class="ti-check">&nbsp;</i> Noted By
-                            </button>
-                        </form>
+                    @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
+                        @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
+                            <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-success receivedBtn">
+                                    <i class="ti-check">&nbsp;</i> Noted By
+                                </button>
+                            </form>
+                        @endif
                     @endif
                     @if($data->Status == 10 && $data->ReceivedBy != NULL)
                     <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
@@ -31,8 +33,6 @@
                     <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                         <i class="ti ti-pencil"></i>&nbsp;Verification
                     </button>
-                    @endif
-                    @if($data->Status == 10 && $data->ClosedBy == NULL)
                     <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-outline-primary closeBtn">
@@ -123,7 +123,7 @@
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Date Closed:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->DateClosed ?? 'N/A' }}</label>
+                            <label>{{ $data->ClosedDate ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">

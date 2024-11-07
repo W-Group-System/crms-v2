@@ -16,7 +16,17 @@
                             </button>
                         </form>
                     @endif
-                    @if($data->ReceivedBy != NULL && $data->Status != 30)
+                    @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
+                        @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
+                            <form action="{{ url('cs_noted/' . $data->id) }}" class="d-inline-block" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-success receivedBtn">
+                                    <i class="ti-check">&nbsp;</i> Noted By
+                                </button>
+                            </form>
+                        @endif
+                    @endif
+                    @if($data->Progress == 30)
                         <button type="button" class="btn btn-outline-warning" id="updateCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCs">
                             <i class="ti ti-pencil"></i>&nbsp;Response
                         </button>
@@ -55,6 +65,10 @@
                         <label class="col-sm-3 col-form-label text-right"><b>Concerned Department:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->concerned->Name ?? 'N/A' }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->notedBy->full_name ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-3">

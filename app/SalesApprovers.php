@@ -20,4 +20,5 @@ class SalesApprovers extends Model
     {
         return $this->belongsTo(User::class, 'SalesApproverId');
     }
+    
 }

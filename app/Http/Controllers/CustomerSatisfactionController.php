@@ -8,6 +8,7 @@ use App\IssueCategory;
 use App\Contact;
 use App\CustomerSatisfaction;
 use App\CsFiles;
+use Illuminate\Support\Facades\Auth;
 use App\CustomerRequirement;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -50,6 +51,11 @@ class CustomerSatisfactionController extends Controller
         $direction = $request->get('direction', 'asc');
         $fetchAll = filter_var($request->input('fetch_all', false), FILTER_VALIDATE_BOOLEAN);
         $entries = $request->input('number_of_entries', 10);
+        $progress = $request->query('progress'); // Get the status from the query parameters
+        $status = $request->query('status'); // Get the status from the query parameters
+
+        $userId = Auth::id(); 
+        $userByUser = optional(Auth::user())->user_id;
 
         $year = date('y') . '4';
 
@@ -82,14 +88,32 @@ class CustomerSatisfactionController extends Controller
                         ->orWhere('Status', 'LIKE', '%' . $search . '%');
                 });
             })
-            ->when($open && $close, function ($query) use ($open, $close) {
-                $query->whereIn('Status', [$open, $close]);
+            ->when($request->input('open') && $request->input('close'), function ($query) use ($request) {
+                $query->whereIn('Status', [$request->input('open'), $request->input('close')]);
             })
-            ->when($open && !$close, function ($query) use ($open) {
-                $query->where('Status', $open);
+            ->when($request->input('open') && !$request->input('close'), function ($query) use ($request) {
+                $query->where('Status', $request->input('open'));
             })
-            ->when($close && !$open, function ($query) use ($close) {
-                $query->where('Status', $close);
+            ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
+                $query->where('Status', $request->input('close'));
+            })
+            ->when($progress, function($query) use ($progress, $userId) {
+                if ($progress == '20') {
+                    $query->where('Progress', '20')
+                        ->whereHas('salesapprovers', function ($query) use ($userId) {
+                            $query->where('SalesApproverId', $userId);
+                        });
+                } else {
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
+                $query->where(function ($query) use ($userId, $userByUser) {
+                    $query->where('PrimaryAccountManagerId', $userId)
+                        ->orWhere('SecondaryAccountManagerId', $userId)
+                        ->orWhere('PrimaryAccountManagerId', $userByUser)
+                        ->orWhere('SecondaryAccountManagerId', $userByUser);
+                }); 
             })
             ->orderBy($sort, $direction);
 
@@ -106,6 +130,7 @@ class CustomerSatisfactionController extends Controller
                 'fetchAll' => $fetchAll,
                 'entries' => $entries,
                 'newCsNo' => $newCsNo,
+                'progress' => $progress
             ]);
         }
     }
@@ -122,6 +147,7 @@ class CustomerSatisfactionController extends Controller
             'ContactNumber' => $request->ContactNumber,
             'Email' => $request->Email,
             'Status' => '10',
+            'Progress' => '10',
         ]);
 
         if ($request->hasFile('Path')) {
@@ -164,6 +190,7 @@ class CustomerSatisfactionController extends Controller
         $data = CustomerSatisfaction::findOrFail($id);
         $data->ReceivedBy = auth()->user()->id;
         $data->DateReceived = now();
+        $data->Progress = 20;
         $data->save();
 
         return response()->json([
@@ -171,17 +198,30 @@ class CustomerSatisfactionController extends Controller
             'message' => 'Customer satisfaction feedback has been successfully received.'
         ]);
     }
+    public function noted($id)
+    {
+        $data = CustomerSatisfaction::findOrFail($id);
+        $data->NotedBy = auth()->user()->id;
+        $data->Progress = 30;
+        $data->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer satisfaction has been successfully updated.'
+        ]);
+    }
 
     public function close($id)
     {
         $data = CustomerSatisfaction::findOrFail($id);
         $data->Status = '30';
+        $data->Progress = 50;
         $data->DateClosed = now();
         $data->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Customer complaint has been successfully closed.'
+            'message' => 'Customer satisfaction has been successfully closed.'
         ]);
     }
 

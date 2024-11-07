@@ -9,6 +9,7 @@ use App\CcOthers;
 use App\Country;
 use App\ConcernDepartment;
 use App\CustomerComplaint2;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class CustomerComplaint2Controller extends Controller
@@ -43,13 +44,18 @@ class CustomerComplaint2Controller extends Controller
         $direction = $request->get('direction', 'asc');
         $fetchAll = filter_var($request->input('fetch_all', false), FILTER_VALIDATE_BOOLEAN);
         $entries = $request->input('number_of_entries', 10);
+        $progress = $request->query('progress'); // Get the status from the query parameters
+        $status = $request->query('status'); // Get the status from the query parameters
+
+        $userId = Auth::id(); 
+        $userByUser = optional(Auth::user())->user_id; 
 
         $year = date('y') . '4'; 
-        
+
         $latestCc = CustomerComplaint2::whereYear('created_at', date('Y'))
-                        ->orderBy('CcNumber', 'desc')
-                        ->first();
-        
+                            ->orderBy('CcNumber', 'desc')
+                            ->first();
+
         if ($latestCc) {
             $latestSeries = (int) substr($latestCc->CcNumber, -4);
             $newSeries = str_pad($latestSeries + 1, 4, '0', STR_PAD_LEFT);
@@ -63,29 +69,49 @@ class CustomerComplaint2Controller extends Controller
         $open = $request->input('open');
         $close = $request->input('close');
 
-
         $customerComplaint = CustomerComplaint2::when($search, function ($query) use ($search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('CcNumber', 'LIKE', '%' . $search . '%')
-                        ->orWhere('created_at', 'LIKE', '%' . $search . '%')
-                        ->orWhere('CompanyName', 'LIKE', '%' . $search . '%')
-                        ->orWhere('ContactName', 'LIKE', '%' . $search . '%')
-                        ->orWhere('Description', 'LIKE', '%' . $search . '%')
-                        ->orWhere('CustomerRemarks', 'LIKE', '%' . $search . '%')
-                        ->orWhere('Status', 'LIKE', '%' . $search . '%');
-                });
-            })
-            ->when($open && $close, function ($query) use ($open, $close) {
-                $query->whereIn('Status', [$open, $close]);
-            })
-            ->when($open && !$close, function ($query) use ($open) {
-                $query->where('Status', $open);
-            })
-            ->when($close && !$open, function ($query) use ($close) {
-                $query->where('Status', $close);
-            })
-            ->orderBy($sort, $direction);
+            $query->where(function ($query) use ($search) {
+                $query->where('CcNumber', 'LIKE', '%' . $search . '%')
+                    ->orWhere('created_at', 'LIKE', '%' . $search . '%')
+                    ->orWhere('CompanyName', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ContactName', 'LIKE', '%' . $search . '%')
+                    ->orWhere('Description', 'LIKE', '%' . $search . '%')
+                    ->orWhere('CustomerRemarks', 'LIKE', '%' . $search . '%')
+                    ->orWhere('Status', 'LIKE', '%' . $search . '%');
+            });
+        })
+        ->when($request->input('open') && $request->input('close'), function ($query) use ($request) {
+            $query->whereIn('Status', [$request->input('open'), $request->input('close')]);
+        })
+        ->when($request->input('open') && !$request->input('close'), function ($query) use ($request) {
+            $query->where('Status', $request->input('open'));
+        })
+        ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
+            $query->where('Status', $request->input('close'));
+        })
+        
+        ->when($progress, function($query) use ($progress, $userId, $userByUser) {
+            if ($progress == '20') {
+                $query->where('Progress', '20')
+                    ->whereHas('salesapprovers', function ($query) use ($userId) {
+                        $query->where('SalesApproverId', $userId);
+                    });
+            } else {
+                $query->where('Progress', $progress);
+            }
+        })
+        ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
+            $query->where(function ($query) use ($userId, $userByUser) {
+                $query->where('PrimaryAccountManagerId', $userId)
+                    ->orWhere('SecondaryAccountManagerId', $userId)
+                    ->orWhere('PrimaryAccountManagerId', $userByUser)
+                    ->orWhere('SecondaryAccountManagerId', $userByUser);
+            }); 
+        })
+        ->orderBy($sort, $direction);
+    
 
+        // Fetch data based on `fetchAll` flag and return
         if ($fetchAll) {
             $data = $customerComplaint->get();
             return response()->json($data);
@@ -94,11 +120,12 @@ class CustomerComplaint2Controller extends Controller
             return view('customer_service.cc_list', [
                 'search' => $search,
                 'data' => $data,
-                'open' => $open,
-                'close' => $close,
+                'open' => $request->input('open'),
+                'close' => $request->input('close'),
                 'fetchAll' => $fetchAll,
                 'entries' => $entries,
                 'newCcNo' => $newCcNo,
+                'progress' => $progress
             ]);
         }
     }
@@ -121,6 +148,7 @@ class CustomerComplaint2Controller extends Controller
             'SiteConcerned' => $request->SiteConcerned,
             'Department' => $request->Department,
             'Status' => '10',
+            'Progress' => '10'
         ]);
 
         CcProductQuality::create([
@@ -267,6 +295,7 @@ class CustomerComplaint2Controller extends Controller
         $data->ShipmentDate = $request->ShipmentDate;
         $data->AmountIncurred = $request->AmountIncurred;
         $data->ShipmentCost = $request->ShipmentCost;
+        $data->Progress = 40;
         $data->save();
 
         return response()->json([
@@ -280,6 +309,7 @@ class CustomerComplaint2Controller extends Controller
         $data = CustomerComplaint2::findOrFail($id);
         $data->ReceivedBy = auth()->user()->id;
         $data->DateReceived = now();
+        $data->Progress = 20;
         $data->save();
 
         return response()->json([
@@ -292,6 +322,7 @@ class CustomerComplaint2Controller extends Controller
     {
         $data = CustomerComplaint2::findOrFail($id);
         $data->NotedBy = auth()->user()->id;
+        $data->Progress = 30;
         $data->save();
 
         return response()->json([
@@ -299,13 +330,14 @@ class CustomerComplaint2Controller extends Controller
             'message' => 'Customer complaint has been successfully updated.'
         ]);
     }
-
+    
     public function closed($id)
     {
         $data = CustomerComplaint2::findOrFail($id);
         $data->ClosedBy = auth()->user()->id;
         $data->ClosedDate = now();
         $data->Status = 30;
+        $data->Progress = 50;
         $data->save();
 
         return response()->json([

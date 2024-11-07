@@ -50,78 +50,90 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($crrReturned as $crr)
+                            @php
+                                $isEmpty = count($crrReturned) == 0 && count($rpeReturned) == 0 && count($srfReturned) == 0;
+                            @endphp
+
+                            @if($isEmpty)
                                 <tr>
-                                    <td>
-                                        <a href="{{url('view_customer_requirement/'.$crr->id.'/'.$crr->CrrNumber)}}" title="View Customer Requirements">
-                                            {{ $crr->CrrNumber }}
-                                        </a>
-                                    </td>
-                                    <td>{{ $crr->DateCreated }}</td>
-                                    <td>{{ $crr->DueDate }}</td>
-                                    <td>{{ $crr->client->Name }}</td>
-                                    <td>{{ $crr->product_application->Name }}</td>
-                                    <td>{{ $crr->primarySalesById->full_name }}</td>
-                                    <td>
-                                        @if($crr->Status == 10)
-                                            <div class="badge badge-success">Open</div>
-                                        @elseif($crr->Status == 30)
-                                            <div class="badge badge-warning">Closed</div>
-                                        @elseif($crr->Status == 50)
-                                            <div class="badge badge-danger">Cancelled</div>
-                                        @endif
-                                    </td>
-                                    <td>{{ $crr->progressStatus->name }}</td>
+                                    <td colspan="8" class="text-center">No data available.</td>
                                 </tr>
-                            @endforeach
-                            @foreach($rpeReturned as $rpe)
-                                <tr>
-                                    <td>
-                                        <a href="{{ url('product_evaluation/view/' . $rpe->id.'/'.$rpe->RpeNumber) }}" title="View Product Evaluation">
-                                            {{ $rpe->RpeNumber }}
-                                        </a>
-                                    </td>
-                                    <td>{{ $rpe->DateCreated }}</td>
-                                    <td>{{ $rpe->DueDate }}</td>
-                                    <td>{{ $rpe->client->Name }}</td>
-                                    <td>{{ $rpe->product_application->Name }}</td>
-                                    <td>{{ $rpe->primarySalesPersonById->full_name }}</td>
-                                    <td>
-                                        @if($rpe->Status == 10)
-                                            <div class="badge badge-success">Open</div>
-                                        @elseif($rpe->Status == 30)
-                                            <div class="badge badge-warning">Closed</div>
-                                        @elseif($rpe->Status == 50)
-                                            <div class="badge badge-danger">Cancelled</div>
-                                        @endif
-                                    </td>
-                                    <td>{{ $rpe->progressStatus->name }}</td>
-                                </tr>
-                            @endforeach
-                            @foreach($srfReturned as $srf)
-                                <tr>
-                                    <td>
-                                        <a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber) }}" title="View Sample Request">
-                                            {{ $srf->SrfNumber }}
-                                        </a>
-                                    </td>
-                                    <td>{{ $srf->DateCreated }}</td>
-                                    <td>{{ $srf->DueDate }}</td>
-                                    <td>{{ $srf->client->Name }}</td>
-                                    <td>{{ $srf->productApplicationsId->Name }}</td>
-                                    <td>{{ $srf->primarySalesById->full_name }}</td>
-                                    <td>
-                                        @if($srf->Status == 10)
-                                            <div class="badge badge-success">Open</div>
-                                        @elseif($srf->Status == 30)
-                                            <div class="badge badge-warning">Closed</div>
-                                        @elseif($srf->Status == 50)
-                                            <div class="badge badge-danger">Cancelled</div>
-                                        @endif
-                                    </td>
-                                    <td>{{ $srf->progressStatus->name }}</td>
-                                </tr>
-                            @endforeach
+                            @else
+                                @foreach($crrReturned as $crr)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url('view_customer_requirement/' . $crr->id . '/' . $crr->CrrNumber) }}" title="View Customer Requirements">
+                                                {{ $crr->CrrNumber }}
+                                            </a>
+                                        </td>
+                                        <td>{{ $crr->DateCreated }}</td>
+                                        <td>{{ $crr->DueDate }}</td>
+                                        <td>{{ $crr->client->Name }}</td>
+                                        <td>{{ $crr->product_application->Name }}</td>
+                                        <td>{{ $crr->primarySalesById->full_name }}</td>
+                                        <td>
+                                            @if($crr->Status == 10)
+                                                <div class="badge badge-success">Open</div>
+                                            @elseif($crr->Status == 30)
+                                                <div class="badge badge-warning">Closed</div>
+                                            @elseif($crr->Status == 50)
+                                                <div class="badge badge-danger">Cancelled</div>
+                                            @endif
+                                        </td>
+                                        <td>{{ $crr->progressStatus->name }}</td>
+                                    </tr>
+                                @endforeach
+
+                                @foreach($rpeReturned as $rpe)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url('product_evaluation/view/' . $rpe->id . '/' . $rpe->RpeNumber) }}" title="View Product Evaluation">
+                                                {{ $rpe->RpeNumber }}
+                                            </a>
+                                        </td>
+                                        <td>{{ $rpe->DateCreated }}</td>
+                                        <td>{{ $rpe->DueDate }}</td>
+                                        <td>{{ $rpe->client->Name }}</td>
+                                        <td>{{ $rpe->product_application->Name }}</td>
+                                        <td>{{ $rpe->primarySalesPersonById->full_name }}</td>
+                                        <td>
+                                            @if($rpe->Status == 10)
+                                                <div class="badge badge-success">Open</div>
+                                            @elseif($rpe->Status == 30)
+                                                <div class="badge badge-warning">Closed</div>
+                                            @elseif($rpe->Status == 50)
+                                                <div class="badge badge-danger">Cancelled</div>
+                                            @endif
+                                        </td>
+                                        <td>{{ $rpe->progressStatus->name }}</td>
+                                    </tr>
+                                @endforeach
+
+                                @foreach($srfReturned as $srf)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url('samplerequest/view/' . $srf->Id . '/' . $srf->SrfNumber) }}" title="View Sample Request">
+                                                {{ $srf->SrfNumber }}
+                                            </a>
+                                        </td>
+                                        <td>{{ $srf->DateCreated }}</td>
+                                        <td>{{ $srf->DueDate }}</td>
+                                        <td>{{ $srf->client->Name }}</td>
+                                        <td>{{ $srf->productApplicationsId->Name }}</td>
+                                        <td>{{ $srf->primarySalesById->full_name }}</td>
+                                        <td>
+                                            @if($srf->Status == 10)
+                                                <div class="badge badge-success">Open</div>
+                                            @elseif($srf->Status == 30)
+                                                <div class="badge badge-warning">Closed</div>
+                                            @elseif($srf->Status == 50)
+                                                <div class="badge badge-danger">Cancelled</div>
+                                            @endif
+                                        </td>
+                                        <td>{{ $srf->progressStatus->name }}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>
