@@ -855,7 +855,7 @@
                         </button>
                     </div> --}}
                     @if(!checkIfItsSalesDept(auth()->user()->department_id))
-                        @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && rndManager(auth()->user()->role))
+                        @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 30 && $requestEvaluation->Progress != 55 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 81 && rndManager(auth()->user()->role))
                         <button type="button" class="btn btn-outline-primary float-right mb-3" data-toggle="modal" data-target="#addRpePersonnel">
                             New
                         </button>
