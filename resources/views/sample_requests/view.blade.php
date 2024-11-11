@@ -1748,38 +1748,38 @@
             order: []
         });
 
-        $(".editBtn").on('click', function() {
-            var secondarySales = $(this).data('secondarysales');
-            // var primarySales = $('[name="PrimarySalesPersonId"]').val();
-            var primarySales = $(this).data('primarysales');
+        // $(".editBtn").on('click', function() {
+        //     var secondarySales = $(this).data('secondarysales');
+        //     // var primarySales = $('[name="PrimarySalesPersonId"]').val();
+        //     var primarySales = $(this).data('primarysales');
             
-            refreshSecondaryApprovers(primarySales,secondarySales)
-        })
-        $('[name="PrimarySalesPersonId"]').on('change', function() {
-            var primarySales = $(this).val();
+        //     refreshSecondaryApprovers(primarySales,secondarySales)
+        // })
+        // $('[name="PrimarySalesPersonId"]').on('change', function() {
+        //     var primarySales = $(this).val();
 
-            refreshSecondaryApprovers(primarySales,"")
-        })
-        function refreshSecondaryApprovers(primarySales,secondarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                        $('[name="SecondarySalesPersonId"]').val(secondarySales) 
-                    }, 500);
-                }
-            })
-        }
+        //     refreshSecondaryApprovers(primarySales,"")
+        // })
+        // function refreshSecondaryApprovers(primarySales,secondarySales)
+        // {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_user_approvers')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //                 $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+        //             }, 500);
+        //         }
+        //     })
+        // }
         // function refreshSecondaryApproversv2(primarySales)
         // {
         //     $.ajax({
