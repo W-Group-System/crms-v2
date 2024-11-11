@@ -283,10 +283,10 @@ class CustomerRequirementController extends Controller
             ->when(optional($role)->type, function($q) use ($role, $request, $search) {
                 if ($role->type == "IS") {
                     $q->where('CrrNumber', 'LIKE', "%CRR-IS%")
-                    ->when($request->status == 10 || $request->open, function ($query)use($request) {
+                    ->when($request->status == 10, function ($query)use($request) {
                         $query->where('Status', 10);
                     })
-                    ->when($request->status == 30 || $request->close, function ($query)use($request) {
+                    ->when($request->status == 30, function ($query)use($request) {
                         $query->where('Status', 30);
                     })
                     ->orWhere(function ($query) use ($search){
@@ -314,10 +314,10 @@ class CustomerRequirementController extends Controller
                     // ->orWhere('Status', $request->close);
                 } elseif ($role->type == "LS") {
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%')
-                    ->when($request->status == 10 || $request->open, function ($query)use($request) {
+                    ->when($request->status == 10, function ($query)use($request) {
                         $query->where('Status', 10);
                     })
-                    ->when($request->status == 30 || $request->close, function ($query)use($request) {
+                    ->when($request->status == 30, function ($query)use($request) {
                         $query->where('Status', 30);
                     })
                     ->orWhere(function ($query) use ($search){
