@@ -345,7 +345,7 @@
                             
                             <tbody>
                                 @if($data->productFiles)
-                                    @foreach ($data->productFiles as $pf)
+                                    @foreach ($data->productFiles->where('IsConfidential', 0) as $pf)
                                         <tr>
                                             <td>
                                                 @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
