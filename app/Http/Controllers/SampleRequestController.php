@@ -553,7 +553,7 @@ class SampleRequestController extends Controller
             ->paginate($request->entries ?? 10);
           
        
-        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users'));
+        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users', 'loggedInUser'));
     }
 
     public function getSampleContactsByClientF($clientId)
@@ -705,7 +705,7 @@ class SampleRequestController extends Controller
 
         $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
         $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate');
-        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'orderedCombinedLogs', 'srfProgress', 'clients', 'users', 'primarySalesPersons', 'secondarySalesPersons', 'productApplications', 'productCodes','transactionApprovals'));
+        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'orderedCombinedLogs', 'srfProgress', 'clients', 'users', 'primarySalesPersons', 'secondarySalesPersons', 'productApplications', 'productCodes','transactionApprovals', 'loggedInUser'));
     }               
 
     // public function update(Request $request, $id)

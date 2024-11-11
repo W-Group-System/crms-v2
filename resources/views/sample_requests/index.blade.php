@@ -26,7 +26,7 @@
         </div>
         <div class="card-body" style="overflow: auto;">
             <div class="card-title d-flex justify-content-between align-items-center">
-                <form method="GET" >
+                <form method="GET" onsubmit="show()">
                     <label>Show : </label>
                     <label class="checkbox-inline">
                         <input name="open" class="sample_request_status" type="checkbox" value="10" @if($open == 10) checked @endif> Open
@@ -52,7 +52,7 @@
             <div class="row">
                 <div class="col-lg-6">
                     <span>Show</span>
-                    <form method="GET" class="d-inline-block">
+                    <form method="GET" class="d-inline-block" onsubmit="show()">
                         <select name="entries" class="form-control">
                             <option value="10" @if($entries == 10) selected @endif>10</option>
                             <option value="25" @if($entries == 25) selected @endif>25</option>
@@ -63,7 +63,7 @@
                     <span>Entries</span>
                 </div>
                 <div class="col-lg-6">
-                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <div class="row height d-flex justify-content-end align-items-end">
                             <div class="col-md-10">
                                 <div class="search">
@@ -472,62 +472,62 @@
             });
         });
 
-        $("#addSrfBtn").on('click', function() {
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+        // $("#addSrfBtn").on('click', function() {
+        //     var primarySales = $('[name="PrimarySalesPersonId"]').val();
             
-            refreshSecondaryApprovers(primarySales)
-        })
+        //     refreshSecondaryApprovers(primarySales)
+        // })
 
-        $('.editBtn').on('click', function() {
-            var primarySales = $(this).data('primarysales')
-            var secondarySales = $(this).data('secondarysales');
+        // $('.editBtn').on('click', function() {
+        //     var primarySales = $(this).data('primarysales')
+        //     var secondarySales = $(this).data('secondarysales');
 
-            console.log(primarySales);
+        //     console.log(primarySales);
             
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
-                    }, 500);
-                }
-            })
-        })
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_user_approvers')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //                 // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+        //             }, 500);
+        //         }
+        //     })
+        // })
 
-        $('[name="PrimarySalesPersonId"]').on('change', function() {
-            var primarySales = $(this).val();
+        // $('[name="PrimarySalesPersonId"]').on('change', function() {
+        //     var primarySales = $(this).val();
 
-            refreshSecondaryApprovers(primarySales)
-        })
+        //     refreshSecondaryApprovers(primarySales)
+        // })
 
-        function refreshSecondaryApprovers(primarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_user_approvers')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                    }, 500);
-                }
-            })
-        }
+        // function refreshSecondaryApprovers(primarySales)
+        // {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_user_approvers')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //             }, 500);
+        //         }
+        //     })
+        // }
     })
 </script>
 @include('sample_requests.create_srf')
