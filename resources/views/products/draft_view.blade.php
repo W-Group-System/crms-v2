@@ -424,6 +424,7 @@
                                         $previousValue = null;
                                         $array_values = $history_rmc['materials'];
                                         $last_total = 0;
+                                        $total = 0;
                                     @endphp
                                     @foreach ($history_rmc['result'] as $key => $rmc)
                                         <tr>
