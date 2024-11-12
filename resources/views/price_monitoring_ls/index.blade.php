@@ -254,62 +254,62 @@
 
     $(document).on('change', '.product-pick', handleProductChange);
 
-    $("#addPrfBtn").on('click', function() {
-            var primarySales = $('[name="PrimarySalesPersonId"]').val();
+    // $("#addPrfBtn").on('click', function() {
+    //         var primarySales = $('[name="PrimarySalesPersonId"]').val();
             
-            refreshSecondaryApprovers(primarySales)
-        })
+    //         refreshSecondaryApprovers(primarySales)
+    //     })
 
-        $('.editBtn').on('click', function() {
-            var primarySales = $(this).data('primarysales')
-            var secondarySales = $(this).data('secondarysales');
+        // $('.editBtn').on('click', function() {
+        //     var primarySales = $(this).data('primarysales')
+        //     var secondarySales = $(this).data('secondarysales');
 
-            console.log(primarySales);
+        //     console.log(primarySales);
             
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_secondary_persons_prf')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                        // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
-                    }, 500);
-                }
-            })
-        })
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_secondary_persons_prf')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //                 // $('[name="SecondarySalesPersonId"]').val(secondarySales) 
+        //             }, 500);
+        //         }
+        //     })
+        // })
 
-        $('[name="PrimarySalesPersonId"]').on('change', function() {
-            var primarySales = $(this).val();
+        // $('[name="PrimarySalesPersonId"]').on('change', function() {
+        //     var primarySales = $(this).val();
 
-            refreshSecondaryApprovers(primarySales)
-        })
+        //     refreshSecondaryApprovers(primarySales)
+        // })
 
-        function refreshSecondaryApprovers(primarySales)
-        {
-            $.ajax({
-                type: "POST",
-                url: "{{url('refresh_secondary_persons_prf')}}",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    ps: primarySales,
-                },
-                success: function(data)
-                {
-                    setTimeout(() => {
-                        $('[name="SecondarySalesPersonId"]').html(data) 
-                    }, 500);
-                }
-            })
-        }
+        // function refreshSecondaryApprovers(primarySales)
+        // {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "{{url('refresh_secondary_persons_prf')}}",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         data: {
+        //             ps: primarySales,
+        //         },
+        //         success: function(data)
+        //         {
+        //             setTimeout(() => {
+        //                 $('[name="SecondarySalesPersonId"]').html(data) 
+        //             }, 500);
+        //         }
+        //     })
+        // }
 })
 
 </script>

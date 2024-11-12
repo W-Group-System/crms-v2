@@ -28,7 +28,7 @@
                                     @endforeach
                                 </select>
                                 @endif --}}
-                                @php
+                                {{-- @php
                                     $primary_sales = "";
                                     if ($price_monitorings->primarySalesPersonById == null)
                                     {
@@ -41,7 +41,16 @@
                                 @endphp
                                 <label>Primary Sales Person</label>
                                 <input type="hidden" name="PrimarySalesPersonId" value="{{$primary_sales->id}}">
-                                <input type="text" class="form-control" value="{{$primary_sales->full_name}}" readonly>
+                                <input type="text" class="form-control" value="{{$primary_sales->full_name}}" readonly> --}}
+                                <select class="form-control js-example-basic-single" name="PrimarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($loggedInUser->groupSales as $group_sales)
+                                        @php
+                                            $user = $group_sales->user;
+                                        @endphp
+                                        <option value="{{ $user->id }}" @if($user->id == $price_monitorings->PrimarySalesPersonId || $user->user_id == $price_monitorings->PrimarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select> 
                             </div>
                             <div class="form-group">
                                 <label>Secondary Sales Person</label>
@@ -52,7 +61,7 @@
                                         <option value="{{ $user->id }}" @if($user->user_id == $price_monitorings->SecondarySalesPersonId || $user->id == $price_monitorings->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select> --}}
-                                @php
+                                {{-- @php
                                     $secondary_sales = "";
                                     if ($price_monitorings->secondarySalesPersonById == null)
                                     {
@@ -73,7 +82,16 @@
                                         <option value="{{ $user->id }}" @if($user->id == $price_monitorings->SecondarySalesPersonId || $user->user_id == $price_monitorings->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
                                     @endforeach
                                 </select> 
-                                @endif
+                                @endif --}}
+                                <select class="form-control js-example-basic-single" name="SecondarySalesPersonId" style="position: relative !important" title="Select Sales Person" required>
+                                    <option value="" disabled selected>Select Sales Person</option>
+                                    @foreach($loggedInUser->groupSales as $group_sales)
+                                        @php
+                                            $user = $group_sales->user;
+                                        @endphp
+                                        <option value="{{ $user->id }}" @if($user->id == $price_monitorings->SecondarySalesPersonId || $user->user_id == $price_monitorings->SecondarySalesPersonId) selected @endif>{{ $user->full_name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-lg-6">

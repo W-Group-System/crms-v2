@@ -221,7 +221,7 @@ class PriceMonitoringController extends Controller
         // })
         // ->get();
         
-        return view('price_monitoring_ls.index', compact('price_monitorings','clients','primarySalesPersons', 'secondarySalesPersons', 'products', 'payment_terms', 'entries', 'search', 'open', 'close', 'productApplications', 'pricegaes', 'users' )); 
+        return view('price_monitoring_ls.index', compact('price_monitorings','clients','primarySalesPersons', 'secondarySalesPersons', 'products', 'payment_terms', 'entries', 'search', 'open', 'close', 'productApplications', 'pricegaes', 'users', 'loggedInUser' )); 
 
     }
 
@@ -754,7 +754,8 @@ class PriceMonitoringController extends Controller
         $mappedAuditsCollection = collect($mappedAudits);
     
         $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-        return view('price_monitoring_ls.view', compact('price_monitorings','prfFileUploads', 'activities', 'combinedLogs', 'clients','users','products', 'productApplications','pricegaes', 'payment_terms'));
+        $loggedInUser = auth()->user();
+        return view('price_monitoring_ls.view', compact('price_monitorings','prfFileUploads', 'activities', 'combinedLogs', 'clients','users','products', 'productApplications','pricegaes', 'payment_terms', 'loggedInUser'));
     }
 
     public function getPrfContacts($clientId)
