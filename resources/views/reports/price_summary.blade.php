@@ -13,11 +13,11 @@
                 </div>
                 <form class="form-inline col-md-6" action="{{ route('reports.price_request') }}" method="GET">
                     <div class="col-md-6 mt-2 mb-2">
-                        <label>From (DD/MM/YYYY):</label>
+                        <label style="align-items: start;justify-content: left;">From (DD/MM/YYYY):</label>
                         <input type="date" class="form-control" name="from" id="from" value="{{ request('from', now()->startOfMonth()->format('Y-m-d')) }}" style="width: 100%;" onchange="this.form.submit()">
                     </div>
                     <div class="col-md-6 mt-2 mb-2">
-                        <label>To (DD/MM/YYYY):</label>
+                        <label style="align-items: start;justify-content: left;">To (DD/MM/YYYY):</label>
                         <input type="date" class="form-control" name="to" id="to" value="{{ request('to', now()->endOfMonth()->format('Y-m-d')) }}" style="width: 100%;" onchange="this.form.submit()">
                     </div>
                 </form>
@@ -205,7 +205,7 @@
                             @endforeach
                         @else 
                             <tr>
-                                <td colspan="14" class="text-center">No matching records found</td>
+                                <td colspan="16" class="text-center">No matching records found</td>
                             </tr>
                         @endif
                     </tbody>

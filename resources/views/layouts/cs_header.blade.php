@@ -59,7 +59,7 @@
         }
         .body_cs {
             min-height: 100vh;
-            background: url('images/logo.jpg');
+            background: url('images/Seaweed_farm.jpg');
             background-size: cover;
             box-shadow: inset 0 0 0 2000px #20222582;
         }

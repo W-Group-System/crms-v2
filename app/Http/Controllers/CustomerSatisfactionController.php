@@ -115,6 +115,13 @@ class CustomerSatisfactionController extends Controller
                         ->orWhere('SecondaryAccountManagerId', $userByUser);
                 }); 
             })
+            ->orWhere(function ($query) use ($userId) {
+                // Include entries where 'ReceivedBy' is the same as the 'userId' in the 'salesapprovers' table
+                $query->where('Progress', '20')
+                    ->whereHas('salesapprovers', function ($query) use ($userId) {
+                        $query->where('SalesApproverId', $userId);
+                    });
+            })
             ->orderBy($sort, $direction);
 
         if ($fetchAll) {
@@ -147,7 +154,7 @@ class CustomerSatisfactionController extends Controller
             'ContactNumber' => $request->ContactNumber,
             'Email' => $request->Email,
             'Status' => '10',
-            'Progress' => '10',
+            'Progress' => '10'
         ]);
 
         if ($request->hasFile('Path')) {
@@ -217,6 +224,7 @@ class CustomerSatisfactionController extends Controller
         $data->Status = '30';
         $data->Progress = 50;
         $data->DateClosed = now();
+        $data->ClosedBy = auth()->user()->id;
         $data->save();
 
         return response()->json([

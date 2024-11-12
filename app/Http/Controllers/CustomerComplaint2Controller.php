@@ -89,7 +89,6 @@ class CustomerComplaint2Controller extends Controller
         ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
             $query->where('Status', $request->input('close'));
         })
-        
         ->when($progress, function($query) use ($progress, $userId, $userByUser) {
             if ($progress == '20') {
                 $query->where('Progress', '20')
@@ -108,6 +107,13 @@ class CustomerComplaint2Controller extends Controller
                     ->orWhere('SecondaryAccountManagerId', $userByUser);
             }); 
         })
+        ->orWhere(function ($query) use ($userId) {
+            // Include entries where 'ReceivedBy' is the same as the 'userId' in the 'salesapprovers' table
+            $query->where('Progress', '20')
+                ->whereHas('salesapprovers', function ($query) use ($userId) {
+                    $query->where('SalesApproverId', $userId);
+                });
+        })
         ->orderBy($sort, $direction);
     
 
@@ -120,8 +126,8 @@ class CustomerComplaint2Controller extends Controller
             return view('customer_service.cc_list', [
                 'search' => $search,
                 'data' => $data,
-                'open' => $request->input('open'),
-                'close' => $request->input('close'),
+                'open' => $open,
+                'close' => $close,
                 'fetchAll' => $fetchAll,
                 'entries' => $entries,
                 'newCcNo' => $newCcNo,
