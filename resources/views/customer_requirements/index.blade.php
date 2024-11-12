@@ -9,12 +9,21 @@
             <div class="card-title d-flex justify-content-between align-items-center">
                 <form method="GET" onsubmit="show()">
                     <label>Show : </label>
-                    <label class="checkbox-inline">
-                        <input name="{{$open ? 'open' : 'status'}}" class="activity_status" type="checkbox" value="10" @if($open == 10 || $status == 10) checked @endif> Open
-                    </label>
-                    <label class="checkbox-inline">
-                        <input name="{{$close ? 'close' : 'status'}}" class="activity_status" type="checkbox" value="30" @if($close == 30 || $status == 30) checked @endif> Closed
-                    </label>
+                    @if($status)
+                        <label class="checkbox-inline">
+                            <input name="status" class="activity_status" type="checkbox" value="10" @if($status == 10) checked @endif> Open
+                        </label>
+                        <label class="checkbox-inline">
+                            <input name="status" class="activity_status" type="checkbox" value="30" @if($status == 30) checked @endif> Closed
+                        </label>
+                    @else
+                        <label class="checkbox-inline">
+                            <input name="open" class="activity_status" type="checkbox" value="10" @if($open == 10 || $status == 10) checked @endif> Open
+                        </label>
+                        <label class="checkbox-inline">
+                            <input name="close" class="activity_status" type="checkbox" value="30" @if($close == 30 || $status == 30) checked @endif> Closed
+                        </label>
+                    @endif
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
                 @include('components.error')
