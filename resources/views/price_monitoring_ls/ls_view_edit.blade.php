@@ -203,7 +203,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Category</label>
-                                            <select class="form-control js-example-basic-single category-select" name="Type[]"  style="position: relative !important" title="Select Category">
+                                            <select class="form-control js-example-basic-single category-select" name="Type[]"  style="position: relative !important" title="Select Category" required>
                                                 <option value="" disabled @if ($priceProducts->Type == '') selected @endif>Select Category</option>
                                                 <option value="1" @if ($priceProducts->Type == '1') selected @endif>Pure</option>
                                                 <option value="2" @if ($priceProducts->Type == '2') selected @endif>Blend</option>
