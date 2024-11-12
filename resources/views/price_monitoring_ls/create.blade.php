@@ -169,7 +169,7 @@
                                 </div>
                                 <div class="form-group">
                                      <label>Category</label>
-                                     <select class="form-control js-example-basic-single category-select" name="Type[]"  style="position: relative !important" title="Select Category">
+                                     <select class="form-control js-example-basic-single category-select" name="Type[]"  style="position: relative !important" title="Select Category" required>
                                         <option value="" disabled selected>Select Category</option>
                                         <option value="1">Pure</option>
                                         <option value="2">Blend</option>
