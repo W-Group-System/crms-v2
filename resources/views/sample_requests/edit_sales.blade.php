@@ -581,7 +581,7 @@ $(document).ready(function() {
             </div>
                        </div>`;
                        $('.productRows{{$sampleRequest->Id }}').append(newProductForm);
-                       $('.ProductType, .ApplicationId, .Disposition, .UnitOfMeasure', '.ProductCode').select2();
+                       $('.js-example-basic-single').select2();
    }
 
  $(document).off('click', '.addSrfProductRowBtn{{$sampleRequest->Id }}').on('click', '.addSrfProductRowBtn{{$sampleRequest->Id }}', function() {
