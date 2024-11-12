@@ -601,6 +601,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/transaction_activity', 'ReportsController@transaction_summary')->name('reports.transaction_activity');
         Route::get('/export-transaction-activity', 'ReportsController@exportTransactionActivity')->name('export_transaction_activity');
         Route::get('/copy-transaction-activity', 'ReportsController@copyTransactionActivity')->name('copy_transaction_activity');
+        Route::get('/sample_dispatch', 'ReportsController@sample_summary')->name('reports.sample_dispatch');
     
         Route::get('audits','AuditController@index');
     

@@ -20,13 +20,13 @@
                         @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
                             <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-outline-success receivedBtn">
+                                <button type="submit" class="btn btn-outline-success notedBtn">
                                     <i class="ti-check">&nbsp;</i> Noted By
                                 </button>
                             </form>
                         @endif
                     @endif
-                    @if($data->Status == 10 && $data->ReceivedBy != NULL)
+                    @if($data->Progress == 30)
                     <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
                     </button>
@@ -692,6 +692,33 @@
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.notedBtn').on('click', function (e) {
+            e.preventDefault(); 
+
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action'); 
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(), 
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Noted",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            customClass: 'swal-wide',
                             timer: 1500
                         }).then(function () {
                             window.location.reload(); 

@@ -20,7 +20,7 @@
                         @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
                             <form action="{{ url('cs_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-outline-success receivedBtn">
+                                <button type="submit" class="btn btn-outline-success notedBtn">
                                     <i class="ti-check">&nbsp;</i> Noted By
                                 </button>
                             </form>
@@ -92,15 +92,19 @@
                         <div class="col-sm-3">
                             <label>{{ $data->ContactName }}</label>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Date Closed:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Closed By:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->DateClosed ?? 'N/A' }}</label>
+                            <label>{{ $data->closedBy->full_name ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Contact Number:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->ContactNumber }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Date Closed:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->DateClosed ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-3">
@@ -206,6 +210,33 @@
                             timer: 1500
                         }).then(function () {
                             window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.notedBtn').on('click', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action'); // Get form action URL
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(), // Serialize form data
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Noted",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            customClass: 'swal-wide',
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); // Reload the page after the alert
                         });
                     }
                 }

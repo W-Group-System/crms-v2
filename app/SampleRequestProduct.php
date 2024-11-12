@@ -47,4 +47,9 @@ class SampleRequestProduct extends Model implements Auditable
         return $this->belongsTo(ProductApplication::class, 'ApplicationId', 'id');
     }
 
+    public function uom()
+    {
+        return $this->belongsTo(UnitOfMeasure::class, 'UnitOfMeasureId', 'Id');
+    }
+
 }

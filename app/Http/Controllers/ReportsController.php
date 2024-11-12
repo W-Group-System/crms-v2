@@ -10,6 +10,7 @@ use App\PriceMonitoring;
 use App\PriceRequestProduct;
 use App\RequestProductEvaluation;
 use App\SampleRequest;
+use App\SampleRequestProduct;
 use App\User;
 use App\Product;
 use App\SrfProgress;
@@ -1393,4 +1394,28 @@ class ReportsController extends Controller
         return response()->json(['data' => $csv]);
     }
 
+    public function sample_summary(Request $request)
+    {
+        $search = $request->input('search');
+        $sort = $request->get('sort', 'SampleRequestId');
+        $direction = $request->get('direction', 'desc');
+        $fetchAll = $request->input('fetch_all', false);
+        $entries = $request->input('number_of_entries', 10);
+
+        $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
+        $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
+
+        $query = SampleRequestProduct::with(['sampleRequest', 'uom'])
+            ->orderBy($sort, $direction);
+        
+            if ($fetchAll) {
+                $sample_dispatch = $query->get();
+            } else {
+                $sample_dispatch = $query->paginate($entries);
+            }
+
+        return view('reports.sample_summary', compact(
+            'search', 'entries', 'fetchAll', 'sort', 'direction', 'from', 'to', 'sample_dispatch',
+        ));
+    }
 }

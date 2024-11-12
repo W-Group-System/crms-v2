@@ -8,6 +8,7 @@
     @csrf
     <input type="hidden" name="CsNumber" value="{{ $newCsNo }}">
     <input type="hidden" name="Status" value="10">
+    <input type="hidden" name="Progress" value="10">
     <div class="row col-lg-12 mt-3" style="margin-left: 0px">
         <div class="offset-lg-1 col-lg-5">
             <div class="form-group">

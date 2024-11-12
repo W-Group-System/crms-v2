@@ -603,6 +603,7 @@
                                     @if(viewModule('Transaction Activity Summary', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url ('/transaction_activity') }}">Transaction/Activity Summary</a></li>
                                     @endif
+                                    <li class="nav-item"><a class="nav-link" href="{{ url ('/sample_dispatch') }}">Sample Dispatch Summary</a></li>
                                 </ul>
                             </div>
                         </li>
