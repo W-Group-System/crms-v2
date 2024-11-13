@@ -187,7 +187,7 @@
                             <thead>
                                 <tr>
                                     <th>Material</th>
-                                    @if(!authCheckIfItsSales(auth()->user()->department_id) && auth()->user()->role->type == 'CS')
+                                    @if(!authCheckIfItsSales(auth()->user()->department_id) && auth()->user()->role->type != 'CS')
                                     <th>%</th>
                                     @endif
                                 </tr>
@@ -198,7 +198,7 @@
                                         <td>
                                             {{$pmc->rawMaterials->Name}}
                                         </td>
-                                        @if(!authCheckIfItsSales(auth()->user()->department_id) && auth()->user()->role->type == 'CS')
+                                        @if(!authCheckIfItsSales(auth()->user()->department_id) && auth()->user()->role->type != 'CS')
                                         <td>
                                             {{$pmc->Percentage}}%
                                         </td>
