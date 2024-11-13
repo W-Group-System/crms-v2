@@ -257,15 +257,13 @@ class CustomerComplaint2Controller extends Controller
             'OthersQuantity4' => $request->OthersQuantity4,
             'OthersLotNo4' => $request->OthersLotNo4
         ]);
-        return response()->json([
-            'success' => true,
-            'message' => 'Customer complaint has been successfully.'
-        ]);
+
         // dd($customerComplaint);
         // return response()->json(['success' => 'You submitted the form successfully..$customerComplaint->id']);
         // return response()->json([
         //     'success' => 'You submitted the form successfully. ID: ' . $request->input('CcNumber')
         // ]);
+        return response()->json(['success' => 'Complaint saved successfully.']);
     }
 
     public function update(Request $request, $id)
