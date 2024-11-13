@@ -553,7 +553,8 @@ class PriceMonitoringController extends Controller
 
         $user = Auth::user(); 
         $salesUser = SalesUser::where('SalesUserId', $user->user_id)->first();
-        $type = $salesUser->Type == 2 ? 'IS' : 'LS';
+        // $type = $salesUser->Type == 2 ? 'IS' : 'LS';
+        $type = 'LS';
         $year = Carbon::parse($request->input('DateRequested'))->format('y');
         $lastEntry = PriceMonitoring::where('PrfNumber', 'LIKE', "Prf-{$type}-%")
                     ->orderBy('id', 'desc')
