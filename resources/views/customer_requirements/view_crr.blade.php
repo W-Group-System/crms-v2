@@ -151,13 +151,13 @@
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
                             @endif
-                        @else
-                            @if(authCheckIfItsRnd(auth()->user()->department_id))
-                                @if($crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60)
-                                    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#returnToSales{{$crr->id}}">
-                                        <i class="ti-back-left">&nbsp;</i> Return to Sales
-                                    </button>
-                                @endif
+                        @endif
+
+                        @if(authCheckIfItsRnd(auth()->user()->department_id))
+                            @if($crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60)
+                                <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#returnToSales{{$crr->id}}">
+                                    <i class="ti-back-left">&nbsp;</i> Return to Sales
+                                </button>
                             @endif
                         @endif
 
