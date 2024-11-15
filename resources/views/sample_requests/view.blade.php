@@ -1060,7 +1060,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($assignedPersonnel as $Personnel)
+                                @foreach ($sampleRequest->srfPersonnel as $Personnel)
                                     <tr>
                                         <td align="center">
                                             @if(rndManager(auth()->user()->role) && $sampleRequest->Progress != 57 && $sampleRequest->Progress != 60 && $sampleRequest->Progress != 81)
@@ -1073,7 +1073,14 @@
                                             </button> 
                                             @endif
                                         </td>
-                                        <td>{{ optional($Personnel->assignedPersonnel)->full_name }}</td>
+                                        <td>
+                                            {{-- {{ optional($Personnel->srfPersonnel)->full_name }} --}}
+                                            @if($Personnel->assignedPersonnel != null)
+                                                {{$Personnel->assignedPersonnel->full_name}}
+                                            @elseif($Personnel->userId != null)
+                                                {{$Personnel->userId->full_name}}
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>

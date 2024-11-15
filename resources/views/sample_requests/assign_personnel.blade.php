@@ -18,7 +18,7 @@
                                     <select class="form-control js-example-basic-single" name="RndPersonnel" id="RndPersonnel" style="position: relative !important" title="Select RND Personnel" >
                                         <option value="" disabled selected>R&D Personnel</option>
                                         @foreach ($rndPersonnel as $personnel)
-                                            <option value="{{ $personnel->user_id }}" >{{ $personnel->full_name }}</option>
+                                            <option value="{{ $personnel->id }}" >{{ $personnel->full_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
