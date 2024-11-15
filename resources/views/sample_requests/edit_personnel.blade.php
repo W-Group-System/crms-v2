@@ -15,7 +15,7 @@
                         <select class="form-control js-example-basic-single" name="RndPersonnel"  style="position: relative !important" title="Select RND Personnel" >
                             <option value="" disabled selected>R&D Personnel</option>
                             @foreach ($rndPersonnel as $personnel)
-                                <option value="{{ $personnel->user_id }}" @if ($Personnel->PersonnelUserId == $personnel->user_id) selected @endif>{{ $personnel->full_name }}</option>
+                                <option value="{{ $personnel->id }}" @if ($Personnel->PersonnelUserId == $personnel->user_id || $Personnel->PersonnelUserId == $personnel->id) selected @endif>{{ $personnel->full_name }}</option>
                             @endforeach
                         </select>
                     </div>
