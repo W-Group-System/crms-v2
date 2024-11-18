@@ -61,7 +61,7 @@
                                 <i class="ti-trash"></i>
                             </button>
                         </td>
-                        <td>{{ $newBase->productMaterial->Name }}</td>
+                        <td>{{ optional($newBase->productMaterial)->Name }}</td>
                         <td>{{ $newBase->Price }}</td>
                         <td>{{ $newBase->userCreated->full_name }}</td>
                         <td>{{ $newBase->CreatedDate ?? $newBase->created_at }}</td>
