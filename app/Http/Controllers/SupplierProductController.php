@@ -53,7 +53,7 @@ class SupplierProductController extends Controller
             $direction = 'desc';
         }
 
-        $supplierProducts = SupplierProduct::with(['suppliers'])
+        $supplierProducts = SupplierProduct::with(['suppliers', 'progress'])
                 ->where(function ($query) use ($search) {
                 $query->where('ProductName', 'LIKE', '%' . $search . '%')  
                     ->orWhere('Supplier', 'LIKE', '%' . $search . '%')
@@ -134,6 +134,8 @@ class SupplierProductController extends Controller
         $supplier_product->Price = $request->Price;
         $supplier_product->LotNo = $request->LotNo;
         $supplier_product->Status = 10;
+        $supplier_product->Progress = 10;
+        $supplier_product->PreparedBy = auth()->user()->id;
         $supplier_product->save();
 
         // Handle instructions
