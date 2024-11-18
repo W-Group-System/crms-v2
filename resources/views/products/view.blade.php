@@ -345,43 +345,83 @@
                             
                             <tbody>
                                 @if($data->productFiles)
-                                    @foreach ($data->productFiles->where('IsConfidential', 0) as $pf)
-                                        <tr>
-                                            <td>
-                                                @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
-                                                <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
-                                                    <i class="ti-pencil"></i>
-                                                </button>
-                                                <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
-                                                    {{csrf_field()}}
-    
-                                                    <button type="button" class="btn btn-sm btn-outline-danger deleteProductFiles" title="Delete">
-                                                        <i class="ti-trash"></i>
+                                    @if(auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'CS')
+                                        @foreach ($data->productFiles->where('IsConfidential', 0) as $pf)
+                                            <tr>
+                                                <td>
+                                                    @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
+                                                    <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                        <i class="ti-pencil"></i>
                                                     </button>
-                                                </form>
-                                                @endif
-                                            </td>
-                                            <td> 
-                                                @if($pf->IsConfidential == 1)
-                                                <i class="mdi mdi-eye-off-outline text-danger"></i>
-                                                @endif
-                                                {{$pf->Name}}
-                                            </td>
-                                            <td>
-                                                {{$pf->Description}}
-                                            </td>
-                                            <td>
-                                                {{optional($pf->client)->Name}}
-                                            </td>
-                                            <td>
-                                                @if($pf->IsConfidential != 1)
-                                                <a href="{{url($pf->Path)}}" target="_blank">
-                                                    <i class="ti-file"></i>
-                                                </a>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                                    <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                                        {{csrf_field()}}
+        
+                                                        <button type="button" class="btn btn-sm btn-outline-danger deleteProductFiles" title="Delete">
+                                                            <i class="ti-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                    @endif
+                                                </td>
+                                                <td> 
+                                                    @if($pf->IsConfidential == 1)
+                                                    <i class="mdi mdi-eye-off-outline text-danger"></i>
+                                                    @endif
+                                                    {{$pf->Name}}
+                                                </td>
+                                                <td>
+                                                    {{$pf->Description}}
+                                                </td>
+                                                <td>
+                                                    {{optional($pf->client)->Name}}
+                                                </td>
+                                                <td>
+                                                    @if($pf->IsConfidential != 1)
+                                                    <a href="{{url($pf->Path)}}" target="_blank">
+                                                        <i class="ti-file"></i>
+                                                    </a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        @foreach ($data->productFiles as $pf)
+                                            <tr>
+                                                <td>
+                                                    @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
+                                                    <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                        <i class="ti-pencil"></i>
+                                                    </button>
+                                                    <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                                        {{csrf_field()}}
+
+                                                        <button type="button" class="btn btn-sm btn-outline-danger deleteProductFiles" title="Delete">
+                                                            <i class="ti-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                    @endif
+                                                </td>
+                                                <td> 
+                                                    @if($pf->IsConfidential == 1)
+                                                    <i class="mdi mdi-eye-off-outline text-danger"></i>
+                                                    @endif
+                                                    {{$pf->Name}}
+                                                </td>
+                                                <td>
+                                                    {{$pf->Description}}
+                                                </td>
+                                                <td>
+                                                    {{optional($pf->client)->Name}}
+                                                </td>
+                                                <td>
+                                                    @if($pf->IsConfidential != 1)
+                                                    <a href="{{url($pf->Path)}}" target="_blank">
+                                                        <i class="ti-file"></i>
+                                                    </a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 @endif
                             </tbody>
                         </table>
