@@ -52,6 +52,10 @@ class SampleRequestController extends Controller
         $role = $loggedInUser->role;
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id;
+
+        $userDispatch = User::whereIn('department_id', [38, 5, 76])
+                ->where('is_active', 1)
+                ->get();
         
         $withRelation = $role->type == 'LS' ? 'localSalesApprovers' : 'internationalSalesApprovers';
         $salesApprovers = SalesApprovers::where('SalesApproverId', $loggedInUser->id)->pluck('UserId');
@@ -553,7 +557,7 @@ class SampleRequestController extends Controller
             ->paginate($request->entries ?? 10);
           
        
-        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users', 'loggedInUser'));
+        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users', 'loggedInUser', 'userDispatch'));
     }
 
     public function getSampleContactsByClientF($clientId)
@@ -1035,6 +1039,7 @@ class SampleRequestController extends Controller
         $srf->CourierCost = $request->input('CourierCost');
         $srf->Reason = $request->input('Reason');
         $srf->DispatchBy = $request->input('DispatchBy');
+        $srf->ReturnToSales = 0;
         $srf->save();
 
         foreach ($request->input('ProductCode', []) as $key => $value) {
@@ -1217,7 +1222,7 @@ class SampleRequestController extends Controller
     public function ReturnToSalesSRF(Request $request, $id)
     {
         $sampleRequest = SampleRequest::findOrFail($id);
-        $sampleRequest->Progress = 10;
+        // $sampleRequest->Progress = 10;
         $sampleRequest->ReturnToSales = 1;
         $sampleRequest->save();
 
@@ -1403,7 +1408,7 @@ class SampleRequestController extends Controller
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
 
-        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
+        $sampleRequest = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
                     $query->where('Progress', '10')
@@ -1468,7 +1473,7 @@ class SampleRequestController extends Controller
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
 
-        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
+        $sampleRequest = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
                     $query->where('Progress', '10')

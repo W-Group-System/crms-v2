@@ -315,9 +315,14 @@ class SupplierProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function approved($id)
     {
-        //
+        $data = SupplierProduct::findOrFail($id);
+        $data->ApprovedBy = auth()->user()->id;
+        $data->Progress = 20;
+        $data->save();
+
+        return response()->json(['success' => 'Data is successfully updated.']);
     }
 
     public function refCode()

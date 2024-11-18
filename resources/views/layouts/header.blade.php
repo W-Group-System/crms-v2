@@ -129,7 +129,11 @@
                         <li class="nav-item nav-profile dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                                 <img src="{{ asset('/images/user.png')}}" alt="profile"/>
-                                <label>
+                                @if($hasReturnedTransactions ?? false)
+                                    <!-- Display a badge if there are returned transactions -->
+                                    <span class="position-absolute top-0 start-100 translate-middle bg-danger border border-light rounded-circle" 
+                                        style="right: 0px; padding: 0.3rem"></span>
+                                @endif
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                                 <a href="{{ route('my_account') }}" class="dropdown-item">
@@ -138,8 +142,15 @@
                                 </a>
                                 @if(Auth::check() && optional(Auth::user()->role)->type == 'IS' || optional(Auth::user()->role)->type == 'LS')
                                 <a href="{{ route('returned_transaction') }}" class="dropdown-item">
+                                    
                                     <i class="ti ti-share-alt text-primary"></i>
+                                    @if($hasReturnedTransactions ?? false)
+                                        <!-- Display a badge if there are returned transactions -->
+                                        <span class="position-absolute top-0 start-100 translate-middle bg-danger border border-light rounded-circle" 
+                                            style="left: 0px; padding: 0.3rem"></span>
+                                    @endif
                                     Returned Transactions
+                                    
                                 </a>
                                 @endif
                                 <a href="{{ route('change_password') }}" class="dropdown-item">

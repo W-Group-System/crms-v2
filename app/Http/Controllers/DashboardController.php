@@ -36,7 +36,7 @@ class DashboardController extends Controller
         }
     }
 
-    public function salesIndex()
+    public function salesIndex(Request $request)
     {
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id; // Safely access user_id
@@ -47,6 +47,59 @@ class DashboardController extends Controller
             // Handle case where there is no authenticated user
             return redirect()->route('login'); // Or handle it in another appropriate way
         }
+
+        $entries = $request->input('entries', 10); // Default to 10 if not specified
+        $search = $request->input('search');
+
+        $crrReturned = CustomerRequirement::where('ReturnToSales', '1')
+                        ->when($search, function($query) use ($search) {
+                            $query->where('ClientId', 'LIKE', "%{$search}%")
+                                ->orWhere('CrrNumber', 'LIKE', "%{$search}%")
+                                ->orWhere('ApplicationId', 'LIKE', "%{$search}%")
+                                ->orWhere('Status', 'LIKE', "%{$search}%");
+                        })
+                        ->where(function ($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        })
+                        ->paginate($entries, ['*'], 'crr_page')
+                        ->appends(['search' => $search, 'entries' => $entries]);
+        
+        $rpeReturned = RequestProductEvaluation::where('ReturnToSales', '1')
+                        ->when($search, function($query) use ($search) {
+                            $query->where('ClientId', 'LIKE', "%{$search}%")
+                                ->orWhere('RpeNumber', 'LIKE', "%{$search}%")
+                                ->orWhere('ApplicationId', 'LIKE', "%{$search}%")
+                                ->orWhere('Status', 'LIKE', "%{$search}%");
+                        })
+                        ->where(function ($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        })
+                        ->paginate($entries, ['*'], 'rpe_page')
+                        ->appends(['search' => $search, 'entries' => $entries]);
+
+        $srfReturned = SampleRequest::where('ReturnToSales', '1')
+                        ->when($search, function($query) use ($search) {
+                            $query->where('ClientId', 'LIKE', "%{$search}%")
+                                ->orWhere('SrfNumber', 'LIKE', "%{$search}%")
+                                ->orWhere('ApplicationId', 'LIKE', "%{$search}%")
+                                ->orWhere('Status', 'LIKE', "%{$search}%");
+                        })
+                        ->where(function ($query) use ($userId, $userByUser) {
+                            $query->where('PrimarySalesPersonId', $userId)
+                                ->orWhere('SecondarySalesPersonId', $userId)
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser);
+                        })
+                        ->paginate($entries, ['*'], 'srf_page')
+                        ->appends(['search' => $search, 'entries' => $entries]);
+
+        $hasReturnedTransactions = $crrReturned->total() > 0 || $rpeReturned->total() > 0 || $srfReturned->total() > 0;
 
         // Activities
         // Get the count of open activities
@@ -667,7 +720,7 @@ class DashboardController extends Controller
             'crrSalesApproved', 'crrRnDOngoing', 'crrRnDPending', 'crrRnDInitial',
             'crrRnDFinal', 'crrRnDCompleted', 'totalRPECount', 'rpeCancelled', 'rpeSalesApproval',
             'rpeSalesApproved', 'rpeSalesAccepted', 'rpeRnDOngoing', 'rpeRnDPending', 'rpeRnDInitial', 'rpeRnDFinal', 'rpeRnDCompleted', 'totalSRFCount', 'srfCancelled', 'srfSalesApproval',
-            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'salesCrrReturn', 'salesRpeReturn', 'salesSrfReturn', 'totalReturned', 'totalCs', 'customerSatisfactionCount', 'customerComplaintCount', 'ccNotedBy', 'csNotedBy'
+            'srfSalesApproved', 'srfSalesAccepted', 'srfRnDOngoing', 'srfRnDPending', 'srfRnDInitial', 'srfRnDFinal', 'srfRnDCompleted', 'totalApproval', 'role', 'prfSalesApproval', 'totalPRFCount', 'prfSalesApproval', 'prfWaiting', 'prfReopened', 'prfClosed', 'prfManagerApproval', 'crrSalesForApproval', 'rpeSalesForApproval', 'srfSalesForApproval', 'prfSalesForApproval',  'newProducts', 'crrCancelledRND', 'crrSalesApprovalRND', 'crrSalesApprovedRND', 'crrSalesAcceptedRND', 'crrRnDOngoingRND', 'crrRnDPendingRND', 'crrRnDInitialRND', 'crrRnDFinalRND', 'crrRnDCompletedRND', 'crrRnDReceivedRND', 'totalCRRCountRND', 'rpeCancelledRND', 'rpeSalesApprovalRND', 'rpeSalesApprovedRND', 'rpeSalesAcceptedRND', 'rpeRnDOngoingRND', 'rpeRnDPendingRND', 'rpeRnDInitialRND', 'rpeRnDFinalRND', 'rpeRnDCompletedRND', 'rpeRnDReceivedRND', 'totalRPECountRND', 'srfCancelledRND', 'srfSalesApprovalRND', 'srfSalesApprovedRND', 'srfSalesAcceptedRND', 'srfRnDOngoingRND', 'srfRnDPendingRND', 'srfRnDInitialRND', 'srfRnDFinalRND', 'srfRnDCompletedRND', 'srfRnDReceivedRND', 'totalSRFCountRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'totalClosedRND', 'salesCrrReturn', 'salesRpeReturn', 'salesSrfReturn', 'totalReturned', 'totalCs', 'customerSatisfactionCount', 'customerComplaintCount', 'ccNotedBy', 'csNotedBy', 'hasReturnedTransactions'
         ));
     }
 
@@ -1105,6 +1158,8 @@ class DashboardController extends Controller
                         ->paginate($entries, ['*'], 'srf_page')
                         ->appends(['search' => $search, 'entries' => $entries]);
 
-        return view('dashboard.return_transactions', compact('entries', 'search', 'crrReturned', 'rpeReturned', 'srfReturned'));
+        $hasReturnedTransactions = $crrReturned->total() > 0 || $rpeReturned->total() > 0 || $srfReturned->total() > 0;
+
+        return view('dashboard.return_transactions', compact('entries', 'search', 'crrReturned', 'rpeReturned', 'srfReturned', 'hasReturnedTransactions'));
     }
 }

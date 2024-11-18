@@ -153,6 +153,7 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
                             </th>
+                            <th>Is Returned?</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -219,7 +220,13 @@
                                 @endif
                             </td>
                             <td>{{ optional($customerRequirement->progressStatus)->name }}</td>
-                            
+                            <td>
+                                @if($customerRequirement->ReturnToSales == 1)
+                                    Yes
+                                @else
+                                    No 
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
                         @else
@@ -345,6 +352,7 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
                             </th>
+                            <th>Is Returned?</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -426,6 +434,13 @@
                                 @endif
                             </td>
                             <td>{{ optional($customerRequirement->progressStatus)->name }}</td>
+                            <td>
+                                @if($customerRequirement->ReturnToSales == 1)
+                                    Yes
+                                @else
+                                    No 
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
                         @else
