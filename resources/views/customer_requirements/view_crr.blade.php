@@ -154,7 +154,7 @@
                         @endif
 
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
-                            @if($crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60)
+                            @if($crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60 && $crr->ReturnToSales == 0)
                                 <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#returnToSales{{$crr->id}}">
                                     <i class="ti-back-left">&nbsp;</i> Return to Sales
                                 </button>

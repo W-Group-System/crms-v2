@@ -763,6 +763,7 @@ class CustomerRequirementController extends Controller
         $customerRequirements->DetailsOfRequirement = $request->DetailsOfRequirement;
         // $customerRequirements->Status = $request->Status;
         $customerRequirements->RefCode = $request->RefCode;
+        $customerRequirements->ReturnToSales = 0;
         if($request->has('NatureOfRequestId'))
         {
             $crrNature = CrrNature::where('CustomerRequirementId', $id)->delete();
@@ -1393,8 +1394,8 @@ class CustomerRequirementController extends Controller
     public function returnToSales(Request $request, $id)
     {
         $crr = CustomerRequirement::findOrFail($id);
-        $crr->Progress = 10;
-        $crr->returnToSales = 1;
+        // $crr->Progress = 10;
+        $crr->ReturnToSales = 1;
         $crr->save();
 
         $transactionApproval = new TransactionApproval;

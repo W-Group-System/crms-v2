@@ -190,6 +190,7 @@
                                 <th>Date Dispatched</th>
                                 <th>Status</th>
                                 <th>Progress</th>
+                                <th>Is Returned?</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -301,6 +302,13 @@
                                             @endif
                                         </td>
                                         <td>{{ optional($srf->progressStatus)->name }}</td>
+                                        <td>
+                                            @if($srf->ReturnToSales == 1)
+                                                Yes
+                                            @else
+                                                No 
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             @else 
@@ -350,6 +358,7 @@
                                 <th>Application</th>
                                 <th>Status</th>
                                 <th>Progress</th>
+                                <th>Is Returned?</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -394,6 +403,13 @@
                                     @endif
                                 </td>
                                 <td>{{ optional($srf->progressStatus)->name }}</td>
+                                <td>
+                                    @if($srf->ReturnToSales == 1)
+                                        Yes
+                                    @else
+                                        No 
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>

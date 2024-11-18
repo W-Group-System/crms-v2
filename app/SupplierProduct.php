@@ -11,8 +11,7 @@ class SupplierProduct extends Model
 
     protected $table = "spe";
     protected $fillable = [
-        'ProductName', 'DateRequested', 'AttentionTo', 'Deadline', 'Manufacturer', 'Quantity', 'Supplier', 'ProductApplication',
-        'Origin', 'LotNo', 'Price'
+        'ProductName', 'DateRequested', 'AttentionTo', 'Deadline', 'Manufacturer', 'Quantity', 'Supplier', 'ProductApplication', 'Origin', 'LotNo', 'Price', 'ApprovedBy', 'Progress'
     ];
 
     public function suppliers()
@@ -33,5 +32,15 @@ class SupplierProduct extends Model
     public function progress() 
     {
         return $this->belongsTo(StProgress::class, 'Progress', 'id');
+    }
+
+    public function prepared_by() 
+    {
+        return $this->belongsTo(User::class, 'PreparedBy', 'id');
+    }
+
+    public function approved_by() 
+    {
+        return $this->belongsTo(User::class, 'ApprovedBy', 'id');
     }
 }

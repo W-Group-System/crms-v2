@@ -68,8 +68,8 @@
                                         </td>
                                         <td>{{ $crr->DateCreated }}</td>
                                         <td>{{ $crr->DueDate }}</td>
-                                        <td>{{ $crr->client->Name }}</td>
-                                        <td>{{ $crr->product_application->Name }}</td>
+                                        <td>{{ optional($crr->client)->Name }}</td>
+                                        <td>{{ optional($crr->product_application)->Name }}</td>
                                         <td>{{ $crr->primarySalesById->full_name }}</td>
                                         <td>
                                             @if($crr->Status == 10)
@@ -93,9 +93,9 @@
                                         </td>
                                         <td>{{ $rpe->DateCreated }}</td>
                                         <td>{{ $rpe->DueDate }}</td>
-                                        <td>{{ $rpe->client->Name }}</td>
-                                        <td>{{ $rpe->product_application->Name }}</td>
-                                        <td>{{ $rpe->primarySalesPersonById->full_name }}</td>
+                                        <td>{{ optional($rpe->client)->Name }}</td>
+                                        <td>{{ optional($rpe->product_application)->Name }}</td>
+                                        <td>{{ $rpe->primarySalesPerson->full_name ?? $rpe->primarySalesPersonById->full_name}}</td>
                                         <td>
                                             @if($rpe->Status == 10)
                                                 <div class="badge badge-success">Open</div>
@@ -116,10 +116,14 @@
                                                 {{ $srf->SrfNumber }}
                                             </a>
                                         </td>
-                                        <td>{{ $srf->DateCreated }}</td>
-                                        <td>{{ $srf->DueDate }}</td>
-                                        <td>{{ $srf->client->Name }}</td>
-                                        <td>{{ $srf->productApplicationsId->Name }}</td>
+                                        <td>{{ $srf->DateRequested }}</td>
+                                        <td>{{ $srf->DateRequired }}</td>
+                                        <td>{{ optional($srf->client)->Name }}</td>
+                                        <td>
+                                            @foreach ($srf->requestProducts as $product)
+                                                {{ optional($product->productApplicationsId)->Name }}<br>
+                                            @endforeach
+                                        </td>
                                         <td>{{ $srf->primarySalesById->full_name }}</td>
                                         <td>
                                             @if($srf->Status == 10)

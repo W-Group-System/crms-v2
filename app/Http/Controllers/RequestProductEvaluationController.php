@@ -507,6 +507,7 @@ class RequestProductEvaluationController extends Controller
         $rpe->Supplier = $request->input('Supplier');
         $rpe->ObjectiveForRpeProject = $request->input('ObjectiveForRpeProject');
         $rpe->Manufacturer = $request->input('Manufacturer');
+        $rpe->ReturnToSales = 0;
         // $rpe->Status = $request->input('Status');
         $rpe->save();
 
@@ -945,7 +946,7 @@ class RequestProductEvaluationController extends Controller
     public function ReturnToSalesRpe($id)
     {
         $rpeList = RequestProductEvaluation::findOrFail($id);
-        $rpeList->Progress = 10;
+        // $rpeList->Progress = 10;
         $rpeList->ReturnToSales = 1;
         $rpeList->save(); 
 

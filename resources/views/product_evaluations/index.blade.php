@@ -79,6 +79,7 @@
                                 <th>RPE Recommendation</th>
                                 <th>Status</th>
                                 <th>Progress</th>
+                                <th>Is Returned?</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -141,6 +142,13 @@
                                             @endif
                                     </td>
                                     <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
+                                    <td>
+                                        @if($productEvaluation->ReturnToSales == 1)
+                                            Yes
+                                        @else
+                                            No 
+                                        @endif
+                                    </td>
                                 </tr>
                                 {{-- @include('product_evaluations.edit') --}}
                                 @endforeach
@@ -162,6 +170,7 @@
                                 <th>RPE Recommendation</th>
                                 <th>Status</th>
                                 <th>Progress</th>
+                                <th>Is Returned</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -219,6 +228,13 @@
                                         @endif
                                     </td>
                                     <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
+                                    <td>
+                                        @if($productEvaluation->ReturnToSales == 1)
+                                            Yes
+                                        @else
+                                            No 
+                                        @endif
+                                    </td>
                                 </tr>
                                 {{-- @include('product_evaluations.edit') --}}
                                 @endforeach

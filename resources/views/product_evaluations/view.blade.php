@@ -205,7 +205,7 @@
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                             
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
-                            @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 20 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 81)
+                            @if($requestEvaluation->Progress != 10 && $requestEvaluation->Progress != 20 && $requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 35 && $requestEvaluation->Progress != 50 && $requestEvaluation->Progress != 57 && $requestEvaluation->Progress != 81 && $requestEvaluation->ReturnToSales == 0)
                                 <button type="button" class="btn btn-outline-info"
                                     data-target="#returnToSales{{  $requestEvaluation->id }}" 
                                     data-toggle="modal" 
