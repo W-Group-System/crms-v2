@@ -539,9 +539,9 @@
 @endforeach   --}}
 
 {{-- @if(auth()->user()->role->type == 'LS') --}}
-@foreach ($sampleRequests as $srf)
+{{-- @foreach ($sampleRequests as $srf)
 @include('sample_requests.edit')
-@endforeach
+@endforeach --}}
 {{-- @elseif ((auth()->user()->role->type == 'IS'))
 @foreach ($products as $product)
 @include('sample_requests.edit')
