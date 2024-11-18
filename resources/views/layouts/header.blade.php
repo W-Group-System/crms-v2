@@ -194,7 +194,7 @@
                                 </a>
                             @endif
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#table_supplier" aria-expanded="false" aria-controls="table_supplier" onclick="toggleSupplier(event)">
                                 <i class="icon-globe menu-icon"></i>
                                 <span class="menu-title">Supplier Transaction</span>
@@ -208,7 +208,7 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/shipment_sample') }}">Shipment Sample Evaluation</a></li> 
                                 </ul>
                             </div> 
-                        </li>
+                        </li> --}}
                         @if((viewModule('Current Products', $department, $role) == "yes") || (viewModule('New Products', $department, $role) == "yes") || (viewModule('Draft Products', $department, $role) == "yes") || (viewModule('Archived Products', $department, $role) == "yes") || (viewModule('Current Base Price', $department, $role) == "yes") || (viewModule('New Base Price', $department, $role) == "yes") || (viewModule('Product Application', $department, $role) == "yes") || (viewModule('Application Sub Categories', $department, $role) == "yes") || (viewModule('Raw Materials', $department, $role) == "yes"))
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#table_product" aria-expanded="false" aria-controls="table_product" onclick="toggleTablesProduct(event)">
@@ -603,7 +603,7 @@
                                     @if(viewModule('Transaction Activity Summary', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url ('/transaction_activity') }}">Transaction/Activity Summary</a></li>
                                     @endif
-                                    <li class="nav-item"><a class="nav-link" href="{{ url ('/sample_dispatch') }}">Sample Dispatch Summary</a></li>
+                                    {{-- <li class="nav-item"><a class="nav-link" href="{{ url ('/sample_dispatch') }}">Sample Dispatch Summary</a></li> --}}
                                 </ul>
                             </div>
                         </li>
