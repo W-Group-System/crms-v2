@@ -964,7 +964,9 @@ function historyRmc($product_material_composition, $product_id)
     $final_id_d = $product_material_composition->sortBy('Percentage')->first();
     
     $basePrice = BasePrice::whereIn('MaterialId', $material_id)
-        ->where('IsDeleted', 0)
+        ->where(function($q) {
+            $q->where('IsDeleted', 0)->orWhere('IsDeleted', null);
+        })
         ->where('Status', 3)
         ->orderBy('EffectiveDate', 'asc')
         ->get();
