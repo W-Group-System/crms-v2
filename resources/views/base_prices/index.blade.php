@@ -38,7 +38,7 @@
                         </td>
                         <td>{{ optional($currentBase->productMaterial)->Name }}</td>
                         <td>{{ $currentBase->Price }}</td>
-                        <td>{{ optional($currentBase->userApproved)->full_name }}</td>
+                        <td>{{ ($currentBase->userApproved->full_name) ?? ($currentBase->userApprovedById->full_name) ?? 'N/A'}}</td>
                         <td>{{ $currentBase->EffectiveDate }}</td>
                     </tr>
                     @endforeach

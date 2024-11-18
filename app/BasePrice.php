@@ -31,8 +31,16 @@ class BasePrice extends Model
     {
         return $this->belongsTo(User::class, 'ApprovedBy', 'user_id');
     }
+    public function userApprovedById()
+    {
+        return $this->belongsTo(User::class, 'ApprovedBy', 'id');
+    }
     public function userCreated()
     {
         return $this->belongsTo(User::class, 'CreatedBy', 'user_id');
+    }
+    public function userCreatedbyId()
+    {
+        return $this->belongsTo(User::class, 'CreatedBy', 'Id');
     }
 }

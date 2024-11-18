@@ -114,7 +114,7 @@ class BasePriceController extends Controller
                     'MaterialId' => $materialId,
                     'Price' => $request->input('Price')[$key],
                     'Status' => 1,
-                    'CreatedBy' => auth()->user()->user_id,
+                    'CreatedBy' => auth()->user()->user_id ?? auth()->user()->id,
                     'CurrencyId' => $request->input('Currency')[$key],
                     'CreatedDate' =>date('Y-m-d, h:i:s')
                 ]);
@@ -181,7 +181,7 @@ class BasePriceController extends Controller
         if ($approveNewBasePrice) {
             if (request()->status === 'approved') {
                 $approveNewBasePrice->Status = 3;
-                $approveNewBasePrice->ApprovedBy = auth()->user()->user_id;
+                $approveNewBasePrice->ApprovedBy = auth()->user()->user_id ?? auth()->user()->id;
                 $approveNewBasePrice->EffectiveDate = now();
                 $approveNewBasePrice->updated_at = now();
             } elseif (request()->status === 'disapproved') {
@@ -203,7 +203,7 @@ class BasePriceController extends Controller
         try {
             BasePrice::whereIn('Id', $ids)->update([
                 'Status' => 3,
-                'ApprovedBy' => auth()->user()->user_id,
+                'ApprovedBy' => auth()->user()->user_id ?? auth()->user()->id,
                 'EffectiveDate' => now(),
                 'updated_at' => now()
             ]);
