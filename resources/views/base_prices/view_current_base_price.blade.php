@@ -18,7 +18,7 @@
                     </div>
                     <div class="card-body bg-light">
                         <p class="mb-0"><strong>USD {{ $currentBase->Price }}</strong></p>
-                        <p class="mb-0">Approved By: {{ optional($currentBase->userApproved)->full_name }}</p>
+                        <p class="mb-0">Approved By: {{ ($currentBase->userApproved->full_name) ?? ($currentBase->userApprovedById->full_name) ?? 'N/A'}}</p>
                         <p class="mb-0">Date: {{ date('m/d/Y', strtotime($currentBase->EffectiveDate)) }}</p>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
                                     <p class="mb-0"><strong>USD {{ $price->Price }}</strong></p>
-                                    <p class="mb-0">Approved By: {{ optional($price->userApproved)->full_name }}</p>
+                                    <p class="mb-0">Approved By: {{ ($currentBase->userApproved->full_name) ?? ($currentBase->userApprovedById->full_name) ?? 'N/A'}}</p>
                                     <p class="mb-0">Date: {{ date('m/d/Y', strtotime($price->EffectiveDate)) }}</p>
                                 </div>
                             </li>
