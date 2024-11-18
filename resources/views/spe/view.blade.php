@@ -7,7 +7,7 @@
                 <div class="col-lg-6"> 
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Supplier Product Evaluation</h4>
                 </div>
-                <div class="col-lg-12" align="right">
+                <div class="col-lg-6" align="right">
                     @if(url()->previous() == url()->current())
                     <a href="{{ url('supplier_product') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
@@ -17,6 +17,13 @@
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @endif
+                    <form action="{{ url('spe_approved/' . $data->id) }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-success approvedBtn">
+                            <i class="ti-check">&nbsp;</i>Approved
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-md btn-outline-warning">Update</button>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group row mb-0" style="margin-top: 2em">
@@ -100,10 +107,17 @@
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Status:</b></label>
                         <div class="col-sm-3">
+                            <label>
+                                @if($data->Status == 10)
+                                    Open
+                                @else
+                                    Closed
+                                @endif
+                            </label>
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Progress:</b></label>
                         <div class="col-sm-3">
-                            <label></label>
+                            <label>{{ $data->progress->name }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">

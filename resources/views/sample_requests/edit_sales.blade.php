@@ -291,7 +291,7 @@
                         <div class="modal-footer product-footer"></div>
                         <div class="form-header">
                             <span class="header-label">Dispatch Details</span>
-                            <hr class="form-divider">
+                            <hr class="form-divider mb-4">
                         </div>
                         <div class="row" >
                             <div class="col-md-6">
@@ -308,22 +308,39 @@
                                     <input type="date" class="form-control DateDispatched{{$sampleRequest->Id  }}" name="DateDispatched" placeholder="Enter Date Dispatched" value="{{ old('DateDispatched', !empty( $sampleRequest->DateDispatched) ? date('Y-m-d', strtotime( $sampleRequest->DateDispatched)) : '') }}">
                                 </div>
                                 <div class="form-group">
-                                    <label>Date Sample Received (MM/DD/YYYY):</label>
-                                    <input type="date" class="form-control DateSampleReceived{{$sampleRequest->Id }}" name="DateSampleReceived"  placeholder="Enter Sample Received" value="{{ old('DateSampleReceived', !empty( $sampleRequest->DateSampleReceived) ? date('Y-m-d', strtotime( $sampleRequest->DateSampleReceived)) : '') }}">
+                                    <label for="DeliveryRemarks">Delivery Remarks</label>
+                                    <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks">{{ old('DeliveryRemarks',  $sampleRequest->DeliveryRemarks) }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Reason">Reason For Delayed Dispatch</label>
+                                    <textarea class="form-control" name="Reason" placeholder="Enter Reason For Delayed Dispatch">{{ old('Reason',  $sampleRequest->Reason) }}</textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="DeliveryRemarks">Delivery Remarks</label>
-                                    <textarea class="form-control" name="DeliveryRemarks" placeholder="Enter Delivery Remarks">{{ old('DeliveryRemarks',  $sampleRequest->DeliveryRemarks) }}</textarea>
+                                    <label for="Courier">Courier Cost:</label>
+                                    <input type="text" class="form-control" name="CourierCost" placeholder="Enter Courier Cost" value="{{ old('CourierCost',  $sampleRequest->CourierCost) }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ETA">ETA</label>
+                                    <input type="date" class="form-control Eta{{$sampleRequest->Id }}" name="Eta" value="{{ old('Eta', !empty( $sampleRequest->Eta) ? date('Y-m-d', strtotime( $sampleRequest->Eta)) : '') }}">
+                                </div>
+                                <div class="form-group">
+                                    <label>Date Sample Received (MM/DD/YYYY):</label>
+                                    <input type="date" class="form-control DateSampleReceived{{$sampleRequest->Id }}" name="DateSampleReceived"  placeholder="Enter Sample Received" value="{{ old('DateSampleReceived', !empty( $sampleRequest->DateSampleReceived) ? date('Y-m-d', strtotime( $sampleRequest->DateSampleReceived)) : '') }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="Note">Notes</label>
                                     <textarea class="form-control" name="Note" placeholder="Enter Delivery Notes">{{ old('Note',  $sampleRequest->Note) }}</textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ETA">ETA</label>
-                                    <input type="date" class="form-control Eta{{$sampleRequest->Id }}" name="Eta" value="{{ old('Eta', !empty( $sampleRequest->Eta) ? date('Y-m-d', strtotime( $sampleRequest->Eta)) : '') }}">
+                                    <label for="DispatchBy">Dispatch By</label>
+                                    <select class="form-control js-example-basic-single" name="DispatchBy" title="Select Person">
+                                        <option value="" disabled selected>Select Sales Person</option>
+                                        @foreach($userDispatch as $user)
+                                            <option value="{{ $user->id }}" @if($user->id == $sampleRequest->DispatchBy || $user->user_id == $sampleRequest->DispatchBy) @endif>{{ $user->full_name }}</option>
+                                        @endforeach
+                                    </select> 
                                 </div>
                             </div>
                         </div>

@@ -29,4 +29,9 @@ class SupplierProduct extends Model
     {
         return $this->hasMany(SpeFiles::class, 'SpeId', 'id');
     }
+
+    public function progress() 
+    {
+        return $this->belongsTo(StProgress::class, 'Progress', 'id');
+    }
 }

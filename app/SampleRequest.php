@@ -36,7 +36,10 @@ class SampleRequest extends Model implements Auditable
         'DateSampleReceived',
         'DeliveryRemarks',
         'Note', 
-        'Eta'
+        'Eta',
+        'CourierCost',
+        'Reason',
+        'DispatchBy'
     ];
 
     public function client()
@@ -107,4 +110,8 @@ class SampleRequest extends Model implements Auditable
         return $this->belongsTo(User::class,'ApprovedBy','Id');
     }
     
+    public function dispatchBy()
+    {
+        return $this->belongsTo(User::class, 'DispatchBy', 'id');
+    }
 }

@@ -166,7 +166,7 @@
                 <div class="modal-footer product-footer"></div>
                 <div class="form-header">
                     <span class="header-label">Dispatch Details</span>
-                    <hr class="form-divider">
+                    <hr class="form-divider mb-4">
                 </div>
                 <div class="row" >
                 <div class="col-md-6">

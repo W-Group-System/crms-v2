@@ -77,12 +77,12 @@
                                             <div class="badge badge-warning">Closed</div>
                                         @endif
                                     </td>
-                                    <td></td>
+                                    <td>{{ $supplier_products->progress->name }}</td>
                                 </tr>
                             @endforeach
                         @else 
                             <tr>
-                                <td colspan="6" align="center">No matching records found</td>
+                                <td colspan="9" align="center">No matching records found</td>
                             </tr>
                         @endif                        
                     </tbody>

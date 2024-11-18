@@ -638,6 +638,10 @@ class SampleRequestController extends Controller
         })
         ->get();
 
+        $userDispatch = User::whereIn('department_id', [38, 5, 76])
+                ->where('is_active', 1)
+                ->get();
+
         $rawMaterials = RawMaterial::where('IsDeleted', '0')
         ->orWhere('deleted_at', '=', '')->get();
         $transactionApprovals = TransactionApproval::where('Type', '30')
@@ -705,7 +709,7 @@ class SampleRequestController extends Controller
 
         $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
         $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate');
-        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'orderedCombinedLogs', 'srfProgress', 'clients', 'users', 'primarySalesPersons', 'secondarySalesPersons', 'productApplications', 'productCodes','transactionApprovals', 'loggedInUser'));
+        return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'orderedCombinedLogs', 'srfProgress', 'clients', 'users', 'userDispatch', 'primarySalesPersons', 'secondarySalesPersons', 'productApplications', 'productCodes','transactionApprovals', 'loggedInUser'));
     }               
 
     // public function update(Request $request, $id)
@@ -1028,6 +1032,9 @@ class SampleRequestController extends Controller
         $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
         $srf->Note = $request->input('Note');
         $srf->Eta = $request->input('Eta');
+        $srf->CourierCost = $request->input('CourierCost');
+        $srf->Reason = $request->input('Reason');
+        $srf->DispatchBy = $request->input('DispatchBy');
         $srf->save();
 
         foreach ($request->input('ProductCode', []) as $key => $value) {

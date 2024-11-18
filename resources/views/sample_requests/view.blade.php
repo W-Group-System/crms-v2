@@ -907,11 +907,17 @@
                         <p class="mb-0">{{ $sampleRequest->Courier  }}</p>
                     </div>
                     <div class="col-sm-3 text-right">
+                        <p class="mb-0"><b>Courier&nbsp;Cost&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">{{ $sampleRequest->CourierCost  }}</p>
+                    </div>
+                    <!-- <div class="col-sm-3 text-right">
                         <p class="mb-0"><b>Late&nbsp;:</b></p>
                     </div>
                     <div class="col-sm-3">
                         <p class="mb-0"></p>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="row mb-0">
                     <div class="col-sm-3 text-right">
@@ -921,10 +927,10 @@
                         <p class="mb-0">{{ $sampleRequest->AwbNumber }}</p>
                     </div>
                     <div class="col-sm-3 text-right">
-                        <p class="mb-0"><b>Delivery Remarks&nbsp;:</b></p>
+                        <p class="mb-0"><b>ETA&nbsp;:</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p class="mb-0">{{ $sampleRequest->DeliveryRemarks}}</p>
+                        <p class="mb-0">{{ $sampleRequest->Eta }}</p>
                     </div>
                 </div>
                 <div class="row mb-0">
@@ -935,6 +941,20 @@
                         <p class="mb-0">{{ $sampleRequest->DateDispatched }}</p>
                     </div>
                     <div class="col-sm-3 text-right">
+                        <p class="mb-0"><b>Date Sample Received&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">{{ $sampleRequest->DateSampleReceived }}</p>
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <div class="col-sm-3 text-right">
+                        <p class="mb-0"><b>Delivery Remarks&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-0">{{ $sampleRequest->DeliveryRemarks}}</p>
+                    </div>
+                    <div class="col-sm-3 text-right">
                         <p class="mb-0"><b>Note&nbsp;:</b></p>
                     </div>
                     <div class="col-sm-3">
@@ -943,13 +963,16 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-sm-3 text-right">
-                        <p class="mb-0"><b>Date Sample Received&nbsp;:</b></p>
+                        <p class="mb-0"><b>Reason For Delayed Dispatch&nbsp;:</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p class="mb-0">{{ $sampleRequest->DateSampleReceived }}</p>
+                        <p class="mb-0">{{ $sampleRequest->Reason}}</p>
+                    </div>
+                    <div class="col-sm-3 text-right">
+                        <p class="mb-0"><b>DispatchBy&nbsp;:</b></p>
                     </div>
                     <div class="col-sm-3">
-                        <p></p>
+                        <p class="mb-0">{{ $sampleRequest->dispatchBy->full_name ?? 'N/A'}}</p>
                     </div>
                 </div>
             </div>

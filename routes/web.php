@@ -587,6 +587,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/edit_spe/{id}', 'SupplierProductController@edit')->name('edit_spe');
         Route::post('update_spe/{id}', 'SupplierProductController@update')->name('update_spe');
         Route::get('spe/view/{id}', 'SupplierProductController@view');   
+        Route::post('spe_approved/{id}', 'SupplierProductController@approved');
     
         // Shipment Sample Evaluation
         Route::get('/shipment_sample', 'ShipmentSampleController@index')->name('shipment_sample.index');
@@ -602,7 +603,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/export-transaction-activity', 'ReportsController@exportTransactionActivity')->name('export_transaction_activity');
         Route::get('/copy-transaction-activity', 'ReportsController@copyTransactionActivity')->name('copy_transaction_activity');
         Route::get('/sample_dispatch', 'ReportsController@sample_summary')->name('reports.sample_dispatch');
-    
+        Route::get('/export_sample_request', 'ReportsController@exportSampleDispatch')->name('export_sample_request');
+        
         Route::get('audits','AuditController@index');
     
     });

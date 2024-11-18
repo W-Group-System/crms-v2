@@ -1406,6 +1406,43 @@ class ReportsController extends Controller
         $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
 
         $query = SampleRequestProduct::with(['sampleRequest', 'uom'])
+            ->whereHas('sampleRequest', function($q) use ($from, $to) {
+                $q->whereBetween('DateDispatched', [$from, $to]);
+            })
+            ->where(function ($query) use ($search) {
+                $query->where('ProductCode', 'LIKE', "%$search%")
+                    ->orWhere('Quantity', 'LIKE', "%$search%")
+                    ->orWhere('ProductDescription', 'LIKE', "%$search%")
+                    ->orWhere('NumberOfPackages', 'LIKE', "%$search%")
+                    ->orWhere('ProductIndex', 'LIKE', "%$search%")
+                    ->orWhereHas('sampleRequest', function ($q) use ($search) {
+                        $q->where('DateSampleReceived', 'LIKE', "%$search%")
+                            ->orWhere('DateDispatched', 'LIKE', "%$search%")
+                            ->orWhere('SrfNumber', 'LIKE', "%$search%")
+                            ->orWhere('Courier', 'LIKE', "%$search%")
+                            ->orWhere('AwbNumber', 'LIKE', "%$search%")
+                            ->orWhere('Eta', 'LIKE', "%$search%")
+                            ->orWhere('CourierCost', 'LIKE', "%$search%")
+                            ->orWhere('SrfType', 'LIKE', "%$search%")
+                            ->orWhere('RefCode', 'LIKE', "%$search%")
+                            ->orWhere('Reason', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('sampleRequest.client', function ($q) use ($search) {
+                        $q->where('Name', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('sampleRequest.clientContact', function ($q) use ($search) {
+                        $q->where('ContactName', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('sampleRequest.clientAddress', function ($q) use ($search) {
+                        $q->where('Address', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('sampleRequest.primarySalesPerson', function ($q) use ($search) {
+                        $q->where('full_name', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('sampleRequest.dispatchBy', function ($q) use ($search) {
+                        $q->where('full_name', 'LIKE', "%$search%");
+                    });
+            })  
             ->orderBy($sort, $direction);
         
             if ($fetchAll) {
