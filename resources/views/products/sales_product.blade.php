@@ -84,9 +84,11 @@
                         @if(count($products) > 0)
                         @foreach ($products as $product)
                             @php
+                                $dates = getLatestEffectiveDate($product->productMaterialComposition, $product->id);
+                                $effective_date = date('Y-m-d', strtotime($dates));
                                 $usd = rmc($product->productMaterialComposition, $product->id);
-                                $eur = usdToEur($usd);
-                                $php = usdToPhp($usd);
+                                $eur = usdToRMC($usd, $effective_date, 1);
+                                $php = usdToRMC($usd, $effective_date, 3);
                             @endphp
                             <tr>
                                 {{-- <td>
