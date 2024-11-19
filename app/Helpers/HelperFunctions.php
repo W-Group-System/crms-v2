@@ -44,10 +44,21 @@ function rmc($productRawMaterials, $id)
     {
         $num = $item * $getPercent[$key];
 
-        return round($num, 2);
+        return $num;
     });
 
     return $multiply->sum();
+}
+
+function getLatestEffectiveDate($productRawMaterials, $id)
+{
+    $getMaterialId = $productRawMaterials->pluck('MaterialId')->toArray();
+
+    $effective_date = BasePrice::whereIn('MaterialId', $getMaterialId)
+        ->orderBy('id', 'desc')
+        ->first();
+
+    return $effective_date->EffectiveDate;
 }
 
 function usdToEur($cost)
