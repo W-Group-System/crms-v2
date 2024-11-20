@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Activity;
 use App\Client;
 use App\CustomerRequirement;
+use App\Exports\SampleDispatchReportExport;
 use App\PaymentTerms;
 use App\PriceMonitoring;
 use App\PriceRequestProduct;
@@ -1454,5 +1455,13 @@ class ReportsController extends Controller
         return view('reports.sample_summary', compact(
             'search', 'entries', 'fetchAll', 'sort', 'direction', 'from', 'to', 'sample_dispatch',
         ));
+    }
+
+    public function exportSampleDispatch(Request $request)
+    {
+        $from = $request->input('from') ?: now()->startOfMonth()->format('Y-m-d');
+        $to = $request->input('to') ?: now()->endOfMonth()->format('Y-m-d');
+        
+        return Excel::download(new SampleDispatchReportExport($from, $to), 'Sample Dispatch.xlsx');
     }
 }

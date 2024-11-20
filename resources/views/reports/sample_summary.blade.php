@@ -9,7 +9,13 @@
             <div class="row height d-flex">
                 <div class="col-md-6 mt-2 mb-2">
                     <a href="#" id="copy_sample_btn" style="margin-top: 1.5em" class="btn btn-md btn-outline-info mb-1">Copy</a>
-                    <a href="#" id="excel_sample_btn" style="margin-top: 1.5em" class="btn btn-md btn-outline-success mb-1">Excel</a>
+                    {{-- <a href="#" id="excel_sample_btn" style="margin-top: 1.5em" class="btn btn-md btn-outline-success mb-1">Excel</a> --}}
+                    <form method="GET" action="{{url('export_sample_request')}}" class="d-inline-block">
+                        <input type="hidden" name="from" value="{{ $from }}">
+                        <input type="hidden" name="to" value="{{ $to }}">
+                        
+                        <button type="submit" id="excel_sample_btn" style="margin-top: 1.5em" class="btn btn-md btn-outline-success mb-1">Excel</button>
+                    </form>
                 </div>
                 <form class="form-inline col-md-6" action="{{ route('reports.sample_dispatch') }}" method="GET">
                     <div class="col-md-6 mt-2 mb-2">
@@ -194,36 +200,36 @@
         });
 
         // Excel Export functionality
-        $('#excel_sample_btn').on('click', function() {
-            var tableData = [];
-            var headers = [];
-            // Extract headers
-            $('#sample_summary_table thead tr').each(function() {
-                $(this).find('th').each(function() {
-                    headers.push($(this).text()); // Append column headers
-                });
-            });
+        // $('#excel_sample_btn').on('click', function() {
+        //     var tableData = [];
+        //     var headers = [];
+        //     // Extract headers
+        //     $('#sample_summary_table thead tr').each(function() {
+        //         $(this).find('th').each(function() {
+        //             headers.push($(this).text()); // Append column headers
+        //         });
+        //     });
 
-            // Extract rows
-            $('#sample_summary_table tbody tr').each(function() {
-                var rowData = [];
-                $(this).find('td').each(function() {
-                    rowData.push($(this).text()); // Append row data
-                });
-                tableData.push(rowData);
-            });
+        //     // Extract rows
+        //     $('#sample_summary_table tbody tr').each(function() {
+        //         var rowData = [];
+        //         $(this).find('td').each(function() {
+        //             rowData.push($(this).text()); // Append row data
+        //         });
+        //         tableData.push(rowData);
+        //     });
 
-            // Create worksheet data
-            var ws = XLSX.utils.aoa_to_sheet([headers, ...tableData]);
+        //     // Create worksheet data
+        //     var ws = XLSX.utils.aoa_to_sheet([headers, ...tableData]);
 
-            // Create workbook and add worksheet
-            var wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Sample Dispatch');
+        //     // Create workbook and add worksheet
+        //     var wb = XLSX.utils.book_new();
+        //     XLSX.utils.book_append_sheet(wb, ws, 'Sample Dispatch');
 
-            // Generate the Excel file with the selected date range in the filename
-            var filename = `Sample_Dispatch_${$('#from').val()}_to_${$('#to').val()}.xlsx`;
-            XLSX.writeFile(wb, filename);
-        });
+        //     // Generate the Excel file with the selected date range in the filename
+        //     var filename = `Sample_Dispatch_${$('#from').val()}_to_${$('#to').val()}.xlsx`;
+        //     XLSX.writeFile(wb, filename);
+        // });
     });
 </script>
 @endsection
