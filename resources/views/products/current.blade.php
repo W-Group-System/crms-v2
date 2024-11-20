@@ -113,7 +113,7 @@
                                         $usd = rmc($product->productMaterialComposition, $product->id);
                                     @endphp
 
-                                    USD {{$usd}}
+                                    USD {{number_format($usd,2)}}
                                 </td>
                             </tr>
                         @endforeach
