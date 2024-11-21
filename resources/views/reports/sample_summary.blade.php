@@ -94,7 +94,10 @@
                                     <td>{{ $data->sampleRequest->SrfNumber }}</td>
                                     <td>{{ $data->sampleRequest->client->Name ?? 'N/A' }}</td>
                                     <td>{{ $data->sampleRequest->clientContact->ContactName ?? 'N/A' }}</td>
-                                    <td>{{ $data->sampleRequest->clientAddress->Address ?? 'N/A' }}</td>
+                                    <td>
+                                        {{-- {{ $data->sampleRequest->clientAddress->Address ?? 'N/A' }} --}}
+                                        {!! nl2br($data->sampleRequest->clientAddress->Address) !!}
+                                    </td>
                                     <td>{{ $data->NumberOfPackages }} x {{$data->Quantity}} {{ $data->uom->Name }}</td>
                                     <td>{{ $data->NumberOfPackages * $data->Quantity }}</td>
                                     <td>{{ $data->ProductCode }}</td>
@@ -175,17 +178,23 @@
                 $(this).find('th').each(function() {
                     tableContent += $(this).text().trim() + '\t'; // Append column headers
                 });
+                
                 tableContent += '\n';
             });
+
             $('#sample_summary_table tbody tr').each(function() {
                 $(this).find('td').each(function() {
-                    tableContent += $(this).text().trim() + '\t'; // Append row data
+                    // tableContent += $(this).text().trim() + '\t'; // Append row data
+                    var cellText = $(this).text().trim().replace(/\n/g, ' '); 
+                    tableContent += cellText + '\t'; // Append row data
                 });
+                
                 tableContent += '\n';
             });
 
             // Copy the formatted table data to clipboard
             var tempTextarea = $('<textarea>').text(tableContent).appendTo('body');
+
             tempTextarea.select();
             document.execCommand('copy');
             tempTextarea.remove();
