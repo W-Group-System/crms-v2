@@ -16,7 +16,7 @@ class RpeDetail extends Model implements Auditable
     protected $table = "rpedetails";
     protected $primaryKey = "Id";
     const UPDATED_AT = "ModifiedDate";
-    const CREATED_AT = "DateCreated";
+    const CREATED_AT = "CreatedDate";
 
     protected $fillable = [
         'RequestProductEvaluationId',
