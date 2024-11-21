@@ -1093,4 +1093,9 @@ class ProductController extends Controller
         
         return $pdf->stream();
     }
+
+    public function getProduct()
+    {
+        return Product::where('is_deleted', 0)->get();
+    }
 }

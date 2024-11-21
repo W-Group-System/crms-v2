@@ -117,4 +117,9 @@ class RawMaterialController extends Controller
     {
         return Excel::download(new RawMaterialsExport, 'Raw Materials.xlsx');
     }
+
+    public function getRawMaterials()
+    {
+        return RawMaterial::where('IsDeleted', 0)->get();
+    }
 }
