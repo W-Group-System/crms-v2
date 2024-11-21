@@ -1408,7 +1408,7 @@ class SampleRequestController extends Controller
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
 
-        $sampleRequest = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
+        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
                     $query->where('Progress', '10')
@@ -1473,7 +1473,7 @@ class SampleRequestController extends Controller
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
 
-        $sampleRequest = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
+        $sampleRequests = SampleRequest::with(['requestProducts', 'salesSrfFiles']) 
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
                 if ($progress == '10') {
                     $query->where('Progress', '10')
