@@ -123,7 +123,7 @@
                             </button>
                         @endif
                     @endif
-                    @if((auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId) || (auth()->user()->id == $sampleRequest->SecondarySalesPersonId || auth()->user()->user_id == $sampleRequest->SecondarySalesPersonId ) && auth()->user()->role->name == 'Staff L1')
+                        @if(checkIfInGroup($sampleRequest->PrimarySalesPersonId, auth()->user()->id))
                             @if(auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'LS')
                             {{-- @if(empty($sampleRequest->Courier) && empty($sampleRequest->AwbNumber) && empty($sampleRequest->DateDispatched) && empty($sampleRequest->DateSampleReceived)) --}}
                             <button type="button" class="btn btn-outline-warning editBtn"
@@ -171,7 +171,7 @@
                             </button>
                         @endif
                         
-                            @if(auth()->user()->id != $sampleRequest->SecondarySalesPersonId && auth()->user()->user_id != $sampleRequest->SecondarySalesPersonId)
+                            @if(auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->user_id == $sampleRequest->PrimarySalesPersonId)
                                 @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 70 || $sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
                                     <button type="button" class="btn btn-outline-warning"
                                         data-target="#closeSrf{{ $sampleRequest->Id }}" 
