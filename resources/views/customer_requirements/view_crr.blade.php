@@ -883,7 +883,7 @@
                                 </tr>
                             </thead>
                             @foreach ($crr->crrFiles->whereNotIn('UserType', ['IS', 'LS']) as $files)
-                                @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $files->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
+                                @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $files->IsConfidential == 0 ) || (auth()->user()->role->type == "RND" || str_contains(auth()->user()->role->type, 'QCD')))
                                 <tbody>
                                     <tr>
                                         <td width="10%" align="center">
