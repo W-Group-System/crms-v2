@@ -1012,7 +1012,8 @@ class ProductController extends Controller
     public function salesProduct(Request $request)
     {
         $products = Product::with(['userById', 'userByUserId', 'application'])
-            ->when($request->search, function($q)use($request){
+            ->where('status', 4)
+            ->where(function($q)use($request){
                 $q->where('ddw_number', "LIKE" ,"%".$request->search."%")
                     ->orWhere('code', "LIKE", "%".$request->search."%")
                     ->orWhereHas('userByUserId', function($q)use($request) {
@@ -1030,7 +1031,6 @@ class ProductController extends Controller
                     $q->where('MaterialId', $request->material_filter);
                 });
             }) 
-            ->where('status', '4')
             ->orderBy('updated_at', 'desc')
             ->paginate($request->entries ?? 10);
         

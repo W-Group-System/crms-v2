@@ -7,7 +7,7 @@
         </div>
         <div class="card-body">
             {{-- <h4 class="card-title d-flex justify-content-between align-items-center">Product List (Current)</h4> --}}
-            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+            <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                 <div class="row height d-flex justify-content-start align-items-start">
                     <div class="col-md-3">
                         Application Filter :
@@ -41,7 +41,7 @@
             <div class="row">
                 <div class="col-lg-6">
                     <span>Showing</span>
-                    <form action="" method="get" class="d-inline-block">
+                    <form action="" method="get" class="d-inline-block" onsubmit="show()">
                         <select name="entries" class="form-control">
                             <option value="10"  @if($entries == 10) selected @endif>10</option>
                             <option value="25"  @if($entries == 25) selected @endif>25</option>
@@ -52,7 +52,7 @@
                     <span>Entries</span>
                 </div>
                 <div class="col-lg-6">
-                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
+                    <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <div class="row height d-flex justify-content-end align-items-end">
                             <div class="col-md-8">
                                 <div class="search">
