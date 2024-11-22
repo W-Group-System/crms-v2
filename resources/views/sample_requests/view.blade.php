@@ -1192,7 +1192,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($srfFileUploads as $fileupload)
-                                    @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $fileupload->IsConfidential == 0 ) || (auth()->user()->role->type == "RND"))
+                                    @if(((auth()->user()->role->type == "IS" || auth()->user()->role->type == "LS") && $fileupload->IsConfidential == 0 ) || (auth()->user()->role->type == "RND" ) || (str_contains(auth()->user()->role->type, 'QCD')))
                                     <tr>
                                         <td align="center">
                                             {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes") --}}
