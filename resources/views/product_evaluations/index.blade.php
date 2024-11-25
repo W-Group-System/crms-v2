@@ -129,7 +129,53 @@
                                     </td>
                                     <td></td>
                                     <td></td>
-                                    <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td>
+                                    {{-- <td style="white-space: break-spaces; width: 100%;"> --}}
+                                    <td>
+                                        {{-- {{ optional($productEvaluation)->RpeResult }} --}}
+                                        @php
+                                            $rpeResult = $productEvaluation->RpeResult;
+                                            $pattern = '/\[(.*?)\]/';
+                                        
+                                            $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
+                                                $code = $matches[1];
+                                                $product = getProductIdByCode($code);
+                                                
+                                                if (auth()->user()->role->type == 'IS')
+                                                {
+                                                    if ($product->status == 4)
+                                                    {
+                                                        return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if ($product->status == 4)
+                                                    {
+                                                        return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                                    }
+                                                    if ($product->status == 2)
+                                                    {
+                                                        return '<a href="'.url('view_new_product/'.$product->id).'">'.$matches[0].'</a>';
+                                                    }
+                                                    if ($product->status == 1)
+                                                    {
+                                                        return '<a href="'.url('view_draft_product/'.$product->id).'">'.$matches[0].'</a>';
+                                                    }
+                                                    if ($product->status == 5)
+                                                    {
+                                                        return '<a href="'.url('view_archive_products/'.$product->id).'">'.$matches[0].'</a>';
+                                                    }
+                                                }
+                                                // if ($product->) {
+                                                //     return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
+                                                // }
+                                                
+                                                return $matches[0];
+                                            }, $rpeResult);
+                                        @endphp  
+
+                                        {!! nl2br($rpeResultLinked) !!}
+                                    </td>
                                     <td>
                                         @if($productEvaluation->Status == 10)
                                                 Open
@@ -207,11 +253,35 @@
                                         
                                             $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
                                                 $code = $matches[1];
-                                                $productId = getProductIdByCode($code);
+                                                $product = getProductIdByCode($code);
                                                 
-                                                if ($productId != null) {
-                                                    return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
+                                                if (auth()->user()->role->type == 'LS')
+                                                {
+                                                    return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
                                                 }
+                                                else
+                                                {
+                                                    if ($product->status == 4)
+                                                    {
+                                                        return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                                    }
+                                                    if ($product->status == 2)
+                                                    {
+                                                        return '<a href="'.url('view_new_product/'.$product->id).'">'.$matches[0].'</a>';
+                                                    }
+                                                    if ($product->status == 1)
+                                                    {
+                                                        return '<a href="'.url('view_draft_product/'.$product->id).'">'.$matches[0].'</a>';
+                                                    }
+                                                    if ($product->status == 5)
+                                                    {
+                                                        return '<a href="'.url('view_archive_products/'.$product->id).'">'.$matches[0].'</a>';
+                                                    }
+                                                }
+                                                // if ($product->) {
+                                                //     return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
+                                                // }
+                                                
                                                 return $matches[0];
                                             }, $rpeResult);
                                         @endphp  

@@ -759,10 +759,32 @@
                 
                     $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
                         $code = $matches[1];
-                        $productId = getProductIdByCode($code);
-                        // dd($matches);
-                        if ($productId != null) {
-                            return '<a href="'.url('view_product/'.$productId).'">'.$matches[0].'</a>';
+                        $product = getProductIdByCode($code);
+                        if (auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS')
+                        {
+                            if ($product->status == 4)
+                            {
+                                return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                            }
+                        }
+                        else
+                        {
+                            if ($product->status == 4)
+                            {
+                                return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                            }
+                            if ($product->status == 2)
+                            {
+                                return '<a href="'.url('view_new_product/'.$product->id).'">'.$matches[0].'</a>';
+                            }
+                            if ($product->status == 1)
+                            {
+                                return '<a href="'.url('view_draft_product/'.$product->id).'">'.$matches[0].'</a>';
+                            }
+                            if ($product->status == 5)
+                            {
+                                return '<a href="'.url('view_archive_products/'.$product->id).'">'.$matches[0].'</a>';
+                            }
                         }
                         return $matches[0];
                     }, $rpeResult);
