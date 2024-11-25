@@ -187,8 +187,8 @@
                             <td>
                                 @if($customerRequirement->RefCode != null)
                                 {{$customerRequirement->RefCode}}
-                                @else
-                                RND
+                                {{-- @else
+                                RND --}}
                                 @endif
                             </td>
                             <td>
@@ -203,12 +203,53 @@
                             </td>
                             <td>{{ optional($customerRequirement->client)->Name }}</td>
                             <td>{{ optional($customerRequirement->product_application)->Name }}</td>
-                            <td style="white-space: break-spaces; width: 100%;">
-                                @if($customerRequirement->Recommendation != null)
+                            <td >
+                                {{-- @if($customerRequirement->Recommendation != null)
                                 {{ $customerRequirement->Recommendation }}
                                 @else
                                 N/A
-                                @endif
+                                @endif --}}
+                                @php
+                                    $crr_result = $customerRequirement->Recommendation;
+                                    $pattern = '/\[(.*?)\]/';
+                                
+                                    $crr_linked = preg_replace_callback($pattern, function($matches) {
+                                        $code = $matches[1];
+                                        $product = getProductIdByCode($code);
+                                        if (auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS')
+                                        {
+                                            if ($product != null)
+                                            {
+                                                if ($product->status == 4)
+                                                {
+                                                    return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if ($product->status == 4)
+                                            {
+                                                return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                            if ($product->status == 2)
+                                            {
+                                                return '<a href="'.url('view_new_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                            if ($product->status == 1)
+                                            {
+                                                return '<a href="'.url('view_draft_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                            if ($product->status == 5)
+                                            {
+                                                return '<a href="'.url('view_archive_products/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                        }
+                                        return $matches[0];
+                                    }, $crr_result);
+                                    @endphp
+
+                                {!! nl2br($crr_linked ) !!}
                             </td>
                             <td>
                                 @if($customerRequirement->Status == 10)
@@ -385,8 +426,8 @@
                             <td>
                                 @if($customerRequirement->RefCode != null)
                                 {{$customerRequirement->RefCode}}
-                                @else
-                                RND
+                                {{-- @else
+                                RND --}}
                                 @endif
                             </td>
                             <td>
@@ -404,7 +445,50 @@
                                 @endif
                             </td>
                             <td>{!! nl2br(e($customerRequirement->DetailsOfRequirement)) !!}</td>
-                            <td style="white-space: break-spaces; width: 100%;">{{ $customerRequirement->Recommendation }}</td>
+                            <td>
+                                {{-- {{ $customerRequirement->Recommendation }} --}}
+                                @php
+                                    $crr_result = $customerRequirement->Recommendation;
+                                    $pattern = '/\[(.*?)\]/';
+                                
+                                    $crr_linked = preg_replace_callback($pattern, function($matches) {
+                                        $code = $matches[1];
+                                        $product = getProductIdByCode($code);
+                                        if (auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS')
+                                        {
+                                            if ($product != null)
+                                            {
+                                                if ($product->status == 4)
+                                                {
+                                                    return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if ($product->status == 4)
+                                            {
+                                                return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                            if ($product->status == 2)
+                                            {
+                                                return '<a href="'.url('view_new_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                            if ($product->status == 1)
+                                            {
+                                                return '<a href="'.url('view_draft_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                            if ($product->status == 5)
+                                            {
+                                                return '<a href="'.url('view_archive_products/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                        }
+                                        return $matches[0];
+                                    }, $crr_result);
+                                @endphp
+
+                                {!! nl2br($crr_linked) !!}
+                            </td>
                             <td>
                                 @if($customerRequirement->DateReceived)
                                 {{date('M d Y', strtotime($customerRequirement->DateReceived))}}

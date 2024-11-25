@@ -151,7 +151,7 @@ function getProductIdByCode($code)
 {
     $product = Product::where('code', $code)->first();
     
-    return $product ? $product->id : null;
+    return $product;
 }
 
 function viewModule($module, $department, $role)

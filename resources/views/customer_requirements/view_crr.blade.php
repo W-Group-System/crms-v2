@@ -634,7 +634,7 @@
                     <div class="col-sm-3 col-md-2"><p class="mb-0 text-right"><b>Recommendation : </b></p></div>
                     <div class="col-sm-3 col-md-3">
                         <p class="mb-0">
-                            @php
+                            {{-- @php
                             $crr_recommendation = $crr->Recommendation;
                             $pattern = '/\[(.*?)\]/';
                         
@@ -647,6 +647,45 @@
                                 }
                                 return $matches[0];
                             }, $crr_recommendation);
+                            @endphp --}}
+                            @php
+                                $crr_result = $crr->Recommendation;
+                                $pattern = '/\[(.*?)\]/';
+                            
+                                $crr_linked = preg_replace_callback($pattern, function($matches) {
+                                    $code = $matches[1];
+                                    $product = getProductIdByCode($code);
+                                    if (auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS')
+                                    {
+                                        if ($product != null)
+                                        {
+                                            if ($product->status == 4)
+                                            {
+                                                return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if ($product->status == 4)
+                                        {
+                                            return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                        }
+                                        if ($product->status == 2)
+                                        {
+                                            return '<a href="'.url('view_new_product/'.$product->id).'">'.$matches[0].'</a>';
+                                        }
+                                        if ($product->status == 1)
+                                        {
+                                            return '<a href="'.url('view_draft_product/'.$product->id).'">'.$matches[0].'</a>';
+                                        }
+                                        if ($product->status == 5)
+                                        {
+                                            return '<a href="'.url('view_archive_products/'.$product->id).'">'.$matches[0].'</a>';
+                                        }
+                                    }
+                                    return $matches[0];
+                                }, $crr_result);
                             @endphp
                             {!! nl2br($crr_linked ) !!}
                         </p>
