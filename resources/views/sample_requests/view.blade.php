@@ -138,12 +138,14 @@
                             @endif
                         {{-- @endif --}}
                         @if(primarySalesApprover($sampleRequest->PrimarySalesPersonId, auth()->user()->id))
-                            <button type="button" class="btn btn-md btn-outline-success"
-                                data-target="#approveSrf{{ $sampleRequest->Id }}" 
-                                data-toggle="modal" 
-                                title='Approve SRF'>
-                                <i class="ti ti-check-box">&nbsp;</i>Approve
-                            </button>
+                            @if($sampleRequest->Progress == 10 && $sampleRequest->Status == 10)
+                                <button type="button" class="btn btn-md btn-outline-success"
+                                    data-target="#approveSrf{{ $sampleRequest->Id }}" 
+                                    data-toggle="modal" 
+                                    title='Approve SRF'>
+                                    <i class="ti ti-check-box">&nbsp;</i>Approve
+                                </button>
+                            @endif
                         @endif
                         
                         {{-- @if($sampleRequest->Progress == 70 && $sampleRequest->Status == 10)
