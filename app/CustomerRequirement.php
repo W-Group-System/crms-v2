@@ -119,4 +119,8 @@ class CustomerRequirement extends Model implements Auditable
     {
         return $this->belongsTo(SalesApprovers::class, 'PrimarySalesPersonId', 'UserId');
     }
+    public function salesapproverByUserId()
+    {
+        return $this->belongsTo(SalesApprovers::class, 'PrimarySalesPersonId', 'UserByUserId');
+    }
 }
