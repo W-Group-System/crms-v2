@@ -109,6 +109,7 @@ class UserController extends Controller
                     $salesApprover = new SalesApprovers;
                     $salesApprover->SalesApproverId = $approver->id;
                     $salesApprover->UserId = $user->id;
+                    $salesApprover->UserByUserId = $user->user_id;
                     if ($approver->department_id == 5)
                     {
                         $salesApprover->Type = 2;
@@ -172,6 +173,7 @@ class UserController extends Controller
                     $salesApprover = new SalesApprovers;
                     $salesApprover->SalesApproverId = $approver->id;
                     $salesApprover->UserId = $user->id;
+                    $salesApprover->UserByUserId = $user->user_id;
                     if ($approver->department_id == 5)
                     {
                         $salesApprover->Type = 2;

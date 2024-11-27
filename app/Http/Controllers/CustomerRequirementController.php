@@ -190,6 +190,9 @@ class CustomerRequirementController extends Controller
                     $query->where('Progress', '10')
                         ->whereHas('salesapprovers', function ($query) use ($userId) {
                             $query->where('SalesApproverId', $userId);
+                        })
+                        ->orWhereHas('salesapproverByUserId', function($query)use($userId) {
+                            $query->where('SalesApproverId', $userId);
                         });
                 } else {
                     $query->where('Progress', $progress);
