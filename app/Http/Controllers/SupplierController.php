@@ -39,7 +39,7 @@ class SupplierController extends Controller
                     ->orWhere('Terms', 'LIKE', '%' . $search . '%');
             })
             ->orderBy($sort, $direction);
-        // dd($suppliers->take(10));
+        
         if ($fetchAll) {
             $data = $suppliers->get(); // Fetch all results
             return response()->json($data); // Return JSON response for copying
