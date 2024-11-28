@@ -28,7 +28,7 @@
                         @forelse($historicalPrices as $price)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
-                                    <p class="mb-0"><strong>USD {{ $price->Price }}</strong></p>
+                                    <p class="mb-0"><strong>USD {{ number_format($price->Price,2) }}</strong></p>
                                     <p class="mb-0">Approved By: {{ ($currentBase->userApproved->full_name) ?? ($currentBase->userApprovedById->full_name) ?? 'N/A'}}</p>
                                     <p class="mb-0">Date: {{ date('m/d/Y', strtotime($price->EffectiveDate)) }}</p>
                                 </div>

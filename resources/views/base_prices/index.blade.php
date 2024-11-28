@@ -37,7 +37,7 @@
                             </button>    
                         </td>
                         <td>{{ optional($currentBase->productMaterial)->Name }}</td>
-                        <td>{{ $currentBase->Price }}</td>
+                        <td>{{ number_format($currentBase->Price, 2) }}</td>
                         <td>{{ ($currentBase->userApproved->full_name) ?? ($currentBase->userApprovedById->full_name) ?? 'N/A'}}</td>
                         <td>{{ $currentBase->EffectiveDate }}</td>
                     </tr>
