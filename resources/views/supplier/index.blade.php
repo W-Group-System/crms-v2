@@ -64,7 +64,7 @@
                                     </td> -->
                                     <td>
                                         <a href="javascript:void(0);" class="edit" data-id="{{ $supplier_data->Id }}" title="Edit Supplier">
-                                            {{ $supplier_data->Name }}
+                                            {{ optional($supplier_data)->Name }}
                                         </a>
                                     </td>
                                     <td>{{ $supplier_data->Products }}</td>
