@@ -62,7 +62,7 @@
                             </button>
                         </td>
                         <td>{{ optional($newBase->productMaterial)->Name }}</td>
-                        <td>{{ $newBase->Price }}</td>
+                        <td>{{ number_format($newBase->Price,2) }}</td>
                         <td>{{ $newBase->userCreated->full_name ?? $newBase->userCreatedbyId->full_name ?? 'N/A' }}</td>
                         <td>{{ $newBase->CreatedDate ?? $newBase->created_at }}</td>
                     </tr>
