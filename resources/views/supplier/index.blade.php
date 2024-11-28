@@ -10,7 +10,7 @@
                         <a href="{{url('export_prospect_client')}}" class="btn btn-md btn-outline-success mb-1">Excel</a>
                     </div>
                     <div class="col-md-6 mt-2 mb-2 text-right">
-                        <button type="button" class="btn btn-md btn-outline-primary"  name="add_supplier" id="add_supplier"><i class="ti ti-plus"></i>&nbsp;New</button></a>
+                        <button type="button" class="btn btn-md btn-outline-primary"  name="add_supplier" id="add_supplier">New</button></a>
                     </div>
                 </div>
                 <div class="row">

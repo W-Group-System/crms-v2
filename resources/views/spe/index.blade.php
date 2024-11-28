@@ -9,9 +9,11 @@
                     <a href="#" id="copy_prospect_btn" class="btn btn-md btn-outline-info mb-1">Copy</a>
                     <a href="#" class="btn btn-md btn-outline-success mb-1">Excel</a>
                 </div>
-                <div class="col-md-6 mt-2 mb-2 text-right">
-                    <button type="button" class="btn btn-md btn-outline-primary" id="addSpeBtn" data-toggle="modal" data-target="#formSupplierProduct">New</button>
-                </div>
+                @if(auth()->user()->role->type == 'PRD')
+                    <div class="col-md-6 mt-2 mb-2 text-right">
+                        <button type="button" class="btn btn-md btn-outline-primary" id="addSpeBtn" data-toggle="modal" data-target="#formSupplierProduct">New</button>
+                    </div>
+                @endif
             </div>
             <div class="row">
                 <div class="col-lg-6">
@@ -60,7 +62,11 @@
                             @foreach($data as $supplier_products)
                                 <tr>
                                     <td align="center">
-                                        <a href="javascript:void(0);" class="edit btn btn-sm btn-outline-warning" data-id="{{ $supplier_products->id }}" title="Edit Supplier Product"><i class="ti-pencil"></i></a>
+                                        @if(auth()->user()->role->type == 'PRD' && auth()->id() == $supplier_products->PreparedBy)
+                                            <a href="javascript:void(0);"  class="edit btn btn-sm btn-outline-warning" data-id="{{ $supplier_products->id }}" title="Edit Supplier Product"><i class="ti-pencil"></i></a>
+                                        @else 
+                                            <a href="#" style="pointer-events: none;" class="edit btn btn-sm btn-outline-warning" data-id="{{ $supplier_products->id }}" title="Edit Supplier Product"><i class="ti-pencil"></i></a>
+                                        @endif
                                     </td>
                                     <td>{{ $supplier_products->DateRequested }}</td>
                                     <td>
@@ -124,11 +130,11 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Date Requested (MM/DD/YYYY):</label>
+                                <label>Date Requested (DD/MM/YYYY):</label>
                                 <input type="date" class="form-control DateRequested" id="DateRequested"  name="DateRequested" value="{{  old('DateRequested', $today) }}" readonly>
                             </div>
                             <div class="form-group">
-                                <label>Deadline (MM/DD/YYYY):</label>
+                                <label>Deadline (DD/MM/YYYY):</label>
                                 <input type="date" class="form-control" id="Deadline" name="Deadline">
                             </div>
                             <div class="form-group">

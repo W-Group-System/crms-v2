@@ -48,6 +48,22 @@
                                 </a>
                             </h5>
                         </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SPE</p>
+                            <h5 class="font-weight-medium text-white">
+                                <a href="{{ route('supplier_product.index', ['progress' => 55]) }}" class="text-white" onclick="show()">
+                                    {{ $speRNDInitialReview ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SSE</p>
+                            <h5 class="font-weight-medium text-white">
+                                <a href="{{ route('shipment_sample.index', ['progress' => 55]) }}" class="text-white" onclick="show()">
+                                    {{ $sseRNDInitialReview ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
                     </div>
                 </div>
                 <div class="card card-light-blue">
@@ -128,6 +144,22 @@
                             <h5 class="font-weight-medium text-white">
                                 <a href="{{ route('sample_request.index', ['progress' => 30]) }}" class="text-white" onclick="show()">
                                     {{ $srfRNDNew ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SPE</p>
+                            <h5 class="font-weight-medium text-white">
+                                <a href="{{ route('supplier_product.index', ['progress' => 20]) }}" class="text-white" onclick="show()">
+                                    {{ $speRNDNew ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SSE</p>
+                            <h5 class="font-weight-medium text-white">
+                                <a href="{{ route('shipment_sample.index', ['progress' => 20]) }}" class="text-white" onclick="show()">
+                                    {{ $sseRNDNew ?? '0' }}
                                 </a>
                             </h5>
                         </div>
@@ -289,9 +321,27 @@
                                 </a>
                             </h5>
                         </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SPE</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('supplier_product.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
+                                    {{ $rndSpeOpen ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SSE</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('shipment_sample.index', ['status' => 10]) }}" class="text-white" onclick='show()'>
+                                    {{ $rndSseOpen ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
                     </div>
                 </div>
-                <div class="card card-light-blue">
+            </div>
+            <div class="col-md-3 grid-margin transparent">
+                <div class="card mb-2 card-light-blue">
                     <div class="card-body">
                         <p class="card-title text-white">Closed Transactions</p>
                         <div class="d-flex justify-content-between">
@@ -301,9 +351,6 @@
                                     <i class="ti ti-folder"></i>
                                 </h3>
                             </div>
-                            <!-- <div class="mt-3">
-                                <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
-                            </div> -->
                         </div>
                         <div class="mb-1 d-flex justify-content-between">
                             <p>CRR</p>
@@ -329,10 +376,24 @@
                                 </a>
                             </h5>
                         </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SPE</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('supplier_product.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $rndSpeClosed ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SSE</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('shipment_sample.index', ['status' => 30]) }}" class="text-white" onclick='show()'>
+                                    {{ $rndSseClosed ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
                 <div class="card card-light-danger">
                     <div class="card-body">
                         <p class="card-title text-white">Due Today</p>

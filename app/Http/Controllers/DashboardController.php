@@ -16,6 +16,8 @@ use App\SalesApprovers;
 use App\RequestProductEvaluation;
 use App\SampleRequest;
 use App\Client;
+use App\SupplierProduct;
+use App\ShipmentSample;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,6 +35,8 @@ class DashboardController extends Controller
             return redirect('/dashboard-sales');
         } elseif ($role && $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC' || $role->type == 'QCD-CCC') {
             return redirect('/dashboard-qcd');
+        } elseif ($role && $role->type == 'PRD') {
+            return redirect('/dashboard-prd');
         }
     }
 
@@ -739,8 +743,10 @@ class DashboardController extends Controller
         $crrRNDInitialReview = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'RND')->count();
         $rpeRNDInitialReview = RequestProductEvaluation::where('Status', '10')->where('Progress', '57')->count();
         $srfRNDInitialReview = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '1')->count();
+        $speRNDInitialReview = SupplierProduct::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'RND')->count();
+        $sseRNDInitialReview = ShipmentSample::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'RND')->count();
 
-        $totalInitialReview = $crrRNDInitialReview + $rpeRNDInitialReview + $srfRNDInitialReview;
+        $totalInitialReview = $crrRNDInitialReview + $rpeRNDInitialReview + $srfRNDInitialReview + $speRNDInitialReview + $sseRNDInitialReview;
 
         $crrRNDFinalReview = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'RND')->count();
         $rpeRNDFinalReview = RequestProductEvaluation::where('Status', '10')->where('Progress', '81')->count();
@@ -752,8 +758,10 @@ class DashboardController extends Controller
         $crrRNDNew = CustomerRequirement::where('Status', '10')->where('Progress', '30')->where('RefCode', 'RND')->count();
         $rpeRNDNew = RequestProductEvaluation::where('Status', '10')->where('Progress', '30')->count();
         $srfRNDNew = SampleRequest::where('Status', '10')->where('Progress', '30')->where('RefCode', '1')->count();
-
-        $totalNewRequest = $crrRNDNew + $rpeRNDNew + $srfRNDNew;
+        $speRNDNew = SupplierProduct::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'RND')->count();
+        $sseRNDNew = ShipmentSample::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'RND')->count();
+        
+        $totalNewRequest = $crrRNDNew + $rpeRNDNew + $srfRNDNew + $speRNDNew + $sseRNDNew;
 
         // RND Due 
         $crrDueToday = CustomerRequirement::where('Status', '10')->where('DueDate', '<', now())->count();
@@ -839,8 +847,26 @@ class DashboardController extends Controller
                     ->orWhere('PersonnelUserId', $userByUser);
             })
             ->count(); 
-              
-        $totalOpenRND = $rndCrrOpen + $rndRpeOpen + $rndSrfOpen;
+        
+        $rndSpeOpen = SupplierProduct::where('Status', '10')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('SpeId')
+                    ->from('spepersonnels')
+                    ->where('SpePersonnel', $userId)
+                    ->orWhere('SpePersonnel', $userByUser);
+            })
+            ->count(); 
+
+        $rndSseOpen = ShipmentSample::where('Status', '10')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('SseId')
+                    ->from('ssepersonnels')
+                    ->where('SsePersonnel', $userId)
+                    ->orWhere('SsePersonnel', $userByUser);
+            })
+            ->count();
+        
+        $totalOpenRND = $rndCrrOpen + $rndRpeOpen + $rndSrfOpen + $rndSpeOpen + $rndSseOpen;
 
         // Closed
         $rndCrrClosed = CustomerRequirement::where('Status', '30')
@@ -870,7 +896,24 @@ class DashboardController extends Controller
             })
             ->count();
 
-        $totalClosedRND = $rndCrrClosed + $rndRpeClosed + $rndSrfClosed;
+        $rndSpeClosed = SupplierProduct::where('Status', '30')
+            ->whereIn('id', function($query) use ($userId) {
+                $query->select('SpeId')
+                    ->from('spepersonnels')
+                    ->where('SpePersonnel', $userId);
+            })
+            ->count();
+
+        $rndSseClosed = ShipmentSample::where('Status', '30')
+            ->whereIn('id', function($query) use ($userId) {
+                $query->select('SseId')
+                    ->from('ssepersonnels')
+                    ->where('SsePersonnel', $userId);
+            })
+            ->count();
+        
+        $totalClosedRND = $rndCrrClosed + $rndRpeClosed + $rndSrfClosed + $rndSpeClosed + $rndSseClosed;
+
         // New Products
         $newProducts = Product::where(function($query) {
                 $query->whereMonth('created_at', Carbon::now()->month)
@@ -883,88 +926,7 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc') 
             ->get();
 
-        // // CRR counts RND
-        // function countCustomerRequirementsRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
-        //     return CustomerRequirement::whereIn('id', function($query) use ($userId, $userByUser) {
-        //                 $query->select('CustomerRequirementId')
-        //                     ->from('crrpersonnels')
-        //                     ->where('PersonnelUserId', $userId)
-        //                     ->orWhere('PersonnelUserId', $userByUser);
-        //             })
-        //             ->where($field, $value)
-        //             ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
-        //                 return $query->where($excludeField, '!=', $excludeValue); // Exclude records where this condition matches
-        //             })
-        //             ->count();
-        // }
-
-        // $crrCancelledRND = countCustomerRequirementsRND($userId, $userByUser, 'Status', '50', );
-        // $crrSalesApprovalRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '10', 'Status', 10);
-        // $crrSalesApprovedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '20');
-        // $crrSalesAcceptedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '70');
-        // $crrRnDReceivedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '35');
-        // $crrRnDOngoingRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '50');
-        // $crrRnDPendingRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '55');
-        // $crrRnDInitialRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '57');
-        // $crrRnDFinalRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '81');
-        // $crrRnDCompletedRND = countCustomerRequirementsRND($userId, $userByUser, 'Progress', '60');
-        // $totalCRRCountRND = $crrCancelledRND + $crrSalesApprovalRND + $crrSalesApprovedRND + $crrSalesAcceptedRND + $crrRnDReceivedRND + $crrRnDOngoingRND + $crrRnDPendingRND + $crrRnDInitialRND + $crrRnDFinalRND + $crrRnDCompletedRND;
-
-        // // RPE counts RND
-        // function countProductEvaluationRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
-        //     return RequestProductEvaluation::whereIn('id', function($query) use ($userId, $userByUser) {
-        //                 $query->select('RequestProductEvaluationId')
-        //                     ->from('rpepersonnels')
-        //                     ->where('PersonnelUserId', $userId)
-        //                     ->orWhere('PersonnelUserId', $userByUser);
-        //             })
-        //             ->where($field, $value)
-        //             ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
-        //                 return $query->where($excludeField, '!=', $excludeValue); // Exclude records where this condition matches
-        //             })
-        //             ->count();
-        // }
-
-        // $rpeCancelledRND = countProductEvaluationRND($userId, $userByUser, 'Status', '50', );
-        // $rpeSalesApprovalRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '10', 'Status', 10);
-        // $rpeSalesApprovedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '20');
-        // $rpeSalesAcceptedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '70');
-        // $rpeRnDReceivedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '35');
-        // $rpeRnDOngoingRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '50');
-        // $rpeRnDPendingRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '55');
-        // $rpeRnDInitialRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '57');
-        // $rpeRnDFinalRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '81');
-        // $rpeRnDCompletedRND = countProductEvaluationRND($userId, $userByUser, 'Progress', '60');
-        // $totalRPECountRND = $rpeCancelledRND + $rpeSalesApprovalRND + $rpeSalesApprovedRND + $rpeSalesAcceptedRND + $rpeRnDReceivedRND + $rpeRnDOngoingRND + $rpeRnDPendingRND + $rpeRnDInitialRND + $rpeRnDFinalRND + $rpeRnDCompletedRND;
-
-        // // SRF counts RND
-        // function countSampleRequestRND($userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
-        //     return SampleRequest::whereIn('id', function($query) use ($userId, $userByUser) {
-        //                 $query->select('SampleRequestId')
-        //                     ->from('srfpersonnels')
-        //                     ->where('PersonnelUserId', $userId)
-        //                     ->orWhere('PersonnelUserId', $userByUser);
-        //             })
-        //             ->where($field, $value)
-        //             ->when($excludeField && $excludeValue, function ($query) use ($excludeField, $excludeValue) {
-        //                 return $query->where($excludeField, '!=', $excludeValue); // Exclude records where this condition matches
-        //             })
-        //             ->count();
-        // }
-
-        // $srfCancelledRND = countSampleRequestRND($userId, $userByUser, 'Status', '50', );
-        // $srfSalesApprovalRND = countSampleRequestRND($userId, $userByUser, 'Progress', '10', 'Status', 10);
-        // $srfSalesApprovedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '20');
-        // $srfSalesAcceptedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '70');
-        // $srfRnDReceivedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '35');
-        // $srfRnDOngoingRND = countSampleRequestRND($userId, $userByUser, 'Progress', '50');
-        // $srfRnDPendingRND = countSampleRequestRND($userId, $userByUser, 'Progress', '55');
-        // $srfRnDInitialRND = countSampleRequestRND($userId, $userByUser, 'Progress', '57');
-        // $srfRnDFinalRND = countSampleRequestRND($userId, $userByUser, 'Progress', '81');
-        // $srfRnDCompletedRND = countSampleRequestRND($userId, $userByUser, 'Progress', '60');
-        // $totalSRFCountRND = $srfCancelledRND + $srfSalesApprovalRND + $srfSalesApprovedRND + $srfSalesAcceptedRND + $srfRnDReceivedRND + $srfRnDOngoingRND + $srfRnDPendingRND + $srfRnDInitialRND + $srfRnDFinalRND + $srfRnDCompletedRND;
-
-        return view('dashboard.rnd', compact('role', 'newProducts', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDFinalReview', 'rpeRNDFinalReview', 'srfRNDFinalReview', 'totalFinalReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday', 'totalOpenRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalClosedRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'crrImmediateOpen', 'rpeImmediateOpen', 'srfImmediateOpen', 'crrImmediateClosed', 'rpeImmediateClosed', 'srfImmediateClosed', 'crrImmediateCancelled', 'rpeImmediateCancelled', 'srfImmediateCancelled', 'totalImmediateCRR', 'totalImmediateRPE', 'totalImmediateSRF'));
+        return view('dashboard.rnd', compact('role', 'newProducts', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDFinalReview', 'rpeRNDFinalReview', 'srfRNDFinalReview', 'totalFinalReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday', 'totalOpenRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalClosedRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'crrImmediateOpen', 'rpeImmediateOpen', 'srfImmediateOpen', 'crrImmediateClosed', 'rpeImmediateClosed', 'srfImmediateClosed', 'crrImmediateCancelled', 'rpeImmediateCancelled', 'srfImmediateCancelled', 'totalImmediateCRR', 'totalImmediateRPE', 'totalImmediateSRF', 'speRNDNew', 'sseRNDNew', 'rndSpeOpen', 'rndSseOpen', 'speRNDInitialReview', 'sseRNDInitialReview', 'rndSpeClosed', 'rndSseClosed'));
     }
 
     public function qcdIndex()
@@ -981,22 +943,34 @@ class DashboardController extends Controller
         // New Request - QCD-WHI
         $crrQCD2New = CustomerRequirement::where('Status', '10')->where('Progress', '30')->where('RefCode', 'QCD-WHI')->count();
         $srfQCD2New = SampleRequest::where('Status', '10')->where('Progress', '30')->where('RefCode', '2')->count();
-        $totalQCD2New = $crrQCD2New + $srfQCD2New;
+        $speQCD2New = SupplierProduct::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'QCD-WHI')->count();
+        $sseQCD2New = ShipmentSample::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'QCD-WHI')->count();
+
+        $totalQCD2New = $crrQCD2New + $srfQCD2New + $speQCD2New + $sseQCD2New;
 
         // New Request - QCD-PBI
         $crrQCD3New = CustomerRequirement::where('Status', '10')->where('Progress', '30')->where('RefCode', 'QCD-PBI')->count();
         $srfQCD3New = SampleRequest::where('Status', '10')->where('Progress', '30')->where('RefCode', '3')->count();
-        $totalQCD3New = $crrQCD3New + $srfQCD3New;
+        $speQCD3New = SupplierProduct::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'QCD-PBI')->count();
+        $sseQCD3New = ShipmentSample::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'QCD-PBI')->count();
+
+        $totalQCD3New = $crrQCD3New + $srfQCD3New + $speQCD3New + $sseQCD3New;
 
         // New Request - QCD-MRDC
         $crrQCD4New = CustomerRequirement::where('Status', '10')->where('Progress', '30')->where('RefCode', 'QCD-MRDC')->count();
         $srfQCD4New = SampleRequest::where('Status', '10')->where('Progress', '30')->where('RefCode', '4')->count();
-        $totalQCD4New = $crrQCD4New + $srfQCD4New;
+        $speQCD4New = SupplierProduct::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'QCD-MRDC')->count();
+        $sseQCD4New = ShipmentSample::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'QCD-MRDC')->count();
+
+        $totalQCD4New = $crrQCD4New + $srfQCD4New + $speQCD4New + $sseQCD4New;
 
         // New Request - QCD-CCC
         $crrQCD5New = CustomerRequirement::where('Status', '10')->where('Progress', '30')->where('RefCode', 'QCD-CCC')->count();
         $srfQCD5New = SampleRequest::where('Status', '10')->where('Progress', '30')->where('RefCode', '5')->count();
-        $totalQCD5New = $crrQCD5New + $srfQCD5New;
+        $speQCD5New = SupplierProduct::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'QCD-CCC')->count();
+        $sseQCD5New = ShipmentSample::where('Status', '10')->where('Progress', '20')->where('AttentionTo', 'QCD-CCC')->count();
+
+        $totalQCD5New = $crrQCD5New + $srfQCD5New + $speQCD5New + $sseQCD5New;
 
         // Due Today - QCD-WHI 
         $crrDueToday2 = CustomerRequirement::where('Status', '10')->where('DueDate', '<', now())->where('RefCode', 'QCD-WHI')->count();
@@ -1068,15 +1042,22 @@ class DashboardController extends Controller
         // QCD Approval
         $crrQCDInitialReview2 = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'QCD-WHI')->count();
         $srfQCDInitialReview2 = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '2')->count();
-        $totalQCDInitialReview2 = $crrQCDInitialReview2 + $srfQCDInitialReview2;
+        $speQCDInitialReview2 = SupplierProduct::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'QCD-WHI')->count();
+        $sseQCDInitialReview2 = ShipmentSample::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'QCD-WHI')->count();
+
+        $totalQCDInitialReview2 = $crrQCDInitialReview2 + $srfQCDInitialReview2 + $speQCDInitialReview2 + $sseQCDInitialReview2;
 
         $crrQCDFinalReview2 = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'QCD-WHI')->count();
         $srfQCDFinalReview2 = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '2')->count();
+        
         $totalQCDFinalReview2 = $crrQCDFinalReview2 + $srfQCDFinalReview2;
 
         $crrQCDInitialReview3 = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'QCD-PBI')->count();
         $srfQCDInitialReview3 = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '3')->count();
-        $totalQCDInitialReview3 = $crrQCDInitialReview3 + $srfQCDInitialReview3;
+        $speQCDInitialReview3 = SupplierProduct::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'QCD-PBI')->count();
+        $sseQCDInitialReview3 = ShipmentSample::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'QCD-PBI')->count();
+
+        $totalQCDInitialReview3 = $crrQCDInitialReview3 + $srfQCDInitialReview3 + $speQCDInitialReview3 + $sseQCDInitialReview3;
 
         $crrQCDFinalReview3 = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'QCD-PBI')->count();
         $srfQCDFinalReview3 = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '3')->count();
@@ -1084,7 +1065,10 @@ class DashboardController extends Controller
 
         $crrQCDInitialReview4 = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'QCD-MRDC')->count();
         $srfQCDInitialReview4 = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '4')->count();
-        $totalQCDInitialReview4 = $crrQCDInitialReview4 + $srfQCDInitialReview4;
+        $speQCDInitialReview4 = SupplierProduct::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'QCD-MRDC')->count();
+        $sseQCDInitialReview4 = ShipmentSample::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'QCD-MRDC')->count();
+
+        $totalQCDInitialReview4 = $crrQCDInitialReview4 + $srfQCDInitialReview4 + $speQCDInitialReview4 + $sseQCDInitialReview4;
 
         $crrQCDFinalReview4 = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'QCD-MRDC')->count();
         $srfQCDFinalReview4 = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '4')->count();
@@ -1092,14 +1076,156 @@ class DashboardController extends Controller
 
         $crrQCDInitialReview5 = CustomerRequirement::where('Status', '10')->where('Progress', '57')->where('RefCode', 'QCD-CCC')->count();
         $srfQCDInitialReview5 = SampleRequest::where('Status', '10')->where('Progress', '57')->where('RefCode', '5')->count();
-        $totalQCDInitialReview5 = $crrQCDInitialReview5 + $srfQCDInitialReview5;
+        $speQCDInitialReview5 = SupplierProduct::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'QCD-CCC')->count();
+        $sseQCDInitialReview5 = ShipmentSample::where('Status', '10')->where('Progress', '55')->where('AttentionTo', 'QCD-CCC')->count();
+
+        $totalQCDInitialReview5 = $crrQCDInitialReview5 + $srfQCDInitialReview5 + $speQCDInitialReview5 + $sseQCDInitialReview5;
 
         $crrQCDFinalReview5 = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'QCD-CCC')->count();
         $srfQCDFinalReview5 = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '5')->count();
         $totalQCDFinalReview5 = $crrQCDFinalReview5 + $srfQCDFinalReview5;
 
+         // Open Transactions
+         $qcdCrrOpen = CustomerRequirement::where('Status', '10')
+         ->whereIn('id', function($query) use ($userId, $userByUser) {
+             $query->select('CustomerRequirementId')
+                 ->from('crrpersonnels')
+                 ->where('PersonnelUserId', '=',  $userId)
+                 ->orWhere('PersonnelUserId', '=', $userByUser);
+         })
+         ->count();
+            
+        $qcdSrfOpen = SampleRequest::where('Status', '10')
+            ->whereIn('Id', function($query) use ($userId, $userByUser) {
+                $query->select('SampleRequestId')
+                    ->from('srfpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); 
+        
+        $qcdSpeOpen = SupplierProduct::where('Status', '10')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('SpeId')
+                    ->from('spepersonnels')
+                    ->where('SpePersonnel', $userId)
+                    ->orWhere('SpePersonnel', $userByUser);
+            })
+            ->count(); 
 
-        return view('dashboard.qcd', compact('role', 'crrQCD2New', 'srfQCD2New', 'totalQCD2New', 'crrQCD3New', 'srfQCD3New', 'totalQCD3New', 'crrQCD4New', 'srfQCD4New', 'totalQCD4New', 'crrQCD5New', 'srfQCD5New', 'totalQCD5New', 'crrDueToday2', 'srfDueToday2', 'totalDueToday2', 'crrDueToday3', 'srfDueToday3', 'totalDueToday3', 'crrDueToday4', 'srfDueToday4', 'totalDueToday4', 'crrDueToday5', 'srfDueToday5', 'totalDueToday5', 'crrImmediateOpen2', 'srfImmediateOpen2', 'crrImmediateOpen3', 'srfImmediateOpen3', 'crrImmediateOpen4', 'srfImmediateOpen4', 'crrImmediateOpen5', 'srfImmediateOpen5', 'crrImmediateClosed2', 'srfImmediateClosed2', 'crrImmediateClosed3', 'srfImmediateClosed3', 'crrImmediateClosed4', 'srfImmediateClosed4', 'crrImmediateClosed5', 'srfImmediateClosed5', 'crrImmediateCancelled2', 'totalCrrImmediate2', 'crrImmediateCancelled3', 'totalCrrImmediate3', 'crrImmediateCancelled4', 'totalCrrImmediate4', 'crrImmediateCancelled5', 'totalCrrImmediate5', 'srfImmediateCancelled2', 'totalSrfImmediate2', 'srfImmediateCancelled3', 'totalSrfImmediate3', 'srfImmediateCancelled4', 'totalSrfImmediate4', 'srfImmediateCancelled5', 'totalSrfImmediate5', 'totalQCDInitialReview2', 'crrQCDInitialReview2', 'srfQCDInitialReview2', 'totalQCDFinalReview2', 'crrQCDFinalReview2', 'srfQCDFinalReview2', 'totalQCDInitialReview3', 'crrQCDInitialReview3', 'srfQCDInitialReview3', 'totalQCDFinalReview3', 'crrQCDFinalReview3', 'srfQCDFinalReview3', 'totalQCDInitialReview4', 'crrQCDInitialReview4', 'srfQCDInitialReview4', 'totalQCDFinalReview4', 'crrQCDFinalReview4', 'srfQCDFinalReview4', 'totalQCDInitialReview5', 'crrQCDInitialReview5', 'srfQCDInitialReview5', 'totalQCDFinalReview5', 'crrQCDFinalReview5', 'srfQCDFinalReview5'));
+        $qcdSseOpen = ShipmentSample::where('Status', '10')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('SseId')
+                    ->from('ssepersonnels')
+                    ->where('SsePersonnel', $userId)
+                    ->orWhere('SsePersonnel', $userByUser);
+            })
+            ->count();
+        
+        $totalOpenQCD = $qcdCrrOpen + $qcdSrfOpen + $qcdSpeOpen + $qcdSseOpen;
+
+        // Closed Transactions
+        $qcdCrrClosed = CustomerRequirement::where('Status', '30')
+            ->whereIn('id', function($query) use ($userId, $userByUser) {
+                $query->select('CustomerRequirementId')
+                    ->from('crrpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count(); 
+
+        $qcdSrfClosed = SampleRequest::where('Status', '30')
+            ->whereIn('Id', function($query) use ($userId, $userByUser) {
+                $query->select('SampleRequestId')
+                    ->from('srfpersonnels')
+                    ->where('PersonnelUserId', $userId)
+                    ->orWhere('PersonnelUserId', $userByUser);
+            })
+            ->count();
+
+        $qcdSpeClosed = SupplierProduct::where('Status', '30')
+            ->whereIn('id', function($query) use ($userId) {
+                $query->select('SpeId')
+                    ->from('spepersonnels')
+                    ->where('SpePersonnel', $userId);
+            })
+            ->count();
+
+        $qcdSseClosed = ShipmentSample::where('Status', '30')
+            ->whereIn('id', function($query) use ($userId) {
+                $query->select('SseId')
+                    ->from('ssepersonnels')
+                    ->where('SsePersonnel', $userId);
+            })
+            ->count();
+        
+        $totalClosedQCD = $qcdCrrClosed + $qcdSrfClosed + $qcdSpeClosed + $qcdSseClosed;
+
+
+        return view('dashboard.qcd', compact('role', 'crrQCD2New', 'srfQCD2New', 'totalQCD2New', 'crrQCD3New', 'srfQCD3New', 'totalQCD3New', 'crrQCD4New', 'srfQCD4New', 'totalQCD4New', 'crrQCD5New', 'srfQCD5New', 'totalQCD5New', 'crrDueToday2', 'srfDueToday2', 'totalDueToday2', 'crrDueToday3', 'srfDueToday3', 'totalDueToday3', 'crrDueToday4', 'srfDueToday4', 'totalDueToday4', 'crrDueToday5', 'srfDueToday5', 'totalDueToday5', 'crrImmediateOpen2', 'srfImmediateOpen2', 'crrImmediateOpen3', 'srfImmediateOpen3', 'crrImmediateOpen4', 'srfImmediateOpen4', 'crrImmediateOpen5', 'srfImmediateOpen5', 'crrImmediateClosed2', 'srfImmediateClosed2', 'crrImmediateClosed3', 'srfImmediateClosed3', 'crrImmediateClosed4', 'srfImmediateClosed4', 'crrImmediateClosed5', 'srfImmediateClosed5', 'crrImmediateCancelled2', 'totalCrrImmediate2', 'crrImmediateCancelled3', 'totalCrrImmediate3', 'crrImmediateCancelled4', 'totalCrrImmediate4', 'crrImmediateCancelled5', 'totalCrrImmediate5', 'srfImmediateCancelled2', 'totalSrfImmediate2', 'srfImmediateCancelled3', 'totalSrfImmediate3', 'srfImmediateCancelled4', 'totalSrfImmediate4', 'srfImmediateCancelled5', 'totalSrfImmediate5', 'totalQCDInitialReview2', 'crrQCDInitialReview2', 'srfQCDInitialReview2', 'totalQCDFinalReview2', 'crrQCDFinalReview2', 'srfQCDFinalReview2', 'totalQCDInitialReview3', 'crrQCDInitialReview3', 'srfQCDInitialReview3', 'totalQCDFinalReview3', 'crrQCDFinalReview3', 'srfQCDFinalReview3', 'totalQCDInitialReview4', 'crrQCDInitialReview4', 'srfQCDInitialReview4', 'totalQCDFinalReview4', 'crrQCDFinalReview4', 'srfQCDFinalReview4', 'totalQCDInitialReview5', 'crrQCDInitialReview5', 'srfQCDInitialReview5', 'totalQCDFinalReview5', 'crrQCDFinalReview5', 'srfQCDFinalReview5', 'speQCD2New', 'sseQCD2New', 'speQCD3New', 'sseQCD3New', 'speQCD4New', 'sseQCD4New', 'speQCD5New', 'sseQCD5New', 'totalOpenQCD', 'qcdCrrOpen', 'qcdSrfOpen', 'qcdSpeOpen', 'qcdSseOpen', 'speQCDInitialReview2', 'sseQCDInitialReview2', 'speQCDInitialReview3', 'sseQCDInitialReview3', 'speQCDInitialReview4', 'sseQCDInitialReview4', 'speQCDInitialReview5', 'sseQCDInitialReview5', 'totalClosedQCD', 'qcdCrrClosed', 'qcdSrfClosed', 'qcdSpeClosed', 'qcdSseClosed'));
+    }
+
+    public function prdIndex() 
+    {
+        $userId = Auth::id(); 
+        $userByUser = optional(Auth::user())->user_id; // Safely access user_id
+        $role = optional(Auth::user())->role;
+        
+        if (!$userId && !$userByUser && !$role) {
+            // Handle case where there is no authenticated user
+            return redirect()->route('login'); // Or handle it in another appropriate way
+        }
+
+        // Open Transactions 
+        $speOpen = SupplierProduct::where('Status', '10')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PreparedBy', $userId)
+                        ->orWhere('PreparedBy', $userByUser);
+                });
+            })
+            ->count();
+
+        $sseOpen = ShipmentSample::where('Status', '10')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PreparedBy', $userId)
+                        ->orWhere('PreparedBy', $userByUser);
+                });
+            })
+            ->count();
+
+        $openTransactions = $speOpen + $sseOpen;
+
+        // Closed Transactions 
+        $speClosed = SupplierProduct::where('Status', '30')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PreparedBy', $userId)
+                        ->orWhere('PreparedBy', $userByUser);
+                });
+            })
+            ->count();
+
+        $sseClosed = ShipmentSample::where('Status', '30')
+            ->where(function($query) use ($userId, $userByUser) {
+                $query->where(function($query) use ($userId, $userByUser) {
+                    $query->where('PreparedBy', $userId)
+                        ->orWhere('PreparedBy', $userByUser);
+                });
+            })
+            ->count();
+
+        $closedTransactions = $speClosed + $sseClosed;
+
+        // Approval Transactions
+        $speApproval = SupplierProduct::where('Status', '10')->where('Progress', '10')->count();
+        $sseApproval = ShipmentSample::where('Status', '10')->where('Progress', '10')->count();
+        
+        $approvalTransactions = $speApproval + $sseApproval;
+
+        return view('dashboard.prd', compact('role', 'speOpen', 'sseOpen', 'openTransactions', 'speApproval', 'sseApproval', 'approvalTransactions', 'closedTransactions', 'speClosed', 'sseClosed'));
+        
     }
 
     public function returned(Request $request)

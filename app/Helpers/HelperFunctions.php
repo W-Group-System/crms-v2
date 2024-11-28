@@ -230,6 +230,15 @@ function checkIfItsManagerOrSupervisor($role)
     
     return "no";
 }
+function checkIfItsAnalyst($role)
+{
+    if (($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-MRDC' || $role->type == 'QCD-PBI' || $role->type == 'QCD-CCC' || $role->type == 'LS' || $role->type == 'IS') && ($role->name == "Staff L1"))
+    {
+        return "yes";
+    }
+    
+    return "no";
+}
 
 function checkIfItsSalesManager($role)
 {
@@ -409,7 +418,7 @@ function checkIfItsSalesDept($department)
 
 function rndManager($role)
 {
-    if (($role->department_id == 15 || $role->id == 14 || $role->department_id == 42) &&( $role->name == "Department Admin" || $role->name == "Staff L2"))
+    if (($role->department_id == 15 || $role->id == 14 || $role->department_id == 42 || $role->department_id == 79 || $role->department_id == 20) &&( $role->name == "Department Admin" || $role->name == "Staff L2"))
     {
         return true;
     }
@@ -1033,4 +1042,124 @@ function usdToRMC($cost,$effecttiveDate,$currency)
 
         return $eur;
     }
+}
+
+function speHistoryLogs($action, $spe)
+{
+    $transaction_logs = new TransactionLogs;
+    $transaction_logs->Type = 40;
+    $transaction_logs->TransactionId = $spe;
+    $transaction_logs->ActionDate = now();
+    $transaction_logs->UserId = auth()->user()->id;
+
+    if ($action == 'create')
+    {
+        $transaction_logs->Details = "Create new supplier product evaluation entry.";
+    }
+    if ($action == 'update')
+    {
+        $transaction_logs->Details = "Update supplier product evaluation entry.";
+    }
+    if ($action == 'accepted')
+    {
+        $transaction_logs->Details = "Accepted supplier product evaluation entry.";
+    }
+    if ($action == 'rejected')
+    {
+        $transaction_logs->Details = "Rejected supplier product evaluation entry.";
+    }
+    if ($action == 'approved')
+    {
+        $transaction_logs->Details = "Approved supplier product evaluation entry.";
+    }
+    if ($action == 'reconfirmatory')
+    {
+        $transaction_logs->Details = "Reconfirmatory supplier product evaluation entry.";
+    }
+    if ($action == 'received')
+    {
+        $transaction_logs->Details = "Received supplier product evaluation entry.";
+    }
+    if ($action == 'add_personnel')
+    {
+        $transaction_logs->Details = "Add new supplier product evaluation personnel entry.";
+    }
+    if ($action == 'update_personnel')
+    {
+        $transaction_logs->Details = "Update assigned customer requirement personnel entry.";
+    }
+    if ($action == 'start')
+    {
+        $transaction_logs->Details = "Start supplier product evaluation transaction.";
+    }
+    if ($action == 'disposition')
+    {
+        $transaction_logs->Details = "Update disposition supplier product evaluation entry.";
+    }
+    if ($action == 'complete')
+    {
+        $transaction_logs->Details = "Complete supplier product evaluation transaction.";
+    }
+    if ($action == 'sales_accepted')
+    {
+        $transaction_logs->Details = "Accept customer requirement transaction.";
+    }
+
+    $transaction_logs->save();
+}
+
+function sseHistoryLogs($action, $spe)
+{
+    $transaction_logs = new TransactionLogs;
+    $transaction_logs->Type = 60;
+    $transaction_logs->TransactionId = $spe;
+    $transaction_logs->ActionDate = now();
+    $transaction_logs->UserId = auth()->user()->id;
+
+    if ($action == 'create')
+    {
+        $transaction_logs->Details = "Create new shipment sample evaluation entry.";
+    }
+    if ($action == 'approved')
+    {
+        $transaction_logs->Details = "Approved shipment sample evaluation entry.";
+    }
+    if ($action == 'received')
+    {
+        $transaction_logs->Details = "Received shipment sample evaluation entry.";
+    }
+    if ($action == 'start')
+    {
+        $transaction_logs->Details = "Start shipment sample evaluation transaction.";
+    }
+    if ($action == 'sample')
+    {
+        $transaction_logs->Details = "Sample shipment sample evaluation transaction.";
+    }
+    if ($action == 'add_personnel')
+    {
+        $transaction_logs->Details = "Add new shipment sample evaluation personnel entry.";
+    }
+    if ($action == 'update_personnel')
+    {
+        $transaction_logs->Details = "Update assigned shipment sample evaluation personnel entry.";
+    }
+    if ($action == 'disposition')
+    {
+        $transaction_logs->Details = "Update disposition shipment sample evaluation entry.";
+    }
+    if ($action == 'complete')
+    {
+        $transaction_logs->Details = "Complete shipment sample evaluation transaction.";
+    }
+    if ($action == 'accepted')
+    {
+        $transaction_logs->Details = "Accepted shipment sample evaluation entry.";
+    }
+    if ($action == 'rejected')
+    {
+        $transaction_logs->Details = "Rejected shipment sample evaluation entry.";
+    }
+
+    $transaction_logs->save();
 }

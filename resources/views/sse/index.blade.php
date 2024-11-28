@@ -9,9 +9,11 @@
                     <a href="#" id="copy_prospect_btn" class="btn btn-md btn-outline-info mb-1">Copy</a>
                     <a href="#" class="btn btn-md btn-outline-success mb-1">Excel</a>
                 </div>
-                <div class="col-md-6 mt-2 mb-2 text-right">
-                    <button type="button" class="btn btn-md btn-outline-primary" id="addSseBtn" data-toggle="modal" data-target="#formSampleShipment">New</button>
-                </div>
+                @if(auth()->user()->role->type == 'PRD')
+                    <div class="col-md-6 mt-2 mb-2 text-right">
+                        <button type="button" class="btn btn-md btn-outline-primary" id="addSseBtn" data-toggle="modal" data-target="#formSampleShipment">New</button>
+                    </div>
+                @endif
             </div>
             <div class="row">
                 <div class="col-lg-6">
@@ -81,12 +83,12 @@
                                             <div class="badge badge-warning">Closed</div>
                                         @endif
                                     </td>
-                                    <td></td>
+                                    <td>{{ $shipment_sample->progress->name }}</td>
                                 </tr>   
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="9" align="center">No matching records found</td>
+                                <td colspan="10" align="center">No matching records found</td>
                             </tr>
                         @endif                 
                     </tbody>
@@ -184,6 +186,16 @@
                                 <input type="text" class="form-control" id="PoNumber" name="PoNumber" placeholder="Enter Po Number">
                             </div>
                             <div class="form-group">
+                                <label>Ordered:</label>
+                                <input type="text" class="form-control" id="Ordered" name="Ordered" placeholder="Enter Ordered">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Quantity:</label>
+                                <input type="text" class="form-control" id="Quantity" name="Quantity" placeholder="Enter Quantity">
+                            </div>
+                            <div class="form-group mb-0">
                                 <label>Product ordered is:</label>
                                 <select class="form-control js-example-basic-single" id="ProductOrdered" name="ProductOrdered" style="position: relative !important" title="Select Product Ordered">
                                     <option value="" disabled selected>Select Product Ordered</option>
@@ -194,15 +206,8 @@
                                     <option value="5">Others</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Quantity:</label>
-                                <input type="text" class="form-control" id="Quantity" name="Quantity" placeholder="Enter Quantity">
-                            </div>
-                            <div class="form-group">
-                                <label>Ordered:</label>
-                                <input type="text" class="form-control" id="Ordered" name="Ordered" placeholder="Enter Ordered">
+                            <div class="form-group" id="otherProduct" style="display: none;">
+                                <input type="text" class="form-control" id="OtherProduct" name="OtherProduct" placeholder="Enter Product Ordered">
                             </div>
                         </div>
                     </div>
@@ -240,7 +245,7 @@
                             </div>
                         </div>
                     </div>
-                    @if(auth()->user()->role->type == 'RND' || auth()->user()->role->type == 'QCD-WHI' || auth()->user()->role->type == 'QCD-PBI' || auth()->user()->role->type == 'QCD-MRDC' || auth()->user()->role->type == 'QCD-CCC')
+                    {{-- @if(auth()->user()->role->type == 'RND' || auth()->user()->role->type == 'QCD-WHI' || auth()->user()->role->type == 'QCD-PBI' || auth()->user()->role->type == 'QCD-MRDC' || auth()->user()->role->type == 'QCD-CCC')
                         <div class="form-header">
                             <span class="header-label font-weight-bold">Sample Details</span>
                             <hr class="form-divider alert-dark">
@@ -297,7 +302,7 @@
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    @endif --}}
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
                         <input type="hidden" name="hidden_id" id="hidden_id">
@@ -332,6 +337,15 @@
                 $('#otherResult').show(); 
             } else {
                 $('#otherResult').hide(); 
+            }
+        });
+
+        $('#ProductOrdered').on('change', function() {
+            var selectedValue = $(this).val(); 
+            if (selectedValue == "5") {
+                $('#otherProduct').show(); 
+            } else {
+                $('#otherProduct').hide(); 
             }
         });
 
