@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\SpeDisposition;
 use App\Supplier;
 use App\SupplierProduct;
 use App\SpeFiles;
 use App\SpeInstructions;
+use App\User;
+use App\SpePersonnel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class SupplierProductController extends Controller
@@ -22,6 +27,9 @@ class SupplierProductController extends Controller
         $fetchAll = $request->input('fetch_all', false); // Get the fetch_all parameter
         $entries = $request->input('number_of_entries', 10); // Default to 10 entries per page
         $refCode = $this->refCode();
+
+        $status = $request->query('status'); // Get the status from the query parameters
+        $progress = $request->query('progress'); // Get the status from the query parameters
     
         $suppliers = Supplier::all();
 
@@ -53,14 +61,105 @@ class SupplierProductController extends Controller
             $direction = 'desc';
         }
 
+        $userId = Auth::id();
+
         $supplierProducts = SupplierProduct::with(['suppliers', 'progress'])
-                ->where(function ($query) use ($search) {
+            ->when($request->input('status'), function($query) use ($request, $userId) {
+                $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name;
+            
+                if ($status == '10') {
+                    if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                              ->where('AttentionTo', 'RND');
+                    } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                              ->where('AttentionTo', 'QCD-WHI');
+                    } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('AttentionTo', 'QCD-PBI');
+                    } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('AttentionTo', 'QCD-MRDC');
+                    } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('AttentionTo', 'QCD-CCC');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '10')
+                                ->where(function($query) use ($userId) {
+                                    $query->where('status', '10')
+                                    ->where(function($query) use ($userId) {
+                                        $query->where('PreparedBy', $userId);
+                                    });
+        
+                                  // Check for related 'crr_personnels' entries
+                                  $query->orWhereHas('spe_personnels', function($query) use ($userId) {
+                                      $query->where('SpePersonnel', $userId);
+                                  });
+                              });
+                    }
+                } else {
+                    // Apply other status filters if status is not '10'
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request->input('progress'), function($query) use ($request) {
+                $progress = $request->input('progress');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
+
+                if ($userType == 'PRD' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', '10');
+                } else {
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->when($request->input('progress'), function($query) use ($request, $userId) {
+                $progress = $request->input('progress');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
+                
+                if ($progress == '20') {
+                    if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                              ->where('AttentionTo', 'RND');
+                    } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                              ->where('AttentionTo', 'QCD-WHI');
+                    } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                                ->where('AttentionTo', 'QCD-PBI');
+                    } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                                ->where('AttentionTo', 'QCD-MRDC');
+                    } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                                ->where('AttentionTo', 'QCD-CCC');
+                    } else {
+                        $query->where('Progress', '20')
+                            ->where(function($query) use ($userId) {
+                                $query->orWhereHas('spe_personnels', function($query) use ($userId) {
+                                    $query->where('SpePersonnel', $userId);
+                                });
+                            });
+                    }
+                } else {
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->where(function ($query) use ($search) {
                 $query->where('ProductName', 'LIKE', '%' . $search . '%')  
                     ->orWhere('Supplier', 'LIKE', '%' . $search . '%')
                     ->orWhere('AttentionTo', 'LIKE', '%' . $search . '%')
                     ->orWhere('DateRequested', 'LIKE', '%' . $search . '%');
             })
             ->orderBy($sort, $direction);
+        
         if ($fetchAll) {
             $data = $supplierProducts->get(); // Fetch all results
             return response()->json($data); // Return JSON response for copying
@@ -171,19 +270,29 @@ class SupplierProductController extends Controller
             }
         }
 
+        speHistoryLogs("create", $supplier_product->id);
+
         return response()->json(['success' => 'Supplier Product added successfully!']);
     }
 
     public function view($id)
     {
-        $data = SupplierProduct::with('supplier_instruction', 'attachments', 'suppliers')->findOrFail($id);
-        return view('spe.view', compact('data'));
+        $data = SupplierProduct::with('supplier_instruction', 'attachments', 'suppliers', 'supplier_disposition', 'spePersonnel')->findOrFail($id);
+        $refCode = $this->refCode();
+        $suppliers = Supplier::all();
+        $instructions = $data->supplier_instruction->pluck('Instruction')->toArray(); 
+        $dispositions = $data->supplier_disposition->pluck('Disposition')->toArray(); 
+        $rnd_personnel = User::whereIn('department_id', [15, 42, 20, 79, 77, 44])->where('is_active', 1)->get();
+        // dd($data);
+        return view('spe.view', compact('data', 'refCode', 'instructions', 'suppliers', 'dispositions', 'rnd_personnel'));
     }
 
     public function edit($id)
     {
         if(request()->ajax()) {
             $data = SupplierProduct::with('supplier_instruction', 'attachments')->findOrFail($id);
+            $suppliers = Supplier::all();
+            $refCode = $this->refCode();
             
             $attachments = $data->attachments->map(function($attachment) {
                 return [
@@ -197,6 +306,8 @@ class SupplierProductController extends Controller
                 'data' => $data,
                 'instructions' => $data->supplier_instruction->pluck('Instruction')->toArray(), 
                 'attachments' => $attachments,
+                'refCode' => $refCode,
+                'suppliers' => $suppliers
             ]);
         }
     }
@@ -304,7 +415,8 @@ class SupplierProductController extends Controller
                 $supplierInstruction->save();
             }
         }
-        dd($request);
+        
+        speHistoryLogs("update", $supplierProduct->id);
         // Return a success response
         return response()->json(['success' => 'Data is successfully updated.']);
     }
@@ -322,7 +434,154 @@ class SupplierProductController extends Controller
         $data->Progress = 20;
         $data->save();
 
+        speHistoryLogs("approved", $data->id);
+
         return response()->json(['success' => 'Data is successfully updated.']);
+    }
+
+    public function disposition(Request $request, $id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+
+        // Handle instructions
+        if ($request->has('Disposition') && is_array($request->Disposition)) {
+            SpeDisposition::where('SpeId', $id)->delete();
+    
+            // Then, save each new instruction
+            foreach ($request->Disposition as $supplier_disposition) {
+                $supplierDisposition = new SpeDisposition();
+                $supplierDisposition->SpeId = $data->id;
+                $supplierDisposition->Disposition = $supplier_disposition;
+                $supplierDisposition->save();
+            }
+        } 
+
+        speHistoryLogs("disposition", $data->id);
+        
+        Alert::success('Success', 'Supplier Product Disposition added successfully!')
+                ->autoClose(2000); // Disable the confirm button
+
+        return back();
+    }
+
+    public function reconfirmatory(Request $request, $id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+        $data->Reconfirmatory = $request->Reconfirmatory;
+        // $data->Progress = 25;
+        $data->save();
+
+        speHistoryLogs("reconfirmatory", $data->id);
+
+        Alert::success('Saved', 'The reconfirmatory value has been successfully updated!')
+                ->autoClose(2000); // Disable the confirm button
+
+        return back();
+    }
+    
+    public function rejected(Request $request, $id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+        $data->RejectedRemarks = $request->RejectedRemarks;
+        $data->Progress = 30;
+        $data->Status = 30;
+        $data->save();
+
+        speHistoryLogs("rejected", $data->id);
+
+        Alert::success('Rejected', 'The supplier product evaluation value has been successfully rejected!')
+                ->autoClose(2000);
+
+        return back();
+    }
+
+    public function acceptSpe(Request $request, $id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+        $data->AcceptedRemarks = $request->AcceptedRemarks;
+        $data->Progress = 60;
+        $data->Status = 30;
+        $data->save();
+
+        speHistoryLogs("accepted", $data->id);
+
+        Alert::success('Accepted', 'The supplier product evaluation value has been successfully accepted!')
+                ->autoClose(2000);
+
+        return back();
+    }
+
+    public function delete($id)
+    {
+        $speFiles = SpeFiles::findOrFail($id);
+        $speFiles->delete();
+
+        Alert::success('Successfully Delete')->persistent('Dismiss');
+        return back();
+    }
+
+    public function addPersonnel(Request $request)
+    {
+        $supplierProduct = SupplierProduct::findOrFail($request->spe_id);
+        $supplierProduct->Progress = 45; // Set Progress to 45
+        $supplierProduct->save();    
+
+        $personnel = new SpePersonnel;
+        $personnel->SpeId = $request->spe_id;
+        $personnel->SpePersonnel = $request->spe_personnel;
+        $personnel->save(); 
+
+        speHistoryLogs("add_personnel", $supplierProduct->id);
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back()->with(['tab' => 'personnel']);
+    }
+
+    public function updatePersonnel(Request $request, $id)
+    {
+        $personnel = SpePersonnel::findOrFail($id);
+        $personnel->SpeId = $request->spe_id;
+        $personnel->SpePersonnel = $request->spe_personnel;
+        $personnel->save(); 
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back()->with(['tab' => 'personnel']);
+    }
+
+    public function received($id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+        $data->Progress = 35;
+        $data->DateReceived = now();
+        $data->save();
+
+        speHistoryLogs("received", $data->id);
+
+        Alert::success('Successfully Received')->persistent('Dismiss');
+        return back();
+    }
+
+    public function startSpe($id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+        $data->Progress = 50;
+        $data->save();
+
+        speHistoryLogs('start', $id);
+
+        Alert::success('Successfully Start')->persistent('Dismiss');
+        return back();
+    }
+
+    public function doneSpe($id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+        $data->Progress = 55;
+        $data->save();
+
+        speHistoryLogs('complete', $id);
+
+        return response()->json(['success' => 'Data is successfully completed.']);
     }
 
     public function refCode()

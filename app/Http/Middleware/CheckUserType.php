@@ -29,6 +29,8 @@ class CheckUserType
                 return redirect('/dashboard-sales');
             } elseif ($roleType == 'QCD-WHI' || $roleType == 'QCD-PBI' || $roleType == 'QCD-MRDC' || $roleType == 'QCD-CCC') {
                 return redirect('/dashboard-qcd');
+            } elseif ($roleType == 'PRD') {
+                return redirect('/dashboard-prd');
             }
 
         }

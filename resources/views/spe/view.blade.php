@@ -17,14 +17,51 @@
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @endif
+                    @if($data->Progress == 10 && auth()->user()->role->type == 'PRD' && (auth()->user()->role->name == 'Staff L2' || auth()->user()->role->name == 'Department Admin'))
                     <form action="{{ url('spe_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-outline-success approvedBtn">
                             <i class="ti-check">&nbsp;</i>Approved
                         </button>
                     </form>
-                    <button type="button" class="btn btn-md btn-outline-warning">Update</button>
-                    <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#disposition">Disposition</button>
+                    @endif
+                    @if(auth()->user()->role->type == 'PRD' || (auth()->user()->role->name == 'Staff L2' || auth()->user()->role->name == 'Department Admin') && auth()->id() == $data->PreparedBy)
+                    <button type="button" class="btn btn-outline-warning" id="editSpe" data-toggle="modal" data-target="#editSpe{{$data->id}}">
+                        <i class="ti ti-pencil"></i>&nbsp;Update
+                    </button>
+                    @endif
+                    @if($data->AttentionTo == auth()->user()->role->type)
+                        @if($data->Progress == 20 && rndManager(auth()->user()->role))
+                            <form action="{{url('spe_received/'.$data->id)}}" method="post" class="d-inline-block" onsubmit="show()">
+                                @csrf
+                                <button type="button" class="btn btn-outline-success receivedBtn">
+                                    <i class="ti-bookmark">&nbsp;</i> Received
+                                </button>
+                            </form>    
+                        @endif
+                        @if($data->Progress == 35 || $data->Progress == 45)
+                        <form method="POST" action="{{url('start_spe/'.$data->id)}}" class="d-inline-block" onsubmit="show()">
+                            @csrf 
+                            <button type="button" class="btn btn-outline-success startSpeBtn">
+                                <i class="ti-control-play"></i>&nbsp; Start
+                            </button>
+                        </form>
+                        @endif
+                        @if($data->Progress == 50)
+                            <!-- <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#reconfirmatory">Re-confirmatory</button> -->
+                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#disposition">Disposition</button>
+                            <form method="POST" action="{{url('done_spe/'.$data->id)}}" class="d-inline-block" onsubmit="show()">
+                                @csrf 
+                                <button type="button" class="btn btn-outline-success doneSpeBtn">
+                                    <i class="ti ti-check"></i>&nbsp; Done
+                                </button>
+                            </form>
+                        @endif  
+                        @if($data->Progress == 55 && rndManager(auth()->user()->role))
+                            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#rejected"> <i class="ti ti-na"></i>&nbsp;Rejected</button>    
+                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#accepted"> <i class="ti ti-check"></i>&nbsp;Accepted</button>  
+                        @endif
+                    @endif   
                 </div>
                 <div class="col-md-12">
                     <div class="form-group row mb-0" style="margin-top: 2em">
@@ -120,7 +157,7 @@
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Prepared By:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->prepared_by->full_name }}</label>
+                            <label>{{ optional($data->prepared_by)->full_name }}</label>
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Progress:</b></label>
                         <div class="col-sm-3">
@@ -130,12 +167,36 @@
                     <div class="form-group row mb-3">
                         <label class="col-sm-3 col-form-label text-right"><b>Approved By:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->approved_by->full_name }}</label>
+                            <label>{{ optional($data->approved_by)->full_name }}</label>
                         </div>
-                        <!-- <label class="col-sm-3 col-form-label text-right"><b>Progress:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->progress->name }}</label>
-                        </div> -->
+                    </div>
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Reconfirmatory:</b></label>
+                        <div class="col-sm-9">
+                            <label>{{ $data->Reconfirmatory ?? 'N/A' }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label class="col-sm-3 col-form-label text-right"><b>Disposition:</b></label>
+                        <div class="col-sm-9">
+                        @if($data->supplier_disposition && count($data->supplier_disposition) > 0)
+                                @foreach($data->supplier_disposition as $disposition)
+                                    @if($disposition->Disposition == 1) 
+                                        <i class="ti ti-check"></i><label>&nbsp;Almost an exact match with the current product. The Sample works with direct replacement in the application.</label><br>
+                                    @elseif($disposition->Disposition == 2) 
+                                        <i class="ti ti-check"></i><label>&nbsp;Has higher quality than the existing raw materials. Needs dilution or lower proportion in product applications.</label><br>
+                                    @elseif($disposition->Disposition == 3) 
+                                        <i class="ti ti-check"></i><label>&nbsp;Has lower quality than the existing product. Needs higher proportion in product applications.</label><br>
+                                    @elseif($disposition->Disposition == 4) 
+                                        <i class="ti ti-check"></i><label>&nbsp;Cannot be fully evaluated. The company does not have a testing capability.</label><br>
+                                    @else
+                                        <i class="ti ti-check"></i><label>&nbsp;Rejected. Does not pass the critical parameters of the test</label>
+                                    @endif
+                                @endforeach
+                            @else
+                                <label>No Disposition Available</label>
+                            @endif
+                        </div>
                     </div>
                     <!-- <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Attachments:</b></label>
@@ -157,26 +218,113 @@
                             <label>{{ $data->Disposition ?? ''}}</label>
                         </div>
                     </div> -->
-                    <table class="table table-bordered">
-                        <thead>
-                            <th width="40%">Attachment Name</th>
-                            <th width="60%">File</th>
-                        </thead>
-                        <tbody>
-                            @if($data->attachments && count($data->attachments) > 0)
-                                @foreach($data->attachments as $file)
-                                <tr>
-                                    <td>{{ $file->Name }}</td>
-                                    <td><a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ $file->Path }}</a></td>
-                                </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="2">No data Available</td>
-                                </tr>
+                    <ul class="nav nav-tabs viewTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link p-2 active" id="assigned-tab" data-toggle="tab" href="#assigned_details" role="tab" aria-controls="assigned_details" aria-selected="true">R&D/QCD Personnel</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link p-2" id="attachment-tab" data-toggle="tab" href="#attachment" role="tab" aria-controls="attachment" aria-selected="false">Attachments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade active show" id="assigned_details" role="tabpanel" aria-labelledby="assigned_details">
+                            @if(!checkIfItsSalesDept(auth()->user()->department_id))
+                                @if(rndManager(auth()->user()->role))
+                                    @if($data->Progress == 35 || $data->Progress == 45)
+                                    <button type="button" class="btn btn-outline-primary btn-sm float-right mb-3" data-toggle="modal" data-target="#addPersonnel">
+                                        New
+                                    </button>
+                                    @include('spe.new_personnel')
+                                    @endif
+                                @endif
                             @endif
-                        </tbody>
-                    </table>
+                            <table class="table table-hover table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th width="10%">Action</th>
+                                        <th width="90%">Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($data->spePersonnel as $personnel)
+                                        <tr>
+                                            <td align="center">
+                                            @if(rndManager(auth()->user()->role) && ($data->Progress == 20 || $data->Progress == 25))
+                                                <button type="button" class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#editPersonnel{{ $personnel->id }}">
+                                                    <i class="ti-pencil"></i>
+                                                </button>
+                                            @endif
+                                            </td>
+                                            <td>
+                                                @if($personnel->crrPersonnelById)
+                                                    {{$personnel->crrPersonnelById->full_name}}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @include('spe.edit_personnel')
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="attachment" role="tabpanel" aria-labelledby="attachment">
+                            <table class="table table-hover table-striped table-bordered tables">
+                                <thead>
+                                    <th width="10%">Action</th>
+                                    <th width="30%">Attachment Name</th>
+                                    <th width="60%">File</th>
+                                </thead>
+                                <tbody>
+                                    @foreach($data->attachments as $file)
+                                    <tr>
+                                        <td align="center">
+                                        @if(auth()->user()->role->type == 'PRD')
+                                            <form action="{{url('delete_spe_file/'.$file->id)}}" class="d-inline-block" method="post">
+                                                @csrf
+                                                <button type="button" class="btn btn-sm btn-outline-danger deleteFile">
+                                                    <i class="ti ti-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                        </td>
+                                        <td>{{ $file->Name }}</td>
+                                        <td><a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ $file->Path }}</a></td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped table-bordered tables" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th width="25%">Date</th>
+                                            <th width="30%">Name</th>
+                                            <th width="45%">Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                         @foreach ($data->historyLogs as $logs)
+                                            <tr>
+                                                <td>{{date('M d, Y - h:i A', strtotime($logs->ActionDate))}}</td>
+                                                <td>
+                                                    @if($logs->historyUser)
+                                                    {{$logs->historyUser->full_name}}
+                                                    @elseif($logs->user)
+                                                    {{$logs->user->full_name}}
+                                                    @endif
+                                                </td>
+                                                <td>{{$logs->Details}}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>   
                 </div>
             </div>
             <div align="right" class="mt-3">
@@ -201,10 +349,11 @@
                     <div class="row">
                         <div class="col-md-12">
                             <select class="form-control js-example-basic-multiple" name="Disposition[]" style="position: relative !important" multiple>
-                                <option value="1">Almost an exact match with the current product. The sample works with direct replacement in the application</option>
-                                <option value="2">Has higher quality than the existing raw materials. Needs dilution or lower proportion in product application</option>
-                                <option value="3">Has lower quality than the existing product. Needs higher proportion in the product applications</option>
-                                <option value="4">Cannot be fully evaluated. The company does not have the testing capability</option>
+                                <option value="1" {{ in_array('1', $dispositions ?? []) ? 'selected' : '' }}> Almost an exact match with the current product. The sample works with direct replacement in the application</option>
+                                <option value="2" {{ in_array('2', $dispositions ?? []) ? 'selected' : '' }}>Has higher quality than the existing raw materials. Needs dilution or lower proportion in product application</option>
+                                <option value="3" {{ in_array('3', $dispositions ?? []) ? 'selected' : '' }}>Has lower quality than the existing product. Needs higher proportion in the product applications</option>
+                                <option value="4" {{ in_array('4', $dispositions ?? []) ? 'selected' : '' }}>Cannot be fully evaluated. The company does not have the testing capability</option>
+                                <option value="5" {{ in_array('5', $dispositions ?? []) ? 'selected' : '' }}>Rejected. Does not pass the critical parameters of the test</option>
                             </select>
                         </div>
                     </div>
@@ -218,8 +367,106 @@
     </div>
 </div>
 
+<div class="modal fade" id="reconfirmatory" tabindex="-1" role="dialog" aria-labelledby="reconfirmatoryModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reconfirmatoryModal">Re-confirmatory</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="updateReconfirmatory" method="POST" action="{{ url('update_reconfirmatory/' . $data->id) }}">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Enter Reconfirmatory</label>
+                                <textarea name="Reconfirmatory" class="form-control" cols="50" rows="10" placeholder="Enter re-confirmatory"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rejected" tabindex="-1" role="dialog" aria-labelledby="rejectedModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectedModal">Rejected</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="updateRejected" method="POST" action="{{ url('update_rejected/' . $data->id) }}">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Enter Rejected Remarks</label>
+                                <textarea name="RejectedRemarks" class="form-control" cols="50" rows="10" placeholder="Enter rejected remarks"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="accepted" tabindex="-1" role="dialog" aria-labelledby="acceptedModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="acceptedModal">Accepted</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="acceptedRejected" method="POST" action="{{ url('accept_spe/' . $data->id) }}">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Enter Accepted Remarks</label>
+                                <textarea name="AcceptedRemarks" class="form-control" cols="50" rows="10" placeholder="Enter accepted remarks"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@include('spe.edit')
 <script>
     $(document).ready(function () {
+        $('.tables').DataTable({
+            destroy: false,
+            processing: true,
+            pageLength: 10,
+            ordering: false
+        });
+
         $('.approvedBtn').on('click', function (e) {
             e.preventDefault(); // Prevent default form submission
 
@@ -252,6 +499,94 @@
                 }
             });
         });
+
+        $('.doneSpeBtn').on('click', function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var button = $(this);
+            var form = button.closest('form');
+            var actionUrl = form.attr('action'); // Get form action URL
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Completed",
+                            text: response.message,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(function () {
+                            window.location.reload(); // Reload the page
+                        });
+                    }
+                }
+            });
+        });
+        
+        $('.receivedBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Received",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.startSpeBtn').on('click', function() {
+            var form = $(this).closest('form');
+            var labelBtn = $(this).data('label');
+            
+            Swal.fire({
+                title: "Are you sure?",
+                // text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                reverseButtons: true,
+                confirmButtonText: labelBtn != null ? labelBtn : "Start"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.deleteFile').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
     });
 </script>
 @endsection

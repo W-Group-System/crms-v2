@@ -147,7 +147,7 @@
                                     @if($hasReturnedTransactions ?? false)
                                         <!-- Display a badge if there are returned transactions -->
                                         <span class="position-absolute top-0 start-100 translate-middle bg-danger border border-light rounded-circle" 
-                                            style="left: 0px; padding: 0.3rem"></span>
+                                            style="left: 10px; padding: 0.3rem"></span>
                                     @endif
                                     Returned Transactions
                                     
@@ -203,9 +203,15 @@
                                     <i class="icon-grid menu-icon"></i>
                                     <span class="menu-title">Dashboard</span>
                                 </a>
+                            @elseif(Auth::check() && optional(Auth::user()->role)->type == 'PRD')
+                                <a class="nav-link" href="{{ route('dashboard.prd') }}">
+                                    <i class="icon-grid menu-icon"></i>
+                                    <span class="menu-title">Dashboard</span>
+                                </a>
                             @endif
                         </li>
-                        {{-- <li class="nav-item">
+                        @if((viewModule('Supplier Information', $department, $role) == "yes") || (viewModule('Supplier Product Evaluation', $department, $role) == "yes") || (viewModule('Shipment Sample Evaluation', $department, $role) == "yes"))
+                        <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#table_supplier" aria-expanded="false" aria-controls="table_supplier" onclick="toggleSupplier(event)">
                                 <i class="icon-globe menu-icon"></i>
                                 <span class="menu-title">Supplier Transaction</span>
@@ -219,7 +225,8 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/shipment_sample') }}">Shipment Sample Evaluation</a></li> 
                                 </ul>
                             </div> 
-                        </li> --}}
+                        </li> 
+                        @endif
                         @if((viewModule('Current Products', $department, $role) == "yes") || (viewModule('New Products', $department, $role) == "yes") || (viewModule('Draft Products', $department, $role) == "yes") || (viewModule('Archived Products', $department, $role) == "yes") || (viewModule('Current Base Price', $department, $role) == "yes") || (viewModule('New Base Price', $department, $role) == "yes") || (viewModule('Product Application', $department, $role) == "yes") || (viewModule('Application Sub Categories', $department, $role) == "yes") || (viewModule('Raw Materials', $department, $role) == "yes"))
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#table_product" aria-expanded="false" aria-controls="table_product" onclick="toggleTablesProduct(event)">

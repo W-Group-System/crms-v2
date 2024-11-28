@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\ShipmentSample;
+use App\SsePersonnel;
 use App\SseFiles;
 use App\SsePacks;
 use App\SseWork;
+use App\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ShipmentSampleController extends Controller
@@ -41,7 +45,98 @@ class ShipmentSampleController extends Controller
         // Combine to create the new SpeNo (e.g., SPE-24-0001)
         $newSseNo = 'SSE-' . $year . '-' . $newSeries;
 
-        $shipmentSample = ShipmentSample::where(function ($query) use ($search) {
+        $userId = Auth::id();
+
+        $shipmentSample = ShipmentSample::with(['progress'])
+            ->when($request->input('status'), function($query) use ($request, $userId) {
+                $status = $request->input('status');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name;
+            
+                if ($status == '10') {
+                    if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                              ->where('AttentionTo', 'RND');
+                    } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                              ->where('AttentionTo', 'QCD-WHI');
+                    } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('AttentionTo', 'QCD-PBI');
+                    } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('AttentionTo', 'QCD-MRDC');
+                    } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Status', '10')
+                                ->where('AttentionTo', 'QCD-CCC');
+                    } else {
+                        // Default logic for other users
+                        $query->where('Status', '10')
+                                ->where(function($query) use ($userId) {
+                                    $query->where('status', '10')
+                                    ->where(function($query) use ($userId) {
+                                        $query->where('PreparedBy', $userId);
+                                    });
+        
+                                  // Check for related 'crr_personnels' entries
+                                  $query->orWhereHas('ssePersonnel', function($query) use ($userId) {
+                                      $query->where('SsePersonnel', $userId);
+                                  });
+                              });
+                    }
+                } else {
+                    // Apply other status filters if status is not '10'
+                    $query->where('Status', $status);
+                }
+            })
+            ->when($request->input('progress'), function($query) use ($request) {
+                $progress = $request->input('progress');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
+
+                if ($userType == 'PRD' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                    $query->where('Progress', '10');
+                } else {
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->when($request->input('progress'), function($query) use ($request, $userId) {
+                $progress = $request->input('progress');
+                $role = auth()->user()->role;
+                $userType = $role->type;  
+                $userName = $role->name; 
+                
+                if ($progress == '20') {
+                    if ($userType == 'RND' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                              ->where('AttentionTo', 'RND');
+                    } elseif ($userType == 'QCD-WHI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                              ->where('AttentionTo', 'QCD-WHI');
+                    } elseif ($userType == 'QCD-PBI' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                                ->where('AttentionTo', 'QCD-PBI');
+                    } elseif ($userType == 'QCD-MRDC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                                ->where('AttentionTo', 'QCD-MRDC');
+                    } elseif ($userType == 'QCD-CCC' && ($userName == 'Staff L2' || $userName == 'Department Admin')) {
+                        $query->where('Progress', '20')
+                                ->where('AttentionTo', 'QCD-CCC');
+                    } else {
+                        $query->where('Progress', '20')
+                            ->where(function($query) use ($userId) {
+                                $query->orWhereHas('ssePersonnel', function($query) use ($userId) {
+                                    $query->where('SsePersonnel', $userId);
+                                });
+                            });
+                    }
+                } else {
+                    $query->where('Progress', $progress);
+                }
+            })
+            ->where(function ($query) use ($search) {
                 $query->where('SseNumber', 'LIKE', '%' . $search . '%')  
                     ->orWhere('AttentionTo', 'LIKE', '%' . $search . '%')
                     ->orWhere('RmType', 'LIKE', '%' . $search . '%')
@@ -65,7 +160,6 @@ class ShipmentSampleController extends Controller
         }
 
     }
-
 
     // Store 
     public function store(Request $request) 
@@ -116,6 +210,9 @@ class ShipmentSampleController extends Controller
         $shipment_sample->ProductDeclared = $request->ProductDeclared;
         $shipment_sample->LnBags = $request->LnBags;
         $shipment_sample->Instruction = $request->Instruction;
+        $shipment_sample->OtherProduct = $request->OtherProduct;
+        $shipment_sample->Progress = 10;
+        $shipment_sample->PreparedBy = auth()->user()->id;
         $shipment_sample->save();
 
         if ($request->has('LotNumber') && is_array($request->LotNumber)) {
@@ -150,6 +247,8 @@ class ShipmentSampleController extends Controller
                 }
             }
         }
+
+        sseHistoryLogs("create", $shipment_sample->id);
 
         return response()->json(['success' => 'Shipment Sample added successfully!']);
     }
@@ -189,7 +288,6 @@ class ShipmentSampleController extends Controller
             'RmType' => 'required|string|max:255',
             'Supplier' => 'required|string|max:255',
             'SseResult' => 'required|string|max:255',
-            'SampleType' => 'required|string|max:255',
             'AttentionTo' => 'nullable|string|max:255',
             'ProductCode' => 'nullable|string|max:255',
             'Grade' => 'nullable|string|max:255',
@@ -199,8 +297,7 @@ class ShipmentSampleController extends Controller
         $customMessages = [
             'RmType.required' => 'The raw material type is required.',
             'SseResult.required' => 'The result is required.',
-            'Supplier.required' => 'The supplier is required.',      
-            'SampleType.required' => 'The sample type is required.',     
+            'Supplier.required' => 'The supplier is required.',        
         ];
 
         $validator = Validator::make($request->all(), $rules, $customMessages);
@@ -224,6 +321,7 @@ class ShipmentSampleController extends Controller
             'Quantity',
             'Ordered',
             'ProductOrdered',
+            'OtherProduct',
             'SampleType',
             'Instruction',
             'Buyer',
@@ -325,7 +423,238 @@ class ShipmentSampleController extends Controller
     public function view($id)
     {
         $data = ShipmentSample::with('shipment_pack', 'shipment_attachments', 'shipment_work')->findOrFail($id);
-        return view('sse.view', compact('data'));
+        $refCode = $this->refCode();
+        $rnd_personnel = User::whereIn('department_id', [15, 42, 20, 79, 77, 44])->where('is_active', 1)->get();
+        return view('sse.view', compact('data', 'refCode', 'rnd_personnel'));
+    }
+
+    public function approvedSse($id)
+    {
+        $data = ShipmentSample::findOrFail($id);
+        $data->ApprovedBy = auth()->user()->id;
+        $data->Progress = 20;
+        $data->save();
+
+        sseHistoryLogs("approved", $data->id);  // Log history
+
+        // Return a JSON response
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully Approved',
+        ]);
+    }
+
+    public function receivedSse($id)
+    {
+        $data = ShipmentSample::findOrFail($id);
+        $data->Progress = 35;
+        $data->DateReceived = now();
+        $data->save();
+
+        sseHistoryLogs("received", $data->id);
+
+        Alert::success('Successfully Received')->persistent('Dismiss');
+        return back();
+    }
+
+    public function startSse($id)
+    {
+        $data = ShipmentSample::findOrFail($id);
+        $data->Progress = 50;
+        $data->save();
+
+        sseHistoryLogs('start', $id);
+
+        Alert::success('Successfully Start')->persistent('Dismiss');
+        return back();
+    }
+
+    public function sample(Request $request, $id) 
+    {
+        $shipmentSample = ShipmentSample::with('shipment_pack', 'shipment_attachments', 'shipment_work')->findOrFail($id);
+        $shipmentSample->SampleType = $request->SampleType;
+        
+        if ($request->has('Name') && is_array($request->Name)) {
+            foreach ($request->Name as $index => $name) {
+                if ($request->hasFile('Path.' . $index)) {
+                    // Delete old file if a new one is uploaded
+                    $existingFile = SseFiles::where('SseId', $shipmentSample->id)
+                                            ->where('Name', $name)
+                                            ->first();
+                    if ($existingFile && Storage::exists('public/' . $existingFile->Path)) {
+                        Storage::delete('public/' . $existingFile->Path);
+                        $existingFile->delete(); // Remove record from database
+                    }
+                    // Upload and save new file
+                    $file = $request->file('Path.' . $index);
+                    if ($file->isValid()) {
+                        $fileName = time() . '_' . $file->getClientOriginalName();
+                        $filePath = $file->storeAs('uploads', $fileName, 'public');
+        
+                        SseFiles::updateOrCreate([
+                            'SseId' => $shipmentSample->id,
+                            'Name' => $name,
+                            'Path' => $filePath,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        if ($request->has('deletedFiles')) {
+            $deletedFilesArray = explode(',', $request->deletedFiles);
+            foreach ($deletedFilesArray as $deletedFileId) {
+                $file = SseFiles::find($deletedFileId);
+                if ($file && Storage::exists('public/' . $file->Path)) {
+                    Storage::delete('public/' . $file->Path); // Delete file from storage
+                    $file->delete(); // Remove from database
+                }
+            }
+        }
+
+        if ($request->has('LotNumber') && is_array($request->LotNumber)) {
+            foreach ($request->LotNumber as $index => $lotNumber) {
+                $packId = $request->PackId[$index] ?? null; // Fetch PackId if it exists
+                
+                if ($packId) {
+                    // Update existing record using PackId
+                    SsePacks::updateOrCreate(
+                        ['id' => $packId], // Find by PackId for updating
+                        [
+                            'SseId' => $shipmentSample->id,
+                            'LotNumber' => $lotNumber, // Update LotNumber
+                            'QtyRepresented' => $request->QtyRepresented[$index] ?? null
+                        ]
+                    );
+                } else {
+                    if (!empty($lotNumber)) {
+                        // Create new pack if PackId is not provided
+                        SsePacks::create([
+                            'SseId' => $shipmentSample->id,
+                            'LotNumber' => $lotNumber,
+                            'QtyRepresented' => $request->QtyRepresented[$index] ?? null
+                        ]);
+                    }
+                }    
+            }
+        } 
+
+        if ($request->has('deletedPacks')) {
+            $deletedPacksArray = explode(',', $request->deletedPacks);
+            foreach ($deletedPacksArray as $deletedPackId) {
+                $pack = SsePacks::find($deletedPackId);
+                if ($pack) {
+                    $pack->delete(); // Remove pack record from database
+                }
+            }
+        }
+
+        if ($request->has('Work') && is_array($request->Work)) {
+            SseWork::where('SseId', $shipmentSample->id)->delete();
+
+            foreach ($request->Work as $shipment_work) {
+                $shipmentWork = new SseWork();
+                $shipmentWork->SseId = $shipmentSample->id;
+                $shipmentWork->Work = $shipment_work;
+                $shipmentWork->save();
+            }
+        }
+        $shipmentSample->save();
+
+        sseHistoryLogs("disposition", $shipmentSample->id);
+
+        return response()->json(['success' => 'Data is successfully updated.']);
+    }
+
+    public function addSsePersonnel(Request $request)
+    {
+        $shipmentSample = ShipmentSample::findOrFail($request->sse_id);
+        $shipmentSample->Progress = 45; // Set Progress to 45
+        $shipmentSample->save();    
+
+        $personnel = new SsePersonnel;
+        $personnel->SseId = $request->sse_id;
+        $personnel->SsePersonnel = $request->sse_personnel;
+        $personnel->save(); 
+
+        speHistoryLogs("add_personnel", $shipmentSample->id);
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back()->with(['tab' => 'personnel']);
+    }
+
+    public function updateSsePersonnel(Request $request, $id)
+    {
+        $personnel = SsePersonnel::findOrFail($id);
+        $personnel->SseId = $request->sse_id;
+        $personnel->SsePersonnel = $request->sse_personnel;
+        $personnel->save(); 
+
+        speHistoryLogs("update_personnel", $personnel->id);
+        
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back()->with(['tab' => 'personnel']);
+    }
+
+    public function doneSse($id)
+    {
+        $data = ShipmentSample::findOrFail($id);
+        $data->Progress = 55;
+        $data->save();
+
+        sseHistoryLogs('complete', $id);
+
+        return response()->json(['success' => 'Data is successfully completed.']);
+    }
+
+    public function rejectedSse(Request $request, $id)
+    {
+        $data = ShipmentSample::findOrFail($id);
+        $data->RejectedRemarks = $request->RejectedRemarks;
+        $data->Progress = 30;
+        $data->Status = 30;
+        $data->save();
+
+        sseHistoryLogs("rejected", $data->id);
+
+        Alert::success('Rejected', 'The shipment sample evaluation value has been successfully rejected!')
+                ->autoClose(2000);
+
+        return back();
+    }
+
+    public function acceptSse(Request $request, $id)
+    {
+        $data = ShipmentSample::findOrFail($id);
+        $data->AcceptedRemarks = $request->AcceptedRemarks;
+        $data->Progress = 60;
+        $data->Status = 30;
+        $data->save();
+
+        sseHistoryLogs("accepted", $data->id);
+
+        Alert::success('Accepted', 'The shipment sample evaluation value has been successfully accepted!')
+                ->autoClose(2000);
+
+        return back();
+    }
+
+    public function deleteSse($id)
+    {
+        $speFiles = SseFiles::findOrFail($id);
+        $speFiles->delete();
+
+        Alert::success('Successfully Delete')->persistent('Dismiss');
+        return back();
+    }
+    
+    public function deletePack($id)
+    {
+        $ssePack = SsePacks::findOrFail($id);
+        $ssePack->delete();
+
+        Alert::success('Successfully Delete')->persistent('Dismiss');
+        return back();
     }
 
     public function refCode()
