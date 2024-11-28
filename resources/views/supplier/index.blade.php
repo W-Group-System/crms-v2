@@ -74,7 +74,7 @@
                                         @endforeach
                                     </td>
                                     <td>{{ $supplier_data->MobileNo }}.</td>
-                                    <td>{{ $supplier_data->payment_terms->Name}}</td>
+                                    <td>{{ optional($supplier_data->payment_terms)->Name}}</td>
                                     <td>
                                         @if($supplier_data->Status == 1)
                                             <div class="badge badge-success">Active</div>
