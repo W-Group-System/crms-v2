@@ -1,7 +1,7 @@
 @extends('layouts.cs_header')
 @section('content')
 <div class="col-12 text-center">
-    <img src="{{ asset('images/wgroup1.png') }}" style="width: 180px;">
+    <img src="{{ asset('images/whi.png') }}" style="width: 180px;">
     <h2 class="header_h2">Customer Complaint Form</h2>
 </div>
 <form id="form_complaint" method="POST" enctype="multipart/form-data">

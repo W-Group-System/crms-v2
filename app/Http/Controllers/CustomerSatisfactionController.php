@@ -107,14 +107,14 @@ class CustomerSatisfactionController extends Controller
                     $query->where('Progress', $progress);
                 }
             })
-            ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
-                $query->where(function ($query) use ($userId, $userByUser) {
-                    $query->where('PrimaryAccountManagerId', $userId)
-                        ->orWhere('SecondaryAccountManagerId', $userId)
-                        ->orWhere('PrimaryAccountManagerId', $userByUser)
-                        ->orWhere('SecondaryAccountManagerId', $userByUser);
-                }); 
-            })
+            // ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
+            //     $query->where(function ($query) use ($userId, $userByUser) {
+            //         $query->where('PrimaryAccountManagerId', $userId)
+            //             ->orWhere('SecondaryAccountManagerId', $userId)
+            //             ->orWhere('PrimaryAccountManagerId', $userByUser)
+            //             ->orWhere('SecondaryAccountManagerId', $userByUser);
+            //     }); 
+            // })                                                          
             ->orWhere(function ($query) use ($userId) {
                 // Include entries where 'ReceivedBy' is the same as the 'userId' in the 'salesapprovers' table
                 $query->where('Progress', '20')

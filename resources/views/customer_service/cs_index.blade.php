@@ -1,7 +1,7 @@
 @extends('layouts.cs_header')
 @section('content')
 <div class="col-12 text-center">
-    <img src="{{asset('images/wgroup1.png')}}" style="width: 180px;">
+    <img src="{{asset('images/whi.png')}}" style="width: 180px;" class="mt-3">
     <h2 class="header_h2 mt-2">Customer Service Application Form</h2>
 </div>
 <div class="row text-center" style="margin-top: 5em">
