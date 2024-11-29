@@ -1,7 +1,7 @@
 @extends('layouts.cs_header')
 @section('content')
 <div class="col-12 text-center">
-    <img src="{{ asset('images/wgroup1.png') }}" style="width: 180px;">
+    <img src="{{ asset('images/whi.png') }}" style="width: 170px;" class="mt-3 mb-2">
     <h2 class="header_h2">Customer Satisfaction Form</h2>
 </div>
 <form id="form_satisfaction" method="POST" enctype="multipart/form-data">
@@ -46,7 +46,7 @@
         <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Department Concerned</label>
-                <select class="form-control js-example-basic-single" name="Concerned" id="Concerned" title="Select Concerned" required>
+                <select class="form-control js-example-basic-single" name="Concerned" id="Concerned" title="Select Concerned">
                     <option value="" disabled selected>Select Concerned</option>
                     @foreach($concern_department as $data)
                         <option value="{{ $data->id }}" {{ old('Concerned') == $data->id ? 'selected' : '' }}>{{ $data->Name }}</option>
@@ -71,12 +71,12 @@
                 <textarea class="form-control" rows="5" name="Description" placeholder="Enter Description" required>{{ old('Description') }}</textarea>
             </div>
         </div>
-        <div class="offset-lg-1 col-lg-5">
+        <!-- <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Attachments</label>
                 <input type="file" class="form-control attachments" name="Path[]" id="Path" multiple>
             </div>
-        </div>
+        </div> -->
         <!-- <div class="offset-lg-1 col-lg-10 mt-3 mb-2">
             <label class="text-white">FOR QUALITY CONCERNS</label>
         </div>
