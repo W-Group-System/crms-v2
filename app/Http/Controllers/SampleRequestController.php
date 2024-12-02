@@ -679,8 +679,17 @@ class SampleRequestController extends Controller
                     $details = "Receive sample request entry";
                 } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
                     $details = "Pause sample request transaction." . isset($audit->new_values['Remarks']);
-                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
-                    $details = "Start sample request transaction";
+                }if (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
+                    if (
+                        $audit->url == 'http://localhost/crmsMain/crms-v2/public/ReturnToSpecialistSRF/' . $audit->auditable_id . '?' || 
+                        $audit->url == 'http://crms-wgroup.wsystem.online/ReturnToSpecialistSRF/' . $audit->auditable_id . '?'
+                    ) {
+                        $newValues = is_array($audit->new_values) ? $audit->new_values : json_decode($audit->new_values, true);
+                        $remarks = $newValues['ReturnToSpecialistRemark'] ?? '';
+                        $details = "Return To Specialist" ." ". $remarks;
+                    } else {
+                        $details = "Start sample request transaction";
+                    }
                 } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
                     $details = "Submitted sample request transaction";
                 } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
@@ -1232,6 +1241,23 @@ class SampleRequestController extends Controller
         $transactionApproval->UserId = Auth::user()->id;
         $transactionApproval->Remarks = request()->input('return_to_sales_remarks');
         $transactionApproval->RemarksType = 'return to sales';
+        $transactionApproval->save(); 
+        Alert::success('Successfully Returned')->persistent('Dismiss');
+        return back();
+    }
+    public function ReturnToSpecialistSRF(Request $request, $id)
+    {
+        $sampleRequest = SampleRequest::findOrFail($id);
+        $sampleRequest->Progress = 50;
+        $sampleRequest->ReturnToSpecialistRemark = request()->input('return_to_specialist_remarks');
+        $sampleRequest->save();
+
+        $transactionApproval = new TransactionApproval();
+        $transactionApproval->Type = '30';
+        $transactionApproval->TransactionId = $id;
+        $transactionApproval->UserId = Auth::user()->id;
+        $transactionApproval->Remarks = request()->input('return_to_specialist_remarks');
+        $transactionApproval->RemarksType = 'return to specialist';
         $transactionApproval->save(); 
         Alert::success('Successfully Returned')->persistent('Dismiss');
         return back();

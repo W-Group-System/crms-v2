@@ -303,6 +303,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('CloseRemarks/{id}', 'SampleRequestController@CloseRemarks');
         // Route::post('ReturnToSales/{id}', 'SampleRequestController@ReturnToSales');
         Route::post('ReturnToSalesSRF/{id}', 'SampleRequestController@ReturnToSalesSRF');
+        Route::post('ReturnToSpecialistSRF/{id}', 'SampleRequestController@ReturnToSpecialistSRF');
     
         Route::post('ReturnToRnd/{id}', 'SampleRequestController@ReturnToRnd');
         Route::post('ReturnToSpecialist/{id}', 'SampleRequestController@ReturnToSpecialist');
