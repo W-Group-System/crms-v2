@@ -366,8 +366,15 @@
                                 {{-- <button type="button" class="btn btn-outline-warning returnBtn">
                                     <i class="ti-back-left">&nbsp;</i> Return To Specialist
                                 </button> --}}
-                                <button type="button" class="btn btn-outline-warning returnToRnd" data-id="{{ $sampleRequest->Id }}">
+
+                                {{-- <button type="button" class="btn btn-outline-warning returnToRnd" data-id="{{ $sampleRequest->Id }}">
                                     <i class="ti ti-check-box"></i>&nbsp;Return to Specialist
+                                </button> --}}
+                                <button type="button" class="btn btn-outline-warning"
+                                    data-target="#returnToSpecialist{{ $sampleRequest->Id }}" 
+                                    data-toggle="modal" 
+                                    title='Return To Specialist'>
+                                    <i class="ti ti-check-box">&nbsp;</i>Return to Specialist
                                 </button>
                                 {{-- <button type="button" class="btn btn-md btn-outline-warning startSrf"  data-id="{{ $sampleRequest->Id }}">
                                     <i class="ti-control-play">&nbsp;</i>Start
@@ -1844,6 +1851,7 @@
 
 @include('sample_requests.srf_start')
 @include('sample_requests.srf_pause')
+@include('sample_requests.srf_returnToSpecialist')
 @include('sample_requests.rnd_update')
 @include('sample_requests.srf_approval')
 @include('sample_requests.cancel_srf')
