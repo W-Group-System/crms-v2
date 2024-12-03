@@ -223,13 +223,13 @@
                         
                         @if($crr->RefCode == auth()->user()->role->type)
                             @if($crr->Progress == 57 || $crr->Progress == 81)
-                            <form action="{{url('start_crr/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
-                                @csrf
+                            {{-- <form action="{{url('start_crr/'.$crr->id)}}" method="post" class="d-inline-block" onsubmit="show()">
+                                @csrf --}}
 
-                                <button type="button" class="btn btn-outline-danger returnBtn">
+                                <button type="button" class="btn btn-outline-danger " data-toggle="modal" data-target="#return{{$crr->id}}">
                                     <i class="ti-back-left">&nbsp;</i> Return To Specialist
                                 </button>
-                            </form>
+                            {{-- </form> --}}
                             @endif
 
                             @if($crr->Progress == 30)
@@ -1058,7 +1058,7 @@
 @include('customer_requirements.return_to_sales_remarks')
 @include('customer_requirements.open_remarks')
 @include('customer_requirements.continue_remarks')
-
+@include('customer_requirements.return_to_specialist')
 {{-- @foreach ($crr->crrFiles as $files)
 @endforeach --}}
 @include('customer_requirements.add_all_files')
@@ -1357,23 +1357,24 @@
             });
         })
         
-        $('.returnBtn').on('click', function() {
-            var form = $(this).closest('form');
+        // $('.returnBtn').on('click', function() {
+        //     var form = $(this).closest('form');
             
-            Swal.fire({
-                title: "Are you sure?",
-                // text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Return"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit()
-                }
-            });
-        })
+        //     Swal.fire({
+        //         title: "Are you sure?",
+        //         // text: "You won't be able to revert this!",
+        //         icon: "warning",
+        //         showCancelButton: true,
+        //         confirmButtonColor: "#3085d6",
+        //         cancelButtonColor: "#d33",
+        //         confirmButtonText: "Return"
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             form.submit()
+        //         }
+        //     });
+            
+        // })
 
         $('.completeCrr').on('click', function() {
             var form = $(this).closest('form');

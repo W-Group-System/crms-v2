@@ -1210,6 +1210,17 @@ class CustomerRequirementController extends Controller
                 $transactionApproval->RemarksType = "continue";
                 $transactionApproval->save();        
             }
+            elseif ($request->action == "return_to_specialist")
+            {
+                $transactionApproval = new TransactionApproval;
+                $transactionApproval->Type = 10;
+                $transactionApproval->TransactionId = $crr->id;
+                $transactionApproval->UserId = auth()->user()->id;
+                $transactionApproval->Status = 30;
+                $transactionApproval->Remarks = $request->return_to_specialist_remarks;
+                $transactionApproval->RemarksType = "returned";
+                $transactionApproval->save();   
+            }
         }
 
         crrHistoryLogs('start', $id);
