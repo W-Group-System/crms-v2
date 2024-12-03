@@ -262,7 +262,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('sales_accept_rpe/{id}', 'RequestProductEvaluationController@salesAcceptRpe');
         Route::post('ReturnToSales_rpe/{id}', 'RequestProductEvaluationController@ReturnToSalesRpe');
         Route::post('ApproveRpe/{id}', 'RequestProductEvaluationController@approveRpeSales');
-    
+        Route::post('ReturnToSpecialistRPE/{id}', 'RequestProductEvaluationController@ReturnToSpecialistRPE');
+
         Route::get('product_evaluation_export', 'RequestProductEvaluationController@export');
     
         Route::post('refresh_rpe_secondary_persons', 'RequestProductEvaluationController@refreshUserApprover');

@@ -329,13 +329,19 @@
 
                                 @if($requestEvaluation->Progress == 81 || $requestEvaluation->Progress == 57 || $requestEvaluation->Progress == 81)
                               
-                                    <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
+                                    {{-- <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
                                         @csrf
 
                                         <button type="button" class="btn btn-outline-info returnToRnd">
                                             <i class="ti ti-check-box"></i>&nbsp;Return to Specialist
                                         </button>
-                                    </form>
+                                    </form> --}}
+                                    <button type="button" class="btn btn-outline-info"
+                                        data-target="#rpeReturnToSpecialist{{ $requestEvaluation->id }}" 
+                                        data-toggle="modal" 
+                                        title='Return To Specialist'>
+                                        <i class="ti ti-check-box">&nbsp;</i>Return to Specialist
+                                    </button>
                                     
                                 @endif
 
@@ -1039,7 +1045,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($combinedLogs as $combinedLog)
+                                @foreach ($orderedCombinedLogs as $combinedLog)
                                     <tr>
                                         <td>{{ $combinedLog->CreatedDate }}</td>
                                         <td>{{ $combinedLog->full_name }}</td>
@@ -1547,6 +1553,8 @@
 {{-- @include('product_evaluations.create_activity') --}}
 @include('product_evaluations.upload_rpe_file')
 @include('product_evaluations.rpe_approval')
+@include('product_evaluations.rpe_returnToSpecialist')
+
 
 {{-- @foreach ($RpeSupplementary as $supplementary) --}}
 {{-- @endforeach --}}

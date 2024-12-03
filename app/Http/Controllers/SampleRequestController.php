@@ -679,7 +679,7 @@ class SampleRequestController extends Controller
                     $details = "Receive sample request entry";
                 } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
                     $details = "Pause sample request transaction." . isset($audit->new_values['Remarks']);
-                }if (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
                     if (
                         $audit->url == 'http://localhost/crmsMain/crms-v2/public/ReturnToSpecialistSRF/' . $audit->auditable_id . '?' || 
                         $audit->url == 'http://crms-wgroup.wsystem.online/ReturnToSpecialistSRF/' . $audit->auditable_id . '?'

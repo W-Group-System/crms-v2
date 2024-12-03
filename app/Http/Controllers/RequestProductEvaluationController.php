@@ -611,7 +611,16 @@ class RequestProductEvaluationController extends Controller
                 } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
                     $details = "Pause request product evaluation transaction." . isset($audit->new_values['Remarks']);
                 } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
-                    $details = "Start request product evaluation transaction";
+                    if (
+                        $audit->url == 'http://localhost/crmsMain/crms-v2/public/ReturnToSpecialistRPE/' . $audit->auditable_id . '?' || 
+                        $audit->url == 'http://crms-wgroup.wsystem.online/ReturnToSpecialistRPE/' . $audit->auditable_id . '?'
+                    ) {
+                        $newValues = is_array($audit->new_values) ? $audit->new_values : json_decode($audit->new_values, true);
+                        $remarks = $newValues['ReturnToSpecialistRemark'] ?? '';
+                        $details = "Return To Specialist" ." ". $remarks;
+                    } else {
+                        $details = "Start sample request transaction";
+                    }
                 } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
                     $details = "Submitted request product evaluation transaction";
                 } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
@@ -645,7 +654,7 @@ class RequestProductEvaluationController extends Controller
         $mappedAuditsCollection = collect($mappedAudits);
     
         $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
-        
+        $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate');
         // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
         // ->get();
@@ -668,7 +677,7 @@ class RequestProductEvaluationController extends Controller
         $product_applications = ProductApplication::all();
         $currentUser = auth()->user();
         
-        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals','rndPersonnel','activities', 'clients','users', 'combinedLogs', 'project_names', 'price_currencies', 'product_applications','primarySalesPersons', 'secondarySalesPersons', 'currentUser'));
+        return view('product_evaluations.view', compact('requestEvaluation', 'rpeTransactionApprovals','rndPersonnel','activities', 'clients','users', 'orderedCombinedLogs', 'project_names', 'price_currencies', 'product_applications','primarySalesPersons', 'secondarySalesPersons', 'currentUser'));
     }
 
     public function addSupplementary(Request $request)
@@ -958,6 +967,24 @@ class RequestProductEvaluationController extends Controller
         $transactionApproval->RemarksType = 'return to sales';
         $transactionApproval->save(); 
         Alert::success('Successfully return to sales')->persistent('Dismiss');
+        return back();
+    }
+
+    public function ReturnToSpecialistRPE(Request $request, $id)
+    {
+        $product_evaluation = RequestProductEvaluation::findOrFail($id);
+        $product_evaluation->Progress = 50;
+        $product_evaluation->ReturnToSpecialistRemark = request()->input('return_to_specialist_remarks');
+        $product_evaluation->save();
+
+        $transactionApproval = new TransactionApproval();
+        $transactionApproval->Type = '20';
+        $transactionApproval->TransactionId = $id;
+        $transactionApproval->UserId = Auth::user()->id;
+        $transactionApproval->Remarks = request()->input('return_to_specialist_remarks');
+        $transactionApproval->RemarksType = 'return to specialist';
+        $transactionApproval->save(); 
+        Alert::success('Successfully Returned')->persistent('Dismiss');
         return back();
     }
 
