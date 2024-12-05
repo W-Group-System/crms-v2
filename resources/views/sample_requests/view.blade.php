@@ -34,12 +34,21 @@
                 </div>
                 <div class="col-lg-12" align="right">
                     <!-- <a href="{{ url()->previous() ?: url('/sample_request') }}" class="btn btn-md btn-outline-primary"><i class="icon-arrow-left"></i>&nbsp;Back</a> -->
-                    @if(url()->previous() == url()->current())
+                    {{-- @if(url()->previous() == url()->current())
                     <a href="{{ url('sample_request') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @else
                     <a href="{{ url()->previous() ?: url('/sample_request') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @endif --}}
+                    @if(request('origin') == 'for_approval')
+                    <a href="{{ url('sample_request?progress=10&open=10') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @else
+                    <a href="{{url()->previous() ?: url('sample_request?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @endif
