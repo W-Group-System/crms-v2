@@ -107,7 +107,13 @@
                                             <i class="ti-pencil"></i>
                                         </button>    
                                     </td> -->
-                                    <td><a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber) }}" title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
+                                    <td>
+                                        @if(request('progress') && request('open'))
+                                        <a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber.'/?origin=for_approval') }}" title="View Sample Request">{{ $srf->SrfNumber }}</a>
+                                        @else 
+                                        <a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber) }}" title="View Sample Request">{{ $srf->SrfNumber }}</a>
+                                        @endif
+                                    </td>
                                     <td>
                                         @if($srf->RefCode == 1)
                                             RND
@@ -204,7 +210,13 @@
                                                 <i class="ti-pencil"></i>
                                             </button>
                                         </td> -->
-                                        <td><a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber) }}" title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
+                                        <td>
+                                            @if(request('progress') && request('open'))
+                                            <a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber.'/?origin=for_approval') }}" title="View Sample Request">{{ $srf->SrfNumber }}</a>
+                                            @else
+                                            <a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber) }}" title="View Sample Request">{{ $srf->SrfNumber }}</a>
+                                            @endif
+                                        </td>
                                         {{-- <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                         <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td> --}}
                                         <td>

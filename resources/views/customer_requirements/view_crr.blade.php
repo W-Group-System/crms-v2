@@ -11,7 +11,7 @@
             {{-- <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details --}}
                 <div align="right">
                     {{-- {{dd(url()->previous(), url()->current())}} --}}
-                    @if(url()->previous() == url()->current())
+                    {{-- @if(url()->previous() == url()->current())
                     <a href="{{ url('customer_requirement?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
@@ -19,10 +19,17 @@
                     <a href="{{ url()->previous() ?: url('/customer_requirements') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
-                    @endif
-                    <!-- <a href="{{ url('/customer_requirement') }}" class="btn btn-md btn-outline-secondary">
+                    @endif --}}
+
+                    @if(request('origin') == 'for_approval')
+                    <a href="{{ url('/customer_requirement?progress=10&open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
-                    </a> -->
+                    </a>
+                    @else
+                    <a href="{{url()->previous() ?: url('/customer_requirement?open=10') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a>
+                    @endif
 
                     @if(auth()->user()->role->type != "LS")
                     <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_crr/'.$crr->id)}}" target="_blank">
