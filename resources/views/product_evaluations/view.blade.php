@@ -35,14 +35,23 @@
             Request for Product Evaluation Details
         </div>
         <div class="card-body" style="overflow: auto;">
-            <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details
+            <h4 class="card-title d-flex justify-content-end align-items-center" style="margin-top: 10px">
                 <div align="right">
-                    @if(url()->previous() == url()->current())
+                    {{-- @if(url()->previous() == url()->current())
                     <a href="{{ url('request_product_evaluation?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @else
                     <a href="{{ url()->previous() ?: url('/product_evaluations') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @endif --}}
+                    @if(request('origin') == 'for_approval')
+                    <a href="{{ url('/request_product_evaluation?progress=10') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @else
+                    <a href="{{url()->previous() ?: url('/request_product_evaluation?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @endif

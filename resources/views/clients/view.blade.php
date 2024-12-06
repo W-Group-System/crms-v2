@@ -1,9 +1,12 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card border border-1 border-primary rounded-0">
+        <div class="card-header bg-primary rounded-0">
+            <p class="m-0 font-weight-bold text-white">Client Details</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details
+            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">View Client Details --}}
                 <div align="right">
                     <a href="{{ session('last_client_page') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
@@ -28,11 +31,11 @@
                     </button>
                     @endif
                 </div>
-            </h4>
+            {{-- </h4> --}}
             <form class="form-horizontal" id="form_client" enctype="multipart/form-data" action="{{ url('update_client/'.$data->id) }}">
                 <span id="form_result"></span>
                 @csrf
-                <div class="col-md-12">
+                {{-- <div class="col-md-12">
                     <div class="form-group row mb-2" style="margin-top: 2em">
                         <label class="col-sm-3 col-form-label"><b>Buyer Code</b></label>
                         <div class="col-sm-3">
@@ -152,29 +155,155 @@
                             </div>
                         @endif
                     </div>
+                </div> --}}
+                <div class="col-md-12 mt-2">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Buyer Code :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->BuyerCode }}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Primary Account Manager :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $primaryAccountManager->full_name ?? 'No Primary Account Manager' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>SAP Code :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->SapCode ?? 'N/A'}}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Secondary Account Manager :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $secondaryAccountManager->full_name ?? 'No Secondary Account Manager' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Company Name :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->Name ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Trade Name :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->TradeName ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 mb-0 text-right"><p class="m-0"><b>TIN :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->TaxIdentificationNumber ?? 'N/A '}}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 mb-0 text-right"><p class="m-0"><b>Telephone :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->TelephoneNumber ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Payment Term :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $payment_terms->Name ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>FAX :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->FaxNumber ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Type :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->Type == '1' ? 'Local' : 'International'}}</p>
+                        </div>
+                        <label class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Website :</b></p></label>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->Website ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Region :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $regions->Name ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Primary Email Address :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->Email ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Area :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $areas->Name ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Second Email Address :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->Email2 ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Source :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->Source ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Third Email Address :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $data->Email3 ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Country :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $countries->Name ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 text-right mb-0"><p class="m-0"><b>Business Type :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $business_types->Name ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-6 col-md-2 mb-2 text-right"><p class="m-0"><b>Industry :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            <p class="m-0">{{ $industries->Name ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-6 col-md-2 mb-2 text-right"><p class="m-0"><b>Client Address :</b></p></div>
+                        <div class="col-sm-6 col-md-4">
+                            @if($addresses->isNotEmpty())
+                                @foreach($addresses as $address)
+                                <div class="row">
+                                    <div class="col-md-12"><p class="m-0">{{ $address->AddressType }}</p></div>
+                                    <div class="col-md-12">
+                                        <p class="m-0">{{ $address->Address }}</p>
+                                    </div>
+                                </div>
+                                @endforeach
+                            {{-- @else
+                                <label class="col-sm-3 col-form-label"><b>Address</b></label>
+                                <div class="col-sm-3">
+                                    <label>No Address Available</label>
+                                </div> --}}
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </form>
             <ul class="nav nav-tabs viewTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="contacts-tab" data-toggle="tab" href="#contacts" role="tab" aria-controls="contacts" aria-selected="true">Contacts</a>
+                    <a class="nav-link active p-2" id="contacts-tab" data-toggle="tab" href="#contacts" role="tab" aria-controls="contacts" aria-selected="true">Contacts</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
+                    <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="transactions" aria-selected="false">Transactions</a>
+                    <a class="nav-link p-2" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="transactions" aria-selected="false">Transactions</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
+                    <a class="nav-link p-2" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="collection-tab" data-toggle="tab" href="#collection" role="tab" aria-controls="collection" aria-selected="false">Collection</a>
+                    <a class="nav-link p-2" id="collection-tab" data-toggle="tab" href="#collection" role="tab" aria-controls="collection" aria-selected="false">Collection</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="productFiles-tab" data-toggle="tab" href="#productFiles" role="tab" aria-controls="productFiles" aria-selected="false">Product Files</a>
+                    <a class="nav-link p-2" id="productFiles-tab" data-toggle="tab" href="#productFiles" role="tab" aria-controls="productFiles" aria-selected="false">Product Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="transactionFiles-tab" data-toggle="tab" href="#transactionFiles" role="tab" aria-controls="transactionFiles" aria-selected="false">Transaction Files</a>
+                    <a class="nav-link p-2" id="transactionFiles-tab" data-toggle="tab" href="#transactionFiles" role="tab" aria-controls="transactionFiles" aria-selected="false">Transaction Files</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">

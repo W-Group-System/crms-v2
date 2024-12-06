@@ -1096,6 +1096,32 @@ class ProductController extends Controller
 
     public function getProduct()
     {
-        return Product::where('is_deleted', 0)->get();
+        $products = Product::with('productMaterialComposition', 'productMaterialComposition.rawMaterials')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
+
+        $product_array = [];
+        foreach($products as $product)
+        {
+            $object = new \StdClass;
+            $object->product = $product->code;
+
+            $raw_materials = $product->productMaterialComposition;
+            $raw_mats_array = [];
+            foreach($raw_materials as $raw_mats)
+            {
+                if ($raw_mats->rawMaterials != null)
+                {
+                    $raw_mats_array[] = $raw_mats->rawMaterials->Name .' - '.$raw_mats->Percentage.'%';
+                }
+                // else
+                // {
+                //     $object->raw_materials = $product_composition;
+                // }
+            }
+
+            $object->material_name = $raw_mats_array;
+            $product_array[] = $object;
+        }
+
+        return $product_array;
     }
 }

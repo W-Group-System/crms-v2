@@ -1,12 +1,17 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card border border-1 border-primary rounded-0">
+        <div class="card-header rounded-0 bg-primary">
+            <p class="m-0 font-weight-bold text-white">
+                Project Name List
+            </p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
-            Project Name List
-            <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#CreateProjectName">Add Project Name</button>
-            </h4>
+            <div class="d-flex justify-content-end align-items-center mb-3">
+                <button type="button" class="btn btn-md btn-primary" data-toggle="modal" data-target="#CreateProjectName">Add Project Name</button>
+            </div>
+            
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                 <div class="row height d-flex justify-content-end align-items-end">
                     <div class="col-md-5">

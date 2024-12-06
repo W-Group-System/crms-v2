@@ -179,10 +179,15 @@
                                 </form>
                             </td> -->
                             <td>
-                                {{-- <a href="{{url('view_customer_requirement/'.$customerRequirement->id)}}" title="View Customer Requirements">{{ optional($customerRequirement)->CrrNumber }}</a> --}}
+                                @if(request('open') && request('progress'))
+                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id.'/'.$customerRequirement->CrrNumber.'/?origin=for_approval')}}" title="View Customer Requirements">
+                                    {{$customerRequirement->CrrNumber}}
+                                </a>
+                                @else
                                 <a href="{{url('view_customer_requirement/'.$customerRequirement->id.'/'.$customerRequirement->CrrNumber)}}" title="View Customer Requirements">
                                     {{$customerRequirement->CrrNumber}}
                                 </a>
+                                @endif
                             </td>
                             <td>
                                 @if($customerRequirement->RefCode != null)
@@ -422,9 +427,15 @@
                                 </form>
                             </td> -->
                             <td>
+                                @if(request('open') && request('progress'))
+                                <a href="{{url('view_customer_requirement/'.$customerRequirement->id.'/'.$customerRequirement->CrrNumber.'/?origin=for_approval')}}" title="View Customer Requirements">
+                                    {{$customerRequirement->CrrNumber}}
+                                </a>
+                                @else
                                 <a href="{{url('view_customer_requirement/'.$customerRequirement->id.'/'.$customerRequirement->CrrNumber)}}" title="View Customer Requirements">
                                     {{$customerRequirement->CrrNumber}}
                                 </a>
+                                @endif
                             </td>
                             <td>
                                 @if($customerRequirement->RefCode != null)
