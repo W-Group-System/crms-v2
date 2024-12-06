@@ -1,9 +1,11 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card border border-1 border-primary rounded-0">
+        <div class="card-header bg-primary">
+            <p class="card-title m-0 font-weight-bold text-white">List of Clients (Archive)</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">Client List (Archived)</h4>
             <div class="row height d-flex ">
                 <div class="col-md-5 mt-2 mb-2">
                     <a href="#" id="copy_archived_btn" class="btn btn-md btn-outline-info mb-1">Copy</a>
