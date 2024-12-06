@@ -67,7 +67,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover table-bordered" id="product_table" width="100%">
+                <table class="table table-striped table-bordered table-hover table-bordered" id="product_table" width="100%" style="table-layout: fixed;">
                     <thead>
                         <tr>
                             {{-- <th width="10%">Action</th> --}}
