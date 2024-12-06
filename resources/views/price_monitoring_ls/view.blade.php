@@ -40,56 +40,30 @@
             <div align="right">
                 <!-- <a href="{{ url('/price_monitoring_ls') }}" class="btn btn-md btn-outline-light"><i class="icon-arrow-left"></i>&nbsp;Back</a> -->
 
-                @if(url()->previous() == url()->current())
-                <a href="{{ url('price_monitoring_ls?open=10') }}" class="btn btn-md btn-outline-secondary">
-                    <i class="icon-arrow-left"></i>&nbsp;Back
-                </a> 
-                @else
-                <a href="{{ url()->previous() ?: url('/price_monitoring_ls') }}" class="btn btn-md btn-outline-secondary">
-                    <i class="icon-arrow-left"></i>&nbsp;Back
-                </a> 
-                @endif
-                <a target='_blank' href="{{ url('quotation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Quotation</a>
-                <a target='_blank' href="{{ url('computation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Computation</a>
-                @if ($price_monitorings->Progress != 30)
-                        <button type="button" class="btn btn-md btn-outline-warning"
-                        data-target="#closePrf{{ $price_monitorings->id }}" 
-                        data-toggle="modal">
-                        <i class="ti-folder"></i>&nbsp;Close
-                    </button>
-                    <button type="button" class="btn btn-outline-warning editBtn"
-                        data-target="#prfEdit{{ $price_monitorings->id }}" 
-                        data-toggle="modal" 
-                        title='Update PRF'>
-                        <i class="ti ti-pencil">&nbsp;</i>Update
-                    </button>
-                @elseif($price_monitorings->Status == 30)
-                     <button type="button" class="btn btn-outline-success reopenStatus" data-id="{{ $price_monitorings->id }}">
-                        <i class="mdi mdi-open-in-new"></i>&nbsp;Open
-                    </button>
-                @endif
-               
-                @php
-                    $showButton = false;
-                    foreach ($price_monitorings->requestPriceProducts as $product) {
-                        if ($product->PriceRequestGaeId == "6") {
-                            $showButton = false;
-                            break; 
-                        }
-                        if ($product->LsalesMarkupPercent > 15) {
-                            $showButton = true;
-                            break; 
-                        }
-                       
-                    }
-                @endphp
 
-                    @if (((prfPrimarySalesApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, $price_monitorings->SecondarySalesPersonId) === "true") && $price_monitorings->Progress == 10)  && $showButton)
-                        <button type="button" class="btn btn-md btn-success"
-                                data-target="#approvePrf{{ $price_monitorings->id }}" 
-                                data-toggle="modal" 
-                                title='Approve PRF'>
-                            <i class="ti ti-check-box">&nbsp;</i>Approve
+                    @if(request('origin') == 'for_approval')
+                    <a href="{{ url('price_monitoring_ls?progress=10') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @else
+                    <a href="{{ url()->previous() ?: url('/price_monitoring_ls') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @endif
+                    <a target='_blank' href="{{ url('quotation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Quotation</a>
+                    <a target='_blank' href="{{ url('computation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Computation</a>
+                    @if ($price_monitorings->Progress != 30)
+                            <button type="button" class="btn btn-md btn-outline-warning"
+                            data-target="#closePrf{{ $price_monitorings->id }}" 
+                            data-toggle="modal">
+                            <i class="ti-folder"></i>&nbsp;Close
+                        </button>
+                        <button type="button" class="btn btn-outline-warning editBtn"
+                            data-target="#prfEdit{{ $price_monitorings->id }}" 
+                            data-toggle="modal" 
+                            title='Update PRF'>
+                            <i class="ti ti-pencil">&nbsp;</i>Update
+                
                         </button>
                     @elseif (((prfPrimarySalesApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, $price_monitorings->SecondarySalesPersonId) === "true")) && $price_monitorings->Progress == 10)
                         <button type="button" class="btn btn-md btn-success"
