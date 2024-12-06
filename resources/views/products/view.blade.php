@@ -413,11 +413,11 @@
                                                     {{optional($pf->client)->Name}}
                                                 </td>
                                                 <td>
-                                                    @if($pf->IsConfidential != 1)
+                                                    {{-- @if($pf->IsConfidential != 1)
+                                                    @endif --}}
                                                     <a href="{{url($pf->Path)}}" target="_blank">
                                                         <i class="ti-file"></i>
                                                     </a>
-                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
