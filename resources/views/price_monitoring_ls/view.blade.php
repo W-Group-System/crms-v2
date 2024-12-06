@@ -39,8 +39,8 @@
                 <div align="right">
                     <!-- <a href="{{ url('/price_monitoring_ls') }}" class="btn btn-md btn-outline-light"><i class="icon-arrow-left"></i>&nbsp;Back</a> -->
 
-                    @if(url()->previous() == url()->current())
-                    <a href="{{ url('price_monitoring_ls?open=10') }}" class="btn btn-md btn-outline-secondary">
+                    @if(request('origin') == 'for_approval')
+                    <a href="{{ url('price_monitoring_ls?progress=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @else

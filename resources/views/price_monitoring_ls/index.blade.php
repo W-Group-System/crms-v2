@@ -64,7 +64,13 @@
                                         <i class="ti-trash"></i>
                                     </button>
                                 </td> -->
-                                <td><a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id.'/'.$priceMonitoring->PrfNumber) }}" title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a></td>
+                                <td>
+                                    @if (request('progress'))
+                                        <a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id.'/'.$priceMonitoring->PrfNumber.'?origin=for_approval') }}" title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a>
+                                    @else
+                                        <a href="{{ url('price_monitoring_local/view/' . $priceMonitoring->id.'/'.$priceMonitoring->PrfNumber) }}" title="View Price Request">{{ optional($priceMonitoring)->PrfNumber }}</a>
+                                    @endif
+                                </td>
                                 <td>{{  date('m-d-y', strtotime($priceMonitoring->DateRequested)) }}</td>
                                 <td>{{ optional($priceMonitoring->client)->Name }}</td>
                                 <td>

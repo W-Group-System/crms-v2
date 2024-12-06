@@ -573,7 +573,7 @@ function updateSellingPrice($row) {
 
         if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
             var markupPercent = (markupPHP / totalProductCost) * 100;
-            $row.find('.markup-percent').val(markupPercent.toFixed(3));
+            $row.find('.markup-percent').val(markupPercent.toFixed(2));
             updateSellingPrice($row);
             updateSellingPriceWithVAT($row);
         }
@@ -630,7 +630,7 @@ function updateSellingPrice($row) {
            var sellingPriceWithVAT = sellingPrice + (sellingPrice * 0.12);
 
            $row.find('.markup-php').val(markupPHP.toFixed(2));
-           $row.find('.markup-percent').val(markupPercent.toFixed(3));
+           $row.find('.markup-percent').val(markupPercent.toFixed(2));
            $row.find('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
        }
    });
@@ -647,7 +647,7 @@ function updateSellingPrice($row) {
             
             $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
             $row.find('.markup-php').val(markupPHP.toFixed(2));
-            $row.find('.markup-percent').val(markupPercent.toFixed(3));
+            $row.find('.markup-percent').val(markupPercent.toFixed(2));
         }
     });
     
