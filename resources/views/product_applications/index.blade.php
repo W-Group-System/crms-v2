@@ -1,12 +1,15 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card rounded-0 border border-1 border-primary">
+        <div class="card-header bg-primary">
+            <p class="m-0 font-weight-bold text-white">List of Product Applications</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
-            Product Application List
-            <button type="button" class="btn btn-md btn-outline-primary" data-toggle="modal" id="addBtn" data-target="#formProductApplication">New</button>
-            </h4>
+            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">
+                Product Application List
+            </h4> --}}
+            <button type="button" class="btn btn-md btn-outline-primary float-right" data-toggle="modal" id="addBtn" data-target="#formProductApplication">New</button>
             <div class="mb-3">
                 <button class="btn btn-md btn-outline-info" id="copy_issue_btn">Copy</button>
                 <a href="{{url('export_product_application')}}" class="btn btn-md btn-outline-success">Excel</a>
