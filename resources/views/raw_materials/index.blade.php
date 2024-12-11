@@ -4,12 +4,15 @@
 @endsection
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card border border-1 border-primary rounded-0">
+        <div class="card-header bg-primary">
+            <p class="m-0 text-white font-weight-bold">List of Raw Materials</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
-            Raw Material List
-            <button type="button" class="btn btn-outline-primary" data-toggle="modal" id="addBtn" data-target="#formRawMaterial">New</button>
-            </h4>
+            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">
+                Raw Material List
+            </h4> --}}
+            <button type="button" class="btn btn-outline-primary float-end" data-toggle="modal" id="addBtn" data-target="#formRawMaterial">New</button>
             @include('components.error')
             
             <div class="mb-3">

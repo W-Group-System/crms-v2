@@ -26,12 +26,15 @@
     }
 </style>
 <div class="col-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card rounded-0 border border-1 border-primary p-0">
+        <div class="card-header bg-primary rounded-0">
+            <p class="m-0 text-white font-weight-bold">Sample Request Details</p>
+        </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-lg-6"> 
+                {{-- <div class="col-lg-6"> 
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Product Details</h4>
-                </div>
+                </div> --}}
                 <div class="col-lg-12" align="right">
                     <!-- <a href="{{ url()->previous() ?: url('/sample_request') }}" class="btn btn-md btn-outline-primary"><i class="icon-arrow-left"></i>&nbsp;Back</a> -->
                     {{-- @if(url()->previous() == url()->current())
