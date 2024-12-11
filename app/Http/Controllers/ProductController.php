@@ -203,9 +203,13 @@ class ProductController extends Controller
         }
         else
         {
-            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->first();
+            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->orderBy('id','desc')->first();
+            if(preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $products->code, $matches))
+            {
+                $series_number2 = $matches[2];
+            }
             
-            if ($products == null)
+            if ($series_number != $series_number2)
             {
                 $product = new Product;
                 $product->ddw_number = $request->ddw_number;
@@ -267,9 +271,13 @@ class ProductController extends Controller
         }
         else
         {
-            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->where('id', '!=', $id)->first();
+            $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->where('id', '!=', $id)->orderBy('id','desc')->first();
+            if(preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $products->code, $matches))
+            {
+                $series_number2 = $matches[2];
+            }
             
-            if ($products == null)
+            if ($series_number != $series_number2)
             {
                 $product = Product::findOrFail($id);
                 $product->ddw_number = $request->ddw_number;
