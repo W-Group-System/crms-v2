@@ -990,7 +990,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label>File :</label>
-                                    <input type="file" name="files[]" id="file" class="form-control form-control-sm" >
+                                    <input type="file" name="productFiles[]" id="file" class="form-control form-control-sm" >
                                 </div>
                             </div>
                         </fieldset>

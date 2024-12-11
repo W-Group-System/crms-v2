@@ -11,15 +11,13 @@
                 {{csrf_field()}}
                 <input type="hidden" name="product_id" value="{{$data->id}}">
                 <div class="modal-body" style="padding: 20px">
-                    <button class="btn btn-sm btn-success mb-3 addBtnFiles" type="button">
-                        <i class="ti-plus"></i>
-                    </button>
                     <div class="product_files_container ">
                         @foreach ($data->productFiles as $pf)
                             <div class="row">
                                 <div class="col-lg-10">
                                     <fieldset class="border border-primary p-3 mb-3">
                                         <div class="row">
+                                                <input type="hidden" name="file_id[]" class="form-control form-control-sm" value="{{$pf->Id}}" required>
                                             <div class="col-lg-6">
                                                 <label>Name :</label>
                                                 <input type="text" name="name[]" class="form-control form-control-sm" value="{{$pf->Name}}" required>
@@ -44,7 +42,7 @@
                                             </div>
                                             <div class="col-lg-6">
                                                 <label>File :</label>
-                                                <input type="file" name="files[]" id="file" class="form-control form-control-sm" required>
+                                                <input type="file" name="productFiles[]" id="file" value="{{ $pf->Path }}" class="form-control form-control-sm">
                                             </div>
                                         </div>
                                     </fieldset>
@@ -57,7 +55,9 @@
                             </div>
                         @endforeach
                     </div>
-                    
+                    <button class="btn btn-sm btn-success mb-3 addBtnFiles" type="button">
+                        <i class="ti-plus"></i>
+                    </button>  
                 </div>
                 <div class="modal-footer" style="padding: 0.6875rem">
                     <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
