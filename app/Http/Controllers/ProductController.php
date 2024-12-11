@@ -514,18 +514,18 @@ class ProductController extends Controller
 
     public function addFiles(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'file' => 'max:1024'
-        ], [
-            'file*' => 'The file may not be greater than 1MB.'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'file' => 'max:1024'
+        // ], [
+        //     'file*' => 'The file may not be greater than 1MB.'
+        // ]);
 
-        if ($validator->fails())
-        {
-            $errors = $validator->errors();
+        // if ($validator->fails())
+        // {
+        //     $errors = $validator->errors();
             
-            return back()->with(['errors' => $errors, 'tab' => 'files']);
-        }
+        //     return back()->with(['errors' => $errors, 'tab' => 'files']);
+        // }
 
         $fileProducts = new ProductFiles;
         $fileProducts->ProductId = $request->product_id;
@@ -549,18 +549,18 @@ class ProductController extends Controller
 
     public function editFiles(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'file' => 'max:1024'
-        ], [
-            'file*' => 'The file may not be greater than 1MB.'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'file' => 'max:1024'
+        // ], [
+        //     'file*' => 'The file may not be greater than 1MB.'
+        // ]);
 
-        if ($validator->fails())
-        {
-            $errors = $validator->errors();
+        // if ($validator->fails())
+        // {
+        //     $errors = $validator->errors();
             
-            return back()->with(['errors' => $errors, 'tab' => 'files']);
-        }
+        //     return back()->with(['errors' => $errors, 'tab' => 'files']);
+        // }
 
         $fileProducts = ProductFiles::findOrFail($id);
         $fileProducts->Name = $request->name;
@@ -848,43 +848,48 @@ class ProductController extends Controller
 
     public function updateAllFiles(Request $request)
     {
-        if ($request->has('files'))
-        {
-            $validator = Validator::make($request->all(), [
-                'files[]' => 'max:1024|array'
-            ], [
-                'files*' => 'The file may not be greater than 1MB.'
-            ]);
-    
-            if ($validator->fails())
-            {
-                $errors = $validator->errors();
-                
-                return back()->with(['errors' => $errors, 'tab' => 'files']);
+        if ($request->file_id) {
+            foreach ($request->file_id as $key => $fileId) {
+                $productFile = ProductFiles::find($fileId);
+                if ($productFile) {
+                    $productFile->Name = $request->name[$key];
+                    $productFile->ClientId = $request->client[$key];
+                    $productFile->Description = $request->description[$key];
+                    $productFile->IsConfidential = isset($request->is_confidential[$key]) ? 1 : 0;
+
+                    if (isset($request->productFiles[$key])) {
+                        $attachment = $request->productFiles[$key];
+                        $name = time() . '-' . $attachment->getClientOriginalName();
+                        $attachment->move(public_path('attachments'), $name);
+                        $productFile->Path = '/attachments/' . $name;
+                    }
+                    $productFile->save();
+                }
             }
-
-            $productFiles = ProductFiles::where('ProductId', $request->product_id)->delete();
-
-            $attachments = $request->file('files');
-            foreach($attachments as $key=>$attachment)
-            {
-                $productFiles = new ProductFiles;
-                $productFiles->ProductId = $request->product_id;
-                $productFiles->Name = $request->name[$key];
-                $productFiles->ClientId = $request->client[$key];
-                $productFiles->Description = $request->description[$key];
-
-                $name = time().'-'.$attachment->getClientOriginalName();
-                $attachment->move(public_path('attachments'), $name);
-
-                $productFiles->path = '/attachments/'.$name;
-                $productFiles->save();
-            }
-
-            Alert::success('Successfully Saved')->persistent('Dismiss');
-            return back()->with(['tab' => 'files']);
         }
+
+        if ($request->has('productFiles')) {
+            $attachments = $request->file('productFiles');
+            foreach($attachments as $key=>$attachment) {
+                    $productFile = new ProductFiles;
+                    $productFile->ProductId = $request->product_id;
+                    $productFile->Name = $request->name[$key];
+                    $productFile->ClientId = $request->client[$key];
+                    $productFile->Description = $request->description[$key];
+                    $productFile->IsConfidential = isset($request->is_confidential[$key]) ? 1 : 0;
+
+                    $name = time() . '-' . $attachment->getClientOriginalName();
+                    $attachment->move(public_path('attachments'), $name);
+
+                    $productFile->Path = '/attachments/' . $name;
+                    $productFile->save();
+            }
+        }
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back()->with(['tab' => 'files']);
     }
+
 
     public function viewDraft($id)
     {
