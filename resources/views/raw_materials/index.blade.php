@@ -12,7 +12,7 @@
             {{-- <h4 class="card-title d-flex justify-content-between align-items-center">
                 Raw Material List
             </h4> --}}
-            <button type="button" class="btn btn-outline-primary float-end" data-toggle="modal" id="addBtn" data-target="#formRawMaterial">New</button>
+            <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" id="addBtn" data-target="#formRawMaterial">New</button>
             @include('components.error')
             
             <div class="mb-3">

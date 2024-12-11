@@ -695,6 +695,10 @@
                                         }
                                         return $matches[0];
                                     }
+                                    else
+                                    {
+                                        return $matches[0];
+                                    }
                                 }, $crr_result);
                             @endphp
                             {!! nl2br($crr_linked ) !!}
