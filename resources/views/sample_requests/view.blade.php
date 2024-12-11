@@ -125,13 +125,13 @@
                         @endif
                     @endif
 
-                    @if(rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->id) || rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->user_id))
+                    {{-- @if(rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->id) || rndPersonnel($sampleRequest->srfPersonnel, auth()->user()->user_id)) --}}
                         @if($sampleRequest->Progress == 50)
                             <button type="button" class="btn btn-md btn-outline-success submitSrf"  data-id="{{ $sampleRequest->Id }}">
                                 <i class="ti-check">&nbsp;</i>Submit
                             </button>
                         @endif
-                    @endif
+                    {{-- @endif --}}
                         @if(checkIfInGroup($sampleRequest->PrimarySalesPersonId, auth()->user()->id))
                             @if(auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'LS')
                             {{-- @if(empty($sampleRequest->Courier) && empty($sampleRequest->AwbNumber) && empty($sampleRequest->DateDispatched) && empty($sampleRequest->DateSampleReceived)) --}}
