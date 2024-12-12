@@ -65,14 +65,40 @@
                             <i class="ti ti-pencil">&nbsp;</i>Update
                 
                         </button>
-                    @elseif (((prfPrimarySalesApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, $price_monitorings->SecondarySalesPersonId) === "true")) && $price_monitorings->Progress == 10)
-                        <button type="button" class="btn btn-md btn-success"
-                                data-target="#approveManagerPrf{{ $price_monitorings->id }}" 
-                                data-toggle="modal" 
-                                title='Approve PRF'>
-                            <i class="ti ti-check-box">&nbsp;</i>Approve To Manager
-                        </button>
-                    @endif
+                        @elseif($price_monitorings->Status == 30)
+                            <button type="button" class="btn btn-outline-success reopenStatus" data-id="{{ $price_monitorings->id }}">
+                                <i class="mdi mdi-open-in-new"></i>&nbsp;Open
+                            </button>
+                        @endif
+                        @php
+                            $showButton = false;
+                            foreach ($price_monitorings->requestPriceProducts as $product) {
+                                if ($product->PriceRequestGaeId == "6") {
+                                    $showButton = false;
+                                    break; 
+                                }
+                                if ($product->LsalesMarkupPercent > 15) {
+                                    $showButton = true;
+                                    break; 
+                                }
+                            
+                            }
+                        @endphp
+                        @if (((prfPrimarySalesApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, $price_monitorings->SecondarySalesPersonId) === "true") && $price_monitorings->Progress == 10)  && $showButton)
+                            <button type="button" class="btn btn-md btn-success"
+                                    data-target="#approvePrf{{ $price_monitorings->id }}" 
+                                    data-toggle="modal" 
+                                    title='Approve PRF'>
+                                <i class="ti ti-check-box">&nbsp;</i>Approve
+                            </button>
+                        @elseif (((prfPrimarySalesApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, $price_monitorings->SecondarySalesPersonId) === "true")) && $price_monitorings->Progress == 10)
+                            <button type="button" class="btn btn-md btn-success"
+                                    data-target="#approveManagerPrf{{ $price_monitorings->id }}" 
+                                    data-toggle="modal" 
+                                    title='Approve PRF'>
+                                <i class="ti ti-check-box">&nbsp;</i>Approve To Manager
+                            </button>
+                        @endif
             
                 @if(authCheckIfItsSalesManager(auth()->user()->role_id) && $price_monitorings->Progress == 40)
                 <button type="button" class="btn btn-md btn-success"
