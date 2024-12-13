@@ -4,7 +4,7 @@
     <img src="{{ asset('images/whi.png') }}" style="width: 180px;">
     <h2 class="header_h2">Customer Complaint Form</h2>
 </div>
-<form id="form_complaint" method="POST" enctype="multipart/form-data">
+<form id="form_complaint" method="POST" >
     @csrf
     <input type="hidden" name="CcNumber" value="{{ $newCcNo }}">
     <input type="hidden" name="Status" value="10">
@@ -21,12 +21,12 @@
                 <input type="text" class="form-control" name="ContactName" id="ContactName" placeholder="Enter Contact Name" required>
             </div>
         </div>
-        <div class="offset-lg-1 col-lg-10">
+        {{-- <div class="offset-lg-1 col-lg-10">
             <div class="form-group">
                 <label class="text-white display-5">Address</label>
                 <input type="text" class="form-control" name="Address" id="Address" placeholder="Enter Address">
             </div>
-        </div>
+        </div> --}}
         <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Email Address</label>
@@ -39,7 +39,7 @@
                 <input type="text" class="form-control" name="Telephone" id="Telephone" placeholder="Enter Telephone">
             </div>
         </div>
-        <div class="offset-lg-1 col-lg-10">
+        {{-- <div class="offset-lg-1 col-lg-10">
             <div class="form-group">
                 <label class="text-white display-5">Mode of Communication</label>
                 <div class="form-check form-check-inline">
@@ -53,7 +53,7 @@
                     <label class="form-check-label text-white display-5" for="flexRadioDefault4">By Email</label>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <div class="offset-lg-1 col-lg-5 mb-3">
             <div class="form-group">
                 <label class="text-white display-5">Country</label>
@@ -65,7 +65,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-lg-5 mb-3">
+        {{-- <div class="col-lg-5 mb-3">
             <div class="form-group">
                 <label class="text-white display-5">Definition of Quality Class</label>
                 <select class="form-control js-example-basic-single" name="QualityClass" id="QualityClass" title="Select Quality Class" required>
@@ -79,8 +79,8 @@
             <div class="form-group" id="pName" style="display: none; margin-top: -10px">
                 <input type="text" class="form-control" id="ProductName" name="ProductName" placeholder="Enter Product Name">
             </div>
-        </div>
-        <div class="offset-lg-1 col-lg-10 table-responsive">
+        </div> --}}
+        {{-- <div class="offset-lg-1 col-lg-10 table-responsive">
             <table class="table table-bordered" style="background: rgb(255 255 255 / 91%)">
                 <thead>
                     <tr>
@@ -262,22 +262,22 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
-        <div class="offset-lg-1 col-lg-10 mt-3">
+        </div> --}}
+        {{-- <div class="offset-lg-1 col-lg-10 mt-3">
             <label class="text-white display-5">Quantification of Cost/s:</label>
-        </div>
-        <div class="offset-lg-1 col-lg-5">
+        </div> --}}
+        {{-- <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Description</label>
                 <input type="text" class="form-control" name="Description" id="Description" placeholder="Enter Description">
             </div>
-        </div>
-        <div class="col-lg-5">
+        </div> --}}
+        {{-- <div class="col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Currency (In PHP/ In US$/ In EUR)</label>
                 <input type="text" class="form-control" name="Currency" id="Currency" placeholder="Enter Currency">
             </div>
-        </div>
+        </div> --}}
         <div class="offset-lg-1 col-lg-10">
             <div class="form-group">
                 <label class="text-white display-5">Customer Remarks</label>
@@ -287,7 +287,7 @@
         <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Site Concerned</label>
-                <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" title="Select Site Concerned" required>
+                <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" title="Select Site Concerned" >
                     <option value="" disabled selected>Select Site Concerned</option>
                     <option value="WHI Carmona">WHI Carmona</option>
                     <option value="WHI Head Office">WHI Head Office</option>
@@ -300,7 +300,7 @@
         <div class="col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Department</label>
-                <select class="form-control js-example-basic-single" name="Department" id="Department" title="Select Department" required>
+                <select class="form-control js-example-basic-single" name="Department" id="Department" title="Select Department" >
                     <option value="" disabled selected>Select Department</option>
                     @foreach($concern_department as $data)
                         <option value="{{ $data->id }}">{{ $data->Name }}</option>
@@ -334,44 +334,44 @@
     $(document).ready(function() {
         $('.js-example-basic-single').select2();
 
-        $('#QualityClass').on('change', function() {
-            var selectedValue = $(this).val(); 
-            if (selectedValue == "4") {
-                $('#pName').show(); 
-            } else {
-                $('#pName').hide(); 
-            }
-        });
+        // $('#QualityClass').on('change', function() {
+        //     var selectedValue = $(this).val(); 
+        //     if (selectedValue == "4") {
+        //         $('#pName').show(); 
+        //     } else {
+        //         $('#pName').hide(); 
+        //     }
+        // });
 
-        function toggleInputs(checkboxId, inputClass) {
-            document.getElementById(checkboxId).onchange = function() {
-                const inputs = document.getElementsByClassName(inputClass);
-                for (let input of inputs) {
-                    input.disabled = !this.checked;
-                }
-            };
-        }
+        // function toggleInputs(checkboxId, inputClass) {
+        //     document.getElementById(checkboxId).onchange = function() {
+        //         const inputs = document.getElementsByClassName(inputClass);
+        //         for (let input of inputs) {
+        //             input.disabled = !this.checked;
+        //         }
+        //     };
+        // }
 
-        toggleInputs('check-p1', 'p1-input');
-        toggleInputs('check-p2', 'p2-input');
-        toggleInputs('check-p3', 'p3-input');
-        toggleInputs('check-p4', 'p4-input');
-        toggleInputs('check-p5', 'p5-input');
-        toggleInputs('check-p6', 'p6-input');
+        // toggleInputs('check-p1', 'p1-input');
+        // toggleInputs('check-p2', 'p2-input');
+        // toggleInputs('check-p3', 'p3-input');
+        // toggleInputs('check-p4', 'p4-input');
+        // toggleInputs('check-p5', 'p5-input');
+        // toggleInputs('check-p6', 'p6-input');
 
-        toggleInputs('check-pack1', 'input-pack1');
-        toggleInputs('check-pack2', 'input-pack2');
-        toggleInputs('check-pack3', 'input-pack3');
-        toggleInputs('check-pack4', 'input-pack4');
+        // toggleInputs('check-pack1', 'input-pack1');
+        // toggleInputs('check-pack2', 'input-pack2');
+        // toggleInputs('check-pack3', 'input-pack3');
+        // toggleInputs('check-pack4', 'input-pack4');
 
-        toggleInputs('check-d1', 'd1-input');
-        toggleInputs('check-d2', 'd2-input');
-        toggleInputs('check-d3', 'd3-input');
+        // toggleInputs('check-d1', 'd1-input');
+        // toggleInputs('check-d2', 'd2-input');
+        // toggleInputs('check-d3', 'd3-input');
         
-        toggleInputs('check-o1', 'o1-input');
-        toggleInputs('check-o2', 'o2-input');
-        toggleInputs('check-o3', 'o3-input');
-        toggleInputs('check-o4', 'o4-input');
+        // toggleInputs('check-o1', 'o1-input');
+        // toggleInputs('check-o2', 'o2-input');
+        // toggleInputs('check-o3', 'o3-input');
+        // toggleInputs('check-o4', 'o4-input');
 
         $('#form_complaint').on('submit', function(event) {
             event.preventDefault();

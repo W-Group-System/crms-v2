@@ -1,10 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\CcEmail;
 use App\ConcernDepartment;
+use App\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ConcernDepartmentController extends Controller
 {
@@ -31,6 +35,8 @@ class ConcernDepartmentController extends Controller
             })
             ->orderBy($sort, $direction);
 
+        $audits = User::where('is_active','1')->where('department_id',8)->pluck('full_name','email');
+
         if ($fetchAll) {
             $concernDepartments = $query->get(); // Fetch all results
             return response()->json($concernDepartments); // Return JSON response for copying
@@ -39,7 +45,8 @@ class ConcernDepartmentController extends Controller
             return view('concerned_departments.index', [
                 'search' => $search,
                 'concernDepartments' => $concernDepartments,
-                'fetchAll' => $fetchAll
+                'fetchAll' => $fetchAll,
+                'audits' => $audits
             ]);
         }
     }
@@ -68,7 +75,8 @@ class ConcernDepartmentController extends Controller
 
         $form_data = array(
             'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
+            'Description'   =>  $request->Description,
+            'Email' => $request->Email
         );
 
         ConcernDepartment::create($form_data);
@@ -81,8 +89,8 @@ class ConcernDepartmentController extends Controller
     {
         if(request()->ajax())
         {
-            $data = ConcernDepartment::findOrFail($id);
-            return response()->json(['data' => $data]);
+            $data = ConcernDepartment::with('audit')->findOrFail($id);
+            return response()->json(['data' => $data, 'audit' => $data->audit->pluck('email')->toArray()]);
         }
     }
 
@@ -93,7 +101,7 @@ class ConcernDepartmentController extends Controller
             'Name' => [
                 'required',
                 Rule::unique('customerserviceconcerneddepartm', 'Name')
-                    ->whereNull('deleted_at')
+                    ->whereNull('deleted_at')->ignore($id)
             ],
             'Description' => 'required',
         ];
@@ -107,10 +115,20 @@ class ConcernDepartmentController extends Controller
 
         $form_data = array(
             'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description
+            'Description'   =>  $request->Description,
+            'Email' => $request->Email
         );
 
         ConcernDepartment::whereId($id)->update($form_data);
+
+        $cc_email = CcEmail::where('concern_department_id', $id)->delete();
+        foreach($request->audit as $audit)
+        {
+            $cc_email = new CcEmail;
+            $cc_email->concern_department_id = $id;
+            $cc_email->email = $audit;
+            $cc_email->save();
+        }
 
         return response()->json(['success' => 'Data is Successfully Updated.']);
     }

@@ -70,5 +70,8 @@ class CustomerComplaint2 extends Model
     {
         return $this->belongsTo(SalesApprovers::class, 'ReceivedBy', 'UserId'); 
     }
-    
+    public function files()
+    {
+        return $this->hasMany(CcFile::class,'customer_complaint_id');
+    }
 }

@@ -1,10 +1,12 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card border border-1 border-primary rounded-0">
+        <div class="card-header bg-primary rounded-0">
+            <p class="text-white font-weight-bold m-0">Concerned Department List</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
-            Concerned Department List
+            <h4 class="card-title d-flex justify-content-end align-items-center">
             <button type="button" class="btn btn-md btn-primary" name="add_concern_department" id="add_concern_department">Add Concerned Department</button>
             </h4>
             <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
@@ -22,47 +24,61 @@
                     </div>
                 </div>
             </form>
-            <table class="table table-striped table-bordered table-hover" id="concern_department_table" width="100%">
-                <thead>
-                    <tr>
-                        <th width="10%">Action</th>
-                        <th width="40%">
-                            Department
-                            <a href="{{ route('concern_department.index', [
-                                'sort' => 'Name', 
-                                'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc'
-                            ]) }}">
-                                <i class="ti ti-arrow-{{ request('sort') == 'Name' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                            </a>
-                        </th>
-                        <th width="50%">
-                            Description
-                            <a href="{{ route('concern_department.index', [
-                                'sort' => 'Description', 
-                                'direction' => request('sort') == 'Description' && request('direction') == 'asc' ? 'desc' : 'asc'
-                            ]) }}">
-                                <i class="ti ti-arrow-{{ request('sort') == 'Description' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                            </a>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($concernDepartments as $concern_department)
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="concern_department_table" width="100%">
+                    <thead>
                         <tr>
-                            <td>
-                            <button type="button" class="edit btn btn-sm btn-warning" data-id="{{ $concern_department->id }}" title='Edit Concerned Department'>
-                                <i class="ti-pencil"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-danger delete" data-id="{{ $concern_department->id }}" title='Delete Concerned Department'>
-                                <i class="ti-trash"></i>
-                            </button>
-                            </td>
-                            <td>{{ $concern_department->Name }}</td>
-                            <td>{{ $concern_department->Description }}</td>
+                            <th width="10%">Action</th>
+                            <th>
+                                Department
+                                <a href="{{ route('concern_department.index', [
+                                    'sort' => 'Name', 
+                                    'direction' => request('sort') == 'Name' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Name' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th >
+                                Description
+                                <a href="{{ route('concern_department.index', [
+                                    'sort' => 'Description', 
+                                    'direction' => request('sort') == 'Description' && request('direction') == 'asc' ? 'desc' : 'asc'
+                                ]) }}">
+                                    <i class="ti ti-arrow-{{ request('sort') == 'Description' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th>
+                                Email
+                            </th>
+                            <th>
+                                Cc Email
+                            </th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($concernDepartments as $concern_department)
+                            <tr>
+                                <td>
+                                <button type="button" class="edit btn btn-sm btn-warning" data-id="{{ $concern_department->id }}" title='Edit Concerned Department'>
+                                    <i class="ti-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger delete" data-id="{{ $concern_department->id }}" title='Delete Concerned Department'>
+                                    <i class="ti-trash"></i>
+                                </button>
+                                </td>
+                                <td>{{ $concern_department->Name }}</td>
+                                <td>{{ $concern_department->Description }}</td>
+                                <td>{{$concern_department->email}}</td>
+                                <td>
+                                    @foreach ($concern_department->audit as $key=>$audit)
+                                        <small>{{$audit->email}}</small> <br>
+                                    @endforeach
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
             {!! $concernDepartments->appends(['search' => $search, 'sort' => request('sort'), 'direction' => request('direction')])->links() !!}
             @php
                 $total = $concernDepartments->total();
@@ -100,6 +116,19 @@
                     <div class="form-group">
                         <label for="name">Description</label>
                         <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Email</label>
+                        <input type="email" class="form-control" id="Email" name="Email" placeholder="Enter Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Cc Email</label>
+                        <select data-placeholder="Select Email" name="audit[]" id="CcEmail" class="form-control js-example-basic-multiple" multiple>
+                            <option value=""></option>
+                            @foreach ($audits as $key=>$audit)
+                                <option value="{{$key}}">{{$audit}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
@@ -208,13 +237,16 @@
         // Edit button click
         $(document).on('click', '.edit', function() {
             var id = $(this).data('id');
+
             $.ajax({
                 url: "{{ route('edit_concern_department', ['id' => '_id_']) }}".replace('_id_', id),
                 dataType: "json",
                 success: function(data) {
                     $('#Name').val(data.data.Name);
                     $('#Description').val(data.data.Description);
+                    $('#Email').val(data.data.email);
                     $('#hidden_id').val(data.data.id);
+                    $('#CcEmail').val(data.audit).trigger('change');
                     $('.modal-title').text("Edit Concerned Department");
                     $('#action_button').val("Update");
                     $('#action').val("Edit");
