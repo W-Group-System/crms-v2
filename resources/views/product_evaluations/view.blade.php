@@ -109,7 +109,7 @@
                             @endif
                         @endif
 
-                        @if(auth()->user()->id == $requestEvaluation->PrimarySalesPersonId && auth()->user()->user_id == $requestEvaluation->PrimarySalesPersonId)
+                        @if(auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->user_id == $requestEvaluation->PrimarySalesPersonId)
                             @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 70 ||  $requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
                                 <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$requestEvaluation->id}}">
                                     <i class="ti ti-close"></i>&nbsp;Close
