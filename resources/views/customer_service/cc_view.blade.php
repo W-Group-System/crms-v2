@@ -1,172 +1,213 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card border border-1 border-primary rounded-0">
+        <div class="card-header bg-primary">
+            <p class="m-0 font-weight-bold text-white">View Customer Complaint</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">View Customer Complaint
-                <div align="right">
-                    <a href="{{ url()->previous() ?: url('customer_complaint2') }}" class="btn btn-md btn-outline-secondary">
-                        <i class="icon-arrow-left"></i>&nbsp;Back
-                    </a>
-                    @if($data->Status == 10 && $data->ReceivedBy == NULL)
-                        <form action="{{ url('cc_received/' . $data->id) }}" class="d-inline-block" method="POST">
+            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">View Customer Complaint
+            </h4> --}}
+            <div align="right">
+                <a href="{{ url()->previous() ?: url('customer_complaint2') }}" class="btn btn-md btn-outline-secondary">
+                    <i class="icon-arrow-left"></i>&nbsp;Back
+                </a>
+                @if($data->Status == 10 && $data->ReceivedBy == NULL)
+                    <form action="{{ url('cc_received/' . $data->id) }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-success receivedBtn">
+                            <i class="ti-bookmark">&nbsp;</i> Received
+                        </button>
+                    </form>
+                @endif
+                @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
+                    @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
+                        <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-outline-success receivedBtn">
-                                <i class="ti-bookmark">&nbsp;</i> Received
+                            <button type="submit" class="btn btn-outline-success notedBtn">
+                                <i class="ti-check">&nbsp;</i> Noted By
                             </button>
                         </form>
                     @endif
-                    @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                        @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
-                            <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-success notedBtn">
-                                    <i class="ti-check">&nbsp;</i> Noted By
-                                </button>
-                            </form>
+                @endif
+                @if($data->Progress == 30)
+                <button type="button" class="btn btn-outline-info" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
+                    <i class="ti ti-pencil"></i>&nbsp;Update 
+                </button>
+                <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                    <i class="ti ti-pencil"></i>&nbsp;Complaint 
+                </button>
+                <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                    <i class="ti ti-pencil"></i>&nbsp;Investigation
+                </button>
+                <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                    <i class="ti ti-pencil"></i>&nbsp;Verification
+                </button>
+                <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-primary closeBtn">
+                        <i class="ti-close">&nbsp;</i> Close
+                    </button>
+                </form>
+                @endif
+            </div>
+            <div class="row mb-0 mt-3">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>CCF # :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->CcNumber }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Quality Class :</b></p></div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">
+                        @if($data->QualityClass == '1')
+                            Critical e.g., Food Safety Hazard
+                        @elseif($data->QualityClass == '2')
+                            Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)
+                        @elseif($data->QualityClass == '3')
+                            Minor/Marginal e.g., Late response
+                        @elseif($data->QualityClass == '4')
+                            Product name.<br>{{$data->ProductName}}
                         @endif
-                    @endif
-                    @if($data->Progress == 30)
-                    <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
-                        <i class="ti ti-pencil"></i>&nbsp;Investigation
-                    </button>
-                    <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
-                        <i class="ti ti-pencil"></i>&nbsp;Verification
-                    </button>
-                    <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-primary closeBtn">
-                            <i class="ti-close">&nbsp;</i> Close
-                        </button>
-                    </form>
+                    </p>
+                </div>
+            </div>
+            <div class="row mb-0">
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Recurring Issue :</b></p></div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">
+                        @if($data->RecurringIssue == 1)
+                            Yes
+                        @else
+                            No 
+                        @endif
+                    </p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Previous CCF No. (If Yes) :</b></p></div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->PreviousCCF }}</p>
+                </div>
+            </div>
+            <div class="form-group row mb-0">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Date Complaint :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->created_at }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Received By :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ optional($data->users)->full_name ?? 'N/A' }}</p>
+                </div>
+            </div>
+            <div class="row mb-0">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Date Received :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->DateReceived }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Department :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->concerned->Name ?? 'N/A' }}</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Address :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->Address }}</p>
+                </div>
+            </div>
+            <div class="row mb-0">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Country :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->country->Name }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Status :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->Status == 10 ? 'Open' : 'Closed' }}</p>
+                </div>
+            </div>
+            <div class="row mb-0">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Company Name :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->CompanyName }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Date Closed :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->ClosedDate ?? 'N/A' }}</p>
+                </div>
+            </div>
+            <div class="row mb-0">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Contact Name :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->ContactName }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Mode of Communication :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    @if($data->Moc == '1')
+                        By Phone
+                    @elseif($data->Moc == '2')
+                        By Letter/ Fax
+                    @elseif($data->Moc == '3')
+                        Personal
+                    @elseif($data->Moc == '4')
+                        By Email
                     @endif
                 </div>
-            </h4>
+            </div>
+            <div class="row mb-0">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Email : </b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->Email ?? 'N/A' }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Noted By :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ optional($data->noted_by)->full_name }}</p>
+                </div>
+            </div>
+            <div class="row mb-0">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Telephone :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->Telephone }}</p>
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Site Concerned :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->SiteConcerned }}</p>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12">
-                    <div class="form-group row mb-0" style="margin-top: 2em">
-                        <label class="col-sm-3 col-form-label text-right"><b>CCF #:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->CcNumber }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Quality Class:</b></label>
-                        <div class="col-sm-3">
-                            <label>
-                                @if($data->QualityClass == '1')
-                                    Critical e.g., Food Safety Hazard
-                                @elseif($data->QualityClass == '2')
-                                    Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)
-                                @elseif($data->QualityClass == '3')
-                                    Minor/Marginal e.g., Late response
-                                @elseif($data->QualityClass == '4')
-                                    Product name.<br>{{$data->ProductName}}
-                                @endif
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Recurring Issue:</b></label>
-                        <div class="col-sm-3">
-                            <label>
-                                @if($data->RecurringIssue == 1)
-                                    Yes
-                                @else
-                                    No 
-                                @endif
-                            </label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Previous CCF No. (If Yes):</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->PreviousCCF }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Date Complaint:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->created_at }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Received By:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ optional($data->users)->full_name ?? 'N/A' }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Date Received:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->DateReceived }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Department:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->concerned->Name ?? 'N/A' }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-3 col-form-label text-right"><b>Address:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->Address }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Country:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->country->Name }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Status:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->Status == 10 ? 'Open' : 'Closed' }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Company Name:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->CompanyName }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Date Closed:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ClosedDate ?? 'N/A' }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Contact Name:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ContactName }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Mode of Communication:</b></label>
-                        <div class="col-sm-3">
-                            @if($data->Moc == '1')
-                                By Phone
-                            @elseif($data->Moc == '2')
-                                By Letter/ Fax
-                            @elseif($data->Moc == '3')
-                                Personal
-                            @elseif($data->Moc == '4')
-                                By Email
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Email:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->Email ?? 'N/A' }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ optional($data->noted_by)->full_name }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Telephone:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->Telephone }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-3 col-form-label text-right"><b>Site Concerned:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->SiteConcerned }}</label>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
+                    {{-- <div class="table-responsive">
                         <table class="table table-bordered mb-3">
                             <thead>
                                 <tr>
@@ -348,128 +389,169 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
+                    </div> --}}
                     <div class="col-md-12 mb-3">
                         <label><strong>Quantification of Cost/s</strong></label>
                         <hr class="alert-dark mt-0">
                     </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Description:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->Description }}</label>
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Description :</b></p>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Currency (In PHP/ In US$/ In EUR):</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->Currency ?? 'N/A' }}</label>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->Description }}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Currency (In PHP/ In US$/ In EUR) :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->Currency ?? 'N/A' }}</p>
                         </div>
                     </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-3 col-form-label text-right"><b>Customer Remarks:</b></label>
-                        <div class="col-sm-9">
-                            <label>{{ $data->CustomerRemarks }}</label>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Customer Remarks :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->CustomerRemarks }}</p>
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
                         <label><strong>Investigation (Department Concerned Responsibility)</strong></label>
                         <hr class="alert-dark mt-0">
                     </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Immediate Action:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ImmediateAction ?? 'N/A' }}</label>
+                    <div class=" row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Immediate Action :</b></p>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Objective Evidence:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ObjectiveEvidence ?? 'N/A' }}</label>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ImmediateAction ?? 'N/A' }}</p>
                         </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Action/ Implementation Date:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ActionDate ?? 'N/A' }}</label>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Objective Evidence :</b></p>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Action Responsible:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ optional($data->action_responsible)->full_name ?? 'N/A' }}</label>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ObjectiveEvidence ?? 'N/A' }}</p>
                         </div>
                     </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Investigation of the Problem:</b></label>
-                        <div class="col-sm-9">
-                            <label>{{ $data->Investigation ?? 'N/A' }}</label>
+                    <div class=" row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"> <b>Action/ Implementation Date :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ActionDate ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Action Responsible :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ optional($data->action_responsible)->full_name ?? 'N/A' }}</p>
                         </div>
                     </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-3 col-form-label text-right"><b>Corrective Action:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->CorrectiveAction ?? 'N/A' }}</label>
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Investigation of the Problem:</b></p>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Objective Evidence:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ActionObjectiveEvidence ?? 'N/A' }}</label>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->Investigation ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Corrective Action :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->CorrectiveAction ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Objective Evidence :</b></p></div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ActionObjectiveEvidence ?? 'N/A' }}</p>
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
                         <label><strong>Verification/ Recommendation</strong></label>
                         <hr class="alert-dark mt-0">
                     </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Client Feedback/ Acceptance:</b></label>
-                        <div class="col-sm-9">
-                            <label>{{ $data->Acceptance ?? 'N/A'}}</label>
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Client Feedback/ Acceptance :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->Acceptance ?? 'N/A'}}</p>
                         </div>
                     </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Closed By:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ optional($data->closed)->full_name }}</label>
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Closed By :</b></p>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Closed Date:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ClosedDate }}</label>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ optional($data->closed)->full_name }}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Closed Date :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ClosedDate }}</p>
                         </div>
                     </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>With Claims/Credit Note?:</b></label>
-                        <div class="col-sm-3">
-                            <label>
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>With Claims/Credit Note? :</b></p></div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">
                                 @if($data->Claims == 1)
                                     Yes
                                 @else
                                     No 
                                 @endif
-                            </label>
+                            </p>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>For shipment Return?:</b></label>
-                        <div class="col-sm-3">
-                            <label>
+                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>For shipment Return? :</b></p></div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">
                                 @if($data->Shipment == 1)
                                     Yes
                                 @else
                                     No 
                                 @endif
-                            </label>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Credit Note Number :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->CnNumber ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Return Shipment Date :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ShipmentDate ?? 'N/A' }}</p>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Credit Note Number:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->CnNumber ?? 'N/A' }}</label>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Total Amount Incurred :</b></p>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Return Shipment Date:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ShipmentDate ?? 'N/A' }}</label>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->AmountIncurred ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Return Shipment Cost :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ShipmentCost ?? 'N/A' }}</p>
                         </div>
                     </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Total Amount Incurred:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->AmountIncurred ?? 'N/A' }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Return Shipment Cost:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ShipmentCost ?? 'N/A' }}</label>
-                        </div>
+                    <div class="col-md-12 mb-3">
+                        <label><strong>Files</strong></label>
+                        <hr class="alert-dark mt-0">
+                    </div>
+                    <div class="col-md-12">
+                        @foreach ($data->files as $key=>$file)
+                            {{$key+1}}. <a href="{{url($file->files)}}" target="_blank">{{$file->filename}}</a> <br>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -639,6 +721,9 @@
     </div>
 </div>
 
+@include('customer_service.complaint_modal')
+@include('customer_service.update_complaint')
+
 <style>
     .break-spaces {
         white-space: break-spaces !important;
@@ -648,6 +733,36 @@
 </style>
 
 <script>
+    function toggleInputs(checkboxId, inputClass) {
+        document.getElementById(checkboxId).onchange = function() {
+            const inputs = document.getElementsByClassName(inputClass);
+            for (let input of inputs) {
+                input.disabled = !this.checked;
+            }
+        };
+    }
+
+    toggleInputs('check-p1', 'p1-input');
+    toggleInputs('check-p2', 'p2-input');
+    toggleInputs('check-p3', 'p3-input');
+    toggleInputs('check-p4', 'p4-input');
+    toggleInputs('check-p5', 'p5-input');
+    toggleInputs('check-p6', 'p6-input');
+
+    toggleInputs('check-pack1', 'input-pack1');
+    toggleInputs('check-pack2', 'input-pack2');
+    toggleInputs('check-pack3', 'input-pack3');
+    toggleInputs('check-pack4', 'input-pack4');
+
+    toggleInputs('check-d1', 'd1-input');
+    toggleInputs('check-d2', 'd2-input');
+    toggleInputs('check-d3', 'd3-input');
+    
+    toggleInputs('check-o1', 'o1-input');
+    toggleInputs('check-o2', 'o2-input');
+    toggleInputs('check-o3', 'o3-input');
+    toggleInputs('check-o4', 'o4-input');
+    
     $(document).ready(function () {
         $('#updateCustomerComplaint').on('submit', function (e) {
             e.preventDefault(); 

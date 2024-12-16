@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\CcPackaging;
 use App\CcProductQuality;
 use App\CcDeliveryHandling;
+use App\CcFile;
 use App\CcOthers;
 use App\Country;
 use App\ConcernDepartment;
+use App\CustomerComplaint;
 use App\CustomerComplaint2;
+use App\Notifications\EmailDepartment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class CustomerComplaint2Controller extends Controller
 {
@@ -99,14 +103,14 @@ class CustomerComplaint2Controller extends Controller
                 $query->where('Progress', $progress);
             }
         })
-        ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
-            $query->where(function ($query) use ($userId, $userByUser) {
-                $query->where('PrimaryAccountManagerId', $userId)
-                    ->orWhere('SecondaryAccountManagerId', $userId)
-                    ->orWhere('PrimaryAccountManagerId', $userByUser)
-                    ->orWhere('SecondaryAccountManagerId', $userByUser);
-            }); 
-        })
+        // ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
+        //     $query->where(function ($query) use ($userId, $userByUser) {
+        //         $query->where('PrimaryAccountManagerId', $userId)
+        //             ->orWhere('SecondaryAccountManagerId', $userId)
+        //             ->orWhere('PrimaryAccountManagerId', $userByUser)
+        //             ->orWhere('SecondaryAccountManagerId', $userByUser);
+        //     }); 
+        // })
         ->orWhere(function ($query) use ($userId) {
             // Include entries where 'ReceivedBy' is the same as the 'userId' in the 'salesapprovers' table
             $query->where('Progress', '20')
@@ -289,7 +293,9 @@ class CustomerComplaint2Controller extends Controller
     public function view($id)
     {
         $data = CustomerComplaint2::with('concerned', 'country', 'product_quality', 'packaging', 'delivery_handling', 'others')->findOrFail($id);
-        return view('customer_service.cc_view', compact('data'));
+        $concern_department = ConcernDepartment::pluck('Name', 'id');
+
+        return view('customer_service.cc_view', compact('data','concern_department'));
     }
 
     public function acceptance(Request $request, $id)
@@ -351,5 +357,92 @@ class CustomerComplaint2Controller extends Controller
             'success' => true,
             'message' => 'Customer complaint has been successfully closed.'
         ]);
+    }
+
+    public function ccupdate(Request $request, $id)
+    {
+        $product_quality = CcProductQuality::where('CcId',$id)->first();
+
+        for($i=1; $i<=6; $i++)
+        {
+            $product_quality->{'Pn' . $i} = $request->{'Pn' . $i};
+            $product_quality->{'ScNo' . $i} = $request->{'ScNo' . $i};
+            $product_quality->{'SoNo' . $i} = $request->{'SoNo' . $i};
+            $product_quality->{'Quantity' . $i} = $request->{'Quantity' . $i};
+            $product_quality->{'LotNo' . $i} = $request->{'LotNo' . $i};
+            $product_quality->save();
+        }
+
+        $packaging = CcPackaging::where('CcId',$id)->first();
+        
+        for($i=1; $i<=4; $i++)
+        {
+            $packaging->{'PackPn' . $i} = $request->{'PackPn' . $i};
+            $packaging->{'PackScNo' . $i} = $request->{'PackScNo' . $i};
+            $packaging->{'PackSoNo' . $i} = $request->{'PackSoNo' . $i};
+            $packaging->{'PackQuantity' . $i} = $request->{'PackQuantity' . $i};
+            $packaging->{'PackLotNo' . $i} = $request->{'PackLotNo' . $i};
+            $packaging->save();
+        }
+
+        $delivery_handling = CcDeliveryHandling::where('CcId',$id)->first();
+        
+        for($i=1; $i<=3; $i++)
+        {
+            $delivery_handling->{'DhPn' . $i} = $request->{'DhPn' . $i};
+            $delivery_handling->{'DhScNo' . $i} = $request->{'DhScNo' . $i};
+            $delivery_handling->{'DhSoNo' . $i} = $request->{'DhSoNo' . $i};
+            $delivery_handling->{'DhQuantity' . $i} = $request->{'DhQuantity' . $i};
+            $delivery_handling->{'DhLotNo' . $i} = $request->{'DhLotNo' . $i};
+            $delivery_handling->save();
+        }
+
+        $others = CcOthers::where('CcId',$id)->first();
+        
+        for($i=1; $i<=4; $i++)
+        {
+            $others->{'OthersPn' . $i} = $request->{'OthersPn' . $i};
+            $others->{'OthersScNo' . $i} = $request->{'OthersScNo' . $i};
+            $others->{'OthersSoNo' . $i} = $request->{'OthersSoNo' . $i};
+            $others->{'OthersQuantity' . $i} = $request->{'OthersQuantity' . $i};
+            $others->{'OthersLotNo' . $i} = $request->{'OthersLotNo' . $i};
+            $others->save();
+        }
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function ccupload(Request $request, $id)
+    {
+        // dd($request->all());
+        $customer_complaint = CustomerComplaint2::findOrFail($id);
+        $customer_complaint->Department = $request->department;
+        $customer_complaint->save();
+
+        if ($request->has('file'))
+        {
+            // $ccfile = CcFile::where('customer_complaint_id', $id)->delete();
+
+            // $files = $request->file('file');
+            // foreach($files as $file)
+            // {
+            //     $name = time().'_'.$file->getClientOriginalName();
+            //     $file->move(public_path('ccfiles'),$name);
+            //     $file_name = '/ccfiles/'.$name;
+
+            //     $ccfile = new CcFile;
+            //     $ccfile->customer_complaint_id = $id;
+            //     $ccfile->files = $file_name;
+            //     $ccfile->filename = $name;
+            //     $ccfile->save();
+            // }
+            // $email = ['richsel.villaruel@wgroup.com.ph', 'bea.bernardino@rico.com.ph'];
+            $concern_department = ConcernDepartment::with('audit')->findOrFail($customer_complaint->Department);
+            $concern_department->notify(new EmailDepartment($concern_department));
+        }
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
     }
 }

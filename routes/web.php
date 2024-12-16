@@ -405,6 +405,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('cc_received/{id}', 'CustomerComplaint2Controller@received');
         Route::post('cc_closed/{id}', 'CustomerComplaint2Controller@closed');
         Route::post('cc_noted/{id}', 'CustomerComplaint2Controller@noted');
+        Route::post('cc_update/{id}', 'CustomerComplaint2Controller@ccupdate');
+        Route::post('cc_upload/{id}', 'CustomerComplaint2Controller@ccupload');
         
         // Categorization
         Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    

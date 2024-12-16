@@ -1,0 +1,202 @@
+<div class="modal fade" id="complaint{{$data->id}}">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Complaint</h5>
+            </div>
+            <form method="POST" action="{{url('cc_update/'.$data->id)}}" onsubmit="show()">
+                @csrf
+
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" style="background: rgb(255 255 255 / 91%)">
+                            <thead>
+                                <tr>
+                                    <th width="50%" colspan="1" class="text-center">COMPLAINT CATEGORY</th>
+                                    <th width="50%" colspan="6" class="text-center">PRODUCT DETAILS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>1. Product Quality</b></td>
+                                    <td>Please<br>Check</td>
+                                    <td>Product Name</td>
+                                    <td>S/C No.</td>
+                                    <td>SO No.</td>
+                                    <td>Quantity</td>
+                                    <td>Lot No.</td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">1.1 Physical Hazard (contamination of product by unspecified compound e.g. hard plastics, metal flakes, rust, etc.)</td>
+                                    <td align="center"><input id="check-p1" type="checkbox" @if($data->product_quality != null) checked @endif></td>
+                                    <td><input type="text" class="form-control p1-input" name="Pn1" value="{{$data->product_quality->Pn1}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p1-input" name="ScNo1" value="{{$data->product_quality->ScNo1}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p1-input" name="SoNo1" value="{{$data->product_quality->SoNo1}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p1-input" name="Quantity1" value="{{$data->product_quality->Quantity1}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p1-input" name="LotNo1" value="{{$data->product_quality->LotNo1}}" @if($data->product_quality == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">1.2 Biological Hazard (e.g. high bacteria count, etc.)</td>
+                                    <td align="center"><input id="check-p2" type="checkbox" @if($data->product_quality != null) checked @endif></td>
+                                    <td><input type="text" class="form-control p2-input" name="Pn2" value="{{$data->product_quality->Pn2}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p2-input" name="ScNo2" value="{{$data->product_quality->ScNo2}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p2-input" name="SoNo2" value="{{$data->product_quality->SoNo2}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p2-input" name="Quantity2" value="{{$data->product_quality->Quantity2}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p2-input" name="LotNo2" value="{{$data->product_quality->LotNo2}}" @if($data->product_quality == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">1.3 Chemical Hazard (e.g. high heavy metals content, etc.)</td>
+                                    <td align="center"><input id="check-p3" type="checkbox"  @if($data->product_quality != null) checked @endif></td>
+                                    <td><input type="text" class="form-control p3-input" name="Pn3" value="{{$data->product_quality->Pn3}}"  @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p3-input" name="ScNo3" value="{{$data->product_quality->ScNo3}}"  @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p3-input" name="SoNo3" value="{{$data->product_quality->SoNo3}}"  @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p3-input" name="Quantity3" value="{{$data->product_quality->Quantity3}}"  @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p3-input" name="LotNo3" value="{{$data->product_quality->LotNo3}}"  @if($data->product_quality == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">1.4 Visual Defects (e.g. color change, particle size)</td>
+                                    <td align="center"><input id="check-p4" type="checkbox"  @if($data->product_quality != null) checked @endif></td>
+                                    <td><input type="text" class="form-control p4-input" name="Pn4" value="{{$data->product_quality->Pn4}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p4-input" name="ScNo4" value="{{$data->product_quality->ScNo4}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p4-input" name="SoNo4" value="{{$data->product_quality->SoNo4}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p4-input" name="Quantity4" value="{{$data->product_quality->Quantity4}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p4-input" name="LotNo4" value="{{$data->product_quality->LotNo4}}" @if($data->product_quality == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">1.5 Application Problems (e.g. poor dispersion, poor distribution, poor binding property, high syneresis, etc.)</td>
+                                    <td align="center"><input id="check-p5" type="checkbox"  @if($data->product_quality != null) checked @endif></td>
+                                    <td><input type="text" class="form-control p5-input" name="Pn5" value="{{$data->product_quality->Pn5}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p5-input" name="ScNo5" value="{{$data->product_quality->ScNo5}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p5-input" name="SoNo5" value="{{$data->product_quality->SoNo5}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p5-input" name="Quantity5" value="{{$data->product_quality->Quantity5}}" @if($data->product_quality == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control p5-input" name="LotNo5" value="{{$data->product_quality->LotNo5}}" @if($data->product_quality == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">1.6 Physical/ Chemical Properties Out-of Specification (e.g. pH, gel strength, viscosity, syneresis and contamination with other ingredients)</td>
+                                    <td align="center"><input id="check-p6" type="checkbox"  @if($data->product_quality != null) checked @endif></td>
+                                    <td><input type="text" class="form-control p6-input" name="Pn6" value="{{$data->product_quality->Pn6}}"  @if($data->product_quality == null) disabled @endif ></td>
+                                    <td><input type="text" class="form-control p6-input" name="ScNo6" value="{{$data->product_quality->ScNo6}}"  @if($data->product_quality == null) disabled @endif ></td>
+                                    <td><input type="text" class="form-control p6-input" name="SoNo6" value="{{$data->product_quality->SoNo6}}"  @if($data->product_quality == null) disabled @endif ></td>
+                                    <td><input type="text" class="form-control p6-input" name="Quantity6" value="{{$data->product_quality->Quantity6}}"  @if($data->product_quality == null) disabled @endif ></td>
+                                    <td><input type="text" class="form-control p6-input" name="LotNo6" value="{{$data->product_quality->LotNo6}}"  @if($data->product_quality == null) disabled @endif ></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"><b>2. Packaging</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">2.1 Quantity (e.g. Short-packing, under-filled bags or box, over-filled container or box, etc.)</td>
+                                    <td align="center"><input id="check-pack1" type="checkbox" @if($data->packaging != null) checked @endif></td>
+                                    <td><input type="text" class="form-control input-pack1" name="PackPn1" value="{{$data->packaging->PackPn1}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack1" name="PackScNo1" value="{{$data->packaging->PackScNo1}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack1" name="PackSoNo1" value="{{$data->packaging->PackSoNo1}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack1" name="PackQuantity1" value="{{$data->packaging->PackQuantity1}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack1" name="PackLotNo1" value="{{$data->packaging->PackLotNo1}}" @if($data->packaging == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">2.2 Packing (e.g. leakages, corrosion, etc.)</td>
+                                    <td align="center"><input id="check-pack2" type="checkbox" @if($data->packaging != null) checked @endif></td>
+                                    <td><input type="text" class="form-control input-pack2" name="PackPn2" value="{{$data->packaging->PackPn2}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack2" name="PackScNo2" value="{{$data->packaging->PackScNo2}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack2" name="PackSoNo2" value="{{$data->packaging->PackSoNo2}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack2" name="PackQuantity2" value="{{$data->packaging->PackQuantity2}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack2" name="PackLotNo2" value="{{$data->packaging->PackLotNo2}}" @if($data->packaging == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">2.3 Labeling (e.g. wrong or defective label, unreadable, incorrect or incomplete text, etc.)</td>
+                                    <td align="center"><input id="check-pack3" type="checkbox" @if($data->packaging != null) checked @endif></td>
+                                    <td><input type="text" class="form-control input-pack3" name="PackPn3" value="{{$data->packaging->PackPn3}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack3" name="PackScNo3" value="{{$data->packaging->PackScNo3}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack3" name="PackSoNo3" value="{{$data->packaging->PackSoNo3}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack3" name="PackQuantity3" value="{{$data->packaging->PackQuantity3}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack3" name="PackLotNo3" value="{{$data->packaging->PackLotNo3}}" @if($data->packaging == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">2.4 Packaging material (e.g. wrong packaging (bag, pallet, etc.) material, incorrect application of packaging instructions, inadequate quality of packaging material, etc.)</td>
+                                    <td align="center"><input id="check-pack4" type="checkbox" @if($data->packaging != null) checked @endif></td>
+                                    <td><input type="text" class="form-control input-pack4" name="PackPn4" value="{{$data->packaging->PackPn4}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack4" name="PackScNo4" value="{{$data->packaging->PackScNo4}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack4" name="PackSoNo4" value="{{$data->packaging->PackSoNo4}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack4" name="PackQuantity4" value="{{$data->packaging->PackQuantity4}}" @if($data->packaging == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control input-pack4" name="PackLotNo4" value="{{$data->packaging->PackLotNo4}}" @if($data->packaging == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"><b>3. Delivery and Handling</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">3.1 Product Handling (e.g. wrong product, pack size or quantity)</td>
+                                    <td align="center"><input id="check-d1" type="checkbox" @if($data->delivery_handling != null) checked @endif></td>
+                                    <td><input type="text" class="form-control d1-input" name="DhPn1" value="{{$data->delivery_handling->DhPn1}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d1-input" name="DhScNo1" value="{{$data->delivery_handling->DhScNo1}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d1-input" name="DhSoNo1" value="{{$data->delivery_handling->DhSoNo1}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d1-input" name="DhQuantity1" value="{{$data->delivery_handling->DhQuantity1}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d1-input" name="DhLotNo1" value="{{$data->delivery_handling->DhLotNo1}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">3.2 Delayed Delivery (e.g. inadequate forwarder service, wrong delivery address, etc.)</td>
+                                    <td align="center"><input id="check-d2" type="checkbox" @if($data->delivery_handling != null) checked @endif></td>
+                                    <td><input type="text" class="form-control d2-input" name="DhPn2" value="{{$data->delivery_handling->DhPn2}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d2-input" name="DhScNo2" value="{{$data->delivery_handling->DhScNo2}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d2-input" name="DhSoNo2" value="{{$data->delivery_handling->DhSoNo2}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d2-input" name="DhQuantity2" value="{{$data->delivery_handling->DhQuantity2}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d2-input" name="DhLotNo2" value="{{$data->delivery_handling->DhLotNo2}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">3.3 Product Damage during transit (e.g. leakages, corrosion, damaged label/box/carton/seal, etc.)</td>
+                                    <td align="center"><input id="check-d3" type="checkbox" @if($data->delivery_handling != null) checked @endif></td>
+                                    <td><input type="text" class="form-control d3-input" name="DhPn3" value="{{$data->delivery_handling->DhPn3}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d3-input" name="DhScNo3" value="{{$data->delivery_handling->DhScNo3}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d3-input" name="DhSoNo3" value="{{$data->delivery_handling->DhSoNo3}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d3-input" name="DhQuantity3" value="{{$data->delivery_handling->DhQuantity3}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control d3-input" name="DhLotNo3" value="{{$data->delivery_handling->DhLotNo3}}" @if($data->delivery_handling == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"><b>4. Others</b></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">4.1 Quality of records or documents (e.g. insufficient, inadequate, missing, etc.)</td>
+                                    <td align="center"><input id="check-o1" type="checkbox" @if($data->others != null) checked @endif></td>
+                                    <td><input type="text" class="form-control o1-input" name="OthersPn1" value="{{$data->others->OthersPn1}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o1-input" name="OthersScNo1" value="{{$data->others->OthersScNo1}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o1-input" name="OthersSoNo1" value="{{$data->others->OthersSoNo1}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o1-input" name="OthersQuantity1" value="{{$data->others->OthersQuantity1}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o1-input" name="OthersLotNo1" value="{{$data->others->OthersLotNo1}}" @if($data->others == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">4.2 Poor customer Service (e.g., courtesy, professionalism, handling, responsiveness)</td>
+                                    <td align="center"><input id="check-o2" type="checkbox" @if($data->others != null) checked @endif></td>
+                                    <td><input type="text" class="form-control o2-input" name="OthersPn2" value="{{$data->others->OthersPn2}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o2-input" name="OthersScNo2" value="{{$data->others->OthersScNo2}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o2-input" name="OthersSoNo2" value="{{$data->others->OthersSoNo2}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o2-input" name="OthersQuantity2" value="{{$data->others->OthersQuantity2}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o2-input" name="OthersLotNo2" value="{{$data->others->OthersLotNo2}}" @if($data->others == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">4.3 Payment/ Invoice (e.g. wrong price/ product details)</td>
+                                    <td align="center"><input id="check-o3" type="checkbox" @if($data->others != null) checked @endif></td>
+                                    <td><input type="text" class="form-control o3-input" name="OthersPn3" value="{{$data->others->OthersPn3}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o3-input" name="OthersScNo3" value="{{$data->others->OthersScNo3}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o3-input" name="OthersSoNo3" value="{{$data->others->OthersSoNo3}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o3-input" name="OthersQuantity3" value="{{$data->others->OthersQuantity3}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o3-input" name="OthersLotNo3" value="{{$data->others->OthersLotNo3}}" @if($data->others == null) disabled @endif></td>
+                                </tr>
+                                <tr>
+                                    <td class="break-spaces">4.4 Other Issues (please specify)</td>
+                                    <td align="center"><input id="check-o4" type="checkbox" @if($data->others != null) checked @endif></td>
+                                    <td><input type="text" class="form-control o4-input" name="OthersPn4" value="{{$data->others->OthersPn4}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o4-input" name="OthersScNo4" value="{{$data->others->OthersScNo4}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o4-input" name="OthersSoNo4" value="{{$data->others->OthersSoNo4}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o4-input" name="OthersQuantity4" value="{{$data->others->OthersQuantity4}}" @if($data->others == null) disabled @endif></td>
+                                    <td><input type="text" class="form-control o4-input" name="OthersLotNo4" value="{{$data->others->OthersLotNo4}}" @if($data->others == null) disabled @endif></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

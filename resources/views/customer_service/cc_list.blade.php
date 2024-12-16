@@ -1,11 +1,13 @@
 @extends('layouts.header')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card border border-1 border-primary rounded-0">
+        <div class="card-header bg-primary">
+            <p class="m-0 text-white font-weight-bold">Customer Complaint List</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
-            Customer Complaint List
-            </h4>
+            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">
+            </h4> --}}
             <div class="form-group">
                 <form method="GET">
                     <label>Show : </label>
