@@ -45,17 +45,27 @@
                         </form>
                         @endif
                         @if($data->Progress == 50)
-                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#sample">Sample</button>
+                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#sampleSse">Disposition</button>
                             <form method="POST" action="{{url('done_sse/'.$data->id)}}" class="d-inline-block">
                                 @csrf 
                                 <button type="button" class="btn btn-outline-success doneSseBtn">
-                                    <i class="ti ti-check"></i>&nbsp; Done
+                                    <i class="ti ti-check"></i>&nbsp;Submit
                                 </button>
                             </form>
-                        @endif  
-                        @if($data->Progress == 55 && rndManager(auth()->user()->role))
-                            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#rejectedSse"><i class="ti ti-na"></i>&nbsp;Rejected</button>    
-                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#acceptedSse"><i class="ti ti-check"></i>&nbsp;Accepted</button>  
+                        @endif 
+                    @endif
+                    @if($data->Progress == 55 && rndManager(auth()->user()->role))
+                        <!-- <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#rejectedSse"><i class="ti ti-na"></i>&nbsp;Rejected</button>     -->
+                        <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#acceptedSse"><i class="ti ti-check"></i>&nbsp;Completed</button>  
+                    @endif
+                    @if(auth()->user()->role->type == 'PRD')
+                        @if($data->Progress == 60 && $data->Status != 30)
+                            <form method="POST" action="{{url('close_sse/'.$data->id)}}" class="d-inline-block">
+                            @csrf 
+                                <button type="button" class="btn btn-outline-success closeSseBtn">
+                                    <i class="ti ti-close"></i>&nbsp;Close
+                                </button>
+                            </form>
                         @endif
                     @endif
                 </div>
@@ -231,9 +241,9 @@
                         </div>
                     </div>
                     <div class="form-group row mb-3">
-                        <div class="col-sm-12">
+                        <div class="col-md-6">
                             <label class="col-form-label"><b>No. of Packs</b></label>
-                            <table class="table table-striped">
+                            <table class="table table-striped" width="100%">
                                 <thead>
                                     <tr>
                                         <th>Action</th>
@@ -246,7 +256,7 @@
                                     @foreach($data->shipment_pack as $pack)
                                     <tr>
                                         <td>
-                                        @if(rndManager(auth()->user()->role) || checkIfItsAnalyst(auth()->user()->role) && $data->Progress != 55 && $data->Progress != 30 && $data->Progress != 60)
+                                        @if(auth()->user()->role->type == 'PRD' && $data->Progress != 55 && $data->Progress != 30 && $data->Progress != 60)
                                             <form action="{{url('delete_sse_packs/'.$pack->id)}}" class="d-inline-block" method="post" onsubmit="show()">
                                                 @csrf
                                                 <button type="button" class="btn btn-sm btn-outline-danger deleteFile">
@@ -257,6 +267,42 @@
                                         </td>
                                         <td>{{ $pack->LotNumber }}</td>
                                         <td>{{ $pack->QtyRepresented }}</td>
+                                    </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3" align="center">No data available</td>
+                                    </tr>
+                                @endif
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-form-label"><b>Attachments</b></label>
+                            <table class="table table-striped" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Action</th>
+                                        <th>Attachment Name</th>
+                                        <th>File</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @if($data->shipment_attachments && count($data->shipment_attachments) > 0)
+                                    @foreach($data->shipment_attachments as $file)
+                                    <tr>
+                                        <td align="center">
+                                        @if(auth()->user()->role->type == 'PRD' && $data->Progress != 55 && $data->Progress != 30 && $data->Progress != 60)
+                                            <form action="{{url('delete_sse_file/'.$file->id)}}" class="d-inline-block" method="post">
+                                                @csrf
+                                                <button type="button" class="btn btn-sm btn-outline-danger deleteFile">
+                                                    <i class="ti ti-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                        </td>
+                                        <td>{{ $file->Name }}</td>
+                                        <td style="white-space: normal;"><a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ $file->Path }}</a></td>
                                     </tr>
                                     @endforeach
                                 @else
@@ -296,12 +342,34 @@
                             @endif
                         </div> -->
                     </div>
+                </div>
+                <div class="col-md-12">
+                    <label><strong>Disposition</strong></label>
+                    <hr class="alert-dark mt-0">
+                    <div class="form-group row mb-3">
+                        <label class="col-sm-3 col-form-label text-right"><b>Laboratory Request:</b></label>
+                        <div class="col-sm-3">
+                            @if($data->shipment_disposition && count($data->shipment_disposition) > 0)
+                                @foreach($data->shipment_disposition as $disposition)
+                                    <label>{{ $disposition->LabDisposition }}</label><br>
+                                @endforeach
+                            @else
+                                <label>No Work Available</label>
+                            @endif
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Remarks:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->LabRemarks ?? 'No Remarks' }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
                     <ul class="nav nav-tabs viewTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link p-2 active" id="assigned-tab" data-toggle="tab" href="#assigned_details" role="tab" aria-controls="assigned_details" aria-selected="true">R&D/QCD Personnel</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-2" id="attachment-tab" data-toggle="tab" href="#attachment1" role="tab" aria-controls="attachment1" aria-selected="false">Attachments</a>
+                            <a class="nav-link p-2" id="file-tab" data-toggle="tab" href="#file" role="tab" aria-controls="file" aria-selected="false">Files</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
@@ -353,29 +421,60 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane fade" id="attachment1" role="tabpanel" aria-labelledby="attachment1">
+                        <div class="tab-pane fade" id="file" role="tabpanel" aria-labelledby="attachment1">
+                            @if(authCheckIfItsRnd(auth()->user()->department_id))
+                                @if($data->Progress == 35 || $data->Progress == 45 || $data->Progress == 50)
+                                <div align="right">
+                                    <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addSseAttachments">
+                                        New
+                                    </button>
+                                </div>
+                                @include('sse.qcd_attachment')
+                                @endif
+                            @endif
                             <table class="table table-hover table-striped table-bordered tables">
                                 <thead>
                                     <th width="10%">Action</th>
-                                    <th width="30%">Attachment Name</th>
-                                    <th width="60%">File</th>
+                                    <th width="45%">File Name</th>
+                                    <th width="45%">File</th>
                                 </thead>
                                 <tbody>
-                                    @foreach($data->shipment_attachments as $file)
+                                    @foreach($data->shipment_files as $file)
                                     <tr>
                                         <td align="center">
-                                        @if(rndManager(auth()->user()->role) || checkIfItsAnalyst(auth()->user()->role) && $data->Progress != 55 && $data->Progress != 30 && $data->Progress != 60)
-                                            <form action="{{url('delete_sse_file/'.$file->id)}}" class="d-inline-block" method="post">
-                                                @csrf
-                                                <button type="button" class="btn btn-sm btn-outline-danger deleteFile">
-                                                    <i class="ti ti-trash"></i>
-                                                </button>
-                                            </form>
+                                        @if(rndManager(auth()->user()->role) || authCheckIfItsRnd(auth()->user()->department_id))
+                                            @if($data->Progress != 55 || $data->Progress != 30 || $data->Progress != 60)
+                                                <form action="{{url('delete_sse_attachment/'.$file->id)}}" class="d-inline-block" method="post">
+                                                    @csrf
+                                                    <button type="button" class="btn btn-sm btn-outline-warning"
+                                                        data-target="#editSseFile{{ $file->id }}" data-toggle="modal" title='Edit File'>
+                                                        <i class="ti-pencil"></i>
+                                                    </button>   
+                                                    <button type="button" class="btn btn-sm btn-outline-danger deleteFile">
+                                                        <i class="ti ti-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         @endif
                                         </td>
-                                        <td>{{ $file->Name }}</td>
-                                        <td><a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ $file->Path }}</a></td>
+                                        <td>
+                                            @if($file->IsForReview)
+                                                <i class="ti-pencil-alt text-danger"></i>
+                                            @endif
+                                            @if($file->IsConfidential)
+                                                <i class="mdi mdi-eye-off-outline text-danger"></i>
+                                            @endif
+                                            {{ $file->Name }}
+                                        </td>
+                                        <td>
+                                            @if($file->IsForReview == 1 || $file->IsConfidential == 1)
+                                                
+                                            @elseif($file->IsForReview == 1 || $file->IsConfidential == 1 || rndManager(auth()->user()->role) || checkIfItsAnalyst(auth()->user()->role))
+                                                <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">View File</a>
+                                            @endif
+                                        </td>
                                     </tr>
+                                    @include('sse.edit_attachment')
                                     @endforeach
                                 </tbody>
                             </table>
@@ -409,7 +508,7 @@
                             </div>
                         </div>
                     </div> 
-                </div>
+                </div>                
             </div>
             <div align="right" class="mt-3">
                 <a href="{{ url('shipment_sample') }}" class="btn btn-outline-secondary">Close</a>
@@ -417,20 +516,20 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="sample" tabindex="-1" role="dialog" aria-labelledby="sampleModal" aria-hidden="true">
-    <div class="modal-dialog modal-md" role="document">
+<div class="modal fade" id="sampleSse" tabindex="-1" role="dialog" aria-labelledby="sampleModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="sampleModal">Sample Details</h5>
+                <h5 class="modal-title" id="sampleModal">Disposition</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="updateSample" method="POST" action="{{ url('update_sample/' . $data->id) }}" enctype="multipart/form-data">
+                <form id="addDisposition" method="POST" action="{{ url('add_disposition/' . $data->id) }}" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
-                        <div class="col-md-12">
+                        <!-- <div class="col-md-12">
                             <div class="form-check form-check-inline text-center">
                                 <input class="form-check-input" type="radio" name="SampleType" id="SampleType1" value="Pre-ship sample">
                                 <label class="form-check-label" for="SampleType1">Pre-ship sample</label>
@@ -444,8 +543,8 @@
                                 <input class="form-check-input" type="radio" name="SampleType" id="SampleType4" value="Partial samples. More samples to follow">
                                 <label class="form-check-label" for="SampleType4">Partial samples. More samples to follow</label>
                             </div>
-                        </div>
-                        <div class="col-md-6">
+                        </div> -->
+                        <!-- <div class="col-md-6">
                             <div class="form-group" id="lotNoContainer">
                                 <label>No of pack:</label>
                                 <div class="input-group">
@@ -478,6 +577,30 @@
                                     <button class="btn btn-sm btn-primary addRowBtn2" style="border-radius: 0px;" type="button">+</button>
                                 </div>
                                 <input type="file" class="form-control" id="Path" name="Path[]">
+                            </div>
+                        </div> -->
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Laboratory Disposition:</label>
+                                <select class="form-control js-example-basic-multiple" id="LabDisposition" name="LabDisposition[]" style="position: relative !important" multiple required>
+                                    <option value="Additional samples from same lots">Additional samples from same lots</option>
+                                    <option value="New samples from other lot">New samples from other lot</option>
+                                    <option value="COA with MICRO results">COA with MICRO results</option>
+                                    <option value="Quality Rejected">Quality Rejected</option>
+                                    <option value="Quality Accepted">Quality Accepted</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Remarks:</label>
+                                <textarea name="Remarks" id="Remarks" class="form-control" cols="50" rows="10" placeholder="Enter Remarks"></textarea>
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
                             </div>
                         </div>
                     </div>
@@ -555,6 +678,8 @@
 
 <script>
     $(document).ready(function () {
+        $(".js-example-basic-multiple, .js-example-basic-single").select2();
+
         $('.tables').DataTable({
             destroy: false,
             processing: true,
@@ -604,13 +729,13 @@
             $(this).closest('.form-group').remove();
         });
 
-        $("#updateSample").on('hidden.bs.modal', function() {
-            $("[name='AttentionTo']").val(null).trigger('change');
-            $("[name='Supplier']").val(null).trigger('change');
-            $("[name='Work']").val(null).trigger('change');
-        })
+        // $("#addDisposition").on('hidden.bs.modal', function() {
+        //     $("[name='AttentionTo']").val(null).trigger('change');
+        //     $("[name='Supplier']").val(null).trigger('change');
+        //     $("[name='Work']").val(null).trigger('change');
+        // })
 
-        $('#updateSample').on('submit', function(event) {
+        $('#addDisposition').on('submit', function(event) {
             event.preventDefault(); // Prevent the default form submission
 
             var form = $(this);
@@ -628,7 +753,7 @@
                         title: 'Success!',
                         text: response.success, 
                     }).then(() => {
-                        $('#sample').modal('hide');
+                        $('#sampleSse').modal('hide');
                         location.reload(); // Reload page (if needed)
                     });
                 },
@@ -721,6 +846,36 @@
                     if (response.success) {
                         Swal.fire({
                             title: "Completed",
+                            text: response.message,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(function () {
+                            window.location.reload(); // Reload the page
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.closeSseBtn').on('click', function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var button = $(this);
+            var form = button.closest('form');
+            var actionUrl = form.attr('action'); // Get form action URL
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Closed",
                             text: response.message,
                             icon: "success",
                             timer: 1500,

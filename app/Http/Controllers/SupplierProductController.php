@@ -9,6 +9,7 @@ use App\SpeFiles;
 use App\SpeInstructions;
 use App\User;
 use App\SpePersonnel;
+use App\SpeAttachments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -442,6 +443,7 @@ class SupplierProductController extends Controller
     public function disposition(Request $request, $id)
     {
         $data = SupplierProduct::findOrFail($id);
+        $data->LabRemarks = $request->LabRemarks;
 
         // Handle instructions
         if ($request->has('Disposition') && is_array($request->Disposition)) {
@@ -455,6 +457,7 @@ class SupplierProductController extends Controller
                 $supplierDisposition->save();
             }
         } 
+        $data->save();
 
         speHistoryLogs("disposition", $data->id);
         
@@ -500,7 +503,6 @@ class SupplierProductController extends Controller
         $data = SupplierProduct::findOrFail($id);
         $data->AcceptedRemarks = $request->AcceptedRemarks;
         $data->Progress = 60;
-        $data->Status = 30;
         $data->save();
 
         speHistoryLogs("accepted", $data->id);
@@ -576,12 +578,115 @@ class SupplierProductController extends Controller
     public function doneSpe($id)
     {
         $data = SupplierProduct::findOrFail($id);
-        $data->Progress = 55;
+        $data->Progress = 65;
         $data->save();
 
         speHistoryLogs('complete', $id);
 
         return response()->json(['success' => 'Data is successfully completed.']);
+    }
+
+    public function submitSpe($id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+        $data->Progress = 55;
+        $data->save();
+
+        speHistoryLogs('submit', $id);
+
+        return response()->json(['success' => 'Data is successfully submitted.']);
+    }
+
+    public function uploadFile(Request $request)
+    {
+        $files = $request->file('spe_file');
+        $names = $request->input('name');
+        $speId = $request->input('spe_id');
+        $isConfidential = $request->input('is_confidential');
+        $isForReview = $request->input('is_for_review');
+
+        if ($files) {
+            foreach ($files as $index => $file) {
+                $name = $names[$index];
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('attachments', $fileName, 'public');
+
+                $uploadedFile = new SpeAttachments();
+                $uploadedFile->SpeId = $speId;
+                $uploadedFile->Name = $name;
+                $uploadedFile->Path = $filePath;
+                $uploadedFile->IsConfidential = isset($isConfidential[$index]) ? $isConfidential[$index] : 0;
+                $uploadedFile->IsForReview = isset($isForReview[$index]) ? $isForReview[$index] : 0;
+                $uploadedFile->save();
+            }
+        }
+
+        Alert::success('File(s) Stored successfully')->persistent('Dismiss');
+        return back();
+    }
+
+    public function editSpeFile(Request $request, $id)
+    {
+        $speFile = SpeAttachments::findOrFail($id);
+
+        // Update name if provided
+        if ($request->has('name')) {
+            $speFile->Name = $request->input('name');
+        }
+
+        if ($request->hasFile('spe_file')) {
+            $file = $request->file('spe_file'); // Get the uploaded file
+            $fileName = time() . '_' . $file->getClientOriginalName(); // Create a unique file name
+            $filePath = $file->storeAs('attachments', $fileName, 'public'); // Store the file
+    
+            // Update the file path in the database
+            $speFile->Path = $filePath;
+        }      
+
+        // Update checkboxes (IsConfidential and IsForReview)
+        if (authCheckIfItsRnd(auth()->user()->department_id)) {
+            $speFile->IsConfidential = $request->has('is_confidential') ? 1 : 0;
+            $speFile->IsForReview = $request->has('is_for_review') ? 1 : 0;
+        }
+
+        $speFile->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back()->with(['tab' => 'files']);
+    }
+
+    public function deleteSpeFile($id)
+    {
+        $sseFile = SpeAttachments::findOrFail($id);
+        // $sseFile->Progress = 60;
+        $sseFile->delete();
+
+        Alert::success('Successfully Delete')->persistent('Dismiss');
+        return back();
+    }
+
+    public function closeSpe($id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+        $data->Status = 30;
+        $data->save();
+
+        speHistoryLogs('closed', $id);
+
+        return response()->json(['success' => 'Data is successfully closed.']);
+    }
+
+    public function ReturnToAnalyst(Request $request, $id)
+    {
+        $data = SupplierProduct::findOrFail($id);
+        $data->ReturnRemarks = $request->ReturnRemarks;
+        $data->Progress = 50;
+        $data->save(); 
+
+        speHistoryLogs('returned', $id);
+
+        Alert::success('Successfully return to analyst')->persistent('Dismiss');
+        return back();
     }
 
     public function refCode()

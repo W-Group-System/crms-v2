@@ -123,12 +123,15 @@
                 <form method="POST" enctype="multipart/form-data" id="form_shipment_sample">
                     <span id="form_result"></span>
                     @csrf
+                    <?php
+                        $today = date('Y-m-d');
+                    ?>
                     <input type="hidden" name="SseNumber" value="{{ $newSseNo }}">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Date Submitted (MM/DD/YYYY):</label>
-                                <input type="date" class="form-control" id="DateSubmitted" name="DateSubmitted" value="">
+                                <label>Date Submitted (DD/MM/YYYY):</label>
+                                <input type="date" class="form-control" id="DateSubmitted" name="DateSubmitted" value="{{  old('DateSubmitted', $today) }}" readonly>
                             </div>
                             <div class="form-group">
                                 <label>Raw Material Type:</label>
@@ -137,6 +140,10 @@
                             <div class="form-group">
                                 <label>Grade:</label>
                                 <input type="text" class="form-control" id="Grade" name="Grade" placeholder="Enter Grade">
+                            </div>
+                            <div class="form-group">
+                                <label>Supplier:</label>
+                                <input type="text" class="form-control" id="Supplier" name="Supplier" placeholder="Enter Supplier">
                             </div>
                             <div class="form-group mb-0">
                                 <label>Result:</label>
@@ -162,6 +169,10 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                <label>Manufacturer:</label>
+                                <input type="text" class="form-control" id="Manufacturer" name="Manufacturer" placeholder="Enter Manufacturer">
+                            </div>
+                            <div class="form-group">
                                 <label>Product Code:</label>
                                 <input type="text" class="form-control" id="ProductCode" name="ProductCode" placeholder="Enter Product Code">
                             </div>
@@ -169,13 +180,9 @@
                                 <label>Origin:</label>
                                 <input type="text" class="form-control" id="Origin" name="Origin" placeholder="Enter Origin">
                             </div>
-                            <div class="form-group">
-                                <label>Supplier:</label>
-                                <input type="text" class="form-control" id="Supplier" name="Supplier" placeholder="Enter Supplier">
-                            </div>
                         </div>
                     </div>
-                    <div class="form-header">
+                    <div class="form-header mt-3">
                         <span class="header-label font-weight-bold">Purchase Details</span>
                         <hr class="form-divider alert-dark">
                     </div>
@@ -186,13 +193,13 @@
                                 <input type="text" class="form-control" id="PoNumber" name="PoNumber" placeholder="Enter Po Number">
                             </div>
                             <div class="form-group">
-                                <label>Ordered:</label>
+                                <label>Quantity Ordered:</label>
                                 <input type="text" class="form-control" id="Ordered" name="Ordered" placeholder="Enter Ordered">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Quantity:</label>
+                                <label>Sample Quantity:</label>
                                 <input type="text" class="form-control" id="Quantity" name="Quantity" placeholder="Enter Quantity">
                             </div>
                             <div class="form-group mb-0">
@@ -232,8 +239,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Sales Agreement #:</label>
-                                <input type="text" class="form-control" id="SalesAgreement" name="SalesAgreement" placeholder="Enter Sales Agreement">
+                                <label>Reference #:</label>
+                                <input type="text" class="form-control" id="SalesAgreement" name="SalesAgreement" placeholder="Enter Reference #">
                             </div>
                             <div class="form-group">
                                 <label>Product Declared as:</label>
@@ -245,64 +252,62 @@
                             </div>
                         </div>
                     </div>
-                    {{-- @if(auth()->user()->role->type == 'RND' || auth()->user()->role->type == 'QCD-WHI' || auth()->user()->role->type == 'QCD-PBI' || auth()->user()->role->type == 'QCD-MRDC' || auth()->user()->role->type == 'QCD-CCC')
-                        <div class="form-header">
-                            <span class="header-label font-weight-bold">Sample Details</span>
-                            <hr class="form-divider alert-dark">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-check form-check-inline text-center">
-                                    <input class="form-check-input" type="radio" name="SampleType" id="SampleType1" value="Pre-ship sample">
-                                    <label class="form-check-label" for="SampleType1">Pre-ship sample</label>
+                    <div class="form-header">
+                        <span class="header-label font-weight-bold">Sample Details</span>
+                        <hr class="form-divider alert-dark">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-check form-check-inline text-center">
+                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType1" value="Pre-ship sample">
+                                <label class="form-check-label" for="SampleType1">Pre-ship sample</label>
 
-                                    <input class="form-check-input" type="radio" name="SampleType" id="SampleType2" value="Co-ship sample">
-                                    <label class="form-check-label" for="SampleType2">Co-ship sample</label>
+                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType2" value="Co-ship sample">
+                                <label class="form-check-label" for="SampleType2">Co-ship sample</label>
 
-                                    <input class="form-check-input" type="radio" name="SampleType" id="SampleType3" value="Complete samples">
-                                    <label class="form-check-label" for="SampleType3">Complete samples</label>
+                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType3" value="Complete samples">
+                                <label class="form-check-label" for="SampleType3">Complete samples</label>
 
-                                    <input class="form-check-input" type="radio" name="SampleType" id="SampleType4" value="Partial samples. More samples to follow">
-                                    <label class="form-check-label" for="SampleType4">Partial samples. More samples to follow</label>
-                                </div>
+                                <input class="form-check-input" type="radio" name="SampleType" id="SampleType4" value="Partial samples. More samples to follow">
+                                <label class="form-check-label" for="SampleType4">Partial samples. More samples to follow</label>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group" id="lotNoContainer">
-                                    <label>No of pack:</label>
-                                    <div class="input-group">
-                                        <input type="hidden" name="PackId[]" value="">
-                                        <input type="text" class="form-control" name="LotNumber[]" placeholder="Enter Lot Number">
-                                        <button class="btn btn-sm btn-primary addRowBtn1" style="border-radius: 0px;" type="button">+</button>
-                                    </div>
-                                    <input type="text" class="form-control" name="QtyRepresented[]" placeholder="Enter Qty Represented">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" id="lotNoContainer">
+                                <label>No of pack:</label>
+                                <div class="input-group">
+                                    <input type="hidden" name="PackId[]" value="">
+                                    <input type="text" class="form-control" name="LotNumber[]" placeholder="Enter Lot Number">
+                                    <button class="btn btn-sm btn-primary addRowBtn1" style="border-radius: 0px;" type="button">+</button>
                                 </div>
-                                <div class="form-group">
-                                    <label>Laboratory work required:</label>
-                                    <select class="form-control js-example-basic-multiple" id="Work" name="Work[]" style="position: relative !important" multiple>
-                                        <option value="Standard QUALITY CONTROL test: pH, Viscosity, WGS, KGS">Standard QUALITY CONTROL test: pH, Viscosity, WGS, KGS</option>
-                                        <option value="Particle size distribution">Particle size distribution</option>
-                                        <option value="Microbacteria test">Microbacteria test</option>
-                                        <option value="Other tests">Other tests</option>
+                                <input type="text" class="form-control" name="QtyRepresented[]" placeholder="Enter Qty Represented">
+                            </div>
+                            <div class="form-group">
+                                <label>Laboratory work required:</label>
+                                <select class="form-control js-example-basic-multiple" id="Work" name="Work[]" style="position: relative !important" multiple>
+                                    <option value="Standard QUALITY CONTROL test: pH, Viscosity, WGS, KGS">Standard QUALITY CONTROL test: pH, Viscosity, WGS, KGS</option>
+                                    <option value="Particle size distribution">Particle size distribution</option>
+                                    <option value="Microbacteria test">Microbacteria test</option>
+                                    <option value="Other tests">Other tests</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" id="attachmentsContainer">
+                                <label>Attachments:</label>
+                                <div class="input-group">         
+                                    <select class="form-control js-example-basic-single" name="Name[]" id="Name" title="Select Attachment Name" >
+                                        <option value="" disabled selected>Select Attachment Name</option>
+                                        <option value="COA">COA</option>
+                                        <option value="Specifications">Specifications</option>
+                                        <option value="Others">Others</option>
                                     </select>
+                                    <button class="btn btn-sm btn-primary addRowBtn2" style="border-radius: 0px;" type="button">+</button>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group" id="attachmentsContainer">
-                                    <label>Attachments:</label>
-                                    <div class="input-group">         
-                                        <select class="form-control js-example-basic-single" name="Name[]" id="Name" title="Select Attachment Name" >
-                                            <option value="" disabled selected>Select Attachment Name</option>
-                                            <option value="COA">COA</option>
-                                            <option value="Specifications">Specifications</option>
-                                            <option value="Others">Others</option>
-                                        </select>
-                                        <button class="btn btn-sm btn-primary addRowBtn2" style="border-radius: 0px;" type="button">+</button>
-                                    </div>
-                                    <input type="file" class="form-control" id="Path" name="Path[]">
-                                </div>
+                                <input type="file" class="form-control" id="Path" name="Path[]">
                             </div>
                         </div>
-                    @endif --}}
+                    </div>
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
                         <input type="hidden" name="hidden_id" id="hidden_id">

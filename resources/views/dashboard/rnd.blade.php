@@ -103,7 +103,14 @@
                                     {{ $srfRNDFinalReview ?? '0' }}
                                 </a>
                             </h5>
-                            <!-- <h5 class="text-primary font-weight-medium">{{ $srfSalesApproval ?? '0' }}</h5> -->
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>SPE</p>
+                            <h5 class="font-weight-medium text-white">
+                                <a href="{{ route('supplier_product.index', ['progress' => 65]) }}" class="text-white" onclick="show()">
+                                    {{ $speRNDFinalReview ?? '0' }}
+                                </a>
+                            </h5>
                         </div>
                     </div>
                 </div>
