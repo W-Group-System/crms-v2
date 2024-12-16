@@ -11,7 +11,7 @@ class SupplierProduct extends Model
 
     protected $table = "spe";
     protected $fillable = [
-        'ProductName', 'DateRequested', 'AttentionTo', 'Deadline', 'Manufacturer', 'Quantity', 'Supplier', 'ProductApplication', 'Origin', 'LotNo', 'Price', 'ApprovedBy', 'Progress', 'Reconfirmatory', 'RejectedRemarks'
+        'ProductName', 'DateRequested', 'AttentionTo', 'Deadline', 'Manufacturer', 'Quantity', 'Supplier', 'ProductApplication', 'Origin', 'LotNo', 'Price', 'ApprovedBy', 'Progress', 'Reconfirmatory', 'RejectedRemarks', 'LabRemarks'
     ];
 
     public function suppliers()
@@ -32,6 +32,11 @@ class SupplierProduct extends Model
     public function supplier_disposition() 
     {
         return $this->hasMany(SpeDisposition::class, 'SpeId', 'id');
+    }
+
+    public function supplier_files() 
+    {
+        return $this->hasMany(SpeAttachments::class, 'SpeId', 'id');
     }
 
     public function attachments() 

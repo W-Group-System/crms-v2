@@ -598,12 +598,19 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('spe_received/{id}', 'SupplierProductController@received');
         Route::post('start_spe/{id}', 'SupplierProductController@startSpe');
         Route::post('done_spe/{id}', 'SupplierProductController@doneSpe');
+        Route::post('submit_spe/{id}', 'SupplierProductController@submitSpe');
         Route::post('accept_spe/{id}', 'SupplierProductController@acceptSpe');
+        Route::post('close_spe/{id}', 'SupplierProductController@closeSpe');
+        Route::post('return_spe_analyst/{id}', 'SupplierProductController@ReturnToAnalyst');
 
         # Spe Personnel
         Route::post('add_spe_personnel', 'SupplierProductController@addPersonnel');
         Route::post('update_spe_personnel/{id}', 'SupplierProductController@updatePersonnel');
-        Route::post('delete_personnel/{id}', 'CustomerRequirementController@deletePersonnel');
+        // Route::post('delete_personnel/{id}', 'SupplierProductController@deletePersonnel');
+
+        Route::post('uploadSpeFiles', 'SupplierProductController@uploadFile');
+        Route::post('update_spe_file/{id}', 'SupplierProductController@editSpeFile');
+        Route::post('delete_spe_attachment/{id}', 'SupplierProductController@deleteSpeFile')->name('delete_spe_attachment');
     
         // Shipment Sample Evaluation
         Route::get('/shipment_sample', 'ShipmentSampleController@index')->name('shipment_sample.index');
@@ -615,15 +622,21 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('sse_received/{id}', 'ShipmentSampleController@receivedSse');
         Route::post('delete_sse_file/{id}', 'ShipmentSampleController@deleteSse')->name('delete_sse_file');
         Route::post('delete_sse_packs/{id}', 'ShipmentSampleController@deletePack')->name('delete_sse_packs');
+        Route::post('delete_sse_attachment/{id}', 'ShipmentSampleController@deleteFile')->name('delete_sse_attachment');
         Route::post('start_sse/{id}', 'ShipmentSampleController@startSse');
         Route::post('update_sample/{id}', 'ShipmentSampleController@sample');
+        Route::post('add_disposition/{id}', 'ShipmentSampleController@dispositionSse');
         Route::post('done_sse/{id}', 'ShipmentSampleController@doneSse');
+        Route::post('close_sse/{id}', 'ShipmentSampleController@closeFileSse');
         Route::post('update_sse_rejected/{id}', 'ShipmentSampleController@rejectedSse');
         Route::post('accept_sse/{id}', 'ShipmentSampleController@acceptSse');
 
         # Sse Personnel
         Route::post('add_sse_personnel', 'ShipmentSampleController@addSsePersonnel');
         Route::post('update_sse_personnel/{id}', 'ShipmentSampleController@updateSsePersonnel');
+
+        Route::post('uploadSseFiles', 'ShipmentSampleController@uploadFile');
+        Route::post('update_sse_file/{id}', 'ShipmentSampleController@editFile');
     
         # Reports
         Route::get('/price_request', 'ReportsController@price_summary')->name('reports.price_request');

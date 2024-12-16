@@ -4,10 +4,10 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-lg-6"> 
+                <div class="col-lg-4"> 
                     <h4 class="card-title d-flex justify-content-between align-items-center" style="margin-top: 10px">View Supplier Product Evaluation</h4>
                 </div>
-                <div class="col-lg-6" align="right">
+                <div class="col-lg-8" align="right">
                     @if(url()->previous() == url()->current())
                     <a href="{{ url('supplier_product') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
@@ -50,18 +50,37 @@
                         @if($data->Progress == 50)
                             <!-- <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#reconfirmatory">Re-confirmatory</button> -->
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#disposition">Disposition</button>
-                            <form method="POST" action="{{url('done_spe/'.$data->id)}}" class="d-inline-block" onsubmit="show()">
+                            <form method="POST" action="{{url('submit_spe/'.$data->id)}}" class="d-inline-block" onsubmit="show()">
                                 @csrf 
-                                <button type="button" class="btn btn-outline-success doneSpeBtn">
-                                    <i class="ti ti-check"></i>&nbsp; Done
+                                <button type="button" class="btn btn-outline-success submitSpeBtn">
+                                    <i class="ti ti-check"></i>&nbsp;Submit
                                 </button>
                             </form>
                         @endif  
-                        @if($data->Progress == 55 && rndManager(auth()->user()->role))
-                            <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#rejected"> <i class="ti ti-na"></i>&nbsp;Rejected</button>    
-                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#accepted"> <i class="ti ti-check"></i>&nbsp;Accepted</button>  
-                        @endif
                     @endif   
+                    @if(rndManager(auth()->user()->role) && $data->Progress == 55 || $data->Progress == 65)
+                        <!-- <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#rejected"> <i class="ti ti-na"></i>&nbsp;Rejected</button>  -->
+                        <button type="button" class="btn btn-outline-info" data-target="#returnToAnalyst{{ $data->id }}" data-toggle="modal" title='Return to Analyst'>
+                            <i class="ti ti-back-left">&nbsp;</i>Return to Analyst
+                        </button>
+                        <form method="POST" action="{{url('done_spe/'.$data->id)}}" class="d-inline-block" onsubmit="show()">
+                            @csrf 
+                            <button type="button" class="btn btn-outline-success doneSpeBtn">
+                                <i class="ti ti-check"></i>&nbsp; Submit
+                            </button>
+                        </form>
+                        <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#accepted"> <i class="ti ti-check"></i>&nbsp;Completed</button>  
+                    @endif
+                    @if(auth()->user()->role->type == 'PRD')
+                        @if($data->Progress == 60 && $data->Status != 30)
+                            <form method="POST" action="{{url('close_spe/'.$data->id)}}" class="d-inline-block">
+                            @csrf 
+                                <button type="button" class="btn btn-outline-success closeSseBtn">
+                                    <i class="ti ti-close"></i>&nbsp;Close
+                                </button>
+                            </form>
+                        @endif
+                    @endif
                 </div>
                 <div class="col-md-12">
                     <div class="form-group row mb-0" style="margin-top: 2em">
@@ -171,9 +190,9 @@
                         </div>
                     </div>
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Reconfirmatory:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Return Remarks:</b></label>
                         <div class="col-sm-9">
-                            <label>{{ $data->Reconfirmatory ?? 'N/A' }}</label>
+                            <label>{{ $data->ReturnRemarks ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-3">
@@ -189,13 +208,50 @@
                                         <i class="ti ti-check"></i><label>&nbsp;Has lower quality than the existing product. Needs higher proportion in product applications.</label><br>
                                     @elseif($disposition->Disposition == 4) 
                                         <i class="ti ti-check"></i><label>&nbsp;Cannot be fully evaluated. The company does not have a testing capability.</label><br>
-                                    @else
+                                    @elseif($disposition->Disposition == 5) 
                                         <i class="ti ti-check"></i><label>&nbsp;Rejected. Does not pass the critical parameters of the test</label>
+                                    @else
+                                        <i class="ti ti-check"></i><label>&nbsp;Accepted. As a new supplier</label>
                                     @endif
                                 @endforeach
                             @else
                                 <label>No Disposition Available</label>
                             @endif
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label class="col-sm-3 col-form-label text-right"><b>Remarks:</b></label>
+                        <div class="col-sm-9">
+                            <label>{{ $data->LabRemarks ?? 'N/A' }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <div class="col-md-12">
+                            <table class="table table-hover table-striped table-bordered tables">
+                                <thead>
+                                    <th width="10%">Action</th>
+                                    <th width="30%">Attachment Name</th>
+                                    <th width="60%">File</th>
+                                </thead>
+                                <tbody>
+                                    @foreach($data->attachments as $file)
+                                    <tr>
+                                        <td align="center">
+                                        @if(auth()->user()->role->type == 'PRD')
+                                            <form action="{{url('delete_spe_file/'.$file->id)}}" class="d-inline-block" method="post">
+                                                @csrf
+                                                <button type="button" class="btn btn-sm btn-outline-danger deleteFile">
+                                                    <i class="ti ti-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                        </td>
+                                        <td>{{ $file->Name }}</td>
+                                        <td><a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ $file->Path }}</a></td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <!-- <div class="form-group row mb-0">
@@ -223,7 +279,7 @@
                             <a class="nav-link p-2 active" id="assigned-tab" data-toggle="tab" href="#assigned_details" role="tab" aria-controls="assigned_details" aria-selected="true">R&D/QCD Personnel</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-2" id="attachment-tab" data-toggle="tab" href="#attachment" role="tab" aria-controls="attachment" aria-selected="false">Attachments</a>
+                            <a class="nav-link p-2" id="file-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
@@ -269,29 +325,60 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane fade" id="attachment" role="tabpanel" aria-labelledby="attachment">
+                        <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files">
+                            @if(authCheckIfItsRnd(auth()->user()->department_id))
+                                @if($data->Progress == 35 || $data->Progress == 45 || $data->Progress == 50)
+                                <div align="right">
+                                    <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addSpeFiles">
+                                        New
+                                    </button>
+                                </div>
+                                @include('spe.add_file')
+                                @endif
+                            @endif
                             <table class="table table-hover table-striped table-bordered tables">
                                 <thead>
                                     <th width="10%">Action</th>
-                                    <th width="30%">Attachment Name</th>
-                                    <th width="60%">File</th>
+                                    <th width="45%">File Name</th>
+                                    <th width="45%">File</th>
                                 </thead>
                                 <tbody>
-                                    @foreach($data->attachments as $file)
+                                    @foreach($data->supplier_files as $file)
                                     <tr>
                                         <td align="center">
-                                        @if(auth()->user()->role->type == 'PRD')
-                                            <form action="{{url('delete_spe_file/'.$file->id)}}" class="d-inline-block" method="post">
-                                                @csrf
-                                                <button type="button" class="btn btn-sm btn-outline-danger deleteFile">
-                                                    <i class="ti ti-trash"></i>
-                                                </button>
-                                            </form>
+                                        @if(rndManager(auth()->user()->role) || authCheckIfItsRnd(auth()->user()->department_id))
+                                            @if($data->Progress != 55 || $data->Progress != 30 || $data->Progress != 60)
+                                                <button type="button" class="btn btn-sm btn-outline-warning"
+                                                    data-target="#editSpeFile{{ $file->id }}" data-toggle="modal" title='Edit File'>
+                                                    <i class="ti-pencil"></i>
+                                                </button>   
+                                                <form action="{{url('delete_spe_attachment/'.$file->id)}}" class="d-inline-block" method="POST">
+                                                    @csrf
+                                                    <button type="button" class="btn btn-sm btn-outline-danger deleteSpeFile">
+                                                        <i class="ti ti-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         @endif
                                         </td>
-                                        <td>{{ $file->Name }}</td>
-                                        <td><a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ $file->Path }}</a></td>
+                                        <td>
+                                            @if($file->IsForReview)
+                                                <i class="ti-pencil-alt text-danger"></i>
+                                            @endif
+                                            @if($file->IsConfidential)
+                                                <i class="mdi mdi-eye-off-outline text-danger"></i>
+                                            @endif
+                                            {{ $file->Name }}
+                                        </td>
+                                        <td>
+                                            @if($file->IsForReview == 1 || $file->IsConfidential == 1)
+                                                
+                                            @elseif($file->IsForReview == 1 || $file->IsConfidential == 1 || rndManager(auth()->user()->role) || checkIfItsAnalyst(auth()->user()->role))
+                                                <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">View File</a>
+                                            @endif
+                                        </td>
                                     </tr>
+                                    @include('spe.edit_file')
                                     @endforeach
                                 </tbody>
                             </table>
@@ -347,17 +434,23 @@
                 <form id="updateDisposition" method="POST" action="{{ url('update_disposition/' . $data->id) }}">
                     @csrf
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-12 mb-3 form-group">
+                            <label>Laboratory Disposition:</label>
                             <select class="form-control js-example-basic-multiple" name="Disposition[]" style="position: relative !important" multiple>
                                 <option value="1" {{ in_array('1', $dispositions ?? []) ? 'selected' : '' }}> Almost an exact match with the current product. The sample works with direct replacement in the application</option>
                                 <option value="2" {{ in_array('2', $dispositions ?? []) ? 'selected' : '' }}>Has higher quality than the existing raw materials. Needs dilution or lower proportion in product application</option>
                                 <option value="3" {{ in_array('3', $dispositions ?? []) ? 'selected' : '' }}>Has lower quality than the existing product. Needs higher proportion in the product applications</option>
                                 <option value="4" {{ in_array('4', $dispositions ?? []) ? 'selected' : '' }}>Cannot be fully evaluated. The company does not have the testing capability</option>
                                 <option value="5" {{ in_array('5', $dispositions ?? []) ? 'selected' : '' }}>Rejected. Does not pass the critical parameters of the test</option>
+                                <option value="6" {{ in_array('6', $dispositions ?? []) ? 'selected' : '' }}>Accepted. As a new supplier</option>
                             </select>
                         </div>
+                        <div class="col-md-12 form-group">
+                            <label>Remarks:</label>
+                            <input type="text" class="form-control" name="LabRemarks" id="LabRemarks" placeholder="Enter Remarks">
+                        </div>
                     </div>
-                    <div class="modal-footer mt-3">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-outline-primary">Submit</button>
                     </div>
@@ -456,7 +549,7 @@
         </div>
     </div>
 </div>
-
+@include('spe.return_spe')
 @include('spe.edit')
 <script>
     $(document).ready(function () {
@@ -529,6 +622,36 @@
                 }
             });
         });
+
+        $('.submitSpeBtn').on('click', function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var button = $(this);
+            var form = button.closest('form');
+            var actionUrl = form.attr('action'); // Get form action URL
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Completed",
+                            text: response.message,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(function () {
+                            window.location.reload(); // Reload the page
+                        });
+                    }
+                }
+            });
+        });
         
         $('.receivedBtn').on('click', function() {
             var form = $(this).closest('form');
@@ -570,6 +693,25 @@
         })
 
         $('.deleteFile').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+
+        $('.deleteSpeFile').on('click', function() {
             var form = $(this).closest('form');
 
             Swal.fire({

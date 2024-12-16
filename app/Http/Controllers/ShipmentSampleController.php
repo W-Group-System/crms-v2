@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\ShipmentSample;
+use App\SseAttachments;
 use App\SsePersonnel;
 use App\SseFiles;
 use App\SsePacks;
 use App\SseWork;
+use App\SseDisposition;
 use App\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -193,6 +195,7 @@ class ShipmentSampleController extends Controller
         $shipment_sample->RmType = $request->RmType;
         $shipment_sample->Grade = $request->Grade;
         $shipment_sample->ProductCode = $request->ProductCode;
+        $shipment_sample->Manufacturer = $request->Manufacturer;        
         $shipment_sample->Origin = $request->Origin;
         $shipment_sample->Supplier = $request->Supplier;
         $shipment_sample->SseResult = $request->SseResult;
@@ -245,6 +248,17 @@ class ShipmentSampleController extends Controller
 
                     $shipmentFiles->save();
                 }
+            }
+        }
+        
+        if ($request->has('Work') && is_array($request->Work)) {
+            SseWork::where('SseId', $shipment_sample->id)->delete();
+
+            foreach ($request->Work as $shipment_work) {
+                $shipmentWork = new SseWork();
+                $shipmentWork->SseId = $shipment_sample->id;
+                $shipmentWork->Work = $shipment_work;
+                $shipmentWork->save();
             }
         }
 
@@ -415,17 +429,20 @@ class ShipmentSampleController extends Controller
                 $shipmentWork->Work = $shipment_work;
                 $shipmentWork->save();
             }
-        }
+        }   
+
+        sseHistoryLogs("update", $shipmentSample->id);  // Log history
                     
         return response()->json(['success' => 'Data is successfully updated.']);
     }
 
     public function view($id)
     {
-        $data = ShipmentSample::with('shipment_pack', 'shipment_attachments', 'shipment_work')->findOrFail($id);
+        $data = ShipmentSample::with('shipment_pack', 'shipment_attachments', 'shipment_work', 'shipment_files', 'shipment_disposition')->findOrFail($id);
         $refCode = $this->refCode();
+        $work = $data->shipment_work ? $data->shipment_work->pluck('Work')->toArray() : [];
         $rnd_personnel = User::whereIn('department_id', [15, 42, 20, 79, 77, 44])->where('is_active', 1)->get();
-        return view('sse.view', compact('data', 'refCode', 'rnd_personnel'));
+        return view('sse.view', compact('data', 'refCode', 'rnd_personnel', 'work'));
     }
 
     public function approvedSse($id)
@@ -467,6 +484,28 @@ class ShipmentSampleController extends Controller
 
         Alert::success('Successfully Start')->persistent('Dismiss');
         return back();
+    }
+
+    public function dispositionSse(Request $request, $id)
+    {
+        $shipmentSample = ShipmentSample::with('shipment_pack', 'shipment_attachments', 'shipment_work')->findOrFail($id);
+        $shipmentSample->LabRemarks = $request->Remarks;
+
+        if ($request->has('LabDisposition') && is_array($request->LabDisposition)) {
+            SseDisposition::where('SseId', $shipmentSample->id)->delete();
+
+            foreach ($request->LabDisposition as $shipment_disposition) {
+                $shipmentDisposition = new SseDisposition();
+                $shipmentDisposition->SseId = $shipmentSample->id;
+                $shipmentDisposition->LabDisposition = $shipment_disposition;
+                $shipmentDisposition->save();
+            }
+        }
+        $shipmentSample->save();
+
+        sseHistoryLogs("disposition", $shipmentSample->id);
+
+        return response()->json(['success' => 'Data is successfully updated.']);
     }
 
     public function sample(Request $request, $id) 
@@ -612,7 +651,6 @@ class ShipmentSampleController extends Controller
         $data = ShipmentSample::findOrFail($id);
         $data->RejectedRemarks = $request->RejectedRemarks;
         $data->Progress = 30;
-        $data->Status = 30;
         $data->save();
 
         sseHistoryLogs("rejected", $data->id);
@@ -628,7 +666,6 @@ class ShipmentSampleController extends Controller
         $data = ShipmentSample::findOrFail($id);
         $data->AcceptedRemarks = $request->AcceptedRemarks;
         $data->Progress = 60;
-        $data->Status = 30;
         $data->save();
 
         sseHistoryLogs("accepted", $data->id);
@@ -655,6 +692,85 @@ class ShipmentSampleController extends Controller
 
         Alert::success('Successfully Delete')->persistent('Dismiss');
         return back();
+    }
+
+    public function uploadFile(Request $request)
+    {
+        $files = $request->file('sse_file');
+        $names = $request->input('name');
+        $sseId = $request->input('sse_id');
+        $isConfidential = $request->input('is_confidential');
+        $isForReview = $request->input('is_for_review');
+
+        if ($files) {
+            foreach ($files as $index => $file) {
+                $name = $names[$index];
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('attachments', $fileName, 'public');
+
+                $uploadedFile = new SseAttachments();
+                $uploadedFile->SseId = $sseId;
+                $uploadedFile->Name = $name;
+                $uploadedFile->Path = $filePath;
+                $uploadedFile->IsConfidential = isset($isConfidential[$index]) ? $isConfidential[$index] : 0;
+                $uploadedFile->IsForReview = isset($isForReview[$index]) ? $isForReview[$index] : 0;
+                $uploadedFile->save();
+            }
+        }
+
+        Alert::success('File(s) Stored successfully')->persistent('Dismiss');
+        return back();
+    }
+    
+    public function editFile(Request $request, $id)
+    {
+        $sseFile = SseAttachments::findOrFail($id);
+
+        // Update name if provided
+        if ($request->has('name')) {
+            $sseFile->Name = $request->input('name');
+        }
+
+        if ($request->hasFile('sse_file')) {
+            $file = $request->file('sse_file'); // Get the uploaded file
+            $fileName = time() . '_' . $file->getClientOriginalName(); // Create a unique file name
+            $filePath = $file->storeAs('attachments', $fileName, 'public'); // Store the file
+    
+            // Update the file path in the database
+            $sseFile->Path = $filePath;
+        }      
+
+        // Update checkboxes (IsConfidential and IsForReview)
+        if (authCheckIfItsRnd(auth()->user()->department_id)) {
+            $sseFile->IsConfidential = $request->has('is_confidential') ? 1 : 0;
+            $sseFile->IsForReview = $request->has('is_for_review') ? 1 : 0;
+        }
+
+        $sseFile->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back()->with(['tab' => 'files']);
+    }
+
+    public function deleteFile($id)
+    {
+        $sseFile = SseAttachments::findOrFail($id);
+        // $sseFile->Progress = 60;
+        $sseFile->delete();
+
+        Alert::success('Successfully Delete')->persistent('Dismiss');
+        return back();
+    }
+
+    public function closeFileSse($id)
+    {
+        $data = ShipmentSample::findOrFail($id);
+        $data->Status =30;
+        $data->save();
+
+        sseHistoryLogs('closed', $id);
+
+        return response()->json(['success' => 'Data is successfully closed.']);
     }
 
     public function refCode()

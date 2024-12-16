@@ -382,7 +382,7 @@ function authCheckIfItsSalesManager($role)
 
 function authCheckIfItsRnd($department)
 {
-    if ($department == 15 || $department == 42)
+    if ($department == 15 || $department == 42 || $department == 20)
     {
         return true;
     }
@@ -392,7 +392,7 @@ function authCheckIfItsRnd($department)
 
 function authCheckIfItsRndStaff($role)
 {
-    if (($role->department_id == 15 || $role->department_id == 42) && $role->name == "Staff L1")
+    if (($role->department_id == 15 || $role->department_id == 42 ) && $role->name == "Staff L1")
     {
         return true;
     }
@@ -1113,9 +1113,21 @@ function speHistoryLogs($action, $spe)
     {
         $transaction_logs->Details = "Complete supplier product evaluation transaction.";
     }
+    if ($action == 'submit')
+    {
+        $transaction_logs->Details = "Submit supplier product evaluation transaction.";
+    }
     if ($action == 'sales_accepted')
     {
         $transaction_logs->Details = "Accept customer requirement transaction.";
+    }
+    if ($action == 'closed')
+    {
+        $transaction_logs->Details = "Closed supplier product evaluation entry.";
+    }
+    if ($action == 'returned')
+    {
+        $transaction_logs->Details = "Return supplier product evaluation entry.";
     }
 
     $transaction_logs->save();
@@ -1132,6 +1144,10 @@ function sseHistoryLogs($action, $spe)
     if ($action == 'create')
     {
         $transaction_logs->Details = "Create new shipment sample evaluation entry.";
+    }
+    if ($action == 'update')
+    {
+        $transaction_logs->Details = "Update shipment sample evaluation entry.";
     }
     if ($action == 'approved')
     {
@@ -1159,19 +1175,23 @@ function sseHistoryLogs($action, $spe)
     }
     if ($action == 'disposition')
     {
-        $transaction_logs->Details = "Update disposition shipment sample evaluation entry.";
+        $transaction_logs->Details = "Disposition shipment sample evaluation entry.";
     }
     if ($action == 'complete')
     {
         $transaction_logs->Details = "Complete shipment sample evaluation transaction.";
     }
+    if ($action == 'submit')
+    {
+        $transaction_logs->Details = "Submit shipment sample evaluation transaction.";
+    }
     if ($action == 'accepted')
     {
         $transaction_logs->Details = "Accepted shipment sample evaluation entry.";
     }
-    if ($action == 'rejected')
+    if ($action == 'closed')
     {
-        $transaction_logs->Details = "Rejected shipment sample evaluation entry.";
+        $transaction_logs->Details = "Closed shipment sample evaluation entry.";
     }
 
     $transaction_logs->save();

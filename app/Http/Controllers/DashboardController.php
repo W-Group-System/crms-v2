@@ -751,6 +751,7 @@ class DashboardController extends Controller
         $crrRNDFinalReview = CustomerRequirement::where('Status', '10')->where('Progress', '81')->where('RefCode', 'RND')->count();
         $rpeRNDFinalReview = RequestProductEvaluation::where('Status', '10')->where('Progress', '81')->count();
         $srfRNDFinalReview = SampleRequest::where('Status', '10')->where('Progress', '81')->where('RefCode', '1')->count();
+        $speRNDFinalReview = SupplierProduct::where('Status', '10')->where('Progress', '65')->where('AttentionTo', 'RND')->count();
 
         $totalFinalReview = $crrRNDFinalReview + $rpeRNDFinalReview + $srfRNDFinalReview;
 
@@ -926,7 +927,7 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc') 
             ->get();
 
-        return view('dashboard.rnd', compact('role', 'newProducts', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDFinalReview', 'rpeRNDFinalReview', 'srfRNDFinalReview', 'totalFinalReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday', 'totalOpenRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalClosedRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'crrImmediateOpen', 'rpeImmediateOpen', 'srfImmediateOpen', 'crrImmediateClosed', 'rpeImmediateClosed', 'srfImmediateClosed', 'crrImmediateCancelled', 'rpeImmediateCancelled', 'srfImmediateCancelled', 'totalImmediateCRR', 'totalImmediateRPE', 'totalImmediateSRF', 'speRNDNew', 'sseRNDNew', 'rndSpeOpen', 'rndSseOpen', 'speRNDInitialReview', 'sseRNDInitialReview', 'rndSpeClosed', 'rndSseClosed'));
+        return view('dashboard.rnd', compact('role', 'newProducts', 'crrRNDInitialReview', 'rpeRNDInitialReview', 'srfRNDInitialReview', 'totalInitialReview', 'crrRNDFinalReview', 'rpeRNDFinalReview', 'srfRNDFinalReview', 'totalFinalReview', 'crrRNDNew', 'rpeRNDNew', 'srfRNDNew', 'totalNewRequest', 'crrDue', 'rpeDue', 'srfDue', 'totalDue', 'totalDueToday', 'crrDueToday', 'rpeDueToday' , 'srfDueToday', 'totalOpenRND', 'rndCrrOpen', 'rndRpeOpen', 'rndSrfOpen', 'totalClosedRND', 'rndCrrClosed', 'rndRpeClosed', 'rndSrfClosed', 'crrImmediateOpen', 'rpeImmediateOpen', 'srfImmediateOpen', 'crrImmediateClosed', 'rpeImmediateClosed', 'srfImmediateClosed', 'crrImmediateCancelled', 'rpeImmediateCancelled', 'srfImmediateCancelled', 'totalImmediateCRR', 'totalImmediateRPE', 'totalImmediateSRF', 'speRNDNew', 'sseRNDNew', 'rndSpeOpen', 'rndSseOpen', 'speRNDInitialReview', 'sseRNDInitialReview', 'rndSpeClosed', 'rndSseClosed', 'speRNDFinalReview'));
     }
 
     public function qcdIndex()

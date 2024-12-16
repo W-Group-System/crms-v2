@@ -11,7 +11,7 @@ class ShipmentSample extends Model
 
     protected $table = "sse";
     protected $fillable = [
-        'SseNumber', 'DateSubmitted', 'AttentionTo', 'RmType', 'Grade', 'ProductCode', 'Origin', 'Supplier', 'SampleType', 'SseResult', 'PoNumber', 'Ordered', 'Quantity', 'ProductOrdered', 'OtherProduct', 'Buyer', 'BuyersPo', 'Instruction', 'SalesAgreement', 'ProductDeclared', 'LnBags', 'SampleType', 'LotNumber', 'QtyRepresented', 'Name', 'Path', 'Work', 
+        'SseNumber', 'DateSubmitted', 'AttentionTo', 'RmType', 'Grade', 'ProductCode', 'Origin', 'Supplier', 'SampleType', 'SseResult', 'PoNumber', 'Ordered', 'Quantity', 'ProductOrdered', 'OtherProduct', 'Buyer', 'BuyersPo', 'Instruction', 'SalesAgreement', 'ProductDeclared', 'LnBags', 'SampleType', 'LotNumber', 'QtyRepresented', 'Name', 'Path', 'Work', 'Manufacturer', 'LabRemarks'
     ];
 
     public function shipment_pack() 
@@ -24,9 +24,19 @@ class ShipmentSample extends Model
         return $this->hasMany(SseFiles::class, 'SseId', 'id');
     }
 
+    public function shipment_files() 
+    {
+        return $this->hasMany(SseAttachments::class, 'SseId', 'id');
+    }
+
     public function shipment_work() 
     {
         return $this->hasMany(SseWork::class, 'SseId', 'id');
+    }
+
+    public function shipment_disposition() 
+    {
+        return $this->hasMany(SseDisposition::class, 'SseId', 'id');
     }
 
     public function progress() 
