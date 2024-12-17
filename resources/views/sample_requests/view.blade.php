@@ -1500,7 +1500,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "POST",
-                        url: "{{ url('ReturnToSales') }}/" + srfId,
+                        url: "{{ url('ReturnToSalesSRF') }}/" + srfId,
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },

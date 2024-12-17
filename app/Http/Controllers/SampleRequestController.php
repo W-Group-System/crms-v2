@@ -690,7 +690,16 @@ class SampleRequestController extends Controller
                     } else {
                         $details = "Start sample request transaction";
                     }
-                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
+                } elseif (isset($audit->new_values['ReturnToSales']) && $audit->new_values['ReturnToSales'] == 1) {
+                    if (
+                        $audit->url == 'http://localhost/crmsMain/crms-v2/public/ReturnToSalesSRF/' . $audit->auditable_id . '?' || 
+                        $audit->url == 'http://crms-wgroup.wsystem.online/ReturnToSalesSRF/' . $audit->auditable_id . '?'
+                    ) {
+                        $newValues = is_array($audit->new_values) ? $audit->new_values : json_decode($audit->new_values, true);
+                        $remarks = $newValues['ReturnToSalesRemark'] ?? '';
+                        $details = "Return To Sales:" ." ". $remarks;
+                    } 
+                }elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
                     $details = "Submitted sample request transaction";
                 } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
                     $details = "Completed sample request transaction";
@@ -1233,6 +1242,7 @@ class SampleRequestController extends Controller
         $sampleRequest = SampleRequest::findOrFail($id);
         // $sampleRequest->Progress = 10;
         $sampleRequest->ReturnToSales = 1;
+        $sampleRequest->ReturnToSalesRemark = request()->input('return_to_sales_remarks');
         $sampleRequest->save();
 
         $transactionApproval = new TransactionApproval();
