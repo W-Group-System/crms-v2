@@ -149,6 +149,10 @@
                                             $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
                                                 $code = $matches[1];
                                                 $product = getProductIdByCode($code);
+                                                if ($product == null)
+                                                {
+                                                    return $matches[0];
+                                                }
                                                 
                                                 if (auth()->user()->role->type == 'IS')
                                                 {
