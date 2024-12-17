@@ -488,117 +488,118 @@ $(document).ready(function() {
 
     function addProductRow() {
        var newProductForm = `
-                       <div class="productRows{{$sampleRequest->Id }} row">
-                          <div class="col-lg-12">
-                                <button type="button" class="btn btn-danger editDeleteSrfBtn" style="float: right;">Delete Row</button>
+                <div class="create_srf_form{{$sampleRequest->Id }} row">
+                    <div class="col-lg-12">
+                        <button type="button" class="btn btn-danger editDeleteSrfBtn" style="float: right;">Delete Row</button>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Product Type:</label>
+                            <select class="form-control js-example-basic-single ProductType" name="ProductType[]" style="position: relative !important" title="Select Product Type">
+                                <option value="" disabled {{ old('ProductType') === null ? 'selected' : '' }}>Select Product Type</option>
+                                <option value="1" {{ old('ProductType') == '1' ? 'selected' : '' }}>Pure</option>
+                                <option value="2" {{ old('ProductType') == '2' ? 'selected' : '' }}>Blend</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Application:</label>
+                            <select class="form-control js-example-basic-single ApplicationId" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
+                                <option value="" disabled selected>Select Application</option>
+                                @foreach ($productApplications as $application)
+                                    <option value="{{ $application->id }}" {{ in_array($application->id, old('ApplicationId', [])) ? 'selected' : '' }}>{{ $application->Name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Product Code:</label>
+                            <input type="text" class="form-control" name="ProductCode[]" >
+                        </div>
+                        @foreach(old('ProductDescription', ['']) as $index => $description)
+                            <div class="form-group">
+                                <label for="ProductDescription">Product Description:</label>
+                                <textarea class="form-control" name="ProductDescription[]" placeholder="Enter Product Description" rows="8">{{ $description }}</textarea>
                             </div>
-                          <div class="col-md-6">
-                <div class="form-group">
-                    <label>Product Type:</label>
-                    <select class="form-control js-example-basic-single ProductType" name="ProductType[]" style="position: relative !important" title="Select Product Type">
-                        <option value="" disabled {{ old('ProductType') === null ? 'selected' : '' }}>Select Product Type</option>
-                        <option value="1" {{ old('ProductType') == '1' ? 'selected' : '' }}>Pure</option>
-                        <option value="2" {{ old('ProductType') == '2' ? 'selected' : '' }}>Blend</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Application:</label>
-                    <select class="form-control js-example-basic-single ApplicationId" name="ApplicationId[]" style="position: relative !important" title="Select Application" required>
-                        <option value="" disabled selected>Select Application</option>
-                        @foreach ($productApplications as $application)
-                            <option value="{{ $application->id }}" {{ in_array($application->id, old('ApplicationId', [])) ? 'selected' : '' }}>{{ $application->Name }}</option>
                         @endforeach
-                    </select>
-                </div>
-            <div class="form-group">
-                <label>Product Code:</label>
-                <input type="text" class="form-control" name="ProductCode[]" >
-            </div>
-            @foreach(old('ProductDescription', ['']) as $index => $description)
-                <div class="form-group">
-                    <label for="ProductDescription">Product Description:</label>
-                    <textarea class="form-control" name="ProductDescription[]" placeholder="Enter Product Description" rows="8">{{ $description }}</textarea>
-                </div>
-            @endforeach
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="NumberOfPackages">Number Of Packages</label>
-                @if(old('NumberOfPackages'))
-                    @foreach(old('NumberOfPackages') as $index => $numberOfPackage)
-                        <input type="number" class="form-control" name="NumberOfPackages[]" value="{{ $numberOfPackage }}">
-                    @endforeach
-                @else
-                    <input type="number" class="form-control" name="NumberOfPackages[]">
-                @endif
-            </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="NumberOfPackages">Number Of Packages</label>
+                            @if(old('NumberOfPackages'))
+                                @foreach(old('NumberOfPackages') as $index => $numberOfPackage)
+                                    <input type="number" class="form-control" name="NumberOfPackages[]" value="{{ $numberOfPackage }}">
+                                @endforeach
+                            @else
+                                <input type="number" class="form-control" name="NumberOfPackages[]">
+                            @endif
+                        </div>
             
-            <div class="row">
-                <div class="col-md-7">
-                    @foreach(old('Quantity', ['']) as $index => $quantity)
-                    <div class="form-group">
-                        <label for="Quantity">Quantity</label>
-                        <input type="number" class="form-control" name="Quantity[]" value="{{ $quantity }}">
+                        <div class="row">
+                            <div class="col-md-7">
+                                @foreach(old('Quantity', ['']) as $index => $quantity)
+                                <div class="form-group">
+                                    <label for="Quantity">Quantity</label>
+                                    <input type="number" class="form-control" name="Quantity[]" value="{{ $quantity }}">
+                                </div>
+                                @endforeach
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Unit</label>
+                                    <select class="form-control js-example-basic-single UnitOfMeasure" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit">
+                                        <option value="1" {{ old('UnitOfMeasure') == '1' ? 'selected' : '' }}>Grams</option>
+                                        <option value="2" {{ old('UnitOfMeasure') == '2' ? 'selected' : '' }}>Kilograms</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        @foreach(old('Label', ['']) as $index => $label)
+                            <div class="form-group" >
+                                <label for="Label">Label:</label>
+                                <input type="text" class="form-control" name="Label[]" value="{{ $label }}">
+                            </div>
+                        @endforeach
+                        @foreach(old('RpeNumber', ['']) as $index => $rpe)
+                            <div class="form-group" >
+                                <label for="RpeNumber">RPE Number:</label>
+                                <input type="text" class="form-control" name="RpeNumber[]" value="{{ $rpe }}">
+                            </div>
+                        @endforeach
+                        @foreach(old('CrrNumber', ['']) as $index => $crr)
+                            <div class="form-group" >
+                                <label for="CrrNumber">CRR Number:</label>
+                                <input type="text" class="form-control" name="CrrNumber[]" value="{{ $crr }}">
+                            </div>
+                        @endforeach
                     </div>
-                    @endforeach
-                </div>
-                <div class="col-md-5">
-                    <div class="form-group">
-                        <label>Unit</label>
-                        <select class="form-control js-example-basic-single UnitOfMeasure" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit">
-                            <option value="1" {{ old('UnitOfMeasure') == '1' ? 'selected' : '' }}>Grams</option>
-                            <option value="2" {{ old('UnitOfMeasure') == '2' ? 'selected' : '' }}>Kilograms</option>
-                        </select>
+                    <div class="col-md-12">
+                        @foreach(old('RemarksProduct', ['']) as $index => $remarksproduct)
+                            <div class="form-group">
+                                <label for="RemarksProduct">Remarks</label>
+                                <textarea class="form-control" name="RemarksProduct[]" placeholder="Enter Remarks">{{ $remarksproduct }}</textarea>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Disposition:</label>
+                            <select class="form-control js-example-basic-single Disposition" name="Disposition[]" style="position: relative !important" title="Select Disposition">
+                                <option value="0">Select Disposition</option>
+                                <option value="1">No feedback</option>
+                                <option value="10">Accepted</option>
+                                <option value="20">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Disposition Remarks</label>
+                            <textarea class="form-control" name="DispositionRejectionDescription[]" placeholder="Enter DispositionRemarks"></textarea>
+                        </div>
                     </div>
                 </div>
-            </div>
-            @foreach(old('Label', ['']) as $index => $label)
-                <div class="form-group" >
-                    <label for="Label">Label:</label>
-                    <input type="text" class="form-control" name="Label[]" value="{{ $label }}">
-                </div>
-            @endforeach
-            @foreach(old('RpeNumber', ['']) as $index => $rpe)
-                <div class="form-group" >
-                    <label for="RpeNumber">RPE Number:</label>
-                    <input type="text" class="form-control" name="RpeNumber[]" value="{{ $rpe }}">
-                </div>
-            @endforeach
-            @foreach(old('CrrNumber', ['']) as $index => $crr)
-                <div class="form-group" >
-                    <label for="CrrNumber">CRR Number:</label>
-                    <input type="text" class="form-control" name="CrrNumber[]" value="{{ $crr }}">
-                </div>
-            @endforeach
-        </div>
-        <div class="col-md-12">
-            @foreach(old('RemarksProduct', ['']) as $index => $remarksproduct)
-                <div class="form-group">
-                    <label for="RemarksProduct">Remarks</label>
-                    <textarea class="form-control" name="RemarksProduct[]" placeholder="Enter Remarks">{{ $remarksproduct }}</textarea>
-                </div>
-            @endforeach
-        </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>Disposition:</label>
-                    <select class="form-control js-example-basic-single Disposition" name="Disposition[]" style="position: relative !important" title="Select Disposition">
-                        <option value="0">Select Disposition</option>
-                        <option value="1">No feedback</option>
-                        <option value="10">Accepted</option>
-                        <option value="20">Rejected</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label>Disposition Remarks</label>
-                    <textarea class="form-control" name="DispositionRejectionDescription[]" placeholder="Enter DispositionRemarks"></textarea>
-                </div>
-            </div>
-                       </div>`;
-                       $('.productRows{{$sampleRequest->Id }}').append(newProductForm);
-                       $('.js-example-basic-single').select2();
+                `;
+                $('.productRows{{$sampleRequest->Id }}').append(newProductForm);
+                $('.js-example-basic-single').select2();
    }
 
  $(document).off('click', '.addSrfProductRowBtn{{$sampleRequest->Id }}').on('click', '.addSrfProductRowBtn{{$sampleRequest->Id }}', function() {
