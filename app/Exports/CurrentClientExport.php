@@ -33,7 +33,8 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
             'Secondary Account Manager',
             'Contact Person',
             'Address',
-            'Contact #'
+            'Contact #',
+            'Email'
         ];
     }
     
@@ -62,6 +63,8 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
 
         $client_contact_no = implode("\n",  $contact_number_array);
         
+        $email = $currentClient->contacts->pluck('EmailAddress')->toArray();
+        $email_address = implode("\n", $email);
         return [
             $type,
             $currentClient->industry->Name ?? 'N/A',
@@ -71,7 +74,8 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
             $secondaryAccount,
             $client_contacts,
             $client_address,
-            $client_contact_no
+            $client_contact_no,
+            $email_address
         ];
     }
 
@@ -80,10 +84,12 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
         $sheet->getColumnDimension('G')->setWidth(40);
         $sheet->getColumnDimension('H')->setWidth(40);
         $sheet->getColumnDimension('I')->setWidth(40);
+        $sheet->getColumnDimension('J')->setWidth(40);
         return [
             'G' => ['alignment' => ['wrapText' => true]],
             'H' => ['alignment' => ['wrapText' => true]],
             'I' => ['alignment' => ['wrapText' => true]],
+            'J' => ['alignment' => ['wrapText' => true]],
         ];
     }
 }
