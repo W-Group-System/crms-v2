@@ -91,7 +91,15 @@
                                                 {{ $rpe->RpeNumber }}
                                             </a>
                                         </td>
-                                        <td>{{ $rpe->DateCreated }}</td>
+                                        <td>
+                                            @if($rpe->DateCreated != null)
+                                            {{ $rpe->DateCreated }}
+                                            @elseif($rpe->CreatedDate != null)
+                                            {{ $rpe->CreatedDate }}
+                                            @else
+                                            {{date('Y-m-d', strtotime($rpe->created_at))}}
+                                            @endif
+                                        </td>
                                         <td>{{ $rpe->DueDate }}</td>
                                         <td>{{ optional($rpe->client)->Name }}</td>
                                         <td>{{ optional($rpe->product_application)->Name }}</td>
