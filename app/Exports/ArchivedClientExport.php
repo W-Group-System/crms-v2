@@ -16,10 +16,24 @@ class ArchivedClientExport implements WithHeadings, FromCollection, WithMapping,
     */
     public function collection()
     {
-        return Client::with(['industry', 'userById', 'userById2', 'userById2', 'userByUserId2'])
-            ->where('Status', 5)
+        if (auth()->user()->role->type == "LS") {
+            return Client::with(['industry', 'userById', 'userById2', 'userByUserId2'])
+            ->where('Status', 2)
+            ->where('Type', 1)
             ->orderBy('id', 'desc')
             ->get();
+        } elseif (auth()->user()->role->type == "IS") {
+            return Client::with(['industry', 'userById', 'userById2', 'userByUserId2'])
+            ->where('Status', 2)
+            ->where('Type', 2)
+            ->orderBy('id', 'desc')
+            ->get();
+        } else {
+            return Client::with(['industry', 'userById', 'userById2', 'userByUserId2'])
+            ->where('Status', 2)
+            ->orderBy('id', 'desc')
+            ->get();
+        }
     }
 
     public function headings(): array
