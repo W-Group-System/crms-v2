@@ -195,7 +195,7 @@ class CustomerRequirementController extends Controller
                             $query->where('SalesApproverId', $userId);
                         });
                 } else {
-                    $query->where('Progress', $progress);
+                    $query->where('Progress', $progress)->where('ReturnToSales',0);
                 }
             })
             ->when($progress, function($query) use ($progress, $userId, $userByUser) {
@@ -209,7 +209,7 @@ class CustomerRequirementController extends Controller
                         });
                 } else {
                     // Apply progress filter if it's not '10'
-                    $query->where('Progress', $progress);
+                    $query->where('Progress', $progress)->where('ReturnToSales',0);
                 }
             })
             ->when($return_to_sales, function($query) use ($return_to_sales, $userId, $userByUser) {

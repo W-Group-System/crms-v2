@@ -910,8 +910,8 @@
                     </div>
                 </div> --}}
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
-                    {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30) --}}
-                    @if(auth()->user()->role->type != 'IS' && auth()->user()->role->type != 'LS' && $crr->Progress != 30)
+                    {{-- @if(auth()->user()->role->type != 'IS' && auth()->user()->role->type != 'LS' && $crr->Progress != 30) --}}
+                    @if(rndPersonnel($crr->crrPersonnel, auth()->user()->id) && $crr->Progress != 30 )
                     <div align="right">
                         <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addCrrFiles">
                             New
