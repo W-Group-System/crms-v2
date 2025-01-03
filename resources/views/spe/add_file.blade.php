@@ -17,22 +17,22 @@
                                 <!-- <label for="name">Name</label> -->
                                 <input type="hidden" name="name[]" class="form-control" id="name" placeholder="Enter Name">
                             </div>
-                            @if(authCheckIfItsRnd(auth()->user()->department_id))
+                            <!-- @if(authCheckIfItsRnd(auth()->user()->department_id))
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Is Confidential:</label>
-                                        <input type="hidden" name="is_confidential[0]" value="0"> <!-- Indexed name -->
-                                        <input type="checkbox" name="is_confidential[0]" value="1"> <!-- Indexed name -->
+                                        <input type="hidden" name="is_confidential[0]" value="0">
+                                        <input type="checkbox" name="is_confidential[0]" value="1">
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Is For Review:</label>
-                                        <input type="hidden" name="is_for_review[0]" value="0"> <!-- Indexed name -->
-                                        <input type="checkbox" name="is_for_review[0]" value="1"> <!-- Indexed name -->
+                                        <input type="hidden" name="is_for_review[0]" value="0">
+                                        <input type="checkbox" name="is_for_review[0]" value="1">
                                     </div>
                                 </div>
-                            @endif
+                            @endif -->
                             <div class="col-lg-12 mb-3">
                                 <label for="spe_file">Browse Files</label>
                                 <input type="file" class="form-control" id="spe_file" name="spe_file[]">
@@ -67,22 +67,6 @@
                         <div class="col-lg-12 mb-3">
                             <input type="hidden" name="name[]" class="form-control" placeholder="Enter Name">
                         </div>
-                        @if(authCheckIfItsRnd(auth()->user()->department_id))
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label>Is Confidential:</label>
-                                    <input type="hidden" name="is_confidential[${rowIndex}]" value="0">
-                                    <input type="checkbox" name="is_confidential[${rowIndex}]" value="1">
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label>Is For Review:</label>
-                                    <input type="hidden" name="is_for_review[${rowIndex}]" value="0">
-                                    <input type="checkbox" name="is_for_review[${rowIndex}]" value="1">
-                                </div>
-                            </div>
-                        @endif
                         <div class="col-lg-12 mb-3">
                             <label for="spe_file">Browse Files</label>
                             <input type="file" class="form-control" name="spe_file[${rowIndex}]">
@@ -133,3 +117,20 @@
         }
     });
 </script>
+
+<!-- @if(authCheckIfItsRnd(auth()->user()->department_id))
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label>Is Confidential:</label>
+            <input type="hidden" name="is_confidential[${rowIndex}]" value="0">
+            <input type="checkbox" name="is_confidential[${rowIndex}]" value="1">
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label>Is For Review:</label>
+            <input type="hidden" name="is_for_review[${rowIndex}]" value="0">
+            <input type="checkbox" name="is_for_review[${rowIndex}]" value="1">
+        </div>
+    </div>
+@endif -->

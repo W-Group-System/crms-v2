@@ -548,18 +548,18 @@ class DashboardController extends Controller
 
         $totalSalesPRF = $salesPrfClosed + $salesPrfReopened + $salesPrfApproval + $salesPrfWaiting + $salesPrfManager;
 
-
-        $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')
-            ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
-                $query->whereColumn('clientcompanies.Name', 'like', 'customersatisfaction.CompanyName')
-                    ->where(function ($query) use ($userId, $userByUser) {
-                        $query->where('clientcompanies.PrimaryAccountManagerId', $userId)
-                            ->orWhere('clientcompanies.SecondaryAccountManagerId', $userId)
-                            ->orWhere('clientcompanies.PrimaryAccountManagerId', $userByUser)
-                            ->orWhere('clientcompanies.SecondaryAccountManagerId', $userByUser);
-                    });
-            })
-            ->count();
+        $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')->count();
+        // $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')
+        //     ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
+        //         $query->whereColumn('clientcompanies.Name', 'like', 'customersatisfaction.CompanyName')
+        //             ->where(function ($query) use ($userId, $userByUser) {
+        //                 $query->where('clientcompanies.PrimaryAccountManagerId', $userId)
+        //                     ->orWhere('clientcompanies.SecondaryAccountManagerId', $userId)
+        //                     ->orWhere('clientcompanies.PrimaryAccountManagerId', $userByUser)
+        //                     ->orWhere('clientcompanies.SecondaryAccountManagerId', $userByUser);
+        //             });
+        //     })
+        //     ->count();
 
         $customerComplaintCount = CustomerComplaint2::where('Status', '10')
             ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {

@@ -130,8 +130,8 @@
                                 <input type="text" class="form-control" id="ProductDeclared" name="ProductDeclared" placeholder="Enter Product Declared" value="{{ $data->ProductDeclared }}">
                             </div>
                             <div class="form-group">
-                                <label>Lot Numbers on bags:</label>
-                                <input type="text" class="form-control" id="LnBags" name="LnBags" placeholder="Enter Lot Number on Bags" value="{{ $data->LnBags }}">
+                                <label>Remarks:</label>
+                                <input type="text" class="form-control" id="LnBags" name="LnBags" placeholder="Enter Remarks" value="{{ $data->LnBags }}">
                             </div>
                         </div>
                     </div>
@@ -171,6 +171,7 @@
                                     <option value="Standard QUALITY CONTROL test: pH, Viscosity, WGS, KGS">Standard QUALITY CONTROL test: pH, Viscosity, WGS, KGS</option>
                                     <option value="Particle size distribution">Particle size distribution</option>
                                     <option value="Microbacteria test">Microbacteria test</option>
+                                    <option value="Retain Sample">Retain Sample</option>
                                     <option value="Other tests">Other tests</option>
                                 </select>
                             </div>

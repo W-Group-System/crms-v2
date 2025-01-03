@@ -204,9 +204,14 @@ class ProductController extends Controller
         else
         {
             $products = Product::where('code', 'LIKE', '%'.$series_number.'%')->orderBy('id','desc')->first();
-            if(preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $products->code, $matches))
-            {
+            // if(preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $products->code, $matches))
+            // {
+            //     $series_number2 = $matches[2];
+            // }
+            if ($products && preg_match('/^(\D+)\s+([\dA-Za-z]+)$/', $products->code, $matches)) {
                 $series_number2 = $matches[2];
+            } else {
+                $series_number2 = null;
             }
             
             if ($series_number != $series_number2)
@@ -225,9 +230,7 @@ class ProductController extends Controller
     
                 productManagementLogs("create", $product->code);
                 return response()->json(['status' => 1, 'message' => 'Successfully Saved.']);
-            }
-            else
-            {
+            } else {
                 return response()->json(['status' => 0, 'error' => 'The number series is existing.']);
             }
         }
