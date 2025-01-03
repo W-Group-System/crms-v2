@@ -1,4 +1,3 @@
-
 <div class="modal fade" id="addSseAttachments" tabindex="-1" role="dialog" aria-labelledby="cancelModal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -14,25 +13,24 @@
                     <div class="sse_file">
                         <div class="row">
                             <div class="col-lg-12 mb-3">
-                                <!-- <label for="name">Name</label> -->
                                 <input type="hidden" name="name[]" class="form-control" id="name" placeholder="Enter Name">
                             </div>
-                            @if(authCheckIfItsRnd(auth()->user()->department_id))
+                            <!-- @if(authCheckIfItsRnd(auth()->user()->department_id))
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Is Confidential:</label>
-                                        <input type="hidden" name="is_confidential[0]" value="0"> <!-- Indexed name -->
-                                        <input type="checkbox" name="is_confidential[0]" value="1"> <!-- Indexed name -->
+                                        <input type="hidden" name="is_confidential[0]" value="0">
+                                        <input type="checkbox" name="is_confidential[0]" value="1">
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label>Is For Review:</label>
-                                        <input type="hidden" name="is_for_review[0]" value="0"> <!-- Indexed name -->
-                                        <input type="checkbox" name="is_for_review[0]" value="1"> <!-- Indexed name -->
+                                        <input type="hidden" name="is_for_review[0]" value="0">
+                                        <input type="checkbox" name="is_for_review[0]" value="1">
                                     </div>
                                 </div>
-                            @endif
+                            @endif -->
                             <div class="col-lg-12 mb-3">
                                 <label for="sse_file">Browse Files</label>
                                 <input type="file" class="form-control" id="sse_file" name="sse_file[]">
@@ -67,22 +65,6 @@
                         <div class="col-lg-12 mb-3">
                             <input type="hidden" name="name[]" class="form-control" placeholder="Enter Name">
                         </div>
-                        @if(authCheckIfItsRnd(auth()->user()->department_id))
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label>Is Confidential:</label>
-                                    <input type="hidden" name="is_confidential[${rowIndex}]" value="0">
-                                    <input type="checkbox" name="is_confidential[${rowIndex}]" value="1">
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label>Is For Review:</label>
-                                    <input type="hidden" name="is_for_review[${rowIndex}]" value="0">
-                                    <input type="checkbox" name="is_for_review[${rowIndex}]" value="1">
-                                </div>
-                            </div>
-                        @endif
                         <div class="col-lg-12 mb-3">
                             <label for="sse_file">Browse Files</label>
                             <input type="file" class="form-control" name="sse_file[${rowIndex}]">
@@ -133,3 +115,20 @@
         }
     });
 </script>
+
+<!-- @if(authCheckIfItsRnd(auth()->user()->department_id))
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label>Is Confidential:</label>
+            <input type="hidden" name="is_confidential[${rowIndex}]" value="0">
+            <input type="checkbox" name="is_confidential[${rowIndex}]" value="1">
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label>Is For Review:</label>
+            <input type="hidden" name="is_for_review[${rowIndex}]" value="0">
+            <input type="checkbox" name="is_for_review[${rowIndex}]" value="1">
+        </div>
+    </div>
+@endif -->

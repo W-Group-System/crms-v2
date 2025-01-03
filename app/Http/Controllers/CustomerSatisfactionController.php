@@ -115,13 +115,13 @@ class CustomerSatisfactionController extends Controller
             //             ->orWhere('SecondaryAccountManagerId', $userByUser);
             //     }); 
             // })                                                          
-            ->orWhere(function ($query) use ($userId) {
-                // Include entries where 'ReceivedBy' is the same as the 'userId' in the 'salesapprovers' table
-                $query->where('Progress', '20')
-                    ->whereHas('salesapprovers', function ($query) use ($userId) {
-                        $query->where('SalesApproverId', $userId);
-                    });
-            })
+            // ->orWhere(function ($query) use ($userId) {
+            //     // Include entries where 'ReceivedBy' is the same as the 'userId' in the 'salesapprovers' table
+            //     $query->where('Progress', '20')
+            //         ->whereHas('salesapprovers', function ($query) use ($userId) {
+            //             $query->where('SalesApproverId', $userId);
+            //         });
+            // })
             ->orderBy($sort, $direction);
 
         if ($fetchAll) {
@@ -157,18 +157,7 @@ class CustomerSatisfactionController extends Controller
             'Progress' => '10'
         ]);
 
-        if ($request->hasFile('Path')) {
-            foreach ($request->file('Path') as $file) {
-
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = $file->storeAs('uploads', $fileName, 'public'); 
-
-                CsFiles::create([
-                    'CsId' => $customerSatisfaction->id, 
-                    'Path' => $filePath, 
-                ]);
-            }
-        }
+        
        
         // Return success message
         return response()->json(['success' => 'You submitted the form successfully..']);

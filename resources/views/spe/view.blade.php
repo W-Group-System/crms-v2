@@ -32,6 +32,9 @@
                     @endif
                     @if($data->AttentionTo == auth()->user()->role->type)
                         @if($data->Progress == 20 && rndManager(auth()->user()->role))
+                            <button type="button" class="btn btn-outline-info" data-target="#returnToPurch{{ $data->id }}" data-toggle="modal" title='Return to Analyst'>
+                                <i class="ti ti-back-left">&nbsp;</i>Return to Purchasing
+                            </button>
                             <form action="{{url('spe_received/'.$data->id)}}" method="post" class="d-inline-block" onsubmit="show()">
                                 @csrf
                                 <button type="button" class="btn btn-outline-success receivedBtn">
@@ -47,9 +50,12 @@
                             </button>
                         </form>
                         @endif
+                        @if($data->Progress != 10 &&  $data->Progress != 20 && $data->Progress != 35)
+                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#disposition">Disposition</button>
+                        @endif
                         @if($data->Progress == 50)
                             <!-- <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#reconfirmatory">Re-confirmatory</button> -->
-                            <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#disposition">Disposition</button>
+                            <!-- <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#disposition">Disposition</button> -->
                             <form method="POST" action="{{url('submit_spe/'.$data->id)}}" class="d-inline-block" onsubmit="show()">
                                 @csrf 
                                 <button type="button" class="btn btn-outline-success submitSpeBtn">
@@ -75,7 +81,7 @@
                         @if($data->Progress == 60 && $data->Status != 30)
                             <form method="POST" action="{{url('close_spe/'.$data->id)}}" class="d-inline-block">
                             @csrf 
-                                <button type="button" class="btn btn-outline-success closeSseBtn">
+                                <button type="button" class="btn btn-outline-success closeSpeBtn">
                                     <i class="ti ti-close"></i>&nbsp;Close
                                 </button>
                             </form>
@@ -189,12 +195,22 @@
                             <label>{{ optional($data->approved_by)->full_name }}</label>
                         </div>
                     </div>
+                    @if($data->ReturnRemarks != null)
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Return Remarks:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Analyst Return Remarks:</b></label>
                         <div class="col-sm-9">
                             <label>{{ $data->ReturnRemarks ?? 'N/A' }}</label>
                         </div>
                     </div>
+                    @endif
+                    @if($data->ReturnRemarksPurch != null)
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Purchasing Return Remarks:</b></label>
+                        <div class="col-sm-9">
+                            <label>{{ $data->ReturnRemarksPurch ?? 'N/A' }}</label>
+                        </div>
+                    </div>
+                    @endif
                     <div class="form-group row mb-3">
                         <label class="col-sm-3 col-form-label text-right"><b>Disposition:</b></label>
                         <div class="col-sm-9">
@@ -371,10 +387,12 @@
                                             {{ $file->Name }}
                                         </td>
                                         <td>
-                                            @if($file->IsForReview == 1 || $file->IsConfidential == 1)
-                                                
-                                            @elseif($file->IsForReview == 1 || $file->IsConfidential == 1 || rndManager(auth()->user()->role) || checkIfItsAnalyst(auth()->user()->role))
+                                            @if(rndManager(auth()->user()->role) || authCheckIfItsRnd(auth()->user()->department_id))
                                                 <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">View File</a>
+                                            @elseif($file->IsForReview == 0 && $file->IsConfidential == 0)
+                                                <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">View File</a>
+                                            @else
+                                                <span>Access Restricted</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -549,6 +567,7 @@
         </div>
     </div>
 </div>
+@include('spe.return_purch')
 @include('spe.return_spe')
 @include('spe.edit')
 <script>
@@ -729,6 +748,37 @@
                 }
             });
         })
+
+        $('.closeSpeBtn').on('click', function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var button = $(this);
+            var form = button.closest('form');
+            var actionUrl = form.attr('action'); // Get form action URL
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Closed",
+                            text: response.message,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(function () {
+                            window.location.reload(); // Reload the page
+                        });
+                    }
+                }
+            });
+        });
+
     });
 </script>
 @endsection

@@ -44,8 +44,10 @@
                             </button>
                         </form>
                         @endif
-                        @if($data->Progress == 50)
+                        @if($data->Progress != 10 || $data->Progress != 20 || $data->Progress != 35)
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#sampleSse">Disposition</button>
+                        @endif
+                        @if($data->Progress == 50)
                             <form method="POST" action="{{url('done_sse/'.$data->id)}}" class="d-inline-block">
                                 @csrf 
                                 <button type="button" class="btn btn-outline-success doneSseBtn">
@@ -55,7 +57,7 @@
                         @endif 
                     @endif
                     @if($data->Progress == 55 && rndManager(auth()->user()->role))
-                        <!-- <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#rejectedSse"><i class="ti ti-na"></i>&nbsp;Rejected</button>     -->
+                        <!-- <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#rejectedSse"><i class="ti ti-na"></i>&nbsp;Rejected</button>  -->
                         <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#acceptedSse"><i class="ti ti-check"></i>&nbsp;Completed</button>  
                     @endif
                     @if(auth()->user()->role->type == 'PRD')
@@ -215,7 +217,7 @@
                         <div class="col-sm-3">
                             <label>{{ $data->Instruction }}</label>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Lot Number on bags:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Remarks:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->LnBags }}</label>
                         </div>
@@ -467,10 +469,12 @@
                                             {{ $file->Name }}
                                         </td>
                                         <td>
-                                            @if($file->IsForReview == 1 || $file->IsConfidential == 1)
-                                                
-                                            @elseif($file->IsForReview == 1 || $file->IsConfidential == 1 || rndManager(auth()->user()->role) || checkIfItsAnalyst(auth()->user()->role))
+                                            @if(rndManager(auth()->user()->role) || authCheckIfItsRnd(auth()->user()->department_id))
                                                 <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">View File</a>
+                                            @elseif($file->IsForReview == 0 && $file->IsConfidential == 0)
+                                                <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">View File</a>
+                                            @else
+                                                <span>Access Restricted</span>
                                             @endif
                                         </td>
                                     </tr>
