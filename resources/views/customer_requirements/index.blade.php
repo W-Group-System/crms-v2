@@ -206,7 +206,11 @@
                                 N/A
                                 @endif
                             </td>
-                            <td>{{ optional($customerRequirement->client)->Name }}</td>
+                            <td>
+                                <a href="{{url('view_client/'.optional($customerRequirement->client)->id)}}">
+                                    {{ optional($customerRequirement->client)->Name }}
+                                </a>
+                            </td>
                             <td>{{ optional($customerRequirement->product_application)->Name }}</td>
                             <td >
                                 {{-- @if($customerRequirement->Recommendation != null)

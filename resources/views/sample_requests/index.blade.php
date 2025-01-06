@@ -399,7 +399,11 @@
                                 </td>
                                 <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i' , strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                 <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
-                                <td>{{ optional($srf->client)->Name }}</td>
+                                <td>
+                                    <a href="{{url('view_client/'.optional($srf->client)->id)}}">
+                                        {{ optional($srf->client)->Name }}
+                                    </a>
+                                </td>
                                 <td>
                                     @foreach ($srf->requestProducts as $product)
                                         {{ optional($product->productApplicationsId)->Name }}<br>
