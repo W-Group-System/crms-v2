@@ -263,7 +263,11 @@
                                         @endif
                                     </td>
                                     <td>{{ $productEvaluation->DueDate }}</td>
-                                    <td>{{ optional($productEvaluation->client)->Name }}</td>
+                                    <td>
+                                        <a href="{{url('view_client/'.optional($productEvaluation->client)->id)}}">
+                                            {{ optional($productEvaluation->client)->Name }}
+                                        </a>
+                                    </td>
                                     <td>{{ optional($productEvaluation->product_application)->Name }}</td>
                                     {{-- <td style="white-space: break-spaces; width: 100%;">{{ optional($productEvaluation)->RpeResult }}</td> --}}
                                     <td>
