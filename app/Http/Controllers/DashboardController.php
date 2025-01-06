@@ -427,7 +427,9 @@ class DashboardController extends Controller
             ->where(function($query) use ($userId, $userByUser) {
                 $query->where(function($query) use ($userId, $userByUser) {
                     $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser);
+                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userId);
                 });
             })
             ->count();
@@ -436,7 +438,9 @@ class DashboardController extends Controller
             ->where(function($query) use ($userId, $userByUser) {
                 $query->where(function($query) use ($userId, $userByUser) {
                     $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser);
+                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userId);
                 });
             })
             ->count();
@@ -445,7 +449,9 @@ class DashboardController extends Controller
             ->where(function($query) use ($userId, $userByUser) {
                 $query->where(function($query) use ($userId, $userByUser) {
                     $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser);
+                        ->orWhere('PrimarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userByUser)
+                        ->orWhere('SecondarySalesPersonId', $userId);
                 });
             })
             ->count();

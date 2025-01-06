@@ -129,30 +129,27 @@
                         <li class="nav-item nav-profile dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                                 <img src="{{ asset('/images/user.png')}}" alt="profile"/>
-                                @if($hasReturnedTransactions ?? false)
-                                    <!-- Display a badge if there are returned transactions -->
+                                <!-- @if($hasReturnedTransactions ?? false)
                                     <span class="position-absolute top-0 start-100 translate-middle bg-danger border border-light rounded-circle" 
                                         style="right: 0px; padding: 0.3rem"></span>
-                                @endif
+                                @endif -->
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                                 <a href="{{ route('my_account') }}" class="dropdown-item">
                                     <i class="ti ti-user text-primary"></i>
                                     My Account
                                 </a>
-                                @if(Auth::check() && optional(Auth::user()->role)->type == 'IS' || optional(Auth::user()->role)->type == 'LS')
+                                <!-- @if(Auth::check() && optional(Auth::user()->role)->type == 'IS' || optional(Auth::user()->role)->type == 'LS')
                                 <a href="{{ route('returned_transaction') }}" class="dropdown-item">
                                     
                                     <i class="ti ti-share-alt text-primary"></i>
                                     @if($hasReturnedTransactions ?? false)
-                                        <!-- Display a badge if there are returned transactions -->
                                         <span class="position-absolute top-0 start-100 translate-middle bg-danger border border-light rounded-circle" 
                                             style="left: 10px; padding: 0.3rem"></span>
                                     @endif
                                     Returned Transactions
-                                    
                                 </a>
-                                @endif
+                                @endif -->
                                 <a href="{{ route('change_password') }}" class="dropdown-item">
                                     <i class="ti ti-unlock text-primary"></i>
                                     Change Password

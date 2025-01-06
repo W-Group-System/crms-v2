@@ -217,7 +217,9 @@ class CustomerRequirementController extends Controller
                     $query->where('ReturnToSales', '1')
                         ->where(function($query) use ($userId, $userByUser) {
                             $query->where('PrimarySalesPersonId', $userId)
-                                ->orWhere('PrimarySalesPersonId', $userByUser);
+                                ->orWhere('PrimarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userByUser)
+                                ->orWhere('SecondarySalesPersonId', $userId);
                         });
                 } else {
                     $query->where('ReturnToSales', $return_to_sales);
