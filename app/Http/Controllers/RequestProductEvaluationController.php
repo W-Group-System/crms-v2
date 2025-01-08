@@ -560,7 +560,7 @@ class RequestProductEvaluationController extends Controller
         $RequestNumber = $requestEvaluation->RpeNumber;
         $clientId = $requestEvaluation->ClientId;
         // $RpeSupplementary = RpeDetail::where('RequestProductEvaluationId', $rpeNumber)->get();
-        $rndPersonnel = User::where('is_active', 1)->where('department_id', 15)->whereNotIn('id', [auth()->user()->id])->get();
+        $rndPersonnel = User::where('is_active', 1)->where('department_id', 15);
         // $rndPersonnel = User::whereHas('rndUsers')->get();
         $activities = Activity::where('TransactionNumber', $RequestNumber)->get();
         // $rpeFileUploads = RpeFile::where('RequestProductEvaluationId', $rpeNumber)->where('userType', 'RND')->get();
