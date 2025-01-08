@@ -426,192 +426,187 @@
                     <label><strong>Request Details</strong></label>
                     <hr style="margin-top: 0px; color: black; border-top-color: black;">
                     <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>RPE # :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">{{ $requestEvaluation->RpeNumber }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Primary Sales Person :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">
-                                @if($requestEvaluation->primarySalesPerson)
-                                {{ optional($requestEvaluation->primarySalesPerson)->full_name}}
-                                @elseif($requestEvaluation->primarySalesPersonById)
-                                {{ optional($requestEvaluation->primarySalesPersonById)->full_name}}
-                                @endif</p>
-                        </div>
+                        
                     </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Date Requested :</b></p>
+                    <div class="row mb-3">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>RPE # :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">{{ $requestEvaluation->RpeNumber }}</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Date Requested :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">@if($requestEvaluation->CreatedDate != null)
+                                        {{ date('M d, Y h:i A', strtotime($requestEvaluation->CreatedDate)) }}
+                                        @else
+                                        {{ date('M d, Y h:i A', strtotime($requestEvaluation->created_at)) }}
+                                        @endif</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="text-right mb-0"><b>Date Required :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">{{ $requestEvaluation->DueDate ?? 'NA'}}</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Priority :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0"> @if($requestEvaluation->Priority == 1)
+                                        IC Application
+                                    @elseif($requestEvaluation->Priority == 3)
+                                        Second Priority
+                                    @elseif($requestEvaluation->Priority == 5)
+                                        First Priority
+                                    @else
+                                        {{ $requestEvaluation->Priority }}
+                                    @endif</p>
+                                </div>
+                                <div class="col-md-4">&nbsp;</div>
+                                <div class="col-md-8">&nbsp;</div>
+                                <div class="col-md-4">&nbsp;</div>
+                                <div class="col-md-8">&nbsp;</div>
+                                <div class="col-md-4">&nbsp;</div>
+                                <div class="col-md-8">&nbsp;</div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="text-right mb-0"><b>Project Name :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">{{ optional($requestEvaluation->projectName)->Name  }}</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Application :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">{{ optional($requestEvaluation->product_application)->Name  }}</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Potential Volume :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">
+                                        {{ $requestEvaluation->PotentialVolume }} 
+                                        @if ($requestEvaluation->UnitOfMeasureId == 1)
+                                            g
+                                        @elseif ($requestEvaluation->UnitOfMeasureId == 2)
+                                            kg
+                                        @endif
+                                    </p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Target Raw Price :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">{{ optional($requestEvaluation->priceCurrency)->Name  }} {{ $requestEvaluation->TargetRawPrice  }}</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Objective for RPE Project :</b></p>
+                                </div>
+                                <div class="col-sm-9 col-md-8">
+                                    <p class="mb-0">{!! nl2br(e($requestEvaluation->ObjectiveForRpeProject)) !!}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">@if($requestEvaluation->CreatedDate != null)
-                                {{ date('M d, Y h:i A', strtotime($requestEvaluation->CreatedDate)) }}
-                                @else
-                                {{ date('M d, Y h:i A', strtotime($requestEvaluation->created_at)) }}
-                                @endif</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Secondary Sales Person :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">
-                                @if($requestEvaluation->secondarySalesPerson)
-                                {{ optional($requestEvaluation->secondarySalesPerson)->full_name}}
-                                @elseif($requestEvaluation->secondarySalesPersonById)
-                                {{ optional($requestEvaluation->secondarySalesPersonById)->full_name}}
-                                @endif
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="text-right mb-0"><b>Date Required :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">{{ $requestEvaluation->DueDate ?? 'NA'}}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Priority :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0"> @if($requestEvaluation->Priority == 1)
-                                IC Application
-                            @elseif($requestEvaluation->Priority == 3)
-                                Second Priority
-                            @elseif($requestEvaluation->Priority == 5)
-                                First Priority
-                            @else
-                                {{ $requestEvaluation->Priority }}
-                            @endif</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Attention To :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">  @if($requestEvaluation->AttentionTo == 1)
-                                RND
-                            @elseif($requestEvaluation->AttentionTo == 2)
-                                QCD
-                            @else
-                                {{ $requestEvaluation->AttentionTo }}
-                            @endif</p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p><b></b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Status :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">
-                                @if($requestEvaluation->Status == 10)
-                                    Open
-                                @elseif($requestEvaluation->Status == 30)
-                                    Closed
-                                @elseif($requestEvaluation->Status == 50)
-                                    Cancelled
-                                @else
-                                    {{ $requestEvaluation->Status }}
-                                @endif
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p><b></b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Progress :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">
-                                {{ optional($requestEvaluation->progressStatus)->name  }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="text-right mb-0"><b>Project Name :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">{{ optional($requestEvaluation->projectName)->Name  }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="text-right mb-0"><b>Sample Name :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">
-                                {{ $requestEvaluation->SampleName  }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Application :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">{{ optional($requestEvaluation->product_application)->Name  }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="text-right mb-0"><b>Manufacturer :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">
-                                {{ $requestEvaluation->Manufacturer  }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Potential Volume :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">
-                                {{ $requestEvaluation->PotentialVolume }} 
-                                @if ($requestEvaluation->UnitOfMeasureId == 1)
-                                    g
-                                @elseif ($requestEvaluation->UnitOfMeasureId == 2)
-                                    kg
-                                @endif
-                            </p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Supplier :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">
-                                {{ $requestEvaluation->Supplier  }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Target Raw Price :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">{{ optional($requestEvaluation->priceCurrency)->Name  }} {{ $requestEvaluation->TargetRawPrice  }}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Objective for RPE Project :</b></p>
-                        </div>
-                        <div class="col-sm-9 col-md-8">
-                            <p class="mb-0">{!! nl2br(e($requestEvaluation->ObjectiveForRpeProject)) !!}</p>
+
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Primary Sales Person :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">
+                                        @if($requestEvaluation->primarySalesPerson)
+                                        {{ optional($requestEvaluation->primarySalesPerson)->full_name}}
+                                        @elseif($requestEvaluation->primarySalesPersonById)
+                                        {{ optional($requestEvaluation->primarySalesPersonById)->full_name}}
+                                        @endif</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Secondary Sales Person :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">
+                                        @if($requestEvaluation->secondarySalesPerson)
+                                        {{ optional($requestEvaluation->secondarySalesPerson)->full_name}}
+                                        @elseif($requestEvaluation->secondarySalesPersonById)
+                                        {{ optional($requestEvaluation->secondarySalesPersonById)->full_name}}
+                                        @endif
+                                </div>
+                                <div class="col-md-4">&nbsp;</div>
+                                <div class="col-md-8">&nbsp;</div>
+                                {{-- <div class="col-md-4">&nbsp;</div>
+                                <div class="col-md-8">&nbsp;</div> --}}
+
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Attention To :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">  @if($requestEvaluation->AttentionTo == 1)
+                                        RND
+                                    @elseif($requestEvaluation->AttentionTo == 2)
+                                        QCD
+                                    @else
+                                        {{ $requestEvaluation->AttentionTo }}
+                                    @endif</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Status :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">
+                                        @if($requestEvaluation->Status == 10)
+                                            Open
+                                        @elseif($requestEvaluation->Status == 30)
+                                            Closed
+                                        @elseif($requestEvaluation->Status == 50)
+                                            Cancelled
+                                        @else
+                                            {{ $requestEvaluation->Status }}
+                                        @endif
+                                    </p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Progress :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">
+                                        {{ optional($requestEvaluation->progressStatus)->name  }}
+                                    </p>
+                                </div>
+                                <div class="col-md-4">&nbsp;</div>
+                                <div class="col-md-8">&nbsp;</div>
+
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="text-right mb-0"><b>Sample Name :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">
+                                        {{ $requestEvaluation->SampleName  }}
+                                    </p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="text-right mb-0"><b>Manufacturer :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">
+                                        {{ $requestEvaluation->Manufacturer  }}
+                                    </p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Supplier :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">
+                                        {{ $requestEvaluation->Supplier  }}
+                                    </p>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                     <div class="group-form">
@@ -650,31 +645,7 @@
                                 @endforeach
                             @endif
                         </div>
-                        <div class="col-sm-12 col-md-2">
-                            {{-- @if($requestEvaluation->rpeTransactionApprovals->isEmpty())
-                                @if($requestEvaluation->approver)
-                                <b>{{$requestEvaluation->approver->full_name}} :</b> {{$requestEvaluation->AcceptRemarks}}
-                                @else
-                                <p>No approver remarks yet</p>
-                                @endif
-                            @else
-                                @php
-                                    $latestApproval = $requestEvaluation->rpeTransactionApprovals->where('RemarksType', 'approved')->last();
-                                @endphp
-                                @if ($latestApproval)
-                                    @if($latestApproval->userByUserId)
-                                        <b>{{$latestApproval->userByUserId->full_name}} :</b>
-                                        <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
-                                    @elseif($latestApproval->userById)
-                                        <b>{{$latestApproval->userById->full_name}} :</b>
-                                        <p style="margin-top: 20px;"> {{ $latestApproval->Remarks }}</p>
-                                    @else
-                                    <p>No approver remarks yet</p>
-                                    @endif
-                                @else
-                                    <p>No approver remarks yet</p>
-                                @endif
-                            @endif --}}
+                        <div class="col-sm-12 col-md-2 mb-3">
                             @if($requestEvaluation->approver)
                                 @php
                                     $acceptRemarks = $requestEvaluation->rpeTransactionApprovals->sortByDesc('Id')->firstWhere('RemarksType', 'accept');
@@ -689,133 +660,115 @@
                     </div>
                     <label><strong>Evaluation Details</strong></label>
                     <hr style="margin-top: 0px; color: black; border-top-color: black;">
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>DDW Number :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">{{ $requestEvaluation->DdwNumber  }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Date Received :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 mb-0">
-                            <p>{{ $requestEvaluation->DateReceived ? date('M d, Y', strtotime($requestEvaluation->DateReceived)) : 'NA' }}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p><b></b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Date Completed :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">{{ $requestEvaluation->DateCompleted}}</p>
-                        </div>
-                    </div>
-                    @php
-                        $dateReceived = $requestEvaluation->DateReceived ? strtotime($requestEvaluation->DateReceived) : null;
-                        $dueDate = $requestEvaluation->DueDate ? strtotime($requestEvaluation->DueDate) : null;
-                        $dateCompleted = $requestEvaluation->DateCompleted ? strtotime($requestEvaluation->DateCompleted) : null;
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row mb-0">
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>DDW Number :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">{{ $requestEvaluation->DdwNumber  }}</p>
+                                </div>
+                                @php
+                                    $rpeResult = $requestEvaluation->RpeResult;
+                                    $pattern = '/\[(.*?)\]/';
+                                
+                                    $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
+                                        $code = $matches[1];
+                                        $product = getProductIdByCode($code);
+                                        
+                                        if ($product == null)
+                                        {
+                                            return $matches[0];
+                                        }
 
-                        if ($dateReceived && $dueDate) {
-                            $difference = ($dueDate - $dateReceived) / (60 * 60 * 24); 
-                            $leadtime = number_format($difference, 0);
-                        } else {
-                            $leadtime = 'NA';
-                        }
+                                        if (auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS')
+                                        {
+                                            if ($product->status == 4)
+                                            {
+                                                return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if ($product->status == 4)
+                                            {
+                                                return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                            if ($product->status == 2)
+                                            {
+                                                return '<a href="'.url('view_new_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                            if ($product->status == 1)
+                                            {
+                                                return '<a href="'.url('view_draft_product/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                            if ($product->status == 5)
+                                            {
+                                                return '<a href="'.url('view_archive_products/'.$product->id).'">'.$matches[0].'</a>';
+                                            }
+                                        }
+                                        return $matches[0];
+                                    }, $rpeResult);
+                                @endphp
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="text-right mb-0"><b>RPE Recommendation :</b></p>
+                                </div>
+                                <div class="col-sm-9 col-md-8">
+                                    <p class="mb-0">{!! nl2br($rpeResultLinked) !!}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row mb-0">
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Date Received :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8 mb-0">
+                                    <p class="mb-0">{{ $requestEvaluation->DateReceived ? date('M d, Y', strtotime($requestEvaluation->DateReceived)) : 'NA' }}</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Date Completed :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">{{ $requestEvaluation->DateCompleted}}</p>
+                                </div>
+                                @php
+                                    $dateReceived = $requestEvaluation->DateReceived ? strtotime($requestEvaluation->DateReceived) : null;
+                                    $dueDate = $requestEvaluation->DueDate ? strtotime($requestEvaluation->DueDate) : null;
+                                    $dateCompleted = $requestEvaluation->DateCompleted ? strtotime($requestEvaluation->DateCompleted) : null;
 
-                        if (!$dateCompleted) {
-                            $dateCompleted = time();
-                        }
+                                    if ($dateReceived && $dueDate) {
+                                        $difference = ($dueDate - $dateReceived) / (60 * 60 * 24); 
+                                        $leadtime = number_format($difference, 0);
+                                    } else {
+                                        $leadtime = 'NA';
+                                    }
 
-                        if ($dueDate) {
-                            $delay = ($dateCompleted - $dueDate) / (60 * 60 * 24); 
-                            $delayed = number_format($delay, 0);
-                        } else {
-                            $delayed = 'NA';
-                        }
-                    @endphp
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p><b></b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0 text-right"><b>Lead Time :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">{{ $leadtime}} day/s</p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2">
-                            <p><b></b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="text-right mb-0"><b>Delayed :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-2">
-                            <p class="mb-0">{{ $delayed }} day/s</p>
-                        </div>
-                    </div>
-                    @php
-                    $rpeResult = $requestEvaluation->RpeResult;
-                    $pattern = '/\[(.*?)\]/';
-                
-                    $rpeResultLinked = preg_replace_callback($pattern, function($matches) {
-                        $code = $matches[1];
-                        $product = getProductIdByCode($code);
-                        
-                        if ($product == null)
-                        {
-                            return $matches[0];
-                        }
+                                    if (!$dateCompleted) {
+                                        $dateCompleted = time();
+                                    }
 
-                        if (auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS')
-                        {
-                            if ($product->status == 4)
-                            {
-                                return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
-                            }
-                        }
-                        else
-                        {
-                            if ($product->status == 4)
-                            {
-                                return '<a href="'.url('view_product/'.$product->id).'">'.$matches[0].'</a>';
-                            }
-                            if ($product->status == 2)
-                            {
-                                return '<a href="'.url('view_new_product/'.$product->id).'">'.$matches[0].'</a>';
-                            }
-                            if ($product->status == 1)
-                            {
-                                return '<a href="'.url('view_draft_product/'.$product->id).'">'.$matches[0].'</a>';
-                            }
-                            if ($product->status == 5)
-                            {
-                                return '<a href="'.url('view_archive_products/'.$product->id).'">'.$matches[0].'</a>';
-                            }
-                        }
-                        return $matches[0];
-                    }, $rpeResult);
-                    @endphp            
-                    <div class="row mb-3">
-                        <div class="col-sm-3 col-md-2">
-                            <p class="text-right mb-0"><b>RPE Recommendation :</b></p>
-                        </div>
-                        <div class="col-sm-9 col-md-8">
-                            <p class="mb-0">{!! nl2br($rpeResultLinked) !!}</p>
+                                    if ($dueDate) {
+                                        $delay = ($dateCompleted - $dueDate) / (60 * 60 * 24); 
+                                        $delayed = number_format($delay, 0);
+                                    } else {
+                                        $delayed = 'NA';
+                                    }
+                                @endphp
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="mb-0 text-right"><b>Lead Time :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">{{ $leadtime}} day/s</p>
+                                </div>
+                                <div class="col-sm-3 col-md-4">
+                                    <p class="text-right mb-0"><b>Delayed :</b></p>
+                                </div>
+                                <div class="col-sm-3 col-md-8">
+                                    <p class="mb-0">{{ $delayed }} day/s</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
             </div>
