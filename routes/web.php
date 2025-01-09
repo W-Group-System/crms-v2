@@ -41,6 +41,9 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/dashboard-sales', 'DashboardController@salesIndex')->name('dashboard.index');
         Route::get('/dashboard-qcd', 'DashboardController@qcdIndex')->name('dashboard.qcd');
         Route::get('/dashboard-prd', 'DashboardController@prdIndex')->name('dashboard.prd');
+
+        // For Approval Transaction
+        Route::get('/view_for_approval_transaction', 'ForApprovalTransactionController@index');
     
         // change password
         Route::get('my_account','HomeController@myAccount')->name('my_account');
