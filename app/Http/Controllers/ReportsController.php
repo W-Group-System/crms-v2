@@ -133,10 +133,10 @@ class ReportsController extends Controller
             return $query->where('pricerequestproducts.QuantityRequired', 'LIKE', '%' . $filterQuantity . '%');
         })
         ->when($filterMargin, function ($query) use ($filterMargin) {
-            return $query->where('pricerequestproducts.IsalesMargin', 'LIKE', '%' . $filterMargin . '%');
+            return $query->where('pricerequestproducts.LsalesMarkupValue', 'LIKE', '%' . $filterMargin . '%');
         })
         ->when($filterPercentMargin, function ($query) use ($filterPercentMargin) {
-            return $query->where('pricerequestproducts.IsalesMarginPercentage', 'LIKE', '%' . $filterPercentMargin . '%');
+            return $query->where('pricerequestproducts.LsalesMarkupPercent', 'LIKE', '%' . $filterPercentMargin . '%');
         })
         ->when($filterTotalMargin, function ($query) use ($filterTotalMargin) {
             return $query->where('pricerequestproducts.IsalesMargin', 'LIKE', '%' . $filterTotalMargin . '%');
@@ -169,8 +169,8 @@ class ReportsController extends Controller
         $allShipment = PriceMonitoring::pluck('ShipmentTerm')->unique()->sort()->values();
         $allPayment = PaymentTerms::pluck('Name')->unique()->sort()->values();
         $allQuantity = PriceRequestProduct::pluck('QuantityRequired')->unique()->sort()->values();
-        $allMargin = PriceRequestProduct::pluck('IsalesMargin')->unique()->sort()->values();
-        $allPercentMargin = PriceRequestProduct::pluck('IsalesMarginPercentage')->unique()->sort()->values();
+        $allMargin = PriceRequestProduct::pluck('LsalesMarkupValue')->unique()->sort()->values();
+        $allPercentMargin = PriceRequestProduct::pluck('LsalesMarkupPercent')->unique()->sort()->values();
         $allTotalMargin = PriceRequestProduct::pluck('IsalesMargin')->unique()->sort()->values();
         $allAccepted = PriceMonitoring::pluck('IsAccepted')->unique()->sort()->values();
         $allRemarks = PriceMonitoring::pluck('Remarks')->unique()->sort()->values();
@@ -399,27 +399,38 @@ class ReportsController extends Controller
         $priceRequests = $priceRequests->get();
 
         $data = $priceRequests->map(function ($item) {
+            $totalCost = $item->ProductRmc +
+            $item->LsalesDirectLabor +
+            $item->LsalesFactoryOverhead +
+            $item->LsalesDeliveryCost +
+            $item->LsalesFinancingCost +
+            $item->LsalesGaeValue +
+            $item->OtherCostRequirements +
+            $item->LsalesBlendingLoss;
+
+            $totalCost = round($totalCost, 2);
+            $markupValue = $item->LsalesMarkupValue;
+
+        
+            $markupValue = (float) $markupValue;
+
+            $sellingPrice = $totalCost + $markupValue;
+
+            $formattedSellingPrice = number_format($sellingPrice, 2);
+
             return [
+
                 'DateRequested' => $item->DateRequested,
                 'PrimarySalesPerson' => $item->primarySalesPerson->full_name ?? 'N/A',
                 'Client' => $item->client->name ?? 'N/A',
                 'ProductCode' => $item->ProductCode,
                 'ProductRmc' => $item->ProductRmc ?? 'N/A',
-                'OfferedPrice' => $item->IsalesOfferedPrice ?? '0',
-                'Selling Price' => array_sum([
-                    $item->ProductRmc, 
-                    $item->LsalesDirectLabor, 
-                    $item->LsalesFactoryOverhead, 
-                    $item->LsalesDeliveryCost, 
-                    $item->LsalesGaeValue, 
-                    $item->OtherCostRequirements, 
-                    $item->LsalesBlendingLoss, 
-                    $item->LsalesMarkupValue
-                ]),
+                // 'OfferedPrice' => $item->IsalesOfferedPrice ?? '0',
+                'Selling Price' => $formattedSellingPrice,
                 'QuantityRequired' => $item->QuantityRequired ?? 'N/A',
-                'Margin' => $item->IsalesMargin ?? 'N/A',
-                'MarginPercentage' => $item->IsalesMarginPercentage ?? 'N/A',
-                'TotalMargin' => $item->TotalMargin ?? 'N/A',
+                'Margin' => $item->LsalesMarkupValue ?? 'N/A',
+                'MarginPercentage' => $item->LsalesMarkupPercent ?? 'N/A',
+                // 'TotalMargin' => $item->TotalMargin ?? 'N/A',
                 'ShipmentTerm' => $item->ShipmentTerm ?? 'N/A',
                 'PaymentTerm' => $item->PaymentTermName ?? 'N/A',
                 'IsAccepted' => $item->IsAccepted ? 'YES' : 'NO',

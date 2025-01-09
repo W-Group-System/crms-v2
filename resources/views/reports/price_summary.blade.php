@@ -106,12 +106,12 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'ProductRmc' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
                             </th>
-                            <th>
+                            {{-- <th>
                                 Offered Price
                                 <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesOfferedPrice', 'direction' => request('sort') == 'IsalesOfferedPrice' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'IsalesOfferedPrice' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
-                            </th>
+                            </th> --}}
                             <th>Selling Price</th>
                             <th>
                                 Shipment Term
@@ -143,12 +143,12 @@
                                     <i class="ti ti-arrow-{{ request('sort') == 'IsalesMarginPercentage' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
                             </th>
-                            <th>
+                            {{-- <th>
                                 Total Margin
                                 <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsalesMargin', 'direction' => request('sort') == 'IsalesMargin' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
                                     <i class="ti ti-arrow-{{ request('sort') == 'IsalesMargin' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
                                 </a> -->
-                            </th>
+                            </th> --}}
                             <th>
                                 Accepted?
                                 <!-- <a href="{{ route('reports.price_request', ['search' => $search, 'sort' => 'IsAccepted', 'direction' => request('sort') == 'IsAccepted' && request('direction') == 'asc' ? 'desc' : 'asc']) }}">
@@ -177,6 +177,31 @@
                                         $price_request->LsalesBlendingLoss,
                                         $price_request->LsalesMarkupValue
                                     ])->filter()->sum();
+
+                                    $totalCost = $price_request->ProductRmc +
+                                    $price_request->LsalesDirectLabor +
+                                    $price_request->LsalesFactoryOverhead +
+                                    $price_request->LsalesDeliveryCost +
+                                    $price_request->LsalesFinancingCost +
+                                    $price_request->LsalesGaeValue +
+                                    $price_request->OtherCostRequirements +
+                                    $price_request->LsalesBlendingLoss;
+                        
+                                    $totalCost = round($totalCost, 2);
+                                    
+                                    $markupPercent = $price_request->LsalesMarkupPercent;
+                                    $markupValue = $price_request->LsalesMarkupValue;
+
+                                
+                                    $markupValue = (float) $markupValue;
+
+                                    $sellingPrice = $totalCost + $markupValue;
+                                    $sellingPriceWithVAT = $sellingPrice * 0.12;
+                                    $sumWithVat = $sellingPrice + $sellingPriceWithVAT;
+
+                                    $formattedSellingPrice = number_format($sellingPrice, 2);
+                                    $formattedSellingPriceWithVAT = number_format($sellingPriceWithVAT, 2);
+                                    $formattedSumWithVat = number_format($sumWithVat, 2);
                                 @endphp
                                 <tr>
                                     <td>{{date('M. d, Y', strtotime($price_request->DateRequested))}}</td>
@@ -185,14 +210,14 @@
                                     <td>{{ $price_request->client->name ?? 'N/A' }} </td>
                                     <td>{{ $price_request->code }}</td>
                                     <td>{{ $price_request->ProductRmc }}</td>
-                                    <td>{{ $price_request->IsalesOfferedPrice ?? 'N/A' }}</td>
-                                    <td>{{ number_format($total, 2) }}</td>
+                                    {{-- <td>{{ $price_request->IsalesOfferedPrice ?? 'N/A' }}</td> --}}
+                                    <td>{{ $formattedSellingPrice }}</td>
                                     <td>{{ $price_request->ShipmentTerm ?? 'N/A' }}</td>
                                     <td>{{ $price_request->paymentterms->Name ?? 'N/A' }}</td>
                                     <td>{{ $price_request->QuantityRequired ?? 'N/A' }}</td>
-                                    <td>{{ $price_request->IsalesMargin ?? 'N/A' }}</td>
-                                    <td>{{ $price_request->IsalesMarginPercentage ?? 'N/A' }}</td>
-                                    <td>{{ $price_request ? number_format($price_request->QuantityRequired * $price_request->IsalesMargin, 2) : '0' }}</td>
+                                    <td>{{ $price_request->LsalesMarkupValue ?? 'N/A' }}</td>
+                                    <td>{{ $price_request->LsalesMarkupPercent ?? 'N/A' }}</td>
+                                    {{-- <td>{{ $price_request ? number_format($price_request->QuantityRequired * $price_request->IsalesMargin, 2) : '0' }}</td> --}}
                                     <td>
                                         @if($price_request->IsAccepted == 1)
                                             YES
@@ -259,14 +284,14 @@
                                     @endforeach
                                 </select>
                             </th>
-                            <th>
+                            {{-- <th>
                                 <select id="filter-offered" name="filter_offered" class="form-control js-example-basic-single">
                                     <option value="">Select Offered</option>
                                     @foreach($allOffered as $offered)
                                         <option value="{{ $offered }}">{{ $offered }}</option>
                                     @endforeach
                                 </select>
-                            </th>
+                            </th> --}}
                             <th></th>
                             <th>
                                 <select id="filter-shipment" name="filter_shipment" class="form-control js-example-basic-single">
@@ -308,14 +333,14 @@
                                     @endforeach
                                 </select>
                             </th>
-                            <th>
+                            {{-- <th>
                                 <select id="filter-total-margin" name="filter_total_margin" class="form-control js-example-basic-single">
                                     <option value="">Select Total Margin</option>
                                     @foreach($allTotalMargin as $total_margin)
                                         <option value="{{ $total_margin }}">{{ $total_margin }}</option>
                                     @endforeach
                                 </select>
-                            </th>
+                            </th> --}}
                             <th>
                                 <select id="filter-accepted" name="filter_accepted" class="form-control js-example-basic-single">
                                     <option value="">Select</option>
@@ -410,7 +435,7 @@
                                     (item.client.name || '') + '\t' +
                                     (item.code || '') + '\t' +
                                     (item.ProductRmc || '') + '\t' +
-                                    (item.IsalesOfferedPrice || '') + '\t' +
+                                    // (item.IsalesOfferedPrice || '') + '\t' +
                                     (item.ShipmentTerm || '') + '\t' +
                                     (item.paymentterms?.Name || '') + '\t' +
                                     (item.QuantityRequired || '') + '\t' +
@@ -540,13 +565,13 @@
             const filterClient = $('#filter-client').val();
             const filterProduct = $('#filter-product').val();
             const filterRMC = $('#filter-rmc').val();
-            const filterOffered = $('#filter-offered').val();
+            // const filterOffered = $('#filter-offered').val();
             const filterShipment = $('#filter-shipment').val();
             const filterPayment = $('#filter-payment').val();
             const filterQuantity = $('#filter-quantity').val();
             const filterMargin = $('#filter-margin').val();
             const filterPercentMargin = $('#filter-percent-margin').val();
-            const filterTotalMargin = $('#filter-total-margin').val();
+            // const filterTotalMargin = $('#filter-total-margin').val();
             const filterAccepted = $('#filter-accepted').val();
             const filterRemarks = $('#filter-remarks').val();
             const dateFrom = $('#from').val();
@@ -560,13 +585,13 @@
                 filter_client: filterClient,
                 filter_product: filterProduct,
                 filter_rmc: filterRMC,
-                filter_offered: filterOffered,
+                // filter_offered: filterOffered,
                 filter_shipment: filterShipment,
                 filter_payment: filterPayment,
                 filter_quantity: filterQuantity,
                 filter_margin: filterMargin,
                 filter_percent_margin: filterPercentMargin,
-                filter_total_margin: filterTotalMargin,
+                // filter_total_margin: filterTotalMargin,
                 filter_accepted: filterAccepted,
                 filter_remarks: filterRemarks,
                 from: dateFrom,
