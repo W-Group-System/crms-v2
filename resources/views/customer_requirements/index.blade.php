@@ -451,7 +451,13 @@
                             <td>
                                 {{date('M d Y', strtotime($customerRequirement->DateCreated))}}
                             </td>
-                            <td>{{ date('M d Y', strtotime($customerRequirement->DueDate)) }}</td>
+                            <td>
+                                @if($customerRequirement->DueDate != null)
+                                {{ date('M d Y', strtotime($customerRequirement->DueDate)) }}
+                                @else
+                                N/A
+                                @endif
+                            </td>
                             <td>{{ optional($customerRequirement->client)->Name }}</td>
                             <td>{{ optional($customerRequirement->product_application)->Name }}</td>
                             <td>{{$customerRequirement->Competitor}}</td>
