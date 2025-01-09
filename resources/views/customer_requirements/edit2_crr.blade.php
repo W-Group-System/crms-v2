@@ -47,7 +47,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$crr->DueDate}}">
+                                <input type="date" class="form-control" id="DueDate" name="DueDate" value="{{$crr->DueDate}}" required>
                             </div>
                         </div>
                         <div class="col-lg-6">
