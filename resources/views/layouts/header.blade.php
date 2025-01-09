@@ -454,7 +454,7 @@
                         </li>
                         @endif
 
-                        @if(optional(auth()->user()->role)->type == "ACCTG" || auth()->user()->role == 'ITD')
+                        @if(optional(auth()->user()->role)->type == "ACCTG" || auth()->user()->role->type == 'ITD')
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0);" data-target="#module" aria-expanded="false" aria-controls="module" onclick="toggleModule(event)">
                                 <i class="icon-layout menu-icon"></i>
