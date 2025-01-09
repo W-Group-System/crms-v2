@@ -78,7 +78,7 @@
             </div>
             
             @if(auth()->user()->role->type == 'LS')
-                <div class="table-responsive" style="overflow: auto; height: 80vh;">
+                <div class="table-responsive" >
                     <table class="table table-striped table-bordered table-hover" id="sample_request_table">
                         <thead>
                             <tr>
@@ -155,21 +155,21 @@
                         </tbody>
                     </table>
                     <!-- {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
-                    {{ $sampleRequests->appends(request()->query())->links() }}
-                    @php
-                        $total = $sampleRequests->total();
-                        $currentPage = $sampleRequests->currentPage();
-                        $perPage = $sampleRequests->perPage();
-        
-                        $from = ($currentPage - 1) * $perPage + 1;
-                        $to = min($currentPage * $perPage, $total);
-                    @endphp
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-                    </div>
+                </div>
+                {{ $sampleRequests->appends(request()->query())->links() }}
+                @php
+                    $total = $sampleRequests->total();
+                    $currentPage = $sampleRequests->currentPage();
+                    $perPage = $sampleRequests->perPage();
+    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                 </div>
             @elseif (auth()->user()->role->type == 'IS')
-                <div class="table-responsive" style="overflow: auto; height: 80vh;">
+                <div class="table-responsive" >
                     <table class="table table-striped table-bordered table-hover" id="sample_request_table" width="100%">
                         <thead>
                             <tr>
@@ -343,21 +343,21 @@
                         <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                     </div> -->
                     <!-- {!! $sampleRequests->appends(['search' => $search, 'open' => $open, 'close' => $close])->links() !!} -->
-                    {{ $sampleRequests->appends(request()->query())->links() }}
-                    @php
-                        $total = $sampleRequests->total();
-                        $currentPage = $sampleRequests->currentPage();
-                        $perPage = $sampleRequests->perPage();
-        
-                        $from = ($currentPage - 1) * $perPage + 1;
-                        $to = min($currentPage * $perPage, $total);
-                    @endphp
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-                    </div>
+                </div>
+                {{ $sampleRequests->appends(request()->query())->links() }}
+                @php
+                    $total = $sampleRequests->total();
+                    $currentPage = $sampleRequests->currentPage();
+                    $perPage = $sampleRequests->perPage();
+    
+                    $from = ($currentPage - 1) * $perPage + 1;
+                    $to = min($currentPage * $perPage, $total);
+                @endphp
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
                 </div>
             @else
-                <div class="table-responsive" style="overflow: auto; height: 80vh;">
+                <div class="table-responsive">
                     <table class="table table-striped table-bordered table-hover" id="sample_request_table">
                         <thead>
                             <tr>
