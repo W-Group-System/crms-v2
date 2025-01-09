@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\CrrNature;
 use App\CustomerRequirement;
+use DateTime;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -39,6 +40,7 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
                     $query->where('Status', $closeStatus);
                 })
+                ->where('CrrNumber','LIKE','%CRR-IS%')
                 ->latest()
                 ->get();
         }
@@ -55,6 +57,7 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
                     $query->where('Status', $closeStatus);
                 })
+                ->where('CrrNumber','LIKE','%CRR-LS%')
                 ->latest()
                 ->get();
         }
@@ -70,6 +73,8 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 'DateCreated',
                 'Due Date',
                 'Client Name',
+                'Region',
+                'Country',
                 'Application',
                 'Competitor',
                 'Primary Sales Person',
@@ -132,6 +137,18 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
             $crr_nature_array[] = optional($crrNature->natureOfRequest)->Name;
         }
 
+        $today = new DateTime();
+        $due_date = new DateTime($row->DueDate);
+        $diff = $due_date->diff($today);
+
+        $days_late = 0;
+        $s = "";
+        if ($today > $due_date) 
+        {
+            $days_late = $diff->d;
+            $s = $days_late > 1 ? 's' : '';
+        } 
+        
         if(auth()->user()->role->type == "IS")
         {
             return [
@@ -139,13 +156,16 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 $row->DateCreated,
                 $row->DueDate,
                 optional($row->client)->Name,
+                optional($row->client->clientcountry)->Name,
+                optional($row->client->clientregion)->Name,
                 optional($row->product_application)->Name,
                 $row->Competitor,
                 $primarySales,
                 $row->DetailsOfRequirement,
                 $row->Recommendation,
                 $row->DateReceived,
-                '',
+                // '',
+                $days_late .' day' .$s,
                 implode(", ", $crr_nature_array),
                 $status,
                 optional($row->progressStatus)->name
