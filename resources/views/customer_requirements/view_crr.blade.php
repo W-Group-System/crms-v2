@@ -22,7 +22,10 @@
                     @endif --}}
 
                     @if(request('origin') == 'for_approval')
-                    <a href="{{ url('/customer_requirement?progress=10&open=10') }}" class="btn btn-md btn-outline-secondary">
+                    {{-- <a href="{{ url('/customer_requirement?progress=10&open=10') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> --}}
+                    <a href="{{ url('view_for_approval_transaction') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
                     @else
