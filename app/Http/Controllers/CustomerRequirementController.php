@@ -273,7 +273,7 @@ class CustomerRequirementController extends Controller
                     ->when($request->status == 30, function ($query)use($request) {
                         $query->where('Status', 30);
                     })
-                    ->orWhere(function ($query) use ($search){
+                    ->where(function ($query) use ($search){
                         if (trim($search) != null)
                         {
                             $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
@@ -304,7 +304,7 @@ class CustomerRequirementController extends Controller
                     ->when($request->status == 30, function ($query)use($request) {
                         $query->where('Status', 30);
                     })
-                    ->orWhere(function ($query) use ($search){
+                    ->where(function ($query) use ($search){
                         if (trim($search) != null)
                         {
                             $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
