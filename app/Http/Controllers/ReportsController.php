@@ -419,9 +419,8 @@ class ReportsController extends Controller
             $formattedSellingPrice = number_format($sellingPrice, 2);
 
             return [
-
                 'DateRequested' => $item->DateRequested,
-                'PrimarySalesPerson' => $item->primarySalesPerson->full_name ?? 'N/A',
+                'PrimarySalesPerson' => $item->primarySalesPersonById->full_name ?? 'N/A',
                 'Client' => $item->client->name ?? 'N/A',
                 'ProductCode' => $item->ProductCode,
                 'ProductRmc' => $item->ProductRmc ?? 'N/A',
