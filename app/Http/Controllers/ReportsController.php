@@ -418,9 +418,16 @@ class ReportsController extends Controller
 
             $formattedSellingPrice = number_format($sellingPrice, 2);
 
+            $primarySalesPerson = 'N/A';
+
+            if (isset($item->primarySalesPerson) && !empty($item->primarySalesPerson->full_name)) {
+                $primarySalesPerson = $item->primarySalesPerson->full_name;
+            } elseif (isset($item->primarySalesPersonById) && !empty($item->primarySalesPersonById->full_name)) {
+                $primarySalesPerson = $item->primarySalesPersonById->full_name;
+            }
             return [
                 'DateRequested' => $item->DateRequested,
-                'PrimarySalesPerson' => $item->primarySalesPersonById->full_name ?? 'N/A',
+                'PrimarySalesPerson' => $primarySalesPerson,
                 'Client' => $item->client->name ?? 'N/A',
                 'ProductCode' => $item->ProductCode,
                 'ProductRmc' => $item->ProductRmc ?? 'N/A',
