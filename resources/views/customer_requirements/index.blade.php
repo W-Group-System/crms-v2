@@ -1,11 +1,25 @@
 @extends('layouts.header')
+@section('css')
+<style>
+.tableFixHead { 
+    overflow: auto; 
+    height: 80vh; 
+}
+.tableFixHead thead th { 
+    position: sticky; 
+    top: 0; 
+    z-index: 1; 
+}
+</style>
+@endsection
+
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card rounded-0 border border-1 border-primary" style="max-height: 80vh;">
+    <div class="card rounded-0 border border-1 border-primary" >
         <div class="card-header bg-primary text-white font-weight-bold rounded-0">
             Customer Requirement
         </div>
-        <div class="card-body" style=" overflow:auto;">
+        <div class="card-body" >
             <div class="card-title d-flex justify-content-between align-items-center">
                 <form method="GET" onsubmit="show()">
                     <label>Show : </label>
@@ -82,7 +96,7 @@
                     </form>
                 </div>
             </div>
-            <div class="table-responsive" >
+            <div class="tableFixHead" >
                 <table class="table table-striped table-bordered table-hover" id="customer_requirement_table" width="100%" >
                     @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == "RND" || auth()->user()->role->type == "QCD-MRDC" || auth()->user()->role->type == "QCD-PBI" || auth()->user()->role->type == "QCD-WHI" || auth()->user()->role->type == "QCD-CCC" || auth()->user()->role->type == "ITD")
                     <thead>
