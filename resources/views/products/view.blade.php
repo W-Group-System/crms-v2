@@ -353,10 +353,10 @@
                                                     <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
                                                         <i class="ti-pencil"></i>
                                                     </button>
-                                                    <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                                    <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete" id="deleteProductFileForm{{$pf->Id}}">
                                                         {{csrf_field()}}
         
-                                                        <button type="button" class="btn btn-sm btn-outline-danger deleteProductFiles" title="Delete">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="deleteFiles({{$pf->Id}})">
                                                             <i class="ti-trash"></i>
                                                         </button>
                                                     </form>
@@ -391,10 +391,10 @@
                                                     <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
                                                         <i class="ti-pencil"></i>
                                                     </button>
-                                                    <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete">
+                                                    <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete" id="deleteProductFileForm{{$pf->Id}}">
                                                         {{csrf_field()}}
 
-                                                        <button type="button" class="btn btn-sm btn-outline-danger deleteProductFiles" title="Delete">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="deleteFiles({{$pf->Id}})">
                                                             <i class="ti-trash"></i>
                                                         </button>
                                                     </form>
@@ -691,6 +691,25 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 
 <script>
+    function deleteFiles(id)
+    {
+        Swal.fire({
+            title: "Are you sure?",
+            // text: "You won't be able to revert this!",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+            customClass: 'swal-wide',
+            reverseButtons: true    
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $("#deleteProductFileForm"+id).submit();
+            }
+        });
+    }
+
     $(document).ready(function() {
         
         new DataTable('.tables', {
@@ -1037,27 +1056,6 @@
         })
 
         $('.deletePds').on('click', function() {
-
-            var form = $(this).closest('form');
-
-            Swal.fire({
-                title: "Are you sure?",
-                // text: "You won't be able to revert this!",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!",
-                customClass: 'swal-wide',
-                reverseButtons: true    
-                }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
-        })
-
-        $('.deleteProductFiles').on('click', function() {
 
             var form = $(this).closest('form');
 
