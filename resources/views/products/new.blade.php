@@ -65,6 +65,16 @@
                                         <i class="ti-pencil"></i>
                                     </button>
 
+                                    <form method="POST" action="{{url('delete_product')}}" id="deleteProductForm{{$product->id}}" class="d-inline-block">
+                                        @csrf 
+
+                                        <input type="hidden" name="id" value="{{$product->id}}">
+                                        
+                                        <button class="btn btn-outline-danger btn-sm" type="button" onclick="deleteProduct({{$product->id}})">
+                                            <i class="ti-trash"></i>
+                                        </button>
+                                    </form>
+
                                     {{-- <form method="POST" class="d-inline-block" action="{{url('add_to_archive_products')}}">
                                         @csrf
 
@@ -128,6 +138,24 @@
 @endforeach
 
 <script>
+    function deleteProduct(id)
+    {
+        var form = $('#deleteProductForm'+id);
+        
+        Swal.fire({
+            title: "Are you sure?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Delete"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit()
+            }
+        });
+    }
+    
     $(document).ready(function() {
         $('.table').tablesorter({
             theme: "bootstrap"
