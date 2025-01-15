@@ -90,6 +90,12 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-group row mb-0" style="margin-top: 2em">
+                        <label class="col-sm-3 col-form-label text-right"><b>SPE #:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->SpeNumber }}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Date Requested (MM/DD/YYYY):</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->DateRequested }}</label>
