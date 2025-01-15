@@ -11,8 +11,12 @@
                     <a href="{{ session('last_client_page') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
-                    @if(checkIfInGroupV2($data->PrimaryAccountManagerId, $data->SecondaryAccountManagerId, auth()->user()->id))
-                    <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-warning"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                    @if(auth()->user()->role->type == 'IS')
+                        @if(checkIfInGroupV2($data->PrimaryAccountManagerId, $data->SecondaryAccountManagerId, auth()->user()->id))
+                        <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-warning"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                        @endif
+                    @else
+                        <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-warning"><i class="ti ti-pencil"></i>&nbsp;Update</a>
                     @endif
                     <!-- <button type="button" class="btn btn-primary" title="Update Client" href="{{ url('/edit_client/' . $data->id) }}">
                         <i class="ti ti-pencil"></i>&nbsp;Update
