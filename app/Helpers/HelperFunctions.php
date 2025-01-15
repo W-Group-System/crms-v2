@@ -1202,9 +1202,15 @@ function checkIfInGroupV2($primary, $secondary, $auth_user)
     $primary_id = User::where('user_id', $primary)->first();
     $secondary_id = User::where('user_id', $secondary)->first();
 
+    $is_manager = User::with('role')->whereHas('role', function($q) {
+            $q->where('type', 'IS')->where('description','Department Admin');
+        })
+        ->pluck('id')
+        ->toArray();
+    
     if (!empty($primary_id) && !empty($secondary_id))
     {
-        $group_sales_list = GroupSales::where('user_id', $auth_user)->pluck('members')->toArray();
+        $group_sales_list = GroupSales::where('user_id', $auth_user)->whereNotIn('members',[$is_manager])->pluck('members')->toArray();
         
         if (in_array($primary_id->id, $group_sales_list) || in_array($secondary_id->id, $group_sales_list))
         {
@@ -1217,7 +1223,10 @@ function checkIfInGroupV2($primary, $secondary, $auth_user)
     }
     else 
     {
-        $group_sales_list = GroupSales::where('user_id', $auth_user)->pluck('members')->toArray();
+        $primary_id = User::where('id', $primary)->first();
+        $secondary_id = User::where('id', $secondary)->first();
+
+        $group_sales_list = GroupSales::where('user_id', $auth_user)->whereNotIn('members',[$is_manager])->pluck('members')->toArray();
         if (in_array($primary_id->id, $group_sales_list) || in_array($secondary_id->id, $group_sales_list))
         {
             return true;

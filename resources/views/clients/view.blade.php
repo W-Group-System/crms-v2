@@ -358,12 +358,14 @@
                                 @foreach ($data->contacts as $contact)
                                     <tr>
                                         <td>
-                                            <button type="button" class="btn btn-outline-warning btn-sm" title="Edit Client" data-toggle="modal" data-target="#edit_contact-{{ $contact->id }}">
-                                                <i class="ti-pencil"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-outline-danger btn-sm deleteContact" title="Delete Client" data-id="{{ $contact->id }}">
-                                                <i class="ti-trash"></i>
-                                            </button>
+                                            @if(checkIfInGroupV2($data->PrimaryAccountManagerId, $data->SecondaryAccountManagerId, auth()->user()->id))
+                                                <button type="button" class="btn btn-outline-warning btn-sm" title="Edit Client" data-toggle="modal" data-target="#edit_contact-{{ $contact->id }}">
+                                                    <i class="ti-pencil"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm deleteContact" title="Delete Client" data-id="{{ $contact->id }}">
+                                                    <i class="ti-trash"></i>
+                                                </button>
+                                            @endif
                                         </td>
                                         <td>{{ $contact->ContactName }}</td>
                                         <td>{{ $contact->Designation ?? 'N/A' }}</td>
@@ -405,12 +407,14 @@
                                 @foreach ($data->files as $file)
                                 <tr>
                                     <td>
-                                        <button type="button" class="btn btn-warning btn-sm" title="Edit File" data-toggle="modal" data-target="#edit_file-{{ $file->id }}">
-                                            <i class="ti-pencil"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm deleteFile" title="Delete File" data-id="{{ $file->id }}">
-                                            <i class="ti-trash"></i>
-                                        </button>
+                                        @if(checkIfInGroupV2($data->PrimaryAccountManagerId, $data->SecondaryAccountManagerId, auth()->user()->id))
+                                            <button type="button" class="btn btn-warning btn-sm" title="Edit File" data-toggle="modal" data-target="#edit_file-{{ $file->id }}">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm deleteFile" title="Delete File" data-id="{{ $file->id }}">
+                                                <i class="ti-trash"></i>
+                                            </button>
+                                        @endif
                                     </td>
                                     <td>{{ $file->FileName}}</td>
                                     <td><a href="{{ url($file->Path) }}" target="_blank" download>{{ $file->Path }}</a></td>
