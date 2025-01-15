@@ -13,29 +13,45 @@
                     </a>
                     @if(auth()->user()->role->type == 'IS')
                         @if(checkIfInGroupV2($data->PrimaryAccountManagerId, $data->SecondaryAccountManagerId, auth()->user()->id))
-                        <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-warning"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                            <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-warning"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                            @if($data->Status != '1')
+                            <button type="button" class="prospectClient btn btn-outline-warning" title="Prospect File" data-id="{{ $data->id }}">
+                                <i class="ti ti-control-record"></i>&nbsp;Prospect
+                            </button>
+                            @endif
+                            @if($data->Status != '2' && $data->Status != '5')
+                            <button type="button" class="activateClient btn btn-outline-success" title="Activate Client" data-id="{{ $data->id }}">
+                                <i class="ti ti-check-box"></i>&nbsp;Activate
+                            </button>
+                            @endif
+                            @if($data->Status != '5')
+                            <button type="button" class="archivedClient btn btn-outline-danger" title="Archived Client" data-id="{{ $data->id }}">
+                                <i class="ti ti-archive"></i>&nbsp;Archive
+                            </button>
+                            @endif
                         @endif
                     @else
                         <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-warning"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                        @if($data->Status != '1')
+                        <button type="button" class="prospectClient btn btn-outline-warning" title="Prospect File" data-id="{{ $data->id }}">
+                            <i class="ti ti-control-record"></i>&nbsp;Prospect
+                        </button>
+                        @endif
+                        @if($data->Status != '2' && $data->Status != '5')
+                        <button type="button" class="activateClient btn btn-outline-success" title="Activate Client" data-id="{{ $data->id }}">
+                            <i class="ti ti-check-box"></i>&nbsp;Activate
+                        </button>
+                        @endif
+                        @if($data->Status != '5')
+                        <button type="button" class="archivedClient btn btn-outline-danger" title="Archived Client" data-id="{{ $data->id }}">
+                            <i class="ti ti-archive"></i>&nbsp;Archive
+                        </button>
+                        @endif
                     @endif
                     <!-- <button type="button" class="btn btn-primary" title="Update Client" href="{{ url('/edit_client/' . $data->id) }}">
                         <i class="ti ti-pencil"></i>&nbsp;Update
                     </button> -->
-                    @if($data->Status != '1')
-                    <button type="button" class="prospectClient btn btn-outline-warning" title="Prospect File" data-id="{{ $data->id }}">
-                        <i class="ti ti-control-record"></i>&nbsp;Prospect
-                    </button>
-                    @endif
-                    @if($data->Status != '2' && $data->Status != '5')
-                    <button type="button" class="activateClient btn btn-outline-success" title="Activate Client" data-id="{{ $data->id }}">
-                        <i class="ti ti-check-box"></i>&nbsp;Activate
-                    </button>
-                    @endif
-                    @if($data->Status != '5')
-                    <button type="button" class="archivedClient btn btn-outline-danger" title="Archived Client" data-id="{{ $data->id }}">
-                        <i class="ti ti-archive"></i>&nbsp;Archive
-                    </button>
-                    @endif
+                    
                 </div>
             {{-- </h4> --}}
             <form class="form-horizontal" id="form_client" enctype="multipart/form-data" action="{{ url('update_client/'.$data->id) }}">
