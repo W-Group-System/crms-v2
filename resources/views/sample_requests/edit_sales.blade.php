@@ -425,7 +425,7 @@
 
     if (refCode === '1') {
          $sampleRequestTypeSelect.append('<option value="1">Regular</option>');
-    } else if (refCode === '2') {
+    } else {
          $sampleRequestTypeSelect.append('<option value="1">Regular</option>');
          $sampleRequestTypeSelect.append('<option value="2">PSS</option>');
          $sampleRequestTypeSelect.append('<option value="3">CSS</option>');
