@@ -467,6 +467,7 @@
                                 <option value="4" {{ in_array('4', $dispositions ?? []) ? 'selected' : '' }}>Cannot be fully evaluated. The company does not have the testing capability</option>
                                 <option value="5" {{ in_array('5', $dispositions ?? []) ? 'selected' : '' }}>Rejected. Does not pass the critical parameters of the test</option>
                                 <option value="6" {{ in_array('6', $dispositions ?? []) ? 'selected' : '' }}>Accepted. As a new supplier</option>
+                                <option value="7" @if(in_array('7', $dispositions)) selected @endif>Accepted as New Raw Material</option>
                             </select>
                         </div>
                         <div class="col-md-12 form-group">
