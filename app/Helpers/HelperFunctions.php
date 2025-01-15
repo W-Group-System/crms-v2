@@ -1196,3 +1196,36 @@ function sseHistoryLogs($action, $spe)
 
     $transaction_logs->save();
 }
+
+function checkIfInGroupV2($primary, $secondary, $auth_user)
+{
+    $primary_id = User::where('user_id', $primary)->first();
+    $secondary_id = User::where('user_id', $secondary)->first();
+
+    if (!empty($primary_id) && !empty($secondary_id))
+    {
+        $group_sales_list = GroupSales::where('user_id', $auth_user)->pluck('members')->toArray();
+        
+        if (in_array($primary_id->id, $group_sales_list) || in_array($secondary_id->id, $group_sales_list))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else 
+    {
+        $group_sales_list = GroupSales::where('user_id', $auth_user)->pluck('members')->toArray();
+        if (in_array($primary_id->id, $group_sales_list) || in_array($secondary_id->id, $group_sales_list))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+}
