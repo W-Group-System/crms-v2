@@ -69,12 +69,14 @@
                         <button type="button" class="btn btn-outline-info" data-target="#returnToAnalyst{{ $data->id }}" data-toggle="modal" title='Return to Analyst'>
                             <i class="ti ti-back-left">&nbsp;</i>Return to Analyst
                         </button>
+                        @if($data->Progress != 65)
                         <form method="POST" action="{{url('done_spe/'.$data->id)}}" class="d-inline-block" onsubmit="show()">
                             @csrf 
                             <button type="button" class="btn btn-outline-success doneSpeBtn">
                                 <i class="ti ti-check"></i>&nbsp; Submit
                             </button>
                         </form>
+                        @endif
                         <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#accepted"> <i class="ti ti-check"></i>&nbsp;Completed</button>  
                     @endif
                     @if(auth()->user()->role->type == 'PRD')
