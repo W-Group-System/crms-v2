@@ -232,6 +232,8 @@
                                         <i class="ti ti-check"></i><label>&nbsp;Cannot be fully evaluated. The company does not have a testing capability.</label><br>
                                     @elseif($disposition->Disposition == 5) 
                                         <i class="ti ti-check"></i><label>&nbsp;Rejected. Does not pass the critical parameters of the test</label>
+                                    @elseif($disposition->Disposition == 7)
+                                        <i class="ti ti-check"></i><label>&nbsp;Accepted as New Raw Material</label>
                                     @else
                                         <i class="ti ti-check"></i><label>&nbsp;Accepted. As a new supplier</label>
                                     @endif
