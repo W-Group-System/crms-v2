@@ -505,9 +505,9 @@ class SupplierProductController extends Controller
         $data->Progress = 60;
         $data->save();
 
-        speHistoryLogs("accepted", $data->id);
+        speHistoryLogs("complete", $data->id);
 
-        Alert::success('Accepted', 'The supplier product evaluation value has been successfully accepted!')
+        Alert::success('Completed', 'The supplier product evaluation value has been successfully completed!')
                 ->autoClose(2000);
 
         return back();
@@ -581,7 +581,7 @@ class SupplierProductController extends Controller
         $data->Progress = 65;
         $data->save();
 
-        speHistoryLogs('complete', $id);
+        speHistoryLogs('submit', $id);
 
         return response()->json(['success' => 'Data is successfully completed.']);
     }
