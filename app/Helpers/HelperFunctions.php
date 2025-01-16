@@ -1179,7 +1179,7 @@ function sseHistoryLogs($action, $spe)
     }
     if ($action == 'complete')
     {
-        $transaction_logs->Details = "Complete shipment sample evaluation transaction.";
+        $transaction_logs->Details = "Completed shipment sample evaluation transaction.";
     }
     if ($action == 'submit')
     {
