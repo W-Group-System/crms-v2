@@ -83,7 +83,7 @@
                                             <div class="badge badge-warning">Closed</div>
                                         @endif
                                     </td>
-                                    <td>{{ $supplier_products->progress->name }}</td>
+                                    <td>{{ optional($supplier_products->progress)->name }}</td>
                                 </tr>
                             @endforeach
                         @else 
