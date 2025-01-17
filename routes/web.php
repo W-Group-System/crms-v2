@@ -42,8 +42,18 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/dashboard-qcd', 'DashboardController@qcdIndex')->name('dashboard.qcd');
         Route::get('/dashboard-prd', 'DashboardController@prdIndex')->name('dashboard.prd');
 
+        # SALES
         // For Approval Transaction
         Route::get('/view_for_approval_transaction', 'ForApprovalTransactionController@index');
+
+        // Open Transactions
+        Route::get('sales_open_transactions', 'OpenTransactionController@salesOpenTransaction');
+
+        // Activities
+        Route::get('sales_activities', 'SalesActivityController@index');
+
+        // Returned Transaction
+        Route::get('returned_transactions', 'ReturnedTransactionController@index');
     
         // change password
         Route::get('my_account','HomeController@myAccount')->name('my_account');
