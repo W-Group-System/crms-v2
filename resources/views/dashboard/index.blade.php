@@ -10,10 +10,12 @@
     <div class="row">
         @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'IS' || optional($role)->type == 'LS'))
             <div class="col-md-6 grid-margin">
-                <div class="card mb-2">
-                    <div class="card-body">
+                <div class="card border border-1 border-primary rounded-0">
+                    <div class="card-header bg-primary rounded-0">
+                        <p class="font-weight-bold mb-0 text-white">Account Information</p>
+                    </div>
+                    <div class="card-body  ">
                         <form class="form-horizontal">
-                            <h4 class="d-flex justify-content-between font-weight-bold mb-4">Account Information</h4>
                             <div class="form-group row mb-2">
                                 <label class="col-sm-3 col-form-label"><b>System Role</b></label>
                                 <div class="col-sm-9">
@@ -48,7 +50,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="card mb-3 card-dark-blue">
+                {{-- <div class="card mb-3 card-dark-blue">
                     <div class="card-body">
                         <p class="card-title text-white">Returned Transactions</p>
                         <div class="d-flex justify-content-between">
@@ -84,113 +86,204 @@
                             </h5>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
-                {{-- <div class="card mb-2 card-tale">
-                    <div class="card-body">
-                        <p class="card-title text-white">For Approval</p>
-                        <div class="d-flex justify-content-between">
-                            <div class="mb-3 mt-2">
-                                <h3 class="fs-30 font-weight-medium text-white">
-                                    {{ $totalApproval ?? '0' }}
-                                    <i class="ti ti-check-box"></i>
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>CRR</p>
-                            <h5 class="font-weight-medium text-white">
-                            <a href="{{ route('customer_requirement.index', ['progress' => 10, 'open' => 10]) }}" class="text-white" onclick="show()">
-                                    {{ $crrSalesForApproval ?? '0' }}
-                                </a>
-                            </h5>
-                        </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>RPE</p>
-                            <h5 class="font-weight-medium text-white">
-                                <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}" class="text-white" onclick="show()">
-                                    {{ $rpeSalesForApproval ?? '0' }}
-                                </a>
-                            </h5>
-                        </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>SRF</p>
-                            <h5 class="font-weight-medium text-white">
-                                <a href="{{ route('sample_request.index', ['progress' => 10, 'open' => 10]) }}" class="text-white" onclick="show()">
-                                    {{ $srfSalesForApproval ?? '0' }}
-                                </a>
-                            </h5>
-                        </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>PRF</p>
-                            <h5 class="font-weight-medium text-white">
-                                <a href="{{ route('price_monitoring.index', ['progress' => 10]) }}" class="text-white" onclick="show()">
-                                    {{ $prfSalesForApproval ?? '0' }}
-                                </a>
-                            </h5>
-                        </div>
-                    </div>
                 </div> --}}
-                <div class="card rounded-0 border border-1 border-success mb-2">
-                    <div class="card-body bg-success">
-                        <div class="row">
-                            <div class="col-6">
-                                <h1 class="m-0">
-                                    <i class="ti-check-box text-white"></i>
-                                </h1>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 grid-margin transparent">
+                        {{-- <div class="card mb-2 card-tale">
+                            <div class="card-body">
+                                <p class="card-title text-white">For Approval</p>
+                                <div class="d-flex justify-content-between">
+                                    <div class="mb-3 mt-2">
+                                        <h3 class="fs-30 font-weight-medium text-white">
+                                            {{ $totalApproval ?? '0' }}
+                                            <i class="ti ti-check-box"></i>
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="mb-1 d-flex justify-content-between">
+                                    <p>CRR</p>
+                                    <h5 class="font-weight-medium text-white">
+                                    <a href="{{ route('customer_requirement.index', ['progress' => 10, 'open' => 10]) }}" class="text-white" onclick="show()">
+                                            {{ $crrSalesForApproval ?? '0' }}
+                                        </a>
+                                    </h5>
+                                </div>
+                                <div class="mb-1 d-flex justify-content-between">
+                                    <p>RPE</p>
+                                    <h5 class="font-weight-medium text-white">
+                                        <a href="{{ route('product_evaluation.index', ['progress' => 10]) }}" class="text-white" onclick="show()">
+                                            {{ $rpeSalesForApproval ?? '0' }}
+                                        </a>
+                                    </h5>
+                                </div>
+                                <div class="mb-1 d-flex justify-content-between">
+                                    <p>SRF</p>
+                                    <h5 class="font-weight-medium text-white">
+                                        <a href="{{ route('sample_request.index', ['progress' => 10, 'open' => 10]) }}" class="text-white" onclick="show()">
+                                            {{ $srfSalesForApproval ?? '0' }}
+                                        </a>
+                                    </h5>
+                                </div>
+                                <div class="mb-1 d-flex justify-content-between">
+                                    <p>PRF</p>
+                                    <h5 class="font-weight-medium text-white">
+                                        <a href="{{ route('price_monitoring.index', ['progress' => 10]) }}" class="text-white" onclick="show()">
+                                            {{ $prfSalesForApproval ?? '0' }}
+                                        </a>
+                                    </h5>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <h1 class="m-0 text-right text-white">{{$totalApproval}}</h1>
-                                <p class="m-0 text-right text-white">For Approval</p>
+                        </div> --}}
+                        <div class="card rounded-0 border border-1 border-success">
+                            <div class="card-body bg-success">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-check-box text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$totalApproval}}</h1>
+                                        <p class="m-0 text-right text-white">For Approval</p>
+                                    </div>
+                                </div>
                             </div>
+                            <a href="{{url('view_for_approval_transaction')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-success">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
                     </div>
-                    <a href="{{url('view_for_approval_transaction')}}" class="text-decoration-none">
-                        <div class="card-footer p-2">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <p class="m-0 text-success">View Details</p>
-                                </div>
-                                <div class="col-lg-6 text-right">
-                                    <i class="ti-arrow-circle-right text-success"></i>
+                    <div class="col-md-6">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-file text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$totalSalesOpen}}</h1>
+                                        <p class="m-0 text-right text-white">Open Transactions</p>
+                                    </div>
                                 </div>
                             </div>
+                            <a href="{{url('sales_open_transactions')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                    </a>
-                </div>
-                <div class="card card-light-blue">
-                    <div class="card-body">
-                        <p class="card-title text-white">Activities</p>
-                        <div class="d-flex justify-content-between">
-                            <div class="mb-3 mt-2">
-                                <h3 class="fs-30 font-weight-medium">
-                                    {{ $totalActivitiesCount ?? '0'}}
-                                    <i class="ti ti-layers"></i>
-                                </h3>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card rounded-0 border border-1 border-info">
+                            <div class="card-body bg-info">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-layers text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$openActivitiesCount}}</h1>
+                                        <p class="m-0 text-right text-white">Activities</p>
+                                    </div>
+                                </div>
                             </div>
+                            <a href="{{url('sales_activities')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>Open</p>
-                            <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('activities.index', ['status' => 10]) }}" class="text-white" onclick="show()">
-                                    {{ $openActivitiesCount ?? '0' }}
-                                </a>
-                            </h5>
-                        </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>Closed</p>
-                            <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('activities.index', ['status' => 20]) }}" class="text-white" onclick="show()">
-                                    {{ $closedActivitiesCount ?? '0' }}
-                                </a>
-                            </h5>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card rounded-0" style="border: 1px solid #4747A1;">
+                            <div class="card-body" style="background: #4747A1;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-share-alt text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$totalReturned}}</h1>
+                                        <p class="m-0 text-right text-white">Returned Transactions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('returned_transactions')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0" style="color: #4747A1;">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right" style="color: #4747A1;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
+            {{-- <div class="card card-light-blue">
+                <div class="card-body">
+                    <p class="card-title text-white">Activities</p>
+                    <div class="d-flex justify-content-between">
+                        <div class="mb-3 mt-2">
+                            <h3 class="fs-30 font-weight-medium">
+                                {{ $totalActivitiesCount ?? '0'}}
+                                <i class="ti ti-layers"></i>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="mb-1 d-flex justify-content-between">
+                        <p>Open</p>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('activities.index', ['status' => 10]) }}" class="text-white" onclick="show()">
+                                {{ $openActivitiesCount ?? '0' }}
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="mb-1 d-flex justify-content-between">
+                        <p>Closed</p>
+                        <h5 class="text-primary font-weight-medium">
+                            <a href="{{ route('activities.index', ['status' => 20]) }}" class="text-white" onclick="show()">
+                                {{ $closedActivitiesCount ?? '0' }}
+                            </a>
+                        </h5>
+                    </div>
+                </div>
+            </div> --}}
             
-            <div class="col-md-3 grid-margin transparent">
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-dark-blue">
                     <div class="card-body">
                         <p class="card-title text-white">Open Transactions</p>
@@ -284,13 +377,15 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'IS' || optional($role)->type == 'LS'))
             <div class="col-md-6 grid-margin stretch-card">
-                <div class="card">
+                <div class="card border border-1 border-primary rounded-0">
+                    <div class="card-header bg-primary rounded-0">
+                        <p class="m-0 text-white font-weight-bold">Account Information</p>
+                    </div>
                     <div class="card-body">
                         <form class="form-horizontal">
-                            <h4 class="d-flex justify-content-between font-weight-bold mb-4">Account Information</h4>
                             <div class="form-group row mb-2">
                                 <label class="col-sm-3 col-form-label"><b>System Role</b></label>
                                 <div class="col-sm-9">
@@ -326,7 +421,98 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 grid-margin transparent">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6  grid-margin transparent">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-file text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$totalSalesOpen}}</h1>
+                                        <p class="m-0 text-right text-white">Open Transactions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('sales_open_transactions')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card rounded-0 border border-1 border-info">
+                            <div class="card-body bg-info">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-layers text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$openActivitiesCount}}</h1>
+                                        <p class="m-0 text-right text-white">Activities</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('sales_activities')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card rounded-0" style="border: 1px solid #4747A1;">
+                            <div class="card-body" style="background: #4747A1;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-share-alt text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$totalReturned}}</h1>
+                                        <p class="m-0 text-right text-white">Returned Transactions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('returned_transactions')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0" style="color: #4747A1;">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right" style="color: #4747A1;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Open Transactions</p>
@@ -475,7 +661,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         @endif
     </div>
 

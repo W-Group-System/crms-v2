@@ -53,6 +53,14 @@
                     <a href="{{ url('/view_for_approval_transaction') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
+                    @elseif(request('origin') == 'open_transactions')
+                    <a href="{{ url('/sales_open_transactions') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @elseif(request('origin') == 'returned_transactions')
+                    <a href="{{ url('/returned_transactions') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
                     @else
                     <a href="{{url()->previous() ?: url('/request_product_evaluation?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back

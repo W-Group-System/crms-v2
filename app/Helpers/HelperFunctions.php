@@ -8,6 +8,7 @@ use App\ProductMaterialsComposition;
 use App\UserAccessModule;
 use App\RequestProductEvaluation;
 use App\SalesApprovers;
+use App\SrfProgress;
 use App\TransactionLogs;
 use App\User;
 use App\UserEventLogs;
@@ -1237,4 +1238,14 @@ function checkIfInGroupV2($primary, $secondary, $auth_user)
         }
     }
     
+}
+
+function transactionProgressName($progress)
+{
+    $progress = SrfProgress::where('id', $progress)->first();
+
+    if ($progress != null)
+    {
+        return $progress->name;
+    }
 }
