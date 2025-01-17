@@ -1477,55 +1477,52 @@
             });
         })
 
-        $('.addMultipleFilesBtn').on('click', function() {
+        $('#addMultipleFilesBtn').on('click', function() {
             var newRow = `
-                <div class="col-md-6 mb-3">
-                    <div class="card border border-1 border-primary">
-                        <div class="card-header bg-primary" style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
-                            <h5 class="card-title text-white">Upload Files
-                                <button type="button" class="btn btn-danger btn-sm float-right closeMultipleFilesBtn">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </h5>
+                <div class="row fileNameRow">
+                    <div class="col-lg-12 mb-3">
+                        <label>Name :</label>
+                        <input type="text" name="file_name[]" class="form-control crrFileName" placeholder="Enter name" required>
+                    </div>
+                    <div class="col-lg-12 mb-3">
+                        <div class="form-group">
+                            <label>Is Confidential :</label>
+                            <input type="checkbox" name="is_confidential[]">
                         </div>
-                        <div class="card-body">
-                            <div class="col-md-12 mb-3">
-                                <label>Name</label>
-                                <input type="text" name="file_name[]" class="form-control crrFileName" placeholder="Enter name" required>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <div class="form-group">
-                                    <label>Is Confidential</label>
-                                    <input type="checkbox" name="is_confidential[]" checked>
-                                </div>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <div class="form-group">
-                                    <label>Is For Review</label>
-                                    <input type="checkbox" name="is_for_review[]" @if(auth()->user()->role->name == "Staff L1")  onclick="return false;" @endif>
-                                </div>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label>Browser File</label>
-                                <input type="file" name="crr_file[]" class="form-control">
-                            </div>
+                    </div>
+                    <div class="col-lg-12 mb-3">
+                        <div class="form-group">
+                            <label>Is For Review :</label>
+                            <input type="checkbox" name="is_for_review[]">
                         </div>
+                    </div>
+                    <div class="col-lg-12 mb-3">
+                        <label>Browser File :</label>
+                        <input type="file" name="crr_file[]" class="form-control" required>
                     </div>
                 </div>
             `
 
-            $("#multipleFilesContainer .row").append(newRow);
+            $("#multipleFilesContainer").append(newRow);
         })
 
-        $(document).on('click', '.closeMultipleFilesBtn', function() {
+        $('#closeMultipleFilesBtn').on('click', function() {
             
-            $(this).closest('.col-md-6').remove()
+            // $(this).closest('.col-md-6').remove()
+            var row = $("#multipleFilesContainer").children()
+
+            if (row.length > 1)
+            {
+                row.last().remove()
+            }
         })
 
         $(document).on('change', '[name="crr_file[]"]', function(e) {
             var filename = e.target.files[0].name;
-
-            $(this).closest('.col-md-6').find('[name="file_name[]"]').val(filename);
+            // console.log($(this).closest('fileNameRow'));
+            
+            $(this).closest('.fileNameRow').find('.crrFileName').val(filename);
+            // $(".crrFileName").val(filename);
         })
 
         $('.deleteFilesBtn').on('click', function() {
