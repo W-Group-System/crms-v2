@@ -77,7 +77,12 @@
                             </button>
                         </form>
                         @endif
-                        <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#accepted"> <i class="ti ti-check"></i>&nbsp;Completed</button>  
+                        {{-- <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#accepted"> <i class="ti ti-check"></i>&nbsp;Completed</button>   --}}
+                        <form action="{{url('accept_spe/'.$data->id)}}" method="post" onsubmit="show()" class="d-inline-block" id="completeSpeForm" onsubmit="show()">
+                            @csrf 
+
+                            <button type="button" class="btn btn-outline-success" onclick="completeSpe()">Completed</button>
+                        </form>
                     @endif
                     @if(auth()->user()->role->type == 'PRD')
                         @if($data->Progress == 60 && $data->Status != 30)
@@ -582,6 +587,11 @@
 @include('spe.return_spe')
 @include('spe.edit')
 <script>
+    function completeSpe() 
+    {
+        document.getElementById('completeSpeForm').submit()
+    }
+
     $(document).ready(function () {
         $('.tables').DataTable({
             destroy: false,
@@ -640,7 +650,7 @@
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
-                            title: "Completed",
+                            title: "Successfully Submitted",
                             text: response.message,
                             icon: "success",
                             timer: 1500,
