@@ -501,7 +501,7 @@ class SupplierProductController extends Controller
     public function acceptSpe(Request $request, $id)
     {
         $data = SupplierProduct::findOrFail($id);
-        $data->AcceptedRemarks = $request->AcceptedRemarks;
+        // $data->AcceptedRemarks = $request->AcceptedRemarks;
         $data->Progress = 60;
         $data->save();
 
