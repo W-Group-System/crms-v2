@@ -1494,6 +1494,8 @@ class SampleRequestController extends Controller
         $srf->DeliveryRemarks = $request->input('DeliveryRemarks');
         $srf->Note = $request->input('Note');
         $srf->Eta = $request->input('Eta');
+        $srf->CourierCost = $request->input('CourierCost');
+        $srf->Reason = $request->input('Reason');
         $srf->save();
         
         return redirect()->back()->with('success', 'Sample Request updated successfully');
