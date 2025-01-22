@@ -16,4 +16,9 @@ class SpePersonnel extends Model
     {
         return $this->belongsTo(User::class,'SpePersonnel','id');
     }
+
+    public function spePersonnelById()
+    {
+        return $this->belongsTo(User::class,'SpeAssignee','id');
+    }
 }
