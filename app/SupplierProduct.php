@@ -18,11 +18,6 @@ class SupplierProduct extends Model
     {
         return $this->belongsTo(Supplier::class, 'Supplier', 'Id');
     }
-
-    // public function supplier_instruction() 
-    // {
-    //     return $this->hasMany(SpeInstructions::class, 'SpeId', 'id');
-    // }
     
     public function supplier_instruction()
     {

@@ -77,6 +77,12 @@
                         </form>
                         <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#accepted"> <i class="ti ti-check"></i>&nbsp;Completed</button>  
                     @endif
+                    @if(in_array(auth()->user()->role->type, ['RND', 'QCD-WHI', 'QCD-MRDC', 'QCD-PBI', 'QCD-CCC']))
+                        <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_spe/'.$data->id)}}" target="_blank">
+                            <i class="ti ti-printer btn-icon-prepend"></i>
+                            Print
+                        </a>
+                    @endif
                     @if(auth()->user()->role->type == 'PRD')
                         @if($data->Progress == 60 && $data->Status != 30)
                             <form method="POST" action="{{url('close_spe/'.$data->id)}}" class="d-inline-block">

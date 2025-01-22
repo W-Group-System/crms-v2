@@ -608,6 +608,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('close_spe/{id}', 'SupplierProductController@closeSpe');
         Route::post('return_spe_analyst/{id}', 'SupplierProductController@ReturnToAnalyst');
         Route::post('return_spe_purch/{id}', 'SupplierProductController@ReturnToPurch');
+        Route::get('print_spe/{id}', 'SupplierProductController@printSpe');
 
         # Spe Personnel
         Route::post('add_spe_personnel', 'SupplierProductController@addPersonnel');

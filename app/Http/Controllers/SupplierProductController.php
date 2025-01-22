@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\App;
 use Carbon\Carbon;
 
 class SupplierProductController extends Controller
@@ -531,6 +532,7 @@ class SupplierProductController extends Controller
         $personnel = new SpePersonnel;
         $personnel->SpeId = $request->spe_id;
         $personnel->SpePersonnel = $request->spe_personnel;
+        $personnel->SpeAssignee = auth()->user()->id;
         $personnel->save(); 
 
         speHistoryLogs("add_personnel", $supplierProduct->id);
@@ -702,6 +704,18 @@ class SupplierProductController extends Controller
 
         Alert::success('Successfully return to purchasing')->persistent('Dismiss');
         return back();
+    }
+
+    public function printSpe($id)
+    {
+        $spe = SupplierProduct::with('suppliers', 'spePersonnel')->findOrFail($id);
+        $data = [];
+        $data['spe'] = $spe;
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('spe.spe_pdf', $data);
+
+        return $pdf->stream();
     }
 
     public function refCode()
