@@ -1073,6 +1073,27 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
+    function toggleConfidential(element)
+    {
+        var closestRow = element.closest('.fileNameRow')
+        var confidentialInput = closestRow.querySelector('input[type="checkbox"][name="is_confidential[]"]')
+        
+        if (confidentialInput.checked)
+        {
+            var hiddenInput = closestRow.querySelector('input[type="hidden"][name="is_confidential[]"]').remove()
+        }
+        else
+        {
+            var hiddenInput = document.createElement('input')
+            hiddenInput.type = 'hidden'
+            hiddenInput.name = 'is_confidential[]'
+            hiddenInput.value = 0
+
+            closestRow.querySelector('.group-confidential').appendChild(hiddenInput)
+        }
+        
+    }
+
     $(document).ready(function(){
         $('.tables').DataTable({
             destroy: false,
@@ -1493,9 +1514,10 @@
                         <input type="text" name="file_name[]" class="form-control crrFileName" placeholder="Enter name" required>
                     </div>
                     <div class="col-lg-12 mb-3">
-                        <div class="form-group">
+                        <div class="form-group group-confidential">
                             <label>Is Confidential :</label>
-                            <input type="checkbox" name="is_confidential[]">
+                            <input type="checkbox" name="is_confidential[]" value="1" onchange="toggleConfidential(this)">
+                            <input type="hidden" id="hiddenConfidential" name="is_confidential[]" value="0">
                         </div>
                     </div>
                     <div class="col-lg-12 mb-3">
