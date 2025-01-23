@@ -30,6 +30,9 @@
                             </button>
                             @endif
                         @endif
+                        @if(auth()->user()->role->type == 'IS' && auth()->user()->role->name == 'Department Admin')
+                            <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-warning"><i class="ti ti-pencil"></i>&nbsp;Update</a>
+                        @endif
                     @else
                         <a href="{{ url('/edit_client/' . $data->id) }}" class="btn btn-md btn-outline-warning"><i class="ti ti-pencil"></i>&nbsp;Update</a>
                         @if($data->Status != '1')
