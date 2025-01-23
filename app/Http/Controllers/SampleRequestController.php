@@ -936,7 +936,7 @@ class SampleRequestController extends Controller
 
     public function store(Request $request)
     {
-    $srfNumber = null;
+        $srfNumber = null;
         $currentYear = date('y');
         $deptCode = '';
 
@@ -948,10 +948,10 @@ class SampleRequestController extends Controller
 
         if ($deptCode) {
             $checkSrf = SampleRequest::select('SrfNumber')
-                ->where('SrfNumber', 'LIKE', "SRF-$deptCode-$currentYear%")
+                ->where('SrfNumber', 'LIKE', "SRF-%$deptCode%")
                 ->orderBy('SrfNumber', 'desc')
                 ->first();
-
+            
             if ($checkSrf) {
                 $count = (int)substr($checkSrf->SrfNumber, -4);
             } else {
