@@ -19,9 +19,10 @@
                                 <input type="text" name="file_name[]" class="form-control crrFileName" placeholder="Enter name" required>
                             </div>
                             <div class="col-lg-12 mb-3">
-                                <div class="form-group">
+                                <div class="form-group group-confidential">
                                     <label>Is Confidential :</label>
-                                    <input type="checkbox" name="is_confidential[]">
+                                    <input type="checkbox" name="is_confidential[]" value="1" onchange="toggleConfidential(this)">
+                                    <input type="hidden" id="hiddenConfidential" name="is_confidential[]" value="0">
                                 </div>
                             </div>
                             <div class="col-lg-12 mb-3">

@@ -947,14 +947,16 @@ class CustomerRequirementController extends Controller
             $fileCrr = new FileCrr;
             $fileCrr->CustomerRequirementId = $request->customer_requirement_id;
             $fileCrr->Name = $request->file_name[$key];
-            if ($request->has('is_confidential'))
-            {
-                $fileCrr->IsConfidential = 1;
-            }
-            else
-            {
-                $fileCrr->IsConfidential = 0;
-            }
+            $fileCrr->IsConfidential = $request->is_confidential[$key];
+            // if ($request->has('is_confidential'))
+            // {
+            //     $fileCrr->IsConfidential = 1;
+            // }
+            // else
+            // {
+            //     $fileCrr->IsConfidential = 0;
+            // }
+            
             if ($request->has('is_for_review'))
             { 
                 $fileCrr->IsForReview = 1;
