@@ -33,7 +33,8 @@ class ForApprovalTransactionController extends Controller
             ->where('Status',10)
             ->get();
 
-        $sampleRequestForm = SampleRequest::where('Progress',10)
+        $sampleRequestForm = SampleRequest::with('requestProducts')
+            ->where('Progress',10)
             ->whereHas('salesapprovers', function($q) {
                 $q->where('SalesApproverId', auth()->user()->id);
             })
