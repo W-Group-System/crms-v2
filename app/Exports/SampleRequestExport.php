@@ -27,7 +27,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
         $openStatus = $this->open;
         $closeStatus = $this->close;
 
-        if(auth()->user()->role->type == "IS")
+        if((auth()->user()->role->type == "IS") || (auth()->user()->role->type == "CS"))
         {
             return SampleRequest::with('requestProducts')
                 ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
@@ -43,7 +43,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                 ->get();
         }
 
-        if(auth()->user()->role->type == "LS")
+        if((auth()->user()->role->type == "LS") || (auth()->user()->role->type == "CS"))
         {
             return SampleRequest::with('requestProducts')
                 ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
@@ -63,7 +63,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
 
     public function headings(): array
     {
-        if(auth()->user()->role->type == "IS")
+        if((auth()->user()->role->type == "IS") || (auth()->user()->role->type == "CS"))
         {
             return [
                 'SRF #',
@@ -90,7 +90,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
             ];
         }
 
-        if(auth()->user()->role->type == "LS")
+        if((auth()->user()->role->type == "LS") || (auth()->user()->role->type == "CS"))
         {
             return [
                 'SRF #',
@@ -207,7 +207,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
         //     return ($product->DateDispatched ?? "NA");
         // })->implode(', ');
 
-        if(auth()->user()->role->type == "IS")
+        if((auth()->user()->role->type == "IS" || (auth()->user()->role->type == "CS")))
         {
             $productRows = [];
 
@@ -263,7 +263,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
             // ];
         }
 
-        if(auth()->user()->role->type == "LS")
+        if((auth()->user()->role->type == "LS") || (auth()->user()->role->type == "CS"))
         {
             $productRows = [];
 
