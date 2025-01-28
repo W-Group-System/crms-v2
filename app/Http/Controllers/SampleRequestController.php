@@ -1430,7 +1430,7 @@ class SampleRequestController extends Controller
 }
     public function export(Request $request)
     {
-        return Excel::download(new SampleRequestExport($request->open, $request->close), 'Sample Request.xlsx');
+        return Excel::download(new SampleRequestExport($request->open, $request->close,$request->srfType), 'Sample Request.xlsx');
     }
 
     public function cs_local(Request $request)

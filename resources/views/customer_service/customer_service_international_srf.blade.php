@@ -40,7 +40,8 @@
     
                     <input type="hidden" name="open" value="{{$open}}">
                     <input type="hidden" name="close" value="{{$close}}">
-                    
+                    <input type="hidden" name="srfType" value="International">
+
                     <button type="submit" class="btn btn-success">Export</button>
                 </form>
             </div>
