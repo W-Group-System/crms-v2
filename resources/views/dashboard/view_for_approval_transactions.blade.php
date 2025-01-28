@@ -95,12 +95,18 @@
                                         }
                                         if ($key == 'srf')
                                         {
+                                            $application = [];
+                                            foreach($transaction->requestProducts as $sampleRequestProduct)
+                                            {
+                                                $application[] = $sampleRequestProduct->productApplicationsId->Name;
+                                            }
+
                                             $id = $transaction->Id;
                                             $transaction_number = $transaction->SrfNumber;
                                             $date_created = $transaction->created_at;
                                             $due_date = $transaction->DateRequired;
                                             $client_name = $transaction->client->Name;
-                                            $application = optional($transaction->productApplicationsId)->Name;
+                                            // $application =  implode('<br>', $application);
                                             $status = $transaction->Status;
                                             $progress = $transaction->Progress;
                                         }
@@ -133,7 +139,13 @@
                                         <td>{{date('Y-m-d',strtotime($date_created))}}</td>
                                         <td>{{$due_date}}</td>
                                         <td>{{$client_name}}</td>
-                                        <td>{{$application}}</td>
+                                        <td>
+                                            @if($key == 'srf')
+                                            {!! implode('<br>', $application) !!}
+                                            @else
+                                            {{$application}}
+                                            @endif
+                                        </td>
                                         <td>
                                             <span class="badge badge-success">Open</span>
                                         </td>
