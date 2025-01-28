@@ -15,19 +15,22 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
     */
     protected $open;
     protected $close;
+    protected $srfType;
 
-    public function __construct($open, $close)
+    public function __construct($open, $close, $srfType)
     {
         $this->open = $open;
         $this->close = $close;
+        $this->srfType = $srfType;
     }
 
     public function collection()
     {
         $openStatus = $this->open;
         $closeStatus = $this->close;
+        $requestType = $this->srfType;
 
-        if((auth()->user()->role->type == "IS") || (auth()->user()->role->type == "CS"))
+        if((auth()->user()->role->type == "IS") || (auth()->user()->role->type == "CS" && $requestType == 'International'))
         {
             return SampleRequest::with('requestProducts')
                 ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
@@ -39,11 +42,12 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                 ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
                     $query->where('Status', $closeStatus);
                 })
+                ->where('SrfNumber', 'LIKE', '%SRF-IS%')
                 ->latest()
                 ->get();
         }
 
-        if((auth()->user()->role->type == "LS") || (auth()->user()->role->type == "CS"))
+        if((auth()->user()->role->type == "LS") || (auth()->user()->role->type == "CS" && $requestType == 'Local'))
         {
             return SampleRequest::with('requestProducts')
                 ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
@@ -55,6 +59,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                 ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
                     $query->where('Status', $closeStatus);
                 })
+                ->where('SrfNumber', 'LIKE', '%SRF-LS%')
                 ->latest()
                 ->get();
         }
