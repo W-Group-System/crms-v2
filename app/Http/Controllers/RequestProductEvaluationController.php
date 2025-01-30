@@ -867,7 +867,7 @@ class RequestProductEvaluationController extends Controller
     {
         $rpeList = RequestProductEvaluation::find($id);    
         $rpeList->Status = 10; 
-        $rpeList->Progress = 10; 
+        // $rpeList->Progress = 10; 
         $rpeList->save();
         
         Alert::success('Successfully Open')->persistent('Dismiss');
