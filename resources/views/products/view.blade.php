@@ -410,7 +410,9 @@
                                                     {{$pf->Description}}
                                                 </td>
                                                 <td>
-                                                    {{optional($pf->client)->Name}}
+                                                    <a href="{{url('view_client/'.optional($pf->client)->id)}}" target="_blank">
+                                                        {{optional($pf->client)->Name}}
+                                                    </a>
                                                 </td>
                                                 <td>
                                                     {{-- @if($pf->IsConfidential != 1)
