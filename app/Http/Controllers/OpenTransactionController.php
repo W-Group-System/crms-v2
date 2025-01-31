@@ -205,6 +205,15 @@ class OpenTransactionController extends Controller
                     ->orWhere('PrimarySalesPersonId', $user->user_id)
                     ->orWhere('SecondarySalesPersonId', $user->user_id);
             })
+            ->where(function($q)use($search) {
+                $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('client', function($clientQuery)use($search) {
+                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    });
+            })
             ->when($role, function($q)use($role) {
                 if ($role->type == 'IS')
                 {
@@ -215,15 +224,6 @@ class OpenTransactionController extends Controller
                     $q->where('CrrNumber', 'LIKE', '%CRR-LS%');
                 }
             })
-            ->when(!empty($search), function($q)use($search) {
-                $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
-                    ->orWhereHas('client', function($clientQuery)use($search) {
-                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
-                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    });
-            })
             ->get();
         
         $rpe = RequestProductEvaluation::where('Status', 10)
@@ -232,6 +232,15 @@ class OpenTransactionController extends Controller
                     ->orWhere('SecondarySalesPersonId', $user->id)
                     ->orWhere('PrimarySalesPersonId', $user->user_id)
                     ->orWhere('SecondarySalesPersonId', $user->user_id);
+            })
+            ->where(function($q)use($search) {
+                $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('client', function($clientQuery)use($search) {
+                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    });
             })
             ->when($role, function($q)use($role) {
                 if ($role->type == 'IS')
@@ -243,15 +252,6 @@ class OpenTransactionController extends Controller
                     $q->where('RpeNumber', 'LIKE', '%RPE-LS%');
                 }
             })
-            ->when(!empty($search), function($q)use($search) {
-                $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
-                    ->orWhereHas('client', function($clientQuery)use($search) {
-                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
-                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    });
-            })
             ->get();
 
         $srf = SampleRequest::where('Status', 10)
@@ -260,6 +260,15 @@ class OpenTransactionController extends Controller
                     ->orWhere('SecondarySalesPersonId', $user->id)
                     ->orWhere('PrimarySalesPersonId', $user->user_id)
                     ->orWhere('SecondarySalesPersonId', $user->user_id);
+            })
+            ->where(function($q)use($search) {
+                $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('client', function($clientQuery)use($search) {
+                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('productApplicationsId',function($applicationQuery)use($search) {
+                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    });
             })
             ->when($role, function($q)use($role) {
                 if ($role->type == 'IS')
@@ -271,15 +280,6 @@ class OpenTransactionController extends Controller
                     $q->where('SrfNumber', 'LIKE', '%SRF-LS%');
                 }
             })
-            ->when(!empty($search), function($q)use($search) {
-                $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
-                    ->orWhereHas('client', function($clientQuery)use($search) {
-                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhereHas('productApplicationsId',function($applicationQuery)use($search) {
-                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    });
-            })
             ->get();
 
         
@@ -290,6 +290,15 @@ class OpenTransactionController extends Controller
                     ->orWhere('PrimarySalesPersonId', $user->user_id)
                     ->orWhere('SecondarySalesPersonId', $user->user_id);
             })
+            ->where(function($q)use($search) {
+                $q->where('PrfNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('client', function($clientQuery)use($search) {
+                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    });
+                    // ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                    //     $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    // });
+            })
             ->when($role, function($q)use($role) {
                 if ($role->type == 'IS')
                 {
@@ -299,15 +308,6 @@ class OpenTransactionController extends Controller
                 {
                     $q->where('PrfNumber', 'LIKE', '%PRF-LS%');
                 }
-            })
-            ->when(!empty($search), function($q)use($search) {
-                $q->where('PrfNumber', 'LIKE', '%'.$search.'%')
-                    ->orWhereHas('client', function($clientQuery)use($search) {
-                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    });
-                    // ->orWhereHas('product_application',function($applicationQuery)use($search) {
-                    //     $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    // });
             })
             ->get();
 

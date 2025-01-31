@@ -280,6 +280,7 @@ class CustomerRequirementController extends Controller
                             ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
                             ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
                             ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
+                            ->orWhere('DetailsOfRequirement', 'LIKE', '%' . $search . '%')
                             ->orWhereHas('client', function ($q) use ($search) {
                                 $q->where('Name', 'LIKE', '%' . $search . '%');
                             })
@@ -532,10 +533,13 @@ class CustomerRequirementController extends Controller
             ->where(function ($query) use ($search){
                 if (trim($search) != null)
                 {
+                    // $query->where('DetailsOfRequirement', 'LIKE', '%' . $search . '%')
+
                     $query->where('CrrNumber', 'LIKE', '%' . $search . '%')
                     ->orWhere('CreatedDate', 'LIKE', '%' . $search . '%')
                     ->orWhere('DueDate', 'LIKE', '%' . $search . '%')
                     ->orWhere('Recommendation', 'LIKE', '%' . $search . '%')
+                    ->orWhere('DetailsOfRequirement', 'LIKE', '%' . $search . '%')
                     ->orWhereHas('client', function ($q) use ($search) {
                         $q->where('Name', 'LIKE', '%' . $search . '%');
                     })

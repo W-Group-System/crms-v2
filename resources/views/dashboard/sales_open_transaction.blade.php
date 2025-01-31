@@ -89,13 +89,19 @@
                                     }
                                     if (str_contains($transaction->SrfNumber, 'SRF'))
                                     {
+                                        $application = [];
+                                        foreach($transaction->requestProducts as $sampleRequestProduct)
+                                        {
+                                            $application[] = $sampleRequestProduct->productApplicationsId->Name;
+                                        }
+
                                         $id = $transaction->Id;
                                         $transaction_number = $transaction->SrfNumber;
                                         $date_created = $transaction->created_at;
                                         $due_date = $transaction->DateRequired;
                                         $client_name = optional($transaction->client)->Name;
                                         $client_id = optional($transaction->client)->id;
-                                        $application = optional($transaction->productApplicationsId)->Name;
+                                        // $application = optional($transaction->productApplicationsId)->Name;
                                         $status = $transaction->Status;
                                         $progress = $transaction->Progress;
                                     }
@@ -132,7 +138,13 @@
                                             {{$client_name}}
                                         </a>
                                     </td>
-                                    <td>{{$application}}</td>
+                                    <td>
+                                        @if(str_contains($transaction->SrfNumber, 'SRF'))
+                                        {!! implode('<br>', $application) !!}
+                                        @else
+                                        {{$application}}
+                                        @endif
+                                    </td>
                                     <td>
                                         <span class="badge badge-success">Open</span>
                                     </td>
