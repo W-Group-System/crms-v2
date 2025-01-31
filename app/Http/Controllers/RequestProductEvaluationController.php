@@ -255,6 +255,27 @@ class RequestProductEvaluationController extends Controller
 
         // Base query with necessary relationships
         $request_product_evaluations = RequestProductEvaluation::with(['client', 'product_application', 'rpe_personnels', 'salesapprovers.user'])
+            // Apply search filters
+            ->where(function($query) use ($search) {
+                $query->where(function($query) use ($search) {
+                    $query->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
+                        ->orWhere('DueDate', 'LIKE','%'.$search.'%')
+                        ->orWhereHas('client', function($query) use ($search) {
+                            $query->where('Name', 'LIKE','%'.$search.'%');
+                        })
+                        ->orWhereHas('product_application', function($query) use ($search) {
+                            $query->where('Name', 'LIKE','%'.$search.'%');
+                        })
+                        ->orWhere('RpeResult', 'LIKE','%'.$search.'%')
+                        ->orWhereHas('primarySalesPerson', function($query)use($search) {
+                            $query->where('full_name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('primarySalesPersonById', function($query)use($search) {
+                            $query->where('full_name', 'LIKE', '%'.$search.'%');
+                        });
+                });
+            })
             // Filter by status
             ->when($status, function($query) use ($status, $userId, $userByUser, $userType, $userName) {
                 // Check for specific status filters
@@ -314,21 +335,6 @@ class RequestProductEvaluationController extends Controller
             })
             ->when($request->has('close') && !$request->has('open'), function($query) use ($request) {
                 $query->where('Status', $request->close);
-            })
-            // Apply search filters
-            ->when($search, function($query) use ($search) {
-                $query->where(function($query) use ($search) {
-                    $query->where('RpeNumber', 'LIKE', '%'.$search.'%')
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
-                        ->orWhere('DueDate', 'LIKE','%'.$search.'%')
-                        ->orWhereHas('client', function($query) use ($search) {
-                            $query->where('Name', 'LIKE','%'.$search.'%');
-                        })
-                        ->orWhereHas('product_application', function($query) use ($search) {
-                            $query->where('Name', 'LIKE','%'.$search.'%');
-                        })
-                        ->orWhere('RpeResult', 'LIKE','%'.$search.'%');
-                });
             })
             ->when($role, function($q)use($role){
                 if ($role->type == 'IS')

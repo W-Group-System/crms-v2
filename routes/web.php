@@ -33,9 +33,13 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/logout', 'LoginController@logout');
         // Apply middleware to check user type
         Route::get('/', 'DashboardController@index')->middleware('checkUserType');
-        Route::get('open-rnd-transaction', 'OpenTransactionController@crr')->name('open_rnd_transactions');
-        Route::get('open-rpe-transaction', 'OpenTransactionController@rpe')->name('open_rpe_transactions');
-        Route::get('open-srf-transaction', 'OpenTransactionController@srf')->name('open_srf_transactions');
+        # RND Dashboard
+        Route::get('open-transaction', 'OpenTransactionController@index')->name('open_rnd_transactions');
+        Route::get('initial-review', 'RndDashboardController@initialReview');
+        Route::get('rnd-new-request', 'RndDashboardController@rndNewRequest');
+        Route::get('final-review', 'RndDashboardController@finalReview');
+        // Route::get('open-rpe-transaction', 'OpenTransactionController@rpe')->name('open_rpe_transactions');
+        // Route::get('open-srf-transaction', 'OpenTransactionController@srf')->name('open_srf_transactions');
         // Separate routes for RND and LS users
         Route::get('/dashboard-rnd', 'DashboardController@RNDindex')->name('dashboard.rnd');
         Route::get('/dashboard-sales', 'DashboardController@salesIndex')->name('dashboard.index');

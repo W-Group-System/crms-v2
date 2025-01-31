@@ -36,8 +36,20 @@
                     <a href="{{ url('/returned_transactions') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
+                    @elseif(request('origin') == 'initial_review')
+                    <a href="{{ url('/initial-review') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @elseif(request('origin') == 'new_request')
+                    <a href="{{ url('/rnd-new-request') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @elseif(request('origin') == 'final_review')
+                    <a href="{{ url('/final-review') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
                     @else
-                    <a href="{{url()->previous() ?: url('/customer_requirement?open=10') }}" class="btn btn-md btn-outline-secondary">
+                    <a href="{{url('/customer_requirement?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
                     @endif
@@ -503,7 +515,12 @@
                             <div class="col-sm-3 col-md-8">
                                 <p class="mb-0">{{$crr->TargetPrice}} {{optional($crr->price)->Name}}</p>
                             </div>
-
+                            <div class="col-sm-3 col-md-4">
+                                <p class="mb-0 text-right"><b>Ref Code :</b></p>
+                            </div>
+                            <div class="col-sm-3 col-md-8">
+                                <p class="mb-0">{{$crr->RefCode}}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -929,7 +946,8 @@
                                 <tbody>
                                     <tr>
                                         <td width="10%" align="center">
-                                            @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30)
+                                            {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes" && $crr->Progress != 30) --}}
+                                            @if(authCheckIfItsRnd(auth()->user()->department_id))
                                                 <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editCrrFiles-{{$files->Id}}" title="Edit">
                                                     <i class="ti-pencil"></i>
                                                 </button>

@@ -58,8 +58,20 @@
                     <a href="{{ url('/returned_transactions') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
+                    @elseif(request('origin') == 'initial_review')
+                    <a href="{{ url('/initial-review') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @elseif(request('origin') == 'new_request')
+                    <a href="{{ url('/rnd-new-request') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @elseif(request('origin') == 'final_review')
+                    <a href="{{ url('/final-review') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
                     @else
-                    <a href="{{url()->previous() ?: url('sample_request?open=10') }}" class="btn btn-md btn-outline-secondary">
+                    <a href="{{url('sample_request?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @endif

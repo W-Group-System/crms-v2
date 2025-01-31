@@ -45,6 +45,7 @@
                             <th>Due Date (Y-M-D)</th>
                             <th>Client Name</th>
                             <th>Application</th>
+                            <th>Analyst</th>
                             <th>Status</th>
                             <th>Progress</th>
                         </tr>
@@ -60,10 +61,23 @@
                                     $client_name = "";
                                     $client_id = "";
                                     $application = "";
+                                    $analyst = "";
                                     $status = "";
                                     $progress = "";
                                     if (str_contains($transaction->CrrNumber, 'CRR'))
                                     {
+                                        if ($transaction->crr_personnels != null)
+                                        {
+                                            if ($transaction->crr_personnels->crrPersonnelByUserId != null)
+                                            {
+                                                $analyst = $transaction->crr_personnels->crrPersonnelByUserId->full_name;
+                                            }
+                                            elseif($transaction->crr_personnels->crrPersonnelById != null)
+                                            {
+                                                $analyst = $transaction->crr_personnels->crrPersonnelById->full_name;
+                                            }
+                                        }
+                                        
                                         $id = $transaction->id;
                                         $transaction_number = $transaction->CrrNumber;
                                         $date_created = $transaction->DateCreated;
@@ -72,11 +86,24 @@
                                         $client_id = optional($transaction->client)->id;
                                         $application = optional($transaction->product_application)->Name;
                                         $status = $transaction->Status;
+                                        // $analyst = optional($transaction->crr_personnels)->full_name;
                                         $progress = $transaction->Progress;
                                     }
                                     
                                     if (str_contains($transaction->RpeNumber, 'RPE'))
                                     {
+                                        if ($transaction->rpe_personnels != null)
+                                        {
+                                            if ($transaction->rpe_personnels->assignedPersonnel != null)
+                                            {
+                                                $analyst = $transaction->rpe_personnels->assignedPersonnel->full_name;
+                                            }
+                                            elseif($transaction->rpe_personnels->userId != null)
+                                            {
+                                                $analyst = $transaction->rpe_personnels->userId->full_name;
+                                            }
+                                        }
+
                                         $id = $transaction->id;
                                         $transaction_number = $transaction->RpeNumber;
                                         $date_created = $transaction->created_at;
@@ -89,10 +116,16 @@
                                     }
                                     if (str_contains($transaction->SrfNumber, 'SRF'))
                                     {
-                                        $application = [];
-                                        foreach($transaction->requestProducts as $sampleRequestProduct)
+                                        if ($transaction->srf_personnel != null)
                                         {
-                                            $application[] = $sampleRequestProduct->productApplicationsId->Name;
+                                            if ($transaction->srf_personnel->assignedPersonnel != null)
+                                            {
+                                                $analyst = $transaction->srf_personnel->assignedPersonnel->full_name;
+                                            }
+                                            elseif($transaction->srf_personnel->userId != null)
+                                            {
+                                                $analyst = $transaction->srf_personnel->userId->full_name;
+                                            }
                                         }
 
                                         $id = $transaction->Id;
@@ -101,17 +134,6 @@
                                         $due_date = $transaction->DateRequired;
                                         $client_name = optional($transaction->client)->Name;
                                         $client_id = optional($transaction->client)->id;
-                                        // $application = optional($transaction->productApplicationsId)->Name;
-                                        $status = $transaction->Status;
-                                        $progress = $transaction->Progress;
-                                    }
-                                    if (str_contains($transaction->PrfNumber, 'PRF'))
-                                    {
-                                        $id = $transaction->id;
-                                        $transaction_number = $transaction->PrfNumber;
-                                        $date_created = $transaction->created_at;
-                                        $due_date = $transaction->DateRequired;
-                                        $client_name = optional($transaction->client)->Name;
                                         $application = optional($transaction->productApplicationsId)->Name;
                                         $status = $transaction->Status;
                                         $progress = $transaction->Progress;
@@ -125,8 +147,6 @@
                                         <a href="{{url('product_evaluation/view/'.$id.'/'.$transaction_number.'/?origin=open_transactions')}}">
                                         @elseif(str_contains($transaction->SrfNumber, 'SRF'))
                                         <a href="{{url('samplerequest/view/'.$id.'/'.$transaction_number.'/?origin=open_transactions')}}">
-                                        @elseif(str_contains($transaction->PrfNumber, 'PRF'))
-                                        <a href="{{url('price_monitoring_local/view/'.$id.'/'.$transaction_number.'/?origin=open_transactions')}}">
                                         @endif
                                             {{$transaction_number}}
                                         </a>
@@ -138,13 +158,8 @@
                                             {{$client_name}}
                                         </a>
                                     </td>
-                                    <td>
-                                        @if(str_contains($transaction->SrfNumber, 'SRF'))
-                                        {!! implode('<br>', $application) !!}
-                                        @else
-                                        {{$application}}
-                                        @endif
-                                    </td>
+                                    <td>{{$application}}</td>
+                                    <td>{{$analyst}}</td>
                                     <td>
                                         <span class="badge badge-success">Open</span>
                                     </td>
@@ -153,7 +168,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td class="text-center" colspan="7">No data available.</td>
+                                <td class="text-center" colspan="8">No data available.</td>
                             </tr>
                         @endif
                     </tbody>
