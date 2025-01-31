@@ -488,6 +488,7 @@ class RequestProductEvaluationController extends Controller
                 $rpeFiles->save();
             }
         }
+        rpeHistoryLogs("create", $productEvaluationData->id);
         return redirect()->back()->with('success', 'RPE added successfully.');
     }
     public function update(Request $request, $id)
@@ -539,6 +540,7 @@ class RequestProductEvaluationController extends Controller
                 $rpeFiles->save();
             }
         }
+        rpeHistoryLogs("update", $id);
         return redirect()->back()->with('success', 'RPE updated successfully');
     }
 
@@ -653,18 +655,14 @@ class RequestProductEvaluationController extends Controller
             ];
         });
     
-        $mappedLogs = $transactionLogs->map(function ($log) {
-            return (object) [
-                'CreatedDate' => $log->ActionDate,
-                'full_name' => optional($log->historyUser)->full_name,
-                'Details' => $log->Details,
-            ];
-        });
+        $mappedLogs = $transactionLogs;
     
-        $mappedLogsCollection = collect($mappedLogs);
-        $mappedAuditsCollection = collect($mappedAudits);
+        // $mappedLogsCollection = collect($mappedLogs);
+        // $mappedAuditsCollection = collect($mappedAudits);
     
-        $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
+        // $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
+        $combinedLogs = $mappedLogs;
+
         $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate');
         // $clients = Client::where('PrimaryAccountManagerId', auth()->user()->user_id)
         // ->orWhere('SecondaryAccountManagerId', auth()->user()->user_id)
@@ -700,6 +698,8 @@ class RequestProductEvaluationController extends Controller
 
             ]);
 
+            rpeHistoryLogs('add_supplementary', $request->input('rpe_id'));
+
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back()->with(['tab' => 'supplementary_details']);
     }
@@ -707,9 +707,12 @@ class RequestProductEvaluationController extends Controller
     public function editSupplementary(Request $request, $id)
     {
         $rpeDetail = RpeDetail::findOrFail($id);
+        $rpeDetail->RequestProductEvaluationId = $request->request_product_evaluation_id;
+        $rpeDetail->UserId =auth()->user()->id;
         $rpeDetail->DetailsOfRequest = $request->input('details_of_request');
         $rpeDetail->save();
 
+        rpeHistoryLogs('update_supplementary', $request->request_product_evaluation_id);
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back()->with(['tab' => 'supplementary_details']);
     }
@@ -719,6 +722,7 @@ class RequestProductEvaluationController extends Controller
         try { 
             $rpeDetail = RpeDetail::findOrFail($id); 
             $rpeDetail->delete();  
+            rpeHistoryLogs('delete_supplementary', $rpeDetail->RequestProductEvaluationId);
             return response()->json(['success' => true, 'message' => 'Supplementary Detail deleted successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to delete supplementary detail.'], 500);
@@ -734,6 +738,7 @@ class RequestProductEvaluationController extends Controller
             'PersonnelUserId' => $request->input('RndPersonnel'),
             ]);
         
+            rpeHistoryLogs('add_personnel', $request->input('rpe_id'));
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back()->with(['tab' => 'personnel']);
     }
@@ -743,6 +748,7 @@ class RequestProductEvaluationController extends Controller
         $rpePersonnel->PersonnelUserId = $request->input('RndPersonnel');
         $rpePersonnel->save();
 
+        rpeHistoryLogs('update_personnel', $rpePersonnel->RequestProductEvaluationId);
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back()->with(['tab' => 'personnel']);
     }
@@ -751,6 +757,7 @@ class RequestProductEvaluationController extends Controller
         try { 
             $rpePersonnel = RpePersonnel::findOrFail($id); 
             $rpePersonnel->delete();  
+            rpeHistoryLogs('delete_personnel', $rpePersonnel->RequestProductEvaluationId);
             return response()->json(['success' => true, 'message' => 'Assigned Personnel deleted successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to delete Assigned Personnel.'], 500);
@@ -802,6 +809,7 @@ class RequestProductEvaluationController extends Controller
             }
         }
         
+        rpeHistoryLogs('add_files', $rpeId);
         Alert::success('Successfully Uploaded')->persistent('Dismiss');
         return back()->with(['tab' => 'files']);
     }
@@ -827,7 +835,7 @@ class RequestProductEvaluationController extends Controller
         }
 
         $rpeFile->save();
-
+        rpeHistoryLogs('update_files', $rpeFile->RequestProductEvaluation);
         // return redirect()->back()->with('success', 'File updated successfully');
         Alert::success('Successfully Uploaded')->persistent('Dismiss');
         return back()->with(['tab' => 'files']);
@@ -837,6 +845,7 @@ class RequestProductEvaluationController extends Controller
         try { 
             $rpeFile = RpeFile::findOrFail($id); 
             $rpeFile->delete();  
+            rpeHistoryLogs('delete_files', $rpeFile->RequestProductEvaluation);
             return response()->json(['success' => true, 'message' => 'Assigned Personnel deleted successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to delete Assigned Personnel.'], 500);
@@ -850,14 +859,17 @@ class RequestProductEvaluationController extends Controller
             $cancelRpe->Status = '50'; 
         }
             $cancelRpe->save();
+            rpeHistoryLogs('cancel', $id);
+
             return back();
     }
 
     public function CloseRpe($id)
     {
         $rpeList = RequestProductEvaluation::find($id);    
-        $rpeList->Status = 30; 
+        $rpeList->Status = 30;
         $rpeList->save();
+        rpeHistoryLogs('close', $id);
         
         Alert::success('Successfully Closed')->persistent('Dismiss');
         return back();
@@ -869,6 +881,8 @@ class RequestProductEvaluationController extends Controller
         $rpeList->Status = 10; 
         // $rpeList->Progress = 10; 
         $rpeList->save();
+
+        rpeHistoryLogs('open', $id);
         
         Alert::success('Successfully Open')->persistent('Dismiss');
         return back();
@@ -880,6 +894,7 @@ class RequestProductEvaluationController extends Controller
         $rpeList->Progress = 30; 
         $rpeList->save();
         
+        rpeHistoryLogs('approve', $id);
         Alert::success('Successfully Approved')->persistent('Dismiss');
         return back();
     }
@@ -891,6 +906,7 @@ class RequestProductEvaluationController extends Controller
         $rpeList->DateReceived = date('Y-m-d'); 
         $rpeList->save();
         
+        rpeHistoryLogs('received', $id);
         Alert::success('Successfully Received')->persistent('Dismiss');
         return back();
     }
@@ -902,6 +918,7 @@ class RequestProductEvaluationController extends Controller
         $rpeList->DateStarted = date('Y-m-d'); 
         $rpeList->save();
         
+        rpeHistoryLogs('start', $id);
         Alert::success('Successfully Start')->persistent('Dismiss');
         return back();
     }
@@ -912,6 +929,7 @@ class RequestProductEvaluationController extends Controller
         $rpeList->Progress = 55;
         $rpeList->save();
         
+        rpeHistoryLogs('pause', $id);
         Alert::success('Successfully Pause')->persistent('Dismiss');
         return back();
     }
@@ -922,6 +940,8 @@ class RequestProductEvaluationController extends Controller
         $rpeList->Progress = 57;
         $rpeList->save();
         
+        rpeHistoryLogs('submit_initial', $id);
+
         Alert::success('Successfully Initial Review')->persistent('Dismiss');
         return back();
     }
@@ -932,6 +952,8 @@ class RequestProductEvaluationController extends Controller
         $rpeList->Progress = 81;
         $rpeList->save();
         
+        rpeHistoryLogs('submit_final', $id);
+
         Alert::success('Successfully Final Review')->persistent('Dismiss');
         return back();
     }
@@ -949,6 +971,7 @@ class RequestProductEvaluationController extends Controller
         $rpeList->DateCompleted = date('Y-m-d');
         $rpeList->save();
         
+        rpeHistoryLogs('complete', $id);
         Alert::success('Successfully Completed')->persistent('Dismiss');
         return back();
     }
@@ -959,6 +982,7 @@ class RequestProductEvaluationController extends Controller
         $rpeList->Progress = 70;
         $rpeList->save();
         
+        rpeHistoryLogs('sales_accepted', $id);
         Alert::success('Successfully Accepted')->persistent('Dismiss');
         return back();
     }
@@ -978,6 +1002,7 @@ class RequestProductEvaluationController extends Controller
         $transactionApproval->Remarks = request()->input('return_to_sales_remarks');
         $transactionApproval->RemarksType = 'return to sales';
         $transactionApproval->save(); 
+        rpeHistoryLogs('return_to_sales', $id);
         Alert::success('Successfully return to sales')->persistent('Dismiss');
         return back();
     }
@@ -996,6 +1021,7 @@ class RequestProductEvaluationController extends Controller
         $transactionApproval->Remarks = request()->input('return_to_specialist_remarks');
         $transactionApproval->RemarksType = 'return to specialist';
         $transactionApproval->save(); 
+        rpeHistoryLogs('return_to_specialist', $id);
         Alert::success('Successfully Returned')->persistent('Dismiss');
         return back();
     }
@@ -1022,6 +1048,8 @@ class RequestProductEvaluationController extends Controller
                 $approveRpeSales->InternalRemarks = request()->input('submitbutton'); 
             }
             $approveRpeSales->save();
+
+            rpeHistoryLogs('approve', $id);
 
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
@@ -1092,6 +1120,7 @@ class RequestProductEvaluationController extends Controller
         $rpe->DateStarted = $request->date_started;
         $rpe->save();
 
+        rpeHistoryLogs('update', $id);
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
     }

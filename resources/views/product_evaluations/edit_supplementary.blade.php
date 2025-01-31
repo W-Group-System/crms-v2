@@ -15,6 +15,7 @@
                         {{-- <input type="text" class="form-control" name="details_of_request" value="{{ optional($supplementary)->DetailsOfRequest }}"> --}}
                         <textarea name="details_of_request" class="form-control" cols="30" rows="10">{{$supplementary->DetailsOfRequest}}</textarea>
                     </div>
+                    <input type="hidden" name="request_product_evaluation_id" value="{{$requestEvaluation->id}}">
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save</button>

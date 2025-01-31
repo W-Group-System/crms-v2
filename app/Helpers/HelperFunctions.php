@@ -973,6 +973,229 @@ function crrHistoryLogs($action, $crr)
     $transaction_logs->save();
 }
 
+function rpeHistoryLogs($action, $rpe)
+{
+    $transaction_logs = new TransactionLogs;
+    $transaction_logs->Type = 20;
+    $transaction_logs->TransactionId = $rpe;
+    $transaction_logs->ActionDate = date('Y-m-d h:i:s');
+    $transaction_logs->UserId = auth()->user()->id;
+
+    if ($action == 'create')
+    {
+        $transaction_logs->Details = "Create new product evaluation entry.";
+    }
+    if ($action == 'update')
+    {
+        $transaction_logs->Details = "Update product evaluation entry.";
+    }
+    if ($action == 'close')
+    {
+        $transaction_logs->Details = "Close product evaluation entry.";
+    }
+    if ($action == 'open')
+    {
+        $transaction_logs->Details = "Open product evaluation entry.";
+    }
+    if ($action == 'cancel')
+    {
+        $transaction_logs->Details = "Cancel product evaluation entry.";
+    }
+    if ($action == 'approve')
+    {
+        $transaction_logs->Details = "Approve product evaluation entry.";
+    }
+    if ($action == 'return_to_sales')
+    {
+        $transaction_logs->Details = "Return product evaluation entry.";
+    }
+    if ($action == 'received')
+    {
+        $transaction_logs->Details = "Received product evaluation entry.";
+    }
+    if ($action == 'add_supplementary')
+    {
+        $transaction_logs->Details = "Add new product evaluation supplementary details entry.";
+    }
+    if ($action == 'update_supplementary')
+    {
+        $transaction_logs->Details = "Update product evaluation supplementary details entry.";
+    }
+    if ($action == 'delete_supplementary')
+    {
+        $transaction_logs->Details = "Delete product evaluation supplementary details entry.";
+    }
+    if ($action == 'add_personnel')
+    {
+        $transaction_logs->Details = "Add new product evaluation personnel entry.";
+    }
+    if ($action == 'update_personnel')
+    {
+        $transaction_logs->Details = "Update assigned product evaluation personnel entry.";
+    }
+    if ($action == 'delete_personnel')
+    {
+        $transaction_logs->Details = "Delete product evaluation personnel entry.";
+    }
+    if ($action == 'start')
+    {
+        $transaction_logs->Details = "Start product evaluation transaction.";
+    }
+    if ($action == 'pause')
+    {
+        $transaction_logs->Details = "Pause product evaluation transaction.";
+    }
+    if ($action == 'submit_initial' || $action == 'submit_final')
+    {
+        $transaction_logs->Details = "Submit product evaluation transaction for review.";
+    }
+    if ($action == 'return_to_specialist')
+    {
+        $transaction_logs->Details = "Return product evaluation transaction.";
+    }
+    if ($action == 'complete')
+    {
+        $transaction_logs->Details = "Complete product evaluation transaction.";
+    }
+    if ($action == 'sales_accepted')
+    {
+        $transaction_logs->Details = "Accept product evaluation transaction.";
+    }
+    if ($action == 'add_files')
+    {
+        $transaction_logs->Details = "Add new product evaluation file entry.";
+    }
+    if ($action == 'update_files')
+    {
+        $transaction_logs->Details = "Update product evaluation file entry.";
+    }
+    if ($action == 'delete_files')
+    {
+        $transaction_logs->Details = "Delete product evaluation file entry.";
+    }
+
+    $transaction_logs->save();
+}
+function srfHistoryLogs($action, $srf)
+{
+    $transaction_logs = new TransactionLogs;
+    $transaction_logs->Type = 30;
+    $transaction_logs->TransactionId = $srf;
+    $transaction_logs->ActionDate = date('Y-m-d h:i:s');
+    $transaction_logs->UserId = auth()->user()->id;
+
+    if ($action == 'create')
+    {
+        $transaction_logs->Details = "Create new sample request entry.";
+    }
+    if ($action == 'update')
+    {
+        $transaction_logs->Details = "Update sample request entry.";
+    }
+    if ($action == 'close')
+    {
+        $transaction_logs->Details = "Close sample request entry.";
+    }
+    if ($action == 'open')
+    {
+        $transaction_logs->Details = "Open sample request entry.";
+    }
+    if ($action == 'cancel')
+    {
+        $transaction_logs->Details = "Cancel sample request entry.";
+    }
+    if ($action == 'approve')
+    {
+        $transaction_logs->Details = "Approve sample request entry.";
+    }
+    if ($action == 'return_to_sales')
+    {
+        $transaction_logs->Details = "Return sample request entry.";
+    }
+    if ($action == 'received')
+    {
+        $transaction_logs->Details = "Received sample request entry.";
+    }
+    if ($action == 'add_supplementary')
+    {
+        $transaction_logs->Details = "Add new sample request supplementary details entry.";
+    }
+    if ($action == 'update_supplementary')
+    {
+        $transaction_logs->Details = "Update sample request supplementary details entry.";
+    }
+    if ($action == 'delete_supplementary')
+    {
+        $transaction_logs->Details = "Delete sample request supplementary details entry.";
+    }
+    if ($action == 'add_personnel')
+    {
+        $transaction_logs->Details = "Add new sample request personnel entry.";
+    }
+    if ($action == 'update_personnel')
+    {
+        $transaction_logs->Details = "Update assigned sample request personnel entry.";
+    }
+    if ($action == 'delete_personnel')
+    {
+        $transaction_logs->Details = "Delete sample request personnel entry.";
+    }
+    if ($action == 'start')
+    {
+        $transaction_logs->Details = "Start sample request transaction.";
+    }
+    if ($action == 'pause')
+    {
+        $transaction_logs->Details = "Pause sample request transaction.";
+    }
+    if ($action == 'submit_initial' || $action == 'submit_final')
+    {
+        $transaction_logs->Details = "Submit sample request transaction for review.";
+    }
+    if ($action == 'return_to_specialist')
+    {
+        $transaction_logs->Details = "Return sample request transaction.";
+    }
+    if ($action == 'complete')
+    {
+        $transaction_logs->Details = "Complete sample request transaction.";
+    }
+    if ($action == 'sales_accepted')
+    {
+        $transaction_logs->Details = "Accept sample request transaction.";
+    }
+    if ($action == 'add_files')
+    {
+        $transaction_logs->Details = "Add new sample request file entry.";
+    }
+    if ($action == 'update_files')
+    {
+        $transaction_logs->Details = "Update sample request file entry.";
+    }
+    if ($action == 'delete_files')
+    {
+        $transaction_logs->Details = "Delete sample request file entry.";
+    }
+    if ($action == 'add_raw_mats')
+    {
+        $transaction_logs->Details = "Create sample request raw materials entry.";
+    }
+    if ($action == 'edit_raw_mats')
+    {
+        $transaction_logs->Details = "Edit sample request raw materials entry.";
+    }
+    if ($action == 'delete_raw_mats')
+    {
+        $transaction_logs->Details = "Delete sample request raw materials entry.";
+    }
+    if ($action == 'sales_initial_quantity')
+    {
+        $transaction_logs->Details = "Sales Initial Approved sample request raw materials entry.";
+    }
+
+    $transaction_logs->save();
+}
+
 function historyRmc($product_material_composition, $product_id)
 {
     // $percentage = $product_material_composition->sortBy('MaterialId')->pluck('Percentage');

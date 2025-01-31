@@ -720,18 +720,12 @@ class SampleRequestController extends Controller
             ];
         });
 
-        $mappedLogs = $transactionLogs->map(function ($log) {
-            return (object) [
-                'CreatedDate' => $log->ActionDate,
-                'full_name' => optional($log->historyUser)->full_name, // Use optional() to avoid null errors
-                'Details' => $log->Details,
-            ];
-        });
+        $mappedLogs = $transactionLogs;
         
-        $mappedLogsCollection = collect($mappedLogs);
-        $mappedAuditsCollection = collect($mappedAudits);
+        // $mappedLogsCollection = collect($mappedLogs);
+        // $mappedAuditsCollection = collect($mappedAudits);
 
-        $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
+        $combinedLogs = $mappedLogs;
         $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate');
         return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'orderedCombinedLogs', 'srfProgress', 'clients', 'users', 'userDispatch', 'primarySalesPersons', 'secondarySalesPersons', 'productApplications', 'productCodes','transactionApprovals', 'loggedInUser'));
     }               
@@ -790,6 +784,7 @@ class SampleRequestController extends Controller
                 'DetailsOfRequest' => $request->input('details_of_request'),
 
             ]);
+            srfHistoryLogs('add_supplementary', $request->input('srf_id'));
             return back();
     }
 
@@ -798,6 +793,7 @@ class SampleRequestController extends Controller
         $srfDetail = SrfDetail::findOrFail($id);
         $srfDetail->DetailsOfRequest = $request->input('details_of_request');
         $srfDetail->save();
+        srfHistoryLogs('update_supplementary', $srfDetail->id);
         return back();
     }
 
@@ -806,6 +802,7 @@ class SampleRequestController extends Controller
         try { 
             $srfDetail = SrfDetail::findOrFail($id); 
             $srfDetail->delete();  
+            srfHistoryLogs('delete_supplementary', $srfDetail->SampleRequestId);
             return response()->json(['success' => true, 'message' => 'Supplementary Detail deleted successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to delete supplementary detail.'], 500);
@@ -820,6 +817,7 @@ class SampleRequestController extends Controller
             'PersonnelType' => 20,
             'PersonnelUserId' => $request->input('RndPersonnel'),
             ]);
+            srfHistoryLogs('add_personnel', $request->input('srf_id'));
             return back();
     }
     public function editPersonnel(Request $request, $id)
@@ -827,6 +825,7 @@ class SampleRequestController extends Controller
         $srfPersonnel = SrfPersonnel::findOrFail($id);
         $srfPersonnel->PersonnelUserId = $request->input('RndPersonnel');
         $srfPersonnel->save();
+        srfHistoryLogs('update_personnel', $srfPersonnel->SampleRequestId);
         return back();
     }
     public function deleteSrfPersonnel($id)
@@ -834,6 +833,7 @@ class SampleRequestController extends Controller
         try { 
             $srfPersonnel = SrfPersonnel::findOrFail($id); 
             $srfPersonnel->delete();  
+            srfHistoryLogs('delete_personnel', $srfPersonnel->SampleRequestId);
             return response()->json(['success' => true, 'message' => 'Assigned Personnel deleted successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to delete Assigned Personnel.'], 500);
@@ -863,7 +863,7 @@ class SampleRequestController extends Controller
             $uploadedFile->save();
             }
         }
-        
+        srfHistoryLogs('add_files', $srfId);
         return redirect()->back()->with('success', 'File(s) Stored successfully');
     }
 
@@ -887,7 +887,7 @@ class SampleRequestController extends Controller
             $srfFile->IsForReview = $request->has('is_for_review') ? 1 : 0;
         }
         $srfFile->save();
-
+        srfHistoryLogs('update_files', $srfFile->SampleRequestId);
         return redirect()->back()->with('success', 'File updated successfully');
     }
     public function deleteFile($id)
@@ -895,6 +895,7 @@ class SampleRequestController extends Controller
         try { 
             $srfFile = SrfFile::findOrFail($id); 
             $srfFile->delete();  
+            srfHistoryLogs('delete_files', $srfFile->SampleRequestId);
             return response()->json(['success' => true, 'message' => 'Assigned Personnel deleted successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to delete Assigned Personnel.'], 500);
@@ -910,6 +911,7 @@ class SampleRequestController extends Controller
                 'Remarks' => $request->input('Remarks'),
 
             ]);
+            srfHistoryLogs('add_raw_mats', $request->input('SampleRequestId'));
             return back();
     }
 
@@ -920,6 +922,7 @@ class SampleRequestController extends Controller
         $srfRawMaterial->LotNumber = $request->input('LotNumber');
         $srfRawMaterial->Remarks = $request->input('Remarks');
         $srfRawMaterial->save();
+        srfHistoryLogs('edit_raw_mats', $srfRawMaterial->SampleRequestId);
         return back();
     }
 
@@ -927,7 +930,8 @@ class SampleRequestController extends Controller
     {
         try { 
             $srfMaterial = SrfRawMaterial::findOrFail($id); 
-            $srfMaterial->delete();  
+            $srfMaterial->delete();
+            srfHistoryLogs('delete_raw_mats', $srfMaterial->SampleRequestId);
             return response()->json(['success' => true, 'message' => 'Raw Material deleted successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to delete RAw Material.'], 500);
@@ -1032,7 +1036,7 @@ class SampleRequestController extends Controller
                     $srfFiles->save();
                 }
             }
-
+            srfHistoryLogs("create", $samplerequest->Id);
             return redirect()->route('sample_request.index')->with('success', 'Sample Request created successfully.');
     }
 
@@ -1113,7 +1117,7 @@ class SampleRequestController extends Controller
                     $srfFiles->save();
                 }
             }
-
+        srfHistoryLogs("update", $id);
         return redirect()->back()->with('success', 'Sample Request updated successfully');
     }
     
@@ -1149,6 +1153,7 @@ class SampleRequestController extends Controller
                 $transactionApproval->save(); 
             }
             $approveSrfSales->save();
+            srfHistoryLogs('approve', $id);
 
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
@@ -1161,7 +1166,7 @@ class SampleRequestController extends Controller
                  $receiveSrf->Progress = 35; 
         }
             $receiveSrf->save();
-
+            srfHistoryLogs('received', $id);
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
     } 
@@ -1173,6 +1178,8 @@ class SampleRequestController extends Controller
                 $startSrf->DateStarted = now(); 
         }
             $startSrf->save();
+            srfHistoryLogs('start', $id);
+
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
     }
@@ -1191,7 +1198,8 @@ class SampleRequestController extends Controller
                 $transactionApproval->RemarksType = 'paused';
                 $transactionApproval->save(); 
                 }
-
+            
+            srfHistoryLogs('pause', $id);
             Alert::success('Successfully Saved')->persistent('Dismiss');
             return back();
     } 
@@ -1219,6 +1227,7 @@ class SampleRequestController extends Controller
         $transactionApproval->RemarksType = 'cancelled';
         $transactionApproval->save(); 
 
+        srfHistoryLogs('cancel', $id);
         Alert::success('Successfully Cancelled')->persistent('Dismiss');
         return back();
     }
@@ -1236,6 +1245,7 @@ class SampleRequestController extends Controller
         $transactionApproval->Remarks = request()->input('close_remarks');
         $transactionApproval->RemarksType = 'closed';
         $transactionApproval->save(); 
+        srfHistoryLogs('close', $id);
         Alert::success('Successfully Closed')->persistent('Dismiss');
         return back();
     }
@@ -1254,6 +1264,7 @@ class SampleRequestController extends Controller
         $transactionApproval->Remarks = request()->input('return_to_sales_remarks');
         $transactionApproval->RemarksType = 'return to sales';
         $transactionApproval->save(); 
+        srfHistoryLogs('return_to_sales', $id);
         Alert::success('Successfully Returned')->persistent('Dismiss');
         return back();
     }
@@ -1271,6 +1282,7 @@ class SampleRequestController extends Controller
         $transactionApproval->Remarks = request()->input('return_to_specialist_remarks');
         $transactionApproval->RemarksType = 'return to specialist';
         $transactionApproval->save(); 
+        srfHistoryLogs('return_to_specialist', $id);
         Alert::success('Successfully Returned')->persistent('Dismiss');
         return back();
     }
@@ -1280,6 +1292,15 @@ class SampleRequestController extends Controller
         $sampleRequest->Progress = 10;
         $sampleRequest->save(); 
 
+        $transactionApproval = new TransactionApproval();
+        $transactionApproval->Type = '30';
+        $transactionApproval->TransactionId = $id;
+        $transactionApproval->UserId = Auth::user()->id;
+        $transactionApproval->Remarks = request()->input('return_to_sales_remarks');
+        $transactionApproval->RemarksType = 'return to sales';
+        $transactionApproval->save(); 
+
+        srfHistoryLogs('return_to_sales', $id);
         Alert::success('Successfully return to sales')->persistent('Dismiss');
         return back();
     }
@@ -1290,6 +1311,14 @@ class SampleRequestController extends Controller
         $sampleRequest->Progress = 50;
         $sampleRequest->save(); 
 
+        $transactionApproval = new TransactionApproval();
+        $transactionApproval->Type = '30';
+        $transactionApproval->TransactionId = $id;
+        $transactionApproval->UserId = Auth::user()->id;
+        $transactionApproval->Remarks = request()->input('return_to_specialist_remarks');
+        $transactionApproval->RemarksType = 'return to specialist';
+        $transactionApproval->save(); 
+        srfHistoryLogs('return_to_specialist', $id);
         Alert::success('Successfully return to rnd')->persistent('Dismiss');
         return back();
     }
@@ -1299,6 +1328,7 @@ class SampleRequestController extends Controller
         $sampleRequest = SampleRequest::findOrFail($id);
         $sampleRequest->Progress = 11;
         $sampleRequest->save(); 
+        srfHistoryLogs('sales_initial_quantity', $id);
 
         Alert::success('Successfully return to rnd')->persistent('Dismiss');
         return back();
@@ -1309,6 +1339,7 @@ class SampleRequestController extends Controller
         $srf->Progress = 57;
         $srf->save();
 
+        srfHistoryLogs('submit_initial', $id);
         Alert::success('Successfully Submitted')->persistent('Dismiss');
         return back();
     }
@@ -1330,6 +1361,7 @@ class SampleRequestController extends Controller
         $srf->Progress = 70;
         $srf->save(); 
 
+        srfHistoryLogs('sales_accepted', $id);
         Alert::success('Sales Accepted')->persistent('Dismiss');
         return back();
     }
@@ -1340,6 +1372,7 @@ class SampleRequestController extends Controller
         $srf->Status = 10;
         $srf->save();
 
+        srfHistoryLogs('open', $id);
         Alert::success('The status are now open')->persistent('Dismiss');
         return back();
     }
@@ -1361,6 +1394,7 @@ class SampleRequestController extends Controller
         $srf->DateCompleted = date('Y-m-d h:i:s');
         $srf->save();
 
+        srfHistoryLogs('complete', $id);
         return response()->json([
             'status' => 'success',
             'message' => 'Successfully Completed'
