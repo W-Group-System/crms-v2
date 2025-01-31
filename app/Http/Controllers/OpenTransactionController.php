@@ -42,8 +42,12 @@ class OpenTransactionController extends Controller
                 {
                     $q->where('RefCode', 'QCD-PBI');
                 }
+                elseif($role->type == 'QCD-MRDC')
+                {
+                    $q->where('RefCode', 'QCD-MRDC');
+                }
             })
-            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI') && $role->name == 'Staff L1', function($q) {
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC') && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('crr_personnels', function($q) {
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
@@ -94,8 +98,12 @@ class OpenTransactionController extends Controller
                 {
                     $q->where('RefCode', 3);
                 }
+                elseif($role->type == 'QCD-MRDC')
+                {
+                    $q->where('RefCode', 4);
+                }
             })
-            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI') && $role->name == 'Staff L1', function($q) {
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC') && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('srf_personnel', function($q) {
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
