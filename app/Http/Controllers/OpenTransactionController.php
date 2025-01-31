@@ -12,140 +12,184 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class OpenTransactionController extends Controller
 {
-    public function crr(Request $request)
+    public function index(Request $request)
     {
-        $status = $request->query('status');
-        $search = $request->get('search', '');
-        $entries = $request->get('entries', '');
+        // $status = $request->query('status');
+        $search = $request->search;
+        $entries = $request->entries;
+        $role = auth()->user()->role;
 
-        $customer_requirement = CustomerRequirement::with('client', 'product_application', 'progressStatus', 'crrPersonnel')
-            ->where(function($q)use($search) {
-                if ($search != null)
-                {
-                    $q->where('CrrNumber', 'LIKE','%'.$search.'%')
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
-                        ->orWhere('DueDate', 'LIKE','%'.$search.'%')
-                        ->orWhereHas('client', function($query)use($search){
-                            $query->where('Name', 'LIKE', '%'.$search.'%');
-                        })
-                        ->orWhereHas('product_application', function($query)use($search){
-                            $query->where('Name', 'LIKE', '%'.$search.'%');
-                        })
-                        ->orWhereHas('crrPersonnel', function($query)use($search){
-                            $query->whereHas('crrPersonnelByUserId', function($q)use($search) {
-                                $q->where('full_name', 'LIKE', "%".$search."%");
-                            })
-                            ->orWhereHas('crrPersonnelById', function($q)use($search) {
-                                $q->where('full_name', 'LIKE', "%".$search."%");
-                            });
-                        })
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%');
-                }
+        $crr = CustomerRequirement::where('Status', 10)
+            ->where(function($q) {
+                $q->where('RefCode', 'RND');
             })
-            ->where('status', $status)
-            ->orderBy('id', 'desc')
-            ->paginate($entries ?? 10);
+            ->when(!empty($search), function($q)use($search) {
+                $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('client', function($clientQuery)use($search) {
+                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    });
+            })
+            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+                $q->whereHas('crr_personnels', function($q) {
+                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                });
+            })
+            ->get();
+        
+        $rpe = RequestProductEvaluation::where('Status', 10)
+            ->when(!empty($search), function($q)use($search) {
+                $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('client', function($clientQuery)use($search) {
+                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    });
+            })
+            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+                $q->whereHas('rpe_personnels', function($q) {
+                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                });
+            })
+            ->get();
 
-        return view('dashboard.crr_transaction',
+        $srf = SampleRequest::where('Status', 10)
+            ->where(function($q) {
+                $q->where('RefCode', 1);
+            })
+            ->when(!empty($search), function($q)use($search) {
+                $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('client', function($clientQuery)use($search) {
+                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('productApplicationsId',function($applicationQuery)use($search) {
+                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    });
+            })
+            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+                $q->whereHas('srf_personnel', function($q) {
+                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                });
+            })
+            ->get();
+
+        $sortedResults = $crr
+        ->concat($rpe)
+        ->concat($srf);
+
+        // $sortedResults = $allResults->sortByDesc('created_at');
+
+        $page = request()->get('page', 1);
+        $perPage = $entries ?? 10;
+        $paginatedResults = new LengthAwarePaginator(
+            $sortedResults->forPage($page, $perPage),
+            $sortedResults->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        return view('dashboard.rnd_open_transactions',
             array(
-                'customer_requirement' => $customer_requirement,
-                'status' => $status,
+                'paginatedResults' => $paginatedResults,
                 'search' => $search,
                 'entries' => $entries
             )
         );
     }
 
-    public function rpe(Request $request)
-    {
-        $status = $request->query('status');
-        $search = $request->get('search', '');
-        $entries = $request->get('entries', '');
+    // public function rpe(Request $request)
+    // {
+    //     $status = $request->query('status');
+    //     $search = $request->get('search', '');
+    //     $entries = $request->get('entries', '');
 
-        $request_product_evaluation = RequestProductEvaluation::with('client', 'product_application', 'progressStatus', 'rpePersonnel')
-            ->where(function($q)use($search) {
-                if ($search != null)
-                {
-                    $q->where('RpeNumber', 'LIKE','%'.$search.'%')
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
-                        ->orWhere('DueDate', 'LIKE','%'.$search.'%')
-                        ->orWhereHas('client', function($query)use($search){
-                            $query->where('Name', 'LIKE', '%'.$search.'%');
-                        })
-                        ->orWhereHas('product_application', function($query)use($search){
-                            $query->where('Name', 'LIKE', '%'.$search.'%');
-                        })
-                        ->orWhereHas('rpePersonnel', function($query)use($search){
-                            $query->whereHas('assignedPersonnel', function($q)use($search) {
-                                $q->where('full_name', 'LIKE', "%".$search."%");
-                            })
-                            ->orWhereHas('userId', function($q)use($search) {
-                                $q->where('full_name', 'LIKE', "%".$search."%");
-                            });
-                        })
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%');
-                }
-            })
-            ->where('status', $status)
-            ->orderBy('id', 'desc')
-            ->paginate($entries ?? 10);
+    //     $request_product_evaluation = RequestProductEvaluation::with('client', 'product_application', 'progressStatus', 'rpePersonnel')
+    //         ->where(function($q)use($search) {
+    //             if ($search != null)
+    //             {
+    //                 $q->where('RpeNumber', 'LIKE','%'.$search.'%')
+    //                     ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
+    //                     ->orWhere('DueDate', 'LIKE','%'.$search.'%')
+    //                     ->orWhereHas('client', function($query)use($search){
+    //                         $query->where('Name', 'LIKE', '%'.$search.'%');
+    //                     })
+    //                     ->orWhereHas('product_application', function($query)use($search){
+    //                         $query->where('Name', 'LIKE', '%'.$search.'%');
+    //                     })
+    //                     ->orWhereHas('rpePersonnel', function($query)use($search){
+    //                         $query->whereHas('assignedPersonnel', function($q)use($search) {
+    //                             $q->where('full_name', 'LIKE', "%".$search."%");
+    //                         })
+    //                         ->orWhereHas('userId', function($q)use($search) {
+    //                             $q->where('full_name', 'LIKE', "%".$search."%");
+    //                         });
+    //                     })
+    //                     ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
+    //                     ->orWhere('DateCreated', 'LIKE','%'.$search.'%');
+    //             }
+    //         })
+    //         ->where('status', $status)
+    //         ->orderBy('id', 'desc')
+    //         ->paginate($entries ?? 10);
         
-        return view('dashboard.rpe_transaction',
-            array(
-                'request_product_evaluation' => $request_product_evaluation,
-                'status' => $status,
-                'search' => $search,
-                'entries' => $entries
-            )
-        );
-    }
+    //     return view('dashboard.rpe_transaction',
+    //         array(
+    //             'request_product_evaluation' => $request_product_evaluation,
+    //             'status' => $status,
+    //             'search' => $search,
+    //             'entries' => $entries
+    //         )
+    //     );
+    // }
 
-    public function srf(Request $request)
-    {
-        $status = $request->query('status');
-        $search = $request->get('search', '');
-        $entries = $request->get('entries', '');
+    // public function srf(Request $request)
+    // {
+    //     $status = $request->query('status');
+    //     $search = $request->get('search', '');
+    //     $entries = $request->get('entries', '');
         
-        $sample_request_product = SampleRequest::with('client', 'productApplicationsId', 'progressStatus', 'srfPersonnel')
-            ->where(function($q)use($search) {
-                if ($search != null)
-                {
-                    $q->where('SrfNumber', 'LIKE','%'.$search.'%')
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
-                        ->orWhere('DueDate', 'LIKE','%'.$search.'%')
-                        ->orWhereHas('client', function($query)use($search){
-                            $query->where('Name', 'LIKE', '%'.$search.'%');
-                        })
-                        ->orWhereHas('productApplicationsId', function($query)use($search){
-                            $query->where('Name', 'LIKE', '%'.$search.'%');
-                        })
-                        ->orWhereHas('srfPersonnel', function($query)use($search){
-                            $query->whereHas('assignedPersonnel', function($q)use($search) {
-                                $q->where('full_name', 'LIKE', "%".$search."%");
-                            })
-                            ->orWhereHas('userId', function($q)use($search) {
-                                $q->where('full_name', 'LIKE', "%".$search."%");
-                            });
-                        })
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
-                        ->orWhere('DateCreated', 'LIKE','%'.$search.'%');
-                }
-            })
-            ->where('status', $status)
-            ->orderBy('id', 'desc')
-            ->paginate($entries ?? 10);
+    //     $sample_request_product = SampleRequest::with('client', 'productApplicationsId', 'progressStatus', 'srfPersonnel')
+    //         ->where(function($q)use($search) {
+    //             if ($search != null)
+    //             {
+    //                 $q->where('SrfNumber', 'LIKE','%'.$search.'%')
+    //                     ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
+    //                     ->orWhere('DueDate', 'LIKE','%'.$search.'%')
+    //                     ->orWhereHas('client', function($query)use($search){
+    //                         $query->where('Name', 'LIKE', '%'.$search.'%');
+    //                     })
+    //                     ->orWhereHas('productApplicationsId', function($query)use($search){
+    //                         $query->where('Name', 'LIKE', '%'.$search.'%');
+    //                     })
+    //                     ->orWhereHas('srfPersonnel', function($query)use($search){
+    //                         $query->whereHas('assignedPersonnel', function($q)use($search) {
+    //                             $q->where('full_name', 'LIKE', "%".$search."%");
+    //                         })
+    //                         ->orWhereHas('userId', function($q)use($search) {
+    //                             $q->where('full_name', 'LIKE', "%".$search."%");
+    //                         });
+    //                     })
+    //                     ->orWhere('DateCreated', 'LIKE','%'.$search.'%')
+    //                     ->orWhere('DateCreated', 'LIKE','%'.$search.'%');
+    //             }
+    //         })
+    //         ->where('status', $status)
+    //         ->orderBy('id', 'desc')
+    //         ->paginate($entries ?? 10);
         
-        return view('dashboard.srf_transaction',
-            array(
-                'sample_request_product' => $sample_request_product,
-                'status' => $status,
-                'search' => $search,
-                'entries' => $entries
-            )
-        );
-    }
+    //     return view('dashboard.srf_transaction',
+    //         array(
+    //             'sample_request_product' => $sample_request_product,
+    //             'status' => $status,
+    //             'search' => $search,
+    //             'entries' => $entries
+    //         )
+    //     );
+    // }
 
     public function salesOpenTransaction(Request $request) 
     {
