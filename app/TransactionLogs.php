@@ -8,8 +8,8 @@ class TransactionLogs extends Model
 {
     //
     protected $table = "transactionlogs";
-    CONST CREATED_AT = "CreatedDate";
-    CONST UPDATED_AT = "ModifiedDate";
+    // CONST CREATED_AT = "CreatedDate";
+    // CONST UPDATED_AT = "ModifiedDate";
 
     public function historyUser()
     {
