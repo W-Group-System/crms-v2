@@ -14,13 +14,11 @@ class RndDashboardController extends Controller
     {
         $search = $request->search;
         $entries = $request->entries;
+        $role = auth()->user()->role;
 
         $crr = CustomerRequirement::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 'RND');
-            })
             ->where('Progress', 57)
-            ->when(!empty($search), function($q)use($search) {
+            ->where(function($q)use($search) {
                 $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
                         $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
@@ -29,27 +27,38 @@ class RndDashboardController extends Controller
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
                     });
             })
-            ->get();
-        
-        $rpe = RequestProductEvaluation::where('Status', 10)
-            ->where('Progress', 57)
-            ->when(!empty($search), function($q)use($search) {
-                $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
-                    ->orWhereHas('client', function($clientQuery)use($search) {
-                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
-                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    });
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where('RefCode', 'RND');
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 'QCD-WHI');
+                }
             })
             ->get();
 
+        $rpe = collect([]);
+        if ($role->type == 'RND')
+        {
+            $rpe = RequestProductEvaluation::where('Status', 10)
+                ->where('Progress', 57)
+                ->where(function($q)use($search) {
+                    $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                        ->orWhereHas('client', function($clientQuery)use($search) {
+                            $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                            $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        });
+                })
+                ->get();
+        }
+
         $srf = SampleRequest::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 1);
-            })
             ->where('Progress', 57)
-            ->when(!empty($search), function($q)use($search) {
+            ->where(function($q)use($search) {
                 $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
                         $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
@@ -57,6 +66,16 @@ class RndDashboardController extends Controller
                     ->orWhereHas('productApplicationsId',function($applicationQuery)use($search) {
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
                     });
+            })
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where('RefCode', 1);
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 2);
+                }
             })
             ->get();
 
@@ -89,13 +108,11 @@ class RndDashboardController extends Controller
     {
         $search = $request->search;
         $entries = $request->entries;
+        $role = auth()->user()->role;
 
         $crr = CustomerRequirement::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 'RND');
-            })
             ->where('Progress', 81)
-            ->when(!empty($search), function($q)use($search) {
+            ->where(function($q)use($search) {
                 $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
                         $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
@@ -104,27 +121,38 @@ class RndDashboardController extends Controller
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
                     });
             })
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where('RefCode', 'RND');
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 'QCD-WHI');
+                }
+            })
             ->get();
         
-        $rpe = RequestProductEvaluation::where('Status', 10)
-            ->where('Progress', 81)
-            ->when(!empty($search), function($q)use($search) {
-                $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
-                    ->orWhereHas('client', function($clientQuery)use($search) {
-                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
-                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    });
-            })
-            ->get();
+        $rpe = collect([]);
+        if ($role->type == 'RND')
+        {
+            $rpe = RequestProductEvaluation::where('Status', 10)
+                ->where('Progress', 81)
+                ->where(function($q)use($search) {
+                    $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                        ->orWhereHas('client', function($clientQuery)use($search) {
+                            $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                            $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        });
+                })
+                ->get();
+        }
 
         $srf = SampleRequest::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 1);
-            })
             ->where('Progress', 81)
-            ->when(!empty($search), function($q)use($search) {
+            ->where(function($q)use($search) {
                 $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
                         $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
@@ -132,6 +160,16 @@ class RndDashboardController extends Controller
                     ->orWhereHas('productApplicationsId',function($applicationQuery)use($search) {
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
                     });
+            })
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where('RefCode', 1);
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 2);
+                }
             })
             ->get();
 
@@ -164,14 +202,12 @@ class RndDashboardController extends Controller
     {
         $search = $request->search;
         $entries = $request->entries;
+        $role = auth()->user()->role;
 
         $crr = CustomerRequirement::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 'RND');
-            })
             ->where('Progress', 30)
             ->where('ReturnToSales', 0)
-            ->when(!empty($search), function($q)use($search) {
+            ->where(function($q)use($search) {
                 $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
                         $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
@@ -180,29 +216,40 @@ class RndDashboardController extends Controller
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
                     });
             })
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where('RefCode', 'RND');
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 'QCD-WHI');
+                }
+            })
             ->get();
         
-        $rpe = RequestProductEvaluation::where('Status', 10)
-            ->where('Progress', 30)
-            ->where('ReturnToSales', 0)
-            ->when(!empty($search), function($q)use($search) {
-                $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
-                    ->orWhereHas('client', function($clientQuery)use($search) {
-                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
-                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    });
-            })
-            ->get();
+        $rpe =  collect([]);
+        if ($role->type == 'RND')
+        {
+            $rpe = RequestProductEvaluation::where('Status', 10)
+                ->where('Progress', 30)
+                ->where('ReturnToSales', 0)
+                ->where(function($q)use($search) {
+                    $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                        ->orWhereHas('client', function($clientQuery)use($search) {
+                            $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                            $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        });
+                })
+                ->get();
+        }
 
         $srf = SampleRequest::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 1);
-            })
             ->where('Progress', 30)
             ->where('ReturnToSales', 0)
-            ->when(!empty($search), function($q)use($search) {
+            ->where(function($q)use($search) {
                 $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
                         $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
@@ -210,6 +257,16 @@ class RndDashboardController extends Controller
                     ->orWhereHas('productApplicationsId',function($applicationQuery)use($search) {
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
                     });
+            })
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where('RefCode', 1);
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 2);
+                }
             })
             ->get();
 
