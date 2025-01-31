@@ -1349,6 +1349,10 @@ class DashboardController extends Controller
                 {
                     $q->where('RefCode', 'QCD-MRDC');
                 }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 'QCD-CCC');
+                }
             })
             ->count();
         
@@ -1387,6 +1391,10 @@ class DashboardController extends Controller
                 {
                     $q->where('RefCode', 4);
                 }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
+                }
             })
             ->count();
         
@@ -1412,6 +1420,10 @@ class DashboardController extends Controller
                 elseif($role->type == 'QCD-MRDC')
                 {
                     $q->where('RefCode', 'QCD-MRDC');
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 'QCD-CCC');
                 }
             })
             ->count();
@@ -1443,6 +1455,10 @@ class DashboardController extends Controller
                 {
                     $q->where('RefCode', 4);
                 }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
+                }
             })
             ->count();
 
@@ -1466,6 +1482,10 @@ class DashboardController extends Controller
                 elseif($role->type == 'QCD-MRDC')
                 {
                     $q->where('RefCode', 'QCD-MRDC');
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 'QCD-CCC');
                 }
             })
             ->count();
@@ -1499,6 +1519,10 @@ class DashboardController extends Controller
                 {
                     $q->where('RefCode', 4);
                 }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
+                }
             })
             ->count();
         
@@ -1518,9 +1542,9 @@ class DashboardController extends Controller
                 {
                     $q->where('RefCode', 'QCD-PBI');
                 }
-                elseif($role->type == 'QCD-MRDC')
+                elseif($role->type == 'QCD-CCC')
                 {
-                    $q->where('RefCode', 'QCD-MRDC');
+                    $q->where('RefCode', 'QCD-CCC');
                 }
             })
             ->count();
@@ -1551,6 +1575,10 @@ class DashboardController extends Controller
                 elseif($role->type == 'QCD-MRDC')
                 {
                     $q->where('RefCode', 4);
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
                 }
             })
             ->count();

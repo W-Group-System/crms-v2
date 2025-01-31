@@ -46,6 +46,10 @@ class OpenTransactionController extends Controller
                 {
                     $q->where('RefCode', 'QCD-MRDC');
                 }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 'QCD-CCC');
+                }
             })
             ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC') && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('crr_personnels', function($q) {
@@ -101,6 +105,10 @@ class OpenTransactionController extends Controller
                 elseif($role->type == 'QCD-MRDC')
                 {
                     $q->where('RefCode', 4);
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
                 }
             })
             ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC') && $role->name == 'Staff L1', function($q) {

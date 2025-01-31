@@ -44,6 +44,10 @@ class RndDashboardController extends Controller
                 {
                     $q->where('RefCode', 'QCD-MRDC');
                 }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 'QCD-CCC');
+                }
             })
             ->get();
 
@@ -90,7 +94,11 @@ class RndDashboardController extends Controller
                 }
                 elseif($role->type == 'QCD-MRDC')
                 {
-                    $q->where('RefCode', 3);
+                    $q->where('RefCode', 4);
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
                 }
             })
             ->get();
@@ -154,6 +162,10 @@ class RndDashboardController extends Controller
                 {
                     $q->where('RefCode', 'QCD-MRDC');
                 }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 'QCD-CCC');
+                }
             })
             ->get();
         
@@ -201,6 +213,10 @@ class RndDashboardController extends Controller
                 elseif($role->type == 'QCD-MRDC')
                 {
                     $q->where('RefCode', 4);
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
                 }
             })
             ->get();
@@ -265,6 +281,10 @@ class RndDashboardController extends Controller
                 {
                     $q->where('RefCode', 'QCD-MRDC');
                 }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 'QCD-CCC');
+                }
             })
             ->get();
         
@@ -314,6 +334,10 @@ class RndDashboardController extends Controller
                 elseif($role->type == 'QCD-MRDC')
                 {
                     $q->where('RefCode', 4);
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
                 }
             })
             ->get();
