@@ -36,6 +36,10 @@ class RndDashboardController extends Controller
                 {
                     $q->where('RefCode', 'QCD-WHI');
                 }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
+                }
             })
             ->get();
 
@@ -75,6 +79,10 @@ class RndDashboardController extends Controller
                 elseif($role->type == 'QCD-WHI')
                 {
                     $q->where('RefCode', 2);
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
                 }
             })
             ->get();
@@ -130,6 +138,10 @@ class RndDashboardController extends Controller
                 {
                     $q->where('RefCode', 'QCD-WHI');
                 }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
+                }
             })
             ->get();
         
@@ -169,6 +181,10 @@ class RndDashboardController extends Controller
                 elseif($role->type == 'QCD-WHI')
                 {
                     $q->where('RefCode', 2);
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
                 }
             })
             ->get();
@@ -225,6 +241,10 @@ class RndDashboardController extends Controller
                 {
                     $q->where('RefCode', 'QCD-WHI');
                 }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
+                }
             })
             ->get();
         
@@ -266,6 +286,10 @@ class RndDashboardController extends Controller
                 elseif($role->type == 'QCD-WHI')
                 {
                     $q->where('RefCode', 2);
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
                 }
             })
             ->get();

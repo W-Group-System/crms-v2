@@ -1327,7 +1327,7 @@ class DashboardController extends Controller
 
         // Open Transaction Count
         $crr = CustomerRequirement::where('Status', 10)
-            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI') && $role->name == 'Staff L1', function($q) {
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI') && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('crr_personnels', function($q) {
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
@@ -1340,6 +1340,10 @@ class DashboardController extends Controller
                 elseif($role->type == 'QCD-WHI')
                 {
                     $q->where('RefCode', 'QCD-WHI');
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
                 }
             })
             ->count();
@@ -1357,7 +1361,7 @@ class DashboardController extends Controller
         }
 
         $srf = SampleRequest::where('Status', 10)
-            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI') && $role->name == 'Staff L1', function($q) {
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI') && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('srf_personnel', function($q) {
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
@@ -1370,6 +1374,10 @@ class DashboardController extends Controller
                 elseif($role->type == 'QCD-WHI')
                 {
                     $q->where('RefCode', 2);
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
                 }
             })
             ->count();
@@ -1388,6 +1396,10 @@ class DashboardController extends Controller
                 elseif($role->type == 'QCD-WHI')
                 {
                     $q->where('RefCode', 'QCD-WHI');
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
                 }
             })
             ->count();
@@ -1411,6 +1423,10 @@ class DashboardController extends Controller
                 {
                     $q->where('RefCode', 2);
                 }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
+                }
             })
             ->count();
 
@@ -1426,6 +1442,10 @@ class DashboardController extends Controller
                 elseif($role->type == 'QCD-WHI')
                 {
                     $q->where('RefCode', 'QCD-WHI');
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
                 }
             })
             ->count();
@@ -1451,6 +1471,10 @@ class DashboardController extends Controller
                 {
                     $q->where('RefCode', 2);
                 }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
+                }
             })
             ->count();
         
@@ -1465,6 +1489,10 @@ class DashboardController extends Controller
                 elseif($role->type == 'QCD-WHI')
                 {
                     $q->where('RefCode', 'QCD-WHI');
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
                 }
             })
             ->count();
@@ -1482,11 +1510,15 @@ class DashboardController extends Controller
             ->when($role, function($q)use($role) {
                 if ($role->type == 'RND')
                 {
-                    $q->where('RefCode', 'RND');
+                    $q->where('RefCode',1);
                 }
                 elseif($role->type == 'QCD-WHI')
                 {
-                    $q->where('RefCode', 'QCD-WHI');
+                    $q->where('RefCode',2);
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
                 }
             })
             ->count();

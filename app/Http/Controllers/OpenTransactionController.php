@@ -38,8 +38,12 @@ class OpenTransactionController extends Controller
                 {
                     $q->where('RefCode', 'QCD-WHI');
                 }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
+                }
             })
-            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI') && $role->name == 'Staff L1', function($q) {
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI') && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('crr_personnels', function($q) {
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
@@ -68,10 +72,6 @@ class OpenTransactionController extends Controller
         }
 
         $srf = SampleRequest::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 1)
-                    ->orWhere('RefCode',2);
-            })
             ->where(function($q)use($search) {
                 $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
@@ -90,14 +90,18 @@ class OpenTransactionController extends Controller
                 {
                     $q->where('RefCode', 2);
                 }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
+                }
             })
-            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI') && $role->name == 'Staff L1', function($q) {
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI') && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('srf_personnel', function($q) {
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
             })
             ->get();
-
+        
         $sortedResults = $crr
         ->concat($rpe)
         ->concat($srf);
