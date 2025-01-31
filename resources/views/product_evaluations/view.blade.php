@@ -1039,7 +1039,14 @@
                                 @foreach ($orderedCombinedLogs as $combinedLog)
                                     <tr>
                                         <td>{{ $combinedLog->CreatedDate }}</td>
-                                        <td>{{ $combinedLog->full_name }}</td>
+                                        <td>
+                                            @if($combinedLog->historyUser)
+                                            {{$combinedLog->historyUser->full_name}}
+                                            @elseif($combinedLog->user)
+                                            {{$combinedLog->user->full_name}}
+                                            @endif
+                                        </td>
+                                        {{-- <td>{{ $combinedLog->full_name }}</td> --}}
                                         <td>{{ $combinedLog->Details }}</td>
                                     </tr>
                                 @endforeach
