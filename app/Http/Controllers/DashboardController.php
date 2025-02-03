@@ -949,11 +949,12 @@ class DashboardController extends Controller
         $total_initial_count= 0;
         $total_new_request_count = 0;
         $total_final_count = 0;
+        $total_close_transaction = 0;
 
         // Open Transaction Count
         $crr = CustomerRequirement::where('Status', 10)
             ->where(function($q) {
-                $q->where('RefCode', 'RND');
+                $q->where('RefCode', 'RND')->orWhereNull('RefCode');
             })
             ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('crr_personnels', function($q) {
@@ -987,7 +988,7 @@ class DashboardController extends Controller
         // Initial Review Count 
         $initial_crr = CustomerRequirement::where('Status', 10)
             ->where(function($q) {
-                $q->where('RefCode', 'RND');
+                $q->where('RefCode', 'RND')->orWhereNull('RefCode');
             })
             ->where('Progress', 57)
             ->count();
@@ -1007,7 +1008,7 @@ class DashboardController extends Controller
         // New Request Count
         $new_crr = CustomerRequirement::where('Status', 10)
             ->where(function($q) {
-                $q->where('RefCode', 'RND');
+                $q->where('RefCode', 'RND')->orWhereNull('RefCode');
             })
             ->where('Progress', 30)
             ->where('ReturnToSales', 0)
@@ -1029,7 +1030,7 @@ class DashboardController extends Controller
         // Final Review Count
         $final_crr = CustomerRequirement::where('Status', 10)
             ->where(function($q) {
-                $q->where('RefCode', 'RND');
+                $q->where('RefCode', 'RND')->orWhereNull('RefCode');
             })
             ->where('Progress', 81)
             ->count();
@@ -1045,12 +1046,47 @@ class DashboardController extends Controller
             ->where('Progress', 81)
             ->count();
 
+        // Close Transaction
+        $crrCloseTransaction = CustomerRequirement::where('Status', 30)
+            ->where(function($q) {
+                $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+            })
+            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+                $q->whereHas('crr_personnels', function($q) {
+                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                });
+            })
+            ->count();
+        
+        $rpeCloseTransaction = collect([]);
+        if ($role->type == 'RND')
+        {
+            $rpeCloseTransaction = RequestProductEvaluation::where('Status', 30)
+                ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+                    $q->whereHas('rpe_personnels', function($q) {
+                        $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                    });
+                })
+                ->count();
+        }
+
+        $srfCloseTransaction = SampleRequest::where('Status', 30)
+            ->where(function($q) {
+                $q->where('RefCode', 1);
+            })
+            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+                $q->whereHas('srf_personnel', function($q) {
+                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                });
+            })
+            ->count();
+
         $total_open_transaction = $crr + $rpe + $srf;
         $total_product_count = $products;
         $total_initial_count = $initial_crr + $initial_rpe + $initial_srf;
         $total_new_request_count = $new_crr + $new_rpe + $new_srf;
         $total_final_count = $final_crr + $final_rpe + $final_srf;
-
+        $total_close_transaction = $crrCloseTransaction + $rpeCloseTransaction + $srfCloseTransaction;
         // if (auth()->user()->role->type == 'RND' && (auth()->user()->role->name == 'Staff L2' || auth()->user()->role->name == 'Department Admin'))
         // {
         // }
@@ -1085,7 +1121,7 @@ class DashboardController extends Controller
         //     $user_transaction[] = $object;
         // }
 
-        return view('dashboard.rnd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction'));
+        return view('dashboard.rnd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction','total_close_transaction'));
     }
 
     public function qcdIndex()

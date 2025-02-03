@@ -38,6 +38,9 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('initial-review', 'RndDashboardController@initialReview');
         Route::get('rnd-new-request', 'RndDashboardController@rndNewRequest');
         Route::get('final-review', 'RndDashboardController@finalReview');
+        Route::get('close-transaction', 'RndDashboardController@closeTransaction');
+        Route::get('export-open-transaction', 'RndDashboardController@exportOpenTransaction');
+        Route::get('export-close-transaction', 'RndDashboardController@exportCloseTransaction');
         // Route::get('open-rpe-transaction', 'OpenTransactionController@rpe')->name('open_rpe_transactions');
         // Route::get('open-srf-transaction', 'OpenTransactionController@srf')->name('open_srf_transactions');
         // Separate routes for RND and LS users
