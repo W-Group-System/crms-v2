@@ -1054,7 +1054,7 @@ class DashboardController extends Controller
         // if (auth()->user()->role->type == 'RND' && (auth()->user()->role->name == 'Staff L2' || auth()->user()->role->name == 'Department Admin'))
         // {
         // }
-        $users = User::with('role','crr_personnels','rpe_personnels','srf_personnel')
+        $users = User::with('role')
             ->whereHas('role', function($q)use($role) {
                 $q->where('type', $role->type);
             })
@@ -1066,15 +1066,15 @@ class DashboardController extends Controller
         {
             $object = new \StdClass;
             $object->rnd = $user->full_name;
-            $crr_personnel = CustomerRequirement::whereHas('crr_personnels', function($q)use($user) {
+            $crr_personnel = CustomerRequirement::with('crr_personnels')->whereHas('crr_personnels', function($q)use($user) {
                     $q->where('PersonnelUserId', $user->user_id)->orWhere('PersonnelUserId', $user->id);
                 })
                 ->count();
-            $rpe_personnel = RequestProductEvaluation::whereHas('rpe_personnels', function($q)use($user) {
+            $rpe_personnel = RequestProductEvaluation::with('rpe_personnels')->whereHas('rpe_personnels', function($q)use($user) {
                     $q->where('PersonnelUserId', $user->user_id)->orWhere('PersonnelUserId', $user->id);
                 })
                 ->count();
-            $srf_personnel = SampleRequest::whereHas('srf_personnel', function($q)use($user) {
+            $srf_personnel = SampleRequest::with('srf_personnel')->whereHas('srf_personnel', function($q)use($user) {
                     $q->where('PersonnelUserId', $user->user_id)->orWhere('PersonnelUserId', $user->id);
                 })
                 ->count();
