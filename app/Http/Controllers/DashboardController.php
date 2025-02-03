@@ -939,7 +939,7 @@ class DashboardController extends Controller
 
     public function RNDindex()
     {
-        ini_set('max_execution_time', 180);
+        ini_set('max_execution_time', 300);
 
         $role = optional(Auth::user())->role;
 
