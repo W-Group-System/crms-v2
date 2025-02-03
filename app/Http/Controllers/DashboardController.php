@@ -1054,36 +1054,36 @@ class DashboardController extends Controller
         // if (auth()->user()->role->type == 'RND' && (auth()->user()->role->name == 'Staff L2' || auth()->user()->role->name == 'Department Admin'))
         // {
         // }
-        $users = User::with('role')
-            ->whereHas('role', function($q)use($role) {
-                $q->where('type', $role->type);
-            })
-            ->where('is_active', 1)
-            ->get();
+        // $users = User::with('role')
+        //     ->whereHas('role', function($q)use($role) {
+        //         $q->where('type', $role->type);
+        //     })
+        //     ->where('is_active', 1)
+        //     ->get();
 
         $user_transaction = [];
-        foreach($users as $user)
-        {
-            $object = new \StdClass;
-            $object->rnd = $user->full_name;
-            $crr_personnel = CustomerRequirement::with('crr_personnels')->whereHas('crr_personnels', function($q)use($user) {
-                    $q->where('PersonnelUserId', $user->user_id)->orWhere('PersonnelUserId', $user->id);
-                })
-                ->count();
-            $rpe_personnel = RequestProductEvaluation::with('rpe_personnels')->whereHas('rpe_personnels', function($q)use($user) {
-                    $q->where('PersonnelUserId', $user->user_id)->orWhere('PersonnelUserId', $user->id);
-                })
-                ->count();
-            $srf_personnel = SampleRequest::with('srf_personnel')->whereHas('srf_personnel', function($q)use($user) {
-                    $q->where('PersonnelUserId', $user->user_id)->orWhere('PersonnelUserId', $user->id);
-                })
-                ->count();
+        // foreach($users as $user)
+        // {
+        //     $object = new \StdClass;
+        //     $object->rnd = $user->full_name;
+        //     $crr_personnel = CustomerRequirement::with('crr_personnels')->whereHas('crr_personnels', function($q)use($user) {
+        //             $q->where('PersonnelUserId', $user->user_id)->orWhere('PersonnelUserId', $user->id);
+        //         })
+        //         ->count();
+        //     $rpe_personnel = RequestProductEvaluation::with('rpe_personnels')->whereHas('rpe_personnels', function($q)use($user) {
+        //             $q->where('PersonnelUserId', $user->user_id)->orWhere('PersonnelUserId', $user->id);
+        //         })
+        //         ->count();
+        //     $srf_personnel = SampleRequest::with('srf_personnel')->whereHas('srf_personnel', function($q)use($user) {
+        //             $q->where('PersonnelUserId', $user->user_id)->orWhere('PersonnelUserId', $user->id);
+        //         })
+        //         ->count();
 
-            $object->crr_count = $crr_personnel;
-            $object->rpe_count = $rpe_personnel;
-            $object->srf_count = $srf_personnel;
-            $user_transaction[] = $object;
-        }
+        //     $object->crr_count = $crr_personnel;
+        //     $object->rpe_count = $rpe_personnel;
+        //     $object->srf_count = $srf_personnel;
+        //     $user_transaction[] = $object;
+        // }
 
         return view('dashboard.rnd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction'));
     }
