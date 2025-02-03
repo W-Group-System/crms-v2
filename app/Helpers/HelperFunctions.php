@@ -430,11 +430,17 @@ function checkIfItsSalesDept($department)
 
 function rndManager($role)
 {
-    if (($role->department_id == 15 || $role->id == 14 || $role->department_id == 42 || $role->department_id == 79 || $role->department_id == 20) &&( $role->name == "Department Admin" || $role->name == "Staff L2"))
+    // if (($role->department_id == 15 || $role->id == 14 || $role->department_id == 42 || $role->department_id == 79 || $role->department_id == 20) &&( $role->name == "Department Admin" || $role->name == "Staff L2"))
+    // {
+    //     return true;
+    // }
+    // dd($role);
+
+    if (($role->type == 'RND' || str_contains($role->type, 'QCD')) && ($role->name == 'Department Admin' || $role->name == "Staff L2"))
     {
         return true;
     }
-    // dd($role);
+
     return false;
 }
 
