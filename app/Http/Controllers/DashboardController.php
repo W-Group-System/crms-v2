@@ -940,6 +940,7 @@ class DashboardController extends Controller
     public function RNDindex()
     {
         ini_set('max_execution_time', 300);
+        set_time_limit(300);
 
         $role = optional(Auth::user())->role;
 
@@ -1053,7 +1054,8 @@ class DashboardController extends Controller
         // if (auth()->user()->role->type == 'RND' && (auth()->user()->role->name == 'Staff L2' || auth()->user()->role->name == 'Department Admin'))
         // {
         // }
-        $users = User::whereHas('role', function($q)use($role) {
+        $users = User::with('role','crr_personnels','rpe_personnels','srf_personnel')
+            ->whereHas('role', function($q)use($role) {
                 $q->where('type', $role->type);
             })
             ->where('is_active', 1)
