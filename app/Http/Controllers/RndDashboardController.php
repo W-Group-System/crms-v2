@@ -33,7 +33,9 @@ class RndDashboardController extends Controller
             ->when($role, function($q)use($role) {
                 if ($role->type == 'RND')
                 {
-                    $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+                    $q->where(function($q) {
+                        $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+                    });
                 }
                 elseif($role->type == 'QCD-WHI')
                 {
@@ -151,7 +153,9 @@ class RndDashboardController extends Controller
             ->when($role, function($q)use($role) {
                 if ($role->type == 'RND')
                 {
-                    $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+                    $q->where(function($q) {
+                        $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+                    });
                 }
                 elseif($role->type == 'QCD-WHI')
                 {
@@ -270,7 +274,9 @@ class RndDashboardController extends Controller
             ->when($role, function($q)use($role) {
                 if ($role->type == 'RND')
                 {
-                    $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+                    $q->where(function($q) {
+                        $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+                    });
                 }
                 elseif($role->type == 'QCD-WHI')
                 {
@@ -385,6 +391,12 @@ class RndDashboardController extends Controller
                     })
                     ->orWhereHas('product_application',function($applicationQuery)use($search) {
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('crr_personnels.crrPersonnelByUserId',function($personnelQuery)use($search) {
+                        $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('crr_personnels.crrPersonnelById',function($personnelQuery)use($search) {
+                        $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
                     });
             })
             ->when($role, function($q)use($role) {
