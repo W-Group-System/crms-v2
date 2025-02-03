@@ -20,10 +20,7 @@ class OpenTransactionController extends Controller
         $role = auth()->user()->role;
 
         $crr = CustomerRequirement::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 'RND');
-            })
-            ->when(!empty($search), function($q)use($search) {
+            ->where( function($q)use($search) {
                 $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
                         $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
@@ -32,35 +29,58 @@ class OpenTransactionController extends Controller
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
                     });
             })
-            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where('RefCode', 'RND');
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 'QCD-WHI');
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
+                }
+                elseif($role->type == 'QCD-MRDC')
+                {
+                    $q->where('RefCode', 'QCD-MRDC');
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 'QCD-CCC');
+                }
+            })
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC') && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('crr_personnels', function($q) {
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
             })
             ->get();
         
-        $rpe = RequestProductEvaluation::where('Status', 10)
-            ->when(!empty($search), function($q)use($search) {
-                $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
-                    ->orWhereHas('client', function($clientQuery)use($search) {
-                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhereHas('product_application',function($applicationQuery)use($search) {
-                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+        $rpe = collect([]);
+        if ($role->type == 'RND')
+        {
+            $rpe = RequestProductEvaluation::where('Status', 10)
+                ->where(function($q)use($search) {
+                    $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                        ->orWhereHas('client', function($clientQuery)use($search) {
+                            $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                            $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        });
+                })
+                ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+                    $q->whereHas('rpe_personnels', function($q) {
+                        $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                     });
-            })
-            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
-                $q->whereHas('rpe_personnels', function($q) {
-                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
-                });
-            })
-            ->get();
+                })
+                ->get();
+        }
 
         $srf = SampleRequest::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 1);
-            })
-            ->when(!empty($search), function($q)use($search) {
+            ->where(function($q)use($search) {
                 $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
                         $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
@@ -69,13 +89,35 @@ class OpenTransactionController extends Controller
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
                     });
             })
-            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where('RefCode', 1);
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 2);
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
+                }
+                elseif($role->type == 'QCD-MRDC')
+                {
+                    $q->where('RefCode', 4);
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
+                }
+            })
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC') && $role->name == 'Staff L1', function($q) {
                 $q->whereHas('srf_personnel', function($q) {
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
             })
             ->get();
-
+        
         $sortedResults = $crr
         ->concat($rpe)
         ->concat($srf);

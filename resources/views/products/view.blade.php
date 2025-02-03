@@ -511,6 +511,7 @@
                                 <tr>
                                     <th>Type</th>
                                     <th>Transaction</th>
+                                    <th>Client</th>
                                     <th>Disposition Remarks</th>
                                 </tr>
                             </thead>
@@ -521,6 +522,9 @@
                                             <td>Customer Requirement</td>
                                             <td>
                                                 <a href="{{url('view_customer_requirement/'.$cr->id.'/'.$cr->CrrNumber)}}" target="_blank">{{$cr->CrrNumber}}</a>
+                                            </td>
+                                            <td>
+                                                <a href="{{url('view_client/'.$cr->client->id)}}">{{$cr->client->Name}}</a>
                                             </td>
                                             <td>N/A</td>
                                         </tr>
@@ -535,6 +539,9 @@
                                                     {{$rps->RpeNumber}}
                                                 </a>
                                             </td>
+                                            <td>
+                                                <a href="{{url('view_client/'.$rps->client->id)}}">{{$rps->client->Name}}</a>
+                                            </td>
                                             <td>N/A</td>
                                         </tr>
                                     @endforeach
@@ -547,6 +554,9 @@
                                                 <a href="{{url('samplerequest/view/'.$item->sampleRequest->Id.'/'.$item->sampleRequest->SrfNumber)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
+                                            </td>
+                                            <td>
+                                                <a href="{{url('view_client/'.$item->sampleRequest->client->id)}}">{{$item->sampleRequest->client->Name}}</a>
                                             </td>
                                             <td>
                                                 {{-- @if($item->DispositionRejectionDescription != null)

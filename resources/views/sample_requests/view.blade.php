@@ -51,9 +51,15 @@
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @elseif(request('origin') == 'open_transactions')
-                    <a href="{{ url('/sales_open_transactions') }}" class="btn btn-md btn-outline-secondary">
-                        <i class="icon-arrow-left"></i>&nbsp;Back
-                    </a> 
+                        @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == "IS")
+                            <a href="{{ url('/sales_open_transactions') }}" class="btn btn-md btn-outline-secondary">
+                                <i class="icon-arrow-left"></i>&nbsp;Back
+                            </a> 
+                        @else
+                            <a href="{{ url('/open-transaction') }}" class="btn btn-md btn-outline-secondary">
+                                <i class="icon-arrow-left"></i>&nbsp;Back
+                            </a> 
+                        @endif
                     @elseif(request('origin') == 'returned_transactions')
                     <a href="{{ url('/returned_transactions') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
@@ -1354,7 +1360,13 @@
                             <tbody>
                                 @foreach ($orderedCombinedLogs as $combinedLog)
                                     <tr>
-                                        <td>{{ $combinedLog->CreatedDate }}</td>
+                                        <td>
+                                            @if(empty($combinedLog->CreatedDate))
+                                            {{date('Y-m-d H:i:s', strtotime($combinedLog->created_at))}}
+                                            @else
+                                            {{ date('Y-m-d H:i:s', strtotime($combinedLog->CreatedDate)) }}
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($combinedLog->historyUser)
                                             {{$combinedLog->historyUser->full_name}}

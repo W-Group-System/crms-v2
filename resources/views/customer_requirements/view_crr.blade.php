@@ -29,9 +29,15 @@
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
                     @elseif(request('origin') == 'open_transactions')
-                    <a href="{{ url('/sales_open_transactions') }}" class="btn btn-md btn-outline-secondary">
-                        <i class="icon-arrow-left"></i>&nbsp;Back
-                    </a> 
+                        @if(auth()->user()->role->type == "LS" || auth()->user()->role->type == "IS")
+                            <a href="{{ url('/sales_open_transactions') }}" class="btn btn-md btn-outline-secondary">
+                                <i class="icon-arrow-left"></i>&nbsp;Back
+                            </a> 
+                        @else
+                            <a href="{{ url('/open-transaction') }}" class="btn btn-md btn-outline-secondary">
+                                <i class="icon-arrow-left"></i>&nbsp;Back
+                            </a> 
+                        @endif
                     @elseif(request('origin') == 'returned_transactions')
                     <a href="{{ url('/returned_transactions') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back

@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 grid-margin stretch-card">
+        {{-- <div class="col-md-6 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
                     <form class="form-horizontal">
@@ -40,9 +40,9 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div> --}}
         @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-WHI'))
-            <div class="col-md-3 grid-margin transparent">
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Initial Review</p>
@@ -117,8 +117,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
+            </div> --}}
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-dark-blue">
                     <div class="card-body">
                         <p class="card-title text-white">New Request</p>
@@ -196,9 +196,192 @@
                         </div>
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-list text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                        <p class="m-0 text-right text-white">Open Transactions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {{-- <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-success">
+                            <div class="card-body bg-success">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-widget text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">0</h1>
+                                        <p class="m-0 text-right text-white">New Product</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('new_products')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-success">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div> --}}
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-check-box text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
+                                        <p class="m-0 text-right text-white">Initial Review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('initial-review')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-warning">
+                            <div class="card-body bg-warning">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-view-list-alt text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
+                                        <p class="m-0 text-right text-white">New Request</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-warning">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-warning"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-check-box text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
+                                        <p class="m-0 text-right text-white">Final Review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('final-review')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>CRR</th>
+                                        <th>RPE</th>
+                                        <th>SRF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(count($user_transaction) > 0)
+                                        @foreach ($user_transaction as $transactions)
+                                            <tr>
+                                                <td>{{$transactions->rnd}}</td>
+                                                <td>{{$transactions->crr_count}}</td>
+                                                <td>{{$transactions->rpe_count}}</td>
+                                                <td>{{$transactions->srf_count}}</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="4" class="text-center">No data available.</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-WHI'))
-            <div class="col-md-3 grid-margin transparent">
+            {{-- <div class="col-lg-6 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Open Transactions</p>
@@ -244,8 +427,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
+            </div> --}}
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-light-blue">
                     <div class="card-body">
                         <p class="card-title text-white">Closed Transactions</p>
@@ -291,11 +474,83 @@
                         </div>
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-lg-6">
+                <div class="card border border-1 border-primary rounded-0">
+                    <div class="card-header bg-primary rounded-0">
+                        <p class="m-0 text-white font-weight-bold">Account Information</p>
+                    </div>
+                    <div class="card-body">
+                        <form class="form-horizontal">
+                            {{-- <h4 class="d-flex justify-content-between font-weight-bold mb-4">Account Information</h4> --}}
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>System Role</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{ auth()->user()->role->name ?? 'No Role Assigned' }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>Company</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{auth()->user()->company->name}}</label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>Department</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{auth()->user()->department->name}}</label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>Username</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{auth()->user()->username}}</label>
+                                </div>
+                            </div>
+                            <!-- <div class="form-group row mb-2" style="margin-top: 2.5em">
+                                <div class="col-md-12">
+                                    <a href="{{ route('change_password') }}" class="btn btn-info">
+                                        <i style="color: #fff" class="ti ti-unlock"></i>&nbsp;Change Password
+                                    </a>
+                                </div>
+                            </div> -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-list text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                <p class="m-0 text-right text-white">Open Transactions</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
         @endif
 
         @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-PBI'))
-            <div class="col-md-3 grid-margin transparent">
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Initial Review</p>
@@ -370,8 +625,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
+            </div> --}}
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-dark-blue">
                     <div class="card-body">
                         <p class="card-title text-white">New Request</p>
@@ -446,9 +701,192 @@
                         </div>
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-list text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                        <p class="m-0 text-right text-white">Open Transactions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {{-- <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-success">
+                            <div class="card-body bg-success">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-widget text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">0</h1>
+                                        <p class="m-0 text-right text-white">New Product</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('new_products')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-success">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div> --}}
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-check-box text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
+                                        <p class="m-0 text-right text-white">Initial Review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('initial-review')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-warning">
+                            <div class="card-body bg-warning">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-view-list-alt text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
+                                        <p class="m-0 text-right text-white">New Request</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-warning">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-warning"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-check-box text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
+                                        <p class="m-0 text-right text-white">Final Review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('final-review')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>CRR</th>
+                                        <th>RPE</th>
+                                        <th>SRF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(count($user_transaction) > 0)
+                                        @foreach ($user_transaction as $transactions)
+                                            <tr>
+                                                <td>{{$transactions->rnd}}</td>
+                                                <td>{{$transactions->crr_count}}</td>
+                                                <td>{{$transactions->rpe_count}}</td>
+                                                <td>{{$transactions->srf_count}}</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="4" class="text-center">No data available.</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-PBI'))
-            <div class="col-md-3 grid-margin transparent">
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Open Transactions</p>
@@ -494,8 +932,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
+            </div> --}}
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-light-blue">
                     <div class="card-body">
                         <p class="card-title text-white">Closed Transactions</p>
@@ -541,11 +979,83 @@
                         </div>
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-lg-6">
+                <div class="card border border-1 border-primary rounded-0">
+                    <div class="card-header bg-primary rounded-0">
+                        <p class="m-0 text-white font-weight-bold">Account Information</p>
+                    </div>
+                    <div class="card-body">
+                        <form class="form-horizontal">
+                            {{-- <h4 class="d-flex justify-content-between font-weight-bold mb-4">Account Information</h4> --}}
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>System Role</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{ auth()->user()->role->name ?? 'No Role Assigned' }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>Company</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{auth()->user()->company->name}}</label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>Department</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{auth()->user()->department->name}}</label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>Username</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{auth()->user()->username}}</label>
+                                </div>
+                            </div>
+                            <!-- <div class="form-group row mb-2" style="margin-top: 2.5em">
+                                <div class="col-md-12">
+                                    <a href="{{ route('change_password') }}" class="btn btn-info">
+                                        <i style="color: #fff" class="ti ti-unlock"></i>&nbsp;Change Password
+                                    </a>
+                                </div>
+                            </div> -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-list text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                <p class="m-0 text-right text-white">Open Transactions</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
         @endif
 
         @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-MRDC'))
-            <div class="col-md-3 grid-margin transparent">
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Initial Review</p>
@@ -620,8 +1130,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
+            </div> --}}
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-dark-blue">
                     <div class="card-body">
                         <p class="card-title text-white">New Request</p>
@@ -696,9 +1206,192 @@
                         </div>
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-list text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                        <p class="m-0 text-right text-white">Open Transactions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {{-- <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-success">
+                            <div class="card-body bg-success">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-widget text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">0</h1>
+                                        <p class="m-0 text-right text-white">New Product</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('new_products')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-success">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div> --}}
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-check-box text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
+                                        <p class="m-0 text-right text-white">Initial Review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('initial-review')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-warning">
+                            <div class="card-body bg-warning">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-view-list-alt text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
+                                        <p class="m-0 text-right text-white">New Request</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-warning">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-warning"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-check-box text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
+                                        <p class="m-0 text-right text-white">Final Review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('final-review')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>CRR</th>
+                                        <th>RPE</th>
+                                        <th>SRF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(count($user_transaction) > 0)
+                                        @foreach ($user_transaction as $transactions)
+                                            <tr>
+                                                <td>{{$transactions->rnd}}</td>
+                                                <td>{{$transactions->crr_count}}</td>
+                                                <td>{{$transactions->rpe_count}}</td>
+                                                <td>{{$transactions->srf_count}}</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="4" class="text-center">No data available.</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-MRDC'))
-            <div class="col-md-3 grid-margin transparent">
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Open Transactions</p>
@@ -744,8 +1437,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
+            </div> --}}
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-light-blue">
                     <div class="card-body">
                         <p class="card-title text-white">Closed Transactions</p>
@@ -791,11 +1484,83 @@
                         </div>
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-lg-6">
+                <div class="card border border-1 border-primary rounded-0">
+                    <div class="card-header bg-primary rounded-0">
+                        <p class="m-0 text-white font-weight-bold">Account Information</p>
+                    </div>
+                    <div class="card-body">
+                        <form class="form-horizontal">
+                            {{-- <h4 class="d-flex justify-content-between font-weight-bold mb-4">Account Information</h4> --}}
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>System Role</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{ auth()->user()->role->name ?? 'No Role Assigned' }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>Company</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{auth()->user()->company->name}}</label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>Department</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{auth()->user()->department->name}}</label>
+                                </div>
+                            </div>
+                            <div class="form-group row mb-2">
+                                <label class="col-sm-3 col-form-label"><b>Username</b></label>
+                                <div class="col-sm-9">
+                                    <label>{{auth()->user()->username}}</label>
+                                </div>
+                            </div>
+                            <!-- <div class="form-group row mb-2" style="margin-top: 2.5em">
+                                <div class="col-md-12">
+                                    <a href="{{ route('change_password') }}" class="btn btn-info">
+                                        <i style="color: #fff" class="ti ti-unlock"></i>&nbsp;Change Password
+                                    </a>
+                                </div>
+                            </div> -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-list text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                <p class="m-0 text-right text-white">Open Transactions</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
         @endif
 
         @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-CCC'))
-            <div class="col-md-3 grid-margin transparent">
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Initial Review</p>
@@ -870,8 +1635,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
+            </div> --}}
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-dark-blue">
                     <div class="card-body">
                         <p class="card-title text-white">New Request</p>
@@ -946,9 +1711,192 @@
                         </div>
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-list text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                        <p class="m-0 text-right text-white">Open Transactions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    {{-- <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-success">
+                            <div class="card-body bg-success">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-widget text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">0</h1>
+                                        <p class="m-0 text-right text-white">New Product</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('new_products')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-success">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div> --}}
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-check-box text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
+                                        <p class="m-0 text-right text-white">Initial Review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('initial-review')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-warning">
+                            <div class="card-body bg-warning">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-view-list-alt text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
+                                        <p class="m-0 text-right text-white">New Request</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-warning">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-warning"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2">
+                        <div class="card rounded-0 border border-1 border-primary">
+                            <div class="card-body bg-primary">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h1 class="m-0">
+                                            <i class="ti-check-box text-white"></i>
+                                        </h1>
+                                    </div>
+                                    <div class="col-6">
+                                        <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
+                                        <p class="m-0 text-right text-white">Final Review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('final-review')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-primary">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>CRR</th>
+                                        <th>RPE</th>
+                                        <th>SRF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(count($user_transaction) > 0)
+                                        @foreach ($user_transaction as $transactions)
+                                            <tr>
+                                                <td>{{$transactions->rnd}}</td>
+                                                <td>{{$transactions->crr_count}}</td>
+                                                <td>{{$transactions->rpe_count}}</td>
+                                                <td>{{$transactions->srf_count}}</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="4" class="text-center">No data available.</td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-CCC'))
-            <div class="col-md-3 grid-margin transparent">
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
                         <p class="card-title text-white">Open Transactions</p>
@@ -994,8 +1942,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3 grid-margin transparent">
+            </div> --}}
+            {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-light-blue">
                     <div class="card-body">
                         <p class="card-title text-white">Closed Transactions</p>
@@ -1041,7 +1989,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         @endif
 
         {{-- @elseif ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-PBI'))
@@ -1463,7 +2411,7 @@
             </div>
         @endif --}}
     </div>
-    <div class="row">
+    {{-- <div class="row">
         @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'QCD-WHI'))
             <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
@@ -1781,7 +2729,7 @@
                 </div>
             </div>
         @endif
-    </div>
+    </div> --}}
 </div>
 
 @endsection
