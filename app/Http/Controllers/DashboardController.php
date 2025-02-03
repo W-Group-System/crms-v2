@@ -939,6 +939,8 @@ class DashboardController extends Controller
 
     public function RNDindex()
     {
+        ini_set('max_execution_time', 180);
+
         $role = optional(Auth::user())->role;
 
         $total_open_transaction = 0;
