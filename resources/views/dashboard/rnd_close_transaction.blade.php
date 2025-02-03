@@ -5,12 +5,12 @@
     <div class="card border border-1 border-primary rounded-0">
         
         <div class="card-header bg-primary">
-            <p class="m-0 font-weight-bold text-white">Open Transactions</p>
+            <p class="m-0 font-weight-bold text-white">Closed Transactions</p>
         </div>
         <div class="card-body">
             <div class="mb-3">
                 <a href="#" id="copy_btn" class="btn btn-md btn-outline-info">Copy</a>
-                <form method="GET" action="{{url('export-open-transaction')}}" class="d-inline-block">
+                <form method="GET" action="{{url('export-close-transaction')}}" class="d-inline-block">
                     {{-- <input type="hidden" name="open" value="{{$open}}">
                     <input type="hidden" name="close" value="{{$close}}"> --}}
                     <button type="submit" class="btn btn-outline-success">Export</button>
@@ -151,11 +151,11 @@
                                 <tr>
                                     <td>
                                         @if(str_contains($transaction->CrrNumber, 'CRR'))
-                                        <a href="{{url('view_customer_requirement/'.$id.'/'.$transaction_number.'/?origin=open_transactions')}}">
+                                        <a href="{{url('view_customer_requirement/'.$id.'/'.$transaction_number.'/?origin=close_transactions')}}">
                                         @elseif(str_contains($transaction->RpeNumber, 'RPE'))
-                                        <a href="{{url('product_evaluation/view/'.$id.'/'.$transaction_number.'/?origin=open_transactions')}}">
+                                        <a href="{{url('product_evaluation/view/'.$id.'/'.$transaction_number.'/?origin=close_transactions')}}">
                                         @elseif(str_contains($transaction->SrfNumber, 'SRF'))
-                                        <a href="{{url('samplerequest/view/'.$id.'/'.$transaction_number.'/?origin=open_transactions')}}">
+                                        <a href="{{url('samplerequest/view/'.$id.'/'.$transaction_number.'/?origin=close_transactions')}}">
                                         @endif
                                             {{$transaction_number}}
                                         </a>

@@ -14,7 +14,7 @@ class OpenTransactionController extends Controller
 {
     public function index(Request $request)
     {
-        ini_set('max_execution_time', 300);
+        // ini_set('max_execution_time', 300);
 
         // $status = $request->query('status');
         $search = $request->search;
@@ -34,7 +34,9 @@ class OpenTransactionController extends Controller
             ->when($role, function($q)use($role) {
                 if ($role->type == 'RND')
                 {
-                    $q->where('RefCode', 'RND');
+                    $q->where(function($q) {
+                        $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+                    });
                 }
                 elseif($role->type == 'QCD-WHI')
                 {
@@ -58,6 +60,7 @@ class OpenTransactionController extends Controller
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
             })
+            ->orderBy('id','desc')
             ->get();
         
         $rpe = collect([]);
@@ -78,6 +81,7 @@ class OpenTransactionController extends Controller
                         $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                     });
                 })
+                ->orderBy('id','desc')
                 ->get();
         }
 
@@ -118,6 +122,7 @@ class OpenTransactionController extends Controller
                     $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
                 });
             })
+            ->orderBy('id','desc')
             ->get();
         
         $sortedResults = $crr
