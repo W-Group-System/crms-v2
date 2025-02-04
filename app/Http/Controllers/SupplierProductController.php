@@ -617,8 +617,8 @@ class SupplierProductController extends Controller
                 $uploadedFile->SpeId = $speId;
                 $uploadedFile->Name = $name;
                 $uploadedFile->Path = $filePath;
-                $uploadedFile->IsConfidential = 1;
-                $uploadedFile->IsForReview = 1;
+                $uploadedFile->IsConfidential = $isConfidential[$index];
+                $uploadedFile->IsForReview = $isForReview[$index];
                 // $uploadedFile->IsConfidential = isset($isConfidential[$index]) ? $isConfidential[$index] : 0;
                 // $uploadedFile->IsForReview = isset($isForReview[$index]) ? $isForReview[$index] : 0;
                 $uploadedFile->save();
