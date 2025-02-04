@@ -197,156 +197,152 @@
                     </div>
                 </div>
             </div> --}}
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-list text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
-                                        <p class="m-0 text-right text-white">Open Transactions</p>
-                                    </div>
-                                </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-list text-white"></i>
+                                </h1>
                             </div>
-                            <a href="{{url('open-transaction')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                <p class="m-0 text-right text-white">Open Transactions</p>
+                            </div>
                         </div>
                     </div>
-                    {{-- <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-success">
-                            <div class="card-body bg-success">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-widget text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">0</h1>
-                                        <p class="m-0 text-right text-white">New Product</p>
-                                    </div>
+                    <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
                                 </div>
                             </div>
-                            <a href="{{url('new_products')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-success">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-success"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
                         </div>
-                    </div> --}}
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-check-box text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
-                                        <p class="m-0 text-right text-white">Initial Review</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('initial-review')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-warning">
-                            <div class="card-body bg-warning">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-view-list-alt text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
-                                        <p class="m-0 text-right text-white">New Request</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-warning">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-warning"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-check-box text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
-                                        <p class="m-0 text-right text-white">Final Review</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('final-review')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-6">
+            {{-- <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-success">
+                    <div class="card-body bg-success">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-widget text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">0</h1>
+                                <p class="m-0 text-right text-white">New Product</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('new_products')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-success">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div> --}}
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-check-box text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
+                                <p class="m-0 text-right text-white">Initial Review</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('initial-review')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-warning">
+                    <div class="card-body bg-warning">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-view-list-alt text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
+                                <p class="m-0 text-right text-white">New Request</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-warning">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-check-box text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
+                                <p class="m-0 text-right text-white">Final Review</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('final-review')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {{-- <div class="col-lg-6">
                 <div class="card rounded-0 border border-1 border-primary">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -379,7 +375,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-WHI'))
             {{-- <div class="col-lg-6 grid-margin transparent">
                 <div class="card mb-2 card-tale">
@@ -702,156 +698,152 @@
                     </div>
                 </div>
             </div> --}}
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-list text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
-                                        <p class="m-0 text-right text-white">Open Transactions</p>
-                                    </div>
-                                </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-list text-white"></i>
+                                </h1>
                             </div>
-                            <a href="{{url('open-transaction')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                <p class="m-0 text-right text-white">Open Transactions</p>
+                            </div>
                         </div>
                     </div>
-                    {{-- <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-success">
-                            <div class="card-body bg-success">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-widget text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">0</h1>
-                                        <p class="m-0 text-right text-white">New Product</p>
-                                    </div>
+                    <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
                                 </div>
                             </div>
-                            <a href="{{url('new_products')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-success">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-success"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
                         </div>
-                    </div> --}}
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-check-box text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
-                                        <p class="m-0 text-right text-white">Initial Review</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('initial-review')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-warning">
-                            <div class="card-body bg-warning">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-view-list-alt text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
-                                        <p class="m-0 text-right text-white">New Request</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-warning">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-warning"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-check-box text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
-                                        <p class="m-0 text-right text-white">Final Review</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('final-review')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-6">
+            {{-- <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-success">
+                    <div class="card-body bg-success">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-widget text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">0</h1>
+                                <p class="m-0 text-right text-white">New Product</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('new_products')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-success">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div> --}}
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-check-box text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
+                                <p class="m-0 text-right text-white">Initial Review</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('initial-review')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-warning">
+                    <div class="card-body bg-warning">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-view-list-alt text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
+                                <p class="m-0 text-right text-white">New Request</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-warning">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-check-box text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
+                                <p class="m-0 text-right text-white">Final Review</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('final-review')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {{-- <div class="col-lg-6">
                 <div class="card rounded-0 border border-1 border-primary">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -884,7 +876,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-PBI'))
             {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
@@ -1207,156 +1199,152 @@
                     </div>
                 </div>
             </div> --}}
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-list text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
-                                        <p class="m-0 text-right text-white">Open Transactions</p>
-                                    </div>
-                                </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-list text-white"></i>
+                                </h1>
                             </div>
-                            <a href="{{url('open-transaction')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                <p class="m-0 text-right text-white">Open Transactions</p>
+                            </div>
                         </div>
                     </div>
-                    {{-- <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-success">
-                            <div class="card-body bg-success">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-widget text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">0</h1>
-                                        <p class="m-0 text-right text-white">New Product</p>
-                                    </div>
+                    <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
                                 </div>
                             </div>
-                            <a href="{{url('new_products')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-success">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-success"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
                         </div>
-                    </div> --}}
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-check-box text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
-                                        <p class="m-0 text-right text-white">Initial Review</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('initial-review')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-warning">
-                            <div class="card-body bg-warning">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-view-list-alt text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
-                                        <p class="m-0 text-right text-white">New Request</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-warning">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-warning"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-check-box text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
-                                        <p class="m-0 text-right text-white">Final Review</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('final-review')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-6">
+            {{-- <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-success">
+                    <div class="card-body bg-success">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-widget text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">0</h1>
+                                <p class="m-0 text-right text-white">New Product</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('new_products')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-success">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div> --}}
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-check-box text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
+                                <p class="m-0 text-right text-white">Initial Review</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('initial-review')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-warning">
+                    <div class="card-body bg-warning">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-view-list-alt text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
+                                <p class="m-0 text-right text-white">New Request</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-warning">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-check-box text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
+                                <p class="m-0 text-right text-white">Final Review</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('final-review')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {{-- <div class="col-lg-6">
                 <div class="card rounded-0 border border-1 border-primary">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -1389,7 +1377,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-MRDC'))
             {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
@@ -1712,156 +1700,152 @@
                     </div>
                 </div>
             </div> --}}
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-list text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
-                                        <p class="m-0 text-right text-white">Open Transactions</p>
-                                    </div>
-                                </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-list text-white"></i>
+                                </h1>
                             </div>
-                            <a href="{{url('open-transaction')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_open_transaction}}</h1>
+                                <p class="m-0 text-right text-white">Open Transactions</p>
+                            </div>
                         </div>
                     </div>
-                    {{-- <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-success">
-                            <div class="card-body bg-success">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-widget text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">0</h1>
-                                        <p class="m-0 text-right text-white">New Product</p>
-                                    </div>
+                    <a href="{{url('open-transaction')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
                                 </div>
                             </div>
-                            <a href="{{url('new_products')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-success">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-success"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
                         </div>
-                    </div> --}}
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-check-box text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
-                                        <p class="m-0 text-right text-white">Initial Review</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('initial-review')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-warning">
-                            <div class="card-body bg-warning">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-view-list-alt text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
-                                        <p class="m-0 text-right text-white">New Request</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-warning">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-warning"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 mb-2">
-                        <div class="card rounded-0 border border-1 border-primary">
-                            <div class="card-body bg-primary">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h1 class="m-0">
-                                            <i class="ti-check-box text-white"></i>
-                                        </h1>
-                                    </div>
-                                    <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
-                                        <p class="m-0 text-right text-white">Final Review</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="{{url('final-review')}}" class="text-decoration-none">
-                                <div class="card-footer p-2">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <p class="m-0 text-primary">View Details</p>
-                                        </div>
-                                        <div class="col-lg-6 text-right">
-                                            <i class="ti-arrow-circle-right text-primary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-6">
+            {{-- <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-success">
+                    <div class="card-body bg-success">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-widget text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">0</h1>
+                                <p class="m-0 text-right text-white">New Product</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('new_products')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-success">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div> --}}
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-check-box text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_initial_count}}</h1>
+                                <p class="m-0 text-right text-white">Initial Review</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('initial-review')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-warning">
+                    <div class="card-body bg-warning">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-view-list-alt text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_new_request_count}}</h1>
+                                <p class="m-0 text-right text-white">New Request</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('rnd-new-request')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-warning">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-primary">
+                    <div class="card-body bg-primary">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-check-box text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{$total_final_count}}</h1>
+                                <p class="m-0 text-right text-white">Final Review</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('final-review')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-primary">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {{-- <div class="col-lg-6">
                 <div class="card rounded-0 border border-1 border-primary">
                     <div class="card-body">
                         <div class="table-responsive">
@@ -1894,7 +1878,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-CCC'))
             {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
