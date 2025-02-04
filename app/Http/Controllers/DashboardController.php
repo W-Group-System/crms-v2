@@ -1058,17 +1058,13 @@ class DashboardController extends Controller
             })
             ->count();
         
-        $rpeCloseTransaction = collect([]);
-        if ($role->type == 'RND')
-        {
-            $rpeCloseTransaction = RequestProductEvaluation::where('Status', 30)
-                ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
-                    $q->whereHas('rpe_personnels', function($q) {
-                        $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
-                    });
-                })
-                ->count();
-        }
+        $rpeCloseTransaction = RequestProductEvaluation::where('Status', 30)
+            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+                $q->whereHas('rpe_personnels', function($q) {
+                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                });
+            })
+            ->count();
 
         $srfCloseTransaction = SampleRequest::where('Status', 30)
             ->where(function($q) {
