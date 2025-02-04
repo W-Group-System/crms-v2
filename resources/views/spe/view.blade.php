@@ -364,7 +364,7 @@
                         </div>
                         <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files">
                             @if(authCheckIfItsRnd(auth()->user()->department_id))
-                                @if($data->Progress == 35 || $data->Progress == 45 || $data->Progress == 50)
+                                @if($data->Progress == 35 || $data->Progress == 45 || $data->Progress == 50 || $data->Progress == 55 || $data->Progress == 65)
                                 <div align="right">
                                     <button type="button" class="btn btn-outline-primary btn-sm mb-3" data-toggle="modal" data-target="#addSpeFiles">
                                         New

@@ -1297,7 +1297,7 @@ class CustomerRequirementController extends Controller
         if ($files)
         {
             $crr->Progress = 60;
-            $crr->DateCompleted = date('Y-m-d h:i:s');
+            // $crr->DateCompleted = date('Y-m-d h:i:s');
             $crr->save();
 
             crrHistoryLogs('complete', $id);

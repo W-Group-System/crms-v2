@@ -181,7 +181,7 @@
                         @endif
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                         
-                        @if($crr->Progress != 30 && $crr->Progress != 10 && $crr->Progress != 20 && $crr->Progress != 60)
+                        @if($crr->Progress != 30 && $crr->Progress != 10 && $crr->Progress != 20)
                             @if(auth()->user()->role->type == $crr->RefCode)
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateCrr-{{$crr->id}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
