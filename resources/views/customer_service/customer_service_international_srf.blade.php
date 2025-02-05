@@ -17,11 +17,14 @@
 }
 </style>
 <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
+    <div class="card border border-1 border-primary rounded-0">
+        <div class="card-header bg-primary">
+            <p class="m-0 font-weight-bold text-white">International Sample Request List</p>
+        </div>
         <div class="card-body">
-            <h4 class="card-title d-flex justify-content-between align-items-center">
+            {{-- <h4 class="card-title d-flex justify-content-between align-items-center">
             International Sample Request List
-            </h4>
+            </h4> --}}
             <div class="form-group">
                 <form method="GET" >
                     <label>Show : </label>
@@ -72,7 +75,7 @@
                 </form>
             </div>
         </div>
-            <div class="table-responsive" >
+            <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover" id="sample_request_table" width="100%">
                     <thead>
                         <tr>
@@ -112,7 +115,7 @@
                                         </button>
                                     @endif
                                 </td>
-                                <td><a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber) }}" title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
+                                <td><a href="{{ url('samplerequest/view/' . $srf->Id.'/'.$srf->SrfNumber.'/?origin=cs_international') }}" title="View Sample Request">{{ $srf->SrfNumber }}</a></td>
                                 <td>{{ !empty($srf->DateRequested) ? date('m/d/Y H:i', strtotime($srf->DateRequested)) : '00/00/0000' }}</td>
                                 <td>{{ !empty($srf->DateRequired) ? date('m/d/Y', strtotime($srf->DateRequired)) : '00/00/0000' }}</td>
                                 <td>
@@ -206,21 +209,20 @@
                         @endforeach
                     </tbody>
                 </table>
-            
-                {{-- {!! $products->appends(['search' => $search])->links() !!}
-            
-                @php
-                    $total = $products->total();
-                    $currentPage = $products->currentPage();
-                    $perPage = $products->perPage();
-            
-                    $from = ($currentPage - 1) * $perPage + 1;
-                    $to = min($currentPage * $perPage, $total);
-                @endphp
-            
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
-                </div> --}}
+            </div>
+            {!! $sampleRequests->appends(['search' => $search])->links() !!}
+        
+            @php
+                $total = $sampleRequests->total();
+                $currentPage = $sampleRequests->currentPage();
+                $perPage = $sampleRequests->perPage();
+        
+                $from = ($currentPage - 1) * $perPage + 1;
+                $to = min($currentPage * $perPage, $total);
+            @endphp
+        
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>Showing {{ $from }} to {{ $to }} of {{ $total }} entries</div>
             </div>
         </div>
     </div>

@@ -12,7 +12,7 @@
             padding: 20px;
         }
         table {
-            width: 100%;
+            /* width: 100%; */
             border-collapse: collapse;
         }
         th, td {
@@ -25,7 +25,7 @@
             font-weight: bold;
         }
         .product-table {
-            width: 100%;
+            /* width: 100%; */
             border-collapse: collapse;
         }
         .product-table td {

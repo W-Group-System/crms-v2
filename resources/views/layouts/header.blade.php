@@ -354,8 +354,8 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request?open=10') }}">Sample Request Form</a></li>
                                     @endif
                                     @if(viewModule('Customer Service SRF', $department, $role) == "yes")
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request_cs_local') }}">Sample Request Local</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request_cs_international') }}">Sample Request International</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request_cs_local?open=10') }}">Sample Request Local</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('/sample_request_cs_international?open=10') }}">Sample Request International</a></li>
                                     @endif
                                     {{-- @if(viewModule('Price Monitoring', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/price_monitoring') }}">Price Monitoring</a></li>
