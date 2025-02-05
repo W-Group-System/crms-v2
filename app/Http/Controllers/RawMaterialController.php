@@ -120,7 +120,7 @@ class RawMaterialController extends Controller
 
     public function getRawMaterials()
     {
-        $rawMaterial = RawMaterial::with('productsMaterialComposition')->where('IsDeleted', 0)->get();
+        $rawMaterial = RawMaterial::with('productMaterialCompositions.products')->where('IsDeleted', 0)->get();
         
         return $rawMaterial;
     }
