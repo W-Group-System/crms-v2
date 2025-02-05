@@ -1520,6 +1520,7 @@ class SampleRequestController extends Controller
 
     public function csSrfUpdate(Request $request, $id)
     {
+        // dd($request->all());
         $srf = SampleRequest::with('requestProducts')->findOrFail($id);
         $srf->Courier = $request->input('Courier');
         $srf->AwbNumber = $request->input('AwbNumber');
@@ -1530,6 +1531,7 @@ class SampleRequestController extends Controller
         $srf->Eta = $request->input('Eta');
         $srf->CourierCost = $request->input('CourierCost');
         $srf->Reason = $request->input('Reason');
+        $srf->DispatchBy = auth()->user()->id;
         $srf->save();
         
         return redirect()->back()->with('success', 'Sample Request updated successfully');

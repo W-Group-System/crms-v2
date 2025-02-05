@@ -76,6 +76,14 @@
                     <a href="{{ url('/final-review') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
+                    @elseif(request('origin') == 'cs_local')
+                    <a href="{{ url('/sample_request_cs_local?open=10') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
+                    @elseif(request('origin') == 'cs_international')
+                    <a href="{{ url('/sample_request_cs_international?open=10') }}" class="btn btn-md btn-outline-secondary">
+                        <i class="icon-arrow-left"></i>&nbsp;Back
+                    </a> 
                     @else
                     <a href="{{url('sample_request?open=10') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
@@ -1031,27 +1039,27 @@
         </div>        
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="supplementary-tab" data-toggle="tab" href="#supplementary" role="tab" aria-controls="supplementary" aria-selected="true">Supplementary Details</a>
+                    <a class="nav-link active p-2" id="supplementary-tab" data-toggle="tab" href="#supplementary" role="tab" aria-controls="supplementary" aria-selected="true">Supplementary Details</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="srfPersonnel-tab" data-toggle="tab" href="#srfPersonnel" role="tab" aria-controls="srfPersonnel" aria-selected="true">Assigned R&D Personnel</a>
+                    <a class="nav-link p-2" id="srfPersonnel-tab" data-toggle="tab" href="#srfPersonnel" role="tab" aria-controls="srfPersonnel" aria-selected="true">Assigned R&D Personnel</a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li> --}}
                 <li class="nav-item">
-                    <a class="nav-link" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
+                    <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
                 @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <li class="nav-item">
-                    <a class="nav-link" id="raw-materials-tab" data-toggle="tab" href="#raw_materials" role="tab" aria-controls="rawMaterials" aria-selected="false">Raw Materials</a>
+                    <a class="nav-link p-2" id="raw-materials-tab" data-toggle="tab" href="#raw_materials" role="tab" aria-controls="rawMaterials" aria-selected="false">Raw Materials</a>
                 </li>
                 @endif
                 <li class="nav-item">
-                    <a class="nav-link" id="transaction-remarks" data-toggle="tab" href="#transactionRemarks" role="tab" aria-controls="transactionRemarks" aria-selected="false">Transaction Remarks</a>
+                    <a class="nav-link p-2" id="transaction-remarks" data-toggle="tab" href="#transactionRemarks" role="tab" aria-controls="transactionRemarks" aria-selected="false">Transaction Remarks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History</a>
+                    <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
