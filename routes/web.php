@@ -413,9 +413,12 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/cs_list', 'CustomerSatisfactionController@list')->name('customer_satisfaction.list'); 
         Route::get('customer_satisfaction/view/{id}', 'CustomerSatisfactionController@view');  
         Route::post('/update_customer_satisfaction/{id}', 'CustomerSatisfactionController@update')->name('update_customer_satisfaction');
+        Route::post('/assign_customer_satisfaction/{id}', 'CustomerSatisfactionController@assign')->name('assign_customer_satisfaction');
         Route::post('cs_received/{id}', 'CustomerSatisfactionController@received');
+        Route::post('cs_approved/{id}', 'CustomerSatisfactionController@approved');
         Route::post('cs_closed/{id}', 'CustomerSatisfactionController@close');
         Route::post('cs_noted/{id}', 'CustomerSatisfactionController@noted');
+        Route::get('print_cs/{id}', 'CustomerSatisfactionController@printCs');
     
         // Customer Complaint
         Route::get('/cc_list', 'CustomerComplaint2Controller@list')->name('customer_complaint.list');

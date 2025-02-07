@@ -44,7 +44,7 @@
             </div>
         </div>
         <div class="offset-lg-1 col-lg-5">
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label class="text-white display-5">Department Concerned</label>
                 <select class="form-control js-example-basic-single" name="Concerned" id="Concerned" title="Select Concerned">
                     <option value="" disabled selected>Select Concerned</option>
@@ -52,9 +52,7 @@
                         <option value="{{ $data->id }}" {{ old('Concerned') == $data->id ? 'selected' : '' }}>{{ $data->Name }}</option>
                     @endforeach
                 </select>
-            </div>
-        </div>
-        <div class="col-lg-5">
+            </div> -->
             <div class="form-group">
                 <label class="text-white display-5">Feedback Category</label>
                 <select class="form-control js-example-basic-single" name="Category" id="Category" title="Select Category" required>
@@ -65,6 +63,17 @@
                 </select>
             </div>
         </div>
+        <!-- <div class="col-lg-5">
+            <div class="form-group">
+                <label class="text-white display-5">Feedback Category</label>
+                <select class="form-control js-example-basic-single" name="Category" id="Category" title="Select Category" required>
+                    <option value="" disabled selected>Select Category</option>
+                    @foreach($category as $data)
+                        <option value="{{ $data->id }}" {{ old('Category') == $data->id ? 'selected' : '' }}>{{ $data->Name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div> -->
         <div class="offset-lg-1 col-lg-10">
             <div class="form-group">
                 <label class="text-white display-5">Description</label>
