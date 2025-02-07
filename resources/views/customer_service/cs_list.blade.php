@@ -55,7 +55,7 @@
                             <th>Contact Name</th>
                             <th>Department Concerned</th>
                             <th>Category</th>
-                            <th>Status</th>
+                            <!-- <th>Status</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -65,18 +65,18 @@
                                 <td>
                                     <a href="{{ url('customer_satisfaction/view/' . $cs_data->id) }}" title="View Customer Satisfaction">{{ $cs_data->CsNumber }}</a>
                                 </td>
-                                <td>{{ $cs_data->created_at }}</td>
+                                <td>{{ date('M. d, Y', strtotime($cs_data->created_at)) }}</td>
                                 <td>{{ $cs_data->CompanyName }}</td>
                                 <td>{{ $cs_data->ContactName }}</td>
-                                <td>{{ $cs_data->concerned->Name }}</td>
+                                <td>{{ $cs_data->concerned->Name ?? 'N/A' }}</td>
                                 <td>{{ $cs_data->category->Name }}</td>
-                                <td>
+                                <!-- <td>
                                     @if($cs_data->Status == 10)
                                         <div class="badge badge-success">Open</div>
                                     @else
                                         <div class="badge badge-warning">Closed</div>
                                     @endif
-                                </td>
+                                </td> -->
                             </tr>   
                             @endforeach
                         @else

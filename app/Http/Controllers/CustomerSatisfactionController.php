@@ -11,6 +11,10 @@ use App\CsFiles;
 use Illuminate\Support\Facades\Auth;
 use App\CustomerRequirement;
 use Illuminate\Http\Request;
+use App\Mail\CustomerSatisfactionMail;
+use App\Mail\AssignDepartmentMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\App;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class CustomerSatisfactionController extends Controller
@@ -127,7 +131,7 @@ class CustomerSatisfactionController extends Controller
         if ($fetchAll) {
             $data = $customerSatisfaction->get();
             return response()->json($data);
-        } else {
+        } else {    
             $data = $customerSatisfaction->paginate($entries);
             return view('customer_service.cs_list', [
                 'search' => $search,
@@ -153,11 +157,13 @@ class CustomerSatisfactionController extends Controller
             'Category' => $request->Category,
             'ContactNumber' => $request->ContactNumber,
             'Email' => $request->Email,
-            'Status' => '10',
+            // 'Status' => '10',
             'Progress' => '10'
         ]);
 
-        
+        Mail::to($request->Email)
+            ->cc('ict.engineer@wgroup.com.ph')
+            ->send(new CustomerSatisfactionMail($customerSatisfaction));
        
         // Return success message
         return response()->json(['success' => 'You submitted the form successfully..']);
@@ -175,10 +181,42 @@ class CustomerSatisfactionController extends Controller
         ]);
     }
 
+    public function assign(Request $request, $id)
+    {
+        $data = CustomerSatisfaction::with('concerned')->findOrFail($id);
+        $data->Concerned = $request->Concerned;
+        $data->save();
+
+        $department = ConcernDepartment::findOrFail($request->Concerned);
+
+        $attachments = [];
+        if ($request->hasFile('Path') && is_array($request->file('Path'))) {
+            foreach ($request->file('Path') as $file) {
+                if ($file->isValid()) {
+                    $csFiles = new CsFiles();
+                    $csFiles->CsId = $data->id;
+
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs('cs_files', $fileName, 'public'); 
+                    $csFiles->Path = $filePath; 
+                    $csFiles->save();
+                }
+            }
+        }
+
+        Mail::to($department->email)->send(new AssignDepartmentMail($data, $attachments));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer satisfaction feedback and files have been successfully assigned.'
+        ]);
+    }
+
     public function view($id)
     {
         $data = CustomerSatisfaction::with('concerned', 'category', 'cs_attachments')->findOrFail($id);
-        return view('customer_service.cs_view', compact('data'));
+        $concern_department = ConcernDepartment::all();
+        return view('customer_service.cs_view', compact('data', 'concern_department'));
     }
 
     public function received($id)
@@ -194,6 +232,7 @@ class CustomerSatisfactionController extends Controller
             'message' => 'Customer satisfaction feedback has been successfully received.'
         ]);
     }
+
     public function noted($id)
     {
         $data = CustomerSatisfaction::findOrFail($id);
@@ -204,6 +243,19 @@ class CustomerSatisfactionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Customer satisfaction has been successfully updated.'
+        ]);
+    }
+
+    public function approved($id)
+    {
+        $data = CustomerSatisfaction::findOrFail($id);
+        $data->ApprovedBy = auth()->user()->id;
+        $data->Progress = 40;
+        $data->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer satisfaction has been successfully approved.'
         ]);
     }
 
@@ -227,4 +279,19 @@ class CustomerSatisfactionController extends Controller
         $contacts = Contact::where('CompanyId', $clientId)->pluck('ContactName', 'id');
         return response()->json($contacts);
     }
+
+    public function printCs($id)
+    {
+        $cs = CustomerSatisfaction::with('category')->findOrFail($id);
+        $data = [
+            'cs' => $cs,
+            'CategoryName' => optional($cs->category)->Name,
+        ];
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('customer_service.cs_pdf', $data);
+
+        return $pdf->stream();
+    }
+
 }

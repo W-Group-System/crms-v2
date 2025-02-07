@@ -8,7 +8,7 @@
                     <a href="{{ url()->previous() ?: url('customer_satisfaction') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
-                    @if($data->Status == 10 && $data->ReceivedBy == NULL)
+                    @if($data->ReceivedBy == NULL)
                         <form action="{{ url('cs_received/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-success receivedBtn">
@@ -17,7 +17,7 @@
                         </form>
                     @endif
                     @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                        @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
+                        @if($data->ReceivedBy != NULL && $data->NotedBy == NULL)
                             <form action="{{ url('cs_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success notedBtn">
@@ -26,9 +26,12 @@
                             </form>
                         @endif
                     @endif
-                    @if($data->Progress == 30)
+                    @if($data->Progress == 30 || $data->Progress == 40)
+                         <button type="button" class="btn btn-outline-warning" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
+                            <i class="ti ti-pencil"></i>&nbsp;Assign 
+                        </button>
                         <button type="button" class="btn btn-outline-warning" id="updateCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCs">
-                            <i class="ti ti-pencil"></i>&nbsp;Response
+                            <i class="ti ti-comment"></i>&nbsp;Remarks
                         </button>
                         <form action="{{ url('cs_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
@@ -36,6 +39,22 @@
                                 <i class="ti ti-close"></i>&nbsp;Close
                             </button>
                         </form>
+                    @endif
+                    @if($data->NotedBy != NULL && auth()->user()->id == 15)
+                        @if($data->Progress != 40)
+                        <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-success approvedBtn">
+                                <i class="ti-check">&nbsp;</i> Approved
+                            </button>
+                        </form>
+                        @endif
+                    @endif
+                    @if($data->ApprovedBy != NULL)
+                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cs/'.$data->id)}}" target="_blank">
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        Print
+                    </a>
                     @endif
                 </div>
             </h4>
@@ -82,9 +101,9 @@
                         <div class="col-sm-3">
                             <label>{{ $data->CompanyName }}</label>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Status:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Approved By:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->Status == 10 ? 'Open' : 'Closed' }}</label>
+                            <label>{{ $data->approvedBy->full_name ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
@@ -118,6 +137,9 @@
                                 @foreach($data->cs_attachments as $file)
                                     <label style="display: block;">
                                         <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ basename($file->Path) }}</a>
+                                        <!-- <button type="button" class="btn btn-sm deleteFile">
+                                            <i class="ti ti-close" style="color:red"></i>
+                                        </button> -->
                                     </label>
                                 @endforeach
                             @else
@@ -132,7 +154,7 @@
                         </div>
                     </div>
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Response:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Internal Instruction Remarks:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->Response }}</label>
                         </div>
@@ -159,7 +181,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCustomerRequirementLabel">Action/ Response</h5>
+                <h5 class="modal-title" id="addCustomerRequirementLabel">Internal Instruction Remarks</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -169,7 +191,50 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
-                            <textarea class="form-control" rows="10" name="Response" placeholder="Enter Response" required></textarea>
+                            <textarea class="form-control" rows="10" name="Response" placeholder="Enter Internal Instruction Remarks" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="assignedCs" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerRequirementLabel">Assign Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="assignCustomerSatisfaction" method="POST" action="{{ url('assign_customer_satisfaction/' . $data->id) }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Select Concerned Department</label>
+                                <select class="form-control js-example-basic-single" name="Concerned" id="Concerned" required>
+                                    <option value="" disabled selected>Select Concerned</option>
+                                    @foreach($concern_department as $dept)
+                                        <option value="{{ $dept->id }}" {{ old('Concerned') == $dept->id ? 'selected' : '' }}>
+                                            {{ $dept->Name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Attachments</label>
+                                <input type="file" class="form-control attachments" name="Path[]" id="Path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer mt-3">
@@ -216,6 +281,37 @@
             });
         });
 
+        $('#assignCustomerSatisfaction').on('submit', function (e) {
+            e.preventDefault(); 
+
+            var formData = new FormData(this); // Use FormData to handle file uploads
+            var actionUrl = $(this).attr('action');
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: formData,
+                processData: false, 
+                contentType: false, 
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Assigned",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire("Error", "Something went wrong! Please try again.", "error");
+                }
+            });
+        });
+
         $('.notedBtn').on('click', function (e) {
             e.preventDefault(); // Prevent the default form submission
 
@@ -257,6 +353,33 @@
                     if (response.success) {
                         Swal.fire({
                             title: "Received",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            customClass: 'swal-wide',
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); // Reload the page after the alert
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.approvedBtn').on('click', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action'); // Get form action URL
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(), // Serialize form data
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Approved",
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,
