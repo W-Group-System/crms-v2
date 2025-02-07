@@ -188,7 +188,7 @@ class CustomerSatisfactionController extends Controller
         $data->save();
 
         $department = ConcernDepartment::findOrFail($request->Concerned);
-
+        
         $attachments = [];
         if ($request->hasFile('Path') && is_array($request->file('Path'))) {
             foreach ($request->file('Path') as $file) {
@@ -200,6 +200,8 @@ class CustomerSatisfactionController extends Controller
                     $filePath = $file->storeAs('cs_files', $fileName, 'public'); 
                     $csFiles->Path = $filePath; 
                     $csFiles->save();
+
+                    $attachments[] = $filePath;
                 }
             }
         }

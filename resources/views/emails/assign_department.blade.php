@@ -14,14 +14,14 @@
         <li><strong>Description:</strong> {{ $customerSatisfaction->Description ?? 'No description provided' }}</li>
     </ul>
 
-    <!-- @if(!empty($attachments))
+    @if(!empty($attachments))
         <p><strong>Attachments:</strong></p>
         <ul>
             @foreach($attachments as $attachment)
-                <li><a href="{{ $attachment }}" target="_blank">View Attachment</a></li>
+                <li><a href="{{ storage_path('app/public/').$attachment }}" target="_blank">View Attachment</a></li>
             @endforeach
         </ul>
-    @endif -->
+    @endif
 
     <p>Please take necessary action as soon as possible.</p>
 
