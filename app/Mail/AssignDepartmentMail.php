@@ -12,27 +12,31 @@ class AssignDepartmentMail extends Mailable
     use Queueable, SerializesModels;
     
     public $customerSatisfaction;
-    public $attachments;
+    public $cs_attachments;
 
-    public function __construct($customerSatisfaction, $attachments)
+    public function __construct($customerSatisfaction, $cs_attachments)
     {
         $this->customerSatisfaction = $customerSatisfaction;
-        $this->attachments = $attachments;
+        $this->cs_attachments = $cs_attachments;
     }
 
     public function build()
     {
         $email = $this->subject('New Customer Satisfaction Assignment')
-                      ->view('emails.assign_department')
-                      ->with([
-                          'customerSatisfaction' => $this->customerSatisfaction,
-                          'attachments' => $this->attachments,
-                          'ConcernedName' => optional($this->customerSatisfaction->concerned)->Name
-                      ]);
+                    ->view('emails.assign_department')
+                    ->with([
+                        'customerSatisfaction' => $this->customerSatisfaction,
+                        'attachments' => $this->cs_attachments,
+                        'ConcernedName' => optional($this->customerSatisfaction->concerned)->Name
+                    ]);
 
         // Attach uploaded files
-        foreach ($this->attachments as $attachment) {
-            $email->attach($attachment);
+        if (!empty($this->cs_attachments))
+        {
+            foreach ($this->cs_attachments as $cs_attachment) {
+                $filePath = storage_path('app/public/'.$cs_attachment);
+                $email->attach($filePath);
+            }
         }
 
         return $email;
