@@ -450,8 +450,8 @@
                                     @endforeach
                                     @php
                                         $usd = number_format($total, 2);
-                                        $eur = number_format(usdToRMC($total,$key,1), 2);
-                                        $php = number_format(usdToRMC($total,$key,3), 2);
+                                        $eur = number_format(latestConversion($total,1), 2);
+                                        $php = number_format(latestConversion($total,3), 2);
                                     @endphp
                                 </tbody>
                             </thead>

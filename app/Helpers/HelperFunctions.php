@@ -1478,3 +1478,12 @@ function transactionProgressName($progress)
         return $progress->name;
     }
 }
+
+function latestConversion($cost,$currency)
+{
+    $currencyExchangeRates = CurrencyExchange::where('ToCurrencyId', $currency)
+        ->orderBy('EffectiveDate', 'desc')
+        ->first();
+
+    return $cost * $currencyExchangeRates->ExchangeRate;
+}
