@@ -130,7 +130,16 @@
                     @endif --}}
                     <a target='_blank' href="{{ url('print_srf', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text"><i class="ti ti-printer btn-icon-prepend"></i>Print</a>
                     @if(!empty($sampleRequest->Courier) && !empty($sampleRequest->AwbNumber) && !empty($sampleRequest->DateDispatched) && !empty($sampleRequest->DateSampleReceived))
-                    <a target='_blank' href="{{ url('print_dispatch', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print Dispatch</a>
+                    {{-- <a target='_blank' href="{{ url('print_dispatch', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print Dispatch</a> --}}
+                    
+                    <form method="GET" action="{{url('export_sample_dispatch')}}" class="d-inline-block" target="_blank">
+                        <input type="hidden" name="sample_request_no" value="{{$sampleRequest->SrfNumber}}">
+
+                        <button type="submit" class="btn btn-outline-success">
+                            <i class="ti-export"></i>
+                            Export Sample Dispatch Advise
+                        </button>
+                    </form>
                     @endif
                     {{-- <a target='_blank' href="{{ url('print_srf_2', $sampleRequest->Id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print 2</a> --}}
                     {{-- <button type="button" class="btn btn-danger btn-icon-text" >
