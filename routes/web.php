@@ -351,6 +351,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/sample_request_cs_local', 'SampleRequestController@cs_local');
         Route::post('sample_request_cs/edit/{id}', 'SampleRequestController@csSrfUpdate');
         Route::get('/sample_request_cs_international', 'SampleRequestController@cs_international');
+        Route::get('export_sample_dispatch', 'SampleRequestController@exportSampleDispatch');
         
         // Price Monitoring 
         // Route::get('/price_monitoring', 'PriceMonitoringController@index')->name('price_monitoring.index');
