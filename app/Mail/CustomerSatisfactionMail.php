@@ -30,8 +30,8 @@ class CustomerSatisfactionMail extends Mailable
                     ->subject('Customer Satisfaction Form Submission')
                     ->view('emails.customer_satisfaction')
                     ->with([
-                        'CompanyName' => $this->customerSatisfaction['CompanyName'],
                         'CsNumber' => $this->customerSatisfaction['CsNumber'],
+                        'CompanyName' => $this->customerSatisfaction['CompanyName'],
                         'ContactName' => $this->customerSatisfaction['ContactName'],
                         'Concerned' => $this->customerSatisfaction['Concerned'],
                         'Description' => $this->customerSatisfaction['Description'],

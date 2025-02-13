@@ -55,9 +55,9 @@
                             <th>Date Complaint</th>
                             <th>Company Name</th>
                             <th>Contact Name</th>
+                            <th>Country</th>
                             <th>Site Concerned</th>
-                            <th>Description</th>
-                            <th>Status</th>
+                            <!-- <th>Status</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -67,18 +67,18 @@
                                 <td>
                                     <a href="{{ url('customer_complaint/view/' . $cc_data->id) }}" title="View Customer Complaint">{{ $cc_data->CcNumber }}</a>
                                 </td>
-                                <td>{{ $cc_data->created_at }}</td>
+                                <td>{{ date('M. d, Y', strtotime($cc_data->created_at)) }}</td>
                                 <td>{{ $cc_data->CompanyName }}</td>
                                 <td>{{ $cc_data->ContactName }}</td>
-                                <td>{{ $cc_data->SiteConcerned }}</td>
-                                <td>{{ $cc_data->Description }}</td>
-                                <td>
+                                <td>{{ $cc_data->country->Name ?? 'N/A' }}</td>
+                                <td>{{ $cc_data->SiteConcerned ?? 'N/A' }}</td>
+                                {{-- <td>
                                     @if($cc_data->Status == 10)
                                         <div class="badge badge-success">Open</div>
                                     @else
                                         <div class="badge badge-warning">Closed</div>
                                     @endif
-                                </td>
+                                </td> --}}
                             </tr>
                             @endforeach
                         @else

@@ -1,7 +1,7 @@
 @extends('layouts.cs_header')
 @section('content')
 <div class="col-12 text-center">
-    <img src="{{ asset('images/whi.png') }}" style="width: 180px;">
+    <img src="{{ asset('images/whi.png') }}" style="width: 170px;" class="mt-3 mb-2">
     <h2 class="header_h2">Customer Complaint Form</h2>
 </div>
 <form id="form_complaint" method="POST" >
@@ -63,6 +63,12 @@
                         <option value="{{ $data->id }}" >{{ $data->Name }}</option>
                     @endforeach
                 </select>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-3">
+            <div class="form-group">
+                <label class="text-white display-5">Attachments</label>
+                <input type="file" class="form-control attachments" name="Path[]" id="Path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
             </div>
         </div>
         {{-- <div class="col-lg-5 mb-3">
@@ -284,7 +290,7 @@
                 <textarea type="text" class="form-control" name="CustomerRemarks" id="CustomerRemarks" placeholder="Enter Customer Remarks" rows="5" required></textarea>
             </div>
         </div>
-        <div class="offset-lg-1 col-lg-5">
+        {{-- <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Site Concerned</label>
                 <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" title="Select Site Concerned" >
@@ -292,7 +298,7 @@
                     <option value="WHI Carmona">WHI Carmona</option>
                     <option value="WHI Head Office">WHI Head Office</option>
                     <option value="CCC Carmen">CCC Carmen</option>
-                    <option value="CCC Carmen">PBI Canlubang</option>
+                    <option value="PBI Canlubang">PBI Canlubang</option>
                     <option value="International Warehouse">International Warehouse</option>
                 </select>
             </div>
@@ -307,7 +313,7 @@
                     @endforeach
                 </select>
             </div>
-        </div>
+        </div> --}}
         <div class="col-lg-11 mt-3 mb-3" align="right">
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>

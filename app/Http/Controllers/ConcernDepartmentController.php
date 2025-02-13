@@ -81,7 +81,7 @@ class ConcernDepartmentController extends Controller
 
         ConcernDepartment::create($form_data);
 
-        return response()->json(['success' => 'Concerned Department added successfully.']);
+        return response()->json(['success' => ' Department Concerned added successfully.']);
     }
 
     // Edit
@@ -104,34 +104,39 @@ class ConcernDepartmentController extends Controller
                     ->whereNull('deleted_at')->ignore($id)
             ],
             'Description' => 'required',
+            'audit' => 'nullable|array', // Ensure 'audit' is an array
+            'audit.*' => 'email', // Validate that each item in 'audit' is an email
         ];
 
         $error = Validator::make($request->all(), $rules);
 
-        if($error->fails())
-        {
+        if ($error->fails()) {
             return response()->json(['errors' => $error->errors()->all()]);
         }
 
-        $form_data = array(
-            'Name'          =>  $request->Name,
-            'Description'   =>  $request->Description,
+        // Update ConcernDepartment
+        ConcernDepartment::whereId($id)->update([
+            'Name' => $request->Name,
+            'Description' => $request->Description,
             'Email' => $request->Email
-        );
+        ]);
 
-        ConcernDepartment::whereId($id)->update($form_data);
+        // Delete existing CcEmails for this department
+        CcEmail::where('concern_department_id', $id)->delete();
 
-        $cc_email = CcEmail::where('concern_department_id', $id)->delete();
-        foreach($request->audit as $audit)
-        {
-            $cc_email = new CcEmail;
-            $cc_email->concern_department_id = $id;
-            $cc_email->email = $audit;
-            $cc_email->save();
+        // Check if 'audit' exists and is an array before looping
+        if (!empty($request->audit) && is_array($request->audit)) {
+            foreach ($request->audit as $audit) {
+                CcEmail::create([
+                    'concern_department_id' => $id,
+                    'email' => $audit
+                ]);
+            }
         }
 
         return response()->json(['success' => 'Data is Successfully Updated.']);
     }
+
 
     // Delete
     public function delete($id)
