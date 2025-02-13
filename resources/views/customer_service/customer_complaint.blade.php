@@ -302,8 +302,8 @@
                     <option value="International Warehouse">International Warehouse</option>
                 </select>
             </div>
-        </div>
-        <div class="col-lg-5">
+        </div> --}}
+        {{-- <div class="col-lg-5">
             <div class="form-group">
                 <label class="text-white display-5">Department</label>
                 <select class="form-control js-example-basic-single" name="Department" id="Department" title="Select Department" >
