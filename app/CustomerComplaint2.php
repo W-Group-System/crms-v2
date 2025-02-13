@@ -8,7 +8,7 @@ class CustomerComplaint2 extends Model
 {
     protected $table = "customercomplaint";
     protected $fillable = [
-        'CompanyName', 'CcNumber', 'ContactName', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status'
+        'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status'
     ];
 
     public function concerned() 
@@ -72,6 +72,11 @@ class CustomerComplaint2 extends Model
     }
     public function files()
     {
-        return $this->hasMany(CcFile::class,'customer_complaint_id');
+        return $this->hasMany(CcFile::class,'CcId');
+    }
+
+    public function cc_attachments() 
+    {
+        return $this->hasMany(ComplaintFile::class, 'CcId', 'id');
     }
 }

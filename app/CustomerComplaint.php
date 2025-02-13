@@ -43,4 +43,8 @@ class CustomerComplaint extends Model
         return $this->belongsTo(IssueCategory::class, 'IssueCategoryId');
     }
    
+    public function country()
+    {
+        return $this->belongsTo(ClientCountry::class, 'Country', 'id');
+    }
 }

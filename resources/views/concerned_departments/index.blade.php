@@ -3,7 +3,7 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card border border-1 border-primary rounded-0">
         <div class="card-header bg-primary rounded-0">
-            <p class="text-white font-weight-bold m-0">Concerned Department List</p>
+            <p class="text-white font-weight-bold m-0">Department Concerned List</p>
         </div>
         <div class="card-body">
             <h4 class="card-title d-flex justify-content-end align-items-center">

@@ -27,7 +27,7 @@
                         @endif
                     @endif
                     @if($data->Progress == 30 || $data->Progress == 40)
-                         <button type="button" class="btn btn-outline-warning" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
+                         <button type="button" class="btn btn-outline-primary" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
                             <i class="ti ti-pencil"></i>&nbsp;Assign 
                         </button>
                         <button type="button" class="btn btn-outline-warning" id="updateCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCs">
@@ -219,9 +219,9 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>Select Concerned Department</label>
+                                <label>Select Department Concerned</label>
                                 <select class="form-control js-example-basic-single" name="Concerned" id="Concerned" required>
-                                    <option value="" disabled selected>Select Concerned</option>
+                                    <option value="" disabled selected>Select Department Concerned</option>
                                     @foreach($concern_department as $dept)
                                         <option value="{{ $dept->id }}" {{ old('Concerned') == $dept->id ? 'selected' : '' }}>
                                             {{ $dept->Name }}

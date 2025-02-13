@@ -166,7 +166,7 @@ class CustomerSatisfactionController extends Controller
             ->send(new CustomerSatisfactionMail($customerSatisfaction));
        
         // Return success message
-        return response()->json(['success' => 'You submitted the form successfully..']);
+        return response()->json(['success' => 'Your customer satisfaction has been submitted successfully!']);
     }
 
     public function update(Request $request, $id)
