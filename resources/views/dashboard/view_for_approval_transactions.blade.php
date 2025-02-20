@@ -121,6 +121,29 @@
                                             $status = $transaction->Status;
                                             $progress = $transaction->Progress;
                                         }
+                                        if ($key == 'cs')
+                                        {
+                                            $id = $transaction->id;
+                                            $transaction_number = $transaction->CsNumber;
+                                            $date_created = $transaction->created_at;
+                                            $due_date = $transaction->DateRequired;
+                                            $client_name = $transaction->CompanyName;
+                                            $application = optional($transaction->productApplicationsId)->Name;
+                                            $status = $transaction->Status;
+                                            $progress = $transaction->Progress;
+                                        }
+
+                                        if ($key == 'cc')
+                                        {
+                                            $id = $transaction->id;
+                                            $transaction_number = $transaction->CcNumber;
+                                            $date_created = $transaction->created_at;
+                                            $due_date = $transaction->DateRequired;
+                                            $client_name = $transaction->CompanyName;
+                                            $application = optional($transaction->productApplicationsId)->Name;
+                                            $status = $transaction->Status;
+                                            $progress = $transaction->Progress;
+                                        }
                                     @endphp
                                     <tr>
                                         <td>
@@ -132,12 +155,16 @@
                                             <a href="{{url('samplerequest/view/'.$id.'/'.$transaction_number.'/?origin=for_approval')}}">
                                             @elseif($key == 'prf')
                                             <a href="{{url('price_monitoring_local/view/'.$id.'/'.$transaction_number.'/?origin=for_approval')}}">
+                                            @elseif($key == 'cs')
+                                            <a href="{{url('customer_satisfaction/view/'.$id.'')}}">
+                                            @elseif($key == 'cc')
+                                            <a href="{{url('customer_complaint/view/'.$id.'')}}">
                                             @endif
                                                 {{$transaction_number}}
                                             </a>
                                         </td>
                                         <td>{{date('Y-m-d',strtotime($date_created))}}</td>
-                                        <td>{{$due_date}}</td>
+                                        <td>{{$due_date ?? 'N/A'}}</td>
                                         <td>{{$client_name}}</td>
                                         <td>
                                             @if($key == 'srf')

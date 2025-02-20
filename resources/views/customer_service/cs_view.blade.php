@@ -26,16 +26,20 @@
                             </form>
                         @endif
                     @endif
-                    @if($data->Progress == 30 || $data->Progress == 40)
+                    @if($data->ApprovedBy != NULL)
                          <button type="button" class="btn btn-outline-primary" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
                             <i class="ti ti-pencil"></i>&nbsp;Assign 
                         </button>
                         <button type="button" class="btn btn-outline-warning" id="updateCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCs">
                             <i class="ti ti-comment"></i>&nbsp;Remarks
                         </button>
+                        <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cs/'.$data->id)}}" target="_blank">
+                            <i class="ti ti-printer btn-icon-prepend"></i>
+                            Print
+                        </a>
                         <form action="{{ url('cs_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
-                            <button type="button" class="btn btn-outline-warning closedBtn">
+                            <button type="button" class="btn btn-outline-secondary closedBtn">
                                 <i class="ti ti-close"></i>&nbsp;Close
                             </button>
                         </form>
@@ -49,12 +53,6 @@
                             </button>
                         </form>
                         @endif
-                    @endif
-                    @if($data->ApprovedBy != NULL)
-                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cs/'.$data->id)}}" target="_blank">
-                        <i class="ti ti-printer btn-icon-prepend"></i>
-                        Print
-                    </a>
                     @endif
                 </div>
             </h4>

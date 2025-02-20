@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\CustomerComplaint2;
 use App\CustomerRequirement;
+use App\CustomerSatisfaction;
 use App\PriceMonitoring;
 use App\RequestProductEvaluation;
 use App\SampleRequest;
@@ -19,48 +21,60 @@ class ForApprovalTransactionController extends Controller
      */
     public function index()
     {
-        $customerRequirement = CustomerRequirement::where('Progress',10)
-            ->whereHas('salesapprovers', function($q) {
-                $q->where('SalesApproverId', auth()->user()->id);
+        $userId = auth()->user()->id;
+
+        $customerRequirement = CustomerRequirement::where('Progress', 10)
+            ->where('Status', 10)
+            ->whereHas('salesapprovers', function ($q) use ($userId) {
+                $q->where('SalesApproverId', $userId);
             })
-            ->where('Status',10)
             ->get();
-        
+
         $requestProductEvaluation = RequestProductEvaluation::where('Progress', 10)
-            ->whereHas('salesapprovers', function($q) {
-                $q->where('SalesApproverId', auth()->user()->id);
+            ->where('Status', 10)
+            ->whereHas('salesapprovers', function ($q) use ($userId) {
+                $q->where('SalesApproverId', $userId);
             })
-            ->where('Status',10)
             ->get();
 
         $sampleRequestForm = SampleRequest::with('requestProducts')
-            ->where('Progress',10)
-            ->whereHas('salesapprovers', function($q) {
-                $q->where('SalesApproverId', auth()->user()->id);
-            })
-            ->where('Status',10)
-            ->get();
-        
-        $priceRequestForm = PriceMonitoring::whereIn('Progress',[10, 40])
-            ->whereHas('salesapprovers', function($q) {
-                $q->where('SalesApproverId', auth()->user()->id);
-            })
-            ->orWhereHas('salesapproverByUserId', function($q) {
-                $q->where('SalesApproverId', auth()->user()->user_id);
+            ->where('Progress', 10)
+            ->where('Status', 10)
+            ->whereHas('salesapprovers', function ($q) use ($userId) {
+                $q->where('SalesApproverId', $userId);
             })
             ->get();
-        
-        $forApprovalTransactionsArray = array();
-        $obj = new stdClass;
-        $obj->crr = $customerRequirement;
-        $obj->rpe = $requestProductEvaluation;
-        $obj->srf = $sampleRequestForm;
-        $obj->prf = $priceRequestForm;
 
-        $forApprovalTransactionsArray = $obj;
-        
+        $priceRequestForm = PriceMonitoring::whereIn('Progress', [10, 40])
+            ->where(function ($query) use ($userId) {
+                $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                })->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
+            })
+            ->get();
+
+        $csForm = CustomerSatisfaction::whereIn('Progress', [20, 30])
+            ->where('Status', 10)
+            ->get();
+
+        $ccForm = CustomerComplaint2::whereIn('Progress', [20, 30])
+            ->where('Status', 10)
+            ->get();
+
+        $forApprovalTransactionsArray = (object) [
+            'crr' => $customerRequirement,
+            'rpe' => $requestProductEvaluation,
+            'srf' => $sampleRequestForm,
+            'prf' => $priceRequestForm,
+            'cs'  => $csForm,
+            'cc'  => $ccForm,
+        ];
+
         return view('dashboard.view_for_approval_transactions', compact('forApprovalTransactionsArray'));
     }
+
 
     /**
      * Show the form for creating a new resource.

@@ -8,7 +8,7 @@ class CustomerComplaint2 extends Model
 {
     protected $table = "customercomplaint";
     protected $fillable = [
-        'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status'
+        'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status', 'Progress'
     ];
 
     public function concerned() 
@@ -56,6 +56,11 @@ class CustomerComplaint2 extends Model
         return $this->belongsTo(User::class, 'NotedBy', 'id');
     }
 
+    public function approved_by()
+    {
+        return $this->belongsTo(User::class, 'ApprovedBy', 'id');
+    }
+
     public function closed()
     {
         return $this->belongsTo(User::class, 'ClosedBy', 'id');
@@ -70,13 +75,19 @@ class CustomerComplaint2 extends Model
     {
         return $this->belongsTo(SalesApprovers::class, 'ReceivedBy', 'UserId'); 
     }
+    
     public function files()
     {
-        return $this->hasMany(CcFile::class,'CcId');
+        return $this->hasMany(ComplaintFile::class,'CcId');
     }
 
     public function cc_attachments() 
     {
         return $this->hasMany(ComplaintFile::class, 'CcId', 'id');
+    }
+
+    public function objective()
+    {
+        return $this->hasMany(CcObjectiveFile::class,'CcId');
     }
 }

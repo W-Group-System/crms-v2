@@ -2008,93 +2008,93 @@ class RoleController extends Controller
                     }
                 }
                 
-                if ($module == "Customer Complaints")
-                {
-                    if ($request->has('Customer_Complaints'))
-                    {
-                        $access->edit = $request->Customer_Complaints['edit'] ?? null;
-                        $access->create = $request->Customer_Complaints['create'] ?? null; 
-                        $access->update = $request->Customer_Complaints['update'] ?? null; 
-                        $access->view = $request->Customer_Complaints['view'] ?? null; 
-                        $access->delete = $request->Customer_Complaints['delete'] ?? null; 
-                        $access->approve = $request->Customer_Complaints['approve'] ?? null; 
-                    }
-                    else
-                    {
-                        $access->create = null;
-                        $access->edit = null;
-                        $access->update = null; 
-                        $access->view = null; 
-                        $access->delete = null; 
-                        $access->approve = null;
-                    }
-                }
+                // if ($module == "Customer Complaints")
+                // {
+                //     if ($request->has('Customer_Complaints'))
+                //     {
+                //         $access->edit = $request->Customer_Complaints['edit'] ?? null;
+                //         $access->create = $request->Customer_Complaints['create'] ?? null; 
+                //         $access->update = $request->Customer_Complaints['update'] ?? null; 
+                //         $access->view = $request->Customer_Complaints['view'] ?? null; 
+                //         $access->delete = $request->Customer_Complaints['delete'] ?? null; 
+                //         $access->approve = $request->Customer_Complaints['approve'] ?? null; 
+                //     }
+                //     else
+                //     {
+                //         $access->create = null;
+                //         $access->edit = null;
+                //         $access->update = null; 
+                //         $access->view = null; 
+                //         $access->delete = null; 
+                //         $access->approve = null;
+                //     }
+                // }
                 
-                if ($module == "Customer Feedback")
-                {
-                    if ($request->has('Customer_Feedback'))
-                    {
-                        $access->edit = $request->Customer_Feedback['edit'] ?? null;
-                        $access->create = $request->Customer_Feedback['create'] ?? null; 
-                        $access->update = $request->Customer_Feedback['update'] ?? null; 
-                        $access->view = $request->Customer_Feedback['view'] ?? null; 
-                        $access->delete = $request->Customer_Feedback['delete'] ?? null; 
-                        $access->approve = $request->Customer_Feedback['approve'] ?? null; 
-                    }
-                    else
-                    {
-                        $access->create = null;
-                        $access->edit = null;
-                        $access->update = null; 
-                        $access->view = null; 
-                        $access->delete = null; 
-                        $access->approve = null;
-                    }
-                }
+                // if ($module == "Customer Feedback")
+                // {
+                //     if ($request->has('Customer_Feedback'))
+                //     {
+                //         $access->edit = $request->Customer_Feedback['edit'] ?? null;
+                //         $access->create = $request->Customer_Feedback['create'] ?? null; 
+                //         $access->update = $request->Customer_Feedback['update'] ?? null; 
+                //         $access->view = $request->Customer_Feedback['view'] ?? null; 
+                //         $access->delete = $request->Customer_Feedback['delete'] ?? null; 
+                //         $access->approve = $request->Customer_Feedback['approve'] ?? null; 
+                //     }
+                //     else
+                //     {
+                //         $access->create = null;
+                //         $access->edit = null;
+                //         $access->update = null; 
+                //         $access->view = null; 
+                //         $access->delete = null; 
+                //         $access->approve = null;
+                //     }
+                // }
                 
-                if ($module == "Issue Category")
-                {
-                    if ($request->has('Issue_Category'))
-                    {
-                        $access->edit = $request->Issue_Category['edit'] ?? null;
-                        $access->create = $request->Issue_Category['create'] ?? null; 
-                        $access->update = $request->Issue_Category['update'] ?? null; 
-                        $access->view = $request->Issue_Category['view'] ?? null; 
-                        $access->delete = $request->Issue_Category['delete'] ?? null; 
-                        $access->approve = $request->Issue_Category['approve'] ?? null; 
-                    }
-                    else
-                    {
-                        $access->create = null;
-                        $access->edit = null;
-                        $access->update = null; 
-                        $access->view = null; 
-                        $access->delete = null; 
-                        $access->approve = null;
-                    }
-                }
+                // if ($module == "Issue Category")
+                // {
+                //     if ($request->has('Issue_Category'))
+                //     {
+                //         $access->edit = $request->Issue_Category['edit'] ?? null;
+                //         $access->create = $request->Issue_Category['create'] ?? null; 
+                //         $access->update = $request->Issue_Category['update'] ?? null; 
+                //         $access->view = $request->Issue_Category['view'] ?? null; 
+                //         $access->delete = $request->Issue_Category['delete'] ?? null; 
+                //         $access->approve = $request->Issue_Category['approve'] ?? null; 
+                //     }
+                //     else
+                //     {
+                //         $access->create = null;
+                //         $access->edit = null;
+                //         $access->update = null; 
+                //         $access->view = null; 
+                //         $access->delete = null; 
+                //         $access->approve = null;
+                //     }
+                // }
 
-                if ($module == "Concerned Department")
-                {
-                    if ($request->has('Concerned_Department'))
-                    {
-                        $access->edit = $request->Concerned_Department['edit'] ?? null;
-                        $access->create = $request->Concerned_Department['create'] ?? null; 
-                        $access->update = $request->Concerned_Department['update'] ?? null; 
-                        $access->view = $request->Concerned_Department['view'] ?? null; 
-                        $access->delete = $request->Concerned_Department['delete'] ?? null; 
-                        $access->approve = $request->Concerned_Department['approve'] ?? null; 
-                    }
-                    else
-                    {
-                        $access->create = null;
-                        $access->edit = null;
-                        $access->update = null; 
-                        $access->view = null; 
-                        $access->delete = null; 
-                        $access->approve = null;
-                    }
-                }
+                // if ($module == "Concerned Department")
+                // {
+                //     if ($request->has('Concerned_Department'))
+                //     {
+                //         $access->edit = $request->Concerned_Department['edit'] ?? null;
+                //         $access->create = $request->Concerned_Department['create'] ?? null; 
+                //         $access->update = $request->Concerned_Department['update'] ?? null; 
+                //         $access->view = $request->Concerned_Department['view'] ?? null; 
+                //         $access->delete = $request->Concerned_Department['delete'] ?? null; 
+                //         $access->approve = $request->Concerned_Department['approve'] ?? null; 
+                //     }
+                //     else
+                //     {
+                //         $access->create = null;
+                //         $access->edit = null;
+                //         $access->update = null; 
+                //         $access->view = null; 
+                //         $access->delete = null; 
+                //         $access->approve = null;
+                //     }
+                // }
 
                 if ($module == "Payment Terms")
                 {

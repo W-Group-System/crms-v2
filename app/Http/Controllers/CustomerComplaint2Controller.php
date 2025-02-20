@@ -13,6 +13,8 @@ use App\ConcernDepartment;
 use App\CustomerComplaint;
 use App\CustomerComplaint2;
 use App\Notifications\EmailDepartment;
+use App\CcObjectiveFile;
+use Illuminate\Support\Facades\App;
 use App\Mail\CustomerComplaintMail;
 use App\Mail\AssignCcDepartmentMail;
 use Illuminate\Support\Facades\Mail;
@@ -174,7 +176,7 @@ class CustomerComplaint2Controller extends Controller
                     $ccFiles->CcId = $customerComplaint->id;
 
                     $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('cs_files', $fileName, 'public'); 
+                    $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
                     $ccFiles->Path = $filePath; 
                     $ccFiles->save();
 
@@ -308,6 +310,21 @@ class CustomerComplaint2Controller extends Controller
         $data->ActionResponsible = auth()->user()->id;
         $data->ActionDate = now();
         $data->save();
+
+        if ($request->hasFile('Path')) {
+            foreach ($request->file('Path') as $file) {
+                if ($file->isValid()) {
+                    $ccFile = new CcObjectiveFile();
+                    $ccFile->CcId = $data->id;
+    
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs('cc_files', $fileName, 'public');
+                    
+                    $ccFile->Path = $filePath;
+                    $ccFile->save();
+                }
+            }
+        }
         
         return response()->json([
             'success' => true,
@@ -317,7 +334,7 @@ class CustomerComplaint2Controller extends Controller
 
     public function view($id)
     {
-        $data = CustomerComplaint2::with('concerned', 'country', 'product_quality', 'packaging', 'delivery_handling', 'others')->findOrFail($id);
+        $data = CustomerComplaint2::with('concerned', 'country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'files', 'objective')->findOrFail($id);
         $concern_department = ConcernDepartment::all();
 
         return view('customer_service.cc_view', compact('data','concern_department'));
@@ -333,7 +350,7 @@ class CustomerComplaint2Controller extends Controller
         $data->ShipmentDate = $request->ShipmentDate;
         $data->AmountIncurred = $request->AmountIncurred;
         $data->ShipmentCost = $request->ShipmentCost;
-        $data->Progress = 40;
+        $data->Progress = 50;
         $data->save();
 
         return response()->json([
@@ -360,12 +377,26 @@ class CustomerComplaint2Controller extends Controller
     {
         $data = CustomerComplaint2::findOrFail($id);
         $data->NotedBy = auth()->user()->id;
+        $data->DateNoted = now();
         $data->Progress = 30;
         $data->save();
 
         return response()->json([
             'success' => true,
             'message' => 'Customer complaint has been successfully updated.'
+        ]);
+    }
+
+    public function approved($id)
+    {
+        $data = CustomerComplaint2::findOrFail($id);
+        $data->ApprovedBy = auth()->user()->id;
+        $data->Progress = 40;
+        $data->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer satisfaction has been successfully approved.'
         ]);
     }
     
@@ -375,7 +406,7 @@ class CustomerComplaint2Controller extends Controller
         $data->ClosedBy = auth()->user()->id;
         $data->ClosedDate = now();
         $data->Status = 30;
-        $data->Progress = 50;
+        $data->Progress = 60;
         $data->save();
 
         return response()->json([
@@ -479,7 +510,7 @@ class CustomerComplaint2Controller extends Controller
                     $ccFiles->CcId = $customer_complaint->id;
 
                     $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('cs_files', $fileName, 'public'); 
+                    $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
                     $ccFiles->Path = $filePath; 
                     $ccFiles->save();
 
@@ -515,5 +546,19 @@ class CustomerComplaint2Controller extends Controller
             'success' => true,
             'message' => 'Customer satisfaction feedback and files have been successfully assigned.'
         ]);
+    }
+
+    public function printCc($id)
+    {
+        $cc = CustomerComplaint2::with('country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'users', 'noted_by')->findOrFail($id);
+        $data = [
+            'cc' => $cc,
+            'CountryName' => optional($cc->country)->Name,
+        ];
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('customer_service.cc_pdf', $data);
+
+        return $pdf->stream();
     }
 }

@@ -30,29 +30,41 @@
                         </form>
                     @endif
                 @endif
-                @if($data->Progress == 30)
-                <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
-                    <i class="ti ti-pencil"></i>&nbsp;Assign 
-                </button>
-                <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
-                    <i class="ti ti-pencil"></i>&nbsp;Complaint 
-                </button>
-                <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
-                    <i class="ti ti-pencil"></i>&nbsp;Investigation
-                </button>
-                <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
-                    <i class="ti ti-pencil"></i>&nbsp;Verification
-                </button>
-                <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
-                    <i class="ti ti-printer btn-icon-prepend"></i>
-                    Print
-                </a>
-                <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-secondary closeBtn">
-                        <i class="ti-close">&nbsp;</i> Close
+                @if($data->Progress == 40)
+                    <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
+                        <i class="ti ti-pencil"></i>&nbsp;Assign 
                     </button>
-                </form>
+                    <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                        <i class="ti ti-pencil"></i>&nbsp;Complaint 
+                    </button>
+                    <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                        <i class="ti ti-pencil"></i>&nbsp;Investigation
+                    </button>
+                    <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                        <i class="ti ti-pencil"></i>&nbsp;Verification
+                    </button>
+                    @if($data->ApprovedBy != NULL)
+                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        Print
+                    </a>
+                    @endif
+                    <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-secondary closeBtn">
+                            <i class="ti-close">&nbsp;</i> Close
+                        </button>
+                    </form>
+                @endif
+                @if($data->NotedBy != NULL && auth()->user()->id == 15)
+                    @if($data->Progress != 40)
+                    <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-success approvedBtn">
+                            <i class="ti-check">&nbsp;</i> Approved
+                        </button>
+                    </form>
+                    @endif
                 @endif
             </div>
             <div class="row mb-0 mt-3">
@@ -191,12 +203,33 @@
                     <p class="m-0">{{ $data->Telephone }}</p>
                 </div>
             </div>
-            <div class="form-group row mb-3">
+            <div class="form-group row mb-0">
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Site Concerned :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ $data->SiteConcerned }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Approved By :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ optional($data->approved_by)->full_name }}</p>
+                </div>
+            </div> 
+            <div class="form-group row mb-3">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Attachments :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">
+                        @foreach ($data->files as $key => $file)
+                            @php
+                                $filePath = asset('storage/' . $file->Path); 
+                            @endphp
+                            {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
+                        @endforeach
+                    </p>
                 </div>
             </div> 
             <div class="row">
@@ -433,7 +466,7 @@
                             <p class="m-0"> <b>Action/ Implementation Date :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ActionDate ?? 'N/A' }}</p>
+                            <p class="m-0">{{ date('M. d, Y', strtotime($data->ActionDate)) ?? 'N/A' }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Action Responsible :</b></p>
@@ -460,6 +493,21 @@
                         <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Objective Evidence :</b></p></div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">{{ $data->ActionObjectiveEvidence ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Files :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">
+                                @foreach ($data->objective as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path); 
+                                    @endphp
+                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
+                                @endforeach
+                            </p>
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
@@ -538,7 +586,7 @@
                             <p class="m-0">{{ $data->ShipmentCost ?? 'N/A' }}</p>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
+                    {{-- <div class="col-md-12 mb-3">
                         <label><strong>Files</strong></label>
                         <hr class="alert-dark mt-0">
                     </div>
@@ -549,7 +597,7 @@
                             @endphp
                             {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
                         @endforeach
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
@@ -566,7 +614,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="updateCustomerComplaint" method="POST" action="{{ url('update_customer_complaint/' . $data->id) }}">
+                <form id="updateCustomerComplaint" method="POST" action="{{ url('update_customer_complaint/' . $data->id) }}" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-lg-6">
@@ -627,6 +675,12 @@
                             <div class="form-group">
                                 <label for="name">Objective Evidence</label>
                                 <textarea type="text" class="form-control" id="ActionObjectiveEvidence" name="ActionObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence">{{ $data->ActionObjectiveEvidence }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">Attachments</label>
+                                <input type="file" name="Path[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
                     </div>
@@ -764,13 +818,15 @@
         $('#updateCustomerComplaint').on('submit', function (e) {
             e.preventDefault(); 
 
-            var form = $(this);
-            var actionUrl = form.attr('action');
+            var formData = new FormData(this); // Use FormData to handle file uploads
+            var actionUrl = $(this).attr('action');
 
             $.ajax({
                 url: actionUrl,
                 type: 'POST',
-                data: form.serialize(),
+                data: formData,
+                processData: false, 
+                contentType: false, 
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
@@ -861,6 +917,33 @@
                             timer: 1500
                         }).then(function () {
                             window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.approvedBtn').on('click', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action'); // Get form action URL
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(), // Serialize form data
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Approved",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            customClass: 'swal-wide',
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); // Reload the page after the alert
                         });
                     }
                 }
