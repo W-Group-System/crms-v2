@@ -352,6 +352,13 @@ class DashboardController extends Controller
             ->where('salesapprovers.SalesApproverId', $userId)
             ->count();
 
+        $customerSatisfactionApproval = CustomerSatisfaction::where('Status', 10)
+            ->whereIn('Progress', [20, 30])
+            ->count();
+
+        $customerComplaintApproval = CustomerComplaint2::where('Status', 10)
+            ->whereIn('Progress', [20, 30])
+            ->count();
         // Display the result
         // dd($prfSalesForApproval);
 
@@ -375,7 +382,7 @@ class DashboardController extends Controller
         // $prfSalesForApproval = countApproval(PriceMonitoring::class, $userId, $userByUser, 'Progress', '10', 'Status', 10);
 
         // Total approval count
-        $totalApproval = $crrSalesForApproval + $rpeSalesForApproval + $srfSalesForApproval + $prfSalesForApproval;
+        $totalApproval = $crrSalesForApproval + $rpeSalesForApproval + $srfSalesForApproval + $prfSalesForApproval + $customerSatisfactionApproval + $customerComplaintApproval;
 
         // Open Transactions
         $salesCrrOpen = CustomerRequirement::where('Status', '10')
@@ -567,20 +574,20 @@ class DashboardController extends Controller
         //             });
         //     })
         //     ->count();
-
-        $customerComplaintCount = CustomerComplaint2::where('Status', '10')
-            ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
-                // Use whereRaw for partial string matching with LIKE
-                $query->whereRaw('LOWER(clientcompanies.Name) LIKE LOWER(CONCAT("%", customercomplaint.CompanyName, "%"))')
-                    ->where(function ($query) use ($userId, $userByUser) {
-                        $query->where('clientcompanies.PrimaryAccountManagerId', $userId)
-                            ->orWhere('clientcompanies.SecondaryAccountManagerId', $userId)
-                            ->orWhere('clientcompanies.PrimaryAccountManagerId', $userByUser)
-                            ->orWhere('clientcompanies.SecondaryAccountManagerId', $userByUser);
-                    });
-            })
+        $customerComplaintCount = CustomerComplaint2::where('Status', '10')->count();
+        // $customerComplaintCount = CustomerComplaint2::where('Status', '10')
+        //     ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
+        //         // Use whereRaw for partial string matching with LIKE
+        //         $query->whereRaw('LOWER(clientcompanies.Name) LIKE LOWER(CONCAT("%", customercomplaint.CompanyName, "%"))')
+        //             ->where(function ($query) use ($userId, $userByUser) {
+        //                 $query->where('clientcompanies.PrimaryAccountManagerId', $userId)
+        //                     ->orWhere('clientcompanies.SecondaryAccountManagerId', $userId)
+        //                     ->orWhere('clientcompanies.PrimaryAccountManagerId', $userByUser)
+        //                     ->orWhere('clientcompanies.SecondaryAccountManagerId', $userByUser);
+        //             });
+        //     })
             
-            ->count();
+        //     ->count();
 
         $ccNotedBy = CustomerComplaint2::join('users', function($join) {
             $join->on('customercomplaint.ReceivedBy', '=', 'users.id');
@@ -599,7 +606,8 @@ class DashboardController extends Controller
                 ->where('salesapprovers.SalesApproverId', $userId)
                 ->count();
         
-        $totalCs = $customerSatisfactionCount + $customerComplaintCount + $ccNotedBy + $csNotedBy;
+        // $totalCs = $customerSatisfactionCount + $customerComplaintCount + $ccNotedBy + $csNotedBy;
+        $totalCs = $customerSatisfactionCount + $customerComplaintCount;
     
         /************* RND *************/
     

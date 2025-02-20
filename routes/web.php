@@ -59,6 +59,9 @@ Route::group(['middleware' => ['auth']], function() {
         // Activities
         Route::get('sales_activities', 'SalesActivityController@index');
 
+        // Customer Service
+        Route::get('customer_services', 'CustomerServiceController@index');
+
         // Returned Transaction
         Route::get('returned_transactions', 'ReturnedTransactionController@index');
     
@@ -426,10 +429,12 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('/update_customer_complaint/{id}', 'CustomerComplaint2Controller@update')->name('update_customer_complaint');
         Route::post('/customer_acceptance/{id}', 'CustomerComplaint2Controller@acceptance')->name('customer_acceptance');
         Route::post('cc_received/{id}', 'CustomerComplaint2Controller@received');
+        Route::post('cc_approved/{id}', 'CustomerComplaint2Controller@approved');
         Route::post('cc_closed/{id}', 'CustomerComplaint2Controller@closed');
         Route::post('cc_noted/{id}', 'CustomerComplaint2Controller@noted');
         Route::post('cc_update/{id}', 'CustomerComplaint2Controller@ccupdate');
         Route::post('cc_assign/{id}', 'CustomerComplaint2Controller@assign');
+        Route::get('print_cc/{id}', 'CustomerComplaint2Controller@printCc');
         
         // Categorization
         Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    

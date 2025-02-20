@@ -90,7 +90,7 @@
             </div>
             <div class="col-md-6">
                 <div class="row">
-                    <div class="col-md-6 grid-margin transparent">
+                    <div class="col-md-6 mb-2 transparent">
                         {{-- <div class="card mb-2 card-tale">
                             <div class="card-body">
                                 <p class="card-title text-white">For Approval</p>
@@ -136,16 +136,16 @@
                                 </div>
                             </div>
                         </div> --}}
-                        <div class="card rounded-0 border border-1 border-success">
+                        <div class="card rounded-0 h-card border border-1 border-success">
                             <div class="card-body bg-success">
                                 <div class="row">
                                     <div class="col-6">
-                                        <h1 class="m-0">
+                                        <h2 class="m-0">
                                             <i class="ti-check-box text-white"></i>
-                                        </h1>
+                                        </h2>
                                     </div>
                                     <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$totalApproval}}</h1>
+                                        <h2 class="m-0 text-right text-white">{{$totalApproval}}</h2>
                                         <p class="m-0 text-right text-white">For Approval</p>
                                     </div>
                                 </div>
@@ -165,16 +165,16 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card rounded-0 border border-1 border-primary">
+                        <div class="card rounded-0 h-card border border-1 border-primary">
                             <div class="card-body bg-primary">
                                 <div class="row">
                                     <div class="col-6">
-                                        <h1 class="m-0">
+                                        <h2 class="m-0">
                                             <i class="ti-file text-white"></i>
-                                        </h1>
+                                        </h2>
                                     </div>
                                     <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$totalSalesOpen}}</h1>
+                                        <h2 class="m-0 text-right text-white">{{$totalSalesOpen}}</h2>
                                         <p class="m-0 text-right text-white">Open Transactions</p>
                                     </div>
                                 </div>
@@ -194,16 +194,16 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card rounded-0 border border-1 border-info">
+                        <div class="card rounded-0 h-card border border-1 border-info">
                             <div class="card-body bg-info">
                                 <div class="row">
                                     <div class="col-6">
-                                        <h1 class="m-0">
+                                        <h2 class="m-0">
                                             <i class="ti-layers text-white"></i>
-                                        </h1>
+                                        </h2>
                                     </div>
                                     <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$openActivitiesCount}}</h1>
+                                        <h2 class="m-0 text-right text-white">{{$openActivitiesCount}}</h2>
                                         <p class="m-0 text-right text-white">Activities</p>
                                     </div>
                                 </div>
@@ -222,17 +222,17 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card rounded-0" style="border: 1px solid #4747A1;">
+                    <div class="col-md-6 mb-2 transparent">
+                        <div class="card rounded-0 h-card" style="border: 1px solid #4747A1;">
                             <div class="card-body" style="background: #4747A1;">
                                 <div class="row">
                                     <div class="col-6">
-                                        <h1 class="m-0">
+                                        <h2 class="m-0">
                                             <i class="ti-share-alt text-white"></i>
-                                        </h1>
+                                        </h2>
                                     </div>
                                     <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$totalReturned}}</h1>
+                                        <h2 class="m-0 text-right text-white">{{$totalReturned}}</h2>
                                         <p class="m-0 text-right text-white">Returned Transactions</p>
                                     </div>
                                 </div>
@@ -245,6 +245,35 @@
                                         </div>
                                         <div class="col-lg-6 text-right">
                                             <i class="ti-arrow-circle-right" style="color: #4747A1;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card rounded-0 h-card border border-1 border-warning">
+                            <div class="card-body cbg-warning">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h2 class="m-0">
+                                            <i class="ti-layers text-white"></i>
+                                        </h2>
+                                    </div>
+                                    <div class="col-6">
+                                        <h2 class="m-0 text-right text-white">{{ $totalCs }}</h2>
+                                        <p class="m-0 text-right text-white">Customer Service</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('customer_services')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-warning">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-warning"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -424,16 +453,16 @@
             <div class="col-md-6">
                 <div class="row">
                     <div class="col-md-6  grid-margin transparent">
-                        <div class="card rounded-0 border border-1 border-primary">
+                        <div class="card rounded-0 h-card border border-1 border-primary">
                             <div class="card-body bg-primary">
                                 <div class="row">
                                     <div class="col-6">
-                                        <h1 class="m-0">
+                                        <h2 class="m-0">
                                             <i class="ti-file text-white"></i>
-                                        </h1>
+                                        </h2>
                                     </div>
                                     <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$totalSalesOpen}}</h1>
+                                        <h2 class="m-0 text-right text-white">{{$totalSalesOpen}}</h2>
                                         <p class="m-0 text-right text-white">Open Transactions</p>
                                     </div>
                                 </div>
@@ -453,16 +482,16 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card rounded-0 border border-1 border-info">
+                        <div class="card rounded-0 h-card border border-1 border-info">
                             <div class="card-body bg-info">
                                 <div class="row">
                                     <div class="col-6">
-                                        <h1 class="m-0">
+                                        <h2 class="m-0">
                                             <i class="ti-layers text-white"></i>
-                                        </h1>
+                                        </h2>
                                     </div>
                                     <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$openActivitiesCount}}</h1>
+                                        <h2 class="m-0 text-right text-white">{{$openActivitiesCount}}</h2>
                                         <p class="m-0 text-right text-white">Activities</p>
                                     </div>
                                 </div>
@@ -482,16 +511,16 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card rounded-0" style="border: 1px solid #4747A1;">
+                        <div class="card rounded-0 h-card" style="border: 1px solid #4747A1;">
                             <div class="card-body" style="background: #4747A1;">
                                 <div class="row">
                                     <div class="col-6">
-                                        <h1 class="m-0">
+                                        <h2 class="m-0">
                                             <i class="ti-share-alt text-white"></i>
-                                        </h1>
+                                        </h2>
                                     </div>
                                     <div class="col-6">
-                                        <h1 class="m-0 text-right text-white">{{$totalReturned}}</h1>
+                                        <h2 class="m-0 text-right text-white">{{$totalReturned}}</h2>
                                         <p class="m-0 text-right text-white">Returned Transactions</p>
                                     </div>
                                 </div>
@@ -504,6 +533,35 @@
                                         </div>
                                         <div class="col-lg-6 text-right">
                                             <i class="ti-arrow-circle-right" style="color: #4747A1;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card rounded-0 h-card border border-1 border-warning">
+                            <div class="card-body cbg-warning">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h2 class="m-0">
+                                            <i class="ti-layers text-white"></i>
+                                        </h2>
+                                    </div>
+                                    <div class="col-6">
+                                        <h2 class="m-0 text-right text-white">{{ $totalCs }}</h2>
+                                        <p class="m-0 text-right text-white">Customer Service</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{url('customer_services')}}" class="text-decoration-none">
+                                <div class="card-footer p-2">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <p class="m-0 text-warning">View Details</p>
+                                        </div>
+                                        <div class="col-lg-6 text-right">
+                                            <i class="ti-arrow-circle-right text-warning"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -890,6 +948,15 @@
 
     
 </div>
+<style>
+    .h-card {
+        height: 150px;
+        position: relative;
+    }
+    .cbg-warning {
+        background-color: #dbad1d !important;
+    }
+</style>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
 <script>

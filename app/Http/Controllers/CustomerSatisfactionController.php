@@ -157,7 +157,7 @@ class CustomerSatisfactionController extends Controller
             'Category' => $request->Category,
             'ContactNumber' => $request->ContactNumber,
             'Email' => $request->Email,
-            // 'Status' => '10',
+            'Status' => '10',
             'Progress' => '10'
         ]);
 
