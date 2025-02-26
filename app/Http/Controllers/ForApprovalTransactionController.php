@@ -58,7 +58,7 @@ class ForApprovalTransactionController extends Controller
             })
             ->get();
         }
-        
+    
 
         $csForm = CustomerSatisfaction::whereIn('Progress', [20, 30])
             ->where('Status', 10)
