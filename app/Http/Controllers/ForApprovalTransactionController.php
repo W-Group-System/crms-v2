@@ -55,7 +55,7 @@ class ForApprovalTransactionController extends Controller
                     $q->where('LsalesMarkupPercent', '>', 15);
                 });
             })
-            ->where('.Status', '10') 
+            ->where('Status', '10') 
             ->get();
         } else {
             $priceRequestForm = PriceMonitoring::whereIn('Progress', [10, 40])
