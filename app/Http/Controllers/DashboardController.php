@@ -185,7 +185,7 @@ class DashboardController extends Controller
 
         // Price Request counts
         if (auth()->user()->role->description == "Manager") {
-            $prfSalesApproval = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '40', 'Status', 10);
+            $prfSalesApproval = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '10', 'Status', 10);
             $prfWaiting = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '20');
             $prfReopened = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '25');
             $prfClosed = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '30');
@@ -357,10 +357,15 @@ class DashboardController extends Controller
                     $join->on('pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
                             ->orOn('pricerequestforms.PrimarySalesPersonId', '=', 'users.id');
                     }) 
-                    // ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
-                    ->where('pricerequestforms.Progress', '40') 
+                    ->join('pricerequestproducts', function($join) {
+                    $join->on('pricerequestforms.id', '=', 'pricerequestproducts.PriceRequestFormId');
+                    }) 
+                    
+                    ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+                    ->whereIn('pricerequestforms.Progress', [10,40]) 
+                    ->where('pricerequestproducts.LsalesMarkupPercent', '>', 15) 
                     ->where('pricerequestforms.Status', '10') 
-                    // ->where('salesapprovers.SalesApproverId', $userId)
+                    ->where('salesapprovers.SalesApproverId', $userId)
                     ->count();
             } else { 
                 $prfSalesForApproval = PriceMonitoring::join('users', function($join) {
