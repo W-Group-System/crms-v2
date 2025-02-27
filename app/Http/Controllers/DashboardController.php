@@ -357,10 +357,10 @@ class DashboardController extends Controller
                     $join->on('pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
                             ->orOn('pricerequestforms.PrimarySalesPersonId', '=', 'users.id');
                     }) 
-                    ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+                    // ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
                     ->where('pricerequestforms.Progress', '40') 
                     ->where('pricerequestforms.Status', '10') 
-                    ->where('salesapprovers.SalesApproverId', $userId)
+                    // ->where('salesapprovers.SalesApproverId', $userId)
                     ->count();
             } else { 
                 $prfSalesForApproval = PriceMonitoring::join('users', function($join) {
