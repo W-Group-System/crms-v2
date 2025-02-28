@@ -865,7 +865,7 @@ class SampleRequestController extends Controller
             }
         }
         srfHistoryLogs('add_files', $srfId);
-        return redirect()->back()->with('success', 'File(s) Stored successfully');
+        return redirect()->back()->with(['tab' => 'files']);
     }
 
     public function editFile(Request $request, $id)
@@ -889,7 +889,7 @@ class SampleRequestController extends Controller
         }
         $srfFile->save();
         srfHistoryLogs('update_files', $srfFile->SampleRequestId);
-        return redirect()->back()->with('success', 'File updated successfully');
+        return redirect()->back()->with(['tab' => 'files']);
     }
     public function deleteFile($id)
     {
