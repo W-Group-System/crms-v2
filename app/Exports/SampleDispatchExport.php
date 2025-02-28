@@ -84,21 +84,24 @@ class SampleDispatchExport implements WithStyles, WithColumnWidths
         $sample_request_products_array = [];
         $quantity_array = [];
         $product_desc_array = [];
+        $lot_array = [];
         foreach($srf as $row)
         {
             foreach($row->requestProducts as $sampleRequestProducts)
             {
+                // dd($sampleRequestProducts);
                 $sample_request_products_array[] = $sampleRequestProducts->Label;
                 $quantity_array[] = $sampleRequestProducts->Quantity;
                 $product_desc_array[] = $sampleRequestProducts->ProductDescription;
+                $lot_array[] = $row->SrfNumber.'-'.$sampleRequestProducts->ProductIndex;
             }
-
+            
             $srf_array['contact'] = optional($row->clientContact)->ContactName;
             $srf_array['company'] = optional($row->client)->Name;
             $srf_array['address'] = optional($row->clientAddress)->Address;
             $srf_array['product'] = implode("\n",$sample_request_products_array);
             $srf_array['quantity'] = implode("\n",$quantity_array);
-            $srf_array['srf'] = $row->SrfNumber;
+            $srf_array['srf'] = count($lot_array) > 1 ? implode("\n",$lot_array) : $row->SrfNumber;
             $srf_array['product_description'] = implode("\n",$product_desc_array);
             $srf_array['documents'] = 'Proforma Invoice, Certification, MSDS, Cover Letter';
             $srf_array['courier'] = $row->Courier;
@@ -131,7 +134,7 @@ class SampleDispatchExport implements WithStyles, WithColumnWidths
         $sheet->setCellValue('C5', $srf_array['company']);
 
         $sheet->setCellValue('B6', 'Address:');
-        $sheet->setCellValue('B6', $srf_array['address']);
+        $sheet->setCellValue('C6', $srf_array['address']);
 
         $sheet->setCellValue('B8', 'Product');
         $sheet->setCellValue('B9', $srf_array['product']);
