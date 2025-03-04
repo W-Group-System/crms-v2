@@ -865,9 +865,9 @@
                                             @endif
                                         <td>
                                             @if($supplementary->userSupplementary)
-                                            {{$supplementary->userSupplementary->full_name}}
+                                                {{$supplementary->userSupplementary->full_name}}
                                             @elseif($supplementary->userId)
-                                            {{$supplementary->userId->full_name}}
+                                                {{$supplementary->userId->full_name}}
                                             @endif
                                         </td>
                                         <td>{!! nl2br( $supplementary->DetailsOfRequest) !!}</td>
