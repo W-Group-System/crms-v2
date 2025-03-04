@@ -112,7 +112,7 @@
                                         @if($productEvaluation->CreatedDate != null)
                                         {{ date('M d, Y h:i A', strtotime($productEvaluation->CreatedDate)) }}
                                         @else
-                                        {{date('M d, Y h:i A', strtotime($productEvaluation->created_at))}}
+                                        {{date('M d, Y h:i A', strtotime($productEvaluation->DateCreated))}}
                                         @endif
                                     </td>
                                     <td>{{ $productEvaluation->DueDate }}</td>

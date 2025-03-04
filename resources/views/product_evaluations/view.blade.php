@@ -473,7 +473,7 @@
                                     <p class="mb-0">@if($requestEvaluation->CreatedDate != null)
                                         {{ date('M d, Y h:i A', strtotime($requestEvaluation->CreatedDate)) }}
                                         @else
-                                        {{ date('M d, Y h:i A', strtotime($requestEvaluation->created_at)) }}
+                                        {{ date('M d, Y h:i A', strtotime($requestEvaluation->DateCreated)) }}
                                         @endif</p>
                                 </div>
                                 <div class="col-sm-3 col-md-4">
