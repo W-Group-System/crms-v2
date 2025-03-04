@@ -473,7 +473,7 @@
                                     <p class="mb-0">@if($requestEvaluation->CreatedDate != null)
                                         {{ date('M d, Y h:i A', strtotime($requestEvaluation->CreatedDate)) }}
                                         @else
-                                        {{ date('M d, Y h:i A', strtotime($requestEvaluation->DateCreated)) }}
+                                        {{ date('M d, Y h:i A', strtotime($requestEvaluation->created_at)) }}
                                         @endif</p>
                                 </div>
                                 <div class="col-sm-3 col-md-4">
@@ -857,7 +857,12 @@
                                                 </button> 
                                             @endif
                                         </td>
-                                        <td>{{ date('M d, Y h:i A', strtotime($supplementary->DateCreated)) }}</td>
+                                        <td>
+                                            @if($supplementary->DateCreated != null)
+                                            {{ date('M d, Y h:i A', strtotime($supplementary->DateCreated)) }}</td>
+                                            @else
+                                            {{date('M d, Y h:i A', strtotime($supplementary->CreatedDate))}}
+                                            @endif
                                         <td>
                                             @if($supplementary->userSupplementary)
                                             {{$supplementary->userSupplementary->full_name}}
