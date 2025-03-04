@@ -857,12 +857,17 @@
                                                 </button> 
                                             @endif
                                         </td>
-                                        <td>{{ date('M d, Y h:i A', strtotime($supplementary->DateCreated)) }}</td>
+                                        <td>
+                                            @if($supplementary->DateCreated != null)
+                                            {{ date('M d, Y h:i A', strtotime($supplementary->DateCreated)) }}</td>
+                                            @else
+                                            {{date('M d, Y h:i A', strtotime($supplementary->CreatedDate))}}
+                                            @endif
                                         <td>
                                             @if($supplementary->userSupplementary)
-                                            {{$supplementary->userSupplementary->full_name}}
+                                                {{$supplementary->userSupplementary->full_name}}
                                             @elseif($supplementary->userId)
-                                            {{$supplementary->userId->full_name}}
+                                                {{$supplementary->userId->full_name}}
                                             @endif
                                         </td>
                                         <td>{!! nl2br( $supplementary->DetailsOfRequest) !!}</td>
