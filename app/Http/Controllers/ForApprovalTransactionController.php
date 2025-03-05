@@ -25,8 +25,12 @@ class ForApprovalTransactionController extends Controller
 
         $customerRequirement = CustomerRequirement::where('Progress', 10)
             ->where('Status', 10)
-            ->whereHas('salesapprovers', function ($q) use ($userId) {
-                $q->where('SalesApproverId', $userId);
+            ->where(function ($query) use ($userId) {
+                $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                })->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
             })
             ->get();
 
@@ -51,8 +55,8 @@ class ForApprovalTransactionController extends Controller
                     $q->where('SalesApproverId', $userId);
                 })->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
                     $q->where('SalesApproverId', $userId);
-                })->orWhereHas('products', function ($q) use ($userId) {
-                    $q->where('LsalesMarkupPercent', '>', 15);
+                })->orWhereHas('products', function ($q) {
+                    $q->where('LsalesMarkupPercent', '<', 15);
                 });
             })
             ->where('Status', '10') 
