@@ -17,7 +17,7 @@
                                 <select class="form-control js-example-basic-single" name="Department" id="Department" required>
                                     <option value="" disabled selected>Select Department Concerned</option>
                                     @foreach($concern_department as $dept)
-                                        <option value="{{ $dept->id }}" {{ old('Department') == $dept->id ? 'selected' : '' }}>
+                                        <option value="{{ $dept->Name }}" {{ old('Department') == $dept->Name ? 'selected' : '' }}>
                                             {{ $dept->Name }}
                                         </option>
                                     @endforeach
@@ -45,9 +45,7 @@
                                     <option value="Critical e.g., Food Safety Hazard">Critical e.g., Food Safety Hazard</option>
                                     <option value="Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)">Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)</option>
                                     <option value="Minor/Marginal e.g., Late response">Minor/Marginal e.g., Late response</option>
-                                    <option value="Product name
-                                    
-                                    ">Product name</option>
+                                    <option value="Product name">Product name</option>
                                 </select>
                             </div>
                             <div class="form-group" id="pName" style="display: none; margin-top: -10px">
@@ -77,7 +75,7 @@
 
         $('#QualityClass').on('change', function() {
             var selectedValue = $(this).val(); 
-            if (selectedValue == "4") {
+            if (selectedValue == "Product name") {
                 $('#pName').show(); 
             } else {
                 $('#pName').hide(); 

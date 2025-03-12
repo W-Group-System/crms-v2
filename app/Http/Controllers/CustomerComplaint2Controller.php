@@ -53,6 +53,7 @@ class CustomerComplaint2Controller extends Controller
         $sort = $request->get('sort', 'CcNumber');
         $direction = $request->get('direction', 'asc');
         $fetchAll = filter_var($request->input('fetch_all', false), FILTER_VALIDATE_BOOLEAN);
+        $role = auth()->user()->role;
         $entries = $request->input('number_of_entries', 10);
         $progress = $request->query('progress'); // Get the status from the query parameters
         $status = $request->query('status'); // Get the status from the query parameters
@@ -99,6 +100,11 @@ class CustomerComplaint2Controller extends Controller
         ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
             $query->where('Status', $request->input('close'));
         })
+        ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
+            $q->whereHas('concerned', function($q) {
+                $q->where('Department',  auth()->user()->role->type);
+            });
+        })
         ->when($progress, function($query) use ($progress, $userId, $userByUser) {
             if ($progress == '20') {
                 $query->where('Progress', '20')
@@ -109,14 +115,6 @@ class CustomerComplaint2Controller extends Controller
                 $query->where('Progress', $progress);
             }
         })
-        // ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
-        //     $query->where(function ($query) use ($userId, $userByUser) {
-        //         $query->where('PrimaryAccountManagerId', $userId)
-        //             ->orWhere('SecondaryAccountManagerId', $userId)
-        //             ->orWhere('PrimaryAccountManagerId', $userByUser)
-        //             ->orWhere('SecondaryAccountManagerId', $userByUser);
-        //     }); 
-        // })
         ->orWhere(function ($query) use ($userId) {
             // Include entries where 'ReceivedBy' is the same as the 'userId' in the 'salesapprovers' table
             $query->where('Progress', '20')
@@ -420,6 +418,7 @@ class CustomerComplaint2Controller extends Controller
         $data = CustomerComplaint2::findOrFail($id);
         $data->Description = $request->Description;
         $data->Currency = $request->Currency;
+        $data->NcarIssuance = $request->NcarIssuance;
         $data->save();
 
         // Ensure product quality record exists
@@ -490,17 +489,17 @@ class CustomerComplaint2Controller extends Controller
         return back();
     }
 
-
     public function assign(Request $request, $id)
     {
         // dd($request->all());
-        $customer_complaint = CustomerComplaint2::with('concerned')->findOrFail($id);
+        $customer_complaint = CustomerComplaint2::findOrFail($id);
         $customer_complaint->QualityClass = $request->QualityClass;
+        $customer_complaint->ProductName = $request->ProductName;
         $customer_complaint->Department = $request->Department;
         $customer_complaint->SiteConcerned = $request->SiteConcerned;
         $customer_complaint->save();
 
-        $department = ConcernDepartment::findOrFail($request->Department);
+        $department = ConcernDepartment::where('Name', $request->Department)->firstOrFail();
 
         $attachments = [];
         if ($request->hasFile('Path') && is_array($request->file('Path'))) {

@@ -1707,10 +1707,20 @@ class DashboardController extends Controller
         //     $user_transaction[] = $object;
         // }
 
-        return view('dashboard.qcd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction'));
+        // Customer Service
+        
+        $cc_data = CustomerComplaint2::where('Status', 10)
+            ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && $role->name == 'Staff L1' || $role->name == 'Staff L2', function ($q) {
+                $q->whereHas('concerned', function($q) {
+                    $q->where('Department',  auth()->user()->role->type);
+                });
+            })
+            ->count();
+        
+        return view('dashboard.qcd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction','cc_data'));
     }
 
-    public function prdIndex() 
+    public function prdIndex()  
     {
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id; // Safely access user_id

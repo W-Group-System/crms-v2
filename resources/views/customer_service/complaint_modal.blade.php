@@ -11,6 +11,19 @@
                 @csrf
                 <div class="modal-body">
                     <div class="row">
+                    <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">For NCAR Issuance:</label>
+                                <div class="form-check form-check-inline" id="issue-radio">
+                                    <input class="form-check-input" type="radio" name="NcarIssuance" id="flexRadioDefault1" value="1" 
+                                        {{ isset($data->NcarIssuance) && $data->NcarIssuance == 1 ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="flexRadioDefault1">Yes</label>
+                                    <input class="form-check-input" type="radio" name="NcarIssuance" id="flexRadioDefault2" value="2" 
+                                        {{ isset($data->NcarIssuance) && $data->NcarIssuance != 1 ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="flexRadioDefault2">No</label>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-lg-12 mb-2">
                             <label class="display-5"><b>Quantification of Cost/s:</b></label>
                         </div>
