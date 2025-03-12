@@ -12,11 +12,12 @@ class ConcernDepartment extends Model
 
     protected $table = "customerserviceconcerneddepartm";
     protected $fillable = [
-        'Name', 'Description'
+        'Name', 'Description', 'email'
     ];
 
     public function audit()
     {
         return $this->hasMany(CcEmail::class,'concern_department_id');
     }
+
 }

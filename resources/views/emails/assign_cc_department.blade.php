@@ -12,7 +12,7 @@
     <ul>
         <li><strong>CCF #:</strong> {{ $customerComplaint->CcNumber }}</li>
         <li><strong>Date Complaint:</strong> {{ date('M. d, Y', strtotime($customerComplaint->created_at)) }}</li>
-        <li><strong>Quality Class:</strong> {{ $customerComplaint->QualityClass }} {{ $customerComplaint->ProductName }}</li>
+        <li><strong>Quality Class:</strong> {{ $customerComplaint->QualityClass }}: {{ $customerComplaint->ProductName }}</li>
         <li><strong>Company Name:</strong> {{ $customerComplaint->CompanyName }}</li>
         <li><strong>Customer:</strong> {{ $customerComplaint->CustomerRemarks ?? 'No customer remarks provided' }}</li>
     </ul>

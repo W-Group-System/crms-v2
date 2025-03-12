@@ -56,8 +56,9 @@
                             <th>Company Name</th>
                             <th>Contact Name</th>
                             <th>Country</th>
-                            <th>Site Concerned</th>
-                            <!-- <th>Status</th> -->
+                            <th>Department Concerned</th>
+                            <th>Received By</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,19 +72,20 @@
                                 <td>{{ $cc_data->CompanyName }}</td>
                                 <td>{{ $cc_data->ContactName }}</td>
                                 <td>{{ $cc_data->country->Name ?? 'N/A' }}</td>
-                                <td>{{ $cc_data->SiteConcerned ?? 'N/A' }}</td>
-                                {{-- <td>
+                                <td>{{ $cc_data->Department ?? 'N/A' }}</td>
+                                <td>{{ $cc_data->users->full_name ?? 'N/A' }}</td>
+                                <td>
                                     @if($cc_data->Status == 10)
                                         <div class="badge badge-success">Open</div>
                                     @else
                                         <div class="badge badge-warning">Closed</div>
                                     @endif
-                                </td> --}}
+                                </td>
                             </tr>
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="7" align="center">No data available.</td>
+                                <td colspan="8" align="center">No data available.</td>
                             </tr>
                         @endif
                     </tbody>

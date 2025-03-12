@@ -45,6 +45,7 @@
                             <th>Contact Name</th>
                             <th>Email</th>
                             <th>Concerned Department</th>
+                            <th>Received By</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -59,6 +60,7 @@
                                     $contact_name = "";
                                     $email = "";
                                     $concerned = "";
+                                    $received = "";
                                     $status = "";
                                     if (str_contains($transaction->CsNumber, 'CSR'))
                                     {
@@ -69,6 +71,7 @@
                                         $contact_name = $transaction->ContactName;
                                         $email        = $transaction->Email;
                                         $concerned    = optional($transaction->concerned)->Name;
+                                        $received     = optional($transaction->users)->full_name;
                                         $status = $transaction->Status;
                                     }
                                     
@@ -81,6 +84,7 @@
                                         $contact_name = $transaction->ContactName;
                                         $email        = $transaction->Email;
                                         $concerned    = optional($transaction->concerned)->Name;
+                                        $received     = optional($transaction->users)->full_name;
                                         $status = $transaction->Status;
                                     }
                                     
@@ -104,6 +108,7 @@
                                     <td>{{$contact_name}}</td>
                                     <td>{{$email}}</td>
                                     <td>{{ $concerned ?? 'N/A' }}</td>
+                                    <td>{{ $received ?? 'N/A' }}</td>
                                     <td>
                                         @if($status == 10)
                                         <span class="badge badge-success">Open</span>

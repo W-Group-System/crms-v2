@@ -13,7 +13,7 @@ class CustomerComplaint2 extends Model
 
     public function concerned() 
     {
-        return $this->belongsTo(ConcernDepartment::class, 'Department', 'id');
+        return $this->belongsTo(ConcernDepartment::class, 'Department', 'Name');
     }
 
     public function product_quality()

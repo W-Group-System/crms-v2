@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\CustomerComplaint2;
-use App\CustomerSatisfaction;
+use App\CustomerSatisfaction;   
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class CustomerServiceController extends Controller
@@ -13,6 +14,9 @@ class CustomerServiceController extends Controller
     {
         $entries = $request->entries;
         $search = $request->search;
+        $role = auth()->user()->role;
+        $userId = Auth::id(); 
+        $userByUser = Auth::user()->user_id; 
 
         $cs = CustomerSatisfaction::where('Status', 10)
             ->where(function ($q) use ($search) {
@@ -39,10 +43,15 @@ class CustomerServiceController extends Controller
                         $clientQuery->where('Name', 'LIKE', '%' . $search . '%');
                     });
             })
+            ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
+                $q->whereHas('concerned', function($q) {
+                    $q->where('Department',  auth()->user()->role->type);
+                });
+            })
             ->orderBy('id', 'desc')
             ->get();
 
-
+       
         $sortedResults = $cc
         ->concat($cs);
 

@@ -21,7 +21,7 @@
                     </form>
                 @endif
                 @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                    @if($data->Status == 10 && $data->ReceivedBy != NULL && $data->NotedBy == NULL)
+                    @if($data->Progress == 20 && $data->ReceivedBy != NULL)
                         <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-success notedBtn">
@@ -30,15 +30,23 @@
                         </form>
                     @endif
                 @endif
-                @if($data->Progress == 40)
+                <!-- @if($data->NcarIssuance == 1)
+                    <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                        <i class="ti ti-pencil"></i>&nbsp;Investigation
+                    </button>
+                @endif -->
+                @if($data->NcarIssuance == 1 && $data->Department == auth()->user()->role->type)
+                    <button type="button" class="btn btn-outline-warning" id="updateCc" 
+                            data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                        <i class="ti ti-pencil"></i>&nbsp;Investigation
+                    </button>
+                @endif
+                @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38 && $data->Progress == 40)
                     <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
                         <i class="ti ti-pencil"></i>&nbsp;Assign 
                     </button>
                     <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
                         <i class="ti ti-pencil"></i>&nbsp;Complaint 
-                    </button>
-                    <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
-                        <i class="ti ti-pencil"></i>&nbsp;Investigation
                     </button>
                     <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                         <i class="ti ti-pencil"></i>&nbsp;Verification
@@ -120,7 +128,7 @@
                     <p class="m-0"><b>Department Concerned :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->concerned->Name ?? 'N/A' }}</p>
+                    <p class="m-0">{{ $data->Department ?? 'N/A' }}</p>
                 </div>
             </div>
             {{-- <div class="row mb-3">
@@ -466,7 +474,7 @@
                             <p class="m-0"> <b>Action/ Implementation Date :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ date('M. d, Y', strtotime($data->ActionDate)) ?? 'N/A' }}</p>
+                            <p class="m-0">{{ optional($data->ActionDate)->format('M. d, Y') ?? 'N/A' }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Action Responsible :</b></p>

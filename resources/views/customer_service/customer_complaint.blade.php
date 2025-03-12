@@ -4,7 +4,7 @@
     <img src="{{ asset('images/whi.png') }}" style="width: 170px;" class="mt-3 mb-2">
     <h2 class="header_h2">Customer Complaint Form</h2>
 </div>
-<form id="form_complaint" method="POST" >
+<form id="form_complaint" method="POST" onsubmit='show()'>
     @csrf
     <input type="hidden" name="CcNumber" value="{{ $newCcNo }}">
     <input type="hidden" name="Status" value="10">

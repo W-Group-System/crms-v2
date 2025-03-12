@@ -771,11 +771,10 @@ function productManagementLogs($action, $product_code)
 
 function primarySalesApprover($primary_sales,$user_login)
 {
-    $user_data = User::where('user_id', $primary_sales)->first();
+    $user_data = User::where('user_id', $primary_sales)->orWhere('id', $primary_sales)->first(); // add orWhere
     if ($user_data != null)
     {
         $user_id = $user_data->id;
-        
         $sales_approvers = SalesApprovers::where('SalesApproverId', $user_login)->where('UserId', $user_id)->get();
     }
     else
