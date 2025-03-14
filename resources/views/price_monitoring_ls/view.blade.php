@@ -79,17 +79,16 @@
                             </button>
                         @endif
                         @php
-                            $showButton = false;
+                            $showButton = false; // Default value
                             foreach ($price_monitorings->requestPriceProducts as $product) {
                                 if ($product->PriceRequestGaeId == "6") {
                                     $showButton = false;
-                                    break; 
+                                    break; // Exit loop if condition met
                                 }
-                                if ($product->LsalesMarkupPercent > 15) {
+                                if ($product->LsalesMarkupPercent >= 15) { 
                                     $showButton = true;
-                                    break; 
+                                    break; // Exit loop if condition met
                                 }
-                            
                             }
                         @endphp
                         @if (((prfPrimarySalesApprover(auth()->user()->id, $price_monitorings->PrimarySalesPersonId, $price_monitorings->SecondarySalesPersonId) === "true") && $price_monitorings->Progress == 10)  && $showButton)
