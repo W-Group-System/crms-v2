@@ -18,7 +18,7 @@
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
                 @if(checkRolesIfHaveCreate('Customer Requirement', auth()->user()->department_id, auth()->user()->role_id) == "yes")
-                    <button type="button" class="btn btn-md btn-outline-primary" id="addRpeBtn" data-toggle="modal" data-target="#AddProductEvaluation">New</button>
+                    <button type="button" class="btn btn-md btn-outline-primary" id="addRpeBtn" data-toggle="modal" data-backdrop="static" data-target="#AddProductEvaluation">New</button>
                 @endif
             </div>
             <div class="mb-3">
