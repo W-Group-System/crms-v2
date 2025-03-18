@@ -1,4 +1,4 @@
-<div class="modal fade" id="editCrr{{$crr->id}}" tabindex="-1" role="dialog" onsubmit="show()">
+<div class="modal fade" id="editCrr{{$crr->id}}" tabindex="-1" data-backdrop="static" role="dialog" onsubmit="show()">
 	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
