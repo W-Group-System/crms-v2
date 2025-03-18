@@ -503,6 +503,19 @@
                                 @endif
                             </div>
                             <div class="col-sm-3 col-md-4">
+                                <p class="mb-0 text-right"><b>REF CRR Number :</b></p>
+                            </div>
+                            <div class="col-sm-3 col-md-8">
+                                @php
+                                    $id = linkToCrr($crr->RefCrrNumber);
+                                @endphp
+                                <p class="mb-0">
+                                    <a href="{{url('view_customer_requirement/'.$id.'/'.$crr->CrrNumber)}}" target="_blank">
+                                        {{$crr->RefCrrNumber}}
+                                    </a>
+                                </p>
+                            </div>
+                            <div class="col-sm-3 col-md-4">
                                 <p class="mb-0 text-right"><b>REF RPE Number :</b></p>
                             </div>
                             <div class="col-sm-3 col-md-8">
