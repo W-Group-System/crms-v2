@@ -53,7 +53,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Due Date</label>
-                                <input type="date" class="form-control DueDate{{ $requestEvaluation->DueDate }}" name="DueDate" value="{{ !empty($requestEvaluation->DueDate) ? date('Y-m-d', strtotime($requestEvaluation->DueDate)) : '' }}">
+                                <input type="date" class="form-control DueDate{{ $requestEvaluation->DueDate }}" name="DueDate" value="{{$requestEvaluation->DueDate}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -288,15 +288,15 @@
             });
         @endif
 
-        document.addEventListener('DOMContentLoaded', function() {
-        var dueDateInput = document.querySelector('.DueDate{{ $requestEvaluation->DueDate }}');
-        var storedDate = '{{ !empty($requestEvaluation->DueDate) ? date('Y-m-d', strtotime($requestEvaluation->DueDate)) : '' }}';
-        var today = new Date().toISOString().split('T')[0];
+    //     document.addEventListener('DOMContentLoaded', function() {
+    //     var dueDateInput = document.querySelector('.DueDate{{ $requestEvaluation->DueDate }}');
+    //     var storedDate = '{{ !empty($requestEvaluation->DueDate) ? date('Y-m-d', strtotime($requestEvaluation->DueDate)) : '' }}';
+    //     var today = new Date().toISOString().split('T')[0];
 
-        if (storedDate) {
-            dueDateInput.setAttribute('min', storedDate);
-        } else {
-            dueDateInput.setAttribute('min', today);
-        }
-    });
+    //     if (storedDate) {
+    //         dueDateInput.setAttribute('min', storedDate);
+    //     } else {
+    //         dueDateInput.setAttribute('min', today);
+    //     }
+    // });
 </script>

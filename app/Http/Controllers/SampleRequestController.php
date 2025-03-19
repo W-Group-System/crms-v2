@@ -8,6 +8,7 @@ use App\SampleRequest;
 use App\Client;
 use App\ConcernDepartment;
 use App\Contact;
+use App\Exports\SampleDispatchExport;
 use App\Exports\SampleRequestExport;
 use App\IssueCategory;
 use App\Product;
@@ -864,7 +865,7 @@ class SampleRequestController extends Controller
             }
         }
         srfHistoryLogs('add_files', $srfId);
-        return redirect()->back()->with('success', 'File(s) Stored successfully');
+        return redirect()->back()->with(['tab' => 'files']);
     }
 
     public function editFile(Request $request, $id)
@@ -888,7 +889,7 @@ class SampleRequestController extends Controller
         }
         $srfFile->save();
         srfHistoryLogs('update_files', $srfFile->SampleRequestId);
-        return redirect()->back()->with('success', 'File updated successfully');
+        return redirect()->back()->with(['tab' => 'files']);
     }
     public function deleteFile($id)
     {
@@ -1640,5 +1641,10 @@ class SampleRequestController extends Controller
         return back()->with(['tab' => 'files']);
     }
 
+    public function exportSampleDispatch(Request $request)
+    {
+        // dd($request->all());
+        return Excel::download(new SampleDispatchExport($request->sample_request_no), 'sample_dispatch.xlsx');
+    }
 }    
 

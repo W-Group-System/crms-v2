@@ -38,7 +38,7 @@
                 </form>
                 {{-- Sample Request List --}}
                 @if(checkRolesIfHaveCreate('Sample Request Form', auth()->user()->department_id, auth()->user()->role_id) == "yes")
-                    <button type="button" class="btn btn-md btn-outline-primary" id="addSrfBtn" data-toggle="modal" data-target="#formSampleRequest">New</button>
+                    <button type="button" class="btn btn-md btn-outline-primary" id="addSrfBtn" data-toggle="modal" data-backdrop="static" data-target="#formSampleRequest">New</button>
                 @endif
             </div>
             <div class="mb-3">
