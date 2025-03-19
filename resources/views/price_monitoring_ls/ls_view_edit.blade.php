@@ -257,9 +257,9 @@
                                         <div class="form-group">
                                             <label>Delivery Type</label>
                                             <select class="form-control js-example-basic-single delivery-type" name="DeliveryType[]" title="Select Delivery Type">
-                                                <option value="10" @if($price_monitorings->priceRequestProduct->LsalesDeliveryType == 10) selected @endif>Courier</option>
-                                                <option value="20" @if($price_monitorings->priceRequestProduct->LsalesDeliveryType == 20) selected @endif>Delivery</option>
-                                                <option value="30" @if($price_monitorings->priceRequestProduct->LsalesDeliveryType == 30) selected @endif>Pickup</option>
+                                                <option value="10" @if($priceProducts->LsalesDeliveryType == 10) selected @endif>Courier</option>
+                                                <option value="20" @if($priceProducts->LsalesDeliveryType == 20) selected @endif>Delivery</option>
+                                                <option value="30" @if($priceProducts->LsalesDeliveryType == 30) selected @endif>Pickup</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
