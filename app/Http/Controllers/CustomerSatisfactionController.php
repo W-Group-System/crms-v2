@@ -296,4 +296,22 @@ class CustomerSatisfactionController extends Controller
         return $pdf->stream();
     }
 
+    // Delete
+    public function delete($id)
+    {
+        try {
+            $data = CsFiles::findOrFail($id);
+
+            // Delete file from storage if necessary
+            if ($data->Path && file_exists(storage_path('app/public/' . $data->Path))) {
+                unlink(storage_path('app/public/' . $data->Path));
+            }
+
+            $data->delete();
+
+            return response()->json(['success' => 'File deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete file.'], 500);
+        }
+    }
 }

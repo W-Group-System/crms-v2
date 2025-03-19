@@ -14,6 +14,12 @@
         <li><strong>Description:</strong> {{ $customerSatisfaction->Description ?? 'No description provided' }}</li>
     </ul>
 
+    <p><strong>View Satisfaction:</strong> 
+        <a href="{{ url('customer_satisfaction/view/'.$customerSatisfaction->id) }}" target="_blank">
+            Click here to view details
+        </a>
+    </p>
+
     <!-- @if(!empty($attachments))
         <p><strong>Attachments:</strong></p>
         <ul>

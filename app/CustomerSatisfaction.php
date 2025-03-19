@@ -8,7 +8,7 @@ class CustomerSatisfaction extends Model
 {
     protected $table = "customersatisfaction";
     protected $fillable = [
-        'CompanyName', 'CsNumber', 'ContactName', 'Concerned', 'Description', 'Category', 'Email', 'ContactNumber', 'Status', 'ReceivedBy', 'DateReceived', 'DateClosed', 'Progress', 'ClosedBy'
+        'CompanyName', 'CsNumber', 'ContactName', 'Concerned', 'Description', 'Category', 'Email', 'ContactNumber', 'Status', 'ReceivedBy', 'DateReceived', 'DateClosed', 'Progress', 'ClosedBy', 'ApprovedBy'
     ];
 
     public function concerned() 

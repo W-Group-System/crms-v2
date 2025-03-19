@@ -41,7 +41,7 @@
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
                     </button>
                 @endif
-                @if(auth()->user()->department_id == 5 || auth()->user()->department_id == 38 && $data->Progress == 40)
+                @if((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->Progress == 40 || $data->Progress == 50)
                     <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
                         <i class="ti ti-pencil"></i>&nbsp;Assign 
                     </button>
@@ -229,13 +229,17 @@
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Attachments :</b></p>
                 </div>
-                <div class="col-sm-3 col-md-4">
+                <div class="col-sm-3 col-md-6">
                     <p class="m-0">
                         @foreach ($data->files as $key => $file)
                             @php
                                 $filePath = asset('storage/' . $file->Path); 
                             @endphp
-                            {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
+                            {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
+                                <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
+                                    <i class="ti ti-close" style="color:red"></i>
+                                </button>
+                                <br>
                         @endforeach
                     </p>
                 </div>
@@ -507,13 +511,17 @@
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Files :</b></p>
                         </div>
-                        <div class="col-sm-3 col-md-4">
+                        <div class="col-sm-3 col-md-6">
                             <p class="m-0">
                                 @foreach ($data->objective as $key => $file)
                                     @php
                                         $filePath = asset('storage/' . $file->Path); 
                                     @endphp
-                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
+                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
+                                        <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
+                                            <i class="ti ti-close" style="color:red"></i>
+                                        </button>           
+                                        <br>
                                 @endforeach
                             </p>
                         </div>
@@ -1011,6 +1019,93 @@
                 $('.ship-check').hide(); 
             }
         });
+
+        $(document).on('click', '.deleteFile', function() {
+            var fileId = $(this).data('id');
+            var button = $(this);
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to recover this file!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('delete_cc_files', '') }}/" + fileId,
+                        type: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Deleted!",
+                                    text: response.success,
+                                    icon: "success",
+                                    timer: 1500, // Auto close after 1.5 sec
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.reload(); // Reload page after deletion
+                                });
+                            } else {
+                                Swal.fire("Error!", response.error, "error");
+                            }
+                        },
+                        error: function() {
+                            Swal.fire("Error!", "Something went wrong.", "error");
+                        }
+                    });
+                }
+            });
+        });
+
+        $(document).on('click', '.deleteFile2', function() {
+            var fileId = $(this).data('id');
+            var button = $(this);
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to recover this file!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('delete_cc_files2', '') }}/" + fileId,
+                        type: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Deleted!",
+                                    text: response.success,
+                                    icon: "success",
+                                    timer: 1500, // Auto close after 1.5 sec
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.reload(); // Reload page after deletion
+                                });
+                            } else {
+                                Swal.fire("Error!", response.error, "error");
+                            }
+                        },
+                        error: function() {
+                            Swal.fire("Error!", "Something went wrong.", "error");
+                        }
+                    });
+                }
+            });
+        });
+
     });
 </script>
 @endsection

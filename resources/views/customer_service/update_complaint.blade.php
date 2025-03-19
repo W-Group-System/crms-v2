@@ -90,7 +90,7 @@
 
             $.ajax({
                 url: actionUrl,
-                type: 'POST',
+                method: 'POST',
                 data: formData,
                 processData: false, 
                 contentType: false, 
