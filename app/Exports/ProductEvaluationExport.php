@@ -28,22 +28,30 @@ class ProductEvaluationExport implements FromCollection, WithHeadings, WithMappi
     {
         $openStatus = $this->open;
         $closeStatus = $this->close;
+        $role = auth()->user()->role->type;
 
-        if(auth()->user()->role->type == "IS")
-        {
-            return RequestProductEvaluation::with(['client', 'product_application'])
-                ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
-                    $query->whereIn('Status', [$openStatus, $closeStatus]);
-                })
-                ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
-                    $query->where('Status', $openStatus);
-                })
-                ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
-                    $query->where('Status', $closeStatus);
-                })
-                ->latest()
-                ->get();
-        }
+        return RequestProductEvaluation::with(['client', 'product_application'])
+            ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
+                $query->whereIn('Status', [$openStatus, $closeStatus]);
+            })
+            ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
+                $query->where('Status', $openStatus);
+            })
+            ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
+                $query->where('Status', $closeStatus);
+            })
+            ->when($role,function($q)use($role) {
+                if ($role == 'IS')
+                {
+                    $q->where('RpeNumber', 'LIKE', '%RPE-IS%');
+                }
+                elseif($role == 'LS')
+                {
+                    $q->where('RpeNumber', 'LIKE', '%RPE-LS%');
+                }
+            })
+            ->orderBy('RpeNumber', 'desc')
+            ->get();
 
         // if(auth()->user()->role->type == "LS")
         // {
@@ -111,9 +119,9 @@ class ProductEvaluationExport implements FromCollection, WithHeadings, WithMappi
         {
             $primarySales = $row->primarySalesPerson->full_name;
         }
-        elseif($row->primarySalesById)
+        elseif($row->primarySalesPersonById)
         {
-            $primarySales = $row->primarySalesById->full_name;
+            $primarySales = $row->primarySalesPersonById->full_name;
         }
 
         $Status = "";
