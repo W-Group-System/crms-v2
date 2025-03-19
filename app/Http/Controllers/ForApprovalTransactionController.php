@@ -25,8 +25,12 @@ class ForApprovalTransactionController extends Controller
         
         $customerRequirement = CustomerRequirement::where('Progress', 10)
             ->where('Status', 10)
-            ->whereHas('salesapprovers', function ($q) use ($userId) {
-                $q->where('SalesApproverId', $userId);
+            ->where(function ($query) use ($userId) {
+                $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                })->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
             })
             ->get();
 
@@ -44,8 +48,21 @@ class ForApprovalTransactionController extends Controller
                 $q->where('SalesApproverId', $userId);
             })
             ->get();
-
-        $priceRequestForm = PriceMonitoring::whereIn('Progress', [10, 40])
+        if (auth()->user()->role->description == "Manager") {
+            $priceRequestForm = PriceMonitoring::whereIn('Progress', [10,40])
+            ->where(function ($query) use ($userId) {
+                $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                })->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                })->orWhereHas('products', function ($q) {
+                    $q->where('LsalesMarkupPercent', '<', 15);
+                });
+            })
+            ->where('Status', '10') 
+            ->get();
+        } else {
+            $priceRequestForm = PriceMonitoring::whereIn('Progress', [10, 40])
             ->where(function ($query) use ($userId) {
                 $query->whereHas('salesapprovers', function ($q) use ($userId) {
                     $q->where('SalesApproverId', $userId);
@@ -54,6 +71,8 @@ class ForApprovalTransactionController extends Controller
                 });
             })
             ->get();
+        }
+    
 
         $csForm = CustomerSatisfaction::whereIn('Progress', [20, 30])
             ->where('Status', 10)

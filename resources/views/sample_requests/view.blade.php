@@ -130,7 +130,16 @@
                     @endif --}}
                     <a target='_blank' href="{{ url('print_srf', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text"><i class="ti ti-printer btn-icon-prepend"></i>Print</a>
                     @if(!empty($sampleRequest->Courier) && !empty($sampleRequest->AwbNumber) && !empty($sampleRequest->DateDispatched) && !empty($sampleRequest->DateSampleReceived))
-                    <a target='_blank' href="{{ url('print_dispatch', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print Dispatch</a>
+                    {{-- <a target='_blank' href="{{ url('print_dispatch', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print Dispatch</a> --}}
+                    
+                    <form method="GET" action="{{url('export_sample_dispatch')}}" class="d-inline-block" target="_blank">
+                        <input type="hidden" name="sample_request_no" value="{{$sampleRequest->SrfNumber}}">
+
+                        <button type="submit" class="btn btn-outline-success">
+                            <i class="ti-export"></i>
+                            Export Sample Dispatch Advise
+                        </button>
+                    </form>
                     @endif
                     {{-- <a target='_blank' href="{{ url('print_srf_2', $sampleRequest->Id) }}" class="btn btn-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print 2</a> --}}
                     {{-- <button type="button" class="btn btn-danger btn-icon-text" >
@@ -1039,7 +1048,7 @@
         </div>        
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active p-2" id="supplementary-tab" data-toggle="tab" href="#supplementary" role="tab" aria-controls="supplementary" aria-selected="true">Supplementary Details</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'supplementary_details' || session('tab') == null) active @endif" id="supplementary-tab" data-toggle="tab" href="#supplementary" role="tab" aria-controls="supplementary" aria-selected="true">Supplementary Details</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link p-2" id="srfPersonnel-tab" data-toggle="tab" href="#srfPersonnel" role="tab" aria-controls="srfPersonnel" aria-selected="true">Assigned R&D Personnel</a>
@@ -1048,7 +1057,7 @@
                     <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities" role="tab" aria-controls="activities" aria-selected="false">Activities</a>
                 </li> --}}
                 <li class="nav-item">
-                    <a class="nav-link p-2" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
+                    <a class="nav-link p-2 @if(session('tab') == 'files') active @endif" id="files-tab"  data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="false">Files</a>
                 </li>
                 @if(authCheckIfItsRnd(auth()->user()->department_id))
                 <li class="nav-item">
@@ -1063,7 +1072,7 @@
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="supplementary" role="tabpanel" aria-labelledby="supplementary-tab">
+                <div class="tab-pane fade @if(session('tab') == 'supplementary_details' || session('tab') == null) active show @endif" id="supplementary" role="tabpanel" aria-labelledby="supplementary-tab">
                     <div class="d-flex">
                         @if(!checkIfItsSalesDept(auth()->user()->department_id))
                             @if($sampleRequest->Progress != 60)
@@ -1231,7 +1240,7 @@
                     </div>
                 </div> --}}
                 {{-- @if(authCheckIfItsRnd(auth()->user()->department_id)) --}}
-                <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="files-tab">
+                <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
                     <div class="d-flex">
                         {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes") --}}
                         {{-- @if(authCheckIfItsRnd(auth()->user()->department_id)) --}}

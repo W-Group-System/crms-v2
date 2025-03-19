@@ -1145,7 +1145,7 @@ class CustomerRequirementController extends Controller
             $transactionApproval->RemarksType = "accept";
             $transactionApproval->save();
         }
-        elseif($request->action == "approved_to_RND" || $request->action == "approved_to_QCD-MRDC" || $request->action == "approved_to_QCD-WHI" || $request->action == "approved_to_QCD-PBI")
+        elseif($request->action == "approved_to_RND" || $request->action == "approved_to_QCD-MRDC" || $request->action == "approved_to_QCD-WHI" || $request->action == "approved_to_QCD-PBI" || $request->action == "approved_to_QCD-CCC" || $request->action == "approved")
         {
             $crr->Progress = 30;
             $crr->returnToSales = 0;

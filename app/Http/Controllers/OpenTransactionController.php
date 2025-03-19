@@ -80,6 +80,12 @@ class OpenTransactionController extends Controller
                         })
                         ->orWhereHas('product_application',function($applicationQuery)use($search) {
                             $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('rpe_personnels.assignedPersonnel',function($personnelQuery)use($search) {
+                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('rpe_personnels.userId',function($personnelQuery)use($search) {
+                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
                         });
                 })
                 ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
@@ -99,6 +105,12 @@ class OpenTransactionController extends Controller
                     })
                     ->orWhereHas('productApplicationsId',function($applicationQuery)use($search) {
                         $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('srf_personnel.assignedPersonnel',function($personnelQuery)use($search) {
+                        $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('srf_personnel.userId',function($personnelQuery)use($search) {
+                        $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
                     });
             })
             ->when($role, function($q)use($role) {

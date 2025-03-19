@@ -184,12 +184,22 @@ class DashboardController extends Controller
         $totalSRFCount = $srfCancelled + $srfSalesApproval + $srfSalesApproved + $srfSalesAccepted + $srfRnDOngoing + $srfRnDPending + $srfRnDInitial + $srfRnDFinal + $srfRnDCompleted;
 
         // Price Request counts
-        $prfSalesApproval = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '10', 'Status', 10);
-        $prfWaiting = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '20');
-        $prfReopened = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '25');
-        $prfClosed = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '30');
-        $prfManagerApproval = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '40');
-        $totalPRFCount = $prfSalesApproval + $prfWaiting + $prfReopened + $prfClosed + $prfManagerApproval;
+        if (auth()->user()->role->description == "Manager") {
+            $prfSalesApproval = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '10', 'Status', 10);
+            $prfWaiting = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '20');
+            $prfReopened = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '25');
+            $prfClosed = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '30');
+            $prfManagerApproval = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '40');
+            $totalPRFCount = $prfSalesApproval + $prfWaiting + $prfReopened + $prfClosed + $prfManagerApproval;
+        } else {
+            $prfSalesApproval = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '10', 'Status', 10);
+            $prfWaiting = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '20');
+            $prfReopened = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '25');
+            $prfClosed = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '30');
+            $prfManagerApproval = countRecords($priceRequestModel, $userId, $userByUser, 'Progress', '40');
+            $totalPRFCount = $prfSalesApproval + $prfWaiting + $prfReopened + $prfClosed + $prfManagerApproval;
+        }
+        
 
 
         // Customer Requirement
@@ -341,17 +351,47 @@ class DashboardController extends Controller
             ->where('samplerequests.Status', '10') 
             ->where('salesapprovers.SalesApproverId', $userId)
             ->count();
-
-        $prfSalesForApproval = PriceMonitoring::join('users', function($join) {
-            $join->on('pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
-                    ->orOn('pricerequestforms.PrimarySalesPersonId', '=', 'users.id');
-            }) 
-            ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
-            ->where('pricerequestforms.Progress', '10') 
-            ->where('pricerequestforms.Status', '10') 
-            ->where('salesapprovers.SalesApproverId', $userId)
+      
+        if (auth()->user()->role->description == "Manager") {
+            $prfSalesForApproval = PriceMonitoring::whereIn('Progress', [10,40])
+            ->where(function ($query) use ($userId) {
+                $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                })->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                })->orWhereHas('products', function ($q) {
+                    $q->where('LsalesMarkupPercent', '<', 15);
+                });
+            })
+            ->where('Status', '10') 
             ->count();
-        // dd($prfSalesForApproval);
+
+            // PriceMonitoring::join('users', function($join) {
+            //     $join->on('pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
+            //             ->orOn('pricerequestforms.PrimarySalesPersonId', '=', 'users.id');
+            //     }) 
+            //     ->join('pricerequestproducts', function($join) {
+            //     $join->on('pricerequestforms.id', '=', 'pricerequestproducts.PriceRequestFormId');
+            //     }) 
+            //     ->where('pricerequestproducts.LsalesMarkupPercent', '<', 15) 
+
+            //     ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+            //     ->whereIn('pricerequestforms.Progress', [10,40]) 
+            //     ->where('pricerequestforms.Status', '10') 
+            //     ->where('salesapprovers.SalesApproverId', $userId)
+            //     ->count();
+        } else { 
+            $prfSalesForApproval = PriceMonitoring::join('users', function($join) {
+                $join->on('pricerequestforms.PrimarySalesPersonId', '=', 'users.user_id')
+                        ->orOn('pricerequestforms.PrimarySalesPersonId', '=', 'users.id');
+                }) 
+                ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+                ->where('pricerequestforms.Progress', '10') 
+                ->where('pricerequestforms.Status', '10') 
+                ->where('salesapprovers.SalesApproverId', $userId)
+                ->count();
+        }
+        
         $customerSatisfactionApproval = CustomerSatisfaction::where('Status', 10)
             ->whereIn('Progress', [20, 30])
             ->where(function ($query) use ($userId) {
