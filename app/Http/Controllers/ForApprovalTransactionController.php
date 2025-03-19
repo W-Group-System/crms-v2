@@ -58,9 +58,17 @@ class ForApprovalTransactionController extends Controller
         $csForm = CustomerSatisfaction::whereIn('Progress', [20, 30])
             ->where('Status', 10)
             ->where(function ($query) use ($userId) {
+                // If userId is 1, show all records
+                if ($userId == 15) {
+                    return;
+                }
+        
                 $query->whereHas('salesapprovers', function ($q) use ($userId) {
                     $q->where('SalesApproverId', $userId);
                 });
+            })
+            ->when($userId == 15, function ($query) { 
+                $query->whereNotNull('NotedBy');
             })
             ->get();
 
