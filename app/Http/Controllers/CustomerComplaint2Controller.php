@@ -560,4 +560,44 @@ class CustomerComplaint2Controller extends Controller
 
         return $pdf->stream();
     }
+
+    public function delete($id)
+    {
+        {
+            try {
+                $data = ComplaintFile::findOrFail($id);
+    
+                // Delete file from storage if necessary
+                if ($data->Path && file_exists(storage_path('app/public/' . $data->Path))) {
+                    unlink(storage_path('app/public/' . $data->Path));
+                }
+    
+                $data->delete();
+    
+                return response()->json(['success' => 'File deleted successfully.']);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Failed to delete file.'], 500);
+            }
+        }
+    }
+
+    public function delete2($id)
+    {
+        {
+            try {
+                $data = CcObjectiveFile::findOrFail($id);
+    
+                // Delete file from storage if necessary
+                if ($data->Path && file_exists(storage_path('app/public/' . $data->Path))) {
+                    unlink(storage_path('app/public/' . $data->Path));
+                }
+    
+                $data->delete();
+    
+                return response()->json(['success' => 'File deleted successfully.']);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Failed to delete file.'], 500);
+            }
+        }
+    }
 }

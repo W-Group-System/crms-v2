@@ -422,6 +422,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('cs_closed/{id}', 'CustomerSatisfactionController@close');
         Route::post('cs_noted/{id}', 'CustomerSatisfactionController@noted');
         Route::get('print_cs/{id}', 'CustomerSatisfactionController@printCs');
+        Route::delete('delete_cs_files/{id}', 'CustomerSatisfactionController@delete')->name('delete_cs_files');
     
         // Customer Complaint
         Route::get('/cc_list', 'CustomerComplaint2Controller@list')->name('customer_complaint.list');
@@ -435,6 +436,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('cc_update/{id}', 'CustomerComplaint2Controller@ccupdate');
         Route::post('cc_assign/{id}', 'CustomerComplaint2Controller@assign');
         Route::get('print_cc/{id}', 'CustomerComplaint2Controller@printCc');
+        Route::delete('delete_cc_files/{id}', 'CustomerComplaint2Controller@delete')->name('delete_cc_files');
+        Route::delete('delete_cc_files2/{id}', 'CustomerComplaint2Controller@delete2')->name('delete_cc_files2');
         
         // Categorization
         Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    

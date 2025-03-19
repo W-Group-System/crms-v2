@@ -68,7 +68,7 @@
                                 <td>{{ date('M. d, Y', strtotime($cs_data->created_at)) }}</td>
                                 <td>{{ $cs_data->CompanyName }}</td>
                                 <td>{{ $cs_data->ContactName }}</td>
-                                <td>{{ $cs_data->Department ?? 'N/A' }}</td>
+                                <td>{{ $cs_data->concerned->Name ?? 'N/A' }}</td>
                                 <td>{{ $cs_data->category->Name }}</td>
                                 <!-- <td>
                                     @if($cs_data->Status == 10)

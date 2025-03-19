@@ -351,16 +351,42 @@ class DashboardController extends Controller
             ->where('pricerequestforms.Status', '10') 
             ->where('salesapprovers.SalesApproverId', $userId)
             ->count();
-
+        // dd($prfSalesForApproval);
         $customerSatisfactionApproval = CustomerSatisfaction::where('Status', 10)
             ->whereIn('Progress', [20, 30])
+            ->where(function ($query) use ($userId) {
+                // If userId is 1, show all records
+                if ($userId == 15) {
+                    return;
+                }
+        
+                $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
+            })
+            ->when($userId == 15, function ($query) { 
+                $query->whereNotNull('NotedBy');
+            })
             ->count();
 
         $customerComplaintApproval = CustomerComplaint2::where('Status', 10)
             ->whereIn('Progress', [20, 30])
+            ->where(function ($query) use ($userId) {
+                // If userId is 1, show all records
+                if ($userId == 15) {
+                    return;
+                }
+        
+                $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
+            })
+            ->when($userId == 15, function ($query) { 
+                $query->whereNotNull('NotedBy');
+            })
             ->count();
+        
         // Display the result
-        // dd($prfSalesForApproval);
 
         // Sales Approval
         // function countApproval($model, $userId, $userByUser, $field, $value, $excludeField = null, $excludeValue = null) {
@@ -383,6 +409,7 @@ class DashboardController extends Controller
 
         // Total approval count
         $totalApproval = $crrSalesForApproval + $rpeSalesForApproval + $srfSalesForApproval + $prfSalesForApproval + $customerSatisfactionApproval + $customerComplaintApproval;
+        // dd($totalApproval);
 
         // Open Transactions
         $salesCrrOpen = CustomerRequirement::where('Status', '10')

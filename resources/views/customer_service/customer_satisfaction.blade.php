@@ -4,7 +4,7 @@
     <img src="{{ asset('images/whi.png') }}" style="width: 170px;" class="mt-3 mb-2">
     <h2 class="header_h2">Customer Satisfaction Form</h2>
 </div>
-<form id="form_satisfaction" method="POST" enctype="multipart/form-data">
+<form id="form_satisfaction" method="POST" enctype="multipart/form-data" onsubmit="show()">
     @csrf
     <input type="hidden" name="CsNumber" value="{{ $newCsNo }}">
     <input type="hidden" name="Status" value="10">
@@ -157,6 +157,11 @@
             event.preventDefault();
 
             var formData = new FormData(this);
+            var submitBtn = $("button[type='submit']");
+            
+            // **Disable the button and show loading**
+            submitBtn.prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> Submitting...');
+
             $.ajax({
                 url: "{{ route('customer_satisfaction.store') }}",
                 method: "POST",
@@ -177,14 +182,58 @@
                             text: response.success,
                             timer: 2000,
                             showConfirmButton: false,
-                        }).then((result) => {
+                        }).then(() => {
                             $('#form_satisfaction')[0].reset();
                             window.location.href = "{{ url('customer_service') }}";
                         });
                     }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again!',
+                    });
+                },
+                complete: function() {
+                    // **Re-enable the button after request is complete**
+                    submitBtn.prop("disabled", false).html('Submit');
                 }
             });
         });
+
+        // $('#form_satisfaction').on('submit', function(event) {
+        //     event.preventDefault();
+
+        //     var formData = new FormData(this);
+        //     $.ajax({
+        //         url: "{{ route('customer_satisfaction.store') }}",
+        //         method: "POST",
+        //         data: formData,
+        //         processData: false,
+        //         contentType: false,
+        //         dataType: "json",
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         success: function(response) {
+        //             $('input[name="CsNumber"]').val(response.newCsNo);
+        //             if (response.success) {
+        //                 // Display a Swal success message
+        //                 Swal.fire({
+        //                     icon: 'success',
+        //                     title: 'Saved',
+        //                     text: response.success,
+        //                     timer: 2000,
+        //                     showConfirmButton: false,
+        //                 }).then((result) => {
+        //                     $('#form_satisfaction')[0].reset();
+        //                     window.location.href = "{{ url('customer_service') }}";
+        //                 });
+        //             }
+        //         }
+        //     });
+        // });
     });
 </script>
 @endsection

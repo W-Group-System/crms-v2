@@ -135,9 +135,9 @@
                                 @foreach($data->cs_attachments as $file)
                                     <label style="display: block;">
                                         <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ basename($file->Path) }}</a>
-                                        <!-- <button type="button" class="btn btn-sm deleteFile">
+                                        <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
                                             <i class="ti ti-close" style="color:red"></i>
-                                        </button> -->
+                                        </button>
                                     </label>
                                 @endforeach
                             @else
@@ -160,7 +160,7 @@
                 </div>
             </div>
             <div align="right" class="mt-3">
-                <a href="{{ url('customer_satisfaction') }}" class="btn btn-outline-secondary">Close</a>
+                <a href="{{ url('cs_list') }}" class="btn btn-outline-secondary">Close</a>
             </div>
             <!-- <ul class="nav nav-tabs viewTab" role="tablist">
                 <li class="nav-item">
@@ -212,7 +212,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="assignCustomerSatisfaction" method="POST" action="{{ url('assign_customer_satisfaction/' . $data->id) }}" enctype="multipart/form-data">
+                <form id="assignCustomerSatisfaction" method="POST" action="{{ url('assign_customer_satisfaction/' . $data->id) }}" enctype="multipart/form-data" onsubmit="show()">
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
@@ -280,14 +280,14 @@
         });
 
         $('#assignCustomerSatisfaction').on('submit', function (e) {
-            e.preventDefault(); 
+            event.preventDefault();
 
-            var formData = new FormData(this); // Use FormData to handle file uploads
+            var formData = new FormData(this);
             var actionUrl = $(this).attr('action');
 
             $.ajax({
                 url: actionUrl,
-                type: 'POST',
+                method: 'POST',
                 data: formData,
                 processData: false, 
                 contentType: false, 
@@ -304,8 +304,12 @@
                         });
                     }
                 },
-                error: function (xhr) {
-                    Swal.fire("Error", "Something went wrong! Please try again.", "error");
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again!',
+                    });
                 }
             });
         });
@@ -414,6 +418,42 @@
                             window.location.reload(); // Reload the page after the alert
                         });
                     }
+                }
+            });
+        });
+
+        $(document).on('click', '.deleteFile', function() {
+            var fileId = $(this).data('id');
+            var button = $(this);
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to recover this file!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('delete_cs_files', '') }}/" + fileId,
+                        type: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire("Deleted!", response.success, "success");
+                                button.closest("label").remove(); // Remove the deleted file from the UI
+                            } else {
+                                Swal.fire("Error!", response.error, "error");
+                            }
+                        },
+                        error: function() {
+                            Swal.fire("Error!", "Something went wrong.", "error");
+                        }
+                    });
                 }
             });
         });
