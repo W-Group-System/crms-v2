@@ -229,26 +229,26 @@
                                         <div><label>MANUFACTURING COST</label></div>
                                         <div class="form-group">
                                             <label>RMC (PHP)</label>
-                                            <input type="number" class="form-control rmc-input" name="Rmc[]" value="{{ $priceProducts->ProductRmc ?? 0 }}" readonly>
+                                            <input type="text" class="form-control rmc-input" name="Rmc[]" value="{{ $priceProducts->ProductRmc ?? 0 }}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label>Direct Labor</label>
-                                            <input type="number" class="form-control direct-labor-input" name="DirectLabor[]" value="2.16" readonly>
+                                            <input type="text" class="form-control direct-labor-input" name="DirectLabor[]" value="2.16" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label>Factory Overhead</label>
-                                            <input type="number" class="form-control factory-overhead-input" name="FactoryOverhead[]" value="24.26" readonly>
+                                            <input type="text" class="form-control factory-overhead-input" name="FactoryOverhead[]" value="24.26" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label>Total Manufacturing Cost</label>
-                                            <input type="number" class="form-control total-manufacturing-cost-input" name="TotalManufacturingCost[]" value="0" readonly>
+                                            <input type="text" class="form-control total-manufacturing-cost-input" name="TotalManufacturingCost[]" value="0" readonly>
                                         </div>
                                         <div class="form-group">
                                             <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
                                         </div>
                                         <div class="form-group">
                                             <label>Blending Loss:</label>
-                                            <input type="number" class="form-control blending-loss" name="BlendingLoss[]"  value="0" readonly>
+                                            <input type="text" class="form-control blending-loss" name="BlendingLoss[]"  value="0" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -264,11 +264,11 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Delivery Cost</label>
-                                            <input type="number" class="form-control delivery-cost" name="DeliveryCost[]" value="0">
+                                            <input type="text" class="form-control delivery-cost" name="DeliveryCost[]" value="0">
                                         </div>
                                         <div class="form-group">
                                             <label>Financing Cost</label>
-                                            <input type="number" class="form-control financing-cost" name="FinancingCost[]" value="0" readonly>
+                                            <input type="text" class="form-control financing-cost" name="FinancingCost[]" value="0" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label>GAE Type:</label>
@@ -280,15 +280,15 @@
                                         </div>
                                         <div class="form-group">
                                             <label>GAE Cost</label>
-                                            <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
+                                            <input type="text" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label>Other Cost Requirement</label>
-                                            <input type="number" step=".01" class="form-control other-cost" name="OtherCostRequirement[]" placeholder="Enter Other Cost Requirement" value="{{  $priceProducts->OtherCostRequirements ?? 0  }}">
+                                            <input type="text" class="form-control other-cost" name="OtherCostRequirement[]" placeholder="Enter Other Cost Requirement" value="{{  $priceProducts->OtherCostRequirements ?? 0  }}">
                                         </div>
                                         <div class="form-group">
                                             <label>Total Operating Cost</label>
-                                            <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
+                                            <input type="text" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
                                         </div>
                                     </div>
                                 <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
@@ -296,29 +296,29 @@
                                         <div><label>PRODUCT COST</label></div>
                                         <div class="form-group">
                                             <label>Total Product Cost (PHP)</label>
-                                            <input type="number" class="form-control total-product-cost" name="TotalProductCost[]" value="0" readonly>
+                                            <input type="text" class="form-control total-product-cost" name="TotalProductCost[]" value="0" readonly>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div><label>MARKUP COST</label></div>
                                         <div class="form-group">
                                             <label>Markup (%)</label>
-                                            <input type="number" step=".001" class="form-control markup-percent" name="MarkupPercent[]" value="{{ $priceProducts->LsalesMarkupPercent ?? 0 }}">
+                                            <input type="text" class="form-control markup-percent" name="MarkupPercent[]" value="{{ $priceProducts->LsalesMarkupPercent ?? 0 }}">
                                         </div>
                                         <div class="form-group">
                                             <label>Markup (PHP)</label>
-                                            <input type="number" step=".01" class="form-control markup-php" name="MarkupPhp[]" value="{{ $priceProducts->LsalesMarkupValue ?? 0 }}">
+                                            <input type="text" class="form-control markup-php" name="MarkupPhp[]" value="{{ $priceProducts->LsalesMarkupValue ?? 0 }}">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <div><label>SELLING PRICE</label></div>
                                         <div class="form-group">
                                             <label>Selling Price (PHP)</label>
-                                            <input type="number" step=".01" class="form-control selling-price-php" name="SellingPricePhp[]" value="0">
+                                            <input type="text" class="form-control selling-price-php" name="SellingPricePhp[]" value="0">
                                         </div>
                                         <div class="form-group">
                                             <label>Selling Price + 12% VAT (PHP)</label>
-                                            <input type="number" step=".01" class="form-control selling-price-vat" name="SellingPriceVat[]" value="0">
+                                            <input type="text" class="form-control selling-price-vat" name="SellingPriceVat[]" value="0">
                                         </div>
                                     </div>
                                 </div>
@@ -740,33 +740,33 @@ $(document).ready(function() {
                                </div>
                                <div class="form-group">
                                    <label>Quantity Required</label>
-                                   <input type="number" class="form-control" name="QuantityRequired[]" value="0">
+                                   <input type="text" class="form-control" name="QuantityRequired[]" value="0">
                                </div>
                            </div>
                            <div class="col-lg-4">
                                <div><label>MANUFACTURING COST</label></div>
                                <div class="form-group">
                                    <label>RMC (PHP)</label>
-                                   <input type="number" class="form-control rmc-input" name="Rmc[]" value="0" readonly>
+                                   <input type="text" class="form-control rmc-input" name="Rmc[]" value="0" readonly>
                                </div>
                                <div class="form-group">
                                    <label>Direct Labor</label>
-                                   <input type="number" class="form-control direct-labor-input" name="DirectLabor[]" value="2.16" readonly>
+                                   <input type="text" class="form-control direct-labor-input" name="DirectLabor[]" value="2.16" readonly>
                                </div>
                                <div class="form-group">
                                    <label>Factory Overhead</label>
-                                   <input type="number" class="form-control factory-overhead-input" name="FactoryOverhead[]" value="24.26" readonly>
+                                   <input type="text" class="form-control factory-overhead-input" name="FactoryOverhead[]" value="24.26" readonly>
                                </div>
                                <div class="form-group">
                                    <label>Total Manufacturing Cost</label>
-                                   <input type="number" class="form-control total-manufacturing-cost-input" name="TotalManufacturingCost[]" value="0" readonly>
+                                   <input type="text" class="form-control total-manufacturing-cost-input" name="TotalManufacturingCost[]" value="0" readonly>
                                </div>
                                <div class="form-group">
                                    <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
                                </div>
                                <div class="form-group">
                                    <label>Blending Loss:</label>
-                                   <input type="number" class="form-control blending-loss" name="BlendingLoss[]"  value="0" readonly>
+                                   <input type="text" class="form-control blending-loss" name="BlendingLoss[]"  value="0" readonly>
                                </div>
                            </div>
                            <div class="col-lg-4">
@@ -781,11 +781,11 @@ $(document).ready(function() {
                                </div>
                                <div class="form-group">
                                    <label>Delivery Cost</label>
-                                   <input type="number" class="form-control delivery-cost" name="DeliveryCost[]" value="0">
+                                   <input type="text" class="form-control delivery-cost" name="DeliveryCost[]" value="0">
                                </div>
                                <div class="form-group">
                                    <label>Financing Cost</label>
-                                   <input type="number" class="form-control financing-cost" name="FinancingCost[]" value="0" readonly>
+                                   <input type="text" class="form-control financing-cost" name="FinancingCost[]" value="0" readonly>
                                </div>
                                <div class="form-group">
                                    <label>GAE Type:</label>
@@ -797,15 +797,15 @@ $(document).ready(function() {
                                </div>
                                <div class="form-group">
                                    <label>GAE Cost</label>
-                                   <input type="number" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
+                                   <input type="text" class="form-control GaeCost" name="GaeCost[]" value="0" readonly>
                                </div>
                                <div class="form-group">
                                     <label>Other Cost Requirement</label>
-                                    <input type="number" step=".01" class="form-control other-cost" name="OtherCostRequirement[]" placeholder="Enter Other Cost Requirement" value="0">
+                                    <input type="text" class="form-control other-cost" name="OtherCostRequirement[]" placeholder="Enter Other Cost Requirement" value="0">
                                 </div>
                                <div class="form-group">
                                    <label>Total Operating Cost</label>
-                                   <input type="number" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
+                                   <input type="text" class="form-control total-operation-cost" name="TotalOperatingCost[]" value="0" readonly>
                                </div>
                            </div>
                        <div class="col-lg-12"><hr style="background-color: rgb(219, 209, 209) !important"></div>
@@ -813,29 +813,29 @@ $(document).ready(function() {
                                <div><label>PRODUCT COST</label></div>
                                <div class="form-group">
                                    <label>Total Product Cost (PHP)</label>
-                                   <input type="number" class="form-control total-product-cost" name="TotalProductCost[]" value="0" readonly>
+                                   <input type="text" class="form-control total-product-cost" name="TotalProductCost[]" value="0" readonly>
                                </div>
                            </div>
                            <div class="col-lg-4">
                                <div><label>MARKUP COST</label></div>
                                <div class="form-group">
                                    <label>Markup (%)</label>
-                                   <input type="number" step=".01" class="form-control markup-percent" name="MarkupPercent[]" value="0">
+                                   <input type="text" class="form-control markup-percent" name="MarkupPercent[]" value="0">
                                </div>
                                <div class="form-group">
                                    <label>Markup (PHP)</label>
-                                   <input type="number" step=".01" class="form-control markup-php" name="MarkupPhp[]" value="0">
+                                   <input type="text" class="form-control markup-php" name="MarkupPhp[]" value="0">
                                </div>
                            </div>
                            <div class="col-lg-4">
                                <div><label>SELLING PRICE</label></div>
                                <div class="form-group">
                                    <label>Selling Price (PHP)</label>
-                                   <input type="number" step=".01" class="form-control selling-price-php" name="SellingPricePhp[]" value="0">
+                                   <input type="text" class="form-control selling-price-php" name="SellingPricePhp[]" value="0">
                                </div>
                                <div class="form-group">
                                    <label>Selling Price + 12% VAT (PHP)</label>
-                                   <input type="number" step=".01" class="form-control selling-price-vat" name="SellingPriceVat[]" value="0">
+                                   <input type="text" class="form-control selling-price-vat" name="SellingPriceVat[]" value="0">
                                </div>
                            </div>
                        </div>`;
