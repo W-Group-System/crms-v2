@@ -223,23 +223,30 @@
                         </div>
                     </div>
                     <div class="col-lg-6" id="addressContainer">
+                        @php
+                            $last_key = array_key_last($addresses->toArray());
+                        @endphp
                         @if(is_null($addresses) || $addresses->isEmpty())
                             <div class="form-group">
                                 <label>Client Address</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type">
                                     <button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>
+                                    <button class="btn btn-sm btn-danger removeRowBtn" style="border-radius: 0px;" type="button">-</button>
                                 </div>
                                 <textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2"></textarea>
                                 <input type="hidden" name="AddressIds[]" value="">
                             </div>
                         @else
-                            @foreach($addresses as $address)
+                            @foreach($addresses as $key=>$address)
                                 <div class="form-group">
                                     <label>Client Address</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type" value="{{ $address->AddressType }}">
+                                        @if($key == $last_key)
                                         <button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>
+                                        @endif
+                                        <button class="btn btn-sm btn-danger removeRowBtn" style="border-radius: 0px;" type="button">-</button>
                                     </div>
                                     <textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2">{{ $address->Address }}</textarea>
                                     <input type="hidden" name="AddressIds[]" value="{{ $address->id }}">
@@ -354,11 +361,12 @@
         }
 
         $(document).on('click', '.addRowBtn', function() {
+            $('.addRowBtn').remove();
             var newRow = $('<div class="form-group">' +
                             '<label>Client Address</label>' +
                             '<div class="input-group">' +
                                 '<input type="text" class="form-control" name="AddressType[]" placeholder="Enter Address Type">' +
-                                // '<button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>' +
+                                '<button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>' +
                                 '<button class="btn btn-sm btn-danger removeRowBtn" style="border-radius: 0px;" type="button">-</button>' +
                             '</div>' +
                             '<textarea type="text" class="form-control" name="Address[]" placeholder="Enter Address" rows="2"></textarea>' +
@@ -370,7 +378,31 @@
         });
 
         $(document).on('click', '.removeRowBtn', function() {
-            $(this).closest('.form-group').remove();
+            var parent = $(this).closest('.form-group');
+            var lastElement = $("#addressContainer").children().last()
+
+            if (parent.is(lastElement))
+            {
+                $(this).closest('.form-group').remove();
+
+                // Ensure at least one row remains
+                if ($('#addressContainer .form-group').length > 0) {
+                    // Remove all existing removeRowBtn buttons
+
+                    // Add a removeRowBtn only to the last row
+                    $('#addressContainer .form-group:last .input-group .removeRowBtn').remove()
+                
+                    $('#addressContainer .form-group:last .input-group').append(
+                        '<button class="btn btn-sm btn-primary addRowBtn" style="border-radius: 0px;" type="button">+</button>'+
+                        '<button class="btn btn-sm btn-danger removeRowBtn" style="border-radius: 0px;" type="button">-</button>'
+                    );
+                }
+            }
+            else
+            {
+                $(this).closest('.form-group').remove();
+            }
+            
         });
 
         $('#editFormClient').on('submit', function(event) {

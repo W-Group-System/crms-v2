@@ -468,6 +468,7 @@ class ClientController extends Controller
     // Update
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $rules = [
             'BuyerCode'                 => 'required|string|max:255',
             'Name'                      => 'required|string|max:255',
@@ -513,27 +514,36 @@ class ClientController extends Controller
         ]));
 
         // Handle addresses
-        if ($request->has('AddressType') && $request->has('Address')) {
-            foreach ($request->AddressType as $key => $addressType) {
-                if (!empty($addressType) && !empty($request->Address[$key])) {
-                    $addressId = $request->AddressIds[$key] ?? null;
-                    if ($addressId) {
-                        // Update existing address
-                        $address = Address::findOrFail($addressId);
-                        $address->update([
-                            'AddressType' => $addressType,
-                            'Address' => $request->Address[$key]
-                        ]);
-                    } else {
-                        // Create new address
-                        Address::create([
-                            'CompanyId' => $client->id,
-                            'AddressType' => $addressType,
-                            'Address' => $request->Address[$key]
-                        ]);
-                    }
-                }
-            }
+        // if ($request->has('AddressType') && $request->has('Address')) {
+        //     foreach ($request->AddressType as $key => $addressType) {
+        //         if (!empty($addressType) && !empty($request->Address[$key])) {
+        //             $addressId = $request->AddressIds[$key] ?? null;
+        //             if ($addressId) {
+        //                 // Update existing address
+        //                 $address = Address::findOrFail($addressId);
+        //                 $address->update([
+        //                     'AddressType' => $addressType,
+        //                     'Address' => $request->Address[$key]
+        //                 ]);
+        //             } else {
+        //                 // Create new address
+        //                 Address::create([
+        //                     'CompanyId' => $client->id,
+        //                     'AddressType' => $addressType,
+        //                     'Address' => $request->Address[$key]
+        //                 ]);
+        //             }
+        //         }
+        //     }
+        // }
+        $address = Address::where('CompanyId', $id)->delete();
+        foreach($request->AddressType as $key=>$address_type)
+        {
+            $address = new Address();
+            $address->CompanyId = $id;
+            $address->AddressType = $address_type;
+            $address->Address = $request->Address[$key];
+            $address->save();
         }
 
         // Return success message
