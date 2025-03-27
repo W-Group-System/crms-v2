@@ -274,7 +274,7 @@
                                             <label>GAE Type:</label>
                                             <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" title="Select GAE Type">
                                                 @foreach ($pricegaes as $gaeType)
-                                                    <option value="{{ $gaeType->id }}" @if($price_monitorings->priceRequestProduct->PriceRequestGaeId == $gaeType->id) selected @endif>{{ $gaeType->ExpenseName }}</option>
+                                                    <option value="{{ $gaeType->id }}" @if($priceProducts->PriceRequestGaeId == $gaeType->id) selected @endif>{{ $gaeType->ExpenseName }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -790,6 +790,7 @@ $(document).ready(function() {
                                <div class="form-group">
                                    <label>GAE Type:</label>
                                    <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" style="position: relative !important" title="Select GAE Type">
+                                        <option value="" >Select GAE Type</option>
                                        @foreach ($pricegaes as $gaeType)
                                            <option value="{{ $gaeType->id }}" >{{ $gaeType->ExpenseName }}</option>
                                        @endforeach
