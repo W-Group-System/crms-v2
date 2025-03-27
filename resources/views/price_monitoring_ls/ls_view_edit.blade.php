@@ -273,6 +273,7 @@
                                         <div class="form-group">
                                             <label>GAE Type:</label>
                                             <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" title="Select GAE Type">
+                                                <option value="" {{ is_null($priceProducts->PriceRequestGaeId) ? 'selected' : '' }}>Select GAE TYPE</option>
                                                 @foreach ($pricegaes as $gaeType)
                                                     <option value="{{ $gaeType->id }}" @if($priceProducts->PriceRequestGaeId == $gaeType->id) selected @endif>{{ $gaeType->ExpenseName }}</option>
                                                 @endforeach
@@ -426,9 +427,14 @@
     // Update 10/28/24
 
 $(document).ready(function() {
-    var $initialRow = $('.create_prf_form{{ $price_monitorings->id }}');
-   var initialGae = $initialRow.find('.PriceGae').val();
-   fetchGaeCost(initialGae, $initialRow);
+//     var $initialRow = $('.create_prf_form{{ $price_monitorings->id }}');
+//    var initialGae = $initialRow.find('.PriceGae').val();
+//    fetchGaeCost(initialGae, $initialRow);
+$('.create_prf_form{{ $price_monitorings->id }}').each(function() {
+    var $row = $(this);
+    var initialGae = $row.find('.PriceGae').val();
+    fetchGaeCost(initialGae, $row);
+});
 
    $(document).on('change', '.PriceGae', function() {
        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
