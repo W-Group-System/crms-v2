@@ -26,7 +26,7 @@ class CustomerSatisfactionMail extends Mailable
     public function build()
     {
         return $this->to($this->customerSatisfaction['Email'])
-                    ->cc(['ict.engineer@wgroup.com.ph', 'schultzxhenry@gmail.com']) 
+                    ->cc(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'iad@wgroup.com.ph'])
                     ->subject('Customer Satisfaction Form Submission')
                     ->view('emails.customer_satisfaction')
                     ->with([

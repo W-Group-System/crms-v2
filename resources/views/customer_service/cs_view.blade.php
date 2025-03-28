@@ -40,7 +40,7 @@
                         <form action="{{ url('cs_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="button" class="btn btn-outline-secondary closedBtn">
-                                <i class="ti ti-close"></i>&nbsp;Close
+                                <i class="ti ti-close"></i>&nbsp;Close Satisfaction
                             </button>
                         </form>
                     @endif
