@@ -91,7 +91,7 @@ class ForApprovalTransactionController extends Controller
             })
             ->get();
 
-            $ccForm = CustomerComplaint2::whereIn('Progress', [20, 30])
+        $ccForm = CustomerComplaint2::whereIn('Progress', [20, 30])
             ->where('Status', 10)
             ->where(function ($query) use ($userId) {
                 // If userId is 1, show all records
