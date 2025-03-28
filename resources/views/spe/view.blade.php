@@ -90,6 +90,15 @@
                             Print
                         </a>
                     @endif
+                    @if(auth()->user()->role->type == 'PRD' && $data->Progress == 60)
+                        <form method="POST" action="{{url('return_to_rnd/'.$data->id)}}" class="d-inline-block">
+                        @csrf 
+
+                            <button type="button" class="btn btn-outline-warning returnToRndBtn">
+                                <i class="ti ti-close"></i>&nbsp;Return To RND
+                            </button>
+                        </form>
+                    @endif
                     @if(auth()->user()->role->type == 'PRD')
                         @if($data->Progress == 60 && $data->Status != 30)
                             <form method="POST" action="{{url('close_spe/'.$data->id)}}" class="d-inline-block">
@@ -806,6 +815,24 @@
             });
         });
 
+        $('.returnToRndBtn').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, return it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
     });
 </script>
 @endsection

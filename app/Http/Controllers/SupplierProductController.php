@@ -728,4 +728,15 @@ class SupplierProductController extends Controller
             'QCD-CCC' => 'QCD-CCC'
         );
     }
+
+    public function returnToRnd(Request $request, $id)
+    {
+        // dd($request->all(), $id);
+        $spe = SupplierProduct::findOrFail($id);
+        $spe->Progress = 50;
+        $spe->save();
+
+        Alert::success('Successfully Returned')->persistent('Dismiss');
+        return back();
+    }
 }
