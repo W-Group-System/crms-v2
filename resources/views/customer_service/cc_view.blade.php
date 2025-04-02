@@ -30,6 +30,9 @@
                         data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
                     <i class="ti ti-pencil"></i>&nbsp;Investigation
                 </button>
+                <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                    <i class="ti ti-pencil"></i>&nbsp;Verification
+                </button>
                 @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
                     @if($data->Progress == 20 && $data->ReceivedBy != NULL)
                         <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
