@@ -20,6 +20,9 @@
                         </button>
                     </form>
                 @endif
+                <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                    <i class="ti ti-pencil"></i>&nbsp;Complaint 
+                </button>
                 @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
                     @if($data->Progress == 20 && $data->ReceivedBy != NULL)
                         <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
@@ -45,9 +48,9 @@
                     <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
                         <i class="ti ti-pencil"></i>&nbsp;Assign 
                     </button>
-                    <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                    <!-- <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
                         <i class="ti ti-pencil"></i>&nbsp;Complaint 
-                    </button>
+                    </button> -->
                     <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                         <i class="ti ti-pencil"></i>&nbsp;Verification
                     </button>
