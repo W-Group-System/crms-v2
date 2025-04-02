@@ -26,6 +26,10 @@
                 <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
                     <i class="ti ti-pencil"></i>&nbsp;Assign 
                 </button>
+                <button type="button" class="btn btn-outline-warning" id="updateCc" 
+                        data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                    <i class="ti ti-pencil"></i>&nbsp;Investigation
+                </button>
                 @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
                     @if($data->Progress == 20 && $data->ReceivedBy != NULL)
                         <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
@@ -42,10 +46,10 @@
                     </button>
                 @endif -->
                 @if($data->NcarIssuance == 1 && $data->Department == auth()->user()->role->type)
-                    <button type="button" class="btn btn-outline-warning" id="updateCc" 
+                    <!-- <button type="button" class="btn btn-outline-warning" id="updateCc" 
                             data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
-                    </button>
+                    </button> -->
                 @endif
                 @if((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->Progress == 40 || $data->Progress == 50)
                     <!-- <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
