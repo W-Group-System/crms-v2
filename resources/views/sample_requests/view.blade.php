@@ -1265,7 +1265,7 @@
                                     <tr>
                                         <td align="center">
                                             {{-- @if(checkIfHaveFiles(auth()->user()->role) == "yes") --}}
-                                            @if(authCheckIfItsRnd(auth()->user()->department_id))
+                                            @if(authCheckIfItsRnd(auth()->user()->department_id) || str_contains(auth()->user()->role->type, 'QCD'))
                                             <button type="button"  class="btn btn-sm btn-warning btn-outline"
                                                 data-target="#editSrfFile{{ $fileupload->Id }}" data-toggle="modal" title='Edit fileupload'>
                                                 <i class="ti-pencil"></i>
