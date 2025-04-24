@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Auth::routes();
+Auth::routes(); 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 // Customer Service
 Route::get('customer_service', 'CustomerSatisfactionController@header');
