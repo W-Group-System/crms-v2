@@ -742,4 +742,8 @@
 @foreach ($assignedPersonnel as $Personnel)
 @include('sample_requests.edit_personnel')
 @endforeach
+
+@foreach ($SrfMaterials as $SrfMaterial)
+@include('sample_requests.edit_material')
+@endforeach --}}
 @endsection
