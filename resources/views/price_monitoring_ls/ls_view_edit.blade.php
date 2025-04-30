@@ -425,7 +425,6 @@
     });
     
     // Update 10/28/24
-
 $(document).ready(function() {
 //     var $initialRow = $('.create_prf_form{{ $price_monitorings->id }}');
 //    var initialGae = $initialRow.find('.PriceGae').val();
