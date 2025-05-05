@@ -1486,3 +1486,9 @@ function latestConversion($cost,$currency)
 
     return $cost * $currencyExchangeRates->ExchangeRate;
 }
+
+function customRound($value)
+ {
+    $value = floor($value * 1000) / 1000; 
+    return round($value, 2);
+}

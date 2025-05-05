@@ -308,7 +308,8 @@
                     <p class="col-md-2 mb-0">{{ number_format($prcieProduct->LsalesDeliveryCost + $prcieProduct->LsalesFinancingCost + $prcieProduct->LsalesGaeValue + $prcieProduct->OtherCostRequirements, 2) }}</p>
                 </div>
                 @php
-                    $totlaMC = ($prcieProduct->ProductRmc +
+                    $totalRmc = customRound($prcieProduct->ProductRmc);
+                    $totlaMC = ($totalRmc +
                                 $prcieProduct->LsalesDirectLabor +
                                 $prcieProduct->LsalesFactoryOverhead);
                                 // dd($totlaMC);
