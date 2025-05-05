@@ -342,7 +342,7 @@
                         {{ number_format($totalCost, 2) }}
                     </p>
                     <p class="col-md-2 mb-0 text-right"><b>Markup (%):</b></p>
-                    <p class="col-md-2 mb-0">{{ $prcieProduct->LsalesMarkupPercent }}</p>
+                    <p class="col-md-2 mb-0">{{ number_format($prcieProduct->LsalesMarkupPercent,2) }}</p>
                     <p class="col-md-2 mb-0 text-right"><b>Selling Price :</b></p>
                     <p class="col-md-2 mb-0">{{ $formattedSellingPrice }}</p>
                 </div>
@@ -350,7 +350,7 @@
                     <p class="col-md-2 mb-0 text-right"></p>
                     <p class="col-md-2 mb-0"></p>
                     <p class="col-md-2 mb-0 text-right"><b>Markup :</b></p>
-                    <p class="col-md-2 mb-0">{{ $prcieProduct->LsalesMarkupValue }}</p>
+                    <p class="col-md-2 mb-0">{{ number_format($prcieProduct->LsalesMarkupValue,2) }}</p>
                     <p class="col-md-2 mb-0 text-right"><b>Selling Price + 12% VAT :</b></p>
                     <p class="col-md-2 mb-0">{{ $formattedSumWithVat }}</p>
                 </div>
