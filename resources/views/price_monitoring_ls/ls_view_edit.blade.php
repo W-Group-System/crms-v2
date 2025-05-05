@@ -273,8 +273,9 @@
                                         <div class="form-group">
                                             <label>GAE Type:</label>
                                             <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" title="Select GAE Type">
+                                                <option value="" {{ is_null($priceProducts->PriceRequestGaeId) ? 'selected' : '' }}>Select GAE TYPE</option>
                                                 @foreach ($pricegaes as $gaeType)
-                                                    <option value="{{ $gaeType->id }}" @if($price_monitorings->priceRequestProduct->PriceRequestGaeId == $gaeType->id) selected @endif>{{ $gaeType->ExpenseName }}</option>
+                                                    <option value="{{ $gaeType->id }}" @if($priceProducts->PriceRequestGaeId == $gaeType->id) selected @endif>{{ $gaeType->ExpenseName }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -303,7 +304,8 @@
                                         <div><label>MARKUP COST</label></div>
                                         <div class="form-group">
                                             <label>Markup (%)</label>
-                                            <input type="text" class="form-control markup-percent" name="MarkupPercent[]" value="{{ $priceProducts->LsalesMarkupPercent ?? 0 }}">
+                                            {{-- <input type="text" class="form-control markup-percent" name="MarkupPercent[]" value="{{ $priceProducts->LsalesMarkupPercent ?? 0 }}"> --}}
+                                            <input type="text" class="form-control markup-percent" name="MarkupPercent[]" value="{{ number_format($priceProducts->LsalesMarkupPercent ?? 0, 2) }}" data-full-value="{{ $priceProducts->LsalesMarkupPercent ?? 0 }}">
                                         </div>
                                         <div class="form-group">
                                             <label>Markup (PHP)</label>
@@ -426,9 +428,14 @@
     // Update 10/28/24
 
 $(document).ready(function() {
-    var $initialRow = $('.create_prf_form{{ $price_monitorings->id }}');
-   var initialGae = $initialRow.find('.PriceGae').val();
-   fetchGaeCost(initialGae, $initialRow);
+//     var $initialRow = $('.create_prf_form{{ $price_monitorings->id }}');
+//    var initialGae = $initialRow.find('.PriceGae').val();
+//    fetchGaeCost(initialGae, $initialRow);
+$('.create_prf_form{{ $price_monitorings->id }}').each(function() {
+    var $row = $(this);
+    var initialGae = $row.find('.PriceGae').val();
+    fetchGaeCost(initialGae, $row);
+});
 
    $(document).on('change', '.PriceGae', function() {
        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
@@ -456,8 +463,10 @@ $(document).ready(function() {
     function calculateCosts($row, rmc) {
         var directLabor = parseFloat($row.find('.direct-labor-input').val());
         var factoryOverhead = parseFloat($row.find('.factory-overhead-input').val());
-        var totalMC = rmc + directLabor + factoryOverhead;
-        var totalManufacturingCost = Math.round((totalMC + Number.EPSILON) * 100) / 100;
+        var roundedRmc = Math.round((rmc + Number.EPSILON) * 100) / 100;
+        var totalMC = roundedRmc + directLabor + factoryOverhead;
+        // var totalManufacturingCost = Math.round((totalMC + Number.EPSILON) * 100) / 100;
+        var totalManufacturingCost = totalMC;
         $row.find('.total-manufacturing-cost-input').val(totalManufacturingCost.toFixed(2));
         
         var blendingLoss = 0.01 * rmc;
@@ -556,7 +565,7 @@ function updateSellingPrice($row) {
 
    function updateMarkupPHP($row) {
         var totalProductCost = parseFloat($row.find('.total-product-cost').val()) || 0;
-        var markupPercent = parseFloat($row.find('.markup-percent').val()) || 0;
+        var markupPercent = parseFloat($row.find('.markup-percent').data('full-value')) || 0;
 
         if (!isNaN(totalProductCost) && !isNaN(markupPercent)) {
             var markupPHP = (markupPercent / 100) * totalProductCost;
@@ -573,7 +582,9 @@ function updateSellingPrice($row) {
 
         if (!isNaN(totalProductCost) && !isNaN(markupPHP)) {
             var markupPercent = (markupPHP / totalProductCost) * 100;
-            $row.find('.markup-percent').val(markupPercent.toFixed(2));
+            $row.find('.markup-percent')
+                .val(markupPercent.toFixed(2)) 
+                .data('full-value', markupPercent); 
             updateSellingPrice($row);
             updateSellingPriceWithVAT($row);
         }
@@ -611,6 +622,8 @@ function updateSellingPrice($row) {
    
    $(document).on('input', '.markup-percent', function() {
        var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
+       var markupPercent = parseFloat($(this).val()) || 0;
+       $(this).data('full-value', markupPercent);
        updateMarkupPHP($row);
    });
 
@@ -629,13 +642,22 @@ function updateSellingPrice($row) {
            var markupPercent = (markupPHP / totalProductCost) * 100;
            var sellingPriceWithVAT = sellingPrice + (sellingPrice * 0.12);
 
-           $row.find('.markup-php').val(markupPHP.toFixed(2));
-           $row.find('.markup-percent').val(markupPercent.toFixed(2));
-           $row.find('.selling-price-vat').val(sellingPriceWithVAT.toFixed(2));
+           $row.find('.markup-php')
+                .val(markupPHP.toFixed(2))
+                .data('full-value', markupPHP);
+
+            $row.find('.markup-percent')
+                .val(markupPercent.toFixed(2))
+                .data('full-value', markupPercent);
+
+            $row.find('.selling-price-vat')
+                .val(sellingPriceWithVAT.toFixed(2))
+                .data('full-value', sellingPriceWithVAT);
+
        }
    });
 
-    $(document).on('input', '.selling-price-vat', function() {
+   $(document).on('input', '.selling-price-vat', function() {
         var $row = $(this).closest('.create_prf_form{{ $price_monitorings->id }}');
         var sellingPriceWithVAT = parseFloat($(this).val()) || 0;
         var sellingPrice = sellingPriceWithVAT / 1.12;
@@ -646,10 +668,40 @@ function updateSellingPrice($row) {
             var markupPercent = (markupPHP / totalProductCost) * 100;
             
             $row.find('.selling-price-php').val(sellingPrice.toFixed(2));
+            $row.find('.selling-price-php').data('full-value', sellingPrice);
+            
             $row.find('.markup-php').val(markupPHP.toFixed(2));
+            $row.find('.markup-php').data('full-value', markupPHP);
+            
             $row.find('.markup-percent').val(markupPercent.toFixed(2));
+            $row.find('.markup-percent').data('full-value', markupPercent);
         }
     });
+
+   
+    $('form').submit(function() {
+        $('.selling-price-php').each(function() {
+            var fullValue = $(this).data('full-value');
+            if (fullValue !== undefined) {
+                $(this).val(fullValue);
+            }
+        });
+
+        $('.markup-php').each(function() {
+            var fullValue = $(this).data('full-value');
+            if (fullValue !== undefined) {
+                $(this).val(fullValue);
+            }
+        });
+
+        $('.markup-percent').each(function() {
+            var fullValue = $(this).data('full-value');
+            if (fullValue !== undefined) {
+                $(this).val(fullValue);
+            }
+        });
+    });
+
     
 });
 
@@ -790,6 +842,7 @@ $(document).ready(function() {
                                <div class="form-group">
                                    <label>GAE Type:</label>
                                    <select class="form-control js-example-basic-single PriceGae" name="PriceGae[]" style="position: relative !important" title="Select GAE Type">
+                                        <option value="" >Select GAE Type</option>
                                        @foreach ($pricegaes as $gaeType)
                                            <option value="{{ $gaeType->id }}" >{{ $gaeType->ExpenseName }}</option>
                                        @endforeach
