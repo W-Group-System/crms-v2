@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="form_price_request" enctype="multipart/form-data" action="{{ url('prfFiles') }}" onsubmit="show()">
+                <form method="POST" id="form_price_request" enctype="multipart/form-data" action="{{ url('/prfFilesUpload') }}" onsubmit="show()">
                     @csrf
                     <div class="prf-file">
                         <div class="form-group">
@@ -17,7 +17,7 @@
                         </div>
                         <div class="form-group">
                             <label ><b>Browse Files</b></label>
-                            <input type="file" class="form-control" id="prf_file" name="prf_file[]" multiple>
+                            <input type="file" class="form-control" id="prf_file" name="prf_file[]">
                         </div>
                         <div class="form-group">
                             <input type="hidden" class="form-control" name="prf_id" value="{{ $price_monitorings->id }}">
@@ -48,7 +48,7 @@
                 </div>
                 <div class="form-group">
                     <label for="prf_file"><b>Browse Files</b></label>
-                    <input type="file" class="form-control" name="prf_file[]" multiple>
+                    <input type="file" class="form-control" name="prf_file[]">
                 </div>
                 <div class="form-group">
                     <input type="hidden" class="form-control" name="prf_id" value="{{ $price_monitorings->id }}">
