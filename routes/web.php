@@ -364,9 +364,9 @@ Route::group(['middleware' => ['auth']], function() {
         // Route::delete('delete_price_request/{id}', 'PriceMonitoringController@delete');
         // Route::get('price_monitoring/view/{id}', 'PriceMonitoringController@view');
     
-        Route::post('prfFiles', 'PriceMonitoringController@uploadFile');
+        Route::post('prfFilesUpload', 'PriceMonitoringController@uploadFile');
         Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
-        // Route::delete('price_monitorings/view/file-delete/{id}', 'PriceMonitoringController@deleteFile');
+        Route::delete('price_monitorings/view/file-delete/{id}', 'PriceMonitoringController@deleteFile');
         // Route::post('updatePrfFile/{id}', 'PriceMonitoringController@editFile');
     
         // Price Monitoring Local Sales

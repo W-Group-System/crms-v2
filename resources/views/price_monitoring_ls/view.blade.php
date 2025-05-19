@@ -582,6 +582,7 @@
         });
 
     function confirmDelete(id, type) {
+        console.log(id, type)
         Swal.fire({
             title: 'Are you sure?',
             text: 'This action cannot be undone.',
