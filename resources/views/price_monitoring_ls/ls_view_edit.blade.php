@@ -460,10 +460,15 @@ $('.create_prf_form{{ $price_monitorings->id }}').each(function() {
    }
 }
 
+    function roundTo(num, decimals = 2) {
+        const factor = Math.pow(10, decimals);
+        return Math.round((num + 1e-10) * factor) / factor;
+    }
     function calculateCosts($row, rmc) {
         var directLabor = parseFloat($row.find('.direct-labor-input').val());
         var factoryOverhead = parseFloat($row.find('.factory-overhead-input').val());
-        var roundedRmc = Math.round((rmc + Number.EPSILON) * 100) / 100;
+        // var roundedRmc = Math.round((rmc + Number.EPSILON) * 100) / 100;
+        var roundedRmc = roundTo(rmc, 2);
         var totalMC = roundedRmc + directLabor + factoryOverhead;
         // var totalManufacturingCost = Math.round((totalMC + Number.EPSILON) * 100) / 100;
         var totalManufacturingCost = totalMC;
