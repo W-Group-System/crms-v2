@@ -361,6 +361,9 @@ class DashboardController extends Controller
                     $q->where('SalesApproverId', $userId);
                 })->orWhereHas('products', function ($q) {
                     $q->where('LsalesMarkupPercent', '<', 15);
+                })->orWhereHas('products', function ($q) {
+                    $q->where('LsalesMarkupPercent', '>', 15)
+                      ->where('PriceRequestGaeId', '=', 6);
                 });
             })
             ->where('Status', '10') 
