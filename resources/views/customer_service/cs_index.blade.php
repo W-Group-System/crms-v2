@@ -69,7 +69,7 @@
                             <div id="form_satisfaction_container" style="display: none;">
                                 <form id="form_satisfaction" method="POST" enctype="multipart/form-data" onsubmit="show()">
                                     @csrf
-                                    <input type="text" name="CsNumber" value="{{ $newCsNo }}"> 
+                                    <input type="hidden" name="CsNumber" value="{{ $newCsNo }}"> 
                                     <input type="hidden" name="Status" value="10">
                                     <input type="hidden" name="Progress" value="10">
                                     <div class="row">
