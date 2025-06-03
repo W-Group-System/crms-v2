@@ -421,7 +421,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('cs_received/{id}', 'CustomerSatisfactionController@received');
         Route::post('cs_approved/{id}', 'CustomerSatisfactionController@approved');
         Route::post('cs_closed/{id}', 'CustomerSatisfactionController@close');
-        Route::post('cs_noted/{id}', 'CustomerSatisfactionController@noted');
+        // Route::post('cs_noted/{id}', 'CustomerSatisfactionController@noted');
+        Route::post('/noted_remarks/{id}', 'CustomerSatisfactionController@noted')->name('noted_remarks');
         Route::get('print_cs/{id}', 'CustomerSatisfactionController@printCs');
         Route::delete('delete_cs_files/{id}', 'CustomerSatisfactionController@delete')->name('delete_cs_files');
     
@@ -435,7 +436,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('cc_closed/{id}', 'CustomerComplaint2Controller@closed');
         Route::post('cc_noted/{id}', 'CustomerComplaint2Controller@noted');
         Route::post('cc_update/{id}', 'CustomerComplaint2Controller@ccupdate');
-        Route::post('cc_assign/{id}', 'CustomerComplaint2Controller@assign');
+        Route::post('cc_assign/{id}', 'CustomerComplaint2Controller@assign')->name('cc_assign');
         Route::get('print_cc/{id}', 'CustomerComplaint2Controller@printCc');
         Route::delete('delete_cc_files/{id}', 'CustomerComplaint2Controller@delete')->name('delete_cc_files');
         Route::delete('delete_cc_files2/{id}', 'CustomerComplaint2Controller@delete2')->name('delete_cc_files2');

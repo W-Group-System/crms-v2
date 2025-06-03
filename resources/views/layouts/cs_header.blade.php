@@ -57,12 +57,12 @@
             font-weight: normal;
             font-style: normal;
         }
-        .body_cs {
+        /* .body_cs {
             min-height: 100vh;
             background: url('images/Seaweed_farm.jpg');
             background-size: cover;
             box-shadow: inset 0 0 0 2000px #20222582;
-        }
+        } */
         .header_h2 {
             font-weight: 600;
             color: #fdfdfe;

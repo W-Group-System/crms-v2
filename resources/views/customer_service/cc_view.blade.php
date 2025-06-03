@@ -20,25 +20,50 @@
                         </button>
                     </form>
                 @endif
-                <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
-                    <i class="ti ti-pencil"></i>&nbsp;Complaint 
-                </button>
-                <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
-                    <i class="ti ti-pencil"></i>&nbsp;Assign 
-                </button>
-                <button type="button" class="btn btn-outline-warning" id="updateCc" 
-                        data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
-                    <i class="ti ti-pencil"></i>&nbsp;Investigation
-                </button>
-                <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
-                    <i class="ti ti-pencil"></i>&nbsp;Verification
-                </button>
                 @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                    @if($data->Progress == 20 && $data->ReceivedBy != NULL)
+                    @if($data->Progress == 20)
                         <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-success notedBtn">
                                 <i class="ti-check">&nbsp;</i> Noted By
+                            </button>
+                        </form>
+                    @endif
+                @endif
+                {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
+                @if($data->ReceivedBy == auth()->user()->id && $data->NotedBy != null)
+                    <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                        <i class="ti ti-pencil"></i>&nbsp;Complaint 
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
+                        <i class="ti ti-pencil"></i>&nbsp;Assign 
+                    </button>
+                    @if($data->Progress == 50)
+                    <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                        <i class="ti ti-pencil"></i>&nbsp;Verification
+                    </button>
+                    @endif
+                    @if($data->ApprovedBy != NULL)
+                        <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
+                            <i class="ti ti-printer btn-icon-prepend"></i>
+                            Print
+                        </a>
+                    @endif
+                @endif
+                @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)
+                <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-secondary closeBtn">
+                        <i class="ti-close">&nbsp;</i> Close
+                    </button>
+                </form>
+                @endif
+                @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Department != NULL)
+                    @if($data->Progress == 50)
+                        <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-success approvedBtn">
+                                <i class="ti-check">&nbsp;</i> Acknowledged
                             </button>
                         </form>
                     @endif
@@ -48,19 +73,22 @@
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
                     </button>
                 @endif -->
-                @if($data->NcarIssuance == 1 && $data->Department == auth()->user()->role->type)
-                    <!-- <button type="button" class="btn btn-outline-warning" id="updateCc" 
+                @if($data->Department == auth()->user()->role->type)
+                    <button type="button" class="btn btn-outline-warning" id="updateCc" 
                             data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
-                    </button> -->
+                    </button>
                 @endif
-                @if((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->Progress == 40 || $data->Progress == 50)
-                    <!-- <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
-                        <i class="ti ti-pencil"></i>&nbsp;Assign 
-                    </button> -->
-                    <!-- <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                <!-- <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                    <i class="ti ti-pencil"></i>&nbsp;Verification
+                </button> -->
+                <!-- @if((auth()->user()->department_id == 5 || auth()->user()->department_id == 38))
+                    <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
                         <i class="ti ti-pencil"></i>&nbsp;Complaint 
-                    </button> -->
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
+                        <i class="ti ti-pencil"></i>&nbsp;Assign 
+                    </button>
                     <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                         <i class="ti ti-pencil"></i>&nbsp;Verification
                     </button>
@@ -76,8 +104,8 @@
                             <i class="ti-close">&nbsp;</i> Close
                         </button>
                     </form>
-                @endif
-                @if($data->NotedBy != NULL && auth()->user()->id == 15)
+                @endif -->
+                <!-- @if($data->NotedBy != NULL && auth()->user()->id == 15)
                     @if($data->Progress != 40)
                     <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                         @csrf
@@ -86,7 +114,7 @@
                         </button>
                     </form>
                     @endif
-                @endif
+                @endif -->
             </div>
             <div class="row mb-0 mt-3">
                 <div class="col-sm-3 col-md-2 text-right">
@@ -240,7 +268,7 @@
             </div> 
             <div class="form-group row mb-3">
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Attachments :</b></p>
+                    <p class="m-0" style="margin-top: 5px !important;"><b>Attachments :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-6">
                     <p class="m-0">
@@ -248,10 +276,10 @@
                             @php
                                 $filePath = asset('storage/' . $file->Path); 
                             @endphp
-                            {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
-                                <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
+                                {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
+                                <!-- <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
                                     <i class="ti ti-close" style="color:red"></i>
-                                </button>
+                                </button> -->
                                 <br>
                         @endforeach
                     </p>
@@ -289,47 +317,47 @@
                                 <tr>
                                     <td class="break-spaces" width="20%">1.2 Biological Hazard (e.g. high bacteria count, etc.)</td>
                                     <!-- <td align="center"><input id="check-p2" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p2-input" name="Pn2" value="{{ optional($data->product_quality)->Pn2 }}" title="{{ optional($data->product_quality)->Pn2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p2-input" name="ScNo2" value="{{ optional($data->product_quality)->ScNo2 }}" title="{{ optional($data->product_quality)->ScNo2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p2-input" name="SoNo2" value="{{ optional($data->product_quality)->SoNo2 }}" title="{{ optional($data->product_quality)->SoNo2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p2-input" style="width: 80px" name="Quantity2" value="{{ optional($data->product_quality)->Quantity2 }}" title="{{ optional($data->product_quality)->Quantity2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p2-input" style="width: 80px" name="LotNo2" value="{{ optional($data->product_quality)->LotNo2 }}" title="{{ optional($data->product_quality)->LotNo2 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control p2-input" name="Pn2" value="{{ optional($data->product_quality)->Pn2 }}" title="{{ optional($data->product_quality)->Pn2 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p2-input" name="ScNo2" value="{{ optional($data->product_quality)->ScNo2 }}" title="{{ optional($data->product_quality)->ScNo2 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p2-input" name="SoNo2" value="{{ optional($data->product_quality)->SoNo2 }}" title="{{ optional($data->product_quality)->SoNo2 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p2-input" style="width: 80px" name="Quantity2" value="{{ optional($data->product_quality)->Quantity2 }}" title="{{ optional($data->product_quality)->Quantity2 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p2-input" style="width: 80px" name="LotNo2" value="{{ optional($data->product_quality)->LotNo2 }}" title="{{ optional($data->product_quality)->LotNo2 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">1.3 Chemical Hazard (e.g. high heavy metals content, etc.)</td>
                                     <!-- <td align="center"><input id="check-p3" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p3-input" name="Pn3" value="{{ optional($data->product_quality)->Pn3 }}" title="{{ optional($data->product_quality)->Pn3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p3-input" name="ScNo3" value="{{ optional($data->product_quality)->ScNo3 }}" title="{{ optional($data->product_quality)->ScNo3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p3-input" name="SoNo3" value="{{ optional($data->product_quality)->SoNo3 }}" title="{{ optional($data->product_quality)->SoNo3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p3-input" style="width: 80px" name="Quantity3" value="{{ optional($data->product_quality)->Quantity3 }}" title="{{ optional($data->product_quality)->Quantity3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p3-input" style="width: 80px" name="LotNo3" value="{{ optional($data->product_quality)->LotNo3 }}" title="{{ optional($data->product_quality)->LotNo3 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control p3-input" name="Pn3" value="{{ optional($data->product_quality)->Pn3 }}" title="{{ optional($data->product_quality)->Pn3 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p3-input" name="ScNo3" value="{{ optional($data->product_quality)->ScNo3 }}" title="{{ optional($data->product_quality)->ScNo3 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p3-input" name="SoNo3" value="{{ optional($data->product_quality)->SoNo3 }}" title="{{ optional($data->product_quality)->SoNo3 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p3-input" style="width: 80px" name="Quantity3" value="{{ optional($data->product_quality)->Quantity3 }}" title="{{ optional($data->product_quality)->Quantity3 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p3-input" style="width: 80px" name="LotNo3" value="{{ optional($data->product_quality)->LotNo3 }}" title="{{ optional($data->product_quality)->LotNo3 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">1.4 Visual Defects (e.g. color change, particle size)</td>
                                     <!-- <td align="center"><input id="check-p4" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p4-input" name="Pn4" value="{{ optional($data->product_quality)->Pn4 }}" title="{{ optional($data->product_quality)->Pn4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p4-input" name="ScNo4" value="{{ optional($data->product_quality)->ScNo4 }}" title="{{ optional($data->product_quality)->ScNo4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p4-input" name="SoNo4" value="{{ optional($data->product_quality)->SoNo4 }}" title="{{ optional($data->product_quality)->SoNo4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p4-input" style="width: 80px" name="Quantity4" value="{{ optional($data->product_quality)->Quantity4 }}" title="{{ optional($data->product_quality)->Quantity4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p4-input" style="width: 80px" name="LotNo4" value="{{ optional($data->product_quality)->LotNo4 }}" title="{{ optional($data->product_quality)->LotNo4 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control p4-input" name="Pn4" value="{{ optional($data->product_quality)->Pn4 }}" title="{{ optional($data->product_quality)->Pn4 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p4-input" name="ScNo4" value="{{ optional($data->product_quality)->ScNo4 }}" title="{{ optional($data->product_quality)->ScNo4 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p4-input" name="SoNo4" value="{{ optional($data->product_quality)->SoNo4 }}" title="{{ optional($data->product_quality)->SoNo4 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p4-input" style="width: 80px" name="Quantity4" value="{{ optional($data->product_quality)->Quantity4 }}" title="{{ optional($data->product_quality)->Quantity4 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p4-input" style="width: 80px" name="LotNo4" value="{{ optional($data->product_quality)->LotNo4 }}" title="{{ optional($data->product_quality)->LotNo4 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">1.5 Application Problems (e.g. poor dispersion, poor distribution, poor binding property, high syneresis, etc.)</td>
                                     <!-- <td align="center"><input id="check-p5" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p5-input" name="Pn5" value="{{ optional($data->product_quality)->Pn5 }}" title="{{ optional($data->product_quality)->Pn5 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p5-input" name="ScNo5" value="{{ optional($data->product_quality)->ScNo5 }}" title="{{ optional($data->product_quality)->ScNo5 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p5-input" name="SoNo5" value="{{ optional($data->product_quality)->SoNo5 }}" title="{{ optional($data->product_quality)->SoNo5 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p5-input" style="width: 80px" name="Quantity5" value="{{ optional($data->product_quality)->Quantity5 }}" title="{{ optional($data->product_quality)->Quantity5 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p5-input" style="width: 80px" name="LotNo5" value="{{ optional($data->product_quality)->LotNo5 }}" title="{{ optional($data->product_quality)->LotNo5 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control p5-input" name="Pn5" value="{{ optional($data->product_quality)->Pn5 }}" title="{{ optional($data->product_quality)->Pn5 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p5-input" name="ScNo5" value="{{ optional($data->product_quality)->ScNo5 }}" title="{{ optional($data->product_quality)->ScNo5 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p5-input" name="SoNo5" value="{{ optional($data->product_quality)->SoNo5 }}" title="{{ optional($data->product_quality)->SoNo5 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p5-input" style="width: 80px" name="Quantity5" value="{{ optional($data->product_quality)->Quantity5 }}" title="{{ optional($data->product_quality)->Quantity5 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p5-input" style="width: 80px" name="LotNo5" value="{{ optional($data->product_quality)->LotNo5 }}" title="{{ optional($data->product_quality)->LotNo5 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">1.6 Physical/ Chemical Properties Out-of Specification (e.g. pH, gel strength, viscosity, syneresis and contamination with other ingredients)</td>
                                     <!-- <td align="center"><input id="check-p6" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p6-input" name="Pn6" value="{{ optional($data->product_quality)->Pn6 }}" title="{{ optional($data->product_quality)->Pn6 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p6-input" name="ScNo6" value="{{ optional($data->product_quality)->ScNo6 }}" title="{{ optional($data->product_quality)->ScNo6 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p6-input" name="SoNo6" value="{{ optional($data->product_quality)->SoNo6 }}" title="{{ optional($data->product_quality)->SoNo6 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p6-input" style="width: 80px" name="Quantity6" value="{{ optional($data->product_quality)->Quantity6 }}" title="{{ optional($data->product_quality)->Quantity6 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control p6-input" style="width: 80px" name="LotNo6" value="{{ optional($data->product_quality)->LotNo6 }}" title="{{ optional($data->product_quality)->LotNo6 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control p6-input" name="Pn6" value="{{ optional($data->product_quality)->Pn6 }}" title="{{ optional($data->product_quality)->Pn6 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p6-input" name="ScNo6" value="{{ optional($data->product_quality)->ScNo6 }}" title="{{ optional($data->product_quality)->ScNo6 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p6-input" name="SoNo6" value="{{ optional($data->product_quality)->SoNo6 }}" title="{{ optional($data->product_quality)->SoNo6 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p6-input" style="width: 80px" name="Quantity6" value="{{ optional($data->product_quality)->Quantity6 }}" title="{{ optional($data->product_quality)->Quantity6 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p6-input" style="width: 80px" name="LotNo6" value="{{ optional($data->product_quality)->LotNo6 }}" title="{{ optional($data->product_quality)->LotNo6 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td colspan="7"><b>2. Packaging</b></td>
@@ -531,9 +559,11 @@
                                         $filePath = asset('storage/' . $file->Path); 
                                     @endphp
                                     {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
-                                        <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
-                                            <i class="ti ti-close" style="color:red"></i>
-                                        </button>           
+                                        @if($data->Department == auth()->user()->role->type)
+                                            <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
+                                                <i class="ti ti-close" style="color:red"></i>
+                                            </button>  
+                                        @endif         
                                         <br>
                                 @endforeach
                             </p>
@@ -615,6 +645,27 @@
                             <p class="m-0">{{ $data->ShipmentCost ?? 'N/A' }}</p>
                         </div>
                     </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Files :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-6">
+                            <p class="m-0">
+                                @foreach ($data->verification as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path); 
+                                    @endphp
+                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
+                                        @if($data->ReceivedBy == auth()->user()->id)
+                                            <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
+                                                <i class="ti ti-close" style="color:red"></i>
+                                            </button>   
+                                        @endif        
+                                        <br>
+                                @endforeach
+                            </p>
+                        </div>
+                    </div>
                     {{-- <div class="col-md-12 mb-3">
                         <label><strong>Files</strong></label>
                         <hr class="alert-dark mt-0">
@@ -643,9 +694,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="updateCustomerComplaint" method="POST" action="{{ url('update_customer_complaint/' . $data->id) }}" enctype="multipart/form-data">
+                <form id="updateCustomerComplaint" method="POST" action="{{ url('update_customer_complaint/' . $data->id) }}" enctype="multipart/form-data" onsubmit="show()">
                     @csrf
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Recurring Issue:</label>
@@ -669,7 +720,7 @@
                                     placeholder="Enter CCF No.">
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <label>Immediate Action/Correction:</label>
                     <div class="row">
                         <div class="col-lg-6">
@@ -733,7 +784,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="customerAcceptance" method="POST" action="{{ url('customer_acceptance/' . $data->id) }}">
+                <form id="customerAcceptance" method="POST" action="{{ url('customer_acceptance/' . $data->id) }}" enctype="multipart/form-data" onsubmit="show()">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">
@@ -790,6 +841,12 @@
                                 <input type="text" class="form-control" id="ShipmentCost" name="ShipmentCost" placeholder="Enter Return Shipment Cost">
                             </div>
                         </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">Attachments</label>
+                                <input type="file" name="Path[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer mt-3">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
@@ -803,7 +860,13 @@
 
 @include('customer_service.complaint_modal')
 @include('customer_service.update_complaint')
-
+@if(session('openModalId'))
+    <script>
+        $(document).ready(function() {
+            $('#update{{ session('openModalId') }}').modal('show');
+        });
+    </script>
+@endif
 <style>
     .break-spaces {
         white-space: break-spaces !important;
@@ -875,13 +938,15 @@
         $('#customerAcceptance').on('submit', function (e) {
             e.preventDefault(); 
 
-            var form = $(this);
-            var actionUrl = form.attr('action');
+            var formData = new FormData(this); // Use FormData to handle file uploads
+            var actionUrl = $(this).attr('action');
 
             $.ajax({
                 url: actionUrl,
                 type: 'POST',
-                data: form.serialize(),
+                data: formData,
+                processData: false, 
+                contentType: false, 
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({

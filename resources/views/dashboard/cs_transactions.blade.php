@@ -64,33 +64,33 @@
                                     $status = "";
                                     if (str_contains($transaction->CsNumber, 'CSR'))
                                     {
-                                        $id = $transaction->id;
-                                        $cs_number = $transaction->CsNumber;
+                                        $id           = $transaction->id;
+                                        $cs_number    = $transaction->CsNumber;
                                         $date_created = $transaction->created_at;
                                         $company_name = $transaction->CompanyName;
                                         $contact_name = $transaction->ContactName;
                                         $email        = $transaction->Email;
                                         $concerned    = optional($transaction->concerned)->Name;
                                         $received     = optional($transaction->users)->full_name;
-                                        $status = $transaction->Status;
+                                        $status       = $transaction->Status;
                                     }
                                     
                                     if (str_contains($transaction->CcNumber, 'CCF'))
                                     {
-                                        $id = $transaction->id;
-                                        $cs_number = $transaction->CcNumber;
+                                        $id           = $transaction->id;
+                                        $cs_number    = $transaction->CcNumber;
                                         $date_created = $transaction->created_at;
                                         $company_name = $transaction->CompanyName;
                                         $contact_name = $transaction->ContactName;
                                         $email        = $transaction->Email;
                                         $concerned    = optional($transaction->concerned)->Name;
                                         $received     = optional($transaction->users)->full_name;
-                                        $status = $transaction->Status;
+                                        $status       = $transaction->Status;
                                     }
                                     
                                 @endphp
                                 <tr>
-                                    <td>
+                                    <td class="{{ is_null($transaction->users) ? 'text-danger-bold' : '' }}">
                                         @if(str_contains($transaction->CsNumber, 'CSR'))
                                         <a href="{{url('customer_satisfaction/view/'.$id.'')}}">
                                         @elseif(str_contains($transaction->CcNumber, 'CCF'))
@@ -99,16 +99,16 @@
                                             {{$cs_number}}
                                         </a>
                                     </td>
-                                    <td>{{ date('M. d, Y', strtotime($date_created)) }}</td>
-                                    <td>
+                                    <td class="{{ is_null($transaction->users) ? 'text-danger-bold' : '' }}">{{ date('M. d, Y', strtotime($date_created)) }}</td>
+                                    <td class="{{ is_null($transaction->users) ? 'text-danger-bold' : '' }}">
                                         <a>
                                             {{ $company_name }}
                                         </a>
                                     </td>
-                                    <td>{{$contact_name}}</td>
-                                    <td>{{$email}}</td>
-                                    <td>{{ $concerned ?? 'N/A' }}</td>
-                                    <td>{{ $received ?? 'N/A' }}</td>
+                                    <td class="{{ is_null($transaction->users) ? 'text-danger-bold' : '' }}">{{$contact_name}}</td>
+                                    <td class="{{ is_null($transaction->users) ? 'text-danger-bold' : '' }}">{{$email}}</td>
+                                    <td class="{{ is_null($transaction->users) ? 'text-danger-bold' : '' }}">{{ $concerned ?? 'N/A' }}</td>
+                                    <td class="{{ is_null($transaction->users) ? 'text-danger-bold' : '' }}">{{ $received ?? 'N/A' }}</td>
                                     <td>
                                         @if($status == 10)
                                         <span class="badge badge-success">Open</span>
@@ -142,6 +142,12 @@
         </div>
     </div>
 </div>
+
+<style>
+    .text-danger-bold {
+        font-weight: bold;
+    }
+</style>
 <script>
     function changeEntries()
     {

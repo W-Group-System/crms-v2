@@ -26,6 +26,11 @@ class CustomerSatisfaction extends Model
         return $this->hasMany(CsFiles::class, 'CsId', 'id');
     }
 
+    public function customer_attachments() 
+    {
+        return $this->hasMany(SatisfactionFile::class, 'CsId', 'id');
+    }
+
     public function users()
     {
         return $this->belongsTo(User::class, 'ReceivedBy', 'id');
@@ -54,5 +59,9 @@ class CustomerSatisfaction extends Model
     public function salesapprovers()
     {
         return $this->belongsTo(SalesApprovers::class, 'ReceivedBy', 'UserId'); 
+    }
+    public function salesapprovers1()
+    {
+        return $this->belongsTo(SalesApprovers::class, 'NotedBy', 'UserId'); 
     }
 }
