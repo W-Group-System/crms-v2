@@ -71,7 +71,7 @@
     </div>
 </div> -->
 
-<div class="container-scroller">
+<!-- <div class="container-scroller">
     <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper d-flex align-items-center auth px-0">
             <div class="row w-100 mx-0">
@@ -90,14 +90,6 @@
                         <h6 class="font-weight-light">Sign in to continue.</h6>
                         <form method="POST" action="{{ route('login') }}" onsubmit='show()'>
                             @csrf   
-                            <!-- <div class="form-group">
-                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required autofocus placeholder="Enter Email">
-                                @if ($errors->has('email'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div> -->
                             <div class="form-group">
                                 <input id="username" type="username" class="form-control{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" required autofocus placeholder="Enter Username">
                                 @if ($errors->has('username'))
@@ -130,6 +122,64 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div> -->
+
+<link rel="stylesheet" type="text/css" href="new_login/fonts/iconic/css/material-design-iconic-font.min.css">
+<link rel="stylesheet" type="text/css" href="new_login/css/main.css">
+
+<div class="limiter">
+    <div class="container-login100" style="background-image: url('images/Seaweed_farm.jpg');">
+        <div class="wrap-login100">
+            @if(session('alert.error'))
+                <div class="alert alert-danger">
+                    {{ session('alert.error') }}
+                </div>
+            @endif
+            <form method="POST" action="{{ route('login') }}" onsubmit='show()' class="login100-form validate-form">
+                @csrf 
+                <span class="login100-form-logo">
+                    <img src="new_login/images/crms-logo.png" width="100" height="100">
+                </span>
+                <span class="login100-form-title mt-3 mb-3">Sign in to continue!</span>
+                <div class="wrap-input100 validate-input" data-validate = "Enter username">
+                    <input id="username" type="username" class="input100{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" required autofocus placeholder="Enter Username">
+                    <span class="focus-input100" data-placeholder="&#xf207;"></span>
+                    @if ($errors->has('username'))
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $errors->first('username') }}</strong>
+                        </span>
+                    @endif
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="Enter password">
+                    <input id="password" type="password" class="input100{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required placeholder="Enter Password">
+                    <span class="focus-input100" data-placeholder="&#xf191;"></span>
+                    @if ($errors->has('password'))
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $errors->first('password') }}</strong>
+                        </span>
+                    @endif
+                </div>
+                <div class="container-login100-form-btn mb-2">
+                    <button type="submit" class="login100-form-btn auth-form-btn">
+                        {{ __('SIGN IN') }}
+                    </button>
+                </div>
+
+                <div class="text-center p-t-90">
+                    @if (Route::has('password.request'))
+                        <a class="auth-link text-white" href="{{ route('password.request') }}">
+                            {{ __('Forgot Password?') }}
+                        </a>
+                    @endif
+                    <p class="mt-4"><small class="text-white">Copyright © W Group Inc. 2025</small></p>
+                    <hr style="border-top: 1px solid rgb(255 255 255)">
+                    <p><small class="text-white">For your system/ technical concerns, click <a href="https://ticketing.rico.com.ph/itd/" target="_blank" style="color: #FFF; font-weigh:600">here</a></small></p>
+                </div>
+                
+            </form>
         </div>
     </div>
 </div>
