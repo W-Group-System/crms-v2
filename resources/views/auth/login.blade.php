@@ -174,7 +174,7 @@
                             {{ __('Forgot Password?') }}
                         </a>
                     @endif
-                    <p class="mt-4"><small class="text-white">Copyright © W Group Inc. 2025</small></p>
+                    <p class="mt-3"><small class="text-white">Copyright © W Group Inc. 2025</small></p>
                     <hr style="border-top: 1px solid rgb(255 255 255)">
                     <p><small class="text-white">For your system/ technical concerns, click <a href="https://ticketing.rico.com.ph/itd/" target="_blank" style="color: #FFF; font-weigh:600">here</a></small></p>
                 </div>
