@@ -65,15 +65,15 @@
                         @if(count($data) > 0)
                             @foreach ($data as $cc_data)
                             <tr>
-                                <td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">
                                     <a href="{{ url('customer_complaint/view/' . $cc_data->id) }}" title="View Customer Complaint">{{ $cc_data->CcNumber }}</a>
                                 </td>
-                                <td>{{ date('M. d, Y', strtotime($cc_data->created_at)) }}</td>
-                                <td>{{ $cc_data->CompanyName }}</td>
-                                <td>{{ $cc_data->ContactName }}</td>
-                                <td>{{ $cc_data->country->Name ?? 'N/A' }}</td>
-                                <td>{{ $cc_data->Department ?? 'N/A' }}</td>
-                                <td>{{ $cc_data->users->full_name ?? 'N/A' }}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ date('M. d, Y', strtotime($cc_data->created_at)) }}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->CompanyName }}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->ContactName }}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->country->Name ?? 'N/A' }}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->Department ?? 'N/A' }}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->users->full_name ?? 'N/A' }}</td>
                                 <td>
                                     @if($cc_data->Status == 10)
                                         <div class="badge badge-success">Open</div>
@@ -107,4 +107,9 @@
     </div>
 </div>
 
+<style>
+    .text-danger-bold {
+        font-weight: bold;
+    }
+</style>
 @endsection

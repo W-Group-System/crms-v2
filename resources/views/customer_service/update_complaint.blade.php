@@ -1,4 +1,4 @@
-<div class="modal fade" id="update{{$data->id}}">
+<div class="modal fade" id="update{{$data->id}}" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
@@ -39,13 +39,13 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Definition of Quality Class</label>
-                                <select class="form-control js-example-basic-single" name="QualityClass" id="QualityClass" title="Select Quality Class" required>
-                                    <option value="" disabled selected>Select Quality Class</option>
+                                <label>Classification of Complaint</label>
+                                <select class="form-control js-example-basic-single" name="QualityClass" id="QualityClass" title="Select Classification of Complaint" required>
+                                    <option value="" disabled selected>Select Classification of Complaint</option>
                                     <option value="Critical e.g., Food Safety Hazard">Critical e.g., Food Safety Hazard</option>
                                     <option value="Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)">Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)</option>
                                     <option value="Minor/Marginal e.g., Late response">Minor/Marginal e.g., Late response</option>
-                                    <option value="Product name">Product name</option>
+                                    <!-- <option value="Product name">Product name</option> -->
                                 </select>
                             </div>
                             <div class="form-group" id="pName" style="display: none; margin-top: -10px">

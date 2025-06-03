@@ -5,14 +5,17 @@ namespace App\Http\Controllers;
 use App\Client;
 use App\ConcernDepartment;
 use App\IssueCategory;
+use App\Country;
 use App\Contact;
 use App\CustomerSatisfaction;
+use App\CustomerComplaint2;
 use App\CsFiles;
 use Illuminate\Support\Facades\Auth;
 use App\CustomerRequirement;
 use Illuminate\Http\Request;
 use App\Mail\CustomerSatisfactionMail;
 use App\Mail\AssignDepartmentMail;
+use App\SatisfactionFile;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\App;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -21,7 +24,41 @@ class CustomerSatisfactionController extends Controller
 {
     public function header()
     {
-        return view('customer_service.cs_index');
+        $category = IssueCategory::all();
+        $countries = Country::get();
+
+        $year1 = '2' . date('y') ; 
+
+        $latestCs = CustomerSatisfaction::whereYear('created_at', date('Y'))
+                        ->orderBy('CsNumber', 'desc')
+                        ->first();
+
+        if ($latestCs) {
+            $latestSeries = (int) substr($latestCs->CsNumber, -4);
+            $newSeries = str_pad($latestSeries + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            $newSeries = '0001';
+        }
+
+        $newCsNo = 'CSR-' . $year1 . '-' . $newSeries;
+
+        $year2 = date('y') . '4'; 
+        
+        $latestCc = CustomerComplaint2::whereYear('created_at', date('Y'))
+                        ->orderBy('CcNumber', 'desc')
+                        ->first();
+        
+        if ($latestCc) {
+            $latestSeries = (int) substr($latestCc->CcNumber, -4);
+            $newSeries = str_pad($latestSeries + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            $newSeries = '0001';
+        }
+
+        $newCcNo = 'CCF-' . $year2 . '-' . $newSeries;
+        
+
+        return view('customer_service.cs_index', compact('category', 'countries', 'newCsNo', 'newCcNo'));
     }
 
     public function index()
@@ -30,7 +67,7 @@ class CustomerSatisfactionController extends Controller
         $concern_department = ConcernDepartment::all();
         $category = IssueCategory::all();
 
-        $year = date('y') . '4'; 
+        $year = '2' . date('y') ; 
 
         $latestCs = CustomerSatisfaction::whereYear('created_at', date('Y'))
                         ->orderBy('CsNumber', 'desc')
@@ -161,9 +198,34 @@ class CustomerSatisfactionController extends Controller
             'Progress' => '10'
         ]);
 
-        Mail::to($request->Email)
-            ->cc('ict.engineer@wgroup.com.ph')
-            ->send(new CustomerSatisfactionMail($customerSatisfaction));
+        $attachments = [];
+        if ($request->hasFile('Path') && is_array($request->file('Path'))) {
+            foreach ($request->file('Path') as $file) {
+                if ($file->isValid()) {
+                    $csFile = new SatisfactionFile();
+                    $csFile->CsId = $customerSatisfaction->id;
+
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
+                    $csFile->Path = $filePath; 
+                    $csFile->save();
+
+                    $attachments[] = $filePath;
+                }
+            }
+        }
+
+        // Mail::to($request->Email)
+        //     ->cc('ict.engineer@wgroup.com.ph')
+        //     ->send(new CustomerSatisfactionMail($customerSatisfaction));
+
+        // Send to main recipient WITHOUT button
+        Mail::to($customerSatisfaction['Email'])
+        ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
+
+        // Send to CC recipients WITH button
+        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'iad@wgroup.com.ph']) // CC emails here
+        ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, true));
        
         // Return success message
         return response()->json(['success' => 'Your customer satisfaction has been submitted successfully!']);
@@ -218,6 +280,7 @@ class CustomerSatisfactionController extends Controller
     {
         $data = CustomerSatisfaction::with('concerned', 'category', 'cs_attachments')->findOrFail($id);
         $concern_department = ConcernDepartment::all();
+        // dd(auth()->user());
         return view('customer_service.cs_view', compact('data', 'concern_department'));
     }
 
@@ -235,11 +298,12 @@ class CustomerSatisfactionController extends Controller
         ]);
     }
 
-    public function noted($id)
+    public function noted($id, Request $request)
     {
         $data = CustomerSatisfaction::findOrFail($id);
         $data->NotedBy = auth()->user()->id;
         $data->Progress = 30;
+        $data->NotedRemarks = $request->NotedRemarks;
         $data->save();
 
         return response()->json([

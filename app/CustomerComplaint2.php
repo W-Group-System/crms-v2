@@ -75,6 +75,11 @@ class CustomerComplaint2 extends Model
     {
         return $this->belongsTo(SalesApprovers::class, 'ReceivedBy', 'UserId'); 
     }
+
+    public function salesapprovers1()
+    {
+        return $this->belongsTo(SalesApprovers::class, 'NotedBy', 'UserId'); 
+    }
     
     public function files()
     {
@@ -89,5 +94,10 @@ class CustomerComplaint2 extends Model
     public function objective()
     {
         return $this->hasMany(CcObjectiveFile::class,'CcId');
+    }
+
+    public function verification()
+    {
+        return $this->hasMany(CcVerificationFile::class,'CcId');
     }
 }

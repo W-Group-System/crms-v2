@@ -18,12 +18,15 @@
                     @endif
                     @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
                         @if($data->ReceivedBy != NULL && $data->NotedBy == NULL)
-                            <form action="{{ url('cs_noted/' . $data->id) }}" class="d-inline-block" method="POST">
+                            <!-- <form action="{{ url('cs_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success notedBtn">
                                     <i class="ti-check">&nbsp;</i> Noted By
                                 </button>
-                            </form>
+                            </form> -->
+                            <button type="button" class="btn btn btn-outline-success" id="editNote" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editNoted">
+                                <i class="ti ti-check"></i>&nbsp;Noted By
+                            </button>
                         @endif
                     @endif
                     @if($data->ApprovedBy != NULL)
@@ -37,23 +40,31 @@
                             <i class="ti ti-printer btn-icon-prepend"></i>
                             Print
                         </a>
-                        <form action="{{ url('cs_closed/' . $data->id) }}" class="d-inline-block" method="POST">
+                        <!-- <form action="{{ url('cs_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="button" class="btn btn-outline-secondary closedBtn">
                                 <i class="ti ti-close"></i>&nbsp;Close Satisfaction
                             </button>
+                        </form> -->
+                    @endif
+                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->ApprovedBy == NULL)
+                        <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-success approvedBtn">
+                                <i class="ti-check">&nbsp;</i> Acknowledged
+                            </button>
                         </form>
                     @endif
-                    @if($data->NotedBy != NULL && auth()->user()->id == 15)
+                    <!-- @if($data->NotedBy != NULL && auth()->user()->id == 15)
                         @if($data->Progress != 40)
                         <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-success approvedBtn">
-                                <i class="ti-check">&nbsp;</i> Approved
+                                <i class="ti-check">&nbsp;</i> Acknowledged
                             </button>
                         </form>
                         @endif
-                    @endif
+                    @endif -->
                 </div>
             </h4>
             <div class="row">
@@ -69,10 +80,10 @@
                         </div>
                     </div>
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Date Received:</b></label>
+                        <!-- <label class="col-sm-3 col-form-label text-right"><b>Date Received:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->DateReceived }}</label>
-                        </div>
+                        </div> -->
                         <label class="col-sm-3 col-form-label text-right"><b>Received By:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->users->full_name ?? 'N/A' }}</label>
@@ -93,28 +104,36 @@
                         <div class="col-sm-3">
                             <label>{{ $data->category->Name ?? 'N/A' }}</label>
                         </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Remarks:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->NotedRemarks ?? 'N/A' }}</label>
+                        </div>
                     </div>
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Company Name:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->CompanyName }}</label>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Approved By:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Acknowledged By:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->approvedBy->full_name ?? 'N/A' }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Contact Name:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Customer Name:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->ContactName }}</label>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Closed By:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Contact Number:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->ContactNumber }}</label>
+                        </div>
+                        <!-- <label class="col-sm-3 col-form-label text-right"><b>Closed By:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->closedBy->full_name ?? 'N/A' }}</label>
-                        </div>
+                        </div> -->
                     </div>
-                    <div class="form-group row mb-0">
+                    <!-- <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Contact Number:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->ContactNumber }}</label>
@@ -123,7 +142,7 @@
                         <div class="col-sm-3">
                             <label>{{ $data->DateClosed ?? 'N/A' }}</label>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="form-group row mb-3">
                         <label class="col-sm-3 col-form-label text-right"><b>Email:</b></label>
                         <div class="col-sm-3">
@@ -145,15 +164,32 @@
                             @endif
                         </div>
                     </div>
-                    <div class="form-group row mb-3">
+                    <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Description:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->Description }}</label>
                         </div>
                     </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Internal Instruction Remarks:</b></label>
+                    <div class="form-group row mb-3">
+                        <label class="col-sm-3 col-form-label text-right"><b>Customer Attachments:</b></label>
                         <div class="col-sm-3">
+                            @if($data->customer_attachments && $data->customer_attachments->isNotEmpty())
+                                @foreach($data->customer_attachments as $file)
+                                    <label style="display: block;">
+                                        <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ basename($file->Path) }}</a>
+                                        <!-- <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
+                                            <i class="ti ti-close" style="color:red"></i>
+                                        </button> -->
+                                    </label>
+                                @endforeach
+                            @else
+                                <label>No Attachments Available</label>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Internal Remarks:</b></label>
+                        <div class="col-sm-9">
                             <label>{{ $data->Response }}</label>
                         </div>
                     </div>
@@ -175,11 +211,38 @@
     </div>
 </div>
 
+<div class="modal fade" id="editNoted" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerRequirementLabel">Noted By</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="notedRemarks" method="POST" action="{{ url('noted_remarks/' . $data->id) }}">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea class="form-control" rows="10" name="NotedRemarks" placeholder="Enter Remarks" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="editCs" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCustomerRequirementLabel">Internal Instruction Remarks</h5>
+                <h5 class="modal-title" id="addCustomerRequirementLabel">Internal Remarks</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -279,6 +342,32 @@
             });
         });
 
+        $('#notedRemarks').on('submit', function (e) {
+            e.preventDefault(); 
+
+            var form = $(this);
+            var actionUrl = form.attr('action');
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Noted",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
         $('#assignCustomerSatisfaction').on('submit', function (e) {
             event.preventDefault();
 
@@ -314,32 +403,32 @@
             });
         });
 
-        $('.notedBtn').on('click', function (e) {
-            e.preventDefault(); // Prevent the default form submission
+        // $('.notedBtn').on('click', function (e) {
+        //     e.preventDefault(); // Prevent the default form submission
 
-            var form = $(this).closest('form');
-            var actionUrl = form.attr('action'); // Get form action URL
+        //     var form = $(this).closest('form');
+        //     var actionUrl = form.attr('action'); // Get form action URL
 
-            $.ajax({
-                url: actionUrl,
-                type: 'POST',
-                data: form.serialize(), // Serialize form data
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: "Noted",
-                            text: response.message,
-                            icon: "success",
-                            showConfirmButton: false,
-                            customClass: 'swal-wide',
-                            timer: 1500
-                        }).then(function () {
-                            window.location.reload(); // Reload the page after the alert
-                        });
-                    }
-                }
-            });
-        });
+        //     $.ajax({
+        //         url: actionUrl,
+        //         type: 'POST',
+        //         data: form.serialize(), // Serialize form data
+        //         success: function (response) {
+        //             if (response.success) {
+        //                 Swal.fire({
+        //                     title: "Noted",
+        //                     text: response.message,
+        //                     icon: "success",
+        //                     showConfirmButton: false,
+        //                     customClass: 'swal-wide',
+        //                     timer: 1500
+        //                 }).then(function () {
+        //                     window.location.reload(); // Reload the page after the alert
+        //                 });
+        //             }
+        //         }
+        //     });
+        // });
 
         $('.receivedBtn').on('click', function (e) {
             e.preventDefault(); // Prevent the default form submission
@@ -395,32 +484,32 @@
             });
         });
 
-        $('.closedBtn').on('click', function (e) {
-            e.preventDefault(); // Prevent the default form submission
+        // $('.closedBtn').on('click', function (e) {
+        //     e.preventDefault(); // Prevent the default form submission
 
-            var form = $(this).closest('form');
-            var actionUrl = form.attr('action'); // Get form action URL
+        //     var form = $(this).closest('form');
+        //     var actionUrl = form.attr('action'); // Get form action URL
 
-            $.ajax({
-                url: actionUrl,
-                type: 'POST',
-                data: form.serialize(), // Serialize form data
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: "Closed",
-                            text: response.message,
-                            icon: "success",
-                            showConfirmButton: false,
-                            customClass: 'swal-wide',
-                            timer: 1500
-                        }).then(function () {
-                            window.location.reload(); // Reload the page after the alert
-                        });
-                    }
-                }
-            });
-        });
+        //     $.ajax({
+        //         url: actionUrl,
+        //         type: 'POST',
+        //         data: form.serialize(), // Serialize form data
+        //         success: function (response) {
+        //             if (response.success) {
+        //                 Swal.fire({
+        //                     title: "Closed",
+        //                     text: response.message,
+        //                     icon: "success",
+        //                     showConfirmButton: false,
+        //                     customClass: 'swal-wide',
+        //                     timer: 1500
+        //                 }).then(function () {
+        //                     window.location.reload(); // Reload the page after the alert
+        //                 });
+        //             }
+        //         }
+        //     });
+        // });
 
         $(document).on('click', '.deleteFile', function() {
             var fileId = $(this).data('id');

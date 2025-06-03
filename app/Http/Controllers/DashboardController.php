@@ -395,38 +395,63 @@ class DashboardController extends Controller
                 ->count();
         }
         
+        // $customerSatisfactionApproval = CustomerSatisfaction::where('Status', 10)
+        //     ->whereIn('Progress', [20, 30])
+        //     ->where(function ($query) use ($userId) {
+        //         // If userId is 1, show all records
+        //         if ($userId == 15) {
+        //             return;
+        //         }
+        
+        //         $query->whereHas('salesapprovers', function ($q) use ($userId) {
+        //             $q->where('SalesApproverId', $userId);
+        //         });
+        //     })
+        //     ->when($userId == 15, function ($query) { 
+        //         $query->whereNotNull('NotedBy');
+        //     })
+        //     ->count();
         $customerSatisfactionApproval = CustomerSatisfaction::where('Status', 10)
             ->whereIn('Progress', [20, 30])
             ->where(function ($query) use ($userId) {
-                // If userId is 1, show all records
-                if ($userId == 15) {
-                    return;
-                }
-        
-                $query->whereHas('salesapprovers', function ($q) use ($userId) {
-                    $q->where('SalesApproverId', $userId);
+                $query->where(function ($q) use ($userId) {
+                    $q->whereHas('salesapprovers', function ($q1) use ($userId) {
+                        $q1->where('SalesApproverId', $userId);
+                    })->orWhereHas('salesapprovers1', function ($q2) use ($userId) {
+                        $q2->where('SalesApproverId', $userId);
+                    });
                 });
-            })
-            ->when($userId == 15, function ($query) { 
-                $query->whereNotNull('NotedBy');
             })
             ->count();
 
         $customerComplaintApproval = CustomerComplaint2::where('Status', 10)
-            ->whereIn('Progress', [20, 30])
+            ->whereIn('Progress', [20, 30, 50])
             ->where(function ($query) use ($userId) {
                 // If userId is 1, show all records
-                if ($userId == 15) {
-                    return;
-                }
+                // if ($userId == 15) {
+                //     return;
+                // }
         
-                $query->whereHas('salesapprovers', function ($q) use ($userId) {
-                    $q->where('SalesApproverId', $userId);
+                // $query->where(function ($q) use ($userId) {
+                //     $q->whereHas('salesapprovers', function ($q1) use ($userId) {
+                //         $q1->where('SalesApproverId', $userId);
+                //     })->orWhereHas('salesapprovers1', function ($q2) use ($userId) {
+                //         $q2->where('SalesApproverId', $userId);
+                //     });
+                // });
+                $query->where(function ($q) use ($userId) {
+                    $q->where(function ($qInner) use ($userId) {
+                        $qInner->whereHas('salesapprovers', function ($q1) use ($userId) {
+                            $q1->where('SalesApproverId', $userId);
+                        })->where('NotedBy');
+                    })->orWhereHas('salesapprovers1', function ($q2) use ($userId) {
+                        $q2->where('SalesApproverId', $userId);
+                    });
                 });
             })
-            ->when($userId == 15, function ($query) { 
-                $query->whereNotNull('NotedBy');
-            })
+            // ->when($userId == 15, function ($query) { 
+            //     $query->whereNotNull('NotedBy');
+            // })
             ->count();
         
         // Display the result

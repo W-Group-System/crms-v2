@@ -13,14 +13,16 @@ class CustomerComplaintMail extends Mailable
 
     public $customerComplaint;
     public $cc_attachments;
+    public $showButton;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($customerComplaint, $cc_attachments)
+    public function __construct($customerComplaint, $cc_attachments, $showButton = false)
     {
         $this->customerComplaint = $customerComplaint;
         $this->cc_attachments = $cc_attachments;
+        $this->showButton = $showButton;
     }
 
     /**
@@ -30,9 +32,11 @@ class CustomerComplaintMail extends Mailable
      */
     public function build()
     {
-        $email = $this->to($this->customerComplaint['Email'])
-                    ->cc(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'iad@wgroup.com.ph'])
-                    ->subject('Customer Complaint Form Submission')
+        $email = $this->subject('Customer Complaint')
+                    // $this->to($this->customerComplaint['Email'])
+                    // ->cc(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'iad@wgroup.com.ph'])
+                    // ->cc(['ict.engineer@wgroup.com.ph'])
+                    // ->subject('Customer Complaint')
                     ->view('emails.customer_complaint')
                     ->with([
                         'CcNumber' => $this->customerComplaint['CcNumber'],
@@ -42,6 +46,9 @@ class CustomerComplaintMail extends Mailable
                         'Telephone' => $this->customerComplaint['Telephone'],
                         'CustomerRemarks' => $this->customerComplaint['CustomerRemarks'],
                         'ComplaintCountry' => optional($this->customerComplaint->country)->Name ?? 'N/A',
+                        'button_text' => 'Visit Customer Complaint',
+                        'button_url' => url('/cc_list?open=10'),
+                        'showButton' => $this->showButton, // pass to view
                     ]);
 
         // Check if attachments exist and attach them

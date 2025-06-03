@@ -2,7 +2,7 @@
 @section('content')
 <div class="col-12 text-center">
     <img src="{{ asset('images/whi.png') }}" style="width: 170px;" class="mt-3 mb-2">
-    <h2 class="header_h2">Customer Complaint Form</h2>
+    <h2 class="header_h2">Customer Complaint</h2>
 </div>
 <form id="form_complaint" method="POST" enctype="multipart/form-data" onsubmit="show()">
     @csrf
@@ -11,16 +11,17 @@
     <div class="row col-lg-12 mt-3" style="margin-left: 0px">
         <div class="offset-lg-1 col-lg-5">
             <div class="form-group">
-                <label class="text-white display-5">Company Name</label>
-                <input type="text" class="form-control" name="CompanyName" id="CompanyName" placeholder="Enter Company Name" required>
+                <label class="text-white display-5">Customer Name</label>
+                <input type="text" class="form-control" name="ContactName" id="ContactName" placeholder="Enter Customer Name" required>
             </div>
         </div>
         <div class="col-lg-5">
             <div class="form-group">
-                <label class="text-white display-5">Contact Name</label>
-                <input type="text" class="form-control" name="ContactName" id="ContactName" placeholder="Enter Contact Name" required>
+                <label class="text-white display-5">Company Name</label>
+                <input type="text" class="form-control" name="CompanyName" id="CompanyName" placeholder="Enter Company Name" required>
             </div>
         </div>
+        
         {{-- <div class="offset-lg-1 col-lg-10">
             <div class="form-group">
                 <label class="text-white display-5">Address</label>

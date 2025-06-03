@@ -14,9 +14,11 @@ use App\CustomerComplaint;
 use App\CustomerComplaint2;
 use App\Notifications\EmailDepartment;
 use App\CcObjectiveFile;
+use App\CcVerificationFile;
 use Illuminate\Support\Facades\App;
 use App\Mail\CustomerComplaintMail;
 use App\Mail\AssignCcDepartmentMail;
+use App\Mail\InvestigationMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -288,9 +290,18 @@ class CustomerComplaint2Controller extends Controller
         // return response()->json([
         //     'success' => 'You submitted the form successfully. ID: ' . $request->input('CcNumber')
         // ]);
-        Mail::to($request->Email)
-            ->cc('ict.engineer@wgroup.com.ph')
-            ->send(new CustomerComplaintMail($customerComplaint, $attachments));
+
+        // Mail::to($request->Email)
+        //     ->cc('ict.engineer@wgroup.com.ph')
+        //     ->send(new CustomerComplaintMail($customerComplaint, $attachments));
+
+        // Send to main recipient WITHOUT button
+        Mail::to($customerComplaint['Email'])
+        ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
+
+        // Send to CC recipients WITH button
+        Mail::to(['ict.engineer@wgroup.com.ph']) // CC emails here
+        ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));
         
         return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
     }
@@ -298,7 +309,7 @@ class CustomerComplaint2Controller extends Controller
     public function update(Request $request, $id)
     {
         $data = CustomerComplaint2::findOrFail($id);
-        $data->RecurringIssue = $request->RecurringIssue;
+        // $data->RecurringIssue = $request->RecurringIssue;
         $data->PreviousCCF = $request->PreviousCCF;
         $data->ImmediateAction = $request->ImmediateAction;
         $data->ObjectiveEvidence = $request->ObjectiveEvidence;
@@ -307,8 +318,10 @@ class CustomerComplaint2Controller extends Controller
         $data->ActionObjectiveEvidence = $request->ActionObjectiveEvidence;
         $data->ActionResponsible = auth()->user()->id;
         $data->ActionDate = now();
+        $data->Progress = 50;
         $data->save();
 
+        $attachments = [];
         if ($request->hasFile('Path')) {
             foreach ($request->file('Path') as $file) {
                 if ($file->isValid()) {
@@ -320,9 +333,14 @@ class CustomerComplaint2Controller extends Controller
                     
                     $ccFile->Path = $filePath;
                     $ccFile->save();
+
+                    $attachments[] = $filePath;
                 }
             }
         }
+
+        Mail::to(['ict.engineer@wgroup.com.ph']) // CC emails here
+            ->send(new InvestigationMail($data, $attachments, true));
         
         return response()->json([
             'success' => true,
@@ -348,8 +366,23 @@ class CustomerComplaint2Controller extends Controller
         $data->ShipmentDate = $request->ShipmentDate;
         $data->AmountIncurred = $request->AmountIncurred;
         $data->ShipmentCost = $request->ShipmentCost;
-        $data->Progress = 50;
+        $data->Progress = 60;
         $data->save();
+
+        if ($request->hasFile('Path')) {
+            foreach ($request->file('Path') as $file) {
+                if ($file->isValid()) {
+                    $verificationFile = new CcVerificationFile();
+                    $verificationFile->CcId = $data->id;
+    
+                    $fileName = time() . '_' . $file->getClientOriginalName();
+                    $filePath = $file->storeAs('cc_files', $fileName, 'public');
+                    
+                    $verificationFile->Path = $filePath;
+                    $verificationFile->save();
+                }
+            }
+        }
 
         return response()->json([
             'success' => true,
@@ -404,7 +437,7 @@ class CustomerComplaint2Controller extends Controller
         $data->ClosedBy = auth()->user()->id;
         $data->ClosedDate = now();
         $data->Status = 30;
-        $data->Progress = 60;
+        $data->Progress = 70;
         $data->save();
 
         return response()->json([
@@ -415,7 +448,9 @@ class CustomerComplaint2Controller extends Controller
 
     public function ccupdate(Request $request, $id)
     {
+        
         $data = CustomerComplaint2::findOrFail($id);
+        $data->RecurringIssue = $request->RecurringIssue;
         $data->Description = $request->Description;
         $data->Currency = $request->Currency;
         $data->NcarIssuance = $request->NcarIssuance;
@@ -486,7 +521,8 @@ class CustomerComplaint2Controller extends Controller
         $others->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return back();
+        // return back();
+        return redirect()->back()->with('openModalId', $id);
     }
 
     public function assign(Request $request, $id)
@@ -497,6 +533,7 @@ class CustomerComplaint2Controller extends Controller
         $customer_complaint->ProductName = $request->ProductName;
         $customer_complaint->Department = $request->Department;
         $customer_complaint->SiteConcerned = $request->SiteConcerned;
+        $customer_complaint->Progress = 50;
         $customer_complaint->save();
 
         $department = ConcernDepartment::where('Name', $request->Department)->firstOrFail();
