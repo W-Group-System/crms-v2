@@ -32,22 +32,24 @@
                 @endif
                 {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
                 @if($data->ReceivedBy == auth()->user()->id && $data->NotedBy != null)
-                    <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
-                        <i class="ti ti-pencil"></i>&nbsp;Complaint 
-                    </button>
-                    <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
-                        <i class="ti ti-pencil"></i>&nbsp;Assign 
-                    </button>
-                    @if($data->Progress == 50)
-                    <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
-                        <i class="ti ti-pencil"></i>&nbsp;Verification
-                    </button>
-                    @endif
-                    @if($data->ApprovedBy != NULL)
-                        <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
-                            <i class="ti ti-printer btn-icon-prepend"></i>
-                            Print
-                        </a>
+                    @if($data->Progress != 70)
+                        <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                            <i class="ti ti-pencil"></i>&nbsp;Complaint 
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
+                            <i class="ti ti-pencil"></i>&nbsp;Assign 
+                        </button>
+                        @if($data->Progress == 80)
+                        <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                            <i class="ti ti-pencil"></i>&nbsp;Verification
+                        </button>
+                        @endif
+                        @if($data->ApprovedBy != NULL)
+                            <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
+                                <i class="ti ti-printer btn-icon-prepend"></i>
+                                Print
+                            </a>
+                        @endif
                     @endif
                 @endif
                 @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)

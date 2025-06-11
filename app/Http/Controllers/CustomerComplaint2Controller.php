@@ -318,7 +318,7 @@ class CustomerComplaint2Controller extends Controller
         $data->ActionObjectiveEvidence = $request->ActionObjectiveEvidence;
         $data->ActionResponsible = auth()->user()->id;
         $data->ActionDate = now();
-        $data->Progress = 50;
+        $data->Progress = 80;
         $data->save();
 
         $attachments = [];
