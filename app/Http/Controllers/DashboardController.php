@@ -425,7 +425,7 @@ class DashboardController extends Controller
             ->count();
 
         $customerComplaintApproval = CustomerComplaint2::where('Status', 10)
-            ->whereIn('Progress', [20, 30, 50])
+            ->whereIn('Progress', [20, 30, 50, 60])
             ->where(function ($query) use ($userId) {
                 // If userId is 1, show all records
                 // if ($userId == 15) {
@@ -444,8 +444,26 @@ class DashboardController extends Controller
                         $qInner->whereHas('salesapprovers', function ($q1) use ($userId) {
                             $q1->where('SalesApproverId', $userId);
                         })->where('NotedBy');
-                    })->orWhereHas('salesapprovers1', function ($q2) use ($userId) {
-                        $q2->where('SalesApproverId', $userId);
+                    })->orWhere(function ($q2) use ($userId) {
+                        $q2->whereHas('salesapprovers1', function ($q3) use ($userId) {
+                            $q3->where('SalesApproverId', $userId);
+                        })
+                        // Others must exist
+                        ->whereHas('others', function ($othersQuery) {
+                            $othersQuery->whereNotNull('id');
+                        })
+                        // Delivery Handling must exist
+                        ->whereHas('delivery_handling', function ($deliveryQuery) {
+                            $deliveryQuery->whereNotNull('id');
+                        })
+                        // Packaging must exist
+                        ->whereHas('packaging', function ($packagingQuery) {
+                            $packagingQuery->whereNotNull('id');
+                        })
+                        // Product Quality must exist
+                        ->whereHas('product_quality', function ($productQuery) {
+                            $productQuery->whereNotNull('id');
+                        });
                     });
                 });
             })

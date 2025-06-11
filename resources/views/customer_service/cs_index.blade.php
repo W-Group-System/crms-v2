@@ -325,7 +325,7 @@
                         showConfirmButton: false,
                     }).then(() => {
                         $('#form_satisfaction')[0].reset();
-                        window.location.href = "{{ url('customer_service') }}";
+                        location.reload();
                     });
                 }
             },
@@ -373,7 +373,7 @@
                             showConfirmButton: false
                         }).then((result) => {
                             $('#form_complaint')[0].reset();
-                            window.location.href = "{{ url('customer_service') }}";
+                            location.reload();
                         });
                     }
                 },
