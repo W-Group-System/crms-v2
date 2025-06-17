@@ -157,8 +157,15 @@ class SupplierProductController extends Controller
             ->where(function ($query) use ($search) {
                 $query->where('ProductName', 'LIKE', '%' . $search . '%')  
                     ->orWhere('Supplier', 'LIKE', '%' . $search . '%')
+                    ->orWhere('SpeNumber', 'LIKE', '%' . $search . '%')
                     ->orWhere('AttentionTo', 'LIKE', '%' . $search . '%')
                     ->orWhere('DateRequested', 'LIKE', '%' . $search . '%');
+            })
+            ->orWhereHas('progress', function($statusQuery) use ($search) {
+                $statusQuery->where('name', 'LIKE', '%' . $search . '%');
+            })
+            ->orWhereHas('suppliers', function($supplier) use ($search) {
+                $supplier->where('name', 'LIKE', '%' . $search . '%');
             })
             ->orderBy($sort, $direction);
         
