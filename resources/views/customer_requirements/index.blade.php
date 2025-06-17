@@ -482,8 +482,8 @@
                                     {{$customerRequirement->primarySalesById->full_name}}
                                 @endif
                             </td>
-                            <td>{!! nl2br(e($customerRequirement->DetailsOfRequirement)) !!}</td>
-                            <td>
+                            <td style="max-width: 300px; white-space: pre-wrap; word-wrap: break-word;">{!! nl2br(e($customerRequirement->DetailsOfRequirement)) !!}</td>
+                            <td style="max-width: 300px; white-space: pre-wrap; word-wrap: break-word;">
                                 {{-- {{ $customerRequirement->Recommendation }} --}}
                                 @php
                                     $crr_result = $customerRequirement->Recommendation;
