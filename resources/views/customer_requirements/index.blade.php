@@ -482,7 +482,7 @@
                                     {{$customerRequirement->primarySalesById->full_name}}
                                 @endif
                             </td>
-                            <td style="max-width: 800px; min-width: 300px; white-space: pre-wrap; word-wrap: break-word;">{!! nl2br(e($customerRequirement->DetailsOfRequirement)) !!}</td>
+                            <td style="max-width: 800px; min-width: 500px; white-space: pre-wrap; word-wrap: break-word;">{!! nl2br(e($customerRequirement->DetailsOfRequirement)) !!}</td>
                             <td style="min-width: 300px; white-space: pre-wrap; word-wrap: break-word;">
                                 {{-- {{ $customerRequirement->Recommendation }} --}}
                                 @php
