@@ -354,7 +354,7 @@
                                     @foreach ($data->spePersonnel as $personnel)
                                         <tr>
                                             <td align="center">
-                                            @if(rndManager(auth()->user()->role) && ($data->Progress == 20 || $data->Progress == 25))
+                                            @if(rndManager(auth()->user()->role))
                                                 <button type="button" class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#editPersonnel{{ $personnel->id }}">
                                                     <i class="ti-pencil"></i>
                                                 </button>
