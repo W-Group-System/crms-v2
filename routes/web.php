@@ -644,7 +644,7 @@ Route::group(['middleware' => ['auth']], function() {
         # Spe Personnel
         Route::post('add_spe_personnel', 'SupplierProductController@addPersonnel');
         Route::post('update_spe_personnel/{id}', 'SupplierProductController@updatePersonnel');
-        // Route::post('delete_personnel/{id}', 'SupplierProductController@deletePersonnel');
+        Route::post('delete_spe_personnel/{id}', 'SupplierProductController@deletePersonnel');
 
         Route::post('uploadSpeFiles', 'SupplierProductController@uploadFile');
         Route::post('update_spe_file/{id}', 'SupplierProductController@editSpeFile');

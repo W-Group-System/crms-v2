@@ -358,6 +358,12 @@
                                                 <button type="button" class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#editPersonnel{{ $personnel->id }}">
                                                     <i class="ti-pencil"></i>
                                                 </button>
+                                                <form action="{{url('delete_spe_personnel/'.$personnel->id)}}" class="d-inline-block" method="POST">
+                                                    @csrf
+                                                    <button type="button" class="btn btn-sm btn-outline-danger deleteSpePersonnel">
+                                                        <i class="ti ti-trash"></i>
+                                                    </button>
+                                                </form>
                                             @endif
                                             </td>
                                             <td>
@@ -827,6 +833,24 @@
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Yes, return it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
+        $('.deleteSpePersonnel').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit()
