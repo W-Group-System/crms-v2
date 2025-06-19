@@ -746,4 +746,13 @@ class SupplierProductController extends Controller
         Alert::success('Successfully Returned')->persistent('Dismiss');
         return back();
     }
+
+    public function deletePersonnel($id)
+    {
+        $spePersonnel = SpePersonnel::findOrFail($id);
+        $spePersonnel->delete();
+
+        Alert::success('Successfully Delete')->persistent('Dismiss');
+        return back();
+    }
 }
