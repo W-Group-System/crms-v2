@@ -1378,18 +1378,19 @@
                                 @foreach ($orderedCombinedLogs as $combinedLog)
                                     <tr>
                                         <td>
-                                            @if(empty($combinedLog->CreatedDate))
+                                            {{-- @if(empty($combinedLog->CreatedDate))
                                             {{date('Y-m-d H:i:s', strtotime($combinedLog->created_at))}}
-                                            @else
+                                            @else --}}
                                             {{ date('Y-m-d H:i:s', strtotime($combinedLog->CreatedDate)) }}
-                                            @endif
+                                            {{-- @endif --}}
                                         </td>
                                         <td>
-                                            @if($combinedLog->historyUser)
+                                            {{ $combinedLog->full_name ?? '' }}
+                                            {{-- @if($combinedLog->historyUser)
                                             {{$combinedLog->historyUser->full_name}}
                                             @elseif($combinedLog->user)
                                             {{$combinedLog->user->full_name}}
-                                            @endif
+                                            @endif --}}
                                         </td>
                                         <td>{{ $combinedLog->Details }}</td>
                                     </tr>

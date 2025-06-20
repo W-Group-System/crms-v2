@@ -659,6 +659,78 @@ class SampleRequestController extends Controller
         ->where('TransactionId', $scrfNumber)
         ->get();
 
+        $mappedLogs = $transactionLogs->map(function ($log) {
+            return (object) [
+                'CreatedDate' => $log->CreatedDate ?? $log->created_at,
+                'full_name' => optional($log->historyUser)->full_name 
+                    ?? optional($log->user)->full_name,
+                'Details' => $log->Details,
+            ];
+        });
+
+        $audits = Audit::where('auditable_id', $scrfNumber)
+        // ->where('auditable_type', 'App\SrfFile')
+        ->where('created_at', '<', Carbon::create(2025, 1, 31))
+        ->get();
+
+        $mappedAudits = $audits->map(function ($audit) {
+        $details = '';
+            if ($audit->auditable_type === 'App\SrfRawMaterial') {
+                $details = $audit->event . " " . 'SRF Raw Material';
+            } elseif ($audit->auditable_type === 'App\SrfFile') {
+                $details = $audit->event . " " . 'SRF Files';
+            } elseif ($audit->auditable_type === 'App\SrfDetail') {
+                $details = $audit->event . " " . 'SRF Supplementary';
+            } elseif ($audit->auditable_type === 'App\SrfPersonnel') {
+                $details = $audit->event . " " . 'SRF R&D Personnel';
+            } elseif ($audit->auditable_type === 'App\SampleRequest') {
+                if (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 20) {
+                    $details = "Approve sample request entry";
+                } elseif (isset($audit->new_values['Progress']) && ($audit->new_values['Progress'] == 30 || $audit->new_values['Progress'] == 80)) {
+                    $details = "Approve sample request entry";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 35) {
+                    $details = "Receive sample request entry";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 55) {
+                    $details = "Pause sample request transaction." . isset($audit->new_values['Remarks']);
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 50) {
+                    if (
+                        $audit->url == 'http://localhost/crmsMain/crms-v2/public/ReturnToSpecialistSRF/' . $audit->auditable_id . '?' || 
+                        $audit->url == 'http://crms-wgroup.wsystem.online/ReturnToSpecialistSRF/' . $audit->auditable_id . '?'
+                    ) {
+                        $newValues = is_array($audit->new_values) ? $audit->new_values : json_decode($audit->new_values, true);
+                        $remarks = $newValues['ReturnToSpecialistRemark'] ?? '';
+                        $details = "Return To Specialist" ." ". $remarks;
+                    } else {
+                        $details = "Start sample request transaction";
+                    }
+                } elseif (isset($audit->new_values['ReturnToSales']) && $audit->new_values['ReturnToSales'] == 1) {
+                    if (
+                        $audit->url == 'http://localhost/crmsMain/crms-v2/public/ReturnToSalesSRF/' . $audit->auditable_id . '?' || 
+                        $audit->url == 'http://crms-wgroup.wsystem.online/ReturnToSalesSRF/' . $audit->auditable_id . '?'
+                    ) {
+                        $newValues = is_array($audit->new_values) ? $audit->new_values : json_decode($audit->new_values, true);
+                        $remarks = $newValues['ReturnToSalesRemark'] ?? '';
+                        $details = "Return To Sales:" ." ". $remarks;
+                    } 
+                }elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 57) {
+                    $details = "Submitted sample request transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 60) {
+                    $details = "Completed sample request transaction";
+                } elseif (isset($audit->new_values['Progress']) && $audit->new_values['Progress'] == 70) {
+                    $details = "Accepted sample request transaction";
+                } elseif (isset($audit->new_values['Status']) && $audit->new_values['Status'] == 30) {
+                    $details = "Closed sample request transaction";
+                }else {
+                    $details = $audit->event . " " . 'Sample Request';
+                }
+            }
+            return (object) [
+                'CreatedDate' => $audit->created_at,
+                'full_name' => optional($audit->user)->full_name,
+                'Details' => $details,
+            ];
+        });
+        
         // $audits = Audit::where('auditable_id', $scrfNumber)
         // ->whereIn('auditable_type', [SampleRequest::class, SrfRawMaterial::class, SrfDetail::class, SrfPersonnel::class, SrfFile::class])
         // ->get();
@@ -720,14 +792,16 @@ class SampleRequestController extends Controller
         //         'Details' => $details,
         //     ];
         // });
-
-        $mappedLogs = $transactionLogs;
         
-        // $mappedLogsCollection = collect($mappedLogs);
-        // $mappedAuditsCollection = collect($mappedAudits);
+        $mappedLogsCollection = collect($mappedLogs);
+        $mappedAuditsCollection = collect($mappedAudits);
 
-        $combinedLogs = $mappedLogs;
-        $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate');
+        // $mappedLogs = $transactionLogs;
+
+        
+        $combinedLogs = $mappedLogsCollection->merge($mappedAuditsCollection);
+
+        $orderedCombinedLogs = $combinedLogs->sortBy('CreatedDate')->values();
         return view('sample_requests.view', compact('sampleRequest', 'SrfSupplementary', 'rndPersonnel', 'assignedPersonnel', 'activities', 'srfFileUploads', 'rawMaterials', 'SrfMaterials', 'orderedCombinedLogs', 'srfProgress', 'clients', 'users', 'userDispatch', 'primarySalesPersons', 'secondarySalesPersons', 'productApplications', 'productCodes','transactionApprovals', 'loggedInUser'));
     }               
 
