@@ -107,7 +107,7 @@
                                     <td>{{ $client->industry->Name ?? 'N/A' }}</td>
                                     <td>{{ $client->BuyerCode ?? 'N/A' }}</td>
                                     <td>
-                                        <a href="javascript:void(0);" onclick="viewClient({{ $client->id }})">
+                                        <a href="{{ url('view_client/'. $client->id) }}" onclick="viewClient({{ $client->id }})">
                                             {{ $client->Name ?? 'N/A' }}
                                         </a>
                                     </td>
