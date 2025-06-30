@@ -86,11 +86,15 @@
                             @php
                                 $dates = getLatestEffectiveDate($product->productMaterialComposition, $product->id);
                                 $effective_date = date('Y-m-d', strtotime($dates));
-                                $usd = rmc($product->productMaterialComposition, $product->id);
-                                $eur = usdToRMC($usd, $effective_date, 1);
-                                $php = usdToRMC($usd, $effective_date, 3);
+                                $last_total = 0;
+                                // $usd = rmc($product->productMaterialComposition, $product->id);
+                                $history_rmc = historyRmc($product->productMaterialComposition, $product->id);
+                                $previousValue = null;
+                                $array_values = $history_rmc['materials'];
+                                // $eur = usdToRMC($usd, $effective_date, 1);
+                                // $php = usdToRMC($usd, $effective_date, 3);
                             @endphp
-                            <tr>
+                                <tr>
                                 {{-- <td>
                                     <a href="{{url('view_product/'.$product->id)}}" type="button" class="btn btn-sm btn-info" target="_blank" title="View product" target="_blank">
                                         <i class="ti-eye"></i>
@@ -105,6 +109,26 @@
                                         </button>
                                     </form>
                                 </td> --}}
+                                @foreach ($history_rmc['result'] as $key => $rmc)
+
+                                @php
+                                    $total = 0;
+                                    foreach($rmc as $rm) {
+                                        foreach($array_values as $key_a => $array) {
+                                            if($rm->MaterialId == $key_a) {
+                                                $array_values[$key_a]->usd = $rm->usd;
+                                            }
+                                        }
+                                    }
+                                    foreach($array_values as $arr) {
+                                        $total = $total + $arr->usd;
+                                        $last_total = $total;
+                                    }
+                                    $usd = number_format($total, 2);
+                                    $eur = number_format(latestConversion($total,1), 2);
+                                    $php = number_format(latestConversion($total,3), 2);
+                                @endphp
+                                @endforeach
                                 <td>
                                     <a href="{{url('view_product/'.$product->id)}}" target="_blank">
                                         {{$product->code}}</td>
@@ -113,10 +137,12 @@
                                     {{date('M d, Y', strtotime($product->created_at))}}
                                 </td>
                                 <td>{{$product->application->Name}}</td>
-                                <td>{{number_format($usd, 2)}}</td>
-                                <td>{{number_format($eur, 2)}}</td>
-                                <td>{{number_format($php, 2)}}</td>
-                            </tr>
+                                <td>{{ $usd }}</td>
+                                <td>{{ $eur }}</td>
+                                <td>{{ $php }}</td>
+                            {{-- <td>{{number_format($eur, 2)}}</td>
+                            <td>{{number_format($php, 2)}}</td> --}}
+                        </tr>
                         @endforeach
                         @else
                         <tr>
