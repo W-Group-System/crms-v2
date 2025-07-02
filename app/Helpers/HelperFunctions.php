@@ -1264,7 +1264,11 @@ function checkIfItsUserId($secondarySale)
 
 function checkIfInGroup($primary_sales, $auth_user)
 {
-    $user = User::where('id', $primary_sales)->orWhere('user_id', $primary_sales)->first();
+    // $user = User::where('id', $primary_sales)->orWhere('user_id', $primary_sales)->first();
+
+    $user = User::whereRaw('LOWER(TRIM(user_id)) = ?', [ $primary_sales ])
+                           ->orWhereRaw('LOWER(TRIM(id)) = ?', [ $primary_sales ])
+                           ->first();
     
     $group_sales_list = GroupSales::where('user_id', $user->id)->pluck('members')->toArray();
     
