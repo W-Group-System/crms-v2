@@ -41,13 +41,24 @@ class ForApprovalTransactionController extends Controller
             })
             ->get();
 
-        $sampleRequestForm = SampleRequest::with('requestProducts')
-            ->where('Progress', 10)
+        $sampleRequestForm = SampleRequest::where('Progress', 10)
             ->where('Status', 10)
-            ->whereHas('salesapprovers', function ($q) use ($userId) {
-                $q->where('SalesApproverId', $userId);
+            ->where(function ($query) use ($userId) {
+                $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                })->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
             })
             ->get();
+
+        // $sampleRequestForm = SampleRequest::with('requestProducts')
+        //     ->where('Progress', 10)
+        //     ->where('Status', 10)
+        //     ->whereHas('salesapprovers', function ($q) use ($userId) {
+        //         $q->where('SalesApproverId', $userId);
+        //     })
+        //     ->get();
         if (auth()->user()->role->description == "Manager") {
             $priceRequestForm = PriceMonitoring::whereIn('Progress', [10,40])
             ->where(function ($query) use ($userId) {

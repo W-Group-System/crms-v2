@@ -771,7 +771,12 @@ function productManagementLogs($action, $product_code)
 
 function primarySalesApprover($primary_sales,$user_login)
 {
-    $user_data = User::where('user_id', $primary_sales)->orWhere('id', $primary_sales)->first(); // add orWhere
+    // $user_data = User::where('user_id', $primary_sales)->orWhere('id', $primary_sales)->first(); 
+
+    $user_data = User::whereRaw('LOWER(TRIM(user_id)) = ?', [ $primary_sales ])
+                           ->orWhereRaw('LOWER(TRIM(id)) = ?', [ $primary_sales ])
+                           ->first();
+
     if ($user_data != null)
     {
         $user_id = $user_data->id;
