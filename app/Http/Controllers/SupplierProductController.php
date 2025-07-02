@@ -10,6 +10,7 @@ use App\SpeInstructions;
 use App\User;
 use App\SpePersonnel;
 use App\SpeAttachments;
+use App\SupplierContact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -754,5 +755,14 @@ class SupplierProductController extends Controller
 
         Alert::success('Successfully Delete')->persistent('Dismiss');
         return back();
+    }
+
+    public function delete_spe($id)
+    {
+        $speRequest = SupplierProduct::findOrFail($id);
+        $speRequest->delete();
+
+        Alert::success('Successfully Cancelled')->persistent('Dismiss');
+        return redirect()->route('supplier_product.index');
     }
 }
