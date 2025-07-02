@@ -100,6 +100,12 @@
                         </form>
                     @endif
                     @if(auth()->user()->role->type == 'PRD')
+                        <form action="{{url('delete_spe/'.$data->id)}}" class="d-inline-block" method="post">
+                        @csrf
+                            <button type="button" class="btn btn-outline-danger deleteRequest">
+                                <i class="ti ti-close"></i>Cancel
+                            </button>
+                        </form>
                         @if($data->Progress == 60 && $data->Status != 30)
                             <form method="POST" action="{{url('close_spe/'.$data->id)}}" class="d-inline-block">
                             @csrf 
@@ -858,5 +864,24 @@
             });
         })
     });
+
+    $('.deleteRequest').on('click', function() {
+            var form = $(this).closest('form');
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Cancel it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit()
+                }
+            });
+        })
 </script>
 @endsection
