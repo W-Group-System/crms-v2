@@ -96,6 +96,7 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 'Due Date',
                 'Client Name',
                 'Application',
+                'Nature of Request',
                 'Recommendation',
                 'Status',
                 'Progress'
@@ -180,9 +181,10 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 $row->DueDate,
                 optional($row->client)->Name,
                 optional($row->product_application)->Name,
+                implode(", ", $crr_nature_array),
                 $row->Recommendation,
                 $status,
-                optional($row->progressStatus)->Name
+                optional($row->progressStatus)->name
             ];
         }
     }
