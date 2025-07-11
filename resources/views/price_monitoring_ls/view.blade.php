@@ -81,9 +81,9 @@
                         @php
                             $showButton = false; // Default value
                             foreach ($price_monitorings->requestPriceProducts as $product) {
-                                if ($product->PriceRequestGaeId == "6") {
+                                if ($product->PriceRequestGaeId == "6" || $product->LsalesMarkupPercent < 15) {
                                     $showButton = false;
-                                    break; // Exit loop if condition met
+                                    break;
                                 }
                                 if ($product->LsalesMarkupPercent >= 15) { 
                                     $showButton = true;
