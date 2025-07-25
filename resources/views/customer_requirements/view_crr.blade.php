@@ -129,6 +129,15 @@
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
                             @endif
+
+                            @if($crr->Progress == 70)
+                            <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
+                                <i class="ti ti-close"></i>&nbsp;Close
+                            </button>
+                            <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                                <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                            </button>                              
+                            @endif
                         @endif
 
                         @if(primarySalesApprover($crr->PrimarySalesPersonId, auth()->user()->id))
