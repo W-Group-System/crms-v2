@@ -196,7 +196,7 @@
                                 @foreach ($data->productMaterialComposition as $pmc)
                                     <tr>
                                         <td>
-                                            {{$pmc->rawMaterials->Name}}
+                                            {{optional($pmc->rawMaterials)->Name}}
                                         </td>
                                         @if(!authCheckIfItsSales(auth()->user()->department_id) && auth()->user()->role->type != 'CS')
                                         <td>
