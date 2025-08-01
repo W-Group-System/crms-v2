@@ -300,7 +300,7 @@ class CustomerComplaint2Controller extends Controller
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
         // Send to CC recipients WITH button
-        Mail::to(['ict.engineer@wgroup.com.ph']) // CC emails here
+        Mail::to(['crista.bautista@rico.com.ph']) // CC emails here
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));
         
         return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
@@ -339,7 +339,7 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        Mail::to(['ict.engineer@wgroup.com.ph']) // CC emails here
+        Mail::to(['crista.bautista@rico.com.ph']) // CC emails here
             ->send(new InvestigationMail($data, $attachments, true));
         
         return response()->json([
