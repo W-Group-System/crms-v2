@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Mail\CustomerSatisfactionMail;
 use App\Mail\AssignDepartmentMail;
 use App\SatisfactionFile;
+use App\SatisfactionRemarks;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\App;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -232,15 +233,18 @@ class CustomerSatisfactionController extends Controller
         return response()->json(['success' => 'Your customer satisfaction has been submitted successfully!']);
     }
 
-    public function update(Request $request, $id)
+    public function submitRemarks(Request $request, $id)
     {
-        $data = CustomerSatisfaction::findOrFail($id);
-        $data->Response = $request->Response;
-        $data->save();
+        // $data = CustomerSatisfaction::findOrFail($id);
+        $remarks = new SatisfactionRemarks();
+        $remarks->CsId = $id;
+        $remarks->Remarks = $request->Remarks;
+        $remarks->RemarksBy = auth()->user()->id;
+        $remarks->save();
         
         return response()->json([
             'success' => true,
-            'message' => 'Customer satisfaction feedback has been successfully updated.'
+            'message' => 'Internal Remarks has been submitted successfully!.'
         ]);
     }
 
@@ -281,8 +285,10 @@ class CustomerSatisfactionController extends Controller
     {
         $data = CustomerSatisfaction::with('concerned', 'category', 'cs_attachments')->findOrFail($id);
         $concern_department = ConcernDepartment::all();
-        // dd(auth()->user());
-        return view('customer_service.cs_view', compact('data', 'concern_department'));
+        $for_remarks = SatisfactionRemarks::with('user')->where('CsId', $data->id)->get();
+        
+        // dd(auth()->user())
+        return view('customer_service.cs_view', compact('data', 'concern_department', 'for_remarks'));
     }
 
     public function received($id)
@@ -330,7 +336,7 @@ class CustomerSatisfactionController extends Controller
     {
         $data = CustomerSatisfaction::findOrFail($id);
         $data->Status = '30';
-        $data->Progress = 50;
+        // $data->Progress = 50;
         $data->DateClosed = now();
         $data->ClosedBy = auth()->user()->id;
         $data->save();
@@ -349,7 +355,7 @@ class CustomerSatisfactionController extends Controller
 
     public function printCs($id)
     {
-        $cs = CustomerSatisfaction::with('category')->findOrFail($id);
+        $cs = CustomerSatisfaction::with('category', 'remarks')->findOrFail($id);
         $data = [
             'cs' => $cs,
             'CategoryName' => optional($cs->category)->Name,

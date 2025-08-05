@@ -425,6 +425,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('/noted_remarks/{id}', 'CustomerSatisfactionController@noted')->name('noted_remarks');
         Route::get('print_cs/{id}', 'CustomerSatisfactionController@printCs');
         Route::delete('delete_cs_files/{id}', 'CustomerSatisfactionController@delete')->name('delete_cs_files');
+        Route::post('new_remarks/{id}','CustomerSatisfactionController@submitRemarks');
     
         // Customer Complaint
         Route::get('/cc_list', 'CustomerComplaint2Controller@list')->name('customer_complaint.list');
