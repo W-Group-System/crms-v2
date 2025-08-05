@@ -32,30 +32,32 @@
                 @endif
                 {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
                 @if($data->ReceivedBy == auth()->user()->id && $data->NotedBy != null)
-                    @if($data->Progress != 70)
+                    @if($data->Progress == 30 && $data->ApprovedBy == NULL)
                         <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
-                            <i class="ti ti-pencil"></i>&nbsp;Complaint 
+                        <i class="ti ti-pencil"></i>&nbsp;Complaint 
                         </button>
+                    @endif
+                    @if($data->Department == NULL && $data->Progress == 50)
                         <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
                             <i class="ti ti-pencil"></i>&nbsp;Assign 
                         </button>
-                        @if($data->Progress == 80)
-                        <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
-                            <i class="ti ti-pencil"></i>&nbsp;Verification
-                        </button>
-                        @endif
-                        @if($data->ApprovedBy != NULL)
-                            <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
-                                <i class="ti ti-printer btn-icon-prepend"></i>
-                                Print
-                            </a>
-                        @endif
                     @endif
+                    @if($data->Progress == 80)
+                    <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                        <i class="ti ti-pencil"></i>&nbsp;Verification
+                    </button>
+                    @endif
+                @endif
+                @if($data->Progress != ['10,20,30,40'])
+                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        Print
+                    </a>
                 @endif
                 @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)
                 <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-outline-secondary closeBtn">
+                    <button type="submit" class="btn btn-outline-danger closeBtn">
                         <i class="ti-close">&nbsp;</i> Close
                     </button>
                 </form>
@@ -75,7 +77,7 @@
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
                     </button>
                 @endif -->
-                @if($data->Department == auth()->user()->role->type)
+                @if($data->Department == auth()->user()->role->type && $data->Progress != 80)
                     <button type="button" class="btn btn-outline-warning" id="updateCc" 
                             data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
@@ -262,7 +264,7 @@
                     <p class="m-0">{{ $data->SiteConcerned }}</p>
                 </div>
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Approved By :</b></p>
+                    <p class="m-0"><b>Acknowledged By:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ optional($data->approved_by)->full_name }}</p>
@@ -521,7 +523,7 @@
                             <p class="m-0"> <b>Action/ Implementation Date :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ optional($data->ActionDate)->format('M. d, Y') ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->ActionDate ? \Carbon\Carbon::parse($data->ActionDate)->format('M. d, Y') : 'N/A' }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Action Responsible :</b></p>
@@ -734,14 +736,14 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Objective Evidence</label>
-                                <textarea type="text" class="form-control" id="ObjectiveEvidence" name="ObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence">{{ $data->ObjectiveEvidence }}</textarea>
+                                <textarea type="text" class="form-control" id="ObjectiveEvidence" name="ObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence" required>{{ $data->ObjectiveEvidence }}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <label>Investigation of the Problem:</label>
                             <div class="form-group">
                                 <label for="name">Investigation/ Root Cause Analysis</label>
-                                <textarea type="text" class="form-control" id="Investigation" name="Investigation" rows="2" placeholder="Enter Immediate Action">{{ $data->Investigation }}</textarea>
+                                <textarea type="text" class="form-control" id="Investigation" name="Investigation" rows="2" placeholder="Enter Immediate Action" required>{{ $data->Investigation }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -750,13 +752,13 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Corrective Action</label>
-                                <textarea type="text" class="form-control" id="CorrectiveAction" name="CorrectiveAction" rows="3" placeholder="Enter Corrective Action">{{ $data->CorrectiveAction }}</textarea>
+                                <textarea type="text" class="form-control" id="CorrectiveAction" name="CorrectiveAction" rows="3" placeholder="Enter Corrective Action" required>{{ $data->CorrectiveAction }}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Objective Evidence</label>
-                                <textarea type="text" class="form-control" id="ActionObjectiveEvidence" name="ActionObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence">{{ $data->ActionObjectiveEvidence }}</textarea>
+                                <textarea type="text" class="form-control" id="ActionObjectiveEvidence" name="ActionObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence" required>{{ $data->ActionObjectiveEvidence }}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-6">

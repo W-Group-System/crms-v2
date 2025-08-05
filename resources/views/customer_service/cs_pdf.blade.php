@@ -126,7 +126,11 @@ input[type="checkbox"] {
             <td colspan="5" align="center"><b>INTERNAL INSTRUCTIONS AND REMARKS</b></td>
         </tr>
         <tr style="border:1px solid">
-            <td colspan="5" align="center" style="padding: 50px">{{ $cs->Response }}</td>
+            <td colspan="5" align="center" style="padding: 50px">
+                @foreach($cs->remarks->sortByDesc('created_at') as $remark)
+                    {{ $remark->Remarks }} -
+                @endforeach
+            </td>
         </tr>
         <tr>
             <td style="border-left: 1px solid;padding-top: 20px" width="20%">&nbsp;Received By:</td>

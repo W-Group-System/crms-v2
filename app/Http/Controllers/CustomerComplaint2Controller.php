@@ -454,6 +454,7 @@ class CustomerComplaint2Controller extends Controller
         $data->Description = $request->Description;
         $data->Currency = $request->Currency;
         $data->NcarIssuance = $request->NcarIssuance;
+        $data->Progress = 50;
         $data->save();
 
         // Ensure product quality record exists
@@ -533,7 +534,6 @@ class CustomerComplaint2Controller extends Controller
         $customer_complaint->ProductName = $request->ProductName;
         $customer_complaint->Department = $request->Department;
         $customer_complaint->SiteConcerned = $request->SiteConcerned;
-        $customer_complaint->Progress = 50;
         $customer_complaint->save();
 
         $department = ConcernDepartment::where('Name', $request->Department)->firstOrFail();
