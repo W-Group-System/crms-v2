@@ -10,9 +10,10 @@ use App\CcOthers;
 use App\ComplaintFile;
 use App\Country;
 use App\ConcernDepartment;
-use App\CustomerComplaint;
+use App\User;
 use App\CustomerComplaint2;
 use App\Notifications\EmailDepartment;
+use App\Notifications\CcNotif;
 use App\CcObjectiveFile;
 use App\CcVerificationFile;
 use Illuminate\Support\Facades\App;
@@ -300,7 +301,7 @@ class CustomerComplaint2Controller extends Controller
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
         // Send to CC recipients WITH button
-        Mail::to(['crista.bautista@rico.com.ph']) // CC emails here
+        Mail::to(['ict.engineer@wgroup.com.ph', 'mark.bautista@wgroup.space']) // CC emails here
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));
         
         return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
@@ -636,5 +637,36 @@ class CustomerComplaint2Controller extends Controller
                 return response()->json(['error' => 'Failed to delete file.'], 500);
             }
         }
+    }
+    public function email() 
+    {
+        $users = User::where('department_id', 1)->where('is_active', 1)->get();
+        
+        foreach($users as $user)
+        {
+            $table = "<table style='margin-bottom:10px;' width='100%' border='1' cellspacing=0><tr><th>CCF #</th><th>Agreed Action Plan</th><th>Target Date</th></tr>";
+            $complaints = CustomerComplaint2::where('Status', '10')->orderBy('created_at', 'asc')->get();
+            
+            foreach($complaints as $complaint)
+            {
+                if($complaint->created_at < date('Y-m-d'))
+                {
+                    $status = " style='background-color:Tomato;color:white;'";
+                }
+                else
+                {
+                    $status = "";
+                }
+                $table .= "<tr ".$status."><td style='width:30%;'>".$complaint->CcNumber."</td><td style='width:40%;'>".$complaint->CustomerRemarks."</td><td style='width:30%;'>".date('Y-m-d',strtotime($complaint->created_at))."</td></tr>";
+            }
+            $table .= "</table>";
+            if($complaints->count() > 0)
+            {
+                $user->notify(new CcNotif($table));
+            }
+        }
+       
+        
+        return "success";
     }
 }
