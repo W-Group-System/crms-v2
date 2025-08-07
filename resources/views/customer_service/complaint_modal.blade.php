@@ -14,13 +14,13 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Recurring Issue:</label>
-                                <div class="form-check form-check-inline" id="issue-radio2">
-                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault1" value="1" 
-                                        {{ isset($data->RecurringIssue) && $data->RecurringIssue == 1 ? 'checked' : '' }}>
+                                <div class="form-check form-check-inline" id="issue-radio2"> 
+                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault1" value="1"
+                                        {{ isset($data->RecurringIssue) && $data->RecurringIssue == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault1">Yes</label>
                                     
-                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault2" value="2" 
-                                        {{ isset($data->RecurringIssue) && $data->RecurringIssue != 1 ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="RecurringIssue" id="flexRadioDefault2" value="2"
+                                        {{ isset($data->RecurringIssue) && $data->RecurringIssue != 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
                             </div>

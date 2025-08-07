@@ -64,4 +64,8 @@ class CustomerSatisfaction extends Model
     {
         return $this->belongsTo(SalesApprovers::class, 'NotedBy', 'UserId'); 
     }
+    public function remarks()
+    {
+        return $this->hasMany(SatisfactionRemarks::class, 'CsId', 'id'); 
+    }
 }

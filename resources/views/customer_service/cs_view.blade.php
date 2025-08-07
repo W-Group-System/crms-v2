@@ -30,9 +30,11 @@
                         @endif
                     @endif
                     @if($data->ApprovedBy != NULL)
+                        @if($data->Concerned == NULL)
                          <button type="button" class="btn btn-outline-primary" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
-                            <i class="ti ti-pencil"></i>&nbsp;Assign 
+                            <i class="ti ti-pencil"></i>&nbsp;Assign
                         </button>
+                        @endif
                         <button type="button" class="btn btn-outline-warning" id="updateCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCs">
                             <i class="ti ti-comment"></i>&nbsp;Remarks
                         </button>
@@ -165,8 +167,8 @@
                         </div>
                     </div>
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Description:</b></label>
-                        <div class="col-sm-3">
+                        <label class="col-sm-3 col-form-label text-right"><b>Customer Feedback:</b></label>
+                        <div class="col-sm-8">
                             <label>{{ $data->Description }}</label>
                         </div>
                     </div>
@@ -189,8 +191,16 @@
                     </div>
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Internal Remarks:</b></label>
-                        <div class="col-sm-9">
-                            <label>{{ $data->Response }}</label>
+                        <div class="col-sm-8">
+                            @foreach($for_remarks->sortByDesc('created_at') as $remark)
+                            <div class="border border-light rounded p-2 mb-3">
+                                <label> {!! $remark->Remarks !!}</label>
+                                <div>
+                                    <p class="m-0">Remarks by: {{$remark->user->full_name}}</p>
+                                    <p class="text-muted"><small>{{date('h:i A - M d, Y',strtotime($remark->created_at))}}</small></p>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -248,11 +258,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="updateCustomerSatisfaction" method="POST" action="{{ url('update_customer_satisfaction/' . $data->id) }}">
+                <form id="newRemarks" method="POST" action="{{ url('new_remarks/' . $data->id) }}">
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
-                            <textarea class="form-control" rows="10" name="Response" placeholder="Enter Internal Instruction Remarks" required></textarea>
+                            <textarea class="form-control" rows="10" name="Remarks" placeholder="Enter Internal Instruction Remarks" required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer mt-3">
@@ -316,7 +326,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#updateCustomerSatisfaction').on('submit', function (e) {
+        $('#newRemarks').on('submit', function (e) {
             e.preventDefault(); 
 
             var form = $(this);
@@ -329,7 +339,7 @@
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
-                            title: "Updated",
+                            title: "Success",
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,
