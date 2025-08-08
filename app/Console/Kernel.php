@@ -2,7 +2,9 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ccStatus;
 use Illuminate\Console\Scheduling\Schedule;
+use Carbon\Carbon;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -13,7 +15,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        ccStatus::class,
     ];
 
     /**
@@ -24,8 +26,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        // $schedule->command('inspire')->hourly();
+        // $schedule->command('command.cc_status')->everyMinute();
+        $schedule->command('command.cc_status')
+            ->weeklyOn(3, '8:00') // 3 = Wednesday
+            ->when(function () {
+                $today = Carbon::today();
+                $lastWednesday = Carbon::now()
+                    ->endOfMonth()
+                    ->previous(Carbon::WEDNESDAY);
+
+                return $today->isSameDay($lastWednesday);
+            });
     }
 
     /**

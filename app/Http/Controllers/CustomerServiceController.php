@@ -34,7 +34,7 @@ class CustomerServiceController extends Controller
                     $q->where('Concerned',  auth()->user()->role->type);
                 });
             })
-            ->orderBy('id', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $cc = CustomerComplaint2::where('Status', 10)
@@ -53,7 +53,7 @@ class CustomerServiceController extends Controller
                     $q->where('Department',  auth()->user()->role->type);
                 });
             })
-            ->orderBy('id', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
        
