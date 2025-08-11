@@ -111,8 +111,8 @@ input[type="checkbox"] {
             <td align="center"><b>C</b></td>
             <td align="center"><b>B</b></td>
             <td align="center"><b>A</b></td>
-            <td align="center"><b>Yes&nbsp;&nbsp;<input type="checkbox"></b></td>
-            <td align="center"><b>No&nbsp;&nbsp;<input type="checkbox"></b></td>
+            <td align="center"><b>Yes&nbsp;&nbsp;<input type="checkbox" @if($cc->RecurringIssue == 1) checked @endif></b></td>
+            <td align="center"><b>No&nbsp;&nbsp;<input type="checkbox" @if($cc->RecurringIssue == 2) checked @endif></b></td>
         </tr>
         <tr>
             <td align="center"><b>Critical</b></td>
@@ -383,9 +383,9 @@ input[type="checkbox"] {
             <td width="25%" align="center">Action Date/ Action Responsible</td>
         </tr>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ $cc->ImmediateAction }}</td>
+            <td>{{ $cc->ObjectiveEvidence }}</td>
+            <td>{{ $cc->ActionDate }}/ {{ $cc->action_responsible->full_name }}</td>
         </tr>
         <tr>
             <td colspan="3"><b>Investigation of the Problem:</b>Root Cause Analysis/Investigation:  details on who/what contributed to the problem, how and why the non-conformity happened</td>
@@ -395,8 +395,8 @@ input[type="checkbox"] {
             <td width="25%" align="center">Date of Investigation:</td>
         </tr>
         <tr>
-            <td colspan="2"></td>
-            <td></td>
+            <td colspan="2">{{ $cc->Investigation }}</td>
+            <td>{{ $cc->ActionDate }}</td>
         </tr>
         <tr>
             <td colspan="3"><b>Corrective Action Plan:</b>Action that will eliminate the cause of the detected nonconformity or undesirable situation</td>
@@ -407,9 +407,9 @@ input[type="checkbox"] {
             <td width="25%" align="center">Action Date/ Action Responsible</td>
         </tr>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ $cc->CorrectiveAction }}</td>
+            <td>{{ $cc->ActionObjectiveEvidence }}</td>
+            <td>{{ $cc->ActionDate }}/ {{ $cc->action_responsible->full_name }}</td>
         </tr>
         <tr>
             <td width="50%" align="center">
@@ -434,30 +434,28 @@ input[type="checkbox"] {
             <td colspan="2"><b>Client Feedback/ Acceptance:</b></td>
         </tr>
         <tr>
-            <td colspan="2"></td>
+            <td colspan="2">{{ $cc->Acceptance }}</td>
         </tr>
         <tr>
-            <td width="50%"><b>Received by/ Date:</b></td>
-            <td width="50%"><b>Customer Complaint Closed Date:</b></td>
+            <td width="50%"><b>Received by/ Date:</b>{{ $cc->users->full_name }}/&nbsp;{{ $cc->DateReceived }}</td>
+            <td width="50%"><b>Customer Complaint Closed Date:</b>&nbsp;{{ $cc->ClosedDate }}</td>
         </tr>
         <tr>
             <td width="50%">
                 <label style="margin-bottom: 10px;"><b>With Claims/Credit Note?</b></label><br>
                 <div style="text-align: left;margin-bottom: 10px">
-                    <label style="margin-right: 10em;">Yes</label>
-                    <label>No</label>
+                    <label style="margin-right: 10em;">{{ $cc->Claims == 1 ? 'Yes' : 'No' }}</label>
                 </div>
-                Credit Note Number: <br>
-                Total Amount Incurred: 
+                Credit Note Number:&nbsp;{{ $cc->CnNumber }}<br>
+                Total Amount Incurred&nbsp;{{ $cc->AmountIncurred }}
             </td>
             <td width="50%">
                 <label style="margin-bottom: 10px;"><b>For shipment Return?</b></label><br>
                 <div style="text-align: left;margin-bottom: 10px">
-                    <label style="margin-right: 10em;">Yes</label>
-                    <label>No</label>
+                    <label style="margin-right: 10em;">{{ $cc->Shipment == 1 ? 'Yes' : 'No' }}</label>
                 </div>
-                Return Shipment Date: <br>
-                Return Shipment Cost: 
+                Return Shipment Date:&nbsp;{{ $cc->ShipmentDate }}<br>
+                Return Shipment Cost:&nbsp; {{ $cc->ShipmentCost }} 
             </td>
         </tr>
     </table>

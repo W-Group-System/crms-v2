@@ -42,17 +42,11 @@
                             <i class="ti ti-pencil"></i>&nbsp;Assign 
                         </button>
                     @endif
-                    @if($data->Progress == 80)
+                    @if($data->Progress == 40 || $data->Progress == 80)
                     <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                         <i class="ti ti-pencil"></i>&nbsp;Verification
                     </button>
                     @endif
-                @endif
-                @if($data->Progress == ['10,20,30,40'])
-                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
-                        <i class="ti ti-printer btn-icon-prepend"></i>
-                        Print
-                    </a>
                 @endif
                 @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)
                 <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
@@ -63,7 +57,7 @@
                 </form>
                 @endif
                 @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Department != NULL)
-                    @if($data->Progress == 50)
+                    @if($data->Progress == 50 || $data->Progress == 80)
                         <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-success approvedBtn">
@@ -82,6 +76,12 @@
                             data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
                     </button>
+                @endif
+                @if($data->Progress == 60 || $data->Progress == 70)
+                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
+                        <i class="ti ti-printer btn-icon-prepend"></i>
+                        Print
+                    </a>
                 @endif
                 <!-- <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                     <i class="ti ti-pencil"></i>&nbsp;Verification
@@ -1034,7 +1034,7 @@
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
-                            title: "Approved",
+                            title: "Acknowledged",
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,

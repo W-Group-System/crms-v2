@@ -428,7 +428,7 @@ class CustomerComplaint2Controller extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Customer satisfaction has been successfully approved.'
+            'message' => 'Customer satisfaction has been successfully acknowledged.'
         ]);
     }
     
@@ -440,7 +440,7 @@ class CustomerComplaint2Controller extends Controller
         $data->Status = 30;
         $data->Progress = 70;
         $data->save();
-
+        // dd($data);
         return response()->json([
             'success' => true,
             'message' => 'Customer complaint has been successfully closed.'
