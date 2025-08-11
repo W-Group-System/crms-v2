@@ -480,7 +480,7 @@
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
-                            title: "Approved",
+                            title: "Acknowledged",
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,
