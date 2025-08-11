@@ -496,7 +496,7 @@
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Customer Remarks :</b></p>
                         </div>
-                        <div class="col-sm-3 col-md-4">
+                        <div class="col-sm-3 col-md-9">
                             <p class="m-0">{{ $data->CustomerRemarks }}</p>
                         </div>
                     </div>
@@ -536,7 +536,7 @@
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Investigation of the Problem:</b></p>
                         </div>
-                        <div class="col-sm-3 col-md-4">
+                        <div class="col-sm-3 col-md-9">
                             <p class="m-0">{{ $data->Investigation ?? 'N/A' }}</p>
                         </div>
                     </div>
@@ -581,7 +581,7 @@
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Client Feedback/ Acceptance :</b></p>
                         </div>
-                        <div class="col-sm-3 col-md-4">
+                        <div class="col-sm-3 col-md-9">
                             <p class="m-0">{{ $data->Acceptance ?? 'N/A'}}</p>
                         </div>
                     </div>
