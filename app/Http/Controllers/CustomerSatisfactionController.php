@@ -226,7 +226,7 @@ class CustomerSatisfactionController extends Controller
 
         // Send to CC recipients WITH button
         // Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'iad@wgroup.com.ph']) // CC emails here
-        Mail::to(['ict.engineer@wgroup.com.ph', 'crista.bautista@rico.com.ph'])
+        Mail::to(['ict.engineer@wgroup.com.ph', 'mark.bautista@wgroup.space'])
         ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, true));
        
         // Return success message
