@@ -294,7 +294,7 @@
                                 <select class="form-control js-example-basic-single" name="Concerned" id="Concerned" required>
                                     <option value="" disabled selected>Select Department Concerned</option>
                                     @foreach($concern_department as $dept)
-                                        <option value="{{ $dept->id }}" {{ old('Concerned') == $dept->id ? 'selected' : '' }}>
+                                        <option value="{{ $dept->Name }}" {{ old('Concerned') == $dept->Name ? 'selected' : '' }}>
                                             {{ $dept->Name }}
                                         </option>
                                     @endforeach

@@ -36,7 +36,7 @@
 <body>
     <div class="email-container">
         <p align="center"><img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;"></p>
-        <b>Dear {{ $ContactName }},</b>
+        <b>Hi Team,</b>
         <p>I hope this message finds you well.</p>
         <p>We are writing to inform you that an investigation has been initiated regarding <b>{{ $CcNumber }}</b></p><br>
         <b>Purpose:</b>
