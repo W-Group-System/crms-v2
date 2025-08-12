@@ -244,7 +244,7 @@ class CustomerSatisfactionController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'Internal Remarks has been submitted successfully!.'
+            'message' => 'Internal Remarks has been submitted successfully.'
         ]);
     }
 
