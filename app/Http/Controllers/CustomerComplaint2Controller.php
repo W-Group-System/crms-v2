@@ -340,7 +340,7 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        Mail::to(['crista.bautista@rico.com.ph']) // CC emails here
+        Mail::to(['ict.engineer@wgroup.com.ph', 'mark.bautista@wgroup.space']) // CC emails here
             ->send(new InvestigationMail($data, $attachments, true));
         
         return response()->json([
