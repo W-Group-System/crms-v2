@@ -46,48 +46,80 @@
 </head>
 <body>
     <div class="email-container" align="center">
-        <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;">
-        <h2>Customer Satisfaction Regarding {{ $CategoryName }}</h2>
-        <b>Thank you for taking the time to share your feedback.</b>
-        <p>We're truly grateful for your trust and satisfaction with our service. Your continued support inspires us to keep improving and delivering the quality you deserve</p>
-
-        <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
-            <tr>
-                <td><strong>CS Number:</strong></td>
-                <td>{{ $CsNumber }}</td>
-            </tr>
-            <tr>
-                <td><strong>Customer Name:</strong></td>
-                <td>{{ $ContactName }}</td>
-            </tr>
-            <tr>
-                <td><strong>Company Name:</strong></td>
-                <td>{{ $CompanyName }}</td>
-            </tr>
-            <tr>
-                <td><strong>Contact Number:</strong></td>
-                <td>{{ $ContactNumber }}</td>
-            </tr>
-            <tr>
-                <td><strong>Email:</strong></td>
-                <td>{{ $Email }}</td>
-            </tr>
-            <tr>
-                <td colspan="2"><strong>Customer Feedback:</strong></td>
-            </tr>
-            <tr>
-                <td colspan="2">{{ $Description }}</td>
-            </tr>
-        </table>
-
         @if($showButton)
+            <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;">
+            <h2>Customer Satisfaction Regarding {{ $CategoryName }}</h2>
+            <b>Hi Sales Team,</b>
+            <p>A new customer satisfaction feedback form has been submitted. Please see the details below:</p>
+
+            <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
+                <tr>
+                    <td><strong>CS Number:</strong></td>
+                    <td>{{ $CsNumber }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Customer Name:</strong></td>
+                    <td>{{ $ContactName }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Company Name:</strong></td>
+                    <td>{{ $CompanyName }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Contact Number:</strong></td>
+                    <td>{{ $ContactNumber }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>{{ $Email }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Customer Feedback:</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2">{{ $Description }}</td>
+                </tr>
+            </table>
             <p>
                 <a href="{{ $button_url }}" style="background: #007BFF; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
                     {{ $button_text }}
                 </a>
             </p>
-        @endif
+        @else 
+            <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;">
+            <h2>Customer Satisfaction Regarding {{ $CategoryName }}</h2>
+            <b>Thank you for taking the time to share your feedback.</b>
+            <p>We're truly grateful for your trust and satisfaction with our service. Your continued support inspires us to keep improving and delivering the quality you deserve</p>
 
+            <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
+                <tr>
+                    <td><strong>CS Number:</strong></td>
+                    <td>{{ $CsNumber }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Customer Name:</strong></td>
+                    <td>{{ $ContactName }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Company Name:</strong></td>
+                    <td>{{ $CompanyName }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Contact Number:</strong></td>
+                    <td>{{ $ContactNumber }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>{{ $Email }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Customer Feedback:</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2">{{ $Description }}</td>
+                </tr>
+            </table>
+        @endif
         <p class="footer">This message was sent from Our Company. Please do not reply to this email.</p>
     </div>
 </body>
