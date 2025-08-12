@@ -254,7 +254,8 @@ class CustomerSatisfactionController extends Controller
         $data->Concerned = $request->Concerned;
         $data->save();
 
-        $department = ConcernDepartment::findOrFail($request->Concerned);
+        // $department = ConcernDepartment::findOrFail($request->Concerned);
+        $department = ConcernDepartment::where('Name', $request->Concerned)->firstOrFail();
         
         $attachments = [];
         if ($request->hasFile('Path') && is_array($request->file('Path'))) {
