@@ -4,7 +4,7 @@
     <title>New Customer Satisfaction Assignment</title>
 </head>
 <body>
-    <p>Dear {{ $ConcernedName }},</p>
+    <p>Dear {{ $customerSatisfaction->Concerned }},</p>
     
     <p>A new customer satisfaction issue has been assigned to your department.</p>
 
