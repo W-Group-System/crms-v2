@@ -34,7 +34,7 @@ class CustomerServiceController extends Controller
                     $q->where('Concerned',  auth()->user()->role->type);
                 });
             })
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->get();
 
         $cc = CustomerComplaint2::where('Status', 10)
@@ -53,12 +53,16 @@ class CustomerServiceController extends Controller
                     $q->where('Department',  auth()->user()->role->type);
                 });
             })
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->get();
 
        
         $sortedResults = $cc
-        ->concat($cs);
+            ->concat($cs)
+            ->sortByDesc(function ($item) {
+                return $item->Progress == 10 ? 1 : 0; // Progress=10 first
+            })
+            ->values();
 
         $page = request()->get('page', 1);
         $perPage = $entries ?? 10;

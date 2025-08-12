@@ -89,7 +89,7 @@ class CustomerSatisfactionController extends Controller
     public function list(Request $request)
     {
         $search = $request->input('search');
-        $sort = $request->get('sort', 'CsNumber');
+        $sort = $request->get('sort', 'Progress'); // default sort column
         $direction = $request->get('direction', 'asc');
         $fetchAll = filter_var($request->input('fetch_all', false), FILTER_VALIDATE_BOOLEAN);
         $entries = $request->input('number_of_entries', 10);
