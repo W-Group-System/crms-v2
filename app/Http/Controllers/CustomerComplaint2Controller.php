@@ -53,7 +53,7 @@ class CustomerComplaint2Controller extends Controller
     public function list(Request $request) 
     {
         $search = $request->input('search');
-        $sort = $request->get('sort', 'CcNumber');
+        $sort = $request->get('sort', 'Progress'); // default sort column
         $direction = $request->get('direction', 'asc');
         $fetchAll = filter_var($request->input('fetch_all', false), FILTER_VALIDATE_BOOLEAN);
         $role = auth()->user()->role;
