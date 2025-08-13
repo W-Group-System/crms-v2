@@ -54,7 +54,7 @@ class CustomerComplaint2Controller extends Controller
     {
         $search = $request->input('search');
         $sort = $request->get('sort', 'Progress'); // default sort column
-        // $direction = $request->get('direction', 'asc');
+        $direction = $request->get('direction', 'asc');
         $fetchAll = filter_var($request->input('fetch_all', false), FILTER_VALIDATE_BOOLEAN);
         $role = auth()->user()->role;
         $entries = $request->input('number_of_entries', 10);
@@ -126,10 +126,12 @@ class CustomerComplaint2Controller extends Controller
                 });
         });
 
-        if ($progress == 10) {
-            $customerComplaint->orderBy('created_at', 'desc');
+        if ($sort === 'Progress' && $progress == 10) {
+            $customerComplaint->orderByRaw('CASE WHEN Progress = 10 THEN 0 ELSE 1 END')
+                ->orderBy('id', 'desc');
         } else {
-            $customerComplaint->orderBy('id', 'desc');
+            $customerComplaint->orderBy($sort, $direction)
+                ->orderBy('id', 'desc');
         }
 
         // Fetch data based on `fetchAll` flag and return
