@@ -127,11 +127,9 @@ class CustomerComplaint2Controller extends Controller
         });
 
         if ($sort === 'Progress' && $progress == 10) {
-            $customerComplaint->orderByRaw('CASE WHEN Progress = 10 THEN 0 ELSE 1 END')
-                ->orderBy('id', 'asc');
+            $customerComplaint->orderBy('created_at', 'desc');
         } else {
-            $customerComplaint->orderBy($sort, $direction)
-                ->orderBy('id', 'asc');
+            $customerComplaint->orderBy($sort, $direction)->orderBy('id', 'desc');
         }
 
         // Fetch data based on `fetchAll` flag and return

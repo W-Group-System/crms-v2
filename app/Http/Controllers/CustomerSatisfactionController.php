@@ -165,11 +165,9 @@ class CustomerSatisfactionController extends Controller
             //         });
             // })
         if ($sort === 'Progress' && $progress == 10) {
-            $customerSatisfaction->orderByRaw('CASE WHEN Progress = 10 THEN 0 ELSE 1 END')
-                ->orderBy('id', 'asc');
+            $customerSatisfaction->orderBy('created_at', 'desc');
         } else {
-            $customerSatisfaction->orderBy($sort, $direction)
-                ->orderBy('id', 'asc');
+            $customerSatisfaction->orderBy($sort, $direction)->orderBy('id', 'desc');
         }
 
         if ($fetchAll) {
