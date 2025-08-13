@@ -124,9 +124,15 @@ class CustomerComplaint2Controller extends Controller
                 ->whereHas('salesapprovers', function ($query) use ($userId) {
                     $query->where('SalesApproverId', $userId);
                 });
-        })
-        ->orderBy($sort, $direction);
-    
+        });
+
+        if ($sort === 'Progress' && $progress == 10) {
+            $customerComplaint->orderByRaw('CASE WHEN Progress = 10 THEN 0 ELSE 1 END')
+                ->orderBy('id', 'asc');
+        } else {
+            $customerComplaint->orderBy($sort, $direction)
+                ->orderBy('id', 'asc');
+        }
 
         // Fetch data based on `fetchAll` flag and return
         if ($fetchAll) {
