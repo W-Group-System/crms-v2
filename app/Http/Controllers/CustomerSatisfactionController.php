@@ -90,7 +90,7 @@ class CustomerSatisfactionController extends Controller
     {
         $search = $request->input('search');
         $sort = $request->get('sort', 'Progress'); // default sort column
-        $direction = $request->get('direction', 'asc');
+        // $direction = $request->get('direction', 'asc');
         $fetchAll = filter_var($request->input('fetch_all', false), FILTER_VALIDATE_BOOLEAN);
         $entries = $request->input('number_of_entries', 10);
         $progress = $request->query('progress'); // Get the status from the query parameters
@@ -167,7 +167,7 @@ class CustomerSatisfactionController extends Controller
         if ($sort === 'Progress' && $progress == 10) {
             $customerSatisfaction->orderBy('created_at', 'desc');
         } else {
-            $customerSatisfaction->orderBy($sort, $direction)->orderBy('id', 'desc');
+            $customerSatisfaction->orderBy('id', 'desc');
         }
 
         if ($fetchAll) {
