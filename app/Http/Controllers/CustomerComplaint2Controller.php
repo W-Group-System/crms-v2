@@ -126,7 +126,7 @@ class CustomerComplaint2Controller extends Controller
                 });
         });
 
-        if ($sort === 'Progress' && $progress == 10) {
+        if ($sort === 'Progress') {
             $customerComplaint->orderByRaw('CASE WHEN Progress = 10 THEN 0 ELSE 1 END')
                 ->orderBy('id', 'desc');
         } else {

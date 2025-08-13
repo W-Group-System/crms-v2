@@ -164,12 +164,12 @@ class CustomerSatisfactionController extends Controller
             //             $query->where('SalesApproverId', $userId);
             //         });
             // })
-        if ($sort === 'Progress' && $progress == 10) {
+        if ($sort === 'Progress') {
             $customerSatisfaction->orderByRaw('CASE WHEN Progress = 10 THEN 0 ELSE 1 END')
-                ->orderBy('id', 'asc');
+                ->orderBy('id', 'desc');
         } else {
             $customerSatisfaction->orderBy($sort, $direction)
-                ->orderBy('id', 'asc');
+                ->orderBy('id', 'desc');
         }
 
         if ($fetchAll) {
