@@ -148,7 +148,7 @@ class CustomerSatisfactionController extends Controller
                 } else {
                     $query->where('Progress', $progress);
                 }
-            })
+            });
             // ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
             //     $query->where(function ($query) use ($userId, $userByUser) {
             //         $query->where('PrimaryAccountManagerId', $userId)
@@ -164,7 +164,13 @@ class CustomerSatisfactionController extends Controller
             //             $query->where('SalesApproverId', $userId);
             //         });
             // })
-            ->orderBy($sort, $direction);
+        if ($sort === 'Progress' && $progress == 10) {
+            $customerSatisfaction->orderByRaw('CASE WHEN Progress = 10 THEN 0 ELSE 1 END')
+                ->orderBy('id', 'asc');
+        } else {
+            $customerSatisfaction->orderBy($sort, $direction)
+                ->orderBy('id', 'asc');
+        }
 
         if ($fetchAll) {
             $data = $customerSatisfaction->get();
