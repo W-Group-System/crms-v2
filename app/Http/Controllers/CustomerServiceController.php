@@ -60,7 +60,8 @@ class CustomerServiceController extends Controller
         $sortedResults = $cc
             ->concat($cs)
             ->sortByDesc(function ($item) {
-                return $item->Progress == 10 ? 1 : 0; // Progress=10 first
+                // This creates a tuple [ProgressFlag, id]
+                return [$item->Progress == 10 ? 1 : 0, $item->id];
             })
             ->values();
 
