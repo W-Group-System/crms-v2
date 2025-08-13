@@ -126,7 +126,7 @@ class CustomerComplaint2Controller extends Controller
                 });
         });
 
-        if ($customerComplaint->Progress == 10) {
+        if ($progress == 10) {
             $customerComplaint->orderBy('created_at', 'desc');
         } else {
             $customerComplaint->orderBy('id', 'desc');
