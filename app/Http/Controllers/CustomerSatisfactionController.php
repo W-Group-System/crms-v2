@@ -164,7 +164,7 @@ class CustomerSatisfactionController extends Controller
             //             $query->where('SalesApproverId', $userId);
             //         });
             // })
-        if ($customerSatisfaction->Progress == 10) {
+        if ($progress == 10) {
             $customerSatisfaction->orderBy('created_at', 'desc');
         } else {
             $customerSatisfaction->orderBy('id', 'desc');
