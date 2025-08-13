@@ -42,7 +42,7 @@
                             <i class="ti ti-pencil"></i>&nbsp;Assign 
                         </button>
                     @endif
-                    @if($data->Progress == 40 || $data->Progress == 80)
+                    @if($data->Progress == 80)
                     <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                         <i class="ti ti-pencil"></i>&nbsp;Verification
                     </button>
@@ -57,7 +57,7 @@
                 </form>
                 @endif
                 @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Department != NULL)
-                    @if($data->Progress == 50 || $data->Progress == 80)
+                    @if($data->Progress == 50)
                         <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-success approvedBtn">
@@ -71,7 +71,7 @@
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
                     </button>
                 @endif -->
-                @if($data->Department == auth()->user()->role->type && $data->Progress != 80)
+                @if($data->Department == auth()->user()->role->type && $data->Progress == 40)
                     <button type="button" class="btn btn-outline-warning" id="updateCc" 
                             data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
                         <i class="ti ti-pencil"></i>&nbsp;Investigation
