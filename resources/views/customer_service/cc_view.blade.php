@@ -17,7 +17,7 @@
                         <form action="{{ url('cc_received/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-success receivedBtn">
-                                <i class="ti-bookmark">&nbsp;</i> Received
+                                <i class="ti-bookmark">&nbsp;</i> Receive
                             </button>
                         </form>
                     @endif
@@ -271,6 +271,14 @@
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ optional($data->approved_by)->full_name }}</p>
                 </div>
+            </div>
+            <div class="form-group row mb-3">
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Customer Remarks:</b></p>
+                </div>
+                <div class="col-sm-3 col-md-6">
+                    <p class="m-0">{{ $data->CustomerRemarks }}</p>
+                </div>
             </div> 
             <div class="form-group row mb-3">
                 <div class="col-sm-3 col-md-2 text-right">
@@ -494,14 +502,14 @@
                             <p class="m-0">{{ $data->Currency ?? 'N/A' }}</p>
                         </div>
                     </div>
-                    <div class="row mb-3">
+                    <!-- <div class="row mb-3">
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Customer Remarks :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-9">
                             <p class="m-0">{{ $data->CustomerRemarks }}</p>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-md-12 mb-3">
                         <label><strong>Investigation (Department Concerned Responsibility)</strong></label>
                         <hr class="alert-dark mt-0">
