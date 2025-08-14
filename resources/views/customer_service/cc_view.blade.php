@@ -12,76 +12,78 @@
                 <a href="{{ url()->previous() ?: url('customer_complaint2') }}" class="btn btn-md btn-outline-secondary">
                     <i class="icon-arrow-left"></i>&nbsp;Back
                 </a>
-                @if($data->Status == 10 && $data->ReceivedBy == NULL)
-                    <form action="{{ url('cc_received/' . $data->id) }}" class="d-inline-block" method="POST">
+                @if(auth()->user()->role->type != 'IAD')
+                    @if($data->Status == 10 && $data->ReceivedBy == NULL)
+                        <form action="{{ url('cc_received/' . $data->id) }}" class="d-inline-block" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-success receivedBtn">
+                                <i class="ti-bookmark">&nbsp;</i> Received
+                            </button>
+                        </form>
+                    @endif
+                    @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
+                        @if($data->Progress == 20)
+                            <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-success notedBtn">
+                                    <i class="ti-check">&nbsp;</i> Noted By
+                                </button>
+                            </form>
+                        @endif
+                    @endif
+                    {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
+                    @if($data->ReceivedBy == auth()->user()->id && $data->NotedBy != null)
+                        @if($data->Progress == 30 && $data->ApprovedBy == NULL)
+                            <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                            <i class="ti ti-pencil"></i>&nbsp;Complaint 
+                            </button>
+                        @endif
+                        @if($data->Department == NULL && $data->Progress == 50)
+                            <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Assign 
+                            </button>
+                        @endif
+                        @if($data->Progress == 80)
+                        <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                            <i class="ti ti-pencil"></i>&nbsp;Verification
+                        </button>
+                        @endif
+                    @endif
+                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)
+                    <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-outline-success receivedBtn">
-                            <i class="ti-bookmark">&nbsp;</i> Received
+                        <button type="submit" class="btn btn-outline-danger closeBtn">
+                            <i class="ti-close">&nbsp;</i> Close
                         </button>
                     </form>
-                @endif
-                @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                    @if($data->Progress == 20)
-                        <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-success notedBtn">
-                                <i class="ti-check">&nbsp;</i> Noted By
-                            </button>
-                        </form>
                     @endif
-                @endif
-                {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
-                @if($data->ReceivedBy == auth()->user()->id && $data->NotedBy != null)
-                    @if($data->Progress == 30 && $data->ApprovedBy == NULL)
-                        <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
-                        <i class="ti ti-pencil"></i>&nbsp;Complaint 
+                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Department != NULL)
+                        @if($data->Progress == 50)
+                            <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-success approvedBtn">
+                                    <i class="ti-check">&nbsp;</i> Acknowledged
+                                </button>
+                            </form>
+                        @endif
+                    @endif
+                    <!-- @if($data->NcarIssuance == 1)
+                        <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                            <i class="ti ti-pencil"></i>&nbsp;Investigation
+                        </button>
+                    @endif -->
+                    @if($data->Department == auth()->user()->role->type && $data->Progress == 40)
+                        <button type="button" class="btn btn-outline-warning" id="updateCc" 
+                                data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                            <i class="ti ti-pencil"></i>&nbsp;Investigation
                         </button>
                     @endif
-                    @if($data->Department == NULL && $data->Progress == 50)
-                        <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
-                            <i class="ti ti-pencil"></i>&nbsp;Assign 
-                        </button>
+                    @if($data->Progress == 60 || $data->Progress == 70)
+                        <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
+                            <i class="ti ti-printer btn-icon-prepend"></i>
+                            Print
+                        </a>
                     @endif
-                    @if($data->Progress == 80)
-                    <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
-                        <i class="ti ti-pencil"></i>&nbsp;Verification
-                    </button>
-                    @endif
-                @endif
-                @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)
-                <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-danger closeBtn">
-                        <i class="ti-close">&nbsp;</i> Close
-                    </button>
-                </form>
-                @endif
-                @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Department != NULL)
-                    @if($data->Progress == 50)
-                        <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-success approvedBtn">
-                                <i class="ti-check">&nbsp;</i> Acknowledged
-                            </button>
-                        </form>
-                    @endif
-                @endif
-                <!-- @if($data->NcarIssuance == 1)
-                    <button type="button" class="btn btn-outline-warning" id="updateCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
-                        <i class="ti ti-pencil"></i>&nbsp;Investigation
-                    </button>
-                @endif -->
-                @if($data->Department == auth()->user()->role->type && $data->Progress == 40)
-                    <button type="button" class="btn btn-outline-warning" id="updateCc" 
-                            data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
-                        <i class="ti ti-pencil"></i>&nbsp;Investigation
-                    </button>
-                @endif
-                @if($data->Progress == 60 || $data->Progress == 70)
-                    <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
-                        <i class="ti ti-printer btn-icon-prepend"></i>
-                        Print
-                    </a>
                 @endif
                 <!-- <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                     <i class="ti ti-pencil"></i>&nbsp;Verification
