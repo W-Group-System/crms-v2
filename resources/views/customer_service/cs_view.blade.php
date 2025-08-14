@@ -8,54 +8,56 @@
                     <a href="{{ url()->previous() ?: url('customer_satisfaction') }}" class="btn btn-md btn-outline-secondary">
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a>
-                    @if($data->ReceivedBy == NULL)
-                        <form action="{{ url('cs_received/' . $data->id) }}" class="d-inline-block" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-success receivedBtn">
-                                <i class="ti-bookmark">&nbsp;</i> Received
-                            </button>
-                        </form>
-                    @endif
-                    @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                        @if($data->ReceivedBy != NULL && $data->NotedBy == NULL)
-                            <!-- <form action="{{ url('cs_noted/' . $data->id) }}" class="d-inline-block" method="POST">
+                    @if(auth()->user()->role->type != 'IAD')
+                        @if($data->ReceivedBy == NULL)
+                            <form action="{{ url('cs_received/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-outline-success notedBtn">
-                                    <i class="ti-check">&nbsp;</i> Noted By
+                                <button type="submit" class="btn btn-outline-success receivedBtn">
+                                    <i class="ti-bookmark">&nbsp;</i> Received
+                                </button>
+                            </form>
+                        @endif
+                        @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
+                            @if($data->ReceivedBy != NULL && $data->NotedBy == NULL)
+                                <!-- <form action="{{ url('cs_noted/' . $data->id) }}" class="d-inline-block" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-success notedBtn">
+                                        <i class="ti-check">&nbsp;</i> Noted By
+                                    </button>
+                                </form> -->
+                                <button type="button" class="btn btn btn-outline-success" id="editNote" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editNoted">
+                                    <i class="ti ti-check"></i>&nbsp;Noted By
+                                </button>
+                            @endif
+                        @endif
+                        @if($data->ApprovedBy != NULL)
+                            @if($data->Concerned == NULL)
+                            <button type="button" class="btn btn-outline-primary" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
+                                <i class="ti ti-pencil"></i>&nbsp;Assign
+                            </button>
+                            @endif
+                            <button type="button" class="btn btn-outline-warning" id="updateCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCs">
+                                <i class="ti ti-comment"></i>&nbsp;Remarks
+                            </button>
+                            <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cs/'.$data->id)}}" target="_blank">
+                                <i class="ti ti-printer btn-icon-prepend"></i>
+                                Print
+                            </a>
+                            <!-- <form action="{{ url('cs_closed/' . $data->id) }}" class="d-inline-block" method="POST">
+                                @csrf
+                                <button type="button" class="btn btn-outline-secondary closedBtn">
+                                    <i class="ti ti-close"></i>&nbsp;Close Satisfaction
                                 </button>
                             </form> -->
-                            <button type="button" class="btn btn btn-outline-success" id="editNote" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editNoted">
-                                <i class="ti ti-check"></i>&nbsp;Noted By
-                            </button>
                         @endif
-                    @endif
-                    @if($data->ApprovedBy != NULL)
-                        @if($data->Concerned == NULL)
-                         <button type="button" class="btn btn-outline-primary" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
-                            <i class="ti ti-pencil"></i>&nbsp;Assign
-                        </button>
+                        @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->ApprovedBy == NULL)
+                            <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-success approvedBtn">
+                                    <i class="ti-check">&nbsp;</i> Acknowledged
+                                </button>
+                            </form>
                         @endif
-                        <button type="button" class="btn btn-outline-warning" id="updateCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCs">
-                            <i class="ti ti-comment"></i>&nbsp;Remarks
-                        </button>
-                        <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cs/'.$data->id)}}" target="_blank">
-                            <i class="ti ti-printer btn-icon-prepend"></i>
-                            Print
-                        </a>
-                        <!-- <form action="{{ url('cs_closed/' . $data->id) }}" class="d-inline-block" method="POST">
-                            @csrf
-                            <button type="button" class="btn btn-outline-secondary closedBtn">
-                                <i class="ti ti-close"></i>&nbsp;Close Satisfaction
-                            </button>
-                        </form> -->
-                    @endif
-                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->ApprovedBy == NULL)
-                        <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-outline-success approvedBtn">
-                                <i class="ti-check">&nbsp;</i> Acknowledged
-                            </button>
-                        </form>
                     @endif
                     <!-- @if($data->NotedBy != NULL && auth()->user()->id == 15)
                         @if($data->Progress != 40)
