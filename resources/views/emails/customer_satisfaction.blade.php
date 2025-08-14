@@ -45,7 +45,7 @@
     </style>
 </head>
 <body>
-    <div class="email-container" align="center">
+    <div class="email-container">
         @if($showButton)
             <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;">
             <h2>Customer Satisfaction Regarding {{ $CategoryName }}</h2>
@@ -80,16 +80,16 @@
                     <td colspan="2">{{ $Description }}</td>
                 </tr>
             </table>
-            <p>
+            <p align="center">
                 <a href="{{ $button_url }}" style="background: #007BFF; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
                     {{ $button_text }}
                 </a>
             </p>
         @else 
-            <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;">
-            <h2>Customer Satisfaction Regarding {{ $CategoryName }}</h2>
-            <b>Thank you for taking the time to share your feedback.</b>
-            <p>We're truly grateful for your trust and satisfaction with our service. Your continued support inspires us to keep improving and delivering the quality you deserve</p>
+            <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;" align="center">
+            <h2 align="center">Customer Satisfaction Regarding {{ $CategoryName }}</h2>
+            <b>Dear Valued Partner.</b>
+            <p>Thank you for your feedback.<br><br>We are delighted to hear your positive comments.<br><br>Should you have further concerns, please contact marketing@rico.com.ph or you may https://crms-v2.wgroup.space/customer_service</p>
 
             <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
                 <tr>
