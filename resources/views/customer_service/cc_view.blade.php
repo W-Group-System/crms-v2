@@ -62,7 +62,7 @@
                             <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success approvedBtn">
-                                    <i class="ti-check">&nbsp;</i> Acknowledged
+                                    <i class="ti-check">&nbsp;</i> Acknowledge
                                 </button>
                             </form>
                         @endif
