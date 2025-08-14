@@ -803,9 +803,12 @@
                             <div class="form-group">
                                 <label for="name">With Claims/Credit Note?</label>
                                 <div class="form-check form-check-inline" id="check-radio">
-                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault1" value="1">
+                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault1" value="1"
+                                        {{ isset($data->Claims) && $data->Claims == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault1">Yes</label>
-                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault2" value="2">
+
+                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault2" value="2"
+                                        {{ isset($data->Claims) && $data->Claims != 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
                             </div>
@@ -814,9 +817,9 @@
                             <div class="form-group">
                                 <label for="name">For Shipment Return?</label>
                                 <div class="form-check form-check-inline" id="ship-radio">
-                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault1" value="1">
+                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault1" value="1" {{ isset($data->Claims) && $data->Claims == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault1">Yes</label>
-                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault2" value="2">
+                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault2" value="2" {{ isset($data->Claims) && $data->Claims == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
                             </div>
