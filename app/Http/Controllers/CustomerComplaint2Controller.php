@@ -299,7 +299,7 @@ class CustomerComplaint2Controller extends Controller
         // ]);
 
         // Mail::to($request->Email)
-        //     ->cc('ict.engineer@wgroup.com.ph')
+        //     ->cc('international.sales@rico.com.ph')
         //     ->send(new CustomerComplaintMail($customerComplaint, $attachments));
 
         // Send to main recipient WITHOUT button
@@ -307,7 +307,7 @@ class CustomerComplaint2Controller extends Controller
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
         // Send to CC recipients WITH button
-        Mail::to(['ict.engineer@wgroup.com.ph', 'mark.bautista@wgroup.space']) // CC emails here
+        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph']) // CC emails here
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));
         
         return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
@@ -346,7 +346,7 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        Mail::to(['ict.engineer@wgroup.com.ph', 'mark.bautista@wgroup.space']) // CC emails here
+        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph']) // CC emails here
             ->send(new InvestigationMail($data, $attachments, true));
         
         return response()->json([
