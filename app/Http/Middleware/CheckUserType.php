@@ -23,7 +23,7 @@ class CheckUserType
             $roleType = $user->role->type; // Get the role type
 
             // Check the role type and redirect accordingly
-            if ($roleType == 'RND' || $roleType == 'ITD' || $roleType == 'ACCTG') {
+            if ($roleType == 'RND' || $roleType == 'ITD' || $roleType == 'ACCTG' || $roleType->type == 'IAD') {
                 return redirect('/dashboard-rnd');
             } elseif ($roleType == 'IS' || $roleType == 'LS' || $roleType == 'CS') {
                 return redirect('/dashboard-sales');
