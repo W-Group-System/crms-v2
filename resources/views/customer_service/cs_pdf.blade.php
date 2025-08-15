@@ -93,7 +93,7 @@ input[type="checkbox"] {
             <td width="20%">{{ $cs->ContactName }}</td>
             <td width="20%"></td>
             <td width="25%">&nbsp;Department/s Concerned:</td>
-            <td style="border-right: 1px solid" width="20%">{{ optional($cs->concerned)->Name }}</td>
+            <td style="border-right: 1px solid" width="20%">{{ $cs->Concerned }}</td>
         </tr>
         <tr>
             <td style="border-left: 1px solid" width="15%">&nbsp;Company Name:</td>

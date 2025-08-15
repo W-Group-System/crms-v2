@@ -411,7 +411,7 @@ input[type="checkbox"] {
             <td>{{ $cc->ActionObjectiveEvidence }}</td>
             <td>{{ $cc->ActionDate }}/ {{ $cc->action_responsible->full_name }}</td>
         </tr>
-        <tr>
+        <!-- <tr>
             <td width="50%" align="center">
                 <div style="text-align: left;margin-bottom: 20px">
                     <label>Prepared By:</label>
@@ -426,7 +426,7 @@ input[type="checkbox"] {
                 <label></label>
                 <label>Signature over Printed Name/ Date</label>
             </td>
-        </tr>
+        </tr> -->
     </table>
     <label class="mt-2"><b>III.	Verification/ Recommendation</b></label>
     <table border="1" class="mt-2" cellspacing="0" cellpadding="4" width="100%">
