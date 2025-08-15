@@ -54,7 +54,8 @@
                             <th>Company Name</th>
                             <th>Contact Name</th>
                             <th>Department Concerned</th>
-                            <th>Category</th>
+                            <!-- <th>Category</th> -->
+                            <th>Customer Remarks</th>
                             <th>Received By</th>
                         </tr>
                     </thead>
@@ -68,8 +69,9 @@
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ date('M. d, Y', strtotime($cs_data->created_at)) }}</td>
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->CompanyName }}</td>
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->ContactName }}</td>
-                                <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->concerned->Name ?? 'N/A' }}</td>
-                                <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->category->Name }}</td>
+                                <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->Concerned ?? 'N/A' }}</td>
+                                <!-- <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->category->Name }}</td> -->
+                                <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->Description ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->users->full_name ?? 'N/A' }}</td>
                                 <!-- <td>
                                     @if($cs_data->Status == 10)

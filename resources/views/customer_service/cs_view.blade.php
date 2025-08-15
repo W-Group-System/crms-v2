@@ -13,7 +13,7 @@
                             <form action="{{ url('cs_received/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success receivedBtn">
-                                    <i class="ti-bookmark">&nbsp;</i> Received
+                                    <i class="ti-bookmark">&nbsp;</i>Receive
                                 </button>
                             </form>
                         @endif
@@ -33,7 +33,7 @@
                         @if($data->ApprovedBy != NULL)
                             @if($data->Concerned == NULL)
                             <button type="button" class="btn btn-outline-primary" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
-                                <i class="ti ti-pencil"></i>&nbsp;Assign
+                                <i class="ti ti-pencil"></i>&nbsp;Share
                             </button>
                             @endif
                             <button type="button" class="btn btn-outline-warning" id="updateCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCs">
@@ -51,7 +51,7 @@
                             </form> -->
                         @endif
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->ApprovedBy == NULL)
-                            <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST">
+                            <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST" onsubmit="show()">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success approvedBtn">
                                     <i class="ti-check">&nbsp;</i> Acknowledged
@@ -88,7 +88,7 @@
                         <div class="col-sm-3">
                             <label>{{ $data->DateReceived }}</label>
                         </div> -->
-                        <label class="col-sm-3 col-form-label text-right"><b>Received By:</b></label>
+                        <label class="offset-sm-6 col-sm-3 col-form-label text-right"><b>Received By:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->users->full_name ?? 'N/A' }}</label>
                         </div>
@@ -470,28 +470,44 @@
         });
 
         $('.approvedBtn').on('click', function (e) {
-            e.preventDefault(); // Prevent the default form submission
+            e.preventDefault(); // Stop normal form submission
+
+            // Show loading before sending AJAX
+            Swal.fire({
+                title: 'Please wait...',
+                text: 'Processing request',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
             var form = $(this).closest('form');
-            var actionUrl = form.attr('action'); // Get form action URL
+            var actionUrl = form.attr('action');
 
             $.ajax({
                 url: actionUrl,
                 type: 'POST',
-                data: form.serialize(), // Serialize form data
+                data: form.serialize(),
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
                             title: "Acknowledged",
                             text: response.message,
                             icon: "success",
-                            showConfirmButton: false,
-                            customClass: 'swal-wide',
-                            timer: 1500
-                        }).then(function () {
-                            window.location.reload(); // Reload the page after the alert
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
                         });
                     }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error",
+                        text: "Something went wrong",
+                        icon: "error"
+                    });
                 }
             });
         });

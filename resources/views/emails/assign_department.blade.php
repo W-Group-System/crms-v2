@@ -6,12 +6,14 @@
 <body>
     <p>Dear {{ $customerSatisfaction->Concerned }},</p>
     
-    <p>A new customer satisfaction issue has been assigned to your department.</p>
+    <p>A new customer satisfaction issue has been shared to your department.</p>
 
     <p><strong>Details:</strong></p>
     <ul>
-        <li><strong>Reference ID:</strong> {{ $customerSatisfaction->CsNumber }}</li>
-        <li><strong>Description:</strong> {{ $customerSatisfaction->Description ?? 'No description provided' }}</li>
+        <li><strong>Customer Satisfaction #:</strong> {{ $customerSatisfaction->CsNumber }}</li>
+        <li><strong>Company Name:</strong> {{ $customerSatisfaction->CompanyName }}</li>
+        <li><strong>Customer Name:</strong> {{ $customerSatisfaction->ContactName }}</li>
+        <li><strong>Customer Feedback:</strong> {{ $customerSatisfaction->Description ?? 'No description provided' }}</li>
     </ul>
 
     <p><strong>View Satisfaction:</strong> 

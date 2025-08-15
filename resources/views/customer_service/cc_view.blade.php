@@ -753,7 +753,7 @@
                             <label>Investigation of the Problem:</label>
                             <div class="form-group">
                                 <label for="name">Investigation/ Root Cause Analysis</label>
-                                <textarea type="text" class="form-control" id="Investigation" name="Investigation" rows="2" placeholder="Enter Immediate Action" required>{{ $data->Investigation }}</textarea>
+                                <textarea type="text" class="form-control" id="Investigation" name="Investigation" rows="2" placeholder="Enter Immediate Action">{{ $data->Investigation }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -762,13 +762,13 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Corrective Action</label>
-                                <textarea type="text" class="form-control" id="CorrectiveAction" name="CorrectiveAction" rows="3" placeholder="Enter Corrective Action" required>{{ $data->CorrectiveAction }}</textarea>
+                                <textarea type="text" class="form-control" id="CorrectiveAction" name="CorrectiveAction" rows="3" placeholder="Enter Corrective Action">{{ $data->CorrectiveAction }}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Objective Evidence</label>
-                                <textarea type="text" class="form-control" id="ActionObjectiveEvidence" name="ActionObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence" required>{{ $data->ActionObjectiveEvidence }}</textarea>
+                                <textarea type="text" class="form-control" id="ActionObjectiveEvidence" name="ActionObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence">{{ $data->ActionObjectiveEvidence }}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-6">

@@ -11,10 +11,10 @@ use App\CustomerSatisfaction;
 use App\CustomerComplaint2;
 use App\CsFiles;
 use Illuminate\Support\Facades\Auth;
-use App\CustomerRequirement;
 use Illuminate\Http\Request;
 use App\Mail\CustomerSatisfactionMail;
 use App\Mail\AssignDepartmentMail;
+use App\Mail\AcknowledgedMail;
 use App\SatisfactionFile;
 use App\SatisfactionRemarks;
 use Illuminate\Support\Facades\Mail;
@@ -231,8 +231,8 @@ class CustomerSatisfactionController extends Controller
         ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
 
         // Send to CC recipients WITH button
-        // Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'iad@wgroup.com.ph']) // CC emails here
-        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph'])
+        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'iad@wgroup.com.ph']) // CC emails here
+        // Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph'])
         ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, true));
        
         // Return success message
@@ -327,12 +327,18 @@ class CustomerSatisfactionController extends Controller
         ]);
     }
 
-    public function approved($id)
+    public function approved(Request $request, $id)
     {
         $data = CustomerSatisfaction::findOrFail($id);
         $data->ApprovedBy = auth()->user()->id;
+        $data->ApprovedDate = now();
         $data->Progress = 40;
         $data->save();
+
+        $attachments = [];
+        
+        Mail::to('ict.engineer@wgroup.com.ph')
+            ->send(new AcknowledgedMail($data, $attachments));
 
         return response()->json([
             'success' => true,
