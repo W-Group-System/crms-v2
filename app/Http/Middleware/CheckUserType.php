@@ -27,7 +27,7 @@ class CheckUserType
                 return redirect('/dashboard-rnd');
             } elseif ($roleType == 'IS' || $roleType == 'LS' || $roleType == 'CS') {
                 return redirect('/dashboard-sales');
-            } elseif ($roleType == 'QCD-WHI' || $roleType == 'QCD-PBI' || $roleType == 'QCD-MRDC' || $roleType == 'QCD-CCC') {
+            } elseif ($roleType == 'QCD-WHI' || $roleType == 'QCD-PBI' || $roleType == 'QCD-MRDC' || $roleType == 'QCD-CCC' || $roleType == 'Production') {
                 return redirect('/dashboard-qcd');
             } elseif ($roleType == 'PRD') {
                 return redirect('/dashboard-prd');
