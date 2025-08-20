@@ -34,7 +34,7 @@ class DashboardController extends Controller
             return redirect('/dashboard-rnd');
         } elseif ($role && $role->type == 'IS' || $role->type == 'LS') {
             return redirect('/dashboard-sales');
-        } elseif ($role && $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC' || $role->type == 'QCD-CCC') {
+        } elseif ($role && $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC' || $role->type == 'QCD-CCC' || $role->type == 'Production') {
             return redirect('/dashboard-qcd');
         } elseif ($role && $role->type == 'PRD') {
             return redirect('/dashboard-prd');
