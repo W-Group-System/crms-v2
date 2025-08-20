@@ -17,23 +17,23 @@
                         <form action="{{ url('cc_received/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-success receivedBtn">
-                                <i class="ti-bookmark">&nbsp;</i> Receive
+                                <i class="ti-bookmark"></i>&nbsp;Receive
                             </button>
                         </form>
                     @endif
                     @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                        @if($data->Progress == 20)
+                        @if($data->Progress == 50)
                             <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success notedBtn">
-                                    <i class="ti-check">&nbsp;</i> Noted By
+                                    <i class="ti-check"></i>&nbsp;Noted By
                                 </button>
                             </form>
                         @endif
                     @endif
                     {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
-                    @if($data->ReceivedBy == auth()->user()->id && $data->NotedBy != null)
-                        @if($data->Progress == 30 && $data->ApprovedBy == NULL)
+                    @if($data->ReceivedBy == auth()->user()->id)
+                        @if($data->Progress == 20)
                             <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
                             <i class="ti ti-pencil"></i>&nbsp;Complaint 
                             </button>
@@ -49,7 +49,7 @@
                         </button>
                         @endif
                     @endif
-                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)
+                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 50)
                     <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger closeBtn">
@@ -57,12 +57,12 @@
                         </button>
                     </form>
                     @endif
-                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Department != NULL)
-                        @if($data->Progress == 50)
+                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->NotedBy != NULL)
+                        @if($data->Progress == 30)
                             <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success approvedBtn">
-                                    <i class="ti-check">&nbsp;</i> Acknowledge
+                                    <i class="ti-check"></i>&nbsp;Acknowledge
                                 </button>
                             </form>
                         @endif

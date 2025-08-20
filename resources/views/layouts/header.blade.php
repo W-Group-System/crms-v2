@@ -24,7 +24,6 @@
         <link href="{{ asset('css/select2-bootstrap.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link href="{{ asset('css/buttons.bootstrap4.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/style.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
         <link rel="stylesheet" href="{{asset('css/theme.bootstrap_4.min.css')}}">
         <link rel="icon" href="{{asset('images/wgroup.png')}}" type="image/x-icon">

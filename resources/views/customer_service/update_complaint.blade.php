@@ -13,27 +13,24 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label>Select Site Concerned</label>
+                                <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" required>
+                                    <option value="" disabled selected>Select Site Concerned</option>
+                                    <option value="1">WHI Head Office</option>
+                                    <option value="2">WHI Carmona</option>
+                                    <option value="3">MRDC</option>
+                                    <option value="4">CCC Carmen</option>
+                                    <option value="5">PBI Canlubang</option>
+                                    <option value="6">International Warehouse</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label>Select Department Concerned</label>
                                 <select class="form-control js-example-basic-single" name="Department" id="Department" required>
                                     <option value="" disabled selected>Select Department Concerned</option>
-                                    @foreach($concern_department as $dept)
-                                        <option value="{{ $dept->Name }}" {{ old('Department') == $dept->Name ? 'selected' : '' }}>
-                                            {{ $dept->Name }}
-                                        </option>
-                                    @endforeach
-                                </select> 
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Select Site Concerned</label>
-                                <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" title="Select Site Concerned" required>
-                                    <option value="" disabled selected>Select Site Concerned</option>
-                                    <option value="WHI Carmona">WHI Carmona</option>
-                                    <option value="WHI Head Office">WHI Head Office</option>
-                                    <option value="CCC Carmen">CCC Carmen</option>
-                                    <option value="PBI Canlubang">PBI Canlubang</option>
-                                    <option value="International Warehouse">International Warehouse</option>
                                 </select>
                             </div>
                         </div>
@@ -111,6 +108,28 @@
                     Swal.fire("Error", "Something went wrong! Please try again.", "error");
                 }
             });
+        });
+
+        $('#SiteConcerned').on('change', function () {
+            let siteId = $(this).val();
+
+            if (siteId) {
+                $.ajax({
+                    url: "{{ url('departments-by-site') }}/" + siteId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#Department').empty(); 
+                        $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
+
+                        $.each(data, function (key, department) {
+                            $('#Department').append('<option value="' + department.Name + '">' + department.Name + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#Department').empty();
+                $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
+            }
         });
     });
 </script>

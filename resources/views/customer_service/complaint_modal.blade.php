@@ -24,14 +24,8 @@
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-6 issue-check1" style="display: {{ isset($data->RecurringIssue) && $data->RecurringIssue == 1 ? 'block' : 'none' }};">
-                            <div class="form-group issue-check">
-                                <label for="name">Previous CCF No. (If Yes):</label>
-                                <input type="text" class="form-control" id="PreviousCCF" name="PreviousCCF" placeholder="Enter CCF No.">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 issue-check2" style="display: {{ isset($data->RecurringIssue) && $data->RecurringIssue == 2 ? 'block' : 'none' }};">
+                        </div>                        
+                        <div class="col-lg-6" >
                             <div class="form-group">
                                 <label for="name">For NCAR Issuance:</label>
                                 <div class="form-check form-check-inline" id="issue-radio">
@@ -42,6 +36,12 @@
                                         {{ isset($data->NcarIssuance) && $data->NcarIssuance != 1 ? 'checked' : '' }}>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 issue-check1" style="display: {{ isset($data->RecurringIssue) && $data->RecurringIssue == 1 ? 'block' : 'none' }};">
+                            <div class="form-group issue-check">
+                                <label for="name">Previous CCF No. (If Yes):</label>
+                                <input type="text" class="form-control" id="PreviousCCF" name="PreviousCCF" placeholder="Enter CCF No.">
                             </div>
                         </div>
                         <div class="col-lg-12 mb-2">
@@ -262,9 +262,9 @@
     $('#issue-radio2').on('change', function() {
         var selectedValue = $('input[name="RecurringIssue"]:checked').val(); 
         if (selectedValue == "2") {
-            $('.issue-check2').show(); 
+            $('').show(); 
         } else {
-            $('.issue-check2').hide(); 
+            $('').hide(); 
         }
         if (selectedValue == "1") {
             $('.issue-check1').show(); 
