@@ -69,6 +69,11 @@
                 <td>{{ $investigationComplaint->ActionObjectiveEvidence }}</td>
             </tr>
         </table>
+        <p align="center">
+            <a href="{{ url('customer-complaint/view/'.$data->id) }}" style="background: #007BFF; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                Click here to view details
+            </a>
+        </p>
         {{-- <p align="center">
             <a href="{{ $button_url }}" style="background: #007BFF; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
                 {{ $button_text }}

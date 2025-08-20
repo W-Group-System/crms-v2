@@ -81,7 +81,7 @@ input[type="checkbox"] {
         </tr>
         <tr>
             <td width="18%"><b>Address:</b></td>
-            <td width="72%" colspan="3"></td>
+            <td width="72%" colspan="3">{{ $cc->Address }}</td>
         </tr>
         <tr>
             <td width="18%"><b>Country:</b></td>
@@ -459,5 +459,6 @@ input[type="checkbox"] {
             </td>
         </tr>
     </table>
+    <p>Electronically generated and valid without signature.</p>
 </body>
 </html>

@@ -11,8 +11,8 @@ use App\ComplaintFile;
 use App\Country;
 use App\ConcernDepartment;
 use App\User;
+use App\Company;
 use App\CustomerComplaint2;
-use App\Notifications\EmailDepartment;
 use App\Notifications\CcNotif;
 use App\CcObjectiveFile;
 use App\CcVerificationFile;
@@ -160,7 +160,7 @@ class CustomerComplaint2Controller extends Controller
             'CcNumber' => $request->CcNumber,
             'ContactName' => $request->ContactName,
             'Email' => $request->Email,
-            // 'Address' => $request->Address,
+            'Address' => $request->Address,
             'Country' => $request->Country,
             'Telephone' => $request->Telephone,
             // 'Moc' => $request->Moc,
@@ -307,7 +307,8 @@ class CustomerComplaint2Controller extends Controller
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
         // Send to CC recipients WITH button
-        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph']) // CC emails here
+        // Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph']) // CC emails here
+        Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph'])
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));
         
         return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
@@ -346,7 +347,7 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph']) // CC emails here
+        Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph']) // CC emails here
             ->send(new InvestigationMail($data, $attachments, true));
         
         return response()->json([
@@ -591,6 +592,11 @@ class CustomerComplaint2Controller extends Controller
         ]);
     }
 
+    public function getDepartmentsBySite($siteId)
+    {
+        $departments = ConcernDepartment::where('site_id', $siteId)->get(['id', 'Name']);
+        return response()->json($departments);
+    }
     public function printCc($id)
     {
         $cc = CustomerComplaint2::with('country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'users', 'noted_by')->findOrFail($id);
@@ -604,7 +610,7 @@ class CustomerComplaint2Controller extends Controller
 
         return $pdf->stream();
     }
-
+    
     public function delete($id)
     {
         {

@@ -344,52 +344,74 @@
     });
 
     $('#form_complaint').on('submit', function(event) {
-            event.preventDefault();
+        event.preventDefault();
 
-            var formData = new FormData(this);
-            var submitBtn = $("button[type='submit']");
-            
-            // **Disable the button and show loading**
-            submitBtn.prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> Submitting...');
+        var formData = new FormData(this);
+        var submitBtn = $("button[type='submit']");
+        
+        // **Disable the button and show loading**
+        submitBtn.prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> Submitting...');
 
-            $.ajax({
-                url: "{{ route('customer_complaint2.store') }}",
-                method: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                dataType: "json",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Display a Swal success message
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Saved',
-                            text: response.success,
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then((result) => {
-                            $('#form_complaint')[0].reset();
-                            location.reload();
-                        });
-                    }
-                },
-                error: function(xhr) {
+        $.ajax({
+            url: "{{ route('customer_complaint2.store') }}",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Display a Swal success message
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Something went wrong. Please try again!',
+                        icon: 'success',
+                        title: 'Saved',
+                        text: response.success,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then((result) => {
+                        $('#form_complaint')[0].reset();
+                        location.reload();
                     });
-                },
-                complete: function() {
-                    // **Re-enable the button after request is complete**
-                    submitBtn.prop("disabled", false).html('Submit');
                 }
-            });
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again!',
+                });
+            },
+            complete: function() {
+                // **Re-enable the button after request is complete**
+                submitBtn.prop("disabled", false).html('Submit');
+            }
         });
+    });
+
+    // document.getElementById('imageUpload').addEventListener('change', function(e) {
+    //     const previewContainer = document.getElementById('imagePreview');
+    //     previewContainer.innerHTML = ''; // Clear previous previews
+
+    //     for (let i = 0; i < e.target.files.length; i++) {
+    //         const file = e.target.files[i];
+    //         if (file.type.startsWith('image/')) {
+    //             const reader = new FileReader();
+    //             reader.onload = function(event) {
+    //                 const img = document.createElement('img');
+    //                 img.src = event.target.result;
+    //                 img.style.maxWidth = '100px'; // Adjust size as needed
+    //                 img.style.margin = '10px';
+    //                 previewContainer.appendChild(img);
+    //             };
+    //             reader.readAsDataURL(file);
+    //         }
+    //     }
+    // });
+
+
 </script>
 
 @endsection

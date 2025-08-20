@@ -50,9 +50,7 @@
                             <th>
                                 Email
                             </th>
-                            <th>
-                                Cc Email
-                            </th>
+                            <!-- <th>Cc Email</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -69,11 +67,11 @@
                                 <td>{{ $concern_department->Name }}</td>
                                 <td>{{ $concern_department->Description }}</td>
                                 <td>{{$concern_department->email}}</td>
-                                <td>
+                                <!-- <td>
                                     @foreach ($concern_department->audit as $key=>$audit)
                                         <small>{{$audit->email}}</small> <br>
                                     @endforeach
-                                </td>
+                                </td> -->
                             </tr>
                         @endforeach
                     </tbody>
@@ -121,7 +119,7 @@
                         <label for="name">Email</label>
                         <input type="email" class="form-control" id="Email" name="Email" placeholder="Enter Email">
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="name">Cc Email</label>
                         <select data-placeholder="Select Email" name="audit[]" id="CcEmail" class="form-control js-example-basic-multiple" multiple>
                             <option value=""></option>
@@ -129,7 +127,7 @@
                                 <option value="{{$key}}">{{$audit}}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> -->
                     <div class="modal-footer">
                         <input type="hidden" name="action" id="action" value="Save">
                         <input type="hidden" name="hidden_id" id="hidden_id">

@@ -3,8 +3,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerComplaintController;
 use App\Http\Controllers\CustomerFeedbackController;
 use App\Http\Controllers\SampleRequestController;
-use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\PriceMonitoringController;
+use App\Http\Controllers\UploadController;
+use App\Http\Controllers\CustomerComplaint2Controller;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -24,6 +24,10 @@ Route::get('customer_service', 'CustomerSatisfactionController@header');
 Route::get('customer_satisfaction', 'CustomerSatisfactionController@index');
 Route::post('/new_customer_satisfaction', 'CustomerSatisfactionController@store')->name('customer_satisfaction.store');
 Route::get('contacts_by_client/{clientId}', 'CustomerSatisfactionController@getContactsByClient');
+
+Route::post('/upload-temp', [UploadController::class, 'uploadTemp'])->name('upload.temp');
+Route::delete('/upload-revert', [UploadController::class, 'uploadRevert'])->name('upload.revert');
+
 
 Route::get('customer_complaint2', 'CustomerComplaint2Controller@index');
 Route::post('/new_customer_complaint2', 'CustomerComplaint2Controller@store')->name('customer_complaint2.store');
@@ -439,6 +443,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('cc_update/{id}', 'CustomerComplaint2Controller@ccupdate');
         Route::post('cc_assign/{id}', 'CustomerComplaint2Controller@assign')->name('cc_assign');
         Route::get('print_cc/{id}', 'CustomerComplaint2Controller@printCc');
+        Route::get('/departments-by-site/{siteId}', [CustomerComplaint2Controller::class, 'getDepartmentsBySite']);
         Route::delete('delete_cc_files/{id}', 'CustomerComplaint2Controller@delete')->name('delete_cc_files');
         Route::delete('delete_cc_files2/{id}', 'CustomerComplaint2Controller@delete2')->name('delete_cc_files2');
         
