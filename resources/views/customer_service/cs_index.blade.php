@@ -4,6 +4,8 @@
     <img src="{{asset('images/whi.png')}}" style="width: 180px;" class="mt-3">
     <h2 class="header_h2 mt-2">Customer Service Application</h2>
 </div> -->
+<link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <div class="container">
     <div class="row justify-content-center">
@@ -108,10 +110,22 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <!-- <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="label">Attachments</label>
                                                 <input type="file" class="form-control attachments" name="Path[]" id="Path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                                            </div>
+                                        </div> -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="label">Attachments</label>
+                                                <input
+                                                    type="file"
+                                                    class="filepond"
+                                                    name="Path[]"
+                                                    id="Path"
+                                                    multiple
+                                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -173,10 +187,22 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <!-- <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="label">Attachments</label>
                                                 <input type="file" class="form-control attachments" name="Path[]" id="Path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                                            </div>
+                                        </div> -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="label">Attachments</label>
+                                                <input
+                                                    type="file"
+                                                    class="filepond"
+                                                    name="Path[]"
+                                                    id="Path2"
+                                                    multiple
+                                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -262,7 +288,10 @@
 }
 
 </style>
-
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const complaintBtn = document.getElementById("btn_complaint");
@@ -391,27 +420,59 @@
         });
     });
 
-    // document.getElementById('imageUpload').addEventListener('change', function(e) {
-    //     const previewContainer = document.getElementById('imagePreview');
-    //     previewContainer.innerHTML = ''; // Clear previous previews
+    document.addEventListener('DOMContentLoaded', function () {
+        // Register plugins
+        FilePond.registerPlugin(
+            // FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize,
+            FilePondPluginImagePreview
+        );
 
-    //     for (let i = 0; i < e.target.files.length; i++) {
-    //         const file = e.target.files[i];
-    //         if (file.type.startsWith('image/')) {
-    //             const reader = new FileReader();
-    //             reader.onload = function(event) {
-    //                 const img = document.createElement('img');
-    //                 img.src = event.target.result;
-    //                 img.style.maxWidth = '100px'; // Adjust size as needed
-    //                 img.style.margin = '10px';
-    //                 previewContainer.appendChild(img);
-    //             };
-    //             reader.readAsDataURL(file);
-    //         }
-    //     }
-    // });
+        // Create FilePond instance
+        const pond = FilePond.create(document.querySelector('#Path'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
 
+            server: {
+                process: {
+                    url: '{{ url("/upload-temp") }}',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    onload: (response) => {
+                        // return the file name only (so it becomes the Path[] value)
+                        return JSON.parse(response).id;
+                    }
+                },
+                revert: {
+                    url: '{{ url("/upload-revert") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
 
+        const pond2 = FilePond.create(document.querySelector('#Path2'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+
+            server: {
+                process: {
+                    url: '{{ url("/upload-temp-cc") }}',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    onload: (response) => {
+                        // return the file name only (so it becomes the Path[] value)
+                        return JSON.parse(response).id;
+                    }
+                },
+                revert: {
+                    url: '{{ url("/upload-revert-cc") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
+    });
 </script>
 
 @endsection

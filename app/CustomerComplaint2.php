@@ -86,6 +86,11 @@ class CustomerComplaint2 extends Model
         return $this->hasMany(ComplaintFile::class,'CcId');
     }
 
+    public function ccsales()
+    {
+        return $this->hasMany(ComplaintRemarks::class,'CcId');
+    }
+
     public function cc_attachments() 
     {
         return $this->hasMany(ComplaintFile::class, 'CcId', 'id');

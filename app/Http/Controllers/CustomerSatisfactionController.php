@@ -19,6 +19,7 @@ use App\SatisfactionFile;
 use App\SatisfactionRemarks;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class CustomerSatisfactionController extends Controller
@@ -190,52 +191,85 @@ class CustomerSatisfactionController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function uploadTemp(Request $request) 
+    {
+        if ($request->hasFile('Path')) {
+            $files = $request->file('Path'); 
+
+            $uploaded = [];
+            foreach ($files as $file) {
+                $fileName = uniqid() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('temp', $fileName, 'public');
+
+                $uploaded[] = [
+                    'id'   => $fileName, // return only fileName to FilePond
+                    'path' => $path
+                ];
+            }
+
+            // Return only first file if FilePond expects one at a time
+            return response()->json($uploaded[0]);
+        }
+
+        return response()->json(['error' => 'No file uploaded'], 400);
+    }
+
+
+    public function uploadRevert(Request $request) 
+    {
+        $fileName = $request->getContent();
+        $path = 'temp/' . $fileName;
+
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+            return response('', 200);
+        }
+        return response('', 404);
+    }
+
+
+    public function store(Request $request) 
     {
         $customerSatisfaction = CustomerSatisfaction::create([
             'CompanyName' => $request->CompanyName,
-            'CsNumber' => $request->CsNumber,
+            'CsNumber'    => $request->CsNumber,
             'ContactName' => $request->ContactName,
-            'Concerned' => $request->Concerned,
+            'Concerned'   => $request->Concerned,
             'Description' => $request->Description,
-            'Category' => $request->Category,
-            'ContactNumber' => $request->ContactNumber,
-            'Email' => $request->Email,
-            'Status' => '10',
-            'Progress' => '10'
+            'Category'    => $request->Category,
+            'ContactNumber'=> $request->ContactNumber,
+            'Email'       => $request->Email,
+            'Status'      => '10',
+            'Progress'    => '10'
         ]);
 
         $attachments = [];
-        if ($request->hasFile('Path') && is_array($request->file('Path'))) {
-            foreach ($request->file('Path') as $file) {
-                if ($file->isValid()) {
-                    $csFile = new SatisfactionFile();
-                    $csFile->CsId = $customerSatisfaction->id;
 
-                    $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
-                    $csFile->Path = $filePath; 
-                    $csFile->save();
+        // 2. Attachments (moved from temp → cs_files)
+        if ($request->has('Path') && is_array($request->Path)) {
+            foreach ($request->Path as $fileName) {
+                $tempPath = 'temp/' . $fileName;
+                if (Storage::disk('public')->exists($tempPath)) {
+                    $newPath = 'cs_files/' . $fileName;
+                    Storage::disk('public')->move($tempPath, $newPath);
 
-                    $attachments[] = $filePath;
+                    SatisfactionFile::create([
+                        'CsId' => $customerSatisfaction->id,
+                        'Path' => $newPath
+                    ]);
+
+                    $attachments[] = $newPath;
                 }
             }
         }
 
-        // Mail::to($request->Email)
-        //     ->cc('ict.engineer@wgroup.com.ph')
-        //     ->send(new CustomerSatisfactionMail($customerSatisfaction));
+        // 3. Send email
+        Mail::to($customerSatisfaction->Email)
+            ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
 
-        // Send to main recipient WITHOUT button
-        Mail::to($customerSatisfaction['Email'])
-        ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
+        Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph'])
+            ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, true));
 
-        // Send to CC recipients WITH button
-        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'iad@wgroup.com.ph']) // CC emails here
-        // Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph'])
-        ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, true));
-       
-        // Return success message
         return response()->json(['success' => 'Your customer satisfaction has been submitted successfully!']);
     }
 

@@ -10,4 +10,9 @@ class SatisfactionFile extends Model
     use SoftDeletes;
     protected $table = "satisfaction_files";
     protected $fillable = ['CsId', 'Path'];
+
+    public function customerSatisfaction()
+    {
+        return $this->belongsTo(CustomerSatisfaction::class, 'CsId');
+    }
 }

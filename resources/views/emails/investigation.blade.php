@@ -58,19 +58,19 @@
                 <td colspan="2"><strong>Investigation/ Root Cause Analysis:</strong></td>
             </tr>
             <tr>
-                <td colspan="2">{{ $investigationComplaint->Investigation }}</td>
+                <td colspan="2">{{ $investigationComplaint->Investigation ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td><strong>Corrective Action:</strong></td>
-                <td>{{ $investigationComplaint->CorrectiveAction }}</td>
+                <td>{{ $investigationComplaint->CorrectiveAction ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td><strong>Objective Evidence:</strong></td>
-                <td>{{ $investigationComplaint->ActionObjectiveEvidence }}</td>
+                <td>{{ $investigationComplaint->ActionObjectiveEvidence ?? 'N/A' }}</td>
             </tr>
         </table>
         <p align="center">
-            <a href="{{ url('customer-complaint/view/'.$data->id) }}" style="background: #007BFF; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+            <a href="{{ url('customer_complaint/view/'.$investigationComplaint->id) }}" style="background: #007BFF; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
                 Click here to view details
             </a>
         </p>

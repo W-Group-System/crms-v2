@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerComplaintController;
 use App\Http\Controllers\CustomerFeedbackController;
 use App\Http\Controllers\SampleRequestController;
-use App\Http\Controllers\UploadController;
+use App\Http\Controllers\CustomerSatisfactionController;
 use App\Http\Controllers\CustomerComplaint2Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,9 +25,11 @@ Route::get('customer_satisfaction', 'CustomerSatisfactionController@index');
 Route::post('/new_customer_satisfaction', 'CustomerSatisfactionController@store')->name('customer_satisfaction.store');
 Route::get('contacts_by_client/{clientId}', 'CustomerSatisfactionController@getContactsByClient');
 
-Route::post('/upload-temp', [UploadController::class, 'uploadTemp'])->name('upload.temp');
-Route::delete('/upload-revert', [UploadController::class, 'uploadRevert'])->name('upload.revert');
+Route::post('/upload-temp', [CustomerSatisfactionController::class, 'uploadTemp'])->name('upload.temp');
+Route::delete('/upload-revert', [CustomerSatisfactionController::class, 'uploadRevert'])->name('upload.revert');
 
+Route::post('/upload-temp-cc', [CustomerComplaint2Controller::class, 'uploadTemp'])->name('upload.temp.cc');
+Route::delete('/upload-revert-cc', [CustomerComplaint2Controller::class, 'uploadRevert'])->name('upload.revert.cc');
 
 Route::get('customer_complaint2', 'CustomerComplaint2Controller@index');
 Route::post('/new_customer_complaint2', 'CustomerComplaint2Controller@store')->name('customer_complaint2.store');
@@ -446,6 +448,10 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/departments-by-site/{siteId}', [CustomerComplaint2Controller::class, 'getDepartmentsBySite']);
         Route::delete('delete_cc_files/{id}', 'CustomerComplaint2Controller@delete')->name('delete_cc_files');
         Route::delete('delete_cc_files2/{id}', 'CustomerComplaint2Controller@delete2')->name('delete_cc_files2');
+
+        Route::post('/upload-temp-remarks', [CustomerComplaint2Controller::class, 'uploadTempRemarks'])->name('upload.temp.remarks');
+        Route::delete('/upload-revert-remarks', [CustomerComplaint2Controller::class, 'uploadRevertRemarks'])->name('upload.revert.remarks');
+
         
         // Categorization
         Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    
