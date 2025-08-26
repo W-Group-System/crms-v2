@@ -1,4 +1,7 @@
 <div class="modal fade" id="update{{$data->id}}" tabindex="-1" role="dialog">
+    <link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
+
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
@@ -49,10 +52,22 @@
                                 <input type="text" class="form-control" id="ProductName" name="ProductName" placeholder="Enter Product Name">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <div class="form-group">
                                 <label>Attachments</label>
                                 <input type="file" name="Path[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div> -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Attachments</label>
+                                <input
+                                type="file"
+                                class="filepond"
+                                name="Path[]"
+                                id="Path4"
+                                multiple
+                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
                     </div>
@@ -65,6 +80,10 @@
         </div>
     </div>
 </div>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -129,6 +148,38 @@
             } else {
                 $('#Department').empty();
                 $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
+            }
+        });
+        
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Register plugins
+        FilePond.registerPlugin(
+            // FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize,
+            FilePondPluginImagePreview
+        );
+
+        // Create FilePond instance
+        FilePond.create(document.querySelector('#Path4'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+            server: {
+            process: {
+                url: '{{ url("/upload-temp-cc") }}',
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                // Return the serverId (filename) so FilePond stores it in Path[]
+                onload: (response) => {
+                try { return JSON.parse(response).id; } catch { return response; }
+                }
+            },
+                revert: {
+                    url: '{{ url("/upload-revert-cc") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
             }
         });
     });

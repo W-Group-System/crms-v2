@@ -425,7 +425,7 @@ class DashboardController extends Controller
             ->count();
 
         $customerComplaintApproval = CustomerComplaint2::where('Status', 10)
-            ->whereIn('Progress', [20, 30, 50, 60])
+            ->whereIn('Progress', [30, 50, 60])
             ->where(function ($query) use ($userId) {
                 // If userId is 1, show all records
                 // if ($userId == 15) {

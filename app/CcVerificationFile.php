@@ -11,6 +11,6 @@ class CcVerificationFile extends Model
     
     protected $table = 'ccverificationfiles';
     protected $fillable = [
-        'Path'
+        'CcId','Path'
     ];
 }

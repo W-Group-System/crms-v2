@@ -10,4 +10,5 @@ class CcFile extends Model
     use SoftDeletes;
     
     protected $table = 'ccfiles';
+    protected $fillable = ['CcId', 'Path'];
 }

@@ -1,4 +1,6 @@
 <div class="modal fade" id="complaint{{$data->id}}">
+    <link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -243,6 +245,29 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-12 mb-2">
+                            <label class="display-5"><b>Sales Remarks:</b></label>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name">Remarks</label>
+                                <textarea class="form-control" name="SalesRemarks" id="SalesRemarks" rows="5" required placeholder="Enter Sales Remarks"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Attachments</label>
+                                <input
+                                type="file"
+                                class="filepond"
+                                name="Path[]"
+                                id="Path3"
+                                multiple
+                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-success">Save</button>
@@ -258,6 +283,11 @@
         border-color: red;
     }
 </style>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
 <script>
     $('#issue-radio2').on('change', function() {
         var selectedValue = $('input[name="RecurringIssue"]:checked').val(); 
@@ -311,5 +341,34 @@
         toggleFields('check-o4', 'o4-input');
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+        // Register plugins
+        FilePond.registerPlugin(
+            // FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize,
+            FilePondPluginImagePreview
+        );
 
+        // Create FilePond instance
+        FilePond.create(document.querySelector('#Path3'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+            server: {
+            process: {
+                url: '{{ url("/upload-temp-remarks") }}',
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                // Return the serverId (filename) so FilePond stores it in Path[]
+                onload: (response) => {
+                try { return JSON.parse(response).id; } catch { return response; }
+                }
+            },
+                revert: {
+                    url: '{{ url("/upload-revert-remarks") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
+    });
 </script>

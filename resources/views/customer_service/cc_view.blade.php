@@ -1,5 +1,8 @@
 @extends('layouts.header')
 @section('content')
+<link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
+
 <div class="col-12 grid-margin stretch-card">
     <div class="card border border-1 border-primary rounded-0">
         <div class="card-header bg-primary">
@@ -49,7 +52,7 @@
                         </button>
                         @endif
                     @endif
-                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 50)
+                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)
                     <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger closeBtn">
@@ -72,11 +75,13 @@
                             <i class="ti ti-pencil"></i>&nbsp;Investigation
                         </button>
                     @endif -->
-                    @if($data->Department == auth()->user()->role->type && $data->Progress == 40)
-                        <button type="button" class="btn btn-outline-warning" id="updateCc" 
-                                data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
-                            <i class="ti ti-pencil"></i>&nbsp;Investigation
-                        </button>
+                    @if($data->Department == auth()->user()->role->type && $data->Progress == 40 || $data->Progress == 80)
+                        @if($data->Investigation == null && $data->CorrectiveAction == null && $data->ActionObjectiveEvidence == null)
+                            <button type="button" class="btn btn-outline-warning" id="updateCc" 
+                                    data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                                <i class="ti ti-pencil"></i>&nbsp;Investigation
+                            </button>
+                        @endif
                     @endif
                     @if($data->Progress == 60 || $data->Progress == 70)
                         <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
@@ -263,7 +268,21 @@
                     <p class="m-0"><b>Site Concerned :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->SiteConcerned }}</p>
+                    <p class="m-0">
+                        @if($data->SiteConcerned == 1) 
+                            WHI Head Office
+                        @elseif ($data->SiteConcerned == 2)
+                            WHI Carmona
+                        @elseif ($data->SiteConcerned == 3)
+                            MRDC
+                        @elseif ($data->SiteConcerned == 4)
+                            CCC Carmen
+                        @elseif ($data->SiteConcerned == 5)
+                            PBI Canlubang
+                        @else 
+                            International Warehouse
+                        @endif
+                    </p>
                 </div>
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Acknowledged By:</b></p>
@@ -659,7 +678,7 @@
                             <p class="m-0">{{ $data->ShipmentCost ?? 'N/A' }}</p>
                         </div>
                     </div>
-                    <div class="row mb-0">
+                    <div class="row mb-3">
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Files :</b></p>
                         </div>
@@ -692,6 +711,32 @@
                             {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
                         @endforeach
                     </div> --}}
+                    <div class="col-md-12 mb-3">
+                        <label><strong>Sales Remarks</strong></label>
+                        <hr class="alert-dark mt-0">
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Remarks :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ optional($data->ccsales->first())->SalesRemarks }}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Attachments :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">
+                                @foreach ($data->ccsales as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path); 
+                                    @endphp
+                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
+                                    <br>
+                                @endforeach
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -771,10 +816,22 @@
                                 <textarea type="text" class="form-control" id="ActionObjectiveEvidence" name="ActionObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence">{{ $data->ActionObjectiveEvidence }}</textarea>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <!-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Attachments</label>
                                 <input type="file" name="Path[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div> -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Attachments</label>
+                                <input
+                                type="file"
+                                class="filepond"
+                                name="Path[]"
+                                id="Path5"
+                                multiple
+                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
                     </div>
@@ -858,10 +915,22 @@
                                 <input type="text" class="form-control" id="ShipmentCost" name="ShipmentCost" placeholder="Enter Return Shipment Cost">
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <!-- <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="name">Attachments</label>
                                 <input type="file" name="Path[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div> -->
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Attachments</label>
+                                <input
+                                type="file"
+                                class="filepond"
+                                name="Path[]"
+                                id="Path6"
+                                multiple
+                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
                     </div>
@@ -891,6 +960,10 @@
         text-wrap: wrap !important;
     }
 </style>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
 <script>
     function toggleInputs(checkboxId, inputClass) {
@@ -1064,6 +1137,16 @@
         $('.closeBtn').on('click', function (e) {
             e.preventDefault(); 
 
+            // Show loading before sending AJAX
+            Swal.fire({
+                title: 'Please wait...',
+                text: 'Processing request',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             var form = $(this).closest('form');
             var actionUrl = form.attr('action'); 
 
@@ -1201,6 +1284,68 @@
             });
         });
 
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Register plugins
+        FilePond.registerPlugin(
+            // FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize,
+            FilePondPluginImagePreview
+        );
+
+        // Create FilePond instance
+        FilePond.create(document.querySelector('#Path5'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+            server: {
+            process: {
+                url: '{{ url("/upload-temp-cc") }}',
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                // Return the serverId (filename) so FilePond stores it in Path[]
+                onload: (response) => {
+                try { return JSON.parse(response).id; } catch { return response; }
+                }
+            },
+                revert: {
+                    url: '{{ url("/upload-revert-cc") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Register plugins
+        FilePond.registerPlugin(
+            // FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize,
+            FilePondPluginImagePreview
+        );
+
+        // Create FilePond instance
+        FilePond.create(document.querySelector('#Path6'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+            server: {
+            process: {
+                url: '{{ url("/upload-temp-cc") }}',
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                // Return the serverId (filename) so FilePond stores it in Path[]
+                onload: (response) => {
+                try { return JSON.parse(response).id; } catch { return response; }
+                }
+            },
+                revert: {
+                    url: '{{ url("/upload-revert-cc") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
     });
 </script>
 @endsection

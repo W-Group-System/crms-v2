@@ -347,12 +347,42 @@ input[type="checkbox"] {
         <tr>
             <td colspan="4">
                 <b>Customer Remarks</b><br>
-                {{ $cc->CustomerRemarks }}
+                {{ $cc->CustomerRemarks }}<br>{{ optional($cc->ccsales->first())->SalesRemarks }}<br>
+                @if($cc->ccsales->count())
+                    <ul>
+                        @foreach($cc->ccsales as $remark)
+                            @if($remark->Path)
+                                <li>
+                                    {{ $remark->Path }}
+                                    {{-- if it's an image --}}
+                                    <br>
+                                    <img src="{{ public_path('storage/' . $remark->Path) }}" width="150">
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                @else
+                    <p>No attachments found.</p>
+                @endif
             </td>
         </tr>
        <tr>
             <td><b>Site Concerned:</b></td>
-            <td>{{ $cc->SiteConcerned }}</td>
+            <td>
+                @if($cc->SiteConcerned == 1) 
+                    WHI Head Office
+                @elseif ($cc->SiteConcerned == 2)
+                    WHI Carmona
+                @elseif ($cc->SiteConcerned == 3)
+                    MRDC
+                @elseif ($cc->SiteConcerned == 4)
+                    CCC Carmen
+                @elseif ($cc->SiteConcerned == 5)
+                    PBI Canlubang
+                @else 
+                    International Warehouse
+                @endif
+            </td>
             <td><b>Deparment:</b></td>
             <td>{{ $cc->Department }}</td>
        </tr> 

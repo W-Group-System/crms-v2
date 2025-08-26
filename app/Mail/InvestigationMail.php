@@ -44,6 +44,7 @@ class InvestigationMail extends Mailable
                         'CorrectiveAction' => $this->investigationComplaint['CorrectiveAction'],
                         'ActionObjectiveEvidence' => $this->investigationComplaint['ActionObjectiveEvidence'],
                         'ContactName' => $this->investigationComplaint['ContactName'],
+                        'data' => $this->investigationComplaint,
                         // 'button_text' => 'Visit Customer Complaint',
                         // 'button_url' => url('/cc_list?open=10'),
                         // 'showButton' => $this->showButton, // pass to view
