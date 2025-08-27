@@ -1,5 +1,8 @@
 @extends('layouts.header')
 @section('content')
+<link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
+
 <div class="col-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
@@ -31,7 +34,7 @@
                             @endif
                         @endif
                         @if($data->ApprovedBy != NULL)
-                            @if($data->Concerned == NULL)
+                            @if($data->Department == NULL)
                             <button type="button" class="btn btn-outline-primary" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
                                 <i class="ti ti-pencil"></i>&nbsp;Share
                             </button>
@@ -96,7 +99,8 @@
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Concerned Department:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->concerned->Name ?? 'N/A' }}</label>
+                            <!-- <label>{{ $data->concerned->Name ?? 'N/A' }}</label> -->
+                            <label>{{ $data->Department ?? 'N/A' }}</label>
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
                         <div class="col-sm-3">
@@ -281,7 +285,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCustomerRequirementLabel">Assign Department</h5>
+                <h5 class="modal-title" id="addCustomerRequirementLabel">Share to</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -291,6 +295,40 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Select Site Concerned</label>
+                                <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" required>
+                                    <option value="" disabled selected>Select Site Concerned</option>
+                                    <option value="1">WHI Head Office</option>
+                                    <option value="2">WHI Carmona</option>
+                                    <option value="3">MRDC</option>
+                                    <option value="4">CCC Carmen</option>
+                                    <option value="5">PBI Canlubang</option>
+                                    <option value="6">International Warehouse</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Select Department Concerned</label>
+                                <select class="form-control js-example-basic-single" name="Department" id="Department" required>
+                                    <option value="" disabled selected>Select Department Concerned</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="label">Attachments</label>
+                                <input
+                                    type="file"
+                                    class="filepond"
+                                    name="Path[]"
+                                    id="Path7"
+                                    multiple
+                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-12">
                             <div class="form-group">
                                 <label>Select Department Concerned</label>
                                 <select class="form-control js-example-basic-single" name="Concerned" id="Concerned" required>
@@ -302,13 +340,13 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
-                        <div class="col-md-12">
+                        </div> -->
+                        <!-- <div class="col-md-12">
                             <div class="form-group">
                                 <label>Attachments</label>
                                 <input type="file" class="form-control attachments" name="Path[]" id="Path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="modal-footer mt-3">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
@@ -325,6 +363,10 @@
         width: 450px;
     }
 </style>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -574,6 +616,50 @@
                 }
             });
         });
+
+        $('#SiteConcerned').on('change', function () {
+            let siteId = $(this).val();
+
+            if (siteId) {
+                $.ajax({
+                    url: "{{ url('departments-by-site') }}/" + siteId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#Department').empty(); 
+                        $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
+
+                        $.each(data, function (key, department) {
+                            $('#Department').append('<option value="' + department.Name + '">' + department.Name + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#Department').empty();
+                $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
+            }
+        });
+    });
+
+    const pond = FilePond.create(document.querySelector('#Path7'), {
+        allowMultiple: true,
+        maxFileSize: '10MB',
+
+        server: {
+            process: {
+                url: '{{ url("/upload-temp") }}',
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                onload: (response) => {
+                    // return the file name only (so it becomes the Path[] value)
+                    return JSON.parse(response).id;
+                }
+            },
+            revert: {
+                url: '{{ url("/upload-revert") }}',
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+            }
+        }
     });
 
 </script>

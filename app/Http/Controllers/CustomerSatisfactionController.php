@@ -291,29 +291,47 @@ class CustomerSatisfactionController extends Controller
     public function assign(Request $request, $id)
     {
         $data = CustomerSatisfaction::with('concerned')->findOrFail($id);
-        $data->Concerned = $request->Concerned;
+        $data->Department = $request->Department;
+        $data->SiteConcerned = $request->SiteConcerned;
         $data->save();
 
         // $department = ConcernDepartment::findOrFail($request->Concerned);
-        $department = ConcernDepartment::where('Name', $request->Concerned)->firstOrFail();
+        $department = ConcernDepartment::where('Name', $request->Department)->firstOrFail();
         // dd($department);
         
         $attachments = [];
-        if ($request->hasFile('Path') && is_array($request->file('Path'))) {
-            foreach ($request->file('Path') as $file) {
-                if ($file->isValid()) {
-                    $csFiles = new CsFiles();
-                    $csFiles->CsId = $data->id;
+        if ($request->has('Path') && is_array($request->Path)) {
+            foreach ($request->Path as $fileName) {
+                $tempPath = 'temp/' . $fileName;
+                if (Storage::disk('public')->exists($tempPath)) {
+                    $newPath = 'cs_files/' . $fileName;
+                    Storage::disk('public')->move($tempPath, $newPath);
 
-                    $fileName = time() . '_' . $file->getClientOriginalName();
-                    $filePath = $file->storeAs('cs_files', $fileName, 'public'); 
-                    $csFiles->Path = $filePath; 
-                    $csFiles->save();
+                    CsFiles::create([
+                        'CsId' => $data->id,
+                        'Path' => $newPath
+                    ]);
 
-                    $attachments[] = $filePath;
+                    $attachments[] = $newPath;
                 }
             }
         }
+
+        // if ($request->hasFile('Path') && is_array($request->file('Path'))) {
+        //     foreach ($request->file('Path') as $file) {
+        //         if ($file->isValid()) {
+        //             $csFiles = new CsFiles();
+        //             $csFiles->CsId = $data->id;
+
+        //             $fileName = time() . '_' . $file->getClientOriginalName();
+        //             $filePath = $file->storeAs('cs_files', $fileName, 'public'); 
+        //             $csFiles->Path = $filePath; 
+        //             $csFiles->save();
+
+        //             $attachments[] = $filePath;
+        //         }
+        //     }
+        // }
 
         Mail::to($department->email)->send(new AssignDepartmentMail($data, $attachments));
 
