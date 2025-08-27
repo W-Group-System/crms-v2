@@ -8,12 +8,12 @@ class CustomerSatisfaction extends Model
 {
     protected $table = "customersatisfaction";
     protected $fillable = [
-        'CompanyName', 'CsNumber', 'ContactName', 'Concerned', 'Description', 'Category', 'Email', 'ContactNumber', 'Status', 'ReceivedBy', 'DateReceived', 'DateClosed', 'Progress', 'ClosedBy', 'ApprovedBy'
+        'CompanyName', 'CsNumber', 'ContactName', 'Department', 'SiteConcerned', 'Description', 'Category', 'Email', 'ContactNumber', 'Status', 'ReceivedBy', 'DateReceived', 'DateClosed', 'Progress', 'ClosedBy', 'ApprovedBy'
     ];
 
     public function concerned() 
     {
-        return $this->belongsTo(ConcernDepartment::class, 'Concerned', 'id');
+        return $this->belongsTo(ConcernDepartment::class, 'Department', 'id');
     }
 
     public function category() 
