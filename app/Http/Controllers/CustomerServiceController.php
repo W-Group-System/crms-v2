@@ -31,7 +31,7 @@ class CustomerServiceController extends Controller
             })
             ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
                 $q->whereHas('concerned', function($q) {
-                    $q->where('Concerned',  auth()->user()->role->type);
+                    $q->where('Department',  auth()->user()->role->type);
                 });
             })
             ->orderBy('id', 'desc')
