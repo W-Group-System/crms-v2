@@ -25,7 +25,7 @@
                         </form>
                     @endif
                     @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                        @if($data->Progress == 50)
+                        @if($data->Progress == 50 && $data->SiteConcerned != NULL)
                             <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success notedBtn">
