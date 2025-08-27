@@ -63,6 +63,12 @@ class ClosedMail extends Mailable
                         'ClosedBy' => optional($this->customerComplaint->closed)->full_name ?? 'N/A',
                         'ClosedDate' => $this->customerComplaint['ClosedDate'],
                     ]);
+        
+        foreach ($this->customerComplaint->verification as $verified) {
+            if ($verified->Path && file_exists(public_path('storage/' . $verified->Path))) {
+                $email->attach(public_path('storage/' . $verified->Path));
+            }
+        }            
 
         // Check if attachments exist and attach them
         // if (!empty($this->cc_attachments))
