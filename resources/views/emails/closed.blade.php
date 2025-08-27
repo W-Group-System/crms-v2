@@ -38,7 +38,7 @@
             <tr>
             </tr>
             <tr>
-                <td width="25%"><strong>Approved By:</strong></td>
+                <td width="25%"><strong>Acknowledged By:</strong></td>
                 <td width="25%">{{ $ApprovedBy }}</td>
             </tr>
             <tr>
