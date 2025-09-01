@@ -56,7 +56,7 @@
                     <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger closeBtn">
-                            <i class="ti-close">&nbsp;</i> Close
+                            Close Complaint
                         </button>
                     </form>
                     @endif
