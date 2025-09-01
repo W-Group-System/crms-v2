@@ -76,7 +76,7 @@
                         </button>
                     @endif -->
                     @if($data->Department == auth()->user()->role->type && $data->Progress == 40 || $data->Progress == 80)
-                        @if($data->Investigation == null && $data->CorrectiveAction == null && $data->ActionObjectiveEvidence == null)
+                        @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
                             <button type="button" class="btn btn-outline-warning" id="updateCc" 
                                     data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
                                 <i class="ti ti-pencil"></i>&nbsp;Investigation
@@ -166,7 +166,7 @@
                     <p class="m-0"><b>Received By :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ optional($data->users)->full_name ?? 'N/A' }}</p>
+                    <p class="m-0">{{ optional($data->users)->full_name }}</p>
                 </div>
             </div>
             <div class="row mb-0">
@@ -180,7 +180,7 @@
                     <p class="m-0"><b>Department Concerned :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->Department ?? 'N/A' }}</p>
+                    <p class="m-0">{{ $data->Department }}</p>
                 </div>
             </div>
             {{-- <div class="row mb-3">
@@ -216,7 +216,7 @@
                     <p class="m-0"><b>Date Closed :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->ClosedDate ?? 'N/A' }}</p>
+                    <p class="m-0">{{ $data->ClosedDate }}</p>
                 </div>
             </div>
             <div class="row mb-0">
@@ -246,7 +246,7 @@
                     <p class="m-0"><b>Email : </b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->Email ?? 'N/A' }}</p>
+                    <p class="m-0">{{ $data->Email }}</p>
                 </div>
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Noted By :</b></p>
@@ -518,7 +518,7 @@
                             <p class="m-0"><b>Currency (In PHP/ In US$/ In EUR) :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->Currency ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->Currency }}</p>
                         </div>
                     </div>
                     <!-- <div class="row mb-3">
@@ -538,13 +538,13 @@
                             <p class="m-0"><b>Immediate Action :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ImmediateAction ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->ImmediateAction }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Objective Evidence :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ObjectiveEvidence ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->ObjectiveEvidence }}</p>
                         </div>
                     </div>
                     <div class=" row mb-0">
@@ -552,13 +552,14 @@
                             <p class="m-0"> <b>Action/ Implementation Date :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ActionDate ? \Carbon\Carbon::parse($data->ActionDate)->format('M. d, Y') : 'N/A' }}</p>
+                            <!-- <p class="m-0">{{ $data->ActionDate ? \Carbon\Carbon::parse($data->ActionDate)->format('M. d, Y') : 'N/A' }}</p> -->
+                            <p class="m-0">{{ $data->ActionDate }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Action Responsible :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ optional($data->action_responsible)->full_name ?? 'N/A' }}</p>
+                            <p class="m-0">{{ optional($data->action_responsible)->full_name }}</p>
                         </div>
                     </div>
                     <div class="row mb-0">
@@ -566,7 +567,7 @@
                             <p class="m-0"><b>Investigation of the Problem:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-9">
-                            <p class="m-0">{{ $data->Investigation ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->Investigation }}</p>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -574,11 +575,11 @@
                             <p class="m-0"><b>Corrective Action :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->CorrectiveAction ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->CorrectiveAction }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Objective Evidence :</b></p></div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ActionObjectiveEvidence ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->ActionObjectiveEvidence }}</p>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -611,7 +612,7 @@
                             <p class="m-0"><b>Client Feedback/ Acceptance :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-9">
-                            <p class="m-0">{{ $data->Acceptance ?? 'N/A'}}</p>
+                            <p class="m-0">{{ $data->Acceptance}}</p>
                         </div>
                     </div>
                     <div class="row mb-0">
@@ -655,13 +656,13 @@
                             <p class="m-0"><b>Credit Note Number :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->CnNumber ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->CnNumber }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Return Shipment Date :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ShipmentDate ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->ShipmentDate }}</p>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
@@ -669,13 +670,13 @@
                             <p class="m-0"><b>Total Amount Incurred :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->AmountIncurred ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->AmountIncurred }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Return Shipment Cost :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ShipmentCost ?? 'N/A' }}</p>
+                            <p class="m-0">{{ $data->ShipmentCost }}</p>
                         </div>
                     </div>
                     <div class="row mb-3">
