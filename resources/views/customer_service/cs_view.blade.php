@@ -93,28 +93,28 @@
                         </div> -->
                         <label class="offset-sm-6 col-sm-3 col-form-label text-right"><b>Received By:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->users->full_name ?? 'N/A' }}</label>
+                            <label>{{ $data->users->full_name }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Concerned Department:</b></label>
                         <div class="col-sm-3">
-                            <!-- <label>{{ $data->concerned->Name ?? 'N/A' }}</label> -->
-                            <label>{{ $data->Department ?? 'N/A' }}</label>
+                            <!-- <label>{{ $data->concerned->Name }}</label> -->
+                            <label>{{ $data->Department }}</label>
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->notedBy->full_name ?? 'N/A' }}</label>
+                            <label>{{ $data->notedBy->full_name }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-3">
                         <label class="col-sm-3 col-form-label text-right"><b>Category:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->category->Name ?? 'N/A' }}</label>
+                            <label>{{ $data->category->Name }}</label>
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Remarks:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->NotedRemarks ?? 'N/A' }}</label>
+                            <label>{{ $data->NotedRemarks }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
@@ -124,7 +124,7 @@
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Acknowledged By:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->approvedBy->full_name ?? 'N/A' }}</label>
+                            <label>{{ $data->approvedBy->full_name }}</label>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
@@ -138,7 +138,7 @@
                         </div>
                         <!-- <label class="col-sm-3 col-form-label text-right"><b>Closed By:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->closedBy->full_name ?? 'N/A' }}</label>
+                            <label>{{ $data->closedBy->full_name }}</label>
                         </div> -->
                     </div>
                     <!-- <div class="form-group row mb-0">
@@ -148,7 +148,7 @@
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Date Closed:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->DateClosed ?? 'N/A' }}</label>
+                            <label>{{ $data->DateClosed }}</label>
                         </div>
                     </div> -->
                     <div class="form-group row mb-3">
