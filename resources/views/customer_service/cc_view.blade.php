@@ -530,7 +530,7 @@
                         </div>
                     </div> -->
                     <div class="col-md-12 mb-3">
-                        <label><strong>Investigation (Department Concerned Responsibility)</strong></label>
+                        <label><strong>Investigation</strong></label>
                         <hr class="alert-dark mt-0">
                     </div>
                     <div class=" row mb-0">
