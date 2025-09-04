@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\App;
 use App\Mail\CustomerComplaintMail;
 use App\Mail\AssignCcDepartmentMail;
 use App\Mail\InvestigationMail;
+use App\Mail\VerifiedMail;
 use App\ComplaintRemarks;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
@@ -355,9 +356,9 @@ class CustomerComplaint2Controller extends Controller
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
         // Send to CC recipients WITH button
-        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph']) // CC emails here
-        // Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph'])
-        ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));
+        // Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph', 'bpd@wgroup.com.ph']) // CC emails here
+        Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph'])
+        ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));  
         
         return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
     }
@@ -366,7 +367,7 @@ class CustomerComplaint2Controller extends Controller
     {
         $data = CustomerComplaint2::findOrFail($id);
         // $data->RecurringIssue = $request->RecurringIssue;
-        $data->PreviousCCF = $request->PreviousCCF;
+        $data->IssuanceNo = $request->IssuanceNo;
         $data->ImmediateAction = $request->ImmediateAction;
         $data->ObjectiveEvidence = $request->ObjectiveEvidence;
         $data->Investigation = $request->Investigation;
@@ -412,8 +413,8 @@ class CustomerComplaint2Controller extends Controller
         //     }
         // }
 
-        // Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph']) // CC emails here
-        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph'])
+        Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph']) // CC emails here
+        // Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph'])
             ->send(new InvestigationMail($data, $attachments, true));
         
         return response()->json([
@@ -443,6 +444,9 @@ class CustomerComplaint2Controller extends Controller
         $data->Progress = 60;
         $data->save();
 
+        $department = ConcernDepartment::where('Name', $data->Department)->firstOrFail();
+
+        $attachments = [];
         if ($request->has('Path') && is_array($request->Path)) {
             foreach ($request->Path as $fileName) {
                 $tempPath = 'temp/' . $fileName;
@@ -459,6 +463,13 @@ class CustomerComplaint2Controller extends Controller
                 }
             }
         }
+
+        if ($data->Claims == 1) {
+            Mail::to(['crista.bautista@rico.com.ph'])
+            ->send(new VerifiedMail($data, $attachments)); 
+        }
+
+        Mail::to($department->email)->send(new VerifiedMail($data, $attachments));
 
         // if ($request->hasFile('Path')) {
         //     foreach ($request->file('Path') as $file) {
@@ -580,6 +591,7 @@ class CustomerComplaint2Controller extends Controller
     {
         $data = CustomerComplaint2::findOrFail($id);
         $data->RecurringIssue = $request->RecurringIssue;
+        $data->PreviousCCF = $request->PreviousCCF;
         $data->Description = $request->Description;
         $data->Currency = $request->Currency;
         $data->NcarIssuance = $request->NcarIssuance;
@@ -630,15 +642,59 @@ class CustomerComplaint2Controller extends Controller
         }
         $others->save();
 
-        $serverIds = (array) $request->input('Path', []); // array of filenames returned by FilePond
-        if (count($serverIds) > 0) {
+        // $serverIds = (array) $request->input('Path', []); // array of filenames returned by FilePond
+        // if (count($serverIds) > 0) {
+        //     foreach ($serverIds as $serverId) {
+        //         $serverId = basename($serverId); // sanitize
+        //         $tempPath = 'temp/' . $serverId;
+        //         $newPath  = 'cc_files/' . $serverId;
+
+        //         if (Storage::disk('public')->exists($tempPath)) {
+        //             // 🔹 Ensure unique filename in cc_files
+        //             if (Storage::disk('public')->exists($newPath)) {
+        //                 $fileInfo   = pathinfo($serverId);
+        //                 $uniqueName = uniqid() . '_' . $fileInfo['basename'];
+        //                 $newPath    = 'cc_files/' . $uniqueName;
+        //             }
+
+        //             Storage::disk('public')->move($tempPath, $newPath);
+        //         }
+
+        //         // Save remark
+        //         $remark = new ComplaintRemarks();
+        //         $remark->CcId           = $id;
+        //         $remark->SalesRemarks   = $request->input('SalesRemarks', '');
+        //         $remark->SalesRemarksBy = auth()->id();
+        //         $remark->Path           = $newPath;
+        //         $remark->save();
+        //     }
+        // } else {
+        //     // Save text-only remark
+        //     if ($request->filled('SalesRemarks')) {
+        //         $remark = new ComplaintRemarks();
+        //         $remark->CcId           = $id;
+        //         $remark->SalesRemarks   = $request->input('SalesRemarks');
+        //         $remark->SalesRemarksBy = auth()->id();
+        //         $remark->Path           = null;
+        //         $remark->save();
+        //     }
+        // }
+
+        $serverIds = (array) $request->input('Path', []); // FilePond files
+
+        if (!empty($serverIds)) {
+            $hasFile = false;
+
             foreach ($serverIds as $serverId) {
                 $serverId = basename($serverId); // sanitize
                 $tempPath = 'temp/' . $serverId;
-                $newPath  = 'cc_files/' . $serverId;
+                $newPath  = null;
 
                 if (Storage::disk('public')->exists($tempPath)) {
-                    // 🔹 Ensure unique filename in cc_files
+                    $hasFile = true; // ✅ at least one valid file exists
+                    $newPath = 'cc_files/' . $serverId;
+
+                    // Ensure unique filename
                     if (Storage::disk('public')->exists($newPath)) {
                         $fileInfo   = pathinfo($serverId);
                         $uniqueName = uniqid() . '_' . $fileInfo['basename'];
@@ -646,28 +702,37 @@ class CustomerComplaint2Controller extends Controller
                     }
 
                     Storage::disk('public')->move($tempPath, $newPath);
-                }
 
-                // Save remark
-                $remark = new ComplaintRemarks();
-                $remark->CcId           = $id;
-                $remark->SalesRemarks   = $request->input('SalesRemarks', '');
-                $remark->SalesRemarksBy = auth()->id();
-                $remark->Path           = $newPath;
-                $remark->save();
+                    // Save remark only if file really moved
+                    ComplaintRemarks::create([
+                        'CcId'           => $id,
+                        'SalesRemarks'   => $request->input('SalesRemarks', ''),
+                        'SalesRemarksBy' => auth()->id(),
+                        'Path'           => $newPath ?? NULL,
+                    ]);
+                }
+            }
+
+            // If there were "serverIds" but no valid files, still save text-only remark
+            if (!$hasFile && $request->filled('SalesRemarks')) {
+                ComplaintRemarks::create([
+                    'CcId'           => $id,
+                    'SalesRemarks'   => $request->input('SalesRemarks'),
+                    'SalesRemarksBy' => auth()->id(),
+                    'Path'           => null,
+                ]);
             }
         } else {
-            // Save text-only remark
+            // No attachments at all → save text-only remark
             if ($request->filled('SalesRemarks')) {
-                $remark = new ComplaintRemarks();
-                $remark->CcId           = $id;
-                $remark->SalesRemarks   = $request->input('SalesRemarks');
-                $remark->SalesRemarksBy = auth()->id();
-                $remark->Path           = null;
-                $remark->save();
+                ComplaintRemarks::create([
+                    'CcId'           => $id,
+                    'SalesRemarks'   => $request->input('SalesRemarks'),
+                    'SalesRemarksBy' => auth()->id(),
+                    'Path'           => null,
+                ]);
             }
         }
-
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return redirect()->back()->with('openModalId', $id);
@@ -799,8 +864,12 @@ class CustomerComplaint2Controller extends Controller
         //         }
         //     }
         // }
+        if ($customer_complaint->NcarIssuance == 1) {
+            Mail::to(['mika.trinidad@rico.com.ph'])
+            ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
+        }
 
-        Mail::to($department->email)->send(new AssignCcDepartmentMail($customer_complaint, $attachments));
+        Mail::to($department->email)->send(new AssignCcDepartmentMail($customer_complaint, $attachments, true));
         // if ($request->has('file'))
         // {
             // $ccfile = CcFile::where('customer_complaint_id', $id)->delete();

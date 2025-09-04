@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>New Customer Satisfaction Assignment</title>
+    <title>New Customer Satisfaction</title>
 </head>
 <body>
     <p>Dear {{ $customerSatisfaction->Department }},</p>
@@ -30,10 +30,5 @@
             @endforeach
         </ul>
     @endif -->
-
-    <p>Please take necessary action as soon as possible.</p>
-
-    <p>Best regards,</p>
-    <p>Your Company</p>
 </body>
 </html>
