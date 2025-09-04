@@ -352,7 +352,9 @@ class CustomerComplaint2Controller extends Controller
         //     ->send(new CustomerComplaintMail($customerComplaint, $attachments));
 
         // Send to main recipient WITHOUT button
-        Mail::to($customerComplaint['Email'])
+        // Mail::to($customerComplaint['Email'])
+        // ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
+        Mail::to([$customerComplaint['Email'], 'mika.trinidad@rico.com.ph']) // for BPD
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
         // Send to CC recipients WITH button
