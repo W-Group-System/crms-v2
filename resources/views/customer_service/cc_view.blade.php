@@ -46,10 +46,12 @@
                                 <i class="ti ti-pencil"></i>&nbsp;Assign 
                             </button>
                         @endif
-                        @if($data->Progress == 80)
-                        <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
-                            <i class="ti ti-pencil"></i>&nbsp;Verification
-                        </button>
+                        @if($data->Progress == 80 || $data->Progress = 60)
+                            @if($data->Investigation != null || $data->CorrectiveAction != null || $data->ActionObjectiveEvidence != null)
+                                <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                                    <i class="ti ti-pencil"></i>&nbsp;Verification
+                                </button>
+                            @endif
                         @endif
                     @endif
                     @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)
@@ -1221,8 +1223,12 @@
             var selectedValue = $('input[name="Claims"]:checked').val(); 
             if (selectedValue == "1") {
                 $('.cn-check').show(); 
+                $('#CnNumber').prop("required", true); // make required
+                $('#AmountIncurred').prop("required", true); // make required
             } else {
                 $('.cn-check').hide(); 
+                $('#CnNumber').prop("required", false); // make required
+                $('#AmountIncurred').prop("required", false); // make required
             }
         });
 
@@ -1230,8 +1236,12 @@
             var selectedValue = $('input[name="Shipment"]:checked').val(); 
             if (selectedValue == "1") {
                 $('.ship-check').show(); 
+                $('#ShipmentCost').prop("required", true); // make required
+                $('#ShipmentDate').prop("required", true); // make required
             } else {
                 $('.ship-check').hide(); 
+                $('#ShipmentCost').prop("required", false); // make required
+                $('#ShipmentDate').prop("required", false); // make required
             }
         });
 
