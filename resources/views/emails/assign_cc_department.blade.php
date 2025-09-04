@@ -34,7 +34,10 @@
             <li><strong>Quality Class:</strong> {{ $customerComplaint->QualityClass }}: {{ $customerComplaint->ProductName }}</li>
             <li><strong>Company Name:</strong> {{ $customerComplaint->CompanyName }}</li>
             <li><strong>Customer Remarks:</strong> {{ $customerComplaint->CustomerRemarks ?? 'No customer remarks provided' }}</li>
+            <li><strong>Department Concerned:</strong> {{ $customerComplaint->ConcernedName }}</li>
         </ul>
+
+        <p>As part of the process, kindly issue an NCAR and coordinate with the assigned department regarding this case. Please take the necessary action at the soonest possible time.</p>
     @endif
     <!-- @if(!empty($attachments))
         <p><strong>Attachments:</strong></p>
