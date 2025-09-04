@@ -32,15 +32,15 @@
                                 <label for="name">For NCAR Issuance:</label>
                                 <div class="form-check form-check-inline" id="issue-radio">
                                     <input class="form-check-input" type="radio" name="NcarIssuance" id="flexRadioDefault1" value="1" 
-                                        {{ isset($data->NcarIssuance) && $data->NcarIssuance == 1 ? 'checked' : '' }}>
+                                        {{ isset($data->NcarIssuance) && $data->NcarIssuance == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault1">Yes</label>
                                     <input class="form-check-input" type="radio" name="NcarIssuance" id="flexRadioDefault2" value="2" 
-                                        {{ isset($data->NcarIssuance) && $data->NcarIssuance != 1 ? 'checked' : '' }}>
+                                        {{ isset($data->NcarIssuance) && $data->NcarIssuance != 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6 issue-check1" style="display: {{ isset($data->RecurringIssue) && $data->RecurringIssue == 1 ? 'block' : 'none' }};">
+                        <div class="col-lg-6 issue-check1" style="display: {{ $data->RecurringIssue == 1 ? 'block' : 'none' }};">
                             <div class="form-group issue-check">
                                 <label for="name">Previous CCF No. (If Yes):</label>
                                 <input type="text" class="form-control" id="PreviousCCF" name="PreviousCCF" placeholder="Enter CCF No.">
@@ -291,15 +291,18 @@
 <script>
     $('#issue-radio2').on('change', function() {
         var selectedValue = $('input[name="RecurringIssue"]:checked').val(); 
-        if (selectedValue == "2") {
-            $('').show(); 
-        } else {
-            $('').hide(); 
-        }
+        // if (selectedValue == "2") {
+        //     $('.issue-check1').hide();
+        // } else {
+        //     $('.issue-check1').show();
+        // }
+
         if (selectedValue == "1") {
-            $('.issue-check1').show(); 
+            $('.issue-check1').show();
+            $('#PreviousCCF').prop("required", true); // make required
         } else {
-            $('.issue-check1').hide(); 
+            $('.issue-check1').hide();
+            $('#PreviousCCF').prop("required", false); // remove required
         }
     });
 

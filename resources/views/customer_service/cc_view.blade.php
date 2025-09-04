@@ -75,7 +75,7 @@
                             <i class="ti ti-pencil"></i>&nbsp;Investigation
                         </button>
                     @endif -->
-                    @if($data->Department == auth()->user()->role->type && $data->Progress == 40 || $data->Progress == 80)
+                    @if ($data->Department == auth()->user()->role->type && ($data->Progress == 40 || $data->Progress == 80))
                         @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
                             <button type="button" class="btn btn-outline-warning" id="updateCc" 
                                     data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
@@ -83,6 +83,15 @@
                             </button>
                         @endif
                     @endif
+
+                    <!-- @if($data->Department == auth()->user()->role->type && $data->Progress == 40 || $data->Progress == 80)
+                        @if($data->Investigation != null || $data->CorrectiveAction != null || $data->ActionObjectiveEvidence != null)
+                            <button type="button" class="btn btn-outline-warning" id="updateCc" 
+                                    data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                                <i class="ti ti-pencil"></i>&nbsp;Investigation
+                            </button>
+                        @endif
+                    @endif -->
                     @if($data->Progress == 60 || $data->Progress == 70)
                         <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
                             <i class="ti ti-printer btn-icon-prepend"></i>
@@ -155,12 +164,28 @@
                     <p class="m-0">{{ $data->PreviousCCF }}</p>
                 </div>
             </div>
+            <div class="row mb-0">
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>NCAR :</b></p></div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">
+                        @if($data->NcarIssuance == 1)
+                            Yes
+                        @elseif($data->NcarIssuance == 2)
+                            No 
+                        @endif
+                    </p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>NCAR # (If Yes) :</b></p></div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->IssuanceNo }}</p>
+                </div>
+            </div>
             <div class="form-group row mb-0">
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Date Complaint :</b></p>
+                    <p class="m-0"><b>Date Received :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ date('M. d, Y', strtotime($data->created_at)) }}</p>
+                    <p class="m-0">{{ $data->DateReceived }}</p>
                 </div>
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Received By :</b></p>
@@ -171,10 +196,10 @@
             </div>
             <div class="row mb-0">
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Date Received :</b></p>
+                    <p class="m-0"><b>Date Complaint :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->DateReceived }}</p>
+                    <p class="m-0">{{ date('M. d, Y', strtotime($data->created_at)) }}</p>
                 </div>
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Department Concerned :</b></p>
@@ -309,10 +334,7 @@
                             @php
                                 $filePath = asset('storage/' . $file->Path); 
                             @endphp
-                                {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
-                                <!-- <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
-                                    <i class="ti ti-close" style="color:red"></i>
-                                </button> -->
+                                {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a>
                                 <br>
                         @endforeach
                     </p>
@@ -549,7 +571,7 @@
                     </div>
                     <div class=" row mb-0">
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"> <b>Action/ Implementation Date :</b></p>
+                            <p class="m-0"> <b>Action Date :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
                             <!-- <p class="m-0">{{ $data->ActionDate ? \Carbon\Carbon::parse($data->ActionDate)->format('M. d, Y') : 'N/A' }}</p> -->
@@ -564,7 +586,7 @@
                     </div>
                     <div class="row mb-0">
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Investigation of the Problem:</b></p>
+                            <p class="m-0"><b>Investigation:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-9">
                             <p class="m-0">{{ $data->Investigation }}</p>
@@ -587,18 +609,18 @@
                             <p class="m-0"><b>Files :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-6">
-                            <p class="m-0">
+                            <p style="margin-top: -5px">
                                 @foreach ($data->objective as $key => $file)
                                     @php
                                         $filePath = asset('storage/' . $file->Path); 
                                     @endphp
                                     {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
-                                        @if($data->Department == auth()->user()->role->type)
-                                            <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
-                                                <i class="ti ti-close" style="color:red"></i>
-                                            </button>  
-                                        @endif         
-                                        <br>
+                                    @if($data->Department == auth()->user()->role->type)
+                                        <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
+                                            <i class="ti ti-close" style="color:red"></i>
+                                        </button>  
+                                    @endif         
+                                    <br>
                                 @endforeach
                             </p>
                         </div>
@@ -609,7 +631,7 @@
                     </div>
                     <div class="row mb-0">
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Client Feedback/ Acceptance :</b></p>
+                            <p class="m-0"><b>Acceptance :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-9">
                             <p class="m-0">{{ $data->Acceptance}}</p>
@@ -630,23 +652,27 @@
                         </div>
                     </div>
                     <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>With Claims/Credit Note? :</b></p></div>
+                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Claims/Credit Note :</b></p></div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">
                                 @if($data->Claims == 1)
                                     Yes
-                                @else
+                                @elseif($data->Claims == 2)
                                     No 
+                                @else
+
                                 @endif
                             </p>
                         </div>
-                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>For shipment Return? :</b></p></div>
+                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Shipment Return :</b></p></div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">
                                 @if($data->Shipment == 1)
                                     Yes
-                                @else
+                                @elseif($data->Shipment == 2)
                                     No 
+                                @else
+
                                 @endif
                             </p>
                         </div>
@@ -781,6 +807,16 @@
                             </div>
                         </div>
                     </div> -->
+                    @if($data->NcarIssuance == 1)
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name">NCAR No.</label>
+                                <textarea type="text" class="form-control" id="IssuanceNo" name="IssuanceNo" rows="3" placeholder="Enter NCAR No." required>{{ $data->IssuanceNo }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     <label>Immediate Action/Correction:</label>
                     <div class="row">
                         <div class="col-lg-6">
@@ -799,7 +835,7 @@
                             <label>Investigation of the Problem:</label>
                             <div class="form-group">
                                 <label for="name">Investigation/ Root Cause Analysis</label>
-                                <textarea type="text" class="form-control" id="Investigation" name="Investigation" rows="2" placeholder="Enter Immediate Action">{{ $data->Investigation }}</textarea>
+                                <textarea type="text" class="form-control" id="Investigation" name="Investigation" rows="2" placeholder="Enter Investigation of the Problem">{{ $data->Investigation }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -885,9 +921,9 @@
                             <div class="form-group">
                                 <label for="name">For Shipment Return?</label>
                                 <div class="form-check form-check-inline" id="ship-radio">
-                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault1" value="1" {{ isset($data->Claims) && $data->Claims == 1 ? 'checked' : '' }} required>
+                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault1" value="1" {{ isset($data->Shipment) && $data->Shipment == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault1">Yes</label>
-                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault2" value="2" {{ isset($data->Claims) && $data->Claims == 1 ? 'checked' : '' }} required>
+                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault2" value="2" {{ isset($data->Shipment) && $data->Shipment == 2 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
                             </div>

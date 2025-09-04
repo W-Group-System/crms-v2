@@ -13,16 +13,18 @@ class AssignCcDepartmentMail extends Mailable
     
     public $customerComplaint;
     public $cc_attachments;
+    public $showButton;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($customerComplaint, $cc_attachments)
+    public function __construct($customerComplaint, $cc_attachments, $showButton = false)
     {
         $this->customerComplaint = $customerComplaint;
         $this->cc_attachments = $cc_attachments;
+        $this->showButton = $showButton;
     }
 
     /**
@@ -37,8 +39,13 @@ class AssignCcDepartmentMail extends Mailable
                     ->with([
                         'customerComplaint' => $this->customerComplaint,
                         'attachments' => $this->cc_attachments,
-                        'ConcernedName' => optional($this->customerComplaint->concerned)->Name
+                        'ConcernedName' => optional($this->customerComplaint->concerned)->Name,
+                        'showButton' => $this->showButton, // pass to view
                     ]);
+
+        // if ($this->customerComplaint->NcarIssuance == 1) {
+        //     $email->cc('mika.trinidad@rico.com.ph');
+        // }
 
         // Attach uploaded files
         if (!empty($this->cc_attachments))
