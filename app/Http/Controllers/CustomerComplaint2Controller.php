@@ -531,7 +531,7 @@ class CustomerComplaint2Controller extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Customer satisfaction has been successfully acknowledged.'
+            'message' => 'Customer complaint has been successfully acknowledged.'
         ]);
     }
     
@@ -867,7 +867,7 @@ class CustomerComplaint2Controller extends Controller
         //     }
         // }
         if ($customer_complaint->NcarIssuance == 1) {
-            Mail::to(['mika.trinidad@rico.com.ph'])
+            Mail::to(['ict.engineer@wgroup.com.ph'])
             ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
         }
 

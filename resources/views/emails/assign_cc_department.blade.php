@@ -27,14 +27,13 @@
         <b>Hi BPD Team,</b>
         <p>I hope this message finds you well.</p>
         <p>This is to formally forward a verified customer complaint for your immediate attention regarding <b>{{ $customerComplaint->CcNumber }}</b></p><br>
-
         <p><strong>Details:</strong></p>
         <ul>
             <li><strong>Date Complaint:</strong> {{ date('M. d, Y', strtotime($customerComplaint->created_at)) }}</li>
             <li><strong>Quality Class:</strong> {{ $customerComplaint->QualityClass }}: {{ $customerComplaint->ProductName }}</li>
             <li><strong>Company Name:</strong> {{ $customerComplaint->CompanyName }}</li>
             <li><strong>Customer Remarks:</strong> {{ $customerComplaint->CustomerRemarks ?? 'No customer remarks provided' }}</li>
-            <li><strong>Department Concerned:</strong> {{ $customerComplaint->ConcernedName }}</li>
+            <li><strong>Department Concerned:</strong> {{ $ConcernedName }}</li>
         </ul>
 
         <p>As part of the process, kindly issue an NCAR and coordinate with the assigned department regarding this case. Please take the necessary action at the soonest possible time.</p>
