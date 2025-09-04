@@ -894,7 +894,7 @@ class CustomerComplaint2Controller extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Customer satisfaction feedback and files have been successfully assigned.'
+            'message' => 'Customer complaint feedback and files have been successfully assigned.'
         ]);
     }
 
