@@ -35,6 +35,7 @@
 </head>
 <body>
     <div class="email-container">
+    @if($showButton)
         <p align="center"><img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;"></p>
         <b>Hi {{ $ConcernedName }},</b>
         <p>I hope this message finds you well.</p>
@@ -81,16 +82,56 @@
                 <td>{{ $verifiedComplaint->ShipmentCost ?? '' }}</td>
             </tr>
         </table>
-        {{-- <p align="center">
-            <a href="{{ url('customer_complaint/view/'.$verifiedComplaint->id) }}" style="background: #007BFF; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-                Click here to view details
-            </a>
-        </p> --}}
-        {{-- <p align="center">
-            <a href="{{ $button_url }}" style="background: #007BFF; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-                {{ $button_text }}
-            </a>
-        </p> --}} 
+    @else
+        <p align="center"><img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;"></p>
+        <b>Dear AR Team,</b>
+        <p>I hope this message finds you well.</p>
+        <p>In relation to customer complaint {{ $verifiedComplaint->CcNumber }}, please proceed with the creation of a credit note and coordinate with the Sales Team accordingly.</p><br>
+
+        <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
+            <tr>
+                <td><b>Details:</b></td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Client Feedback/ Acceptance:</strong></td>
+            </tr>
+            <tr>
+                <td colspan="2">{{ $verifiedComplaint->Acceptance ?? '' }}</td>
+            </tr>
+            <tr>
+                <td><strong>With Claims/Credit Note:</strong></td>
+                <td>
+                    @if($Claims == 1)
+                        Yes
+                    @else
+                        No 
+                    @endif
+                </td>
+                <td><strong>For Shipment Return:</strong></td>
+                <td>
+                    @if($Shipment == 1)
+                        Yes
+                    @else
+                        No 
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Credit Note Number:</strong></td>
+                <td>{{ $verifiedComplaint->CnNumber ?? '' }}</td>
+                <td><strong>Return Shipment Date:</strong></td>
+                <td>{{ $verifiedComplaint->ShipmentDate ?? '' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Total Amount Incurred:</strong></td>
+                <td>{{ $verifiedComplaint->AmountIncurred ?? '' }}</td>
+                <td><strong>Return Shipment Cost:</strong></td>
+                <td>{{ $verifiedComplaint->ShipmentCost ?? '' }}</td>
+            </tr>
+        </table>
+        <p>Kindly disregard this message if the credit note has already been created for this complaint.</p>
+    @endif 
+    <p>Thank you!</p>
     </div>
 </body>
 </html>

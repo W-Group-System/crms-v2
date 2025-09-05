@@ -36,7 +36,7 @@
             <li><strong>Department Concerned:</strong> {{ $ConcernedName }}</li>
         </ul>
 
-        <p>As part of the process, kindly issue an NCAR and coordinate with the assigned department regarding this case. Please take the necessary action at the soonest possible time.</p>
+        <p>As part of the process, kindly issue an NCAR and coordinate with the assigned department regarding this case.</p>
     @endif
     <!-- @if(!empty($attachments))
         <p><strong>Attachments:</strong></p>

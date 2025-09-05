@@ -47,7 +47,7 @@
                             </button>
                         @endif
                         @if($data->Progress == 80 || $data->Progress = 60)
-                            @if($data->Investigation != null || $data->CorrectiveAction != null || $data->ActionObjectiveEvidence != null)
+                            @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null)
                                 <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                                     <i class="ti ti-pencil"></i>&nbsp;Verification
                                 </button>
@@ -94,7 +94,7 @@
                             </button>
                         @endif
                     @endif -->
-                    @if($data->Progress == 60 || $data->Progress == 70)
+                    @if($data->Progress == 60 && $data->Progress == 70)
                         <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
                             <i class="ti ti-printer btn-icon-prepend"></i>
                             Print
@@ -931,25 +931,25 @@
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <div class="form-group cn-check" style="display: none;">
+                            <div class="form-group cn-check" @if($data->Claims != 1) style="display:none;" @endif>
                                 <label for="name">Credit Note Number</label>
                                 <input type="text" class="form-control" id="CnNumber" name="CnNumber" placeholder="Enter Credit Note Number">
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <div class="form-group ship-check" style="display: none;">
+                            <div class="form-group ship-check" @if($data->Shipment != 1) style="display:none;" @endif>
                                 <label for="name">Return Shipment Date</label>
                                 <input type="date" class="form-control" id="ShipmentDate" name="ShipmentDate" placeholder="Enter Return Shipment Date">
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <div class="form-group cn-check" style="display: none;">
+                            <div class="form-group cn-check" @if($data->Claims != 1) style="display:none;" @endif>
                                 <label for="name">Total Amount Incurred</label>
                                 <input type="text" class="form-control" id="AmountIncurred" name="AmountIncurred" placeholder="Enter Total Amount Incurred">
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <div class="form-group ship-check" style="display: none;">
+                            <div class="form-group ship-check" @if($data->Shipment != 1) style="display:none;" @endif>
                                 <label for="name">Return Shipment Cost</label>
                                 <input type="text" class="form-control" id="ShipmentCost" name="ShipmentCost" placeholder="Enter Return Shipment Cost">
                             </div>
@@ -1223,12 +1223,8 @@
             var selectedValue = $('input[name="Claims"]:checked').val(); 
             if (selectedValue == "1") {
                 $('.cn-check').show(); 
-                $('#CnNumber').prop("required", true); // make required
-                $('#AmountIncurred').prop("required", true); // make required
             } else {
                 $('.cn-check').hide(); 
-                $('#CnNumber').prop("required", false); // make required
-                $('#AmountIncurred').prop("required", false); // make required
             }
         });
 
@@ -1236,12 +1232,8 @@
             var selectedValue = $('input[name="Shipment"]:checked').val(); 
             if (selectedValue == "1") {
                 $('.ship-check').show(); 
-                $('#ShipmentCost').prop("required", true); // make required
-                $('#ShipmentDate').prop("required", true); // make required
             } else {
                 $('.ship-check').hide(); 
-                $('#ShipmentCost').prop("required", false); // make required
-                $('#ShipmentDate').prop("required", false); // make required
             }
         });
 
