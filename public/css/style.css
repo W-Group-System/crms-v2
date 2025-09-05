@@ -22242,7 +22242,8 @@ dl li {
 } */
 
 .modal .modal-dialog .modal-content .modal-header {
-  padding: 25px;
+  /* padding: 25px; */
+  padding: 20px;
 }
 
 .modal .modal-dialog .modal-content .modal-header .close span {
@@ -22252,7 +22253,8 @@ dl li {
 }
 
 .modal .modal-dialog .modal-content .modal-body {
-  padding: 25px;
+  /* padding: 25px; */
+  padding: 20px;
 }
 
 .modal .modal-dialog .modal-content .modal-footer {
