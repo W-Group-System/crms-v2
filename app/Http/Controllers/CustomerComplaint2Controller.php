@@ -467,11 +467,12 @@ class CustomerComplaint2Controller extends Controller
         }
 
         if ($data->Claims == 1) {
-            Mail::to(['ar.accounting@rico.com.ph'])
-            ->send(new VerifiedMail($data, $attachments)); 
+            // Mail::to(['ar.accounting@rico.com.ph'])
+            Mail::to(['crista.bautista@rico.com.ph'])
+            ->send(new VerifiedMail($data, $attachments, false)); 
         }
 
-        Mail::to($department->email)->send(new VerifiedMail($data, $attachments));
+        Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
 
         // if ($request->hasFile('Path')) {
         //     foreach ($request->file('Path') as $file) {
@@ -867,7 +868,8 @@ class CustomerComplaint2Controller extends Controller
         //     }
         // }
         if ($customer_complaint->NcarIssuance == 1) {
-            Mail::to(['bpd@wgroup.com.ph'])
+            // Mail::to(['bpd@wgroup.com.ph'])
+            Mail::to(['ict.engineer@wgroup.com.ph'])
             ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
         }
 

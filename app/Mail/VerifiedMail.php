@@ -13,16 +13,18 @@ class VerifiedMail extends Mailable
 
     public $verifiedComplaint;
     public $verification;
+    public $showButton;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($verifiedComplaint, $verification)
+    public function __construct($verifiedComplaint, $verification, $showButton = false)
     {
         $this->verifiedComplaint = $verifiedComplaint;
         $this->verification = $verification;
+        $this->showButton = $showButton;
     }
 
     /**
@@ -44,6 +46,7 @@ class VerifiedMail extends Mailable
                         'AmountIncurred' => $this->verifiedComplaint['AmountIncurred'],
                         'ShipmentCost' => $this->verifiedComplaint['ShipmentCost'],
                         'ConcernedName' => optional($this->verifiedComplaint->concerned)->Name,
+                        'showButton' => $this->showButton, // pass to view
                     ]);
 
         if (!empty($this->verification))
