@@ -354,7 +354,7 @@ class CustomerComplaint2Controller extends Controller
         // Send to main recipient WITHOUT button
         // Mail::to($customerComplaint['Email'])
         // ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
-        Mail::to([$customerComplaint['Email'], 'mika.trinidad@rico.com.ph']) // for BPD
+        Mail::to([$customerComplaint['Email'], 'bpd@wgroup.com.ph']) // for BPD
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
         // Send to CC recipients WITH button
@@ -467,7 +467,7 @@ class CustomerComplaint2Controller extends Controller
         }
 
         if ($data->Claims == 1) {
-            Mail::to(['crista.bautista@rico.com.ph'])
+            Mail::to(['ar.accounting@rico.com.ph'])
             ->send(new VerifiedMail($data, $attachments)); 
         }
 
@@ -544,7 +544,7 @@ class CustomerComplaint2Controller extends Controller
         $data->Progress = 70;
         $data->save();
 
-        Mail::to('audit@rico.com.ph')
+        Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph']) // CC emails here
             ->send(new ClosedMail($data));
 
         return response()->json([
@@ -867,7 +867,7 @@ class CustomerComplaint2Controller extends Controller
         //     }
         // }
         if ($customer_complaint->NcarIssuance == 1) {
-            Mail::to(['ict.engineer@wgroup.com.ph'])
+            Mail::to(['bpd@wgroup.com.ph'])
             ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
         }
 
