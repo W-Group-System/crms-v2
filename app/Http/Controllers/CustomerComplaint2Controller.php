@@ -352,14 +352,14 @@ class CustomerComplaint2Controller extends Controller
         //     ->send(new CustomerComplaintMail($customerComplaint, $attachments));
 
         // Send to main recipient WITHOUT button
-        // Mail::to($customerComplaint['Email'])
-        // ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
-        Mail::to([$customerComplaint['Email'], 'bpd@wgroup.com.ph']) // for BPD
+        Mail::to($customerComplaint['Email'])
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
+        // Mail::to([$customerComplaint['Email'], 'bpd@wgroup.com.ph']) 
+        // ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
         // Send to CC recipients WITH button
         // Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph', 'bpd@wgroup.com.ph']) // CC emails here
-        Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph'])
+        Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph', 'bpd@wgroup.com.ph'])
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));  
         
         return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
