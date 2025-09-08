@@ -437,13 +437,23 @@ class CustomerComplaint2Controller extends Controller
     {
         $data = CustomerComplaint2::findOrFail($id);
         $data->Acceptance = $request->Acceptance;
-        $data->Claims = $request->Claims;
-        $data->Shipment = $request->Shipment;
+        // $data->Claims = $request->Claims;
+        // $data->Shipment = $request->Shipment;
         $data->CnNumber = $request->CnNumber;
         $data->ShipmentDate = $request->ShipmentDate;
         $data->AmountIncurred = $request->AmountIncurred;
         $data->ShipmentCost = $request->ShipmentCost;
+        $data->IsVerified = $request->IsVerified;
         $data->Progress = 60;
+
+        // ✅ Only update Claims if it's present in the request
+        if ($request->has('Claims')) {
+            $data->Claims = $request->Claims;
+        }
+
+        if ($request->has('Shipment')) {
+            $data->Shipment = $request->Shipment;
+        }
         $data->save();
 
         $department = ConcernDepartment::where('Name', $data->Department)->firstOrFail();

@@ -54,13 +54,13 @@
                             @endif
                         @endif
                     @endif
-                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60)
-                    <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-danger closeBtn">
-                            Close Complaint
-                        </button>
-                    </form>
+                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60 && $data->IsVerified == 1)
+                        <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger closeBtn">
+                                Close Complaint
+                            </button>
+                        </form>
                     @endif
                     @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->NotedBy != NULL)
                         @if($data->Progress == 30)
@@ -328,7 +328,7 @@
             </div> 
             <div class="form-group row mb-3">
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0" style="margin-top: 5px !important;"><b>Attachments :</b></p>
+                    <p class="m-0"><b>Attachments :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-6">
                     <p class="m-0">
@@ -539,7 +539,7 @@
                             <p class="m-0">{{ $data->Description }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Currency (In PHP/ In US$/ In EUR) :</b></p>
+                            <p class="m-0"><b>Currency :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">{{ $data->Currency }}</p>
@@ -611,7 +611,7 @@
                             <p class="m-0"><b>Files :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-6">
-                            <p style="margin-top: -5px">
+                            <p>
                                 @foreach ($data->objective as $key => $file)
                                     @php
                                         $filePath = asset('storage/' . $file->Path); 
@@ -909,12 +909,23 @@
                             <div class="form-group">
                                 <label for="name">With Claims/Credit Note?</label>
                                 <div class="form-check form-check-inline" id="check-radio">
-                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault1" value="1"
+                                    <!-- <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault1" value="1"
                                         {{ isset($data->Claims) && $data->Claims == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault1">Yes</label>
 
                                     <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault2" value="2"
                                         {{ isset($data->Claims) && $data->Claims != 1 ? 'checked' : '' }} required>
+                                    <label class="form-check-label" for="flexRadioDefault2">No</label> -->
+                                    @php
+                                        $isDisabled = !is_null($data->Claims) ? 'disabled' : '';
+                                    @endphp
+
+                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault1" value="1"
+                                        {{ $data->Claims == 1 ? 'checked' : '' }} {{ $isDisabled }} required>
+                                    <label class="form-check-label" for="flexRadioDefault1">Yes</label>
+
+                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault2" value="2"
+                                        {{ $data->Claims == 2 ? 'checked' : '' }} {{ $isDisabled }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
                             </div>
@@ -923,9 +934,12 @@
                             <div class="form-group">
                                 <label for="name">For Shipment Return?</label>
                                 <div class="form-check form-check-inline" id="ship-radio">
-                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault1" value="1" {{ isset($data->Shipment) && $data->Shipment == 1 ? 'checked' : '' }} required>
+                                    @php
+                                        $ShipmentDisabled = !is_null($data->Shipment) ? 'disabled' : '';
+                                    @endphp
+                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault1" value="1" {{ $data->Shipment == 1 ? 'checked' : '' }} {{ $ShipmentDisabled }} required>
                                     <label class="form-check-label" for="flexRadioDefault1">Yes</label>
-                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault2" value="2" {{ isset($data->Shipment) && $data->Shipment == 2 ? 'checked' : '' }} required>
+                                    <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault2" value="2" {{ $data->Shipment == 2 ? 'checked' : '' }} {{ $ShipmentDisabled }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
                                 </div>
                             </div>
@@ -933,25 +947,25 @@
                         <div class="col-lg-6">
                             <div class="form-group cn-check" @if($data->Claims != 1) style="display:none;" @endif>
                                 <label for="name">Credit Note Number</label>
-                                <input type="text" class="form-control" id="CnNumber" name="CnNumber" placeholder="Enter Credit Note Number">
+                                <input type="text" class="form-control" id="CnNumber" name="CnNumber" placeholder="Enter Credit Note Number" value="{{$data->CnNumber}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group ship-check" @if($data->Shipment != 1) style="display:none;" @endif>
                                 <label for="name">Return Shipment Date</label>
-                                <input type="date" class="form-control" id="ShipmentDate" name="ShipmentDate" placeholder="Enter Return Shipment Date">
+                                <input type="date" class="form-control" id="ShipmentDate" name="ShipmentDate" placeholder="Enter Return Shipment Date" value="{{$data->ShipmentDate}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group cn-check" @if($data->Claims != 1) style="display:none;" @endif>
                                 <label for="name">Total Amount Incurred</label>
-                                <input type="text" class="form-control" id="AmountIncurred" name="AmountIncurred" placeholder="Enter Total Amount Incurred">
+                                <input type="text" class="form-control" id="AmountIncurred" name="AmountIncurred" placeholder="Enter Total Amount Incurred" value="{{$data->AmountIncurred}}">
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group ship-check" @if($data->Shipment != 1) style="display:none;" @endif>
                                 <label for="name">Return Shipment Cost</label>
-                                <input type="text" class="form-control" id="ShipmentCost" name="ShipmentCost" placeholder="Enter Return Shipment Cost">
+                                <input type="text" class="form-control" id="ShipmentCost" name="ShipmentCost" placeholder="Enter Return Shipment Cost" value="{{$data->ShipmentCost}}">
                             </div>
                         </div>
                         <!-- <div class="col-lg-6">
@@ -972,6 +986,16 @@
                                 accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
+                        @if($data->Claims != null || $data->Shipment != null)
+                            <div class="col-lg-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="IsVerified" value="1" id="flexCheckDefault" {{ $data->IsVerified == 1 ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        Is Verified?
+                                    </label>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     <div class="modal-footer mt-3">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>

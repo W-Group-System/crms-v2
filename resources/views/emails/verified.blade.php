@@ -39,11 +39,11 @@
         <p align="center"><img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;"></p>
         <b>Hi {{ $ConcernedName }},</b>
         <p>I hope this message finds you well.</p>
-        <p>This is to formally forward a verified customer complaint for your immediate attention regarding <b>{{ $verifiedComplaint->CcNumber }}</b></p><br>
+        <p>This is to formally forward the customer’s verification regarding<b>{{ $verifiedComplaint->CcNumber }},</b>after the completed investigation.</p><br>
         
         <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
             <tr>
-                <td><b>Details:</b></td>
+                <td><b>Verification Details:</b></td>
             </tr>
             <tr>
                 <td colspan="2"><strong>Client Feedback/ Acceptance:</strong></td>

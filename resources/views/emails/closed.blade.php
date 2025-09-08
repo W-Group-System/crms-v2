@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>New Customer Satisfaction Assignment</title>
+    <title>Customer Complaint Closed</title>
 </head>
 <body>
     <div class="email-container">
