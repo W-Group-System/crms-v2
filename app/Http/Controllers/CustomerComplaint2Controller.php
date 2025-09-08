@@ -467,8 +467,8 @@ class CustomerComplaint2Controller extends Controller
         }
 
         if ($data->Claims == 1) {
-            // Mail::to(['ar.accounting@rico.com.ph'])
-            Mail::to(['crista.bautista@rico.com.ph'])
+            Mail::to(['ar.accounting@rico.com.ph'])
+            // Mail::to(['crista.bautista@rico.com.ph'])
             ->send(new VerifiedMail($data, $attachments, false)); 
         }
 
