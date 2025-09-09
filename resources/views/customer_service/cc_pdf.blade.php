@@ -138,11 +138,11 @@ input[type="checkbox"] {
             <td align="center">
                 <input id="check-p1" type="checkbox" @if(optional($cc->product_quality)->Pn1) checked @endif>
             </td>
-            <td>{{ optional($cc->product_quality)->Pn1 }}</td>
-            <td>{{ optional($cc->product_quality)->ScNo1 }}</td>
-            <td>{{ optional($cc->product_quality)->SoNo1 }}</td>
-            <td>{{ optional($cc->product_quality)->Quantity1 }}</td>
-            <td>{{ optional($cc->product_quality)->LotNo1 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Pn1 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->ScNo1 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->SoNo1 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Quantity1 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->LotNo1 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">1.2 Biological Hazard (e.g. high bacteria count, etc.)</td>
@@ -402,7 +402,7 @@ input[type="checkbox"] {
             <td width="54%">{{ $cc->noted_by->full_name }}/&nbsp;{{ $cc->DateNoted }}</td>
         </tr>
     </table>
-    <label class="mt-2"><b>II.	Investigation</b></label>
+    <label class="mt-2"><b>II.	Investigation: Attach necessary support document(s)</b></label>
     <table border="1" class="mt-2" cellspacing="0" cellpadding="4" width="100%">
         <tr>
             <td colspan="3"><b>Immediate Action/Correction:</b></td>
