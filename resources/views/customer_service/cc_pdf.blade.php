@@ -383,12 +383,12 @@ input[type="checkbox"] {
                     International Warehouse
                 @endif
             </td>
-            <td><b>Deparment:</b></td>
+            <td><b>Department:</b></td>
             <td>{{ $cc->Department }}</td>
        </tr> 
        <tr>
             <td colspan="2">For NCAR Issuance:</td>
-            <td>Yes (NCAR No.:_)</td>
+            <td>Yes (NCAR No.: {{ $cc->IssuanceNo }})</td>
             <td>No</td>
        </tr>
     </table>
@@ -402,7 +402,7 @@ input[type="checkbox"] {
             <td width="54%">{{ $cc->noted_by->full_name }}/&nbsp;{{ $cc->DateNoted }}</td>
         </tr>
     </table>
-    <label class="mt-2"><b>II.	Investigation (Department Concerned Responsibility): Attach necessary support document</b></label>
+    <label class="mt-2"><b>II.	Investigation</b></label>
     <table border="1" class="mt-2" cellspacing="0" cellpadding="4" width="100%">
         <tr>
             <td colspan="3"><b>Immediate Action/Correction:</b></td>
