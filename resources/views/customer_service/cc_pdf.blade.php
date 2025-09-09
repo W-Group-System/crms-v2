@@ -353,7 +353,7 @@ input[type="checkbox"] {
                         @foreach($cc->ccsales as $remark)
                             @if($remark->Path)
                                 <li>
-                                    {{ $remark->Path }}
+                                    {{-- {{ $remark->Path }} --}}
                                     {{-- if it's an image --}}
                                     <br>
                                     <img src="{{ public_path('storage/' . $remark->Path) }}" width="150">
