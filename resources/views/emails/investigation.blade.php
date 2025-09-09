@@ -58,15 +58,15 @@
                 <td colspan="2"><strong>Investigation/ Root Cause Analysis:</strong></td>
             </tr>
             <tr>
-                <td colspan="2">{{ $investigationComplaint->Investigation ?? 'N/A' }}</td>
+                <td colspan="2">{{ $investigationComplaint->Investigation ?? '' }}</td>
             </tr>
             <tr>
                 <td><strong>Corrective Action:</strong></td>
-                <td>{{ $investigationComplaint->CorrectiveAction ?? 'N/A' }}</td>
+                <td>{{ $investigationComplaint->CorrectiveAction ?? '' }}</td>
             </tr>
             <tr>
                 <td><strong>Objective Evidence:</strong></td>
-                <td>{{ $investigationComplaint->ActionObjectiveEvidence ?? 'N/A' }}</td>
+                <td>{{ $investigationComplaint->ActionObjectiveEvidence ?? '' }}</td>
             </tr>
         </table>
         <p align="center">
