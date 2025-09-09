@@ -392,7 +392,7 @@ class CustomerSatisfactionController extends Controller
         $attachments = [];
         
         // Mail::to('ict.engineer@wgroup.com.ph')
-        Mail::to('audit@rico.com.ph')
+        Mail::to('audit@rico.com.ph', 'bpd@wgroup.com.ph')
             ->send(new AcknowledgedMail($data, $attachments));
 
         return response()->json([
