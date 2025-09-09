@@ -501,7 +501,7 @@ class CustomerComplaint2Controller extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Customer complaint acceptance has been successfully updated.'
+            'message' => 'Customer complaint has been successfully verified.'
         ]);
     }
 

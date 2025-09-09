@@ -1103,7 +1103,7 @@
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
-                            title: "Acceptance",
+                            title: "Verified",
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,
