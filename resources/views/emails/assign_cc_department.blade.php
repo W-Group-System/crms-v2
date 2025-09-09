@@ -26,7 +26,7 @@
     @else 
         <b>Hi BPD Team,</b>
         <p>I hope this message finds you well.</p>
-        <p>This is to formally forward a verified customer complaint for your immediate attention regarding <b>{{ $customerComplaint->CcNumber }}</b></p><br>
+        <p>This is to formally forward a verified customer complaint for your immediate attention regarding <b>{{ $customerComplaint->CcNumber }}</b></p>
         <p><strong>Details:</strong></p>
         <ul>
             <li><strong>Date Complaint:</strong> {{ date('M. d, Y', strtotime($customerComplaint->created_at)) }}</li>

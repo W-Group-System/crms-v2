@@ -41,7 +41,6 @@
         <p>We are writing to inform you that an investigation has been initiated regarding <b>{{ $CcNumber }}</b></p><br>
         <b>Purpose:</b>
         <p>The objective of this investigation is to thoroughly assess the issue and identify any contributing factors so that we can implement appropriate corrective and immediate actions.</p>
-
         <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
             <tr>
                 <td><b>Details:</b></td>
@@ -55,11 +54,15 @@
                 <td>{{ $investigationComplaint->ObjectiveEvidence }}</td>
             </tr>
             <tr>
+                <td><strong>Investigation:</strong></td>
+                <td>{{ $investigationComplaint->Investigation ?? '' }}</td>
+            </tr>
+            <!-- <tr>
                 <td colspan="2"><strong>Investigation/ Root Cause Analysis:</strong></td>
             </tr>
             <tr>
                 <td colspan="2">{{ $investigationComplaint->Investigation ?? '' }}</td>
-            </tr>
+            </tr> -->
             <tr>
                 <td><strong>Corrective Action:</strong></td>
                 <td>{{ $investigationComplaint->CorrectiveAction ?? '' }}</td>
