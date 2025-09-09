@@ -22,7 +22,7 @@ class AssignDepartmentMail extends Mailable
 
     public function build()
     {
-        $email = $this->subject('New Customer Satisfaction Assignment')
+        $email = $this->subject('New Customer Satisfaction Feedback')
                     ->view('emails.assign_department')
                     ->with([
                         'customerSatisfaction' => $this->customerSatisfaction,
