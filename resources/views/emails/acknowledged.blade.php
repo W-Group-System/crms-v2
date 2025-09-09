@@ -7,7 +7,7 @@
     <div class="email-container">
         <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;">
         <h2>Customer Satisfaction Regarding {{ $CategoryName }}</h2>
-        <b>Hi IAD Team,</b>
+        <b>Hi Team,</b>
         <p>The Sales Manager has acknowledged the recent customer satisfaction feedback. Below are the details for your record and reference:</p>
 
         <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;margin-bottom:20px">
