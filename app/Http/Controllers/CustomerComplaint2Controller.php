@@ -358,8 +358,8 @@ class CustomerComplaint2Controller extends Controller
         // ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
         // Send to CC recipients WITH button
-        // Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph', 'bpd@wgroup.com.ph']) // CC emails here
-        Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph', 'bpd@wgroup.com.ph'])
+        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph', 'bpd@wgroup.com.ph']) // CC emails here
+        // Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph', 'bpd@wgroup.com.ph'])
         ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));  
         
         return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
@@ -415,8 +415,8 @@ class CustomerComplaint2Controller extends Controller
         //     }
         // }
 
-        Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph']) // CC emails here
-        // Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph'])
+        // Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph']) // CC emails here
+        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph'])
             ->send(new InvestigationMail($data, $attachments, true));
         
         return response()->json([
@@ -878,8 +878,8 @@ class CustomerComplaint2Controller extends Controller
         //     }
         // }
         if ($customer_complaint->NcarIssuance == 1) {
-            // Mail::to(['bpd@wgroup.com.ph'])
-            Mail::to(['ict.engineer@wgroup.com.ph'])
+            Mail::to(['bpd@wgroup.com.ph'])
+            // Mail::to(['ict.engineer@wgroup.com.ph'])
             ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
         }
 
