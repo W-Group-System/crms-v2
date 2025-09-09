@@ -387,11 +387,11 @@ input[type="checkbox"] {
             <td>{{ $cc->Department }}</td>
        </tr> 
        <tr>
-            <td colspan="2">For NCAR Issuance:</td>
+            <td>For NCAR Issuance:</td>
             @if($cc->NcarIssuance == 1)
-                <td colspan="2">Yes (NCAR No.: {{ $cc->IssuanceNo }})</td>
+                <td colspan="3">Yes (NCAR No.: {{ $cc->IssuanceNo }})</td>
             @else   
-                <td colspan="2">No</td>
+                <td colspan="3">No</td>
             @endif
             <!-- <td>No</td> -->
        </tr>
