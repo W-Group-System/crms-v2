@@ -531,7 +531,7 @@
                         <label><strong>Quantification of Cost/s</strong></label>
                         <hr class="alert-dark mt-0">
                     </div>
-                    <div class="row mb-0">
+                    <div class="row mb-3">
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Description :</b></p>
                         </div>
