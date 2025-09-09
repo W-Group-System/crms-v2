@@ -94,7 +94,7 @@
                             </button>
                         @endif
                     @endif -->
-                    @if($data->Progress == 60 && $data->Progress == 70)
+                    @if($data->Progress == 60 || $data->Progress == 70)
                         <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
                             <i class="ti ti-printer btn-icon-prepend"></i>
                             Print
