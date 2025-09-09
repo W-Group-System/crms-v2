@@ -47,7 +47,7 @@
                             </button>
                         @endif
                         @if($data->Progress == 80 || $data->Progress = 60)
-                            @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null || $data->IsVerified != 1)
+                            @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null && $data->IsVerified != 1)
                                 <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                                     <i class="ti ti-pencil"></i>&nbsp;Verification
                                 </button>
