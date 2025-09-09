@@ -103,35 +103,35 @@ input[type="checkbox"] {
     </table>
     <table border="1" class="mt-3" cellspacing="0" cellpadding="4" width="100%">
         <tr>
-            <td rowspan="3" colspan="2" align="center" style="vertical-align: middle"><b>Customer Complaint Category</b></td>
-            <td colspan="3" align="center"><b>Definition of Quality Class (see below)</b></td>
-            <td colspan="2" align="center"><b>Recurring Issue:</b></td>
+            <td rowspan="3" colspan="2" align="center" style="vertical-align: middle; background-color: #d7d7d7"><b>Customer Complaint Category</b></td>
+            <td colspan="3" align="center" style="background-color: #d7d7d7"><b>Definition of Quality Class (see below)</b></td>
+            <td colspan="2" align="center" style="background-color: #d7d7d7"><b>Recurring Issue:</b></td>
         </tr>
         <tr>
-            <td align="center"><b>C</b></td>
-            <td align="center"><b>B</b></td>
-            <td align="center"><b>A</b></td>
-            <td align="center"><b>Yes&nbsp;&nbsp;<input type="checkbox" @if($cc->RecurringIssue == 1) checked @endif></b></td>
-            <td align="center"><b>No&nbsp;&nbsp;<input type="checkbox" @if($cc->RecurringIssue == 2) checked @endif></b></td>
+            <td align="center" style="background-color: #d7d7d7"><b>C</b></td>
+            <td align="center" style="background-color: #d7d7d7"><b>B</b></td>
+            <td align="center" style="background-color: #d7d7d7"><b>A</b></td>
+            <td align="center" style="background-color: #d7d7d7"><b>Yes&nbsp;&nbsp;<input type="checkbox" @if($cc->RecurringIssue == 1) checked @endif></b></td>
+            <td align="center" style="background-color: #d7d7d7"><b>No&nbsp;&nbsp;<input type="checkbox" @if($cc->RecurringIssue == 2) checked @endif></b></td>
         </tr>
         <tr>
-            <td align="center"><b>Critical</b></td>
-            <td align="center"><b>Major/ Important</b></td>
-            <td align="center"><b>Minor/ Marginal</b></td>
-            <td align="center" colspan="2"><b>Previous CCF No. (If Yes):</b></td>
+            <td align="center" style="background-color: #d7d7d7"><b>Critical</b></td>
+            <td align="center" style="background-color: #d7d7d7"><b>Major/ Important</b></td>
+            <td align="center" style="background-color: #d7d7d7"><b>Minor/ Marginal</b></td>
+            <td align="center" style="background-color: #d7d7d7" colspan="2"><b>Previous CCF No. (If Yes): {{ $cc->PreviousCCF ?? 'N/A' }}</b></td>
         </tr>
         <tr>
             <td colspan="2" align="center"><b>COMPLAINT CATEGORY</b></td>
             <td colspan="5" align="center"><b>PRODUCT DETAILS</b></td>
         </tr>
         <tr>
-            <td width="37%"><b>1. Product Quality</b></td>
-            <td width="5%">Please<br>Check</td>
-            <td align="center" width="18%">Product Name</td>
-            <td align="center" width="10%">S/C No.</td>
-            <td align="center" width="10%">SO No.</td>
-            <td align="center" width="10%">Quantity</td>
-            <td align="center" width="10%">Lot No.</td>
+            <td width="37%" style="background-color: #d7d7d7"><b>1. Product Quality</b></td>
+            <td width="5%" style="background-color: #d7d7d7">Please<br>Check</td>
+            <td align="center" width="18%" style="background-color: #d7d7d7">Product Name</td>
+            <td align="center" width="10%" style="background-color: #d7d7d7">S/C No.</td>
+            <td align="center" width="10%" style="background-color: #d7d7d7">SO No.</td>
+            <td align="center" width="10%" style="background-color: #d7d7d7">Quantity</td>
+            <td align="center" width="10%" style="background-color: #d7d7d7">Lot No.</td>
         </tr>
         <tr>
             <td class="break-spaces">1.1 Physical Hazard (contamination of product by unspecified compound e.g. hard plastics, metal flakes, rust, etc.)</td>
@@ -149,192 +149,192 @@ input[type="checkbox"] {
             <td align="center">
                 <input id="check-p2" type="checkbox" @if(optional($cc->product_quality)->Pn2) checked @endif>
             </td>
-            <td>{{ optional($cc->product_quality)->Pn2 }}</td>
-            <td>{{ optional($cc->product_quality)->ScNo2 }}</td>
-            <td>{{ optional($cc->product_quality)->SoNo2 }}</td>
-            <td>{{ optional($cc->product_quality)->Quantity2 }}</td>
-            <td>{{ optional($cc->product_quality)->LotNo2 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Pn2 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->ScNo2 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->SoNo2 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Quantity2 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->LotNo2 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">1.3 Chemical Hazard (e.g. high heavy metals content, etc.)</td>
             <td align="center">
                 <input id="check-p3" type="checkbox" @if(optional($cc->product_quality)->Pn3) checked @endif>
             </td>
-            <td>{{ optional($cc->product_quality)->Pn3 }}</td>
-            <td>{{ optional($cc->product_quality)->ScNo3 }}</td>
-            <td>{{ optional($cc->product_quality)->SoNo3 }}</td>
-            <td>{{ optional($cc->product_quality)->Quantity3 }}</td>
-            <td>{{ optional($cc->product_quality)->LotNo3 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Pn3 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->ScNo3 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->SoNo3 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Quantity3 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->LotNo3 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">1.4 Visual Defects (e.g. color change, particle size)</td>
             <td align="center">
                 <input id="check-p4" type="checkbox" @if(optional($cc->product_quality)->Pn4) checked @endif>
             </td>
-            <td>{{ optional($cc->product_quality)->Pn4 }}</td>
-            <td>{{ optional($cc->product_quality)->ScNo4 }}</td>
-            <td>{{ optional($cc->product_quality)->SoNo4 }}</td>
-            <td>{{ optional($cc->product_quality)->Quantity4 }}</td>
-            <td>{{ optional($cc->product_quality)->LotNo4 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Pn4 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->ScNo4 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->SoNo4 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Quantity4 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->LotNo4 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">1.5 Application Problems (e.g. poor dispersion, poor distribution, poor binding property, high syneresis, etc.)</td>
             <td align="center">
                 <input id="check-p5" type="checkbox" @if(optional($cc->product_quality)->Pn5) checked @endif>
             </td>
-            <td>{{ optional($cc->product_quality)->Pn5 }}</td>
-            <td>{{ optional($cc->product_quality)->ScNo5 }}</td>
-            <td>{{ optional($cc->product_quality)->SoNo5 }}</td>
-            <td>{{ optional($cc->product_quality)->Quantity5 }}</td>
-            <td>{{ optional($cc->product_quality)->LotNo5 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Pn5 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->ScNo5 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->SoNo5 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Quantity5 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->LotNo5 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">1.6 Physical/ Chemical Properties Out-of Specification (e.g. pH, gel strength, viscosity, syneresis and contamination with other ingredients)</td>
             <td align="center">
                 <input id="check-p6" type="checkbox" @if(optional($cc->product_quality)->Pn6) checked @endif>
             </td>
-            <td>{{ optional($cc->product_quality)->Pn6 }}</td>
-            <td>{{ optional($cc->product_quality)->ScNo6 }}</td>
-            <td>{{ optional($cc->product_quality)->SoNo6 }}</td>
-            <td>{{ optional($cc->product_quality)->Quantity6 }}</td>
-            <td>{{ optional($cc->product_quality)->LotNo6 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Pn6 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->ScNo6 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->SoNo6 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->Quantity6 }}</td>
+            <td align="center">{{ optional($cc->product_quality)->LotNo6 }}</td>
         </tr>
         <tr>
-            <td colspan="7"><b>2. Packaging</b></td>
+            <td colspan="7" style="background-color: #d7d7d7"><b>2. Packaging</b></td>
         </tr>
         <tr>
             <td class="break-spaces">2.1 Quantity (e.g. Short-packing, under-filled bags or box, over-filled container or box, etc.)</td>
             <td align="center">
                 <input id="check-pack1" type="checkbox" @if(optional($cc->packaging)->PackPn1) checked @endif>
             </td>
-            <td>{{ optional($cc->packaging)->PackPn1 }}</td>
-            <td>{{ optional($cc->packaging)->PackScNo1 }}</td>
-            <td>{{ optional($cc->packaging)->PackSoNo1 }}</td>
-            <td>{{ optional($cc->packaging)->PackQuantity1 }}</td>
-            <td>{{ optional($cc->packaging)->PackLotNo1 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackPn1 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackScNo1 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackSoNo1 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackQuantity1 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackLotNo1 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">2.2 Packing (e.g. leakages, corrosion, etc.)</td>
             <td align="center">
                 <input id="check-pack2" type="checkbox" @if(optional($cc->packaging)->PackPn2) checked @endif>
             </td>
-            <td>{{ optional($cc->packaging)->PackPn2 }}</td>
-            <td>{{ optional($cc->packaging)->PackScNo2 }}</td>
-            <td>{{ optional($cc->packaging)->PackSoNo2 }}</td>
-            <td>{{ optional($cc->packaging)->PackQuantity2 }}</td>
-            <td>{{ optional($cc->packaging)->PackLotNo2 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackPn2 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackScNo2 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackSoNo2 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackQuantity2 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackLotNo2 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">2.3 Labeling (e.g. wrong or defective label, unreadable, incorrect or incomplete text, etc.)</td>
             <td align="center">
                 <input id="check-pack3" type="checkbox" @if(optional($cc->packaging)->PackPn3) checked @endif>
             </td>
-            <td>{{ optional($cc->packaging)->PackPn3 }}</td>
-            <td>{{ optional($cc->packaging)->PackScNo3 }}</td>
-            <td>{{ optional($cc->packaging)->PackSoNo3 }}</td>
-            <td>{{ optional($cc->packaging)->PackQuantity3 }}</td>
-            <td>{{ optional($cc->packaging)->PackLotNo3 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackPn3 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackScNo3 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackSoNo3 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackQuantity3 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackLotNo3 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">2.4 Packaging material (e.g. wrong packaging (bag, pallet, etc.) material, incorrect application of packaging instructions, inadequate quality of packaging material, etc.)</td>
             <td align="center">
                 <input id="check-pack4" type="checkbox" @if(optional($cc->packaging)->PackPn4) checked @endif>
             </td>
-            <td>{{ optional($cc->packaging)->PackPn4 }}</td>
-            <td>{{ optional($cc->packaging)->PackScNo4 }}</td>
-            <td>{{ optional($cc->packaging)->PackSoNo4 }}</td>
-            <td>{{ optional($cc->packaging)->PackQuantity4 }}</td>
-            <td>{{ optional($cc->packaging)->PackLotNo4 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackPn4 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackScNo4 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackSoNo4 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackQuantity4 }}</td>
+            <td align="center">{{ optional($cc->packaging)->PackLotNo4 }}</td>
         </tr>
         <tr>
-            <td colspan="7"><b>3. Delivery and Handling</b></td>
+            <td colspan="7" style="background-color: #d7d7d7"><b>3. Delivery and Handling</b></td>
         </tr>
         <tr>
             <td class="break-spaces">3.1 Product Handling (e.g. wrong product, pack size or quantity)</td>
             <td align="center">
                 <input id="check-d1" type="checkbox" @if(optional($cc->delivery_handling)->DhPn1) checked @endif>
             </td>
-            <td>{{ optional($cc->delivery_handling)->DhPn1 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhScNo1 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhSoNo1 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhQuantity1 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhLotNo1 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhPn1 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhScNo1 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhSoNo1 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhQuantity1 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhLotNo1 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">3.2 Delayed Delivery (e.g. inadequate forwarder service, wrong delivery address, etc.)</td>
             <td align="center">
                 <input id="check-d2" type="checkbox" @if(optional($cc->delivery_handling)->DhPn2) checked @endif>
             </td>
-            <td>{{ optional($cc->delivery_handling)->DhPn2 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhScNo2 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhSoNo2 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhQuantity2 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhLotNo2 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhPn2 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhScNo2 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhSoNo2 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhQuantity2 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhLotNo2 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">3.3 Product Damage during transit (e.g. leakages, corrosion, damaged label/box/carton/seal, etc.)</td>
             <td align="center">
                 <input id="check-d3" type="checkbox" @if(optional($cc->delivery_handling)->DhPn3) checked @endif>
             </td>
-            <td>{{ optional($cc->delivery_handling)->DhPn3 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhScNo3 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhSoNo3 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhQuantity3 }}</td>
-            <td>{{ optional($cc->delivery_handling)->DhLotNo3 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhPn3 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhScNo3 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhSoNo3 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhQuantity3 }}</td>
+            <td align="center">{{ optional($cc->delivery_handling)->DhLotNo3 }}</td>
         </tr>
         <tr>
-            <td colspan="7"><b>4. Others</b></td>
+            <td colspan="7" style="background-color: #d7d7d7"><b>4. Others</b></td>
         </tr>
         <tr>
             <td class="break-spaces">4.1 Quality of records or documents (e.g. insufficient, inadequate, missing, etc.)</td>
             <td align="center">
                 <input id="check-o1" type="checkbox" @if(optional($cc->others)->OthersPn1) checked @endif>
             </td>
-            <td>{{ optional($cc->others)->OthersPn1 }}</td>
-            <td>{{ optional($cc->others)->OthersScNo1 }}</td>
-            <td>{{ optional($cc->others)->OthersSoNo1 }}</td>
-            <td>{{ optional($cc->others)->OthersQuantity1 }}</td>
-            <td>{{ optional($cc->others)->OthersLotNo1 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersPn1 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersScNo1 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersSoNo1 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersQuantity1 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersLotNo1 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">4.2 Poor customer Service (e.g., courtesy, professionalism, handling, responsiveness)</td>
             <td align="center">
                 <input id="check-o2" type="checkbox" @if(optional($cc->others)->OthersPn2) checked @endif>
             </td>
-            <td>{{ optional($cc->others)->OthersPn2 }}</td>
-            <td>{{ optional($cc->others)->OthersScNo2 }}</td>
-            <td>{{ optional($cc->others)->OthersSoNo2 }}</td>
-            <td>{{ optional($cc->others)->OthersQuantity2 }}</td>
-            <td>{{ optional($cc->others)->OthersLotNo2 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersPn2 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersScNo2 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersSoNo2 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersQuantity2 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersLotNo2 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">4.3 Payment/ Invoice (e.g. wrong price/ product details)</td>
             <td align="center">
                 <input id="check-o3" type="checkbox" @if(optional($cc->others)->OthersPn3) checked @endif>
             </td>
-            <td>{{ optional($cc->others)->OthersPn3 }}</td>
-            <td>{{ optional($cc->others)->OthersScNo3 }}</td>
-            <td>{{ optional($cc->others)->OthersSoNo3 }}</td>
-            <td>{{ optional($cc->others)->OthersQuantity3 }}</td>
-            <td>{{ optional($cc->others)->OthersLotNo3 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersPn3 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersScNo3 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersSoNo3 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersQuantity3 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersLotNo3 }}</td>
         </tr>
         <tr>
             <td class="break-spaces">4.4 Other Issues (please specify)</td>
             <td align="center">
                 <input id="check-o4" type="checkbox" @if(optional($cc->others)->OthersPn4) checked @endif>
             </td>
-            <td>{{ optional($cc->others)->OthersPn4 }}</td>
-            <td>{{ optional($cc->others)->OthersScNo4 }}</td>
-            <td>{{ optional($cc->others)->OthersSoNo4 }}</td>
-            <td>{{ optional($cc->others)->OthersQuantity4 }}</td>
-            <td>{{ optional($cc->others)->OthersLotNo4 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersPn4 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersScNo4 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersSoNo4 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersQuantity4 }}</td>
+            <td align="center">{{ optional($cc->others)->OthersLotNo4 }}</td>
         </tr>
     </table>
     <label class="mt-2"><b>Quantification of Cost/s:</b></label>
     <table border="1" style="margin-top: 0px" cellspacing="0" cellpadding="4" width="100%">
         <tr>
-            <td align="center" colspan="2"><b>DESCRIPTION</b></td>
-            <td align="center" colspan="2"><b>PHP/ IN USD/ IN EUR</b></td>
+            <td align="center" colspan="2" style="background-color: #d7d7d7"><b>DESCRIPTION</b></td>
+            <td align="center" colspan="2" style="background-color: #d7d7d7"><b>PHP/ IN USD/ IN EUR</b></td>
         </tr>
         <tr>
             <td align="center" colspan="2">{{ $cc->Description }}</td>
@@ -387,9 +387,13 @@ input[type="checkbox"] {
             <td>{{ $cc->Department }}</td>
        </tr> 
        <tr>
-            <td colspan="2">For NCAR Issuance:</td>
-            <td>Yes (NCAR No.: {{ $cc->IssuanceNo }})</td>
-            <td>No</td>
+            <td colspan="3">For NCAR Issuance:</td>
+            @if($cc->NcarIssuance == 1)
+                <td>Yes (NCAR No.: {{ $cc->IssuanceNo }})</td>
+            @else   
+                <td>No</td>
+            @endif
+            <!-- <td>No</td> -->
        </tr>
     </table>
     <table border="1" class="mt-2" cellspacing="0" cellpadding="4" width="100%">
@@ -402,10 +406,10 @@ input[type="checkbox"] {
             <td width="54%">{{ $cc->noted_by->full_name }}/&nbsp;{{ $cc->DateNoted }}</td>
         </tr>
     </table>
-    <label class="mt-2"><b>II.	Investigation: Attach necessary support document(s)</b></label>
+    <label class="mt-2"><b>II.	Investigation: Attach necessary supporting document(s)</b></label>
     <table border="1" class="mt-2" cellspacing="0" cellpadding="4" width="100%">
         <tr>
-            <td colspan="3"><b>Immediate Action/Correction:</b></td>
+            <td colspan="3" style="background-color: #d7d7d7"><b>Immediate Action/Correction:</b></td>
         </tr>
         <tr>
             <td width="50%" align="center">Immediate Action</td>
@@ -418,7 +422,7 @@ input[type="checkbox"] {
             <td>{{ $cc->ActionDate }}/ {{ $cc->action_responsible->full_name }}</td>
         </tr>
         <tr>
-            <td colspan="3"><b>Investigation of the Problem:</b>Root Cause Analysis/Investigation:  details on who/what contributed to the problem, how and why the non-conformity happened</td>
+            <td colspan="3" style="background-color: #d7d7d7"><b>Investigation of the Problem:</b>Root Cause Analysis/Investigation:  details on who/what contributed to the problem, how and why the non-conformity happened</td>
         </tr>
         <tr>
             <td width="75%" align="center" colspan="2">Investigation / Root Cause Analysis:</td>
@@ -429,7 +433,7 @@ input[type="checkbox"] {
             <td>{{ $cc->ActionDate }}</td>
         </tr>
         <tr>
-            <td colspan="3"><b>Corrective Action Plan:</b>Action that will eliminate the cause of the detected nonconformity or undesirable situation</td>
+            <td colspan="3" style="background-color: #d7d7d7"><b>Corrective Action Plan:</b>Action that will eliminate the cause of the detected nonconformity or undesirable situation</td>
         </tr>
         <tr>
             <td width="50%" align="center">Corrective Action</td>
