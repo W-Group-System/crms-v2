@@ -355,8 +355,7 @@ input[type="checkbox"] {
                                 <li>
                                     {{-- {{ $remark->Path }} --}}
                                     {{-- if it's an image --}}
-                                    <br>
-                                    <img src="{{ public_path('storage/' . $remark->Path) }}" width="150">
+                                    <img src="{{ public_path('storage/' . $remark->Path) }}" width="150"><br>
                                 </li>
                             @endif
                         @endforeach
