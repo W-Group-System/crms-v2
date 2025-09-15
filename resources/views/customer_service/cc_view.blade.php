@@ -62,8 +62,8 @@
                             </button>
                         </form>
                     @endif
-                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->NotedBy != NULL)
-                        @if($data->Progress == 30)
+                    @if($data->Progress == 30 && $data->NotedBy != NULL)
+                        @if(primarySalesApprover($data->NotedBy, auth()->user()->id))
                             <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success approvedBtn">
@@ -545,6 +545,32 @@
                             <p class="m-0">{{ $data->Currency }}</p>
                         </div>
                     </div>
+                    <div class="col-md-12 mb-3">
+                        <label><strong>Sales Remarks</strong></label>
+                        <hr class="alert-dark mt-0">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Remarks :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ optional($data->ccsales->first())->SalesRemarks }}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Attachments :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">
+                                @foreach ($data->ccsales as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path); 
+                                    @endphp
+                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
+                                    <br>
+                                @endforeach
+                            </p>
+                        </div>
+                    </div>
                     <!-- <div class="row mb-3">
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Customer Remarks :</b></p>
@@ -740,32 +766,6 @@
                             {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
                         @endforeach
                     </div> --}}
-                    <div class="col-md-12 mb-3">
-                        <label><strong>Sales Remarks</strong></label>
-                        <hr class="alert-dark mt-0">
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Remarks :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ optional($data->ccsales->first())->SalesRemarks }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Attachments :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">
-                                @foreach ($data->ccsales as $key => $file)
-                                    @php
-                                        $filePath = asset('storage/' . $file->Path); 
-                                    @endphp
-                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
-                                    <br>
-                                @endforeach
-                            </p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
