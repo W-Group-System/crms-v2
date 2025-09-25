@@ -5,7 +5,7 @@
 </head>
 <body>
     <div class="email-container">
-        <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;">
+        <p align="center"><img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;"></p>
         <h2>Customer Complaint Regarding {{ $CcNumber }}</h2>
         <b>Hi Team,</b>
         <p>The Sales Manager has closed the recent customer satisfaction feedback. Below are the details for your record and reference.:</p>

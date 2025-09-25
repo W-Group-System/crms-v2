@@ -47,7 +47,7 @@
 <body>
     <div class="email-container">
         @if($showButton)
-            <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;">
+            <p align="center"><img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;"></p>
             <h2>Customer Satisfaction Regarding {{ $CategoryName }}</h2>
             <b>Hi Team,</b>
             <p>A new customer satisfaction feedback form has been submitted. Please see the details below:</p>
@@ -86,7 +86,7 @@
                 </a>
             </p>
         @else 
-            <img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;" align="center">
+            <p align="center"><img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;" align="center"></p>
             <h2 align="center">Customer Satisfaction Regarding {{ $CategoryName }}</h2>
             <b>Dear Valued Partner.</b>
             <p>Thank you for your feedback.<br><br>We are delighted to hear your positive comments.<br><br>Should you have further concerns, please contact marketing@rico.com.ph or you may https://crms-v2.wgroup.space/customer_service</p>
