@@ -135,7 +135,7 @@
         @else 
             <p align="center"><img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;"></p>
             <b>Dear {{ $ContactName }},</b>
-            <p>Thank you for bringing your concern. We truly value your feedback and sincerely apologize for any inconvenience caused.<br><br>Please rest assured that we are carefully reviewing the matter and will take the necessary steps to resolve it promptly. Your satisfaction is very important to us, and your input helps us improve our service.</p>
+            <p>Thank you for bringing your concern to our attention. We truly value your feedback and sincerely apologize for any inconvenience caused.<br><br>Please rest assured that we are carefully reviewing the matter and will take the necessary steps to resolve it promptly. Your satisfaction is very important to us, and your input helps us improve our service.</p>
 
             <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
                 <tr>
