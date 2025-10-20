@@ -26,9 +26,16 @@ class ForApprovalTransactionController extends Controller
         $customerRequirement = CustomerRequirement::where('Progress', 10)
             ->where('Status', 10)
             ->where(function ($query) use ($userId) {
-                $query->whereHas('salesapprovers', function ($q) use ($userId) {
-                    $q->where('SalesApproverId', $userId);
-                })->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                // $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                //     $q->where('SalesApproverId', $userId);
+                // })
+                $query->where(function ($q1) use ($userId) {
+                    $q1->whereHas('salesapprovers', function ($q) use ($userId) {
+                        $q->where('SalesApproverId', $userId);
+                    })
+                     ->whereRaw('PrimarySalesPersonId REGEXP "^[0-9]+$"'); 
+                })
+                ->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
                     $q->where('SalesApproverId', $userId);
                 });
             })
@@ -44,9 +51,16 @@ class ForApprovalTransactionController extends Controller
         $sampleRequestForm = SampleRequest::where('Progress', 10)
             ->where('Status', 10)
             ->where(function ($query) use ($userId) {
-                $query->whereHas('salesapprovers', function ($q) use ($userId) {
-                    $q->where('SalesApproverId', $userId);
-                })->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                // $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                //     $q->where('SalesApproverId', $userId);
+                // })
+                $query->where(function ($q1) use ($userId) {
+                    $q1->whereHas('salesapprovers', function ($q) use ($userId) {
+                        $q->where('SalesApproverId', $userId);
+                    })
+                     ->whereRaw('PrimarySalesPersonId REGEXP "^[0-9]+$"'); 
+                })
+                ->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
                     $q->where('SalesApproverId', $userId);
                 });
             })

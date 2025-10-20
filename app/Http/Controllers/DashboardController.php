@@ -318,8 +318,15 @@ class DashboardController extends Controller
         // dd($primarySalesCount);
 
         $crrSalesForApproval = CustomerRequirement::join('users', function($join) {
-            $join->on('customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
-                 ->orOn('customerrequirements.PrimarySalesPersonId', '=', 'users.id');
+            // $join->on('customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
+            //      ->orOn('customerrequirements.PrimarySalesPersonId', '=', 'users.id');
+            $join->where(function ($q) {
+                $q->whereColumn('customerrequirements.PrimarySalesPersonId', '=', 'users.id')
+                ->where('customerrequirements.PrimarySalesPersonId', 'REGEXP', '^[0-9]+$');
+            })
+            ->orWhere(function ($q) {
+                $q->whereColumn('customerrequirements.PrimarySalesPersonId', '=', 'users.user_id');
+            });
             }) 
             ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
             ->where('customerrequirements.Progress', '10') 
@@ -343,8 +350,15 @@ class DashboardController extends Controller
         
 
         $srfSalesForApproval = SampleRequest::join('users', function($join) {
-            $join->on('samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
-                    ->orOn('samplerequests.PrimarySalesPersonId', '=', 'users.id');
+            // $join->on('samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
+            //         ->orOn('samplerequests.PrimarySalesPersonId', '=', 'users.id');
+            $join->where(function ($q) {
+                $q->whereColumn('samplerequests.PrimarySalesPersonId', '=', 'users.id')
+                ->where('samplerequests.PrimarySalesPersonId', 'REGEXP', '^[0-9]+$');
+            })
+            ->orWhere(function ($q) {
+                $q->whereColumn('samplerequests.PrimarySalesPersonId', '=', 'users.user_id');
+            });
             }) 
             ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
             ->where('samplerequests.Progress', '10') 
