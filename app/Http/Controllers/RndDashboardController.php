@@ -261,7 +261,10 @@ class RndDashboardController extends Controller
 
         $crr = CustomerRequirement::where('Status', 10)
             ->where('Progress', 30)
-            ->where('ReturnToSales', 0)
+            ->where(function($q) {
+                $q->where('ReturnToSales', 0)->orWhere('ReturnToSales', null);
+            })
+            // ->orWhere('ReturnToSales', null)
             ->where(function($q)use($search) {
                 $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
