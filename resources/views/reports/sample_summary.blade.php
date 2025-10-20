@@ -96,7 +96,7 @@
                                     <td>{{ $data->sampleRequest->clientContact->ContactName ?? 'N/A' }}</td>
                                     <td>
                                         {{-- {{ $data->sampleRequest->clientAddress->Address ?? 'N/A' }} --}}
-                                        {!! nl2br($data->sampleRequest->clientAddress->Address) !!}
+                                        {!! nl2br(optional($data->sampleRequest->clientAddress)->Address) !!}
                                     </td>
                                     <td>{{ $data->NumberOfPackages }} x {{$data->Quantity}} {{ $data->uom->Name }}</td>
                                     <td>{{ $data->NumberOfPackages * $data->Quantity }}</td>
