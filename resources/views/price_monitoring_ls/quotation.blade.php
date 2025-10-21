@@ -280,20 +280,14 @@
                     @endif
                 @endforeach
                 <br>
-                <br>
                 {{-- {{dd($price_monitoring_ls->requestPriceProducts)}} --}}
                 @php
-                    $hasHighMarkup = $price_monitoring_ls->requestPriceProducts->contains(function ($item) {
-                        return $item->LsalesMarkupPercent >= 15;
+                    $shouldShowNotedBy = $price_monitoring_ls->requestPriceProducts->contains(function ($item) {
+                        return $item->LsalesMarkupPercent < 15 && (empty($item->GAE) || $item->LsalesGaeValue == 0);
                     });
                 @endphp
 
-                @if($hasHighMarkup)
-                    <b style="color: green; font-size:14px">
-                        Marine Resources Development Corporation
-                    </b> 
-                    <p class="right-p">---This is a computer-generated and no signature is required---</p>
-                @else
+                @if($shouldShowNotedBy)
                     <table cellpadding="0" border="0" cellspacing="0" style="width:100%;">
                         <tr>
                             <td><p style="font-size:9;">Noted by</p></td>
@@ -302,12 +296,12 @@
                         </tr>
                         <tr>
                             <td>
-                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin:35 10 0 10;">
+                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin:15 10 0 10;">
                                     [signature over printed name]
                                 </p>
                             </td>
                             <td>
-                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin:35 10 0 10;">
+                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin:15 10 0 10;">
                                     [signature over printed name]
                                 </p>
                             </td>
@@ -320,7 +314,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin:35 10 0 10;">
+                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin:15 10 0 10;">
                                     [signature over printed name]
                                 </p>
                             </td>
@@ -328,6 +322,11 @@
                             <td></td>
                         </tr>
                     </table>
+                @else
+                    <b style="color: green; font-size:14px">
+                        Marine Resources Development Corporation
+                    </b> 
+                    <p class="right-p">---This is a computer-generated and no signature is required---</p>
                 @endif
             </td>
         </tr>

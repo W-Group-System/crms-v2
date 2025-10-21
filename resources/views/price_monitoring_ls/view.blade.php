@@ -249,7 +249,7 @@
                     <p class="col-md-2 mb-0 text-right"><b>Product:</b></p>
                     <p class="col-md-2 mb-0">{{ optional($prcieProduct->products)->code }}</p>
                     <p class="col-md-2 mb-0 text-right"><b>RMC (PHP):</b></p>
-                    <p class="col-md-2 mb-0">{{ $prcieProduct->ProductRmc }}</p>
+                    <p class="col-md-2 mb-0">{{ number_format($prcieProduct->ProductRmc,2) }}</p>
                     <p class="col-md-2 mb-0 text-right"><b>Delivery Cost:</b></p>
                     <p class="col-md-2 mb-0">{{ $prcieProduct->LsalesDeliveryCost }}</p>
                 </div>

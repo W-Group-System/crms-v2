@@ -229,7 +229,7 @@
             <tr>
                 <td class="sub-heading no-border">a. Raw Materials</td>
                 <td class="no-border"></td>
-                <td><div class="values">{{ $item->ProductRmc }}</div></td>
+                <td><div class="values">{{ number_format($item->ProductRmc, 2) }}</div></td>
             </tr>
             <tr>
                 <td class="sub-heading no-border">b. Direct Labor</td>
@@ -319,12 +319,12 @@
             <tr>
                 <td class="sub-heading"></td>
                 <td class="no-border"></td>
-                <td><div class="values">{{ $item->LsalesMarkupPercent }}%</div></td>
+                <td><div class="values">{{ number_format($item->LsalesMarkupPercent,2) }}%</div></td>
             </tr>
             <tr>
                 <td class="sub-heading"></td>
                 <td class="no-border"></td>
-                <td><div class="values">Php {{ $item->LsalesMarkupValue }}</div></td>
+                <td><div class="values">Php {{ number_format($item->LsalesMarkupValue,2) }}</div></td>
             </tr>
         </table>
     </div>
