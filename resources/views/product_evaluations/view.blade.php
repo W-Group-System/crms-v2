@@ -767,9 +767,29 @@
                                     $dueDate = $requestEvaluation->DueDate ? strtotime($requestEvaluation->DueDate) : null;
                                     $dateCompleted = $requestEvaluation->DateCompleted ? strtotime($requestEvaluation->DateCompleted) : null;
 
-                                    if ($dateReceived && $dueDate) {
-                                        $difference = ($dueDate - $dateReceived) / (60 * 60 * 24); 
-                                        $leadtime = number_format($difference, 0);
+                                    // if ($dateReceived && $dueDate) {
+                                    //     $difference = ($dueDate - $dateReceived) / (60 * 60 * 24); 
+                                    //     $leadtime = number_format($difference, 0);
+                                    // } else {
+                                    //     $leadtime = 'NA';
+                                    // }
+                                    $leadReceived = $requestEvaluation->DateReceived;
+                                    $leadDueDate = $requestEvaluation->DueDate;
+
+                                    if ($leadReceived && $leadDueDate) {
+                                        // Normalize to Y-m-d strictly, ensuring no time or timezone offsets
+                                        $start = DateTime::createFromFormat('Y-m-d', date('Y-m-d', strtotime($leadReceived)));
+                                        $end = DateTime::createFromFormat('Y-m-d', date('Y-m-d', strtotime($leadDueDate)));
+
+                                        $leadtime = 0;
+
+                                        while ($start <= $end) {
+                                            $dayOfWeek = $start->format('N'); 
+                                            if ($dayOfWeek < 6) { 
+                                                $leadtime++;
+                                            }
+                                            $start->modify('+1 day');
+                                        }
                                     } else {
                                         $leadtime = 'NA';
                                     }
