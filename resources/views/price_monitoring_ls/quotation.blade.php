@@ -32,7 +32,7 @@
             border: 1px solid black;
             text-align: center;
             font-size: 12px;
-            padding: 15px
+            padding: 5px
         }
         .left-div {
             text-align: right;
@@ -144,7 +144,7 @@
                 @if ($price_monitoring_ls->TaxType == "20")
                 <table class="table1">
                     <thead>
-                        <tr style="gray">
+                        <tr style="background-color:gray">
                             <th>Product</th>
                             <th>PRICE/Kg VAT Ex</th>
                             <th>Quantity (Kg)</th>
