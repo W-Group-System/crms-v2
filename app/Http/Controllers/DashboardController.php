@@ -317,54 +317,80 @@ class DashboardController extends Controller
 
         // dd($primarySalesCount);
 
-        $crrSalesForApproval = CustomerRequirement::join('users', function($join) {
-            // $join->on('customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
-            //      ->orOn('customerrequirements.PrimarySalesPersonId', '=', 'users.id');
-            $join->where(function ($q) {
-                $q->whereColumn('customerrequirements.PrimarySalesPersonId', '=', 'users.id')
-                ->where('customerrequirements.PrimarySalesPersonId', 'REGEXP', '^[0-9]+$');
+        $crrSalesForApproval = CustomerRequirement::where('Progress', 10)
+            ->where('Status', 10)
+            ->where(function ($query) use ($userId) {
+                $query->where(function ($q1) use ($userId) {
+                    $q1->whereHas('salesapprovers', function ($q) use ($userId) {
+                        $q->where('SalesApproverId', $userId);
+                    })
+                     ->whereRaw('PrimarySalesPersonId REGEXP "^[0-9]+$"'); 
+                })
+                ->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
             })
-            ->orWhere(function ($q) {
-                $q->whereColumn('customerrequirements.PrimarySalesPersonId', '=', 'users.user_id');
-            });
-            }) 
-            ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
-            ->where('customerrequirements.Progress', '10') 
-            ->where('customerrequirements.Status', '10') 
-            ->where('salesapprovers.SalesApproverId', $userId)
-            ->count(); 
+            ->count();
+        // $crrSalesForApproval = CustomerRequirement::join('users', function($join) {
+        //     // $join->on('customerrequirements.PrimarySalesPersonId', '=', 'users.user_id')
+        //     //      ->orOn('customerrequirements.PrimarySalesPersonId', '=', 'users.id');
+        //     $join->where(function ($q) {
+        //         $q->whereColumn('customerrequirements.PrimarySalesPersonId', '=', 'users.id')
+        //         ->where('customerrequirements.PrimarySalesPersonId', 'REGEXP', '^[0-9]+$');
+        //     })
+        //     ->orWhere(function ($q) {
+        //         $q->whereColumn('customerrequirements.PrimarySalesPersonId', '=', 'users.user_id');
+        //     });
+        //     }) 
+        //     ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+        //     ->where('customerrequirements.Progress', '10') 
+        //     ->where('customerrequirements.Status', '10') 
+        //     ->where('salesapprovers.SalesApproverId', $userId)
+        //     ->count(); 
 
         $rpeSalesForApproval = RequestProductEvaluation::join('users', function($join) {
                 $join->on('requestproductevaluations.PrimarySalesPersonId', '=', 'users.user_id')
                      ->orOn('requestproductevaluations.PrimarySalesPersonId', '=', 'users.id');
             })
             ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId')
-            ->where('requestproductevaluations.Progress', '10')  // Filter by progress 10
-            ->where('requestproductevaluations.Status', '10')    // Filter by status 10
+            ->where('requestproductevaluations.Progress', '10')  
+            ->where('requestproductevaluations.Status', '10')    
             ->where(function($query) use ($userId) {
-                // Ensure correct filtering by SalesApproverId for the logged-in user
                 $query->where('salesapprovers.SalesApproverId', $userId)
                       ->whereNotNull('salesapprovers.SalesApproverId');
             })
-            ->count(); // Correct count of rows based on the filters
+            ->count(); 
         
-
-        $srfSalesForApproval = SampleRequest::join('users', function($join) {
-            // $join->on('samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
-            //         ->orOn('samplerequests.PrimarySalesPersonId', '=', 'users.id');
-            $join->where(function ($q) {
-                $q->whereColumn('samplerequests.PrimarySalesPersonId', '=', 'users.id')
-                ->where('samplerequests.PrimarySalesPersonId', 'REGEXP', '^[0-9]+$');
+        $srfSalesForApproval = SampleRequest::where('Progress', 10)
+            ->where('Status', 10)
+            ->where(function ($query) use ($userId) {
+                $query->where(function ($q1) use ($userId) {
+                    $q1->whereHas('salesapprovers', function ($q) use ($userId) {
+                        $q->where('SalesApproverId', $userId);
+                    })
+                     ->whereRaw('PrimarySalesPersonId REGEXP "^[0-9]+$"'); 
+                })
+                ->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
             })
-            ->orWhere(function ($q) {
-                $q->whereColumn('samplerequests.PrimarySalesPersonId', '=', 'users.user_id');
-            });
-            }) 
-            ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
-            ->where('samplerequests.Progress', '10') 
-            ->where('samplerequests.Status', '10') 
-            ->where('salesapprovers.SalesApproverId', $userId)
             ->count();
+        // $srfSalesForApproval = SampleRequest::join('users', function($join) {
+        //     // $join->on('samplerequests.PrimarySalesPersonId', '=', 'users.user_id')
+        //     //         ->orOn('samplerequests.PrimarySalesPersonId', '=', 'users.id');
+        //     $join->where(function ($q) {
+        //         $q->whereColumn('samplerequests.PrimarySalesPersonId', '=', 'users.id')
+        //         ->where('samplerequests.PrimarySalesPersonId', 'REGEXP', '^[0-9]+$');
+        //     })
+        //     ->orWhere(function ($q) {
+        //         $q->whereColumn('samplerequests.PrimarySalesPersonId', '=', 'users.user_id');
+        //     });
+        //     }) 
+        //     ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId') 
+        //     ->where('samplerequests.Progress', '10') 
+        //     ->where('samplerequests.Status', '10') 
+        //     ->where('salesapprovers.SalesApproverId', $userId)
+        //     ->count();
       
         if (auth()->user()->role->description == "Manager") {
             $prfSalesForApproval = PriceMonitoring::whereIn('Progress', [10,40])
