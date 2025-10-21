@@ -282,48 +282,53 @@
                 <br>
                 <br>
                 {{-- {{dd($price_monitoring_ls->requestPriceProducts)}} --}}
-                @foreach ($price_monitoring_ls->requestPriceProducts as $price_products)
-                    @if($price_products->LsalesMarkupPercent >= 15)
+                @php
+                    $hasHighMarkup = $price_monitoring_ls->requestPriceProducts->contains(function ($item) {
+                        return $item->LsalesMarkupPercent >= 15;
+                    });
+                @endphp
+
+                @if($hasHighMarkup)
                     <b style="color: green; font-size:14px">
                         Marine Resources Development Corporation
                     </b> 
-                    <p  class="right-p">---This is a computer-generated and no signature is required---</p>
-                    @else
-
+                    <p class="right-p">---This is a computer-generated and no signature is required---</p>
+                @else
                     <table cellpadding="0" border="0" cellspacing="0" style="width:100%;">
                         <tr>
-                            <td>
-                                <p style="font-size:9;">Noted by</p>
-                            </td>
+                            <td><p style="font-size:9;">Noted by</p></td>
                             <td></td>
                             <td></td>
                         </tr>
                         <tr>
                             <td>
-                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin: 35 10 0 10;">[signature over printed name]</p>
+                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin:35 10 0 10;">
+                                    [signature over printed name]
+                                </p>
                             </td>
                             <td>
-                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin: 35 10 0 10;">[signature over printed name]</p>
+                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin:35 10 0 10;">
+                                    [signature over printed name]
+                                </p>
                             </td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td>
-                                <p style="font-size:9; margin-top:20;">Approved by</p>
-                            </td>
+                            <td><p style="font-size:9; margin-top:20;">Approved by</p></td>
                             <td></td>
                             <td></td>
                         </tr>
                         <tr>
                             <td>
-                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin: 35 10 0 10;">[signature over printed name]</p>
+                                <p style="font-size:8; text-align:center; border-top:1px solid black; margin:35 10 0 10;">
+                                    [signature over printed name]
+                                </p>
                             </td>
                             <td></td>
                             <td></td>
                         </tr>
                     </table>
-                    @endif
-                @endforeach
+                @endif
             </td>
         </tr>
     </table>
