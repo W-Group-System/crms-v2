@@ -423,8 +423,16 @@ class ClientController extends Controller
             }
         }        
        
+        if ($request->source === 'create') {
+            $redirect = url('client_prospect');
+        } else {
+            $redirect = url('client');
+        }
         // Return success message
-        return response()->json(['success' => 'Data Added Successfully.']);
+        return response()->json([
+            'success' => 'Data Added Successfully.',
+            'redirect' => $redirect,
+        ]);
     }
 
     // Edit

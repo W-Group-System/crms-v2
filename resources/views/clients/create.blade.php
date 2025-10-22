@@ -11,6 +11,7 @@
                 @csrf
                 <span id="form_result"></span>
                 <div class="row">
+                    <input type="hidden" name="source" value="create">
                     <input type="hidden" name="Status" id="Status" value="1">
                     <div class="col-lg-6">
                         <div class="form-group">
@@ -584,8 +585,9 @@
                             timer: 1500, // Auto-close after 2 seconds
                             showConfirmButton: false
                         }).then((result) => {
-                            $('#form_client')[0].reset();
-                            location.reload();
+                            // $('#form_client')[0].reset();
+                            // location.reload();
+                            window.location.href = response.redirect;
                         });
                     } else if (response.errors) {
                         // Handle validation errors display
