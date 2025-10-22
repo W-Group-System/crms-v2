@@ -833,11 +833,11 @@
                         <div class="col-sm-3">
                             <p class="mb-0">@php
                                 $prodCode = $requestProducts->ProductCode;
-                                $productId = getProductIdByCode($prodCode);
+                                $productId = getProductIdByCodeSrf($prodCode);
                                 if ($productId) {
                                     echo '<a href="'.url('view_product/'.$productId).'">'.$prodCode.'</a>';
                                 } else {
-                                    echo $prodCode; // Or whatever you want to display if the product ID is not found
+                                    echo $prodCode;
                                 }
                             @endphp</p>
                         </div>
