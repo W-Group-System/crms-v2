@@ -551,12 +551,12 @@
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
-                                                <a href="{{url('samplerequest/view/'.$item->sampleRequest->Id.'/'.$item->sampleRequest->SrfNumber)}}" target="_blank">
+                                                <a href="{{url('samplerequest/view/'. optional($item->sampleRequest)->Id.'/'.optional($item->sampleRequest)->SrfNumber)}}" target="_blank">
                                                     {{optional($item->sampleRequest)->SrfNumber}}
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="{{url('view_client/'.$item->sampleRequest->client->id)}}">{{$item->sampleRequest->client->Name}}</a>
+                                                <a href="{{url('view_client/'.optional(optional($item->sampleRequest)->client)->id)}}">{{optional(optional($item->sampleRequest)->client)->Name}}</a>
                                             </td>
                                             <td>
                                                 {{-- @if($item->DispositionRejectionDescription != null)
