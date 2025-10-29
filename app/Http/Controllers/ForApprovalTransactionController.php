@@ -41,10 +41,27 @@ class ForApprovalTransactionController extends Controller
             })
             ->get();
 
-        $requestProductEvaluation = RequestProductEvaluation::where('Progress', 10)
+        // $requestProductEvaluation = RequestProductEvaluation::where('Progress', 10)
+        //     ->where('Status', 10)
+        //     ->whereHas('salesapprovers', function ($q) use ($userId) {
+        //         $q->where('SalesApproverId', $userId);
+        //     })
+        //     ->get();
+         $requestProductEvaluation = RequestProductEvaluation::where('Progress', 10)
             ->where('Status', 10)
-            ->whereHas('salesapprovers', function ($q) use ($userId) {
-                $q->where('SalesApproverId', $userId);
+            ->where(function ($query) use ($userId) {
+                // $query->whereHas('salesapprovers', function ($q) use ($userId) {
+                //     $q->where('SalesApproverId', $userId);
+                // })
+                $query->where(function ($q1) use ($userId) {
+                    $q1->whereHas('salesapprovers', function ($q) use ($userId) {
+                        $q->where('SalesApproverId', $userId);
+                    })
+                     ->whereRaw('PrimarySalesPersonId REGEXP "^[0-9]+$"'); 
+                })
+                ->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
             })
             ->get();
 

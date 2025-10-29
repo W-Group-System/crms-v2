@@ -348,18 +348,32 @@ class DashboardController extends Controller
         //     ->where('salesapprovers.SalesApproverId', $userId)
         //     ->count(); 
 
-        $rpeSalesForApproval = RequestProductEvaluation::join('users', function($join) {
-                $join->on('requestproductevaluations.PrimarySalesPersonId', '=', 'users.user_id')
-                     ->orOn('requestproductevaluations.PrimarySalesPersonId', '=', 'users.id');
+        // $rpeSalesForApproval = RequestProductEvaluation::join('users', function($join) {
+        //         $join->on('requestproductevaluations.PrimarySalesPersonId', '=', 'users.user_id')
+        //              ->orOn('requestproductevaluations.PrimarySalesPersonId', '=', 'users.id');
+        //     })
+        //     ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId')
+        //     ->where('requestproductevaluations.Progress', '10')  
+        //     ->where('requestproductevaluations.Status', '10')    
+        //     ->where(function($query) use ($userId) {
+        //         $query->where('salesapprovers.SalesApproverId', $userId)
+        //               ->whereNotNull('salesapprovers.SalesApproverId');
+        //     })
+        //     ->count(); 
+        $rpeSalesForApproval = RequestProductEvaluation::where('Progress', 10)
+            ->where('Status', 10)
+            ->where(function ($query) use ($userId) {
+                $query->where(function ($q1) use ($userId) {
+                    $q1->whereHas('salesapprovers', function ($q) use ($userId) {
+                        $q->where('SalesApproverId', $userId);
+                    })
+                     ->whereRaw('PrimarySalesPersonId REGEXP "^[0-9]+$"'); 
+                })
+                ->orWhereHas('salesapproverByUserId', function ($q) use ($userId) {
+                    $q->where('SalesApproverId', $userId);
+                });
             })
-            ->join('salesapprovers', 'users.id', '=', 'salesapprovers.UserId')
-            ->where('requestproductevaluations.Progress', '10')  
-            ->where('requestproductevaluations.Status', '10')    
-            ->where(function($query) use ($userId) {
-                $query->where('salesapprovers.SalesApproverId', $userId)
-                      ->whereNotNull('salesapprovers.SalesApproverId');
-            })
-            ->count(); 
+            ->count();
         
         $srfSalesForApproval = SampleRequest::where('Progress', 10)
             ->where('Status', 10)
