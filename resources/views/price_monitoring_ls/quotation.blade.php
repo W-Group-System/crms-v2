@@ -272,8 +272,10 @@
                     @if($price_products->LsalesMarkupPercent <= 15)
                         @if($price_products->priceRequestForm->primarySalesPerson)
                         <p class="right-p">{{$price_products->priceRequestForm->primarySalesPerson->full_name}}</p>
+                        @break
                         @elseif($price_products->priceRequestForm->primarySalesPersonById)
                         <p class="right-p">{{$price_products->priceRequestForm->primarySalesPersonById->full_name}}</p>
+                        @break
                         @endif
                     {{-- @else
                         <p class="right-p">Maricris J. Ribon</p> --}}
