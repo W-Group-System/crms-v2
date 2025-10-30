@@ -426,10 +426,10 @@ class RequestProductEvaluationController extends Controller
             $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-IS%')->orderBy('id', 'desc')->first();
             $count = substr($rpeList->RpeNumber, 10);
             $totalCount = $count + 1;
-            if ($totalCount < 1000)
-            {
+            // if ($totalCount < 1000)
+            // {
                 $rpe_series = str_pad($totalCount, 4,'0', STR_PAD_LEFT);
-            }
+            // }
             $rpeNo = "RPE-".$type.'-'.$year.'-'.$rpe_series;
         }
         
@@ -439,10 +439,10 @@ class RequestProductEvaluationController extends Controller
             $rpeList = RequestProductEvaluation::where('RpeNumber', 'LIKE', '%RPE-LS%')->orderBy('id', 'desc')->first();
             $count = substr($rpeList->RpeNumber, 10);
             $totalCount = $count + 1;
-            if ($totalCount < 1000)
-            {
+            // if ($totalCount < 1000)
+            // {
                 $rpe_series = str_pad($totalCount, 4,'0', STR_PAD_LEFT);
-            }
+            // }
             $rpeNo = "RPE-".$type.'-'.$year.'-'.$rpe_series;
         }
         
