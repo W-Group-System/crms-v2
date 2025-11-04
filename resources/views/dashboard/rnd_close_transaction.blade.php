@@ -55,6 +55,7 @@
                             <th>Client Name</th>
                             <th>Application</th>
                             <th>Analyst</th>
+                            <th>Date Completed</th>
                             <th>Status</th>
                             <th>Progress</th>
                         </tr>
@@ -70,6 +71,7 @@
                                     $client_name = "";
                                     $client_id = "";
                                     $application = "";
+                                    $date_completed = "";
                                     $analyst = "";
                                     $status = "";
                                     $progress = "";
@@ -94,6 +96,7 @@
                                         $client_name = optional($transaction->client)->Name;
                                         $client_id = optional($transaction->client)->id;
                                         $application = optional($transaction->product_application)->Name;
+                                        $date_completed = $transaction->DateCompleted;
                                         $status = $transaction->Status;
                                         // $analyst = optional($transaction->crr_personnels)->full_name;
                                         $progress = $transaction->Progress;
@@ -120,6 +123,7 @@
                                         $client_name = optional($transaction->client)->Name;
                                         $client_id = optional($transaction->client)->id;
                                         $application = optional($transaction->product_application)->Name;
+                                        $date_completed = $transaction->DateCompleted;
                                         $status = $transaction->Status;
                                         $progress = $transaction->Progress;
                                     }
@@ -144,6 +148,7 @@
                                         $client_name = optional($transaction->client)->Name;
                                         $client_id = optional($transaction->client)->id;
                                         $application = optional($transaction->productApplicationsId)->Name;
+                                        $date_completed = $transaction->DateCompleted;
                                         $status = $transaction->Status;
                                         $progress = $transaction->Progress;
                                     }
@@ -169,6 +174,7 @@
                                     </td>
                                     <td>{{$application}}</td>
                                     <td>{{$analyst}}</td>
+                                    <td>{{ $date_completed }}</td>
                                     <td>
                                         @if($status == 10)
                                         <span class="badge badge-success">Open</span>
