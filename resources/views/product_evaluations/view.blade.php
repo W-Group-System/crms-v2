@@ -172,7 +172,7 @@
                             
                         @if ($requestEvaluation->Status == 10)
 
-                            @if($requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 10  && $requestEvaluation->Progress != 20  )
+                            @if($requestEvaluation->Progress != 10  && $requestEvaluation->Progress != 20  )
                             <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateRnd{{$requestEvaluation->id}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Update
                             </button>
@@ -316,7 +316,7 @@
 
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
                             @if ($requestEvaluation->Status == 10)
-                                @if($requestEvaluation->Progress != 60 && $requestEvaluation->Progress != 10  && $requestEvaluation->Progress != 20  && $requestEvaluation->Progress != 30 )
+                                @if( $requestEvaluation->Progress != 10  && $requestEvaluation->Progress != 20  && $requestEvaluation->Progress != 30 )
                                     <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#updateRnd{{$requestEvaluation->id}}">
                                         <i class="ti ti-pencil"></i>&nbsp;Update
                                     </button>

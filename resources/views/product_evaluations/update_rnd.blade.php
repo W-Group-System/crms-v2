@@ -11,28 +11,32 @@
                 <form method="POST" action="{{ url('update_rnd/'.$requestEvaluation->id) }}" onsubmit="show()">
                     @csrf
                     <div class="row">
+                        @php
+                            $isReadOnly = ($requestEvaluation->Progress == 60);
+                        @endphp
+
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>DDW Number</label>
-                                <input type="text" name="ddw_number" class="form-control" placeholder="Enter DDW Number" value="{{$requestEvaluation->DdwNumber}}" required>
+                                <input type="text" name="ddw_number" class="form-control" placeholder="Enter DDW Number" value="{{$requestEvaluation->DdwNumber}}" required {{ $isReadOnly ? 'readonly' : '' }}>
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Date Received</label>
-                                <input type="date" name="date_received" class="form-control" value="{{$requestEvaluation->DateReceived}}">
+                                <input type="date" name="date_received" class="form-control" value="{{$requestEvaluation->DateReceived}}" {{ $isReadOnly ? 'readonly' : '' }}>
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>RPE Recommendation</label>
-                                <textarea name="rpe_recommendation" class="form-control" cols="30" rows="10">{{$requestEvaluation->RpeResult}}</textarea>
+                                <textarea name="rpe_recommendation" class="form-control" cols="30" rows="10" {{ $isReadOnly ? 'readonly' : '' }}>{{$requestEvaluation->RpeResult}}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Date Started</label>
-                                <input type="date" name="date_started" class="form-control" value="{{$requestEvaluation->DateStarted}}">
+                                <input type="date" name="date_started" class="form-control" value="{{$requestEvaluation->DateStarted}}" {{ $isReadOnly ? 'readonly' : '' }}>
                             </div>
                         </div>
                         <div class="col-lg-12">
