@@ -719,17 +719,28 @@
                             </div>
                             <div class="col-sm-3 col-md-8">
                                 @php
+                                    // $today = new DateTime();
+                                    // $due_date = new DateTime($crr->DueDate);
+                                    // $diff = $due_date->diff($today);
+
+                                    // $days_late = 0;
+                                    // $s = "";
+                                    // if ($today > $due_date) 
+                                    // {
+                                    //     $days_late = $diff->d;
+                                    //     $s = $days_late > 1 ? 's' : '';
+                                    // } 
                                     $today = new DateTime();
                                     $due_date = new DateTime($crr->DueDate);
-                                    $diff = $due_date->diff($today);
+                                    $completed_date = new DateTime($crr->DateCompleted ?? 'now');
+                                    $diff = $due_date->diff($completed_date);
 
                                     $days_late = 0;
                                     $s = "";
-                                    if ($today > $due_date) 
-                                    {
-                                        $days_late = $diff->d;
+                                    if ($completed_date > $due_date) {
+                                        $days_late = $diff->days;
                                         $s = $days_late > 1 ? 's' : '';
-                                    } 
+                                    }
                                     
                                 @endphp
                                 <p class="mb-0">
