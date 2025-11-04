@@ -229,6 +229,7 @@
                                 <th>Application</th>
                                 <th>RPE Recommendation</th>
                                 <th>Status</th>
+                                <th>Date Completed</th>
                                 <th>Progress</th>
                                 <th>Is Returned</th>
                             </tr>
@@ -325,6 +326,13 @@
                                             <div class="badge badge-warning">Closed</div>
                                         @elseif($productEvaluation->Status == 50)
                                             <div class="badge badge-danger">Cancelled</div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($productEvaluation->DateCompleted == null)
+                                        N/A
+                                        @else 
+                                        {{date('M d, Y', strtotime($productEvaluation->DateCompleted))}}
                                         @endif
                                     </td>
                                     <td>{{ optional($productEvaluation->progressStatus)->name }}</td>
