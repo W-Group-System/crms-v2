@@ -1125,37 +1125,98 @@ class DashboardController extends Controller
         $total_new_request_count = 0;
         $total_final_count = 0;
         $total_close_transaction = 0;
+        $total_transaction_crr = 0;
+        $crr_new = 0;
+        $crr_ongoing = 0;
+        $total_transaction_rpe = 0;
+        $rpe_new = 0;
+        $rpe_ongoing = 0;
+
+        $userId = auth()->user()->id;
+        $userEmployeeId = auth()->user()->user_id;
+
+        $baseCrr = CustomerRequirement::query()
+            ->where(function ($q) {
+                $q->where('RefCode', 'RND')
+                ->orWhereNull('RefCode');
+            })
+            ->when($role->type === 'RND' && $role->name === 'Staff L1', function ($q) use ($userId, $userEmployeeId) {
+                $q->whereHas('crr_personnels', function ($subQ) use ($userId, $userEmployeeId) {
+                    $subQ->where(function ($innerQ) use ($userId, $userEmployeeId) {
+                        $innerQ->where('PersonnelUserId', $userEmployeeId)
+                            ->orWhere('PersonnelUserId', $userId);
+                    });
+                });
+            });
+        
+        $crr     = (clone $baseCrr)->where('Status', 10)->count();
+        $crr_new = (clone $baseCrr)->where('Progress', 40)->count();
+        $crr_ongoing = (clone $baseCrr)->whereNotIn('Progress', [60, 70])->count();
+        $total_transaction_crr = $crr_new + $crr_ongoing;
 
         // Open Transaction Count
-        $crr = CustomerRequirement::where('Status', 10)
-            ->where(function($q) {
-                $q->where('RefCode', 'RND')->orWhereNull('RefCode');
-            })
-            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
-                $q->whereHas('crr_personnels', function($q) {
-                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
-                });
-            })
-            ->count();
+        // $crr = CustomerRequirement::where('Status', 10)
+        //     ->where(function($q) {
+        //         $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+        //     })
+        //     ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+        //         $q->whereHas('crr_personnels', function($q) {
+        //             $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+        //         });
+        //     })
+        //     ->count();
         
-        $rpe = RequestProductEvaluation::where('Status', 10)
-            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
-                $q->whereHas('rpe_personnels', function($q) {
-                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
-                });
-            })
-            ->count();
+        // $rpe = RequestProductEvaluation::where('Status', 10)
+        //     ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+        //         $q->whereHas('rpe_personnels', function($q) {
+        //             $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+        //         });
+        //     })
+        //     ->count();
 
-        $srf = SampleRequest::where('Status', 10)
+        $baseRpe = RequestProductEvaluation::query()
+            ->when($role->type === 'RND' && $role->name === 'Staff L1', function ($q) use ($userId, $userEmployeeId) {
+                $q->whereHas('rpe_personnels', function ($subQ) use ($userId, $userEmployeeId) {
+                    $subQ->where(function ($innerQ) use ($userId, $userEmployeeId) {
+                        $innerQ->where('PersonnelUserId', $userEmployeeId)
+                            ->orWhere('PersonnelUserId', $userId);
+                    });
+                });
+            });
+
+        $rpe     = (clone $baseRpe)->where('Status', 10)->count();
+        $rpe_new = (clone $baseRpe)->whereIn('Progress', [35, 40])->count();
+        $rpe_ongoing = (clone $baseRpe)->whereNotIn('Progress', [35, 40, 60, 70])->count();
+        $total_transaction_rpe = $rpe_new + $rpe_ongoing;
+
+        // $srf = SampleRequest::where('Status', 10)
+        //     ->where(function($q) {
+        //         $q->where('RefCode', 1);
+        //     })
+        //     ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+        //         $q->whereHas('srf_personnel', function($q) {
+        //             $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+        //         });
+        //     })
+        //     ->count();
+
+        $baseSrf = SampleRequest::query()
             ->where(function($q) {
                 $q->where('RefCode', 1);
             })
-            ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
-                $q->whereHas('srf_personnel', function($q) {
-                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+            ->when($role->type === 'RND' && $role->name === 'Staff L1', function ($q) use ($userId, $userEmployeeId) {
+                $q->whereHas('srf_personnel', function ($subQ) use ($userId, $userEmployeeId) {
+                    $subQ->where(function ($innerQ) use ($userId, $userEmployeeId) {
+                        $innerQ->where('PersonnelUserId', $userEmployeeId)
+                            ->orWhere('PersonnelUserId', $userId);
+                    });
                 });
-            })
-            ->count();
+            });
+
+        $srf     = (clone $baseSrf)->where('Status', 10)->count();
+        $srf_new = (clone $baseSrf)->whereIn('Progress', [35, 40])->count();
+        $srf_ongoing = (clone $baseSrf)->whereNotIn('Progress', [35, 40, 60, 70])->count();
+        $total_transaction_srf = $srf_new + $srf_ongoing;
 
         // New Product Count
         $products = Product::where('status', 2)->count();
@@ -1292,7 +1353,7 @@ class DashboardController extends Controller
         //     $user_transaction[] = $object;
         // }
 
-        return view('dashboard.rnd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction','total_close_transaction'));
+        return view('dashboard.rnd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction','total_close_transaction', 'crr_new', 'crr_ongoing', 'total_transaction_crr', 'rpe_new', 'rpe_ongoing', 'total_transaction_rpe', 'srf_new', 'srf_ongoing', 'total_transaction_srf'));
     }
 
     public function qcdIndex()

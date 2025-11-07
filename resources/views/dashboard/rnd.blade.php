@@ -503,6 +503,48 @@
                         </div>
                     </div>
                 </div>
+                <br>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card border border-1 border-primary rounded-0">
+                            <div class="card-header bg-primary rounded-0">
+                                <p class="m-0 text-white font-weight-bold">Transactions</p>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th width="25%"></th>
+                                            <th width="25%">New Request</th>
+                                            <th width="25%">Ongoing</th>
+                                            <th width="25%">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><b>CRR</b></td>
+                                            <td class="text-center">{{ $crr_new }}</td>
+                                            <td class="text-center">{{ $crr_ongoing }}</td>
+                                            <td class="text-center">{{ $total_transaction_crr }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>RPE</b></td>
+                                            <td class="text-center">{{ $rpe_new }}</td>
+                                            <td class="text-center">{{ $rpe_ongoing }}</td>
+                                            <td class="text-center">{{ $total_transaction_rpe }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>SRF</b></td>
+                                            <td class="text-center">{{ $srf_new }}</td>
+                                            <td class="text-center">{{ $srf_ongoing }}</td>
+                                            <td class="text-center">{{ $total_transaction_srf }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-lg-6">
                 <div class="col-lg-12 mb-2">
