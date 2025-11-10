@@ -119,13 +119,20 @@ input[type="checkbox"] {
                     <p class="text-right font-weight-bold">Laboratory </p>
                 </td>
                 <td width="25%">
-                    <p class="ml-1 text-center"><strong class="d-inline-block" style="border-bottom: 1px dashed black; width:100%;">@if($sample_requests->RefCode == 1)
+                    <p class="ml-1 text-center"><strong class="d-inline-block" style="border-bottom: 1px dashed black; width:100%;">
+                            @if($sampleRequest->RefCode == 1)
                                 RND
-                            @elseif($sample_requests->RefCode == 2)
-                                QCD
+                            @elseif($sampleRequest->RefCode == 2)
+                                QCD-WHI
+                            @elseif($sampleRequest->RefCode == 3)
+                                QCD-PBI
+                            @elseif($sampleRequest->RefCode == 4)
+                                QCD-MRDC
+                            @elseif($sampleRequest->RefCode == 5)
+                                QCD-CCC
                             @else
-                                {{ $sample_requests->RefCode }}
-                            @endif</strong></p>
+                                {{ $sampleRequest->RefCode }}
+                            @endif
                 </td>
             </tr>
             <tr>
