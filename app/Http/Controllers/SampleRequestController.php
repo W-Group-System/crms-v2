@@ -1500,6 +1500,18 @@ class SampleRequestController extends Controller
         return $pdf->stream('print.pdf');
     }
 
+    public function print_srf_two(Request $request, $id)
+    {
+        $srf = SampleRequest::findOrFail($id);
+
+        View::share('sample_requests', $srf);
+        $pdf = PDF::loadView('sample_requests.print_two', [
+            'sample_requests' => $srf,
+        ])->setPaper('a4', 'portrait');
+    
+        return $pdf->stream('print.pdf');
+    }
+
     public function print_srf_2(Request $request, $id)
     {
         $srf = SampleRequest::findOrFail($id);

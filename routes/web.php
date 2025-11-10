@@ -342,6 +342,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('OpenStatus/{id}', 'SampleRequestController@OpenStatus');
         Route::post('CompleteSrf/{id}', 'SampleRequestController@CompleteSrf');
         Route::get('print_srf/{id}', 'SampleRequestController@print_srf');
+        Route::get('print_srf_two/{id}', 'SampleRequestController@print_srf_two');
         Route::get('print_srf_2/{id}', 'SampleRequestController@print_srf_2');
         Route::get('print_dispatch/{id}', 'SampleRequestController@print_dispatch');
         Route::post('editDisposition/{id}', 'SampleRequestController@editDisposition');
