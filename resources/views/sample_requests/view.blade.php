@@ -128,7 +128,7 @@
                         Print
                     </button>
                     @endif --}}
-                    <a target='_blank' href="{{ url('print_srf', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text"><i class="ti ti-printer btn-icon-prepend"></i>Print</a>
+                    {{-- <a target='_blank' href="{{ url('print_srf', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text"><i class="ti ti-printer btn-icon-prepend"></i>Print</a> --}}
                     <a target='_blank' href="{{ url('print_srf_two', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text"><i class="ti ti-printer btn-icon-prepend"></i>Print</a>
                     @if(!empty($sampleRequest->Courier) && !empty($sampleRequest->AwbNumber) && !empty($sampleRequest->DateDispatched) && !empty($sampleRequest->DateSampleReceived))
                     {{-- <a target='_blank' href="{{ url('print_dispatch', $sampleRequest->Id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Print Dispatch</a> --}}
