@@ -168,5 +168,11 @@
     {
         document.getElementById('entriesForm').submit()
     }
+    document.addEventListener('DOMContentLoaded', function () {
+   
+        $(".table").tablesorter({
+            theme : "bootstrap",
+        })
+    });
 </script>
 @endsection
