@@ -85,10 +85,11 @@
                     </a> 
                     @endif
 
-                    <a class="btn btn-outline-danger btn-icon-text" href="javascript:void(0);">
+                    {{-- <a class="btn btn-outline-danger btn-icon-text" href="javascript:void(0);">
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
-                    </a>
+                    </a> --}}
+                    <a target='_blank' href="{{ url('print_rpe/'. $requestEvaluation->id) }}" class="btn btn-outline-danger btn-icon-text"><i class="ti ti-printer btn-icon-prepend"></i>Print</a>
 
                     {{-- Sales Button --}}
                     {{-- @if((auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->user_id == $requestEvaluation->PrimarySalesPersonId) || (auth()->user()->id == $requestEvaluation->SecondarySalesPersonId || auth()->user()->user_id == $requestEvaluation->SecondarySalesPersonId) && auth()->user()->role->name == 'Staff L1') --}}

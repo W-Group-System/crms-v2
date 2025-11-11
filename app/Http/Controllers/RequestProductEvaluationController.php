@@ -26,8 +26,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Models\Audit;
 use RealRashid\SweetAlert\Facades\Alert;
 use Collective\Html\FormFacade as Form;
-
-
+use Illuminate\Support\Facades\View;
+use PDF;
 
 class RequestProductEvaluationController extends Controller
 {
@@ -1129,5 +1129,17 @@ class RequestProductEvaluationController extends Controller
         rpeHistoryLogs('update', $id);
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
+    }
+
+    public function print_rpe(Request $request, $id)
+    {
+        $rpe = RequestProductEvaluation::findOrFail($id);
+
+        View::share('product_evaluations', $rpe);
+        $pdf = PDF::loadView('product_evaluations.print', [
+            'product_evaluations' => $rpe,
+        ])->setPaper('legal', 'portrait');
+    
+        return $pdf->stream('print.pdf');
     }
 }
