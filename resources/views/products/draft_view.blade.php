@@ -699,7 +699,7 @@
         
                                                 @foreach ($data->productMaterialComposition as $rawMats)
                                                     @if($rawMats->MaterialId == $rm->id)
-                                                        <input type="number" name="percentage[]" class="form-control form-control-sm percentageVal" value="{{$rawMats->Percentage}}">
+                                                        <input type="number" name="percentage[]" class="form-control form-control-sm percentageVal" value="{{$rawMats->Percentage}}" step=".01">
                                                         @php
                                                             $composition_found = true;
                                                             $percentage += $rawMats->Percentage;
@@ -709,7 +709,7 @@
                                                 @endforeach
         
                                                 @if(!$composition_found)
-                                                <input type="number" name="percentage[]" class="form-control form-control-sm percentageVal">
+                                                <input type="number" name="percentage[]" class="form-control form-control-sm percentageVal" step=".01">
                                                 @endif
         
                                             </td>

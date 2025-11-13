@@ -676,7 +676,7 @@
                                                 @endforeach
         
                                                 @if(!$composition_found)
-                                                <input type="number" name="percentage[]" class="form-control percentageVal">
+                                                <input type="number" name="percentage[]" class="form-control percentageVal" step=".01">
                                                 @endif
         
                                             </td>

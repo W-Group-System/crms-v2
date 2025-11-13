@@ -88,7 +88,7 @@ input[type="checkbox"] {
                     <p class="text-right">Request Date </p> 
                 </td>
                 <td width="30%">
-                    <p class="ml-1 text-left"><strong class="d-inline-block" style="border-bottom: 1px dashed black; width:100%;">{{date('F d, Y', strtotime($product_evaluations->DateCreated))}}</strong></p>
+                    <p class="ml-1 text-left"><strong class="d-inline-block" style="border-bottom: 1px dashed black; width:100%;">{{date('F d, Y', strtotime($product_evaluations->created_at))}}</strong></p>
                 </td>
                 <td width="25%">
                     <p class="text-right font-weight-bold">SRF No: </p> 
