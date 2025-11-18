@@ -1286,7 +1286,14 @@
                                             {{ $fileupload->Name }}</td>
                                         <td>
                                             @if ($fileupload->Path)
-                                            <a href="{{ url($fileupload->Path) }}" target="_blank">View File</a>
+                                            @php
+                                                $path = $fileupload->Path;
+                                                $dirname = pathinfo($path, PATHINFO_DIRNAME);
+                                                $basename = pathinfo($path, PATHINFO_BASENAME);
+                                                $encodedBasename = rawurlencode($basename);
+                                                $finalUrl = url($dirname . '/' . $encodedBasename);
+                                            @endphp
+                                            <a href="{{ $finalUrl }}" target="_blank">View File</a>
                                             @endif
                                         </td>
                                     </tr>
