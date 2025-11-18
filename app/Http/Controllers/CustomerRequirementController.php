@@ -555,7 +555,12 @@ class CustomerRequirementController extends Controller
                 }
             })
             ->orderBy($sort, $direction)
-            ->paginate($request->entries ?? 10);
+            ->paginate($request->entries ?? 10)
+            ->appends([
+                'sort' => $sort,
+                'direction' => $direction,
+                'entries' => $request->entries,
+            ]);
 
         // Fetch related data for filters and dropdowns
         $product_applications = ProductApplication::all();
@@ -1042,7 +1047,7 @@ class CustomerRequirementController extends Controller
         $customerRequirement = CustomerRequirement::findOrFail($id);
         $customerRequirement->DdwNumber = $request->ddw_number;
         $customerRequirement->DateReceived = $request->date_received;
-        $customerRequirement->DueDate = $request->due_date;
+        // $customerRequirement->DueDate = $request->due_date;
         $customerRequirement->Recommendation = $request->recommendation;
         // $customerRequirement->Status = $request->Status;
         // $customerRequirement->Progress = $request->progress;
