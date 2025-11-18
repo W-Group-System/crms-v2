@@ -1018,7 +1018,14 @@
                                             @endif
                                         </td>
                                         <td width="5%">
-                                            <a href="{{url($files->Path)}}" target="_blank">
+                                            @php
+                                                $path = $files->Path;
+                                                $dirname = pathinfo($path, PATHINFO_DIRNAME);
+                                                $basename = pathinfo($path, PATHINFO_BASENAME);
+                                                $encodedBasename = rawurlencode($basename);
+                                                $finalUrl = url($dirname . '/' . $encodedBasename);
+                                            @endphp
+                                            <a href="{{url($finalUrl)}}" target="_blank">
                                                 <i class="ti-file"></i>
                                             </a>
                                         </td>

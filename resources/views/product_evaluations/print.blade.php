@@ -10,9 +10,22 @@
 </head>
 
 <style>
-body {
-    font-size: 9;
+header {
+    position: fixed;
+    top: -60px; 
+    left: 0;
+    right: 0;
+    height: 80px; 
 }
+body {
+    margin-top: 12px; 
+    font-size:9px;
+}
+
+/* header {
+    margin-top: -75px;
+    margin-bottom: 0;
+} */
 
 @page {
     margin: 90px 30px 60px 30px;
@@ -33,7 +46,9 @@ table {
 thead {
     display: table-row-group;
 }
-
+.content {
+    border: #000 solid 1px;
+}
 tr {
     page-break-inside: auto;
 }
@@ -46,10 +61,7 @@ p {
     padding: 0;
 }
 
-header {
-    margin-top: -75px;
-    margin-bottom: 0;
-}
+
 
 input[type="checkbox"] {
     display: inline;
@@ -58,7 +70,8 @@ input[type="checkbox"] {
 
 <body>
     <header>
-        <table border="1" style="width: 100%; margin-bottom: -10px !important;" cellspacing="0" cellpadding="4">
+        <table style="width: 100%; margin-bottom: -10px !important; border: #000 solid 1px;" cellspacing="0" cellpadding="4">
+        <thead>
             <tr>
                 <td rowspan="2">
                     <img src="{{asset('images/whi.png')}}" alt="" height="45" width="90" style="vertical-align: middle;">
@@ -73,16 +86,14 @@ input[type="checkbox"] {
                     <p class="text-center">FR-S&M-04 rev 02</p>
                 </td>
             </tr>
-        </table>
+        </thead>
+    </table>
     </header>
-
-    {{-- <div class="page-break">
-    </div> --}}
-    <table border="1" style="width: 100%; font-size:9 margin-top:0; height:min-content;" cellspacing="0" cellpadding="0">
-        <table border="1" style="width: 80%; font-size:9; margin: 0 auto;" class="mt-4" cellspacing="0" cellpadding="0">
+    <div class="content">
+        <table style="width: 80%; font-size:9; margin: 0 auto; border: #000 solid 1px;" class="mt-4" cellspacing="0" cellpadding="0">
             <h4 class="text-center">{{$product_evaluations->client->Name}}</h4>
         </table>
-        <table border="0" style="width: 100%; font-size:9; height:min-content;" cellspacing="0" cellpadding="0">
+        <table border="0" style="width: 100%; font-size:9; height:min-content;border: #000 solid 1px;" cellspacing="0" cellpadding="0">
             <tr>
                 <td width="15%">
                     <p class="text-right">Request Date </p> 
@@ -91,7 +102,7 @@ input[type="checkbox"] {
                     <p class="ml-1 text-left"><strong class="d-inline-block" style="border-bottom: 1px dashed black; width:100%;">{{date('F d, Y', strtotime($product_evaluations->created_at))}}</strong></p>
                 </td>
                 <td width="25%">
-                    <p class="text-right font-weight-bold">SRF No: </p> 
+                    <p class="text-right font-weight-bold">RPE No: </p> 
                 </td>
                 <td width="25%">
                     <p class="ml-1 text-center"><strong class="d-inline-block" style="border-bottom: 1px dashed black; width:100%; font-size: 18px;">{{$product_evaluations->RpeNumber}}</strong></p>
@@ -174,7 +185,7 @@ input[type="checkbox"] {
             </div>
 
              <div style="white-space:nowrap;">
-                <table style="width:50%; font-size:12px; margin-left:auto; margin-right:auto; border-collapse:collapse;" cellspacing="0" cellpadding="0">
+                <table border="1" style="width:70%; font-size:9px; margin-left:auto; margin-right:auto; border-collapse:collapse; border: #000 solid 1px;" cellspacing="0" cellpadding="0">
                     <tbody>
                             <tr>
                                 <td style="width:20%">Sample Sources</td>
@@ -219,7 +230,7 @@ input[type="checkbox"] {
             </div>
 
              <div style="white-space:nowrap;">
-                <table style="width:50%; font-size:12px; margin-left:auto; margin-right:auto; border-collapse:collapse;" cellspacing="0" cellpadding="0">
+                <table border="1" style="width:70%; font-size:9px; margin-left:auto; margin-right:auto; border-collapse:collapse; border: #000 solid 1px;" cellspacing="0" cellpadding="0">
                     <tbody>
                             <tr>
                                 <td style="width:20%">Sample Name</td>
@@ -252,7 +263,7 @@ input[type="checkbox"] {
             </div>
 
             <div style="text-align:center;">
-                <table style="width:50%; font-size:9px; margin:0 auto;">
+                <table border="1" style="width:70%; font-size:9px; margin:0 auto; border: #000 solid 1px;">
                     <tbody>
                         <tr>
                             <td style="text-align:center; vertical-align:middle; padding:10px;">
@@ -266,9 +277,9 @@ input[type="checkbox"] {
 
         <div style="font-size:12px; margin-top:20px;">
 
-            <p style="font-weight:bold; text-decoration:underline; margin-bottom:6px;">Recommended Tests</p>
+            <p style="font-weight:bold; margin-bottom:6px; margin-left :5px">Recommended Tests</p>
 
-            <p style="font-weight:bold; margin-top:10px;">Chemical Analysis</p>
+            <p style="font-weight:bold; margin-top:10px; margin-left :5px">Chemical Analysis</p>
             <div style="text-align:center; white-space:nowrap;">
                 <label style="margin-right:25px;">
                     <input type="checkbox"> Gum Content
@@ -287,7 +298,7 @@ input[type="checkbox"] {
                 </label>
             </div>
 
-            <p style="font-weight:bold; margin-top:3px;">Physical Analysis</p>
+            <p style="font-weight:bold; margin-top:3px; margin-left :5px">Physical Analysis</p>
             <div style="text-align:center; white-space:nowrap;">
                 <label style="margin-right:25px;">
                     <input type="checkbox"> Particle Size
@@ -428,97 +439,98 @@ input[type="checkbox"] {
             </table>
 
         </div>
-    <table border="1" style="width: 100%; font-size:9; height:min-content; margin-top:0;" cellspacing="0" cellpadding="0">
-        <tr>
-            <td colspan="5">
-                <p style="width: 100%; border-bottom:10px solid black;"></p>
-            </td>
-        </tr>
-    </table>
-    <table border="1" style="width: 100%; font-size:9; font-size: 11px;">
-        <tr>
-            <td width="50%">
-                <table style="width:100%; border:none" >
-                    <tr >
-                        <td width="30%" style="border:none">
-                            <p class="text-left">Prepared by</p>
-                        </td>
-                        <td width="70%" style="border:none">
-                            <p class="ml-1 text-left">
-                                <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
-                                    Hidden text
-                                </span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="30%" style="border:none">
-                            <p class="text-left">Approved by</p>
-                        </td>
-                        <td width="70%" style="border:none">
-                            <p class="ml-1 text-left">
-                                <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
-                                    Hidden text
-                                </span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="30%" style="border:none">
-                            <p class="text-left">Copy Received by</p>
-                        </td>
-                        <td width="70%" style="border:none">
-                            <p class="ml-1 text-left">
-                                <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
-                                    Hidden text
-                                </span>
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-            <td width="50%">
-                <table style="width:100%; border:none" >
-                    <tr >
-                        <td width="30%" style="border:none">
-                            <p class="text-left">RPE Closed On</p>
-                        </td>
-                        <td width="70%" style="border:none">
-                            <p class="ml-1 text-left">
-                                <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
-                                    Hidden text
-                                </span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="30%" style="border:none">
-                            <p class="text-left">Report Receive</p>
-                        </td>
-                        <td width="70%" style="border:none">
-                            <p class="ml-1 text-left">
-                                <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
-                                    Hidden text
-                                </span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="30%" style="border:none">
-                            <p class="text-left">Analysis</p>
-                        </td>
-                        <td width="70%" style="border:none">
-                            <p class="ml-1 text-left">
-                                <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
-                                    Hidden text
-                                </span>
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table> 
+        <table border="1" style="width: 100%; font-size:9; height:min-content; margin-top:0; border: #000 solid 1px;" cellspacing="0" cellpadding="0">
+            <tr>
+                <td colspan="5">
+                    <p style="width: 100%; border-bottom:10px solid black;"></p>
+                </td>
+            </tr>
+        </table>
+        <table border="1" style="width: 100%; font-size:9; font-size: 11px; border: #000 solid 1px;">
+            <tr>
+                <td width="50%">
+                    <table style="width:100%; border:none" >
+                        <tr >
+                            <td width="30%" style="border:none">
+                                <p class="text-left">Prepared by</p>
+                            </td>
+                            <td width="70%" style="border:none">
+                                <p class="ml-1 text-left">
+                                    <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
+                                        Hidden text
+                                    </span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="30%" style="border:none">
+                                <p class="text-left">Approved by</p>
+                            </td>
+                            <td width="70%" style="border:none">
+                                <p class="ml-1 text-left">
+                                    <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
+                                        Hidden text
+                                    </span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="30%" style="border:none">
+                                <p class="text-left">Copy Received by</p>
+                            </td>
+                            <td width="70%" style="border:none">
+                                <p class="ml-1 text-left">
+                                    <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
+                                        Hidden text
+                                    </span>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td width="50%">
+                    <table style="width:100%; border:none" >
+                        <tr >
+                            <td width="30%" style="border:none">
+                                <p class="text-left">RPE Closed On</p>
+                            </td>
+                            <td width="70%" style="border:none">
+                                <p class="ml-1 text-left">
+                                    <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
+                                        Hidden text
+                                    </span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="30%" style="border:none">
+                                <p class="text-left">Report Receive</p>
+                            </td>
+                            <td width="70%" style="border:none">
+                                <p class="ml-1 text-left">
+                                    <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
+                                        Hidden text
+                                    </span>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="30%" style="border:none">
+                                <p class="text-left">Analysis</p>
+                            </td>
+                            <td width="70%" style="border:none">
+                                <p class="ml-1 text-left">
+                                    <span class="d-inline-block" style="border-bottom: 1px dashed black; width:80%; color: transparent;">
+                                        Hidden text
+                                    </span>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table> 
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 </html>

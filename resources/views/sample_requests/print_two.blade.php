@@ -194,7 +194,7 @@ input[type="checkbox"] {
             <p class="ml-1 text-left">Blended Products - Maximum of 4 days</p>
         </div>
         </div>
-        <div class="div" style="margin-top:40px; min-height:510px !important; max-height:510px !important;">
+        <div class="div" style="margin-top:40px; min-height:490px !important; max-height:490px !important;">
             <table border="0.5" style="width: 100%; font-size:9px; margin-top:0;" cellspacing="0" cellpadding="0">
                 <thead>
                     <tr style="text-align: center">
