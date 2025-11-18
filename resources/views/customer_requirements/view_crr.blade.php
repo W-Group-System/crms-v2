@@ -1018,13 +1018,14 @@
                                             @endif
                                         </td>
                                         <td width="5%">
-                                            @php
-                                                $path = $files->Path;
+                                           @php
+                                                $path = $files->Path; 
                                                 $dirname = pathinfo($path, PATHINFO_DIRNAME);
                                                 $basename = pathinfo($path, PATHINFO_BASENAME);
-                                                $encodedBasename = rawurlencode($basename);
-                                                $finalUrl = url($dirname . '/' . $encodedBasename);
+                                                $encodedBasename = rawurlencode($basename); 
+                                                $finalUrl = url("$dirname/$encodedBasename");
                                             @endphp
+
                                             <a href="{{ $finalUrl }}" target="_blank">
                                                 <i class="ti-file"></i>
                                             </a>
