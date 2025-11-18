@@ -1025,7 +1025,7 @@
                                                 $encodedBasename = rawurlencode($basename);
                                                 $finalUrl = url($dirname . '/' . $encodedBasename);
                                             @endphp
-                                            <a href="{{url($finalUrl)}}" target="_blank">
+                                            <a href="{{ $finalUrl }}" target="_blank">
                                                 <i class="ti-file"></i>
                                             </a>
                                         </td>
