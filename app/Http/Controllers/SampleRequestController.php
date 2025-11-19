@@ -47,7 +47,8 @@ class SampleRequestController extends Controller
         $productApplications = ProductApplication::all();
         $productCodes = Product::where('status', '4')->get();
         $return_to_sales = $request->query('return_to_sales');
-        
+        $sort = $request->get('sort', 'id');
+        $direction = $request->get('direction', 'desc');
         // $salesPersons = User::whereHas('salespersons')->get();
         $loggedInUser = Auth::user(); 
         $role = $loggedInUser->role;
@@ -492,10 +493,27 @@ class SampleRequestController extends Controller
             // })
 
             // Order by sort and direction
-            ->orderBy($sort, $direction)
-
+            ->when($sort === 'ClientRegion', function($query) use ($direction) {
+                $query->leftJoin('clientcompanies', 'samplerequests.ClientId', '=', 'clientcompanies.id')
+                    ->leftJoin('clientregions', 'clientcompanies.ClientRegionId', '=', 'clientregions.id')
+                    ->select('samplerequests.*') 
+                    ->orderBy('clientregions.Name', $direction);
+            })
+            ->when($sort === 'ClientCountry', function($query) use ($direction) {
+                $query->leftJoin('clientcompanies', 'samplerequests.ClientId', '=', 'clientcompanies.id')
+                    ->leftJoin('clientregions', 'clientcompanies.ClientCountryId', '=', 'clientregions.id')
+                    ->select('samplerequests.*') 
+                    ->orderBy('clientregions.Name', $direction);
+            })
+            ->when($sort !== 'ClientRegion' && $sort !== 'ClientCountry', function($query) use ($sort, $direction) {
+                $query->orderBy($sort, $direction);
+            })
             // Paginate with entries per page
-            ->paginate($request->entries ?? 10);
+            ->paginate($request->entries ?? 10)->appends([
+                'sort' => $sort,
+                'direction' => $direction,
+                'entries' => $request->entries,
+            ]);
 
         
         // $openStatus = request('open');
@@ -556,7 +574,21 @@ class SampleRequestController extends Controller
                     });
                 }  
             })
-            ->orderBy($sort, $direction)
+            ->when($sort === 'ClientRegion', function($query) use ($direction) {
+                $query->leftJoin('clientcompanies', 'samplerequests.ClientId', '=', 'clientcompanies.id')
+                    ->leftJoin('clientregions', 'clientcompanies.ClientRegionId', '=', 'clientregions.id')
+                    ->select('samplerequests.*') 
+                    ->orderBy('clientregions.Name', $direction);
+            })
+            ->when($sort === 'ClientCountry', function($query) use ($direction) {
+                $query->leftJoin('clientcompanies', 'samplerequests.ClientId', '=', 'clientcompanies.id')
+                    ->leftJoin('clientregions', 'clientcompanies.ClientCountryId', '=', 'clientregions.id')
+                    ->select('samplerequests.*') 
+                    ->orderBy('clientregions.Name', $direction);
+            })
+            ->when($sort !== 'ClientRegion' && $sort !== 'ClientCountry', function($query) use ($sort, $direction) {
+                $query->orderBy($sort, $direction);
+            })
             ->paginate($request->entries ?? 10);
           
        

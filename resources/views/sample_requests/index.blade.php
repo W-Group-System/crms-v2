@@ -83,14 +83,70 @@
                         <thead>
                             <tr>
                                 <!-- <th>Action</th> -->
-                                <th>SRF # </th>
-                                <th>Ref Code</th>
-                                <th>Date Requested</th>
-                                <th>Date Required</th>
-                                <th>Client Name</th>
+                                <th>SRF # 
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'SrfNumber', 
+                                        'direction' => request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Ref Code
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'RefCode', 
+                                        'direction' => request('sort') == 'RefCode' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'RefCode' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Date Requested
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'DateRequested', 
+                                        'direction' => request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Date Required
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'DateRequired', 
+                                        'direction' => request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Client Name
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'ClientId', 
+                                        'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
                                 <th>Application </th>
-                                <th>Status</th>
-                                <th>Progress </th>
+                                <th>Status
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'Status', 
+                                        'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Progress 
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'Progress', 
+                                        'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -174,15 +230,87 @@
                         <thead>
                             <tr>
                                 <!-- <th>Action</th> -->
-                                <th>SRF #</th>
-                                <th>Ref Code</th>
-                                <th>Date Requested</th>
-                                <th>Date Required</th>
-                                <th>Type</th>
-                                <th>Client Name</th>
-                                <th>Region</th>
-                                <th>Country</th>
-                                <th>Primary Sales Person</th>
+                                <th>SRF #
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'SrfNumber', 
+                                        'direction' => request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Ref Code
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'RefCode', 
+                                        'direction' => request('sort') == 'RefCode' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'RefCode' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Date Requested
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'DateRequested', 
+                                        'direction' => request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Date Required
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'DateRequired', 
+                                        'direction' => request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Type
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'SrfType', 
+                                        'direction' => request('sort') == 'SrfType' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'SrfType' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Client Name
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'ClientId', 
+                                        'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Region
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'ClientRegion', 
+                                        'direction' => request('sort') == 'ClientRegion' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ClientRegion' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Country
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'ClientCountry', 
+                                        'direction' => request('sort') == 'ClientCountry' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ClientCountry' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Primary Sales Person
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'PrimarySalesPersonId', 
+                                        'direction' => request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
                                 <th>Index</th>
                                 <th>Number of Packages</th>
                                 <th>Quantity</th>
@@ -192,10 +320,42 @@
                                 <th>Description</th>
                                 <th>RPE No.</th>
                                 <th>CRR No.</th>
-                                <th>Date Sample Received</th>
-                                <th>Date Dispatched</th>
-                                <th>Status</th>
-                                <th>Progress</th>
+                                <th>Date Sample Received
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'DateSampleReceived', 
+                                        'direction' => request('sort') == 'DateSampleReceived' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateSampleReceived' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Date Dispatched
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'DateDispatched', 
+                                        'direction' => request('sort') == 'DateDispatched' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateDispatched' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Status
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'Status', 
+                                        'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Progress
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'Progress', 
+                                        'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
                                 <th>Is Returned?</th>
                             </tr>
                         </thead>
@@ -362,14 +522,70 @@
                         <thead>
                             <tr>
                                 <!-- <th>Action</th> -->
-                                <th>SRF #</th>
-                                <th>Ref Code</th>
-                                <th>Date Requested</th>
-                                <th>Date Required</th>
-                                <th>Client Name</th>
+                                <th>SRF # 
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'SrfNumber', 
+                                        'direction' => request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'SrfNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Ref Code
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'RefCode', 
+                                        'direction' => request('sort') == 'RefCode' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'RefCode' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Date Requested
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'DateRequested', 
+                                        'direction' => request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateRequested' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Date Required
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'DateRequired', 
+                                        'direction' => request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateRequired' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Client Name
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'ClientId', 
+                                        'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
                                 <th>Application</th>
-                                <th>Status</th>
-                                <th>Progress</th>
+                                <th>Status
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'Status', 
+                                        'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
+                                <th>Progress
+                                    <a href="{{ route('sample_request.index', [
+                                        'sort' => 'Progress', 
+                                        'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a>
+                                </th>
                                 <th>Is Returned?</th>
                             </tr>
                         </thead>
@@ -462,9 +678,9 @@
             });
         @endif
 
-        $(".table").tablesorter({
-            theme : "bootstrap",
-        })
+        // $(".table").tablesorter({
+        //     theme : "bootstrap",
+        // })
 
         $("[name='entries']").on('change', function() {
             $(this).closest('form').submit()
