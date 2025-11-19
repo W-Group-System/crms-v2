@@ -1163,4 +1163,15 @@ class RequestProductEvaluationController extends Controller
     
         return $pdf->stream('print.pdf');
     }
+    public function print_rpe_two(Request $request, $id)
+    {
+        $rpe = RequestProductEvaluation::findOrFail($id);
+
+        View::share('product_evaluations', $rpe);
+        $pdf = PDF::loadView('product_evaluations.print_two', [
+            'product_evaluations' => $rpe,
+        ])->setPaper('letter', 'portrait');
+    
+        return $pdf->stream('print.pdf');
+    }
 }
