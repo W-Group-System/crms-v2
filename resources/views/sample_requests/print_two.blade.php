@@ -61,8 +61,13 @@ input[type="checkbox"] {
         <table border="1" style="width: 100%; margin-bottom: -10px !important;" cellspacing="0" cellpadding="4">
             <tr>
                 <td rowspan="2">
-                    <img src="{{asset('images/whi.png')}}" alt="" height="45" width="90" style="vertical-align: middle;">
-                    <p style="font-size:24px;" class="d-inline-block font-weight-bold ml-1">W HYDROCOLLOIDS, INC.</p>
+                    @if (str_starts_with($sample_requests->SrfNumber, 'SRF-LS'))
+                        <img src="{{asset('images/mrdclogo.png')}}" alt="" height="40" width="50" style="vertical-align: middle;">
+                        <p style="font-size:18px;" class="d-inline-block font-weight-bold ml-1">MARINE RESOURCES DEVELOPMENT CORPORATION</p>
+                    @else
+                        <img src="{{asset('images/whi.png')}}" alt="" height="45" width="90" style="vertical-align: middle;">
+                        <p style="font-size:24px;" class="d-inline-block font-weight-bold ml-1">W HYDROCOLLOIDS, INC.</p>
+                    @endif
                 </td>
                 <td>
                     <p class="text-center"><b>SAMPLE REQUEST FORM</b></p>
@@ -70,7 +75,11 @@ input[type="checkbox"] {
             </tr>
             <tr>
                 <td>
-                    <p class="text-center">FR-S&M-04 rev 02</p>
+                    @if (str_starts_with($sample_requests->SrfNumber, 'SRF-LS'))
+                        
+                    @else
+                        <p class="text-center">FR-S&M-04 rev 02</p>
+                    @endif
                 </td>
             </tr>
         </table>
@@ -162,7 +171,7 @@ input[type="checkbox"] {
                 <td width="15%">
                     <p class="text-right">Address</p> 
                 </td>
-                <td width="25%">
+                <td width="30%">
                     <p class="ml-1 text-left"><span class="d-inline-block" style="border-bottom: 1px dashed black; width:100%; white-space: pre-line;">{{ optional($sample_requests->clientAddress)->Address }}</span></p>
                 </td>
                 <td width="25%">

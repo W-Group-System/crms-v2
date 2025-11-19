@@ -728,7 +728,7 @@
             destroy: true,
             processing: true,
             pageLength: 10,
-            ordering: false
+            ordering: true,
         });
 
         var usd = "{{$usd}}"

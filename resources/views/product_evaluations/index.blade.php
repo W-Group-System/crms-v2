@@ -62,23 +62,135 @@
                         <thead>
                             <tr>
                                 <!-- <th>Action</th> -->
-                                <th>RPE #</th>
-                                <th>Date Created</th>
-                                <th>Due Date</th>
-                                <th>Client Name</th>
-                                <th>Region</th>
-                                <th>Country</th>
-                                <th>Primary Sales Person</th>
-                                <th>Project Name</th>
-                                <th>Application</th>
-                                <th>Sample Name</th>
-                                <th>Manufacturer</th>
-                                <th>Date Completed</th>
+                                <th>RPE #
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'RpeNumber', 
+                                        'direction' => request('sort') == 'RpeNumber' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'RpeNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Date Created
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'CreatedDate', 
+                                        'direction' => request('sort') == 'CreatedDate' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'CreatedDate' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Due Date
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'DueDate', 
+                                        'direction' => request('sort') == 'DueDate' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DueDate' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Client Name
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'ClientId', 
+                                        'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Region
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'ClientRegionId', 
+                                        'direction' => request('sort') == 'ClientRegionId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ClientRegionId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Country
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'ClientCountryId', 
+                                        'direction' => request('sort') == 'ClientCountryId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ClientCountryId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Primary Sales Person
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'PrimarySalesPersonId', 
+                                        'direction' => request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'PrimarySalesPersonId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Project Name
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'ProjectNameId', 
+                                        'direction' => request('sort') == 'ProjectNameId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ProjectNameId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Application
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'ApplicationId', 
+                                        'direction' => request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Sample Name
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'SampleName', 
+                                        'direction' => request('sort') == 'SampleName' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'SampleName' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Manufacturer
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'Manufacturer', 
+                                        'direction' => request('sort') == 'Manufacturer' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Manufacturer' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Date Completed
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'DateCompleted', 
+                                        'direction' => request('sort') == 'DateCompleted' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateCompleted' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
                                 <th>Leadtime</th>
                                 <th>Delayed</th>
                                 <th>RPE Recommendation</th>
-                                <th>Status</th>
-                                <th>Progress</th>
+                                <th>Status
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'Status', 
+                                        'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Progress
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'Progress', 
+                                        'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
                                 <th>Is Returned?</th>
                             </tr>
                         </thead>
@@ -222,15 +334,79 @@
                         <thead>
                             <tr>
                                 <!-- <th>Action</th> -->
-                                <th>RPE #</th>
-                                <th>Date Created</th>
-                                <th>Due Date</th>
-                                <th>Client Name</th>
-                                <th>Application</th>
+                                <th>RPE #
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'RpeNumber', 
+                                        'direction' => request('sort') == 'RpeNumber' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'RpeNumber' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Date Created
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'CreatedDate', 
+                                        'direction' => request('sort') == 'CreatedDate' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'CreatedDate' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Due Date
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'DueDate', 
+                                        'direction' => request('sort') == 'DueDate' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DueDate' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Client Name
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'ClientId', 
+                                        'direction' => request('sort') == 'ClientId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ClientId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Application
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'ApplicationId', 
+                                        'direction' => request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'ApplicationId' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
                                 <th>RPE Recommendation</th>
-                                <th>Status</th>
-                                <th>Date Completed</th>
-                                <th>Progress</th>
+                                <th>Status
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'Status', 
+                                        'direction' => request('sort') == 'Status' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Status' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Date Completed
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'DateCompleted', 
+                                        'direction' => request('sort') == 'DateCompleted' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'DateCompleted' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
+                                <th>Progress
+                                    <a href="{{ route('product_evaluation.index', [
+                                        'sort' => 'Progress', 
+                                        'direction' => request('sort') == 'Progress' && request('direction') == 'asc' ? 'desc' : 'asc',
+                                        'page' => request()->page
+                                    ]) }}">
+                                        <i class="ti ti-arrow-{{ request('sort') == 'Progress' && request('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                    </a> 
+                                </th>
                                 <th>Is Returned</th>
                             </tr>
                         </thead>
@@ -420,9 +596,9 @@
             $(this).closest('form').submit()
         })
 
-        $(".table").tablesorter({
-            theme : "bootstrap",
-        })
+        // $(".table").tablesorter({
+        //     theme : "bootstrap",
+        // })
 
         $('#copy_btn').click(function() {
             var tableData = '';

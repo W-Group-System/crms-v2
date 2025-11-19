@@ -239,6 +239,8 @@ class RequestProductEvaluationController extends Controller
     public function index(Request $request)
     {   
         $search = $request->input('search');
+        $sort = $request->get('sort', 'id');
+        $direction = $request->get('direction', 'desc');
         $open = $request->open;
         $close = $request->close;
         $status = $request->query('status'); // Get the status from the query parameters
@@ -346,8 +348,27 @@ class RequestProductEvaluationController extends Controller
                     $q->where('RpeNumber', 'LIKE', '%RPE-LS%');
                 }
             })
-            ->orderBy('id', 'desc')
-            ->paginate($request->entries ?? 10);
+            ->when($sort === 'ClientRegionId', function($query) use ($direction) {
+                $query->leftJoin('clientcompanies', 'requestproductevaluations.ClientId', '=', 'clientcompanies.id')
+                    ->leftJoin('clientregions', 'clientcompanies.ClientRegionId', '=', 'clientregions.id')
+                    ->select('requestproductevaluations.*') 
+                    ->orderBy('clientregions.Name', $direction);
+            })
+            ->when($sort === 'ClientCountryId', function($query) use ($direction) {
+                $query->leftJoin('clientcompanies', 'requestproductevaluations.ClientId', '=', 'clientcompanies.id')
+                    ->leftJoin('clientcountries', 'clientcompanies.ClientCountryId', '=', 'clientcountries.id')
+                    ->select('requestproductevaluations.*') 
+                    ->orderBy('clientcountries.Name', $direction);
+            })
+            ->when($sort !== 'ClientRegionId' || $sort !== 'ClientCountryId', function($query) use ($sort, $direction) {
+                $query->orderBy($sort, $direction);
+            })
+            // ->orderBy('id', 'desc')
+            ->paginate($request->entries ?? 10)->appends([
+                'sort' => $sort,
+                'direction' => $direction,
+                'entries' => $request->entries,
+            ]);
 
         // Fetch clients based on user role
         $clients = Client::where(function($query) {
