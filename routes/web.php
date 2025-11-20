@@ -36,7 +36,7 @@ Route::post('/new_customer_complaint2', 'CustomerComplaint2Controller@store')->n
 
 Route::group(['middleware' => ['auth']], function() {
     Route::group(['middleware' => 'inactive_users'], function() {
-        Route::get('/logout', 'LoginController@logout');
+        Route::get('/logout', 'Auth\LoginController@logout');
         // Apply middleware to check user type
         Route::get('/', 'DashboardController@index')->middleware('checkUserType');
         # RND Dashboard
@@ -226,7 +226,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('complete_crr/{id}', 'CustomerRequirementController@completeCrr');
         Route::post('refresh_crr_secondary_sales_person', 'CustomerRequirementController@refreshUserApprover');
         Route::post('return_to_sales/{id}', 'CustomerRequirementController@returnToSales');
-        Route::post('return_to_rnd/{id}', 'CustomerRequirementController@returnToRnd');
+        Route::post('rndReturn/{id}', 'CustomerRequirementController@returnToRnd')->name('rndReturn');
         Route::post('sales_accepted/{id}', 'CustomerRequirementController@salesAccepted');
         Route::get('print_crr/{id}', 'CustomerRequirementController@printCrr');
         Route::post('multipleUploadFiles', 'CustomerRequirementController@multipleUploadFiles');
