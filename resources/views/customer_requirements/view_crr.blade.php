@@ -149,7 +149,7 @@
                         @endif
 
                         @if($crr->Status == 10 && $crr->Progress == 60)
-                            <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}" onsubmit="show()">
+                            <form method="POST" class="d-inline-block" action="{{ url('rndReturn/'.$crr->id) }}" onsubmit="show()">
                                 @csrf
 
                                 <button type="button" class="btn btn-outline-info returnToRnd">
@@ -224,7 +224,7 @@
                             @if(authCheckIfItsSales(auth()->user()->department_id))
     
                                 @if($crr->Progress == 60 && $crr->Status == 10)
-                                <form method="POST" class="d-inline-block" action="{{url('return_to_rnd/'.$crr->id)}}" onsubmit="show()">
+                                <form method="POST" class="d-inline-block" action="{{url('rndReturn/'.$crr->id)}}" onsubmit="show()">
                                     @csrf
     
                                     <button type="button" class="btn btn-outline-info returnToRnd">
