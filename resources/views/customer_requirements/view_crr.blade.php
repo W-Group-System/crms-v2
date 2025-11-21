@@ -1,4 +1,5 @@
 @extends('layouts.header')
+@section('title', 'Customer Requirement - CRMS')
 @section('content')
 
 <div class="col-12 grid-margin stretch-card">
@@ -330,13 +331,15 @@
                             @endif
 
                             @if($crr->Progress == 57 || $crr->Progress == 81)
-                                <form method="POST" action="{{url('complete_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
-                                    @csrf 
-
-                                    <button type="button" class="btn btn-outline-primary completeCrr">
-                                        <i class="ti-pencil-alt"></i>&nbsp; Completed
-                                    </button>
-                                </form>
+                                @if($crr->DateCompleted != null)
+                                    <form method="POST" action="{{url('complete_crr/'.$crr->id)}}" class="d-inline-block" onsubmit="show()">
+                                        @csrf 
+                                        
+                                        <button type="button" class="btn btn-outline-primary completeCrr">
+                                            <i class="ti-pencil-alt"></i>&nbsp; Completed
+                                        </button>
+                                    </form>
+                                @endif
                             @endif
                         @endif
                     @endif
