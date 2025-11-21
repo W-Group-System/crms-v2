@@ -145,7 +145,15 @@
                                     <i class="ti ti-close"></i>&nbsp;Close
                                 </button>
                             @endif
+                            @if( ($requestEvaluation->Progress == 70))
+                                <form method="POST" class="d-inline-block" action="{{url('start_rpe/'.$requestEvaluation->id)}}">
+                                    @csrf
 
+                                    <button type="button" class="btn btn-outline-info returnToRnd">
+                                        <i class="ti ti-check-box"></i>&nbsp;Return to RND
+                                    </button>
+                                </form>
+                            @endif
                             @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
                                 <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
                                     <i class="mdi mdi-cancel"></i>&nbsp;Cancel
