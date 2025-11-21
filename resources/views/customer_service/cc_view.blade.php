@@ -1,4 +1,5 @@
 @extends('layouts.header')
+@section('title', 'Customer Complaint - CRMS')
 @section('content')
 <link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">

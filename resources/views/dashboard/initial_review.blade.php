@@ -1,4 +1,5 @@
 @extends('layouts.header')
+@section('title', 'Transaction - CRMS')
 
 @section('content')
 <div class="col-lg-12 grid-stretch-margin">

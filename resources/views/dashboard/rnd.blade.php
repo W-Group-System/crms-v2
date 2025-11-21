@@ -1,4 +1,5 @@
 @extends('layouts.header')
+@section('title', 'Dashboard - CRMS')
 @section('content')
 <div class="content-wrapper">
     <div class="row">
