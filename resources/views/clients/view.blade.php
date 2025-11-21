@@ -1,4 +1,6 @@
 @extends('layouts.header')
+@section('title', 'Client - CRMS')
+
 @section('content')
 <div class="col-12 grid-margin stretch-card">
     <div class="card border border-1 border-primary rounded-0">

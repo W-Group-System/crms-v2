@@ -1,4 +1,5 @@
 @extends('layouts.header')
+@section('title', 'Request for Product Evaluation - CRMS')
 @section('content')
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card rounded-0 border border-1 border-primary" style="max-height:80vh;">

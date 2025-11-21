@@ -1,4 +1,5 @@
 @extends('layouts.header')
+@section('title', 'Customer Requirement - CRMS')
 @section('css')
 <style>
 .tableFixHead { 

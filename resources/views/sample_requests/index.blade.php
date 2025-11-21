@@ -1,4 +1,5 @@
 @extends('layouts.header')
+@section('title', 'Sample Request Form - CRMS')
 @section('css')
 <style>
     .form-header {

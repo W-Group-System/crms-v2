@@ -1,5 +1,5 @@
 @extends('layouts.header')
-
+@section('title', 'Activity - CRMS')
 @section('content')
 <div class="col-lg-12 grid-stretch-margin">
     <div class="card border border-1 border-primary rounded-0">

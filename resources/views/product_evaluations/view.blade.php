@@ -1,4 +1,5 @@
 @extends('layouts.header')
+@section('title', 'Request for Product Evaluation - CRMS')
 @section('content')
 <style>
     #form_product {

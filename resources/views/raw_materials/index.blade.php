@@ -1,4 +1,6 @@
 @extends('layouts.header')
+@section('title', 'Products - CRMS')
+
 @section('css')
     <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
 @endsection
