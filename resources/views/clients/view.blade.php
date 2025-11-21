@@ -474,7 +474,12 @@
                                 @if($rpeClients->isNotEmpty())
                                     @foreach ($rpeClients as $rpeClient)
                                         <tr>
-                                            <td>{{ $rpeClient->DateCreated }}</td>
+                                            <td>
+                                                @if($rpeClient->DateCreated != null)
+                                                    {{ $rpeClient->DateCreated }}
+                                                @else
+                                                    {{ $rpeClient->created_at }}
+                                                @endif</td>
                                             <td>Request Product Evaluation</td>
                                             <td>
                                                 <a href="{{ url('product_evaluation/view/'.$rpeClient->id.'/'.$rpeClient->RpeNumber) }}" target="_blank">
