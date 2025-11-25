@@ -59,7 +59,11 @@ function getLatestEffectiveDate($productRawMaterials, $id)
         ->orderBy('id', 'desc')
         ->first();
 
-    return $effective_date->EffectiveDate;
+    if ($effective_date) {
+        return $effective_date->EffectiveDate;
+    }
+
+    return null;
 }
 
 function usdToEur($cost)
