@@ -14,7 +14,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" id="create_srf_form" enctype="multipart/form-data" action="{{ route('sample_request.store') }}">
+                <form method="POST" id="create_srf_form" enctype="multipart/form-data" action="{{ route('sample_request.store') }}" onsubmit="show()">
                     <div class="error-message alert alert-danger"></div>
                     <span id="form_result"></span>
                     @csrf
