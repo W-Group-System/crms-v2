@@ -38,7 +38,10 @@ class Product extends Model implements Auditable
 
     public function productMaterialComposition()
     {
-        return $this->hasMany(ProductMaterialsComposition::class, 'ProductId')->where('IsDeleted', '!=', 1);
+        return $this->hasMany(ProductMaterialsComposition::class, 'ProductId')->where(function ($query) {
+                    $query->whereNull('IsDeleted')      
+                          ->orWhere('IsDeleted', 0);   
+                });
     }
 
     public function productSpecification()
