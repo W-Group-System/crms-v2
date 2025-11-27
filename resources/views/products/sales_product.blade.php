@@ -115,6 +115,7 @@
 
                                 @php
                                     $total = 0;
+                                    $usd = 0;
                                     foreach($rmc as $rm) {
                                         foreach($array_values as $key_a => $array) {
                                             if($rm->MaterialId == $key_a) {
@@ -122,14 +123,16 @@
                                             }
                                         }
                                     }
-                                    // foreach($array_values as $arr) {
-                                    //     $total = $total + $arr->usd;
-                                    //     $last_total = $total;
-                                    // }
                                     foreach($array_values as $arr) {
-                                        $total += $arr->usd ?? 0;
+                                        $total = $total + $arr->usd;
+                                        $last_total = $total;
                                     }
-                                    $last_total = $total;
+                                    // foreach($array_values as $arr) {
+                                    //     if (is_object($arr)) {
+                                    //         $total += $arr->usd ?? 0;
+                                    //     }
+                                    // }
+                                    // $last_total = $total;
                                     $usd = number_format($total, 2);
                                     $eur = number_format(latestConversion($total,1), 2);
                                     $php = number_format(latestConversion($total,3), 2);
