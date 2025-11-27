@@ -478,7 +478,7 @@
                                             @endforeach
                                             @foreach($array_values as $arr)
                                             @php
-                                                $total = $total + $arr->usd;
+                                                $total += $arr->usd ?? 0;
                                                 $last_total = $total;
                                             @endphp
                                             @endforeach
