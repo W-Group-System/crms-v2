@@ -458,11 +458,12 @@
                                     $previousValue = null;
                                     $array_values = $history_rmc['materials'];
                                     $last_total = 0;
-                                @endphp
-                                @foreach ($history_rmc['result'] as $key => $rmc)
-                                @php
                                     $total = 0;
                                 @endphp
+                                @foreach ($history_rmc['result'] as $key => $rmc)
+                                {{-- @php
+                                    
+                                @endphp --}}
                                     <tr>
                                         <td>{{date('Y-m-d', strtotime($key))}}</td>
                                         <td>
