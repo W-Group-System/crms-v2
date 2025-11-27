@@ -127,7 +127,9 @@
                                     //     $last_total = $total;
                                     // }
                                     foreach($array_values as $arr) {
-                                        $total += $arr->usd ?? 0;
+                                        if (is_object($arr)) {
+                                            $total += $arr->usd ?? 0;
+                                        }
                                     }
                                     $last_total = $total;
                                     $usd = number_format($total, 2);
