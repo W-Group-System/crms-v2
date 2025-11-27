@@ -113,6 +113,8 @@
                                 </td> --}}
                                 @php
                                     $usd = 0;
+                                    $eur = 0;
+                                    $php = 0;
                                 @endphp
                                 @foreach ($history_rmc['result'] as $key => $rmc)
 
