@@ -459,13 +459,16 @@
                                     $array_values = $history_rmc['materials'];
                                     $last_total = 0;
                                 @endphp
+                                @php
+                                    $total = 0;
+                                @endphp
                                 @foreach ($history_rmc['result'] as $key => $rmc)
                                     <tr>
                                         <td>{{date('Y-m-d', strtotime($key))}}</td>
                                         <td>
-                                            @php
+                                            {{-- @php
                                                 $total = 0;
-                                            @endphp
+                                            @endphp --}}
                                             @foreach($rmc as $rm)
                                                 @foreach($array_values as $key_a => $array)
                                                     @if($rm->MaterialId == $key_a)
