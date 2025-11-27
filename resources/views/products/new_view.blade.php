@@ -414,34 +414,26 @@
                                         $last_total = 0;
                                     @endphp
                                     @foreach ($history_rmc['result'] as $key => $rmc)
-                                    @php
-                                        $total = 0;
-                                        $row_values = [];
-                                    @endphp
                                         <tr>
                                             <td>{{date('Y-m-d', strtotime($key))}}</td>
                                             <td>
+                                                @php
+                                                    $total = 0;
+                                                @endphp
                                                 @foreach($rmc as $rm)
                                                     @foreach($array_values as $key_a => $array)
                                                         @if($rm->MaterialId == $key_a)
                                                             @php
-                                                                // $array_values[$key_a]->usd = $rm->usd;
-                                                                $row_values[$key_a] = $rm->usd ?? 0;
+                                                                $array_values[$key_a]->usd = $rm->usd;
                                                             @endphp
                                                         @endif
                                                     @endforeach
                                                 @endforeach
-                                                {{-- @foreach($array_values as $arr)
+                                                @foreach($array_values as $arr)
                                                 @php
                                                     $total = $total + $arr->usd;
                                                     $last_total = $total;
                                                 @endphp
-                                                @endforeach --}}
-                                                @foreach($array_values as $key_a => $array)
-                                                    @php
-                                                        $usd = $row_values[$key_a] ?? 0;
-                                                        $total += $usd;
-                                                    @endphp
                                                 @endforeach
                                                 {{number_format($total,2)}}
                                             </td>
@@ -456,13 +448,12 @@
                                         {
                                             $previousValue = $key;
                                         }
-                                        $last_total = $total;
                                         @endphp
                                     @endforeach
                                     @php
-                                        $usd = number_format($last_total, 2);
-                                        $eur = number_format(latestConversion($last_total,1), 2);
-                                        $php = number_format(latestConversion($last_total,3), 2);
+                                        $usd = number_format($total, 2);
+                                        $eur = number_format(latestConversion($total,1), 2);
+                                        $php = number_format(latestConversion($total,3), 2);
                                     @endphp
                                 </tbody>
                             </thead>
