@@ -111,11 +111,13 @@
                                         </button>
                                     </form>
                                 </td> --}}
+                                @php
+                                    $usd = 0;
+                                @endphp
                                 @foreach ($history_rmc['result'] as $key => $rmc)
 
                                 @php
                                     $total = 0;
-                                    $usd = 0;
                                     foreach($rmc as $rm) {
                                         foreach($array_values as $key_a => $array) {
                                             if($rm->MaterialId == $key_a) {
