@@ -122,10 +122,14 @@
                                             }
                                         }
                                     }
+                                    // foreach($array_values as $arr) {
+                                    //     $total = $total + $arr->usd;
+                                    //     $last_total = $total;
+                                    // }
                                     foreach($array_values as $arr) {
-                                        $total = $total + $arr->usd;
-                                        $last_total = $total;
+                                        $total += $arr->usd ?? 0;
                                     }
+                                    $last_total = $total;
                                     $usd = number_format($total, 2);
                                     $eur = number_format(latestConversion($total,1), 2);
                                     $php = number_format(latestConversion($total,3), 2);
