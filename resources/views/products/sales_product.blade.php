@@ -111,11 +111,11 @@
                                         </button>
                                     </form>
                                 </td> --}}
-                                {{-- @php
+                                @php
                                     $usd = 0;
                                     $eur = 0;
                                     $php = 0;
-                                @endphp --}}
+                                @endphp
                                 @foreach ($history_rmc['result'] as $key => $rmc)
 
                                 @php
@@ -131,12 +131,12 @@
                                         $total = $total + $arr->usd;
                                         $last_total = $total;
                                     }
-                                    foreach($array_values as $arr) {
-                                        if (is_object($arr)) {
-                                            $total += $arr->usd ?? 0;
-                                        }
-                                    }
-                                    $last_total = $total;
+                                    // foreach($array_values as $arr) {
+                                    //     if (is_object($arr)) {
+                                    //         $total += $arr->usd ?? 0;
+                                    //     }
+                                    // }
+                                    // $last_total = $total;
                                     $usd = number_format($total, 2);
                                     $eur = number_format(latestConversion($total,1), 2);
                                     $php = number_format(latestConversion($total,3), 2);
