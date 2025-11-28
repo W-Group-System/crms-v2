@@ -1101,7 +1101,13 @@
                             <tbody>
                                 @foreach ($crr->historyLogs as $logs)
                                     <tr>
-                                        <td>{{date('M d, Y - h:i A', strtotime($logs->ActionDate))}}</td>
+                                        <td>
+                                            @if ($logs->CreatedDate)
+                                                {{date('M d, Y - h:i A', strtotime($logs->CreatedDate))}}
+                                            @else
+                                                {{date('M d, Y - h:i A', strtotime($logs->created_at))}}
+                                            @endif
+                                        </td>
                                         <td>
                                             @if($logs->historyUser)
                                             {{$logs->historyUser->full_name}}
