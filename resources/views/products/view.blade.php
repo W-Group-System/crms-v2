@@ -34,7 +34,7 @@
             @endphp
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0 text-right"><b>DDW Number:</b></p>
+                    <p class="mb-0 text-left text-sm-left"><b>DDW Number:</b></p>
                 </div>
                 <div class="col-md-3">
                     @if($data->ddw_number != null)
@@ -44,7 +44,7 @@
                     @endif
                 </div>
                 <div class="col-md-2">
-                    <p class="mb-0 text-right"><b>Raw Materials Cost:</b></p>
+                    <p class="mb-0 text-left text-sm-left"><b>Raw Materials Cost:</b></p>
                 </div>
                 <div class="col-md-3">
                     {{-- <p class="mb-0"><strong>USD</strong> {{number_format($rmc, 2)}}</p> --}}
@@ -57,7 +57,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0 text-right"><b>Code:</b></p>
+                    <p class="mb-0 text-left text-sm-left"><b>Code:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $data->code }}</p>
@@ -65,7 +65,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0 text-right"><b>Type:</b></p>
+                    <p class="mb-0 text-left text-sm-left"><b>Type:</b></p>
                 </div>
                 <div class="col-md-3">
                     @if($data->type == 1)
@@ -77,7 +77,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0 text-right"><b>Reference Number:</b></p>
+                    <p class="mb-0 text-left text-sm-left"><b>Reference Number:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $data->reference_no }}</p>
@@ -85,7 +85,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0 text-right"><b>Product Origin:</b></p>
+                    <p class="mb-0 text-left text-sm-left"><b>Product Origin:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $data->product_origin }}</p>
@@ -93,7 +93,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0 text-right"><b>Application:</b></p>
+                    <p class="mb-0 text-left text-sm-left"><b>Application:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $product_applications ? $product_applications->Name : 'N/A' }}</p>
@@ -101,14 +101,14 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    <p class="mb-0 text-right"><b>Subcategory:</b></p>
+                    <p class="mb-0 text-left text-sm-left"><b>Subcategory:</b></p>
                 </div>
                 <div class="col-md-3">
                     <p class="mb-0">{{ $product_subcategories ? $product_subcategories->Name : 'N/A' }}</p>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-2 text-right"><p class="mb-0"><b>Created By:</b></p></div>
+                <div class="col-md-2"><p class="mb-0 text-left text-sm-left"><b>Created By:</b></p></div>
                 {{-- <div class="col-md-3"><p class="mb-0">{{ $userAccounts->full_name }}</p></div> --}}
                 <div class="col-md-3">
                     <p class="mb-0">
@@ -121,11 +121,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-2 col-form-label"><p class="mb-0 text-right"><b>Date Created:</b></p></div>
+                <div class="col-md-2 col-form-label"><p class="mb-0 text-left text-sm-left"><b>Date Created:</b></p></div>
                 <div class="col-sm-3 col-form-label"><p class="mb-0">{{ $data->created_at->format('Y-m-d') }}</p></div>
             </div>
             <div class="row">
-                <div class="col-md-2"><p class="mb-0 text-right"><b>Approved By:</b></p></div>
+                <div class="col-md-2"><p class="mb-0 text-left text-sm-left"><b>Approved By:</b></p></div>
                 <div class="col-md-3">
                     @if($data->approveByUserId)
                     <p class="mb-0">{{ optional($data->approveByUserId)->full_name }}</p>
@@ -135,11 +135,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-2 col-form-label"><p class="mb-0 text-right"><b>Date Approved:</b></p></div>
+                <div class="col-md-2 col-form-label"><p class="mb-0 text-left text-sm-left"><b>Date Approved:</b></p></div>
                 <div class="col-md-3 col-form-label"><p class="mb-0">{{ $data->date_approved != null ? $data->date_approved : 'N/A' }}</p></div>
             </div>
             <div class="row mb-5">
-                <div class="col-md-2"><p class="mb-0 text-right"><b>Status:</b></p></div>
+                <div class="col-md-2"><p class="mb-0 text-left text-sm-left"><b>Status:</b></p></div>
                 @php
                     $statusLabels = [
                         1 => 'Draft',
