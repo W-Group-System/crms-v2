@@ -428,7 +428,8 @@
                             timer: 1500
                         }).then((result) => {
                             setTimeout(function() {
-                                window.location.href = "{{ session('last_client_page', url('/client')) }}";
+                                // window.location.href = "{{ session('last_client_page', url('/client')) }}";
+                                window.location.href = "{{ (url('view_client/'.$data->id)) }}";
                             })
                         });
                     } else if (response.errors) {
