@@ -30,7 +30,7 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
 
         if(auth()->user()->role->type == "IS")
         {
-            return CustomerRequirement::with('crrNature')->select('id','CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Competitor', 'PrimarySalesPersonId', 'DetailsOfRequirement', 'Recommendation', 'DateReceived', 'Status', 'Progress')
+            return CustomerRequirement::with('crrNature')->select('id','CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Competitor', 'PrimarySalesPersonId', 'DetailsOfRequirement', 'Recommendation', 'DateReceived', 'Status', 'Progress', 'DateCompleted')
                 ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
                     $query->whereIn('Status', [$openStatus, $closeStatus]);
                 })
@@ -47,7 +47,7 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
 
         if(auth()->user()->role->type == "LS")
         {
-            return CustomerRequirement::with('crrNature')->select('id', 'CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Recommendation', 'Status', 'Progress')
+            return CustomerRequirement::with('crrNature')->select('id', 'CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Recommendation', 'Status', 'Progress', 'DateCompleted')
                 ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
                     $query->whereIn('Status', [$openStatus, $closeStatus]);
                 })
@@ -140,13 +140,14 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
 
         $today = new DateTime();
         $due_date = new DateTime($row->DueDate);
-        $diff = $due_date->diff($today);
+        $completed_date = new DateTime($row->DateCompleted ?? 'now');
+        $diff = $due_date->diff($completed_date);
 
         $days_late = 0;
         $s = "";
-        if ($today > $due_date) 
+        if ($completed_date > $due_date) 
         {
-            $days_late = $diff->d;
+            $days_late = $diff->days;
             $s = $days_late > 1 ? 's' : '';
         } 
         
@@ -157,8 +158,8 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 $row->DateCreated,
                 $row->DueDate,
                 optional($row->client)->Name,
-                optional($row->client->clientregion)->Name,
-                optional($row->client->clientcountry)->Name,
+                optional(optional($row->client)->clientregion)->Name,
+                optional(optional($row->client)->clientcountry)->Name,
                 optional($row->product_application)->Name,
                 $row->Competitor,
                 $primarySales,
