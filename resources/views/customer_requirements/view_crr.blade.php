@@ -372,13 +372,13 @@
                 <div class="row mb-0">
                     <p class="col-sm-3 mb-0 col-md-2 text-right"><b>Region :</b></p>
                     <div class="col-sm-3 col-md-10">
-                        <p class="mb-0">{{optional($crr->client->clientregion)->Name}}</p>
+                        <p class="mb-0">{{optional(optional($crr->client)->clientregion)->Name}}</p>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <p class="col-sm-3 mb-0 col-md-2 text-right"><b>Country :</b></p>
                     <div class="col-sm-3 col-md-10">
-                        <p class="mb-0">{{optional($crr->client->clientcountry)->Name}}</p>
+                        <p class="mb-0">{{optional(optional($crr->client)->clientcountry)->Name}}</p>
                     </div>
                 </div>
             </div>
