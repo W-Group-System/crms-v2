@@ -157,11 +157,28 @@ class ProductEvaluationExport implements FromCollection, WithHeadings, WithMappi
         }
        
 
-        $leadtime = "N/A";
+        // $leadtime = "N/A";
+        // if ($row->DateReceived && $row->DueDate) {
+        //     $dateReceived = Carbon::parse($row->DateReceived);
+        //     $dueDate = Carbon::parse($row->DueDate);
+        //     $leadtime = $dateReceived->diffInDays($dueDate) . ' days';
+        // }
+        $leadtime = 'NA';
+
         if ($row->DateReceived && $row->DueDate) {
-            $dateReceived = Carbon::parse($row->DateReceived);
-            $dueDate = Carbon::parse($row->DueDate);
-            $leadtime = $dateReceived->diffInDays($dueDate) . ' days';
+            $start = Carbon::parse($row->DateReceived)->startOfDay();
+            $end   = Carbon::parse($row->DueDate)->startOfDay();
+
+            $leadtimeCount = 0;
+
+            while ($start->lte($end)) {
+                if ($start->isWeekday()) {
+                    $leadtimeCount++;
+                }
+                $start->addDay();
+            }
+
+            $leadtime = $leadtimeCount;
         }
 
         $delay = "N/A";
@@ -171,7 +188,7 @@ class ProductEvaluationExport implements FromCollection, WithHeadings, WithMappi
             if (is_null($row->DateCompleted) && Carbon::now()->lte($dueDate)) {
                 $delay = '0 days'; 
             } else {
-                $delay = $dueDate->diffInDays($dateCompleted, false) . ' days';
+                $delay = $dueDate->diffInDays($dateCompleted, false);
             }
         }
 

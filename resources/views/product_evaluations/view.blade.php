@@ -787,7 +787,6 @@
                                     $leadDueDate = $requestEvaluation->DueDate;
 
                                     if ($leadReceived && $leadDueDate) {
-                                        // Normalize to Y-m-d strictly, ensuring no time or timezone offsets
                                         $start = DateTime::createFromFormat('Y-m-d', date('Y-m-d', strtotime($leadReceived)));
                                         $end = DateTime::createFromFormat('Y-m-d', date('Y-m-d', strtotime($leadDueDate)));
 

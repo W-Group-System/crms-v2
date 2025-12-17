@@ -214,7 +214,7 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 $row->Recommendation,
                 $row->DateReceived,
                 // '',
-                $days_late .' day' .$s,
+                $days_late,
                 implode(", ", $crr_nature_array),
                 $status,
                 optional($row->progressStatus)->name
