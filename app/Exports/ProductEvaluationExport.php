@@ -49,6 +49,11 @@ class ProductEvaluationExport implements FromCollection, WithHeadings, WithMappi
                 {
                     $q->where('RpeNumber', 'LIKE', '%RPE-LS%');
                 }
+                elseif($role == 'RND')
+                {
+                    $q->where('RpeNumber', 'LIKE', '%RPE-LS%')
+                        ->orWhere('RpeNumber', 'LIKE', '%RPE-IS%');
+                }
             })
             ->orderBy('RpeNumber', 'desc')
             ->get();
@@ -97,6 +102,19 @@ class ProductEvaluationExport implements FromCollection, WithHeadings, WithMappi
         }
 
         if(auth()->user()->role->type == "LS")
+        {
+            return [
+                'RPE #',
+                'Date Created',
+                'Due Date',
+                'Client Name',
+                'Application',
+                'RPE Recommendation',
+                'Status',
+                'Progress'
+            ];
+        }
+        if(auth()->user()->role->type == "RND")
         {
             return [
                 'RPE #',
@@ -181,6 +199,20 @@ class ProductEvaluationExport implements FromCollection, WithHeadings, WithMappi
         }
 
         if(auth()->user()->role->type == "LS")
+        {
+            return [
+                $row->RpeNumber,
+                $row->CreatedDate ?? $row->created_at,
+                $row->DueDate,
+                optional($row->client)->Name,
+                optional($row->product_application)->Name,
+                $row->RpeResult,
+                $Status,
+                optional($row->progressStatus)->name,
+            ];
+        }
+
+        if(auth()->user()->role->type == "RND")
         {
             return [
                 $row->RpeNumber,

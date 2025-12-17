@@ -62,6 +62,38 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 ->get();
         }
 
+        if((auth()->user()->role->type == "RND"))
+        {
+            return CustomerRequirement::with('crrNature')->select('id','CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Competitor', 'PrimarySalesPersonId', 'DetailsOfRequirement', 'Recommendation', 'DateReceived', 'Status', 'Progress', 'DateCompleted', 'RefCode')
+                ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
+                    $query->whereIn('Status', [$openStatus, $closeStatus]);
+                })
+                ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
+                    $query->where('Status', $openStatus);
+                })
+                ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
+                    $query->where('Status', $closeStatus);
+                })
+                ->where('RefCode','RND')
+                ->latest()
+                ->get();
+        }
+        // if((auth()->user()->role->type == "QCD-CCC") || (auth()->user()->role->type == "QCD-MRDC") || (auth()->user()->role->type == "QCD-WHI") || (auth()->user()->role->type == "QCD-PBI"))
+        // {
+        //     return CustomerRequirement::with('crrNature')->select('id','CrrNumber', 'DateCreated', 'DueDate', 'ClientId', 'ApplicationId', 'Competitor', 'PrimarySalesPersonId', 'DetailsOfRequirement', 'Recommendation', 'DateReceived', 'Status', 'Progress', 'DateCompleted')
+        //         ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
+        //             $query->whereIn('Status', [$openStatus, $closeStatus]);
+        //         })
+        //         ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
+        //             $query->where('Status', $openStatus);
+        //         })
+        //         ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
+        //             $query->where('Status', $closeStatus);
+        //         })
+        //         ->latest()
+        //         ->get();
+        // }
+
     }
 
     public function headings(): array
@@ -97,6 +129,21 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 'Client Name',
                 'Application',
                 'Nature of Request',
+                'Recommendation',
+                'Status',
+                'Progress'
+            ];
+        }
+
+        if(auth()->user()->role->type == "RND")
+        {
+            return [
+                'CRR #',
+                'RefCode',
+                'DateCreated',
+                'Due Date',
+                'Client Name',
+                'Application',
                 'Recommendation',
                 'Status',
                 'Progress'
@@ -183,6 +230,21 @@ class CustomerRequirementExport implements FromCollection, WithHeadings, WithMap
                 optional($row->client)->Name,
                 optional($row->product_application)->Name,
                 implode(", ", $crr_nature_array),
+                $row->Recommendation,
+                $status,
+                optional($row->progressStatus)->name
+            ];
+        }
+
+        if(auth()->user()->role->type == "RND")
+        {
+            return [
+                $row->CrrNumber,
+                $row->RefCode,
+                $row->DateCreated,
+                $row->DueDate,
+                optional($row->client)->Name,
+                optional($row->product_application)->Name,
                 $row->Recommendation,
                 $status,
                 optional($row->progressStatus)->name
