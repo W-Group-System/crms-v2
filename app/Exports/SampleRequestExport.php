@@ -64,6 +64,23 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                 ->get();
         }
 
+        if((auth()->user()->role->type == "RND"))
+        {
+            return SampleRequest::with('requestProducts')
+                ->when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
+                    $query->whereIn('Status', [$openStatus, $closeStatus]);
+                })
+                ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
+                    $query->where('Status', $openStatus);
+                })
+                ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
+                    $query->where('Status', $closeStatus);
+                })
+                ->where('RefCode','1')
+                ->latest()
+                ->get();
+        }
+
     }
 
     public function headings(): array
@@ -104,6 +121,20 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                 'Client Name',
                 'Application',
                 'Primary Sales Person',
+                'Status',
+                'Progress'
+            ];
+        }
+
+        if((auth()->user()->role->type == "RND") )
+        {
+            return [
+                'SRF #',
+                'RefCode',
+                'Date Requested',
+                'Date Required',
+                'Client Name',
+                'Application',
                 'Status',
                 'Progress'
             ];
@@ -170,6 +201,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
         {
             $Status = "Closed";
         }
+        
        
 
         // $productApplications = $row->requestProducts->map(function($product) {
@@ -295,6 +327,26 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
             //     $Status,
             //     optional($row->progressStatus)->Name,
             // ];
+        }
+
+        if((auth()->user()->role->type == "RND"))
+        {
+            $productRows = [];
+
+            foreach ($row->requestProducts as $product) {
+                $productRows[] = [
+                    $row->SrfNumber,
+                    $RefCode,
+                    $row->DateRequested,
+                    $row->DateRequired,
+                    optional($row->client)->Name,
+                    optional($product->productApplicationsId)->Name,
+                    $status,
+                    optional($row->progressStatus)->name,
+                ];
+            }
+    
+            return $productRows;
         }
     }
 }
