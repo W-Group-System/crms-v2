@@ -1222,7 +1222,11 @@ function historyRmc($product_material_composition, $product_id)
     $material_id = $product_material_composition->sortBy('MaterialId')->pluck('MaterialId')->toArray();
     $product_material_composition = ProductMaterialsComposition::whereIn('MaterialId', $material_id)
         ->where('ProductId', $product_id)
-        // ->orderBy('MaterialId', 'asc')
+        ->where(function($query) {
+        $query->where('IsDeleted', 0)
+              ->orWhereNull('IsDeleted')  
+              ->orWhere('IsDeleted', ''); 
+        })
         ->get();
     $final_id = $product_material_composition->sortByDesc('Percentage')->first();
     $final_id_d = $product_material_composition->sortBy('Percentage')->first();
