@@ -265,14 +265,14 @@ class SampleRequestController extends Controller
                     ->orWhereHas('progressStatus', function($statusQuery) use ($search) {
                         $statusQuery->where('name', 'LIKE', '%' . $search . '%');
                     })
-                    ->orWhere(function ($q) use ($search) {
-                        $q->whereHas('requestProducts', function($productQuery) use ($search) {
-                            $productQuery->where('ProductCode', 'LIKE', '%' . $search . '%');
-                        })
-                        ->orWhereHas('productApplicationsId', function($applicationQuery) use ($search) {
-                            $applicationQuery->where('Name', 'LIKE', '%' . $search . '%');
-                        });
-                    })
+                    // ->orWhere(function ($q) use ($search) {
+                    //     $q->whereHas('requestProducts', function($productQuery) use ($search) {
+                    //         $productQuery->where('ProductCode', 'LIKE', '%' . $search . '%');
+                    //     })
+                    //     ->orWhereHas('productApplicationsId', function($applicationQuery) use ($search) {
+                    //         $applicationQuery->where('Name', 'LIKE', '%' . $search . '%');
+                    //     });
+                    // })
                     ->orWhere(function ($q) use ($search, $refCodeMappings) {
                         foreach ($refCodeMappings as $code => $label) {
                             if (stripos($label, $search) !== false) {
