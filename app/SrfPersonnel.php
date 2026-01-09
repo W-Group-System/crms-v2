@@ -38,4 +38,13 @@ class SrfPersonnel extends Model implements Auditable
 
         return $data;
     }
+    public function srfPersonnelByUserId()
+    {
+        return $this->belongsTo(User::class,'PersonnelUserId','user_id');
+    }
+
+    public function srfPersonnelById()
+    {
+        return $this->belongsTo(User::class,'PersonnelUserId','id');
+    }
 }

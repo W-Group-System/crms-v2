@@ -40,4 +40,13 @@ class RpePersonnel extends Model implements Auditable
 
         return $data;
     }
+    public function rpePersonnelByUserId()
+    {
+        return $this->belongsTo(User::class,'PersonnelUserId','user_id');
+    }
+
+    public function rpePersonnelById()
+    {
+        return $this->belongsTo(User::class,'PersonnelUserId','id');
+    }
 }
