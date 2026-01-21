@@ -45,7 +45,7 @@
                     <button type="submit" id="yes_button" class="btn btn-success">Submit</button>
                 </div>
             </form> --}}
-            <form method="POST" action="{{url('edit_files/'.$pf->Id)}}" enctype="multipart/form-data" onsubmit="show()">
+            <form method="POST" action="{{url('edit_files')}}" enctype="multipart/form-data" onsubmit="show()">
                 {{csrf_field()}}
                 
                 <input type="hidden" name="product_id">

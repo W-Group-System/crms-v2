@@ -576,7 +576,7 @@ class ProductController extends Controller
         return back()->with(['tab' => 'files']);
     }
 
-    public function editFiles(Request $request, $id)
+    public function editFiles(Request $request)
     {
         // dd($request->all());
         // $validator = Validator::make($request->all(), [
