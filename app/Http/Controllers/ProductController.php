@@ -242,7 +242,7 @@ class ProductController extends Controller
     {
         if(request()->ajax())
         {
-            $data = Product::findOrFail($id);
+            $data = ProductFiles::findOrFail($id);
             return response()->json(['data' => $data]);
         }
     }
@@ -578,6 +578,7 @@ class ProductController extends Controller
 
     public function editFiles(Request $request, $id)
     {
+        // dd($request->all());
         // $validator = Validator::make($request->all(), [
         //     'file' => 'max:1024'
         // ], [
@@ -591,11 +592,11 @@ class ProductController extends Controller
         //     return back()->with(['errors' => $errors, 'tab' => 'files']);
         // }
 
-        $fileProducts = ProductFiles::findOrFail($id);
+        $fileProducts = ProductFiles::findOrFail($request->product_files);
         $fileProducts->Name = $request->name;
         $fileProducts->Description = $request->description;
         $fileProducts->ClientId = $request->client;
-        $fileProducts->IsConfidential = isset($request->is_confidential)?1:0;
+        $fileProducts->IsConfidential = (isset($request->is_confidential) || $request->is_confidential == "on")?1:0;
         
         if ($request->hasFile('file'))
         {

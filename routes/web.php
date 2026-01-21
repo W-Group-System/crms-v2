@@ -130,6 +130,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('print_mrdc_pds/{id}', 'ProductController@printMrdcPds');
         Route::get('print_whi_pds/{id}', 'ProductController@printWhiPds');
         Route::get('print_pbi_pds/{id}', 'ProductController@printPbiPds');
+        Route::post('edit_product_show/{id}', 'ProductController@edit');
     
         # Export Products
         Route::get('/export_current_products', 'ProductController@exportCurrentProducts');

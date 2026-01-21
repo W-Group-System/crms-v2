@@ -389,7 +389,10 @@
                                             <tr>
                                                 <td>
                                                     @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
-                                                    <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                    {{-- <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                        <i class="ti-pencil"></i>
+                                                    </button> --}}
+                                                    <button class="btn btn-sm btn-outline-warning" type="button" id="editFile{{ $pf->id }}" onclick="editFile({{ $pf->Id }})">
                                                         <i class="ti-pencil"></i>
                                                     </button>
                                                     <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete" id="deleteProductFileForm{{$pf->Id}}">
@@ -430,9 +433,9 @@
                         </table>
                     </div>
 
-                    @foreach ($data->productFiles as $pf)
-                        @include('products.edit_file')
-                    @endforeach
+                    @include('products.edit_file')
+                    {{-- @foreach ($data->productFiles as $pf)
+                    @endforeach --}}
                 </div>
                 <div class="tab-pane fade " id="rmc" role="tabpanel" aria-labelledby="rmc-tab">
                     <div class="table-responsive">
@@ -721,6 +724,31 @@
                 $("#deleteProductFileForm"+id).submit();
             }
         });
+    }
+
+    function editFile(id) {
+        $("#fileModal").modal("show")
+
+        $.ajax({
+            type:"POST",
+            url: "{{ url('edit_product_show') }}/"+id,
+            data: {
+                _token: "{{ csrf_token() }}"
+            },
+            success: function(response) {
+                $("#editFileName").val(response.data.Name)
+                $("#editDescription").val(response.data.Description)
+                $("#editClient").val(response.data.ClientId).trigger('change')
+                if(response.data.IsConfidential == "1") {
+                    $("#editConfidential").prop('checked', true)
+                }
+                else {
+                    $("#editConfidential").prop('checked', false) 
+                }
+                $("[name='product_id']").val(response.data.ProductId)
+                $("[name='product_files']").val(response.data.Id)
+            }
+        })
     }
 
     $(document).ready(function() {
