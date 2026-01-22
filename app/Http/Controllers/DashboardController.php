@@ -38,6 +38,8 @@ class DashboardController extends Controller
             return redirect('/dashboard-qcd');
         } elseif ($role && $role->type == 'PRD') {
             return redirect('/dashboard-prd');
+        } else {
+            return redirect('/dashboard-qcd');
         }
     }
 
