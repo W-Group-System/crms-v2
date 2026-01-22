@@ -151,7 +151,7 @@ Route::group(['middleware' => ['auth']], function() {
     
         # Product Files
         Route::post('add_product_files', 'ProductController@addFiles');
-        Route::post('edit_files/{id}', 'ProductController@editFiles');
+        Route::post('edit_files', 'ProductController@editFiles');
         Route::post('update_all_files', 'ProductController@updateAllFiles');
         Route::post('delete_product_files/{id}', 'ProductController@deleteProductFiles');
     
