@@ -878,7 +878,7 @@
                     </div>
                 </div>
             </div> --}}
-        @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-PBI'))
+        @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'QCD-PBI' || optional($role)->type == 'Production'))
             {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">
                     <div class="card-body">
