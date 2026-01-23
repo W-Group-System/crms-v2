@@ -172,7 +172,7 @@ input[type="checkbox"] {
                     <p class="text-right">Address</p> 
                 </td>
                 <td width="30%">
-                    <p class="ml-1 text-left"><span class="d-inline-block" style="border-bottom: 1px dashed black; width:100%; white-space: pre-line;">{{ optional($sample_requests->clientAddress)->Address }}</span></p>
+                    <p class="ml-1 text-left"><span class="d-inline-block" style="border-bottom: 1px dashed black; width:100%; white-space: pre-line; font-family: DejaVu Sans, sans-serif;">{{ optional($sample_requests->clientAddress)->Address }}</span></p>
                 </td>
                 <td width="25%">
                     <p class="text-right"></p> 
