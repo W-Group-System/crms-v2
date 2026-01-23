@@ -108,6 +108,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                 'Date Sample Received',
                 'Date Dispatched',
                 'Status',
+                'Disposition Remarks',
                 'Progress'
             ];
         }
@@ -175,7 +176,19 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
         }
         elseif($row->RefCode == 2)
         {
-            $RefCode = "QCD";
+            $RefCode = "QCD-WHI";
+        }
+        elseif($row->RefCode == 3)
+        {
+            $RefCode = "QCD-PBI";
+        }
+        elseif($row->RefCode == 4)
+        {
+            $RefCode = "QCD-MRDC";
+        }
+        elseif($row->RefCode == 5)
+        {
+            $RefCode = "QCD-CCC";
         }
 
         $SrfType = "";
@@ -270,6 +283,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                     $product->DateSampleReceived ?? "NA",
                     $row->DateDispatched ?? "NA",
                     $status,
+                    optional($product)->DispositionRejectionDescription,
                     optional($row->progressStatus)->name,
                 ];
             }
