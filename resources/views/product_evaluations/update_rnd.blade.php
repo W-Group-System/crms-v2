@@ -13,6 +13,7 @@
                     <div class="row">
                         @php
                             $isReadOnly = ($requestEvaluation->Progress == 60);
+                            $isRecomReadOnly = ($requestEvaluation->Status != 10);
                         @endphp
 
                         <div class="col-lg-12">
@@ -30,7 +31,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>RPE Recommendation</label>
-                                <textarea name="rpe_recommendation" class="form-control" cols="30" rows="10" {{ $isReadOnly ? 'readonly' : '' }}>{{$requestEvaluation->RpeResult}}</textarea>
+                                <textarea name="rpe_recommendation" class="form-control" cols="30" rows="10" {{ $isRecomReadOnly ? 'readonly' : '' }}>{{$requestEvaluation->RpeResult}}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-12">
