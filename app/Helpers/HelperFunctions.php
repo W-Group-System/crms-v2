@@ -393,7 +393,7 @@ function authCheckIfItsSalesManager($role)
 
 function authCheckIfItsRnd($department)
 {
-    if ($department == 15 || $department == 42 || $department == 20)
+    if ($department == 15 || $department == 42 || $department == 20 || $department == 44 || $department == 77 || $department == 78 || $department == 79)
     {
         return true;
     }
