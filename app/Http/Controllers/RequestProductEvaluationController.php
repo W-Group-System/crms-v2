@@ -535,6 +535,7 @@ class RequestProductEvaluationController extends Controller
         $rpe->CurrencyId = $request->input('CurrencyId');
         $rpe->SampleName = $request->input('SampleName');
         $rpe->Supplier = $request->input('Supplier');
+        $rpe->RpeReferenceNumber = $request->input('RpeReferenceNumber');
         $rpe->ObjectiveForRpeProject = $request->input('ObjectiveForRpeProject');
         $rpe->Manufacturer = $request->input('Manufacturer');
         $rpe->ReturnToSales = 0;

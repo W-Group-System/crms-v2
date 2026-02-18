@@ -20,7 +20,7 @@ class RequestProductEvaluation extends Model implements Auditable
     protected $fillable = [
         'RpeNumber', 'CreatedDate', 'ClientId', 'Priority', 'ApplicationId', 'DueDate', 'PotentialVolume', 'UnitOfMeasureId',
         'PrimarySalesPersonId', 'TargetRawPrice', 'CurrencyId', 'SecondarySalesPersonId', 'AttentionTo', 'SampleName',
-        'NatureOfRequestId', 'Supplier', 'ObjectiveForRpeProject', 'Status', 'Progress', 'ProjectNameId'
+        'NatureOfRequestId', 'Supplier', 'ObjectiveForRpeProject', 'Status', 'Progress', 'ProjectNameId', 'RpeReferenceNumber'
     ];
     public function client()
     {
