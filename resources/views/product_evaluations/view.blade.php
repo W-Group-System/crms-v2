@@ -645,7 +645,7 @@
                                     </p>
                                 </div>
                                 <div class="col-sm-3 col-md-4">
-                                    <p class="mb-0 text-right"><b>Rpe Reference Number :</b></p>
+                                    <p class="mb-0 text-right"><b>RPE Reference Number :</b></p>
                                 </div>
                                 <div class="col-sm-3 col-md-8">
                                     <p class="mb-0">
