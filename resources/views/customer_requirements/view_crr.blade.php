@@ -1026,7 +1026,7 @@
                                                 $dirname = pathinfo($path, PATHINFO_DIRNAME);
                                                 $basename = pathinfo($path, PATHINFO_BASENAME);
                                                 $encodedBasename = rawurlencode($basename); 
-                                                $finalUrl = asset("$dirname/$encodedBasename");
+                                                $finalUrl = url("$dirname/$encodedBasename");
                                             @endphp
 
                                             <a href="{{ $finalUrl }}" target="_blank">
