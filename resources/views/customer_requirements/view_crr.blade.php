@@ -1021,15 +1021,15 @@
                                             @endif
                                         </td>
                                         <td width="5%">
-                                           @php
+                                            {{-- @php
                                                 $path = $files->Path; 
                                                 $dirname = pathinfo($path, PATHINFO_DIRNAME);
                                                 $basename = pathinfo($path, PATHINFO_BASENAME);
                                                 $encodedBasename = rawurlencode($basename); 
                                                 $finalUrl = url("$dirname/$encodedBasename");
-                                            @endphp
+                                            @endphp --}}
 
-                                            <a href="{{ $finalUrl }}" target="_blank">
+                                            <a href="{{ url($files->Path) }}" target="_blank">
                                                 <i class="ti-file"></i>
                                             </a>
                                         </td>
