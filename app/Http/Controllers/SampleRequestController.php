@@ -80,7 +80,7 @@ class SampleRequestController extends Controller
         $close = $request->close;
         $status = $request->query('status'); // Get the status from the query parameters
         $progress = $request->query('progress'); // Get the status from the query parameters
-
+        $filterBy = $request->query('filterBy');
         
         $clients = Client::where(function($query) {
             if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
@@ -592,7 +592,7 @@ class SampleRequestController extends Controller
             ->paginate($request->entries ?? 10);
           
        
-        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users', 'loggedInUser', 'userDispatch'));
+        return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users', 'loggedInUser', 'userDispatch','filterBy'));
     }
 
     public function getSampleContactsByClientF($clientId)
