@@ -35,7 +35,7 @@ use OwenIt\Auditing\Models\Audit;
 use PDF;
 use RealRashid\SweetAlert\Facades\Alert;
 use Collective\Html\FormFacade as Form;
-
+use Illuminate\Support\Facades\Log;
 
 class SampleRequestController extends Controller
 {
@@ -80,7 +80,7 @@ class SampleRequestController extends Controller
         $close = $request->close;
         $status = $request->query('status'); // Get the status from the query parameters
         $progress = $request->query('progress'); // Get the status from the query parameters
-        $filterBy = $request->query('filterBy');
+        $filterBy = $request->query('filterBy')??"";
         
         $clients = Client::where(function($query) {
             if (auth()->user()->role->name == "Department Admin" || auth()->user()->role->name == "Staff L1" || auth()->user()->role->name == "Staff L2") {
@@ -242,51 +242,61 @@ class SampleRequestController extends Controller
             //         });
             // })
             // Search filter for SrfNumber, DateRequested, and DateRequired
-            ->when($search, function($query) use ($search, $refCodeMappings, $srfTypeMappings) {
-                $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
-                    ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
-                    ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
-                    ->orWhere('ProductDescription', 'LIKE', '%' . $search . '%')
-                    ->orWhereHas('client', function($q) use ($search) {
-                        $q->where('name', 'LIKE', '%' . $search . '%')
-                        ->orWhereHas('clientregion', function($regionQuery) use ($search) {
-                            $regionQuery->where('Name', 'LIKE', '%' . $search . '%');
-                        })
-                        ->orWhereHas('clientcountry', function($countryQuery) use ($search) {
-                            $countryQuery->where('Name', 'LIKE', '%' . $search . '%');
-                        });
-                    })
-                    ->orWhereHas('primarySalesPerson', function($salesQuery) use ($search) {
-                        $salesQuery->where('full_name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('primarySalesById', function($salesQuery) use ($search) {
-                        $salesQuery->where('full_name', 'LIKE', '%' . $search . '%');
-                    })
-                    ->orWhereHas('progressStatus', function($statusQuery) use ($search) {
-                        $statusQuery->where('name', 'LIKE', '%' . $search . '%');
-                    })
-                    // ->orWhere(function ($q) use ($search) {
-                    //     $q->whereHas('requestProducts', function($productQuery) use ($search) {
-                    //         $productQuery->where('ProductCode', 'LIKE', '%' . $search . '%');
-                    //     })
-                    //     ->orWhereHas('productApplicationsId', function($applicationQuery) use ($search) {
-                    //         $applicationQuery->where('Name', 'LIKE', '%' . $search . '%');
-                    //     });
-                    // })
-                    ->orWhere(function ($q) use ($search, $refCodeMappings) {
-                        foreach ($refCodeMappings as $code => $label) {
-                            if (stripos($label, $search) !== false) {
-                                $q->orWhere('RefCode', $code);
-                            }
-                        }
-                    })
-                    ->orWhere(function ($q) use ($search, $srfTypeMappings) {
-                        foreach ($srfTypeMappings as $code => $label) {
-                            if (stripos($label, $search) !== false) {
-                                $q->orWhere('SrfType', $code);
-                            }
-                        }
+            ->when($search, function($query) use ($search, $refCodeMappings, $srfTypeMappings, $filterBy) {
+                if (!empty($filterBy) && $filterBy == "productCode") {
+                    Log::info("PASSED");
+                    $query = $query->whereIn('Id', function ($query) use ($search) {
+                        $query->select('SampleRequestId')
+                            ->from('samplerequestproducts')
+                            ->where('ProductCode', 'LIKE', '%' . $search . '%')
+                            ->distinct();
                     });
+                }else{
+                    $query->where('SrfNumber', 'LIKE', '%' . $search . '%')
+                        ->orWhere('DateRequested', 'LIKE', '%' . $search . '%')
+                        ->orWhere('DateRequired', 'LIKE', '%' . $search . '%')
+                        ->orWhere('ProductDescription', 'LIKE', '%' . $search . '%')
+                        ->orWhereHas('client', function($q) use ($search) {
+                            $q->where('name', 'LIKE', '%' . $search . '%')
+                            ->orWhereHas('clientregion', function($regionQuery) use ($search) {
+                                $regionQuery->where('Name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->orWhereHas('clientcountry', function($countryQuery) use ($search) {
+                                $countryQuery->where('Name', 'LIKE', '%' . $search . '%');
+                            });
+                        })
+                        ->orWhereHas('primarySalesPerson', function($salesQuery) use ($search) {
+                            $salesQuery->where('full_name', 'LIKE', '%' . $search . '%');
+                        })
+                        ->orWhereHas('primarySalesById', function($salesQuery) use ($search) {
+                            $salesQuery->where('full_name', 'LIKE', '%' . $search . '%');
+                        })
+                        ->orWhereHas('progressStatus', function($statusQuery) use ($search) {
+                            $statusQuery->where('name', 'LIKE', '%' . $search . '%');
+                        })
+                        // ->orWhere(function ($q) use ($search) {
+                        //     $q->whereHas('requestProducts', function($productQuery) use ($search) {
+                        //         $productQuery->where('ProductCode', 'LIKE', '%' . $search . '%');
+                        //     })
+                        //     ->orWhereHas('productApplicationsId', function($applicationQuery) use ($search) {
+                        //         $applicationQuery->where('Name', 'LIKE', '%' . $search . '%');
+                        //     });
+                        // })
+                        ->orWhere(function ($q) use ($search, $refCodeMappings) {
+                            foreach ($refCodeMappings as $code => $label) {
+                                if (stripos($label, $search) !== false) {
+                                    $q->orWhere('RefCode', $code);
+                                }
+                            }
+                        })
+                        ->orWhere(function ($q) use ($search, $srfTypeMappings) {
+                            foreach ($srfTypeMappings as $code => $label) {
+                                if (stripos($label, $search) !== false) {
+                                    $q->orWhere('SrfType', $code);
+                                }
+                            }
+                        });
+                }
             })
             ->when($progress, function($query) use ($progress, $userId) {
                 if ($progress == '10') {
@@ -507,9 +517,9 @@ class SampleRequestController extends Controller
             })
             ->when($sort !== 'ClientRegion' && $sort !== 'ClientCountry', function($query) use ($sort, $direction) {
                 $query->orderBy($sort, $direction);
-            })
+            });
             // Paginate with entries per page
-            ->paginate($request->entries ?? 10)->appends([
+            $sampleRequests = $sampleRequests->paginate($request->entries ?? 10)->appends([
                 'sort' => $sort,
                 'direction' => $direction,
                 'entries' => $request->entries,
