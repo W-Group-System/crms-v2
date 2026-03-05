@@ -65,6 +65,11 @@ class Client extends Model
         return $this->belongsTo(ClientCountry::class, 'ClientCountryId');
     }
 
+    public function clientarea()
+    {
+        return $this->belongsTo(Area::class, 'ClientCountryId');
+    }
+
     public function activities()
     {
         return $this->hasMany(Activity::class, 'ClientId', 'id');

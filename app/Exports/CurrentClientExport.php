@@ -48,6 +48,10 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
             'Contact Person',
             'Address',
             'Contact #',
+            'Region',
+            'Area',
+            'Country',
+            'Website',
             'Email'
         ];
     }
@@ -77,6 +81,10 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
 
         $client_contact_no = implode("\n",  $contact_number_array);
         
+        $region = $currentClient->clientregion->Name  ?? '';
+        $area = $currentClient->clientarea->Name  ?? '';
+        $country = $currentClient->clientcountry->Name  ?? '';
+
         $email = $currentClient->contacts->pluck('EmailAddress')->toArray();
         $email_address = implode("\n", $email);
         return [
@@ -89,6 +97,10 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
             $client_contacts,
             $client_address,
             $client_contact_no,
+            $region,
+            $area,
+            $country,
+            $currentClient->Website ?? '',
             $email_address
         ];
     }
