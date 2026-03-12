@@ -89,6 +89,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
         {
             return [
                 'SRF #',
+                'Index',
                 'Date Requested',
                 'Date Required',
                 'Ref Code',
@@ -109,6 +110,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                 'Date Dispatched',
                 'Status',
                 'Disposition Remarks',
+                'Disposition',
                 'Progress'
             ];
         }
@@ -262,8 +264,24 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
             $productRows = [];
 
             foreach ($row->requestProducts as $product) {
+                $disposition = $product->Disposition;
+                $dispositionDesc = "";
+                if ($disposition == '1'){
+                    $dispositionDesc = "No Feedback";
+                }
+                elseif ($disposition == '10'){
+                    $dispositionDesc = "Accepted";
+                }
+                elseif ($disposition == '20'){
+                    $dispositionDesc = "Rejected";
+                }
+                else {
+                    $dispositionDesc = "NA";
+                }
+                
                 $productRows[] = [
                     $row->SrfNumber,
+                    $row->SrfNumber."-".$product->ProductIndex,
                     $row->DateRequested,
                     $row->DateRequired,
                     $RefCode,
@@ -284,6 +302,7 @@ class SampleRequestExport implements FromCollection, WithHeadings, WithMapping
                     $row->DateDispatched ?? "NA",
                     $status,
                     optional($product)->DispositionRejectionDescription,
+                    $dispositionDesc,
                     optional($row->progressStatus)->name,
                 ];
             }
