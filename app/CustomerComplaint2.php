@@ -15,6 +15,10 @@ class CustomerComplaint2 extends Model
     {
         return $this->belongsTo(ConcernDepartment::class, 'Department', 'Name');
     }
+    public function concernedDept() 
+    {
+        return $this->belongsTo(ConcernDepartment::class, 'Department', 'id');
+    }
 
     public function product_quality()
     {

@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CustomerComplaint2Controller extends Controller
 {
@@ -106,10 +108,28 @@ class CustomerComplaint2Controller extends Controller
         ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
             $query->where('Status', $request->input('close'));
         })
-        ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
-            $q->whereHas('concerned', function($q) {
-                $q->where('Department',  auth()->user()->role->type);
-            });
+        // ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
+        //     $q->whereHas('concerned', function($q) {
+        //         $q->where('Department',  auth()->user()->role->type);
+        //     });
+        // })
+        // ->when(isset($role) && !in_array($role->type, ['IS', 'LS', 'Admin']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
+        //     $q->whereHas('concerned', function($q) {
+        //         $q->where('Department',  auth()->user()->role->type);
+        //     });
+        // })
+        ->when(optional($role)->type, function($q) use ($role, $request, $search) {
+            if ($role->type == "IS") {
+                $q->where('CcNumber', 'LIKE', "%CCF-IS%");
+            } elseif ($role->type == "LS") {
+                $q->where('CcNumber', 'LIKE', "%CCF-LS%");
+            } elseif ($role->type == "ITD") {
+
+            } else {
+                $q->whereHas('concernedDept', function ($dept) use ($role) {
+                    $dept->where('dept_role_group', $role->type);
+                })->whereNotNull('ApprovedBy');
+            }
         })
         ->when($progress, function($query) use ($progress, $userId, $userByUser) {
             if ($progress == '20') {
@@ -194,52 +214,114 @@ class CustomerComplaint2Controller extends Controller
 
     public function store(Request $request)
     {
-        $customerComplaint = CustomerComplaint2::create([
-            'CompanyName' => $request->CompanyName,
-            'CcNumber' => $request->CcNumber,
-            'ContactName' => $request->ContactName,
-            'Email' => $request->Email,
-            'Address' => $request->Address,
-            'Country' => $request->Country,
-            'Telephone' => $request->Telephone,
-            'CustomerRemarks' => $request->CustomerRemarks,
-            'Status' => '10',
-            'Progress' => '10'
-        ]);
+        $year = date('y');
 
-        $attachments = [];
-        // if ($request->hasFile('Path') && is_array($request->file('Path'))) {
-        //     foreach ($request->file('Path') as $file) {
-        //         if ($file->isValid()) {
-        //             $ccFiles = new ComplaintFile();
-        //             $ccFiles->CcId = $customerComplaint->id;
+        if ($request->is('new_customer_complaint2_is')) {
+            $type = 'IS';
+        } elseif ($request->is('new_customer_complaint2_ls')) {
+            $type = 'LS';
+        } 
+        $last = CustomerComplaint2::where('CcNumber', 'LIKE', "%CCF-$type-%")
+            ->orderBy('id', 'desc')
+            ->first();
 
-        //             $fileName = time() . '_' . $file->getClientOriginalName();
-        //             $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
-        //             $ccFiles->Path = $filePath; 
-        //             $ccFiles->save();
+        $next = $last
+            ? intval(substr($last->CcNumber, strrpos($last->CcNumber, '-') + 1)) + 1
+            : 1;
 
-        //             $attachments[] = $filePath;
-        //         }
-        //     }
-        // }
+        $padded = str_pad($next, 4, '0', STR_PAD_LEFT);
 
-        if ($request->has('Path') && is_array($request->Path)) {
-            foreach ($request->Path as $fileName) {
-                $tempPath = 'temp/' . $fileName;
-                if (Storage::disk('public')->exists($tempPath)) {
-                    $newPath = 'cc_files/' . $fileName;
-                    Storage::disk('public')->move($tempPath, $newPath);
+        $ccNo = "CCF-$type-$year-$padded";
+        DB::beginTransaction(); 
+        try { 
+                $customerComplaint = CustomerComplaint2::create([
+                'CompanyName' => $request->CompanyName,
+                'CcNumber' => $ccNo,
+                'ContactName' => $request->ContactName,
+                'Email' => $request->Email,
+                'Address' => $request->Address,
+                'Country' => $request->Country,
+                'Telephone' => $request->Telephone,
+                'CustomerRemarks' => $request->CustomerRemarks,
+                'Status' => '10',
+                'Progress' => '10'
+            ]);
 
-                    ComplaintFile::create([
-                        'CcId' => $customerComplaint->id,
-                        'Path' => $newPath
-                    ]);
+            $attachments = [];
+            // if ($request->hasFile('Path') && is_array($request->file('Path'))) {
+            //     foreach ($request->file('Path') as $file) {
+            //         if ($file->isValid()) {
+            //             $ccFiles = new ComplaintFile();
+            //             $ccFiles->CcId = $customerComplaint->id;
 
-                    $attachments[] = $newPath;
+            //             $fileName = time() . '_' . $file->getClientOriginalName();
+            //             $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
+            //             $ccFiles->Path = $filePath; 
+            //             $ccFiles->save();
+
+            //             $attachments[] = $filePath;
+            //         }
+            //     }
+            // }
+
+            if ($request->has('Path') && is_array($request->Path)) {
+                foreach ($request->Path as $fileName) {
+                    $tempPath = 'temp/' . $fileName;
+                    if (Storage::disk('public')->exists($tempPath)) {
+                        $newPath = 'cc_files/' . $fileName;
+                        Storage::disk('public')->move($tempPath, $newPath);
+
+                        ComplaintFile::create([
+                            'CcId' => $customerComplaint->id,
+                            'Path' => $newPath
+                        ]);
+
+                        $attachments[] = $newPath;
+                    }
                 }
             }
+            $recipients = [];
+
+            if ($request->is('new_customer_complaint2_is')) {
+                $recipients = [
+                    // 'international.sales@rico.com.ph',
+                    // 'audit@rico.com.ph',
+                    // 'bpd@wgroup.com.ph',
+                    'junjihadbarroga@gmail.com',
+                    'therealharrypotter00@gmail.com'
+                ];
+            } elseif ($request->is('new_customer_complaint2_ls')) {
+                $recipients = [
+                    // 'mrdc.sales@rico.com.ph',
+                    // 'audit@rico.com.ph',
+                    // 'bpd@wgroup.com.ph',
+                    'junjihadbarroga@gmail.com',
+                    'therealharrypotter00@gmail.com'
+                ];
+            }
+            // Send to CC recipients WITH button
+            if (!empty($recipients)) {
+                // Send to CC recipients WITHOUT button
+
+                Mail::to($customerComplaint['Email'])
+                    ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
+                Mail::to($recipients)
+                    ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));
+            }
+            
+            
+
+            DB::commit();
+
+            return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
+
+        } catch (\Exception $e) {
+            DB::rollBack(); 
+            return response()->json([
+                'error' => 'Failed to submit complaint: ' . $e->getMessage()
+            ], 500);
         }
+        
         // CcProductQuality::create([
         //     'CcId' => $customerComplaint->id,
         //     'Pn1' => $request->Pn1,
@@ -352,17 +434,10 @@ class CustomerComplaint2Controller extends Controller
         //     ->send(new CustomerComplaintMail($customerComplaint, $attachments));
 
         // Send to main recipient WITHOUT button
-        Mail::to($customerComplaint['Email'])
-        ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
+       
         // Mail::to([$customerComplaint['Email'], 'bpd@wgroup.com.ph']) 
         // ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
 
-        // Send to CC recipients WITH button
-        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph', 'bpd@wgroup.com.ph']) // CC emails here
-        // Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph', 'bpd@wgroup.com.ph'])
-        ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));  
-        
-        return response()->json(['success' => 'Your customer complaint has been submitted successfully!']);
     }
 
     public function update(Request $request, $id)
@@ -416,9 +491,28 @@ class CustomerComplaint2Controller extends Controller
         // }
 
         // Mail::to(['ict.engineer@wgroup.com.ph', 'admin@rico.com.ph']) // CC emails here
-        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph'])
-            ->send(new InvestigationMail($data, $attachments, true));
-        
+        $recipients = [];
+
+        if (Str::contains($data->CcNumber, 'CCF-IS')) {
+                $recipients = [
+                    // 'international.sales@rico.com.ph',
+                    // 'audit@rico.com.ph',
+                    'junjihadbarroga@gmail.com',
+                    'therealharrypotter00@gmail.com'
+                ];
+            } elseif (Str::contains($data->CcNumber, 'CCF-LS')) {
+                $recipients = [
+                    // 'mrdc.sales@rico.com.ph',
+                    // 'audit@rico.com.ph',
+                    'junjihadbarroga@gmail.com',
+                    'therealharrypotter00@gmail.com'
+                ];
+            }
+
+            if (!empty($recipients)) {
+                Mail::to($recipients)
+                    ->send(new InvestigationMail($data, $attachments, true));
+            }
         return response()->json([
             'success' => true,
             'message' => 'Customer complaint investigation has been successfully updated.'
@@ -456,7 +550,7 @@ class CustomerComplaint2Controller extends Controller
         }
         $data->save();
 
-        $department = ConcernDepartment::where('Name', $data->Department)->firstOrFail();
+        $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
 
         $attachments = [];
         if ($request->has('Path') && is_array($request->Path)) {
@@ -477,8 +571,8 @@ class CustomerComplaint2Controller extends Controller
         }
 
         if ($data->Claims == 1) {
-            Mail::to(['ar.accounting@rico.com.ph'])
-            // Mail::to(['crista.bautista@rico.com.ph'])
+            // Mail::to(['ar.accounting@rico.com.ph'])
+            Mail::to(['crista.bautista@rico.com.ph'])
             ->send(new VerifiedMail($data, $attachments, false)); 
         }
 
@@ -540,6 +634,19 @@ class CustomerComplaint2Controller extends Controller
         $data->Progress = 40;
         $data->save();
 
+        $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
+        $attachments = CCFile::where('CCId', $data->id)->get();
+
+        if ($data->NcarIssuance == 1) {
+            // Mail::to(['bpd@wgroup.com.ph'])
+            Mail::to(['junjihadbarroga@gmail.com.com.ph'])
+            // Mail::to(['ict.engineer@wgroup.com.ph'])
+            ->send(new AssignCcDepartmentMail($data, $attachments, false)); 
+        }
+
+        Mail::to($department->email)->send(new AssignCcDepartmentMail($data, $attachments, true));
+        
+
         return response()->json([
             'success' => true,
             'message' => 'Customer complaint has been successfully acknowledged.'
@@ -555,7 +662,7 @@ class CustomerComplaint2Controller extends Controller
         $data->Progress = 70;
         $data->save();
 
-        Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph']) // CC emails here
+        Mail::to(['junjihadbarroga@gmail.com']) 
             ->send(new ClosedMail($data));
 
         return response()->json([
@@ -841,7 +948,7 @@ class CustomerComplaint2Controller extends Controller
         $customer_complaint->SiteConcerned = $request->SiteConcerned;
         $customer_complaint->save();
 
-        $department = ConcernDepartment::where('Name', $request->Department)->firstOrFail();
+        $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
 
         $attachments = [];
 
@@ -877,13 +984,16 @@ class CustomerComplaint2Controller extends Controller
         //         }
         //     }
         // }
-        if ($customer_complaint->NcarIssuance == 1) {
-            Mail::to(['bpd@wgroup.com.ph'])
-            // Mail::to(['ict.engineer@wgroup.com.ph'])
-            ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
-        }
 
-        Mail::to($department->email)->send(new AssignCcDepartmentMail($customer_complaint, $attachments, true));
+        // move email when manager approves
+        // if ($customer_complaint->NcarIssuance == 1) {
+        //     Mail::to(['bpd@wgroup.com.ph'])
+        //     // Mail::to(['ict.engineer@wgroup.com.ph'])
+        //     ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
+        // }
+
+        // Mail::to($department->email)->send(new AssignCcDepartmentMail($customer_complaint, $attachments, true));
+
         // if ($request->has('file'))
         // {
             // $ccfile = CcFile::where('customer_complaint_id', $id)->delete();
@@ -914,7 +1024,7 @@ class CustomerComplaint2Controller extends Controller
 
     public function getDepartmentsBySite($siteId)
     {
-        $departments = ConcernDepartment::where('site_id', $siteId)->get(['id', 'Name']);
+        $departments = ConcernDepartment::where('site_id', $siteId)->get(['id', 'Name', 'dept_role_group']);
         return response()->json($departments);
     }
     public function printCc($id)

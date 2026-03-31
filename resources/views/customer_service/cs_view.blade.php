@@ -58,7 +58,7 @@
                             <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST" onsubmit="show()">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success approvedBtn">
-                                    <i class="ti-check">&nbsp;</i> Acknowledge
+                                    <i class="ti-check">&nbsp;</i> Noted By
                                 </button>
                             </form>
                         @endif
@@ -101,7 +101,8 @@
                         <label class="col-sm-3 col-form-label text-right"><b>Concerned Department:</b></label>
                         <div class="col-sm-3">
                             <!-- <label>{{ $data->concerned->Name ?? '' }}</label> -->
-                            <label>{{ $data->Department ?? '' }}</label>
+                            {{-- <label>{{ $data->Department ?? '' }}</label> --}}
+                            <label> {{ optional($data->concerned)->Name ?? 'N/A' }}</label>
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
                         <div class="col-sm-3">
@@ -123,7 +124,7 @@
                         <div class="col-sm-3">
                             <label>{{ $data->CompanyName }}</label>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Acknowledged By:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->approvedBy->full_name ?? '' }}</label>
                         </div>
@@ -535,7 +536,7 @@
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
-                            title: "Acknowledged",
+                            title: "Noted",
                             text: response.message,
                             icon: "success",
                             timer: 1500,
@@ -630,7 +631,7 @@
                         $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
 
                         $.each(data, function (key, department) {
-                            $('#Department').append('<option value="' + department.Name + '">' + department.Name + '</option>');
+                            $('#Department').append('<option value="' + department.id + '">' + department.Name + '</option>');
                         });
                     }
                 });
