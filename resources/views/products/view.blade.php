@@ -1059,7 +1059,7 @@
         let baseUrl = "{{ url('/') }}";
         let csrf = "{{csrf_token()}}";
         let isRndQsi = false;
-        let id = "{{ $data->id }}"
+        let productId = "{{ $data->id }}"
         let currentFilesTable = $('#current_files_table').DataTable({
             processing: true,
             serverSide: true,
@@ -1080,7 +1080,7 @@
                     data: {
                         page: page,
                         limit: limit,
-                        productId: id,
+                        productId: productId,
                         search: search
                     },
                     success: function (resp) {
@@ -1090,6 +1090,7 @@
                             recordsTotal: resp.total,   
                             recordsFiltered: resp.total 
                         });
+                        AppendUpdateAllFilesModal();
                     }
                 });
             },
@@ -1157,7 +1158,95 @@
                 
             }
         });
+
+        function AppendUpdateAllFilesModal() {
+            $.ajax({
+                url: "{{ route('currentFileList') }}",
+                type: 'GET',
+                data: {
+                    page: 1,
+                    limit: 9999,
+                    productId: productId
+                },
+                success: function (resp) {
+
+                    let clients = @json($client); // ✅ move outside loop
+
+                    resp.data.forEach(element => {
+
+                        let fileId = element.Id;
+                        let name = element.Name;
+                        let description = element.Description;
+                        let isConfidential = element.IsConfidential == 1 ? 'checked' : '';
+                        let path = element.Path;
+                        let selectedId = element.ClientId;
+
+                        // build client options
+                        let selectHtml = '<option value="">-Client-</option>';
+
+                        $.each(clients, function (i, c) {
+                            selectHtml += `
+                                <option value="${c.id}" ${c.id == selectedId ? 'selected' : ''}>
+                                    ${c.Name}
+                                </option>
+                            `;
+                        });
+
+                        let html = `
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <fieldset class="border border-primary p-3 mb-3">
+                                        <div class="row">
+
+                                            <input type="hidden" name="file_id[]" value="${fileId}">
+
+                                            <div class="col-lg-6">
+                                                <label>Name :</label>
+                                                <input type="text" name="name[]" class="form-control form-control-sm" value="${name}">
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <label>Client :</label>
+                                                <select name="client[]" class="js-example-basic-single form-control form-control-sm">
+                                                    ${selectHtml}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <label>Description :</label>
+                                                <textarea name="description[]" class="form-control">${description}</textarea>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <label>Is Confidential :</label>
+                                                <input type="checkbox" name="is_confidential[]" ${isConfidential}>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <label>File :</label>
+                                                <input type="file" name="productFiles[]" class="form-control form-control-sm">
+                                            </div>
+
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div class="col-lg-2">
+                                    <button class="btn btn-sm btn-danger mb-3 removeBtnFiles" type="button">
+                                        <i class="ti-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+
+                        let row = $(html);
+                        $('.product_files_container').append(row);
+
+                        row.find('.js-example-basic-single').select2();
+                    });
+                }
+            });
+        }
     });    
-    // <i class="mdi mdi-eye-off-outline text-danger"></i>
 </script>
 @endsection
