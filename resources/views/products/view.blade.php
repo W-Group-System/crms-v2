@@ -328,7 +328,7 @@
                     @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
-                        <button type="button" class="btn btn-md btn-outline-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
+                        {{-- <button type="button" class="btn btn-md btn-outline-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button> --}}
                     </div>
                     @endif
 
@@ -1090,7 +1090,6 @@
                             recordsTotal: resp.total,   
                             recordsFiltered: resp.total 
                         });
-                        AppendUpdateAllFilesModal();
                     }
                 });
             },
