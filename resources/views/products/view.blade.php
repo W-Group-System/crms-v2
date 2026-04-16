@@ -1,9 +1,7 @@
 @extends('layouts.header')
 @section('title', 'Products - CRMS')
 @section('content')
-{{-- @php
-    dd(get_defined_vars());
-@endphp --}}
+
 <div class="col-12 grid-margin stretch-card">
     <div class="card rounded-0 border border-1 border-primary">
         <div class="card-header bg-primary font-weight-bold text-white">
@@ -328,14 +326,14 @@
                     @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#file">Add</button>
-                        {{-- <button type="button" class="btn btn-md btn-outline-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button> --}}
+                        <button type="button" class="btn btn-md btn-outline-warning submit_approval mb-2" data-toggle="modal" data-target="#updateAllFiles">Update All</button>
                     </div>
                     @endif
 
                     @include('products.add_file')
                     @include('products.edit_all_product_files')
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="current_files_table" width="100%">
+                        <table class="table table-striped table-bordered table-hover tables" id="specification_table" width="100%">
                             <thead>
                                 <tr>
                                     <th width="10%">Actions</th>
@@ -347,7 +345,90 @@
                             </thead>
                             
                             <tbody>
-                                
+                                @if($data->productFiles)
+                                    @if(auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'CS')
+                                        @foreach ($data->productFiles->where('IsConfidential', 0) as $pf)
+                                            <tr>
+                                                <td>
+                                                    @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
+                                                    <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                        <i class="ti-pencil"></i>
+                                                    </button>
+                                                    <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete" id="deleteProductFileForm{{$pf->Id}}">
+                                                        {{csrf_field()}}
+        
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="deleteFiles({{$pf->Id}})">
+                                                            <i class="ti-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                    @endif
+                                                </td>
+                                                <td> 
+                                                    @if($pf->IsConfidential == 1)
+                                                    <i class="mdi mdi-eye-off-outline text-danger"></i>
+                                                    @endif
+                                                    {{$pf->Name}}
+                                                </td>
+                                                <td>
+                                                    {{$pf->Description}}
+                                                </td>
+                                                <td>
+                                                    {{optional($pf->client)->Name}}
+                                                </td>
+                                                <td>
+                                                    @if($pf->IsConfidential != 1)
+                                                    <a href="{{url($pf->Path)}}" target="_blank">
+                                                        <i class="ti-file"></i>
+                                                    </a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        @foreach ($data->productFiles as $pf)
+                                            <tr>
+                                                <td>
+                                                    @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
+                                                    {{-- <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
+                                                        <i class="ti-pencil"></i>
+                                                    </button> --}}
+                                                    <button class="btn btn-sm btn-outline-warning" type="button" id="editFile{{ $pf->id }}" onclick="editFile({{ $pf->Id }})">
+                                                        <i class="ti-pencil"></i>
+                                                    </button>
+                                                    <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete" id="deleteProductFileForm{{$pf->Id}}">
+                                                        {{csrf_field()}}
+
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="deleteFiles({{$pf->Id}})">
+                                                            <i class="ti-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                    @endif
+                                                </td>
+                                                <td> 
+                                                    @if($pf->IsConfidential == 1)
+                                                    <i class="mdi mdi-eye-off-outline text-danger"></i>
+                                                    @endif
+                                                    {{$pf->Name}}
+                                                </td>
+                                                <td>
+                                                    {{$pf->Description}}
+                                                </td>
+                                                <td>
+                                                    <a href="{{url('view_client/'.optional($pf->client)->id)}}" target="_blank">
+                                                        {{optional($pf->client)->Name}}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{-- @if($pf->IsConfidential != 1)
+                                                    @endif --}}
+                                                    <a href="{{url($pf->Path)}}" target="_blank">
+                                                        <i class="ti-file"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -1054,198 +1135,7 @@
                     form.submit();
                 }
             });
-        });
-        
-        let baseUrl = "{{ url('/') }}";
-        let csrf = "{{csrf_token()}}";
-        let isRndQsi = false;
-        let productId = "{{ $data->id }}"
-        let currentFilesTable = $('#current_files_table').DataTable({
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            searching: true,
-            ordering: false,
-            paging: true,
-            autoWidth: false,
-            lengthChange: true,
-            ajax: function (data, callback) {
-                let page = (data.start / data.length) + 1;
-                let limit = data.length;
-                let search = data.search.value;
-
-                $.ajax({
-                    url: "{{ route('currentFileList') }}",
-                    type: 'GET',
-                    data: {
-                        page: page,
-                        limit: limit,
-                        productId: productId,
-                        search: search
-                    },
-                    success: function (resp) {
-                        isRndQsi = resp.isRndQsi;
-                        callback({
-                            data: resp.data,            
-                            recordsTotal: resp.total,   
-                            recordsFiltered: resp.total 
-                        });
-                    }
-                });
-            },
-            columns: [
-                { 
-                    render: function (data, type, row) {
-                        if (isRndQsi) {
-                            let id = row.Id;
-                            let action = baseUrl+"/delete_product_files/"+ id;
-                            
-                            return `
-                                <button class="btn btn-sm btn-outline-warning" type="button" id="editFile${id}" onclick="editFile(${id})">
-                                    <i class="ti-pencil"></i>
-                                </button>
-                                <form action="${action}" method="post" class="d-inline-block" title="Delete" id="deleteProductFileForm${id}">
-                                    <input type="hidden" name="_token" value="${csrf}">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Delete" onclick="deleteFiles(${id})">
-                                        <i class="ti-trash"></i>
-                                    </button>
-                                </form>
-                            `;
-                        }else{
-                            return ``;
-                        }
-                    }
-                },
-                { 
-                    render: function (data, type, row) {
-                        if (row.IsConfidential == '1') {
-                            return `
-                                <i class="mdi mdi-eye-off-outline text-danger"></i>${row.Name}
-                            `;    
-                        }else{
-                             return `
-                                ${row.Name}
-                             `;    
-                        }
-                        
-                    }
-                },
-                { data: 'Description'},
-                { 
-                    render: function (data, type, row) {
-                        let clientName = row.client !== null ? row.client.Name: '';
-                        let clientId = row.client !== null ? row.client.id: '';
-                        return `
-                            <a href="/view_client/${clientId}" target="_blank">
-                                ${clientName}
-                            </a>
-                        `;
-                    }
-                },
-                { 
-                    render: function (data, type, row) {
-                        let viewHref = baseUrl+row.Path;
-                        return `
-                            <a href="${viewHref}" target="_blank">
-                                <i class="ti-file"></i>
-                            </a>
-                        `;
-                    }
-                }
-            ],
-            rowCallback : function(row,data,DisplayIndex){
-                
-            }
-        });
-
-        function AppendUpdateAllFilesModal() {
-            $.ajax({
-                url: "{{ route('currentFileList') }}",
-                type: 'GET',
-                data: {
-                    page: 1,
-                    limit: 9999,
-                    productId: productId
-                },
-                success: function (resp) {
-
-                    let clients = @json($client); // ✅ move outside loop
-
-                    resp.data.forEach(element => {
-
-                        let fileId = element.Id;
-                        let name = element.Name;
-                        let description = element.Description;
-                        let isConfidential = element.IsConfidential == 1 ? 'checked' : '';
-                        let path = element.Path;
-                        let selectedId = element.ClientId;
-
-                        // build client options
-                        let selectHtml = '<option value="">-Client-</option>';
-
-                        $.each(clients, function (i, c) {
-                            selectHtml += `
-                                <option value="${c.id}" ${c.id == selectedId ? 'selected' : ''}>
-                                    ${c.Name}
-                                </option>
-                            `;
-                        });
-
-                        let html = `
-                            <div class="row">
-                                <div class="col-lg-10">
-                                    <fieldset class="border border-primary p-3 mb-3">
-                                        <div class="row">
-
-                                            <input type="hidden" name="file_id[]" value="${fileId}">
-
-                                            <div class="col-lg-6">
-                                                <label>Name :</label>
-                                                <input type="text" name="name[]" class="form-control form-control-sm" value="${name}">
-                                            </div>
-
-                                            <div class="col-lg-6">
-                                                <label>Client :</label>
-                                                <select name="client[]" class="js-example-basic-single form-control form-control-sm">
-                                                    ${selectHtml}
-                                                </select>
-                                            </div>
-
-                                            <div class="col-lg-6">
-                                                <label>Description :</label>
-                                                <textarea name="description[]" class="form-control">${description}</textarea>
-                                            </div>
-
-                                            <div class="col-lg-6">
-                                                <label>Is Confidential :</label>
-                                                <input type="checkbox" name="is_confidential[]" ${isConfidential}>
-                                            </div>
-
-                                            <div class="col-lg-6">
-                                                <label>File :</label>
-                                                <input type="file" name="productFiles[]" class="form-control form-control-sm">
-                                            </div>
-
-                                        </div>
-                                    </fieldset>
-                                </div>
-
-                                <div class="col-lg-2">
-                                    <button class="btn btn-sm btn-danger mb-3 removeBtnFiles" type="button">
-                                        <i class="ti-minus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-
-                        let row = $(html);
-                        $('.product_files_container').append(row);
-
-                        row.find('.js-example-basic-single').select2();
-                    });
-                }
-            });
-        }
-    });    
+        })
+    });
 </script>
 @endsection
