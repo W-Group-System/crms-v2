@@ -66,7 +66,16 @@
                 <div class="col-lg-6">
                     <form method="GET" class="custom_form mb-3" enctype="multipart/form-data" onsubmit="show()">
                         <div class="row height d-flex justify-content-end align-items-end">
-                            <div class="col-md-10">
+                            <div class="col-md-3">
+                                <label class="" for="filterBy">Filter by:</label>
+                                <div class="search">
+                                    <select name="filterBy" id="filterBy" class="form-control">
+                                        <option value="">None</option>
+                                        <option value="productCode" {{$filterBy=="productCode" ? 'selected':''}}>Product Code</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
                                 <div class="search">
                                     <i class="ti ti-search"></i>
                                     <input type="text" class="form-control" placeholder="Search Sample Request" name="search" value="{{$search}}"> 
