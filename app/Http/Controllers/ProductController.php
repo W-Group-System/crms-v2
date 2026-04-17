@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 class ProductController extends Controller
 {
     // Current List
@@ -331,9 +332,9 @@ class ProductController extends Controller
             'productSpecification' => function($q) {
                 $q->orderBy('id', 'desc');
             },
-            'productFiles' => function($q) {
-                $q->orderBy('id', 'desc');
-            },
+            // 'productFiles' => function($q) {
+            //     $q->orderBy('id', 'desc');
+            // },
             'productDataSheet.productPhysicoChemicalAnalyses' => function($q) {
                 $q->orderBy('id', 'desc');
             },
@@ -1158,5 +1159,61 @@ class ProductController extends Controller
         }
 
         return $product_array;
+    }
+
+    public function CurrentFileList(Request $request){
+        $response = [
+            "message"=>"Failed to retrieved information.",
+            "total"=>0,
+            "isRndQsi"=>false,
+            "data"=>[],
+        ];
+        $isSuccess = false;
+
+        $productId = $request->productId??"";
+        $search = $request->search??"";
+        $page = $request->page??"1";
+        $limit = $request->limit??"10";
+        $authRoleType = auth()->user()->role->type;
+        try {
+            if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD')){
+                $response["isRndQsi"] = true;
+            }
+            $productList = ProductFiles::with([
+                'client' => function($q) {
+                    $q->select('Name','id');
+                },
+            ])->where('ProductId',$productId);
+            if($authRoleType == 'LS' || $authRoleType == 'IS' || $authRoleType == 'CS'){
+                $productList = $productList->where('IsConfidential','0');
+            }
+            if (!empty(isset($request->search))) {
+                $productList = $productList->where(function ($query) use ($search) {
+                    $query->where('Name', 'LIKE', "%{$search}%")
+                        ->orWhere('Description', 'LIKE', "%{$search}%");
+                });
+            }
+
+            $totalCount = (clone $productList)->count();
+
+            $productList = $productList->orderBy("id","desc") 
+                ->skip(($page - 1) * $limit)
+                ->take($limit)
+                ->get();
+            $isSuccess = true;
+            $response["message"] = "Successfully retrieved information.";
+            $response["total"] = $totalCount;
+            $response["data"] = $productList;
+
+            $isSuccess = true;
+        } catch (\Throwable $th) {
+            Log::error("ERROR IN CURRENT FILE LIST: ".$th->getMessage());
+        }
+
+        if ($isSuccess) {
+            return response()->json($response,200);    
+        }else{
+            return response()->json($response,400);
+        }
     }
 }
