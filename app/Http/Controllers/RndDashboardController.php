@@ -527,6 +527,163 @@ class RndDashboardController extends Controller
         return view('dashboard.rnd_close_transaction', compact('search', 'entries', 'paginatedResults'));
     }
 
+    public function closeTransactionV2(Request $request)
+    {
+        $search = $request->search;
+        $entries = $request->entries;
+        $filter = $request->filter??"";
+        $role = auth()->user()->role;
+
+        $crr = CustomerRequirement::where('Status', 30)
+            ->where( function($q)use($search,$filter) {
+                if (!empty($filter) && $filter == "analyst") {
+                    $q->whereHas('crr_personnels.crrPersonnelByUserId',function($personnelQuery)use($search) {
+                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('crr_personnels.crrPersonnelById',function($personnelQuery)use($search) {
+                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                        });
+                }else{
+                    $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
+                        ->orWhereHas('client', function($clientQuery)use($search) {
+                            $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                            $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        });
+                }
+            })
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where(function($q) {
+                        $q->where('RefCode', 'RND')->orWhereNull('RefCode');
+                    });
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 'QCD-WHI');
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 'QCD-PBI');
+                }
+                elseif($role->type == 'QCD-MRDC')
+                {
+                    $q->where('RefCode', 'QCD-MRDC');
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 'QCD-CCC');
+                }
+            })
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC') && $role->name == 'Staff L1', function($q) {
+                $q->whereHas('crr_personnels', function($q) {
+                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                });
+            })
+            ->orderBy('id','desc')
+            ->get();
+        // dd($crr->count());
+        $rpe = collect([]);
+        if ($role->type == 'RND')
+        {
+            $rpe = RequestProductEvaluation::where('Status', 30)
+                ->where(function($q)use($search,$filter) {
+                    if (!empty($filter) && $filter == "analyst") {
+                        $q->whereHas('rpe_personnels.rpePersonnelByUserId',function($personnelQuery)use($search) {
+                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('rpe_personnels.rpePersonnelById',function($personnelQuery)use($search) {
+                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                        });
+                    }else{
+                        $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
+                        ->orWhereHas('client', function($clientQuery)use($search) {
+                            $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->orWhereHas('product_application',function($applicationQuery)use($search) {
+                            $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                        });
+                    }
+                })
+                ->when($role->type == 'RND' && $role->name == 'Staff L1', function($q) {
+                    $q->whereHas('rpe_personnels', function($q) {
+                        $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                    });
+                })
+                ->orderBy('id','desc')
+                ->get();
+        }
+
+        $srf = SampleRequest::where('Status', 30)
+            ->where(function($q)use($search,$filter) {
+                if (!empty($filter) && $filter == "analyst") {
+                    $q->whereHas('srf_personnel.srfPersonnelByUserId',function($personnelQuery)use($search) {
+                        $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('srf_personnel.srfPersonnelById',function($personnelQuery)use($search) {
+                        $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                    });
+                }else{
+                    $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
+                    ->orWhereHas('client', function($clientQuery)use($search) {
+                        $clientQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    })
+                    ->orWhereHas('productApplicationsId',function($applicationQuery)use($search) {
+                        $applicationQuery->where('Name', 'LIKE', '%'.$search.'%');
+                    });
+                }
+            })
+            ->when($role, function($q)use($role) {
+                if ($role->type == 'RND')
+                {
+                    $q->where('RefCode', 1);
+                }
+                elseif($role->type == 'QCD-WHI')
+                {
+                    $q->where('RefCode', 2);
+                }
+                elseif($role->type == 'QCD-PBI')
+                {
+                    $q->where('RefCode', 3);
+                }
+                elseif($role->type == 'QCD-MRDC')
+                {
+                    $q->where('RefCode', 4);
+                }
+                elseif($role->type == 'QCD-CCC')
+                {
+                    $q->where('RefCode', 5);
+                }
+            })
+            ->when(($role->type == 'RND' || $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC') && $role->name == 'Staff L1', function($q) {
+                $q->whereHas('srf_personnel', function($q) {
+                    $q->where('PersonnelUserId',  auth()->user()->user_id)->orWhere('PersonnelUserId', auth()->user()->id);
+                });
+            })
+            ->orderBy('id','desc')
+            ->get();
+        
+        $sortedResults = $crr
+        ->concat($rpe)
+        ->concat($srf);
+
+        // $sortedResults = $allResults->sortByDesc('created_at');
+
+        $page = request()->get('page', 1);
+        $perPage = $entries ?? 10;
+        $paginatedResults = new LengthAwarePaginator(
+            $sortedResults->forPage($page, $perPage),
+            $sortedResults->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        return view('dashboard.rnd_close_transaction_v2', compact('search', 'entries', 'paginatedResults'));
+    }
+
     public function exportOpenTransaction(Request $request)
     {
         return Excel::download(new RndOpenTransactionExport, 'export_open_transaction.xlsx');
