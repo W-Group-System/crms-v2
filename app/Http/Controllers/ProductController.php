@@ -25,6 +25,7 @@ use App\ProductRawMaterials;
 use App\ProductSpecification;
 use App\ProductSubcategories;
 use App\RawMaterial;
+use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -327,6 +328,7 @@ class ProductController extends Controller
     // View
     public function view($id)
     {
+        Log::info("START: ".Carbon::now()->toDateTimeString() );
         $data = Product::with([
             'productMaterialComposition', 
             'productSpecification' => function($q) {
@@ -355,6 +357,7 @@ class ProductController extends Controller
         
         $rawMaterials = RawMaterial::where('status', 'Active')->get();
         $client = Client::get();
+        Log::info("END: ".Carbon::now()->toDateTimeString() );
 
         return view('products.view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'rawMaterials', 'client'));
     }
