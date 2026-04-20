@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 
 function rmc($productRawMaterials, $id)
 {
+    Log::info("rmc START: ".Carbon::now()->toDateTimeString() );
     $getMaterialId = $productRawMaterials->pluck('MaterialId')->toArray();
 
     $productComposition = ProductMaterialsComposition::where('ProductId', $id)
@@ -48,7 +49,7 @@ function rmc($productRawMaterials, $id)
 
         return $num;
     });
-
+    Log::info("rmc END: ".Carbon::now()->toDateTimeString() );
     return $multiply->sum();
 }
 
