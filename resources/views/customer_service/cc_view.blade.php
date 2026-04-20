@@ -17,15 +17,13 @@
                     <i class="icon-arrow-left"></i>&nbsp;Back
                 </a>
                 @if(auth()->user()->role->type != 'IAD')
-                    @if(checkIfItsSalesDept(auth()->user()->department_id))
-                        @if($data->Status == 10 && $data->ReceivedBy == NULL)
-                            <form action="{{ url('cc_received/' . $data->id) }}" class="d-inline-block" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-success receivedBtn">
-                                    <i class="ti-bookmark"></i>&nbsp;Receive
-                                </button>
-                            </form>
-                        @endif
+                    @if($data->Status == 10 && $data->ReceivedBy == NULL)
+                        <form action="{{ url('cc_received/' . $data->id) }}" class="d-inline-block" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-success receivedBtn">
+                                <i class="ti-bookmark"></i>&nbsp;Receive
+                            </button>
+                        </form>
                     @endif
                     @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
                         @if($data->Progress == 50 && $data->SiteConcerned != NULL)
@@ -69,8 +67,8 @@
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id))
                             <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-outline-warning approvedBtn">
-                                    <i class="ti-check"></i>&nbsp;Noted By
+                                <button type="submit" class="btn btn-outline-success approvedBtn">
+                                    <i class="ti-check"></i>&nbsp;Acknowledge
                                 </button>
                             </form>
                         @endif
@@ -80,7 +78,7 @@
                             <i class="ti ti-pencil"></i>&nbsp;Investigation
                         </button>
                     @endif -->
-                    @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type && ($data->Progress == 40 || $data->Progress == 80))
+                    @if ($data->Department == auth()->user()->role->type && ($data->Progress == 40 || $data->Progress == 80))
                         @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
                             <button type="button" class="btn btn-outline-warning" id="updateCc" 
                                     data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
@@ -210,7 +208,7 @@
                     <p class="m-0"><b>Department Concerned :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ optional($data->concernedDept)->Name }}</p>
+                    <p class="m-0">{{ $data->Department }}</p>
                 </div>
             </div>
             {{-- <div class="row mb-3">
@@ -315,7 +313,7 @@
                     </p>
                 </div>
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Noted By:</b></p>
+                    <p class="m-0"><b>Acknowledged By:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ optional($data->approved_by)->full_name }}</p>
@@ -1122,13 +1120,6 @@
         $('.notedBtn').on('click', function (e) {
             e.preventDefault(); 
 
-            var btn = $(this);
-            if (btn.data('clicked')) {
-                return;
-            }
-            btn.data('clicked', true);
-            btn.prop('disabled', true).text('Processing...');
-
             var form = $(this).closest('form');
             var actionUrl = form.attr('action'); 
 
@@ -1156,13 +1147,6 @@
         $('.receivedBtn').on('click', function (e) {
             e.preventDefault(); 
 
-            var btn = $(this);
-            if (btn.data('clicked')) {
-                return;
-            }
-            btn.data('clicked', true);
-            btn.prop('disabled', true).text('Processing...');
-
             var form = $(this).closest('form');
             var actionUrl = form.attr('action'); 
 
@@ -1188,26 +1172,19 @@
         });
 
         $('.approvedBtn').on('click', function (e) {
-            e.preventDefault(); 
-
-            var btn = $(this);
-            if (btn.data('clicked')) {
-                return;
-            }
-            btn.data('clicked', true);
-            btn.prop('disabled', true).text('Processing...');
+            e.preventDefault(); // Prevent the default form submission
 
             var form = $(this).closest('form');
-            var actionUrl = form.attr('action'); 
+            var actionUrl = form.attr('action'); // Get form action URL
 
             $.ajax({
                 url: actionUrl,
                 type: 'POST',
-                data: form.serialize(), 
+                data: form.serialize(), // Serialize form data
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
-                            title: "Noted",
+                            title: "Acknowledged",
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,

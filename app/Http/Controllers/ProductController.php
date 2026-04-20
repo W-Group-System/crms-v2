@@ -332,9 +332,9 @@ class ProductController extends Controller
             'productSpecification' => function($q) {
                 $q->orderBy('id', 'desc');
             },
-            'productFiles' => function($q) {
-                $q->orderBy('id', 'desc');
-            },
+            // 'productFiles' => function($q) {
+            //     $q->orderBy('id', 'desc');
+            // },
             'productDataSheet.productPhysicoChemicalAnalyses' => function($q) {
                 $q->orderBy('id', 'desc');
             },
