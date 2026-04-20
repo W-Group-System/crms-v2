@@ -44,8 +44,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('initial-review', 'RndDashboardController@initialReview');
         Route::get('rnd-new-request', 'RndDashboardController@rndNewRequest');
         Route::get('final-review', 'RndDashboardController@finalReview');
-        Route::get('close-transaction', 'RndDashboardController@closeTransaction');
-        Route::get('close-transaction-test', 'RndDashboardController@closeTransactionV2');
+        // Route::get('close-transaction', 'RndDashboardController@closeTransaction');
+        Route::get('close-transaction', 'RndDashboardController@closeTransactionV2');
         Route::get('export-open-transaction', 'RndDashboardController@exportOpenTransaction');
         Route::get('export-close-transaction', 'RndDashboardController@exportCloseTransaction');
         // Route::get('open-rpe-transaction', 'OpenTransactionController@rpe')->name('open_rpe_transactions');
