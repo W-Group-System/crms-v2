@@ -70,23 +70,8 @@
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ date('M. d, Y', strtotime($cs_data->created_at)) }}</td>
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->CompanyName }}</td>
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->ContactName }}</td>
-                                <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">
-                                    {{-- {{ $cs_data->Concerned ?? 'N/A' }} --}}
-                                    @if(optional($cs_data->Concerned)->site_id == 1) 
-                                        WHI Head Office
-                                    @elseif (optional($cs_data->Concerned)->site_id == 2)
-                                        WHI Carmona
-                                    @elseif (optional($cs_data->Concerned)->site_id == 3)
-                                        MRDC
-                                    @elseif (optional($cs_data->Concerned)->site_id == 4)
-                                        CCC Carmen
-                                    @elseif (optional($cs_data->Concerned)->site_id == 5)
-                                        PBI Canlubang
-                                    @else 
-                                        International Warehouse
-                                    @endif
-                                </td>
-                                <!-- <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ optional($cs_data->category)->Name }}</td> -->
+                                <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->Concerned ?? 'N/A' }}</td>
+                                <!-- <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->category->Name }}</td> -->
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->Description ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->users->full_name ?? 'N/A' }}</td>
                                 <!-- <td>

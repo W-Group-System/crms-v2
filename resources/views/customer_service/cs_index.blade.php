@@ -71,7 +71,7 @@
                             <div id="form_satisfaction_container" style="display: none;">
                                 <form id="form_satisfaction" method="POST" enctype="multipart/form-data" onsubmit="show()">
                                     @csrf
-                                    {{-- <input type="hidden" name="CsNumber" value="{{ $newCsNo }}">  --}}
+                                    <input type="hidden" name="CsNumber" value="{{ $newCsNo }}"> 
                                     <input type="hidden" name="Status" value="10">
                                     <input type="hidden" name="Progress" value="10">
                                     <div class="row">
@@ -143,7 +143,7 @@
                             <div id="form_complaint_container" style="display: none;">
                                 <form id="form_complaint" method="POST" enctype="multipart/form-data" onsubmit="show()">
                                     @csrf
-                                    {{-- <input type="hidden" name="CcNumber" value="{{ $newCcNo }}"> --}}
+                                    <input type="hidden" name="CcNumber" value="{{ $newCcNo }}">
                                     <input type="hidden" name="Status" value="10">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -333,7 +333,7 @@
         submitBtn.prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> Submitting...');
 
         $.ajax({
-            url: "{{ route('customer_satisfaction_is.store') }}",
+            url: "{{ route('customer_satisfaction.store') }}",
             method: "POST",
             data: formData,
             processData: false,
@@ -382,7 +382,7 @@
         submitBtn.prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> Submitting...');
 
         $.ajax({
-            url: "{{ route('customer_complaint2_is.store') }}",
+            url: "{{ route('customer_complaint2.store') }}",
             method: "POST",
             data: formData,
             processData: false,

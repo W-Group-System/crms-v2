@@ -29,23 +29,10 @@ class CustomerServiceController extends Controller
                         $clientQuery->where('Name', 'LIKE', '%' . $search . '%');
                     });
             })
-            // ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
-            //     $q->whereHas('concerned', function($q) {
-            //         $q->where('Department',  auth()->user()->role->type);
-            //     });
-            // })
-            ->when(optional($role)->type, function($q) use ($role, $request, $search) {
-                if ($role->type == "IS") {
-                    $q->where('CsNumber', 'LIKE', "%CSR-IS%");
-                } elseif ($role->type == "LS") {
-                    $q->where('CsNumber', 'LIKE', "%CSR-LS%");
-                } elseif ($role->type == "ITD") {
-
-                } else {
-                    $q->whereHas('concernedDept', function ($dept) use ($role) {
-                        $dept->where('dept_role_group', $role->type);
-                    })->whereNotNull('ApprovedBy');
-                }
+            ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
+                $q->whereHas('concerned', function($q) {
+                    $q->where('Department',  auth()->user()->role->type);
+                });
             })
             ->orderBy('id', 'desc')
             ->get();
@@ -61,23 +48,10 @@ class CustomerServiceController extends Controller
                         $clientQuery->where('Name', 'LIKE', '%' . $search . '%');
                     });
             })
-            // ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
-            //     $q->whereHas('concerned', function($q) {
-            //         $q->where('Department',  auth()->user()->role->type);
-            //     });
-            // })
-            ->when(optional($role)->type, function($q) use ($role, $request, $search) {
-                if ($role->type == "IS") {
-                    $q->where('CcNumber', 'LIKE', "%CCF-IS%");
-                } elseif ($role->type == "LS") {
-                    $q->where('CcNumber', 'LIKE', "%CCF-LS%");
-                } elseif ($role->type == "ITD") {
-
-                } else {
-                    $q->whereHas('concernedDept', function ($dept) use ($role) {
-                        $dept->where('dept_role_group', $role->type);
-                    })->whereNotNull('ApprovedBy');
-                }
+            ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
+                $q->whereHas('concerned', function($q) {
+                    $q->where('Department',  auth()->user()->role->type);
+                });
             })
             ->orderBy('id', 'desc')
             ->get();
