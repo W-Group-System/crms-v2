@@ -32,7 +32,7 @@
                 $identicalComposition = identicalComposition($data->productMaterialComposition, $data->id);
                 // $customerRequirements = customerRequirements($data->code);
                 // $productRps = productRps($data->code);
-                $history_rmc = historyRmc($data->productMaterialComposition, $data->id);
+                // $history_rmc = historyRmc($data->productMaterialComposition, $data->id);
             @endphp
             <div class="row">
                 <div class="col-md-2">
@@ -356,7 +356,7 @@
                     {{-- @foreach ($data->productFiles as $pf)
                     @endforeach --}}
                 </div>
-                <div class="tab-pane fade " id="rmc" role="tabpanel" aria-labelledby="rmc-tab">
+                {{-- <div class="tab-pane fade " id="rmc" role="tabpanel" aria-labelledby="rmc-tab">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered table-striped tables" width="100%">
                             <thead>
@@ -399,9 +399,6 @@
                                         </td>
                                         <td>{{number_format(usdToRMC($total,$key,1), 2)}}</td>
                                         <td>{{number_format(usdToRMC($total,$key,3), 2)}}</td>
-                                        {{-- <td>{{$rmc['total_po']}}</td> --}}
-                                        {{-- <td>{{number_format(usdToEur($rmc['total_price']), 2)}}</td>
-                                        <td>{{number_format(usdToPhp($rmc['total_price']), 2)}}</td> --}}
                                     </tr>
                                     @php
                                     if(count($rmc) > 1)
@@ -418,7 +415,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> --}}
                 {{-- <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped tables" width="100%">
@@ -590,6 +587,13 @@
         </div>
     </div>
 </div>
+{{-- var usd = "{{$usd}}"
+        var eur = "{{$eur}}"
+        var php = "{{$php}}"
+
+        $("#usd").html("<b>USD </b>"+00)
+        $("#eur").html("<b>EUR </b>"+eur)
+        $("#php").html("<b>PHP </b>"+php) --}}
 <style>
     #form_product {
         padding: 20px 20px;
@@ -666,13 +670,7 @@
             ordering: true,
         });
 
-        var usd = "{{$usd}}"
-        var eur = "{{$eur}}"
-        var php = "{{$php}}"
-
-        $("#usd").html("<b>USD </b>"+usd)
-        $("#eur").html("<b>EUR </b>"+eur)
-        $("#php").html("<b>PHP </b>"+php)
+        
 
         // $("#addBtn").on('click', function() {
             
