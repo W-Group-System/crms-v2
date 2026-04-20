@@ -7,8 +7,11 @@ use App\Exports\RndCloseTransactionExport;
 use App\Exports\RndOpenTransactionExport;
 use App\RequestProductEvaluation;
 use App\SampleRequest;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class RndDashboardController extends Controller
@@ -533,16 +536,25 @@ class RndDashboardController extends Controller
         $entries = $request->entries;
         $filter = $request->filter??"";
         $role = auth()->user()->role;
+        $analystArr = [];
+        if (!empty($filter) && $filter == "analyst") {
+            
+            $userList = User::select('id', 'user_id')
+                ->where('full_name', 'LIKE', '%' . $search . '%')
+                ->get();
+
+            $idsArr = $userList->pluck('id')->toArray();
+            $userIdArr = $userList->pluck('user_id')->toArray();   
+
+            $analystArr = array_merge($idsArr, $userIdArr);
+        }
 
         $crr = CustomerRequirement::where('Status', 30)
-            ->where( function($q)use($search,$filter) {
+            ->where( function($q)use($search,$filter,$analystArr) {
                 if (!empty($filter) && $filter == "analyst") {
-                    $q->whereHas('crr_personnels.crrPersonnelByUserId',function($personnelQuery)use($search) {
-                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
-                        })
-                        ->orWhereHas('crr_personnels.crrPersonnelById',function($personnelQuery)use($search) {
-                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
-                        });
+                    $q->whereHas('crr_personnels',function($personnelQuery)use($analystArr) {
+                        $personnelQuery->whereIn('PersonnelUserId', $analystArr);
+                    });
                 }else{
                     $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
                         ->orWhereHas('client', function($clientQuery)use($search) {
@@ -589,13 +601,16 @@ class RndDashboardController extends Controller
         if ($role->type == 'RND')
         {
             $rpe = RequestProductEvaluation::where('Status', 30)
-                ->where(function($q)use($search,$filter) {
+                ->where(function($q)use($search,$filter,$analystArr) {
                     if (!empty($filter) && $filter == "analyst") {
-                        $q->whereHas('rpe_personnels.rpePersonnelByUserId',function($personnelQuery)use($search) {
-                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
-                        })
-                        ->orWhereHas('rpe_personnels.rpePersonnelById',function($personnelQuery)use($search) {
-                            $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                        // $q->whereHas('rpe_personnels.rpePersonnelByUserId',function($personnelQuery)use($search) {
+                        //     $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                        // })
+                        // ->orWhereHas('rpe_personnels.rpePersonnelById',function($personnelQuery)use($search) {
+                        //     $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                        // });
+                        $q->whereHas('rpe_personnels',function($personnelQuery)use($analystArr) {
+                            $personnelQuery->whereIn('PersonnelUserId', $analystArr);
                         });
                     }else{
                         $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
@@ -617,14 +632,18 @@ class RndDashboardController extends Controller
         }
 
         $srf = SampleRequest::where('Status', 30)
-            ->where(function($q)use($search,$filter) {
+            ->where(function($q)use($search,$filter,$analystArr) {
                 if (!empty($filter) && $filter == "analyst") {
-                    $q->whereHas('srf_personnel.srfPersonnelByUserId',function($personnelQuery)use($search) {
-                        $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
-                    })
-                    ->orWhereHas('srf_personnel.srfPersonnelById',function($personnelQuery)use($search) {
-                        $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                    // $q->whereHas('srf_personnel.srfPersonnelByUserId',function($personnelQuery)use($search) {
+                    //     $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                    // })
+                    // ->orWhereHas('srf_personnel.srfPersonnelById',function($personnelQuery)use($search) {
+                    //     $personnelQuery->where('full_name', 'LIKE', '%'.$search.'%');
+                    // });
+                    $q->whereHas('srf_personnel',function($personnelQuery)use($analystArr) {
+                        $personnelQuery->whereIn('PersonnelUserId', $analystArr);
                     });
+                    
                 }else{
                     $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
                     ->orWhereHas('client', function($clientQuery)use($search) {
@@ -664,7 +683,7 @@ class RndDashboardController extends Controller
             })
             ->orderBy('id','desc')
             ->get();
-        
+            
         $sortedResults = $crr
         ->concat($rpe)
         ->concat($srf);
