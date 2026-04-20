@@ -45,7 +45,7 @@ class VerifiedMail extends Mailable
                         'ShipmentDate' => $this->verifiedComplaint['ShipmentDate'],
                         'AmountIncurred' => $this->verifiedComplaint['AmountIncurred'],
                         'ShipmentCost' => $this->verifiedComplaint['ShipmentCost'],
-                        'ConcernedName' => optional($this->verifiedComplaint->concerned)->Name,
+                        'ConcernedName' => optional($this->verifiedComplaint->concernedDept)->Name,
                         'showButton' => $this->showButton, // pass to view
                     ]);
 
