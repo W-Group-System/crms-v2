@@ -14,6 +14,7 @@ use App\User;
 use App\UserEventLogs;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 function rmc($productRawMaterials, $id)
 {
@@ -118,6 +119,7 @@ function usdToPhp($cost)
 
 function identicalComposition($materials, $product_id)
 {
+    Log::info("identicalComposition START: ".Carbon::now()->toDateTimeString() );
     $getMaterialId = $materials->pluck('MaterialId')->toArray();
     $getPercentage = $materials->pluck('Percentage')->toArray();
 
@@ -141,7 +143,7 @@ function identicalComposition($materials, $product_id)
         ->where('ProductId', '!=', $product_id)
         ->groupBy('ProductId')
         ->get();
-
+    Log::info("identicalComposition END: ".Carbon::now()->toDateTimeString() );
     return $matchingProducts;
 }
 
