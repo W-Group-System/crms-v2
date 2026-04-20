@@ -180,7 +180,7 @@
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                {{-- <div class="tab-pane fade @if(session('tab') == 'materials' || session('tab') == null) active show @endif" id="materials" role="tabpanel" aria-labelledby="materials-tab">
                     @if(session('tab') == 'materials')
                     @include('components.error')
                     @endif
@@ -212,7 +212,7 @@
                         </table>
                     </div>
                 </div>
-                {{-- <div class="tab-pane fade " id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+                <div class="tab-pane fade " id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
                     @include('components.error')
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#specification">Add</button>
@@ -265,7 +265,7 @@
                         @include('products.edit_specification')
                     @endforeach
                 </div> --}}
-                <div class="tab-pane fade @if(session('tab') == 'pds') active show @endif" id="pds" role="tabpanel" aria-labelledby="pds-tab">
+                {{-- <div class="tab-pane fade @if(session('tab') == 'pds') active show @endif" id="pds" role="tabpanel" aria-labelledby="pds-tab">
                     @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
                     <div class="col-lg-12" align="right">
                         <button type="button" class="btn btn-md btn-outline-primary submit_approval mb-2" data-toggle="modal" data-target="#pdsModal">Add</button>
@@ -319,7 +319,7 @@
                     @if($data->productDataSheet)
                         @include('products.edit_pds')
                     @endif
-                </div>
+                </div> --}}
                 <div class="tab-pane fade @if(session('tab') == 'files') active show @endif" id="files" role="tabpanel" aria-labelledby="files-tab">
                     @if(session('tab') == 'files')
                     @include('components.error')
@@ -368,14 +368,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @foreach ($history_rmc as $rmc)
-                                    <tr>
-                                        <td>{{date('Y-m-d', strtotime($rmc['effective_dates']))}}</td>
-                                        <td>{{$rmc['total_price']}}</td>
-                                        <td>{{number_format(usdToEur($rmc['total_price']), 2)}}</td>
-                                        <td>{{number_format(usdToPhp($rmc['total_price']), 2)}}</td>
-                                    </tr>
-                                @endforeach --}}
                                 @php
                                     $previousValue = null;
                                     $array_values = $history_rmc['materials'];
@@ -499,7 +491,7 @@
                         </table>
                     </div>
                 </div> --}}
-                <div class="tab-pane fade " id="identical" role="tabpanel" aria-labelledby="identical-tab">
+                {{-- <div class="tab-pane fade " id="identical" role="tabpanel" aria-labelledby="identical-tab">
                     <div class="table-responsive">                       
                         <table class="table table-striped table-bordered table-hover tables" width="100%">
                             <thead>
@@ -574,7 +566,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
