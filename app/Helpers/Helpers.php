@@ -8,7 +8,9 @@ use App\CustomerRequirement;
 use App\Product;
 use App\ProductMaterialsComposition;
 use App\RequestProductEvaluation;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Helpers {
     public static function rmc($productRawMaterials, $id)
@@ -75,6 +77,7 @@ class Helpers {
 
     public static function identicalComposition($materials, $product_id)
     {
+        Log::info("identicalComposition START: ".Carbon::now()->toDateTimeString() );
         $getMaterialId = $materials->pluck('MaterialId')->toArray();
         $getPercentage = $materials->pluck('Percentage')->toArray();
 
@@ -98,7 +101,7 @@ class Helpers {
             ->where('ProductId', '!=', $product_id)
             ->groupBy('ProductId')
             ->get();
-
+        Log::info("identicalComposition END: ".Carbon::now()->toDateTimeString() );
         return $matchingProducts;
     }
 
