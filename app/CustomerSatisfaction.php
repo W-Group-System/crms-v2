@@ -68,4 +68,8 @@ class CustomerSatisfaction extends Model
     {
         return $this->hasMany(SatisfactionRemarks::class, 'CsId', 'id'); 
     }
+    public function concernedDept() 
+    {
+        return $this->belongsTo(ConcernDepartment::class, 'Department', 'id');
+    }
 }
