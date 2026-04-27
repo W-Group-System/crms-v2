@@ -39,7 +39,7 @@ class AssignCcDepartmentMail extends Mailable
                     ->with([
                         'customerComplaint' => $this->customerComplaint,
                         'attachments' => $this->cc_attachments,
-                        'ConcernedName' => optional($this->customerComplaint->concernedDept)->Name,
+                        'ConcernedName' => optional($this->customerComplaint->concerned)->Name,
                         'showButton' => $this->showButton, // pass to view
                     ]);
 
@@ -51,7 +51,7 @@ class AssignCcDepartmentMail extends Mailable
         if (!empty($this->cc_attachments))
         {
             foreach ($this->cc_attachments as $cc_attachment) {
-                $filePath = storage_path('app/public/'.$cc_attachment->Path);
+                $filePath = storage_path('app/public/'.$cc_attachment);
                 $email->attach($filePath);
             }
         }

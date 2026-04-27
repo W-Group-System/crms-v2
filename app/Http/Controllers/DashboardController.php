@@ -731,20 +731,7 @@ class DashboardController extends Controller
 
         $totalSalesPRF = $salesPrfClosed + $salesPrfReopened + $salesPrfApproval + $salesPrfWaiting + $salesPrfManager;
 
-        $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')
-        ->when(optional($role)->type, function($q) use ($role, $request, $search) {
-            if ($role->type == "IS") {
-                $q->where('CsNumber', 'LIKE', "%CSR-IS%");
-            } elseif ($role->type == "LS") {
-                $q->where('CsNumber', 'LIKE', "%CSR-LS%");
-            } elseif ($role->type == "ITD") {
-
-            } else {
-                $q->whereHas('concernedDept', function ($dept) use ($role) {
-                    $dept->where('dept_role_group', $role->type);
-                })->whereNotNull('ApprovedBy');
-            }
-        })->count();
+        $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')->count();
         // $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')
         //     ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
         //         $query->whereColumn('clientcompanies.Name', 'like', 'customersatisfaction.CompanyName')
@@ -756,20 +743,7 @@ class DashboardController extends Controller
         //             });
         //     })
         //     ->count();
-        $customerComplaintCount = CustomerComplaint2::where('Status', '10')
-            ->when(optional($role)->type, function($q) use ($role, $request, $search) {
-                if ($role->type == "IS") {
-                    $q->where('CcNumber', 'LIKE', "%CCF-IS%");
-                } elseif ($role->type == "LS") {
-                    $q->where('CcNumber', 'LIKE', "%CCF-LS%");
-                } elseif ($role->type == "ITD") {
-
-                } else {
-                    $q->whereHas('concernedDept', function ($dept) use ($role) {
-                        $dept->where('dept_role_group', $role->type);
-                    })->whereNotNull('ApprovedBy');
-                }
-            })->count();
+        $customerComplaintCount = CustomerComplaint2::where('Status', '10')->count();
         // $customerComplaintCount = CustomerComplaint2::where('Status', '10')
         //     ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
         //         // Use whereRaw for partial string matching with LIKE

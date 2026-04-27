@@ -383,7 +383,7 @@ input[type="checkbox"] {
                 @endif
             </td>
             <td><b>Department:</b></td>
-            <td>{{ optional($cc->concernedDept)->Name }}</td>
+            <td>{{ $cc->Department }}</td>
        </tr> 
        <tr>
             <td>For NCAR Issuance:</td>

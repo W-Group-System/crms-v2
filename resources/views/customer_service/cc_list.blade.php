@@ -57,7 +57,6 @@
                             <th>Company Name</th>
                             <th>Contact Name</th>
                             <!-- <th>Country</th> -->
-                            <th>Site</th>
                             <th>Department Concerned</th>
                             <th>Customer Remarks</th>
                             <th>Received By</th>
@@ -75,22 +74,7 @@
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->CompanyName }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->ContactName }}</td>
                                 <!-- <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->country->Name ?? 'N/A' }}</td> -->
-                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">
-                                    @if(optional($cc_data->concernedDept)->site_id == 1) 
-                                        WHI Head Office
-                                    @elseif (optional($cc_data->concernedDept)->site_id == 2)
-                                        WHI Carmona
-                                    @elseif (optional($cc_data->concernedDept)->site_id == 3)
-                                        MRDC
-                                    @elseif (optional($cc_data->concernedDept)->site_id == 4)
-                                        CCC Carmen
-                                    @elseif (optional($cc_data->concernedDept)->site_id == 5)
-                                        PBI Canlubang
-                                    @else 
-                                        International Warehouse
-                                    @endif
-                                </td>
-                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ optional($cc_data->concernedDept)->Name ?? 'N/A' }}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->Department ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->CustomerRemarks ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->users->full_name ?? 'N/A' }}</td>
                                 <td>

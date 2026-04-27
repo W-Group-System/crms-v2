@@ -508,7 +508,7 @@
                         </table>
                     </div>
                 </div>
-                {{-- <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">
+                <div class="tab-pane fade" id="client" role="tabpanel" aria-labelledby="client-tab">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped tables" width="100%">
                             <thead>
@@ -563,6 +563,11 @@
                                                 <a href="{{url('view_client/'.optional(optional($item->sampleRequest)->client)->id)}}">{{optional(optional($item->sampleRequest)->client)->Name}}</a>
                                             </td>
                                             <td>
+                                                {{-- @if($item->DispositionRejectionDescription != null)
+                                                {{$item->DispositionRejectionDescription}}
+                                                @else
+                                                N/A
+                                                @endif --}}
                                                 @if ($item->Disposition == '1')
                                                     <span class="badge badge-warning">No Feedback</span>
                                                 @elseif ($item->Disposition == '10')
@@ -579,7 +584,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div> --}}
+                </div>
                 <div class="tab-pane fade " id="identical" role="tabpanel" aria-labelledby="identical-tab">
                     <div class="table-responsive">                       
                         <table class="table table-striped table-bordered table-hover tables" width="100%">

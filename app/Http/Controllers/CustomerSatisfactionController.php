@@ -21,8 +21,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
-use Illuminate\Support\Facades\DB;
-
 
 class CustomerSatisfactionController extends Controller
 {
@@ -62,46 +60,7 @@ class CustomerSatisfactionController extends Controller
         $newCcNo = 'CCF-' . $year2 . '-' . $newSeries;
         
 
-        return view('customer_service.cs_index', compact('category', 'countries', 'newCsNo'));
-    }
-
-    public function headerls()
-    {
-        $category = IssueCategory::all();
-        $countries = Country::get();
-
-        $year1 = '2' . date('y') ; 
-
-        $latestCs = CustomerSatisfaction::whereYear('created_at', date('Y'))
-                        ->orderBy('CsNumber', 'desc')
-                        ->first();
-
-        if ($latestCs) {
-            $latestSeries = (int) substr($latestCs->CsNumber, -4);
-            $newSeries = str_pad($latestSeries + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            $newSeries = '0001';
-        }
-
-        $newCsNo = 'CSR-' . $year1 . '-' . $newSeries;
-
-        $year2 = date('y') . '4'; 
-        
-        $latestCc = CustomerComplaint2::whereYear('created_at', date('Y'))
-                        ->orderBy('CcNumber', 'desc')
-                        ->first();
-        
-        if ($latestCc) {
-            $latestSeries = (int) substr($latestCc->CcNumber, -4);
-            $newSeries = str_pad($latestSeries + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            $newSeries = '0001';
-        }
-
-        // $newCcNo = 'CCF-' . $year2 . '-' . $newSeries;
-        
-
-        return view('customer_service.cs_ls_index', compact('category', 'countries', 'newCsNo'));
+        return view('customer_service.cs_index', compact('category', 'countries', 'newCsNo', 'newCcNo'));
     }
 
     public function index()
@@ -134,7 +93,6 @@ class CustomerSatisfactionController extends Controller
         $sort = $request->get('sort', 'Progress'); // default sort column
         $direction = $request->get('direction', 'asc');
         $fetchAll = filter_var($request->input('fetch_all', false), FILTER_VALIDATE_BOOLEAN);
-        $role = auth()->user()->role;
         $entries = $request->input('number_of_entries', 10);
         $progress = $request->query('progress'); // Get the status from the query parameters
         $status = $request->query('status'); // Get the status from the query parameters
@@ -181,19 +139,6 @@ class CustomerSatisfactionController extends Controller
             })
             ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
                 $query->where('Status', $request->input('close'));
-            })
-            ->when(optional($role)->type, function($q) use ($role, $request, $search) {
-                if ($role->type == "IS") {
-                    $q->where('CsNumber', 'LIKE', "%CSR-IS%");
-                } elseif ($role->type == "LS") {
-                    $q->where('CsNumber', 'LIKE', "%CSR-LS%");
-                } elseif ($role->type == "ITD") {
-
-                } else {
-                    $q->whereHas('concernedDept', function ($dept) use ($role) {
-                        $dept->where('dept_role_group', $role->type);
-                    })->whereNotNull('ApprovedBy');
-                }
             })
             ->when($progress, function($query) use ($progress, $userId) {
                 if ($progress == '20') {
@@ -286,101 +231,49 @@ class CustomerSatisfactionController extends Controller
 
     public function store(Request $request) 
     {
-        $year = date('y');
+        $customerSatisfaction = CustomerSatisfaction::create([
+            'CompanyName' => $request->CompanyName,
+            'CsNumber'    => $request->CsNumber,
+            'ContactName' => $request->ContactName,
+            'Concerned'   => $request->Concerned,
+            'Description' => $request->Description,
+            'Category'    => $request->Category,
+            'ContactNumber'=> $request->ContactNumber,
+            'Email'       => $request->Email,
+            'Status'      => '10',
+            'Progress'    => '10'
+        ]);
 
-        if ($request->is('new_customer_satisfaction')) {
-            $type = 'IS';
-        } elseif ($request->is('new_customer_satisfaction_ls')) {
-            $type = 'LS';
-        } 
-        $last = CustomerSatisfaction::where('CsNumber', 'LIKE', "%CSR-$type-%")
-            ->orderBy('id', 'desc')
-            ->first();
+        $attachments = [];
 
-        $next = $last
-            ? intval(substr($last->CsNumber, strrpos($last->CsNumber, '-') + 1)) + 1
-            : 1;
+        // 2. Attachments (moved from temp → cs_files)
+        if ($request->has('Path') && is_array($request->Path)) {
+            foreach ($request->Path as $fileName) {
+                $tempPath = 'temp/' . $fileName;
+                if (Storage::disk('public')->exists($tempPath)) {
+                    $newPath = 'cs_files/' . $fileName;
+                    Storage::disk('public')->move($tempPath, $newPath);
 
-        $padded = str_pad($next, 4, '0', STR_PAD_LEFT);
+                    SatisfactionFile::create([
+                        'CsId' => $customerSatisfaction->id,
+                        'Path' => $newPath
+                    ]);
 
-        $csNo = "CSR-$type-$year-$padded";
-        DB::beginTransaction(); 
-        
-        try {
-
-             $customerSatisfaction = CustomerSatisfaction::create([
-                'CompanyName' => $request->CompanyName,
-                'CsNumber'    => $csNo,
-                'ContactName' => $request->ContactName,
-                'Concerned'   => $request->Concerned,
-                'Description' => $request->Description,
-                'Category'    => $request->Category,
-                'ContactNumber'=> $request->ContactNumber,
-                'Email'       => $request->Email,
-                'Status'      => '10',
-                'Progress'    => '10'
-            ]);
-
-            $attachments = [];
-
-            // 2. Attachments (moved from temp → cs_files)
-            if ($request->has('Path') && is_array($request->Path)) {
-                foreach ($request->Path as $fileName) {
-                    $tempPath = 'temp/' . $fileName;
-                    if (Storage::disk('public')->exists($tempPath)) {
-                        $newPath = 'cs_files/' . $fileName;
-                        Storage::disk('public')->move($tempPath, $newPath);
-
-                        SatisfactionFile::create([
-                            'CsId' => $customerSatisfaction->id,
-                            'Path' => $newPath
-                        ]);
-
-                        $attachments[] = $newPath;
-                    }
+                    $attachments[] = $newPath;
                 }
             }
-             // 3. Send email
-            // Mail::to($customerSatisfaction->Email)
-            //     ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
-            
-
-            $recipients = [];
-
-            if ($request->is('new_customer_satisfaction')) {
-                $recipients = [
-                    // 'international.sales@rico.com.ph',
-                    // 'audit@rico.com.ph',
-                    // 'bpd@wgroup.com.ph',
-                    'junjihadbarroga@gmail.com',
-                    'therealharrypotter00@gmail.com'
-                ];
-            } elseif ($request->is('new_customer_satisfaction_ls')) {
-                $recipients = [
-                    // 'mrdc.sales@rico.com.ph',
-                    // 'audit@rico.com.ph',
-                    // 'bpd@wgroup.com.ph',
-                    'junjihadbarroga@gmail.com',
-                    'therealharrypotter00@gmail.com'
-                ];
-            }
-
-            if (!empty($recipients)) {
-                Mail::to($recipients)
-                    ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, true));
-                Mail::to([$customerSatisfaction['Email']]) 
-                    ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
-            }
-           
-            DB::commit();
-            return response()->json(['success' => 'Your customer satisfaction has been submitted successfully!']);
-        } catch (\Exception $e) {
-            DB::rollBack(); 
-            return response()->json([
-                'error' => 'Failed to submit satisfaction: ' . $e->getMessage()
-            ], 500);
         }
-             
+
+        // 3. Send email
+        // Mail::to($customerSatisfaction->Email)
+        //     ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
+        Mail::to([$customerSatisfaction['Email']]) // for BPD
+        ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
+
+        Mail::to(['international.sales@rico.com.ph', 'mrdc.sales@rico.com.ph', 'audit@rico.com.ph', 'bpd@wgroup.com.ph'])
+            ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, true));
+
+        return response()->json(['success' => 'Your customer satisfaction has been submitted successfully!']);
     }
 
     public function submitRemarks(Request $request, $id)
@@ -406,7 +299,7 @@ class CustomerSatisfactionController extends Controller
         $data->save();
 
         // $department = ConcernDepartment::findOrFail($request->Concerned);
-        $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
+        $department = ConcernDepartment::where('Name', $request->Department)->firstOrFail();
         // dd($department);
         
         $attachments = [];
@@ -499,8 +392,8 @@ class CustomerSatisfactionController extends Controller
 
         $attachments = [];
         
-        Mail::to('junjihadbarroga@gmail.com')
-        // Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
+        // Mail::to('ict.engineer@wgroup.com.ph')
+        Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
             ->send(new AcknowledgedMail($data, $attachments));
 
         return response()->json([
