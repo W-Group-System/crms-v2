@@ -1671,6 +1671,19 @@ class DashboardController extends Controller
                 }
             })
             ->count();
+            $customer_complaint = CustomerComplaint2::where('Status', 10)
+            ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
+                $q->whereHas('concernedDept', function($q) {
+                    $q->where('dept_role_group',  auth()->user()->role->type);
+                })->whereNotNull('ApprovedBy');
+            })->count();
+
+        $customer_satisfaction = CustomerSatisfaction::where('Status', 10)
+            ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
+                $q->whereHas('concernedDept', function($q) {
+                    $q->where('dept_role_group',  auth()->user()->role->type);
+                })->whereNotNull('ApprovedBy');;
+            })->count();
         
         // New Product Count
         $products = Product::where('status', 2)->count();
