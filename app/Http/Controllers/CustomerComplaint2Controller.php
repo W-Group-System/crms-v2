@@ -164,10 +164,11 @@ class CustomerComplaint2Controller extends Controller
             $uploaded = [];
             foreach ($files as $file) {
                 $fileName = uniqid() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('temp', $fileName, 'public');
+                $cleanName = str_replace('#', '_', $fileName);
+                $path = $file->storeAs('temp', $cleanName, 'public');
 
                 $uploaded[] = [
-                    'id'   => $fileName, // return only fileName to FilePond
+                    'id'   => $cleanName, // return only fileName to FilePond
                     'path' => $path
                 ];
             }
@@ -572,10 +573,11 @@ class CustomerComplaint2Controller extends Controller
             $uploaded = [];
             foreach ($files as $file) {
                 $fileName = uniqid() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('temp', $fileName, 'public');
+                $cleanName = str_replace('#', '_', $fileName);
+                $path = $file->storeAs('temp', $cleanName, 'public');
 
                 $uploaded[] = [
-                    'id'   => $fileName, // return only fileName to FilePond
+                    'id'   => $cleanName, // return only fileName to FilePond
                     'path' => $path
                 ];
             }
