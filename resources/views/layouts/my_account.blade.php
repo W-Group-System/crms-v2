@@ -27,7 +27,7 @@
                 <div class="form-group row mb-2">
                     <label class="col-sm-2 col-form-label"><b>Department</b></label>
                     <div class="col-sm-10">
-                        <label>{{auth()->user()->department->name}}</label>
+                        <label>{{auth()->user()->department_optional??auth()->user()->department->name}}</label>
                     </div>
                 </div>
                 <div class="form-group row mb-2">

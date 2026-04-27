@@ -96,6 +96,7 @@ class UserController extends Controller
         $user->company_id = $request->company_id;
         $user->department_id = $request->department_id;
         $user->is_active = 1;
+        $user->department_optional = $request->department_opt;
         $user->save();
 
         if ($request->has('user_approvers'))
@@ -266,6 +267,7 @@ class UserController extends Controller
             'company_id' => $user->company_id,
             'role_id' => $user->role_id,
             'department_id' => $user->department_id,
+            'department_optional' => $user->department_optional,
             'status' => $user->is_active,
             'approvers' => $approvers
         );

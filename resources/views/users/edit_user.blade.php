@@ -49,6 +49,10 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Department (Optional)</label>
+                        <input type="text" name="department_opt" id="department_opt" value="{{ $user->department_optional }}" class="form-control">
+                    </div>
                     <div class="form-group" id="formStatus" >
                         <label for="name">Status</label>
                         <select class="form-control js-example-basic-single" name="is_active"  style="position: relative !important" title="Select Type" required>
