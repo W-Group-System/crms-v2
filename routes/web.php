@@ -20,11 +20,9 @@ use Illuminate\Support\Facades\Auth;
 Auth::routes(); 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 // Customer Service
-Route::get('customer_service_is', 'CustomerSatisfactionController@header');
-Route::get('customer_service_ls', 'CustomerSatisfactionController@headerls');
+Route::get('customer_service', 'CustomerSatisfactionController@header');
 Route::get('customer_satisfaction', 'CustomerSatisfactionController@index');
-Route::post('/new_customer_satisfaction', 'CustomerSatisfactionController@store')->name('customer_satisfaction_is.store');
-Route::post('/new_customer_satisfaction_ls', 'CustomerSatisfactionController@store')->name('customer_satisfaction_ls.store');
+Route::post('/new_customer_satisfaction', 'CustomerSatisfactionController@store')->name('customer_satisfaction.store');
 Route::get('contacts_by_client/{clientId}', 'CustomerSatisfactionController@getContactsByClient');
 
 Route::post('/upload-temp', [CustomerSatisfactionController::class, 'uploadTemp'])->name('upload.temp');
@@ -34,8 +32,7 @@ Route::post('/upload-temp-cc', [CustomerComplaint2Controller::class, 'uploadTemp
 Route::delete('/upload-revert-cc', [CustomerComplaint2Controller::class, 'uploadRevert'])->name('upload.revert.cc');
 
 Route::get('customer_complaint2', 'CustomerComplaint2Controller@index');
-Route::post('/new_customer_complaint2_is', 'CustomerComplaint2Controller@store')->name('customer_complaint2_is.store');
-Route::post('/new_customer_complaint2_ls', 'CustomerComplaint2Controller@store')->name('customer_complaint2_ls.store');
+Route::post('/new_customer_complaint2', 'CustomerComplaint2Controller@store')->name('customer_complaint2.store');
 
 Route::group(['middleware' => ['auth']], function() {
     Route::group(['middleware' => 'inactive_users'], function() {
@@ -47,8 +44,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('initial-review', 'RndDashboardController@initialReview');
         Route::get('rnd-new-request', 'RndDashboardController@rndNewRequest');
         Route::get('final-review', 'RndDashboardController@finalReview');
-        Route::get('close-transaction', 'RndDashboardController@closeTransaction');
-        Route::get('close-transaction-test', 'RndDashboardController@closeTransactionV2');
+        // Route::get('close-transaction', 'RndDashboardController@closeTransaction');
+        Route::get('close-transaction', 'RndDashboardController@closeTransactionV2');
         Route::get('export-open-transaction', 'RndDashboardController@exportOpenTransaction');
         Route::get('export-close-transaction', 'RndDashboardController@exportCloseTransaction');
         // Route::get('open-rpe-transaction', 'OpenTransactionController@rpe')->name('open_rpe_transactions');

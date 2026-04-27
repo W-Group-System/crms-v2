@@ -163,6 +163,10 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label>Department (Optional)</label>
+                        <input type="text" name="department_opt" id="department_opt" class="form-control">
+                    </div>
+                    <div class="form-group">
                         <label for="name">User Approvers</label>
                         <select class="form-control js-example-basic-multiple" name="user_approvers[]" style="position: relative !important" multiple>
                             @foreach ($approvers as $approver)
