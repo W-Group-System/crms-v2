@@ -68,7 +68,7 @@
                             <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success approvedBtn">
-                                    <i class="ti-check"></i>&nbsp;Acknowledge
+                                    <i class="ti-check"></i>&nbsp;Noted by
                                 </button>
                             </form>
                         @endif
@@ -313,7 +313,7 @@
                     </p>
                 </div>
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Acknowledged By:</b></p>
+                    <p class="m-0"><b>Noted By:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ optional($data->approved_by)->full_name }}</p>
@@ -1184,7 +1184,7 @@
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
-                            title: "Acknowledged",
+                            title: "Notedd",
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,

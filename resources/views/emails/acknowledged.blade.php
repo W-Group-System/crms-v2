@@ -8,7 +8,7 @@
         <p align="center"><img src="{{ url('images/whi.png') }}" style="width: 100px; margin-top: 10px; margin-bottom: 10px;"></p>
         <h2>Customer Satisfaction Regarding {{ $CategoryName }}</h2>
         <b>Hi Team,</b>
-        <p>The Sales Manager has acknowledged the recent customer satisfaction feedback. Below are the details for your record and reference:</p>
+        <p>The Sales Manager has noted the recent customer satisfaction feedback. Below are the details for your record and reference:</p>
 
         <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;margin-bottom:20px">
             <tr>
@@ -38,11 +38,11 @@
                 <td colspan="2" style="padding-bottom: 30px">{{ $Description }}</td>
             </tr>
             <tr>
-                <td><strong>Acknowledged By:</strong></td>
+                <td><strong>Noted By:</strong></td>
                 <td>{{ $ApprovedBy }}</td>
             </tr>
             <tr>
-                <td><strong>Acknowledgement Date & Time:</strong></td>
+                <td><strong>Noted By Date & Time:</strong></td>
                 <td>{{ $ApprovedDate }}</td>
             </tr>
         </table>
