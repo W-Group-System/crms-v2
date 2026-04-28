@@ -39,7 +39,7 @@ class AssignCcDepartmentMail extends Mailable
                     ->with([
                         'customerComplaint' => $this->customerComplaint,
                         'attachments' => $this->cc_attachments,
-                        'ConcernedName' => optional($this->customerComplaint->concerned)->Name,
+                        'ConcernedName' => optional($this->customerComplaint->concernedDept)->Name,
                         'showButton' => $this->showButton, // pass to view
                     ]);
 
