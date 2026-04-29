@@ -731,7 +731,20 @@ class DashboardController extends Controller
 
         $totalSalesPRF = $salesPrfClosed + $salesPrfReopened + $salesPrfApproval + $salesPrfWaiting + $salesPrfManager;
 
-        $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')->count();
+        $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')
+        ->when(optional($role)->type, function($q) use ($role, $request, $search) {
+            if ($role->type == "IS") {
+                $q->where('CsNumber', 'LIKE', "%CSR-IS%");
+            } elseif ($role->type == "LS") {
+                $q->where('CsNumber', 'LIKE', "%CSR-LS%");
+            } elseif ($role->type == "ITD") {
+
+            } else {
+                $q->whereHas('concernedDept', function ($dept) use ($role) {
+                    $dept->where('dept_role_group', $role->type);
+                })->whereNotNull('ApprovedBy');
+            }
+        })->count();
         // $customerSatisfactionCount = CustomerSatisfaction::where('Status', '10')
         //     ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
         //         $query->whereColumn('clientcompanies.Name', 'like', 'customersatisfaction.CompanyName')
@@ -743,7 +756,20 @@ class DashboardController extends Controller
         //             });
         //     })
         //     ->count();
-        $customerComplaintCount = CustomerComplaint2::where('Status', '10')->count();
+        $customerComplaintCount = CustomerComplaint2::where('Status', '10')
+            ->when(optional($role)->type, function($q) use ($role, $request, $search) {
+                if ($role->type == "IS") {
+                    $q->where('CcNumber', 'LIKE', "%CCF-IS%");
+                } elseif ($role->type == "LS") {
+                    $q->where('CcNumber', 'LIKE', "%CCF-LS%");
+                } elseif ($role->type == "ITD") {
+
+                } else {
+                    $q->whereHas('concernedDept', function ($dept) use ($role) {
+                        $dept->where('dept_role_group', $role->type);
+                    })->whereNotNull('ApprovedBy');
+                }
+            })->count();
         // $customerComplaintCount = CustomerComplaint2::where('Status', '10')
         //     ->whereHas('clientCompany', function ($query) use ($userId, $userByUser) {
         //         // Use whereRaw for partial string matching with LIKE
@@ -1684,7 +1710,6 @@ class DashboardController extends Controller
                     $q->where('dept_role_group',  auth()->user()->role->type);
                 })->whereNotNull('ApprovedBy');;
             })->count();
-        
         // New Product Count
         $products = Product::where('status', 2)->count();
 
@@ -1911,13 +1936,14 @@ class DashboardController extends Controller
 
         // Customer Service
         
-        $cc_data = CustomerComplaint2::where('Status', 10)
-            ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && $role->name == 'Staff L1' || $role->name == 'Staff L2', function ($q) {
-                $q->whereHas('concerned', function($q) {
-                    $q->where('Department',  auth()->user()->role->type);
-                });
-            })
-            ->count();
+        // $cc_data = CustomerComplaint2::where('Status', 10)
+        //     ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && $role->name == 'Staff L1' || $role->name == 'Staff L2', function ($q) {
+        //         $q->whereHas('concerned', function($q) {
+        //             $q->where('Department',  auth()->user()->role->type);
+        //         });
+        //     })
+        //     ->count();
+        $cc_data = $customer_complaint + $customer_satisfaction;
         
         return view('dashboard.qcd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction','cc_data'));
     }
