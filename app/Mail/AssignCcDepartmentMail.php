@@ -51,7 +51,7 @@ class AssignCcDepartmentMail extends Mailable
         if (!empty($this->cc_attachments))
         {
             foreach ($this->cc_attachments as $cc_attachment) {
-                $filePath = public_path('storage/'.$cc_attachment);
+                $filePath = public_path('storage/'.$cc_attachment->Path);
                 $email->attach($filePath);
             }
         }
