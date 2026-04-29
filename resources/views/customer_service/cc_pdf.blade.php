@@ -398,11 +398,11 @@ input[type="checkbox"] {
     <table border="1" class="mt-2" cellspacing="0" cellpadding="4" width="100%">
         <tr>
             <td width="46%">Customer Complaint Received By/ Date:</td>
-            <td width="54%">{{ $cc->users->full_name }}/&nbsp;{{ $cc->DateReceived }}</td>
+            <td width="54%">{{ optional($cc->users)->full_name }}/&nbsp;{{ $cc->DateReceived }}</td>
         </tr>
         <tr>
             <td width="46%">Noted By/ Date:</td>
-            <td width="54%">{{ $cc->noted_by->full_name }}/&nbsp;{{ $cc->DateNoted }}</td>
+            <td width="54%">{{ optional($cc->noted_by)->full_name }}/&nbsp;{{ $cc->DateNoted }}</td>
         </tr>
     </table>
     <label class="mt-2"><b>II.	Investigation: Attach necessary supporting document(s)</b></label>
@@ -418,7 +418,7 @@ input[type="checkbox"] {
         <tr>
             <td>{{ $cc->ImmediateAction }}</td>
             <td>{{ $cc->ObjectiveEvidence }}</td>
-            <td>{{ $cc->ActionDate }}/ {{ $cc->action_responsible->full_name }}</td>
+            <td>{{ $cc->ActionDate }}/ {{ optional($cc->action_responsible)->full_name }}</td>
         </tr>
         <tr>
             <td colspan="3" style="background-color: #d7d7d7"><b>Investigation of the Problem:</b>Root Cause Analysis/Investigation:  details on who/what contributed to the problem, how and why the non-conformity happened</td>
@@ -442,7 +442,7 @@ input[type="checkbox"] {
         <tr>
             <td>{{ $cc->CorrectiveAction }}</td>
             <td>{{ $cc->ActionObjectiveEvidence }}</td>
-            <td>{{ $cc->ActionDate }}/ {{ $cc->action_responsible->full_name }}</td>
+            <td>{{ $cc->ActionDate }}/ {{ optional($cc->action_responsible)->full_name }}</td>
         </tr>
         <!-- <tr>
             <td width="50%" align="center">
@@ -470,7 +470,7 @@ input[type="checkbox"] {
             <td colspan="2">{{ $cc->Acceptance }}</td>
         </tr>
         <tr>
-            <td width="50%"><b>Received by/ Date:</b>{{ $cc->users->full_name }}/&nbsp;{{ $cc->DateReceived }}</td>
+            <td width="50%"><b>Received by/ Date:</b>{{ optional($cc->users)->full_name }}/&nbsp;{{ $cc->DateReceived }}</td>
             <td width="50%"><b>Customer Complaint Closed Date:</b>&nbsp;{{ $cc->ClosedDate }}</td>
         </tr>
         <tr>
