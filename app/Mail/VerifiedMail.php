@@ -34,7 +34,11 @@ class VerifiedMail extends Mailable
      */
     public function build()
     {
-        $email_verified = $this->subject('Verified Customer Complaint')
+        // $email_verified = $this->subject('Verified Customer Complaint')
+        $subject = $this->verifiedComplaint->isVerified == 1
+        ? 'Final Verification'
+        : 'Initial Verification';
+        $email_verified = $this->subject($subject)
                     ->view('emails.verified')
                     ->with([
                         'CcNumber' => $this->verifiedComplaint['CcNumber'],
