@@ -58,10 +58,12 @@
                         @endif
                          @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type)
                         @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
-                            <button type="button" class="btn btn-outline-warning" id="updateCc" 
-                                    data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
-                                <i class="ti ti-pencil"></i>&nbsp;Investigation
-                            </button>
+                            @if ($data->ApprovedBy != null)
+                                <button type="button" class="btn btn-outline-warning" id="updateCc" 
+                                        data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                                    <i class="ti ti-pencil"></i>&nbsp;Investigation
+                                </button>
+                            @endif
                         @endif
                     @endif
                     @endif
