@@ -56,6 +56,14 @@
                                 </button>
                             @endif
                         @endif
+                         @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type)
+                        @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
+                            <button type="button" class="btn btn-outline-warning" id="updateCc" 
+                                    data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
+                                <i class="ti ti-pencil"></i>&nbsp;Investigation
+                            </button>
+                        @endif
+                    @endif
                     @endif
                     @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60 && $data->IsVerified == 1)
                         <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
