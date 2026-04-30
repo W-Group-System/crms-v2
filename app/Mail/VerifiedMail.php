@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
 
 class VerifiedMail extends Mailable
 {
@@ -36,8 +35,7 @@ class VerifiedMail extends Mailable
     public function build()
     {
         // $email_verified = $this->subject('Verified Customer Complaint')
-        Log::info("IS VERIFIED VALUE:".$this->verifiedComplaint['isVerified']);
-        $subject = $this->verifiedComplaint['isVerified'] == '1'
+        $subject = $this->verifiedComplaint->IsVerified == 1
         ? 'Customer Complaint Final Verification'
         : 'Customer Complaint Initial Verification';
         $email_verified = $this->subject($subject)
