@@ -36,8 +36,8 @@ class VerifiedMail extends Mailable
     public function build()
     {
         // $email_verified = $this->subject('Verified Customer Complaint')
-        Log::info("IS VERIFIED VALUE:".$this->verifiedComplaint->isVerified);
-        $subject = $this->verifiedComplaint->isVerified == '1'
+        Log::info("IS VERIFIED VALUE:".$this->verifiedComplaint['isVerified']);
+        $subject = $this->verifiedComplaint['isVerified'] == '1'
         ? 'Customer Complaint Final Verification'
         : 'Customer Complaint Initial Verification';
         $email_verified = $this->subject($subject)
