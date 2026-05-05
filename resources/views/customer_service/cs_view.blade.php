@@ -630,7 +630,7 @@
                         $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
 
                         $.each(data, function (key, department) {
-                            $('#Department').append('<option value="' + department.Name + '">' + department.Name + '</option>');
+                            $('#Department').append('<option value="' + department.id + '">' + department.Name + '</option>');
                         });
                     }
                 });
