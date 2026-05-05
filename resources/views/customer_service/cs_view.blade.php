@@ -35,7 +35,7 @@
                             @endif
                         @endif
                         @if($data->ApprovedBy != NULL)
-                            @if($data->Department == NULL)
+                            @if($data->Department == NULL && $data->ReceivedBy == auth()->user()->id)
                             <button type="button" class="btn btn-outline-primary" id="assignCs" data-id="{{ $data->id }}" data-toggle="modal" data-target="#assignedCs">
                                 <i class="ti ti-pencil"></i>&nbsp;Share
                             </button>
