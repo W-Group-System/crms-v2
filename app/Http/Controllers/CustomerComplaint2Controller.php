@@ -555,7 +555,7 @@ class CustomerComplaint2Controller extends Controller
         if ($request->has('Shipment')) {
             $data->Shipment = $request->Shipment;
         }
-        $data->save();
+        $result = $data->save();
 
         $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
 
@@ -577,13 +577,15 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        if ($data->Claims == 1) {
-            // Mail::to(['ar.accounting@rico.com.ph'])
-            Mail::to(['crista.bautista@rico.com.ph'])
-            ->send(new VerifiedMail($data, $attachments, false)); 
-        }
+        if ($result) {
+            if ($data->Claims == 1) {
+                // Mail::to(['ar.accounting@rico.com.ph'])
+                Mail::to(['crista.bautista@rico.com.ph'])
+                ->send(new VerifiedMail($data, $attachments, false)); 
+            }
 
-        Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
+            Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
+        }
 
         // if ($request->hasFile('Path')) {
         //     foreach ($request->file('Path') as $file) {
