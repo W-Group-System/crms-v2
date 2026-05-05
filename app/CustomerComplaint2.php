@@ -8,7 +8,7 @@ class CustomerComplaint2 extends Model
 {
     protected $table = "customercomplaint";
     protected $fillable = [
-        'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status', 'Progress'
+        'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status', 'Progress','IsVerified'
     ];
 
     public function concerned() 
