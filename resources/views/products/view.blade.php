@@ -26,7 +26,6 @@
                 </div>
             </div>
             @php
-                dd($data->id);
                 $rmc = rmc($data->productMaterialComposition, $data->id);
                 $identicalComposition = identicalComposition($data->productMaterialComposition, $data->id);
                 $customerRequirements = customerRequirements($data->code);
@@ -289,6 +288,9 @@
                                 @if($data->productDataSheet)
                                     <tr>
                                         <td>
+                                            @php
+                                                dd($data->productDataSheet->Id);
+                                            @endphp
                                             <a href="{{url('view_details/'.$data->productDataSheet->Id)}}" class="btn btn-outline-info btn-sm" title="View Details" target="_blank">
                                                 <i class="ti-eye"></i>
                                             </a>
