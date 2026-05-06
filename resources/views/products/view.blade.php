@@ -348,9 +348,9 @@
                                 @if($data->productFiles)
                                     @if(auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'CS')
                                         @foreach ($data->productFiles->where('IsConfidential', 0) as $pf)
-                                        @php
+                                        {{-- @php
                                             dd($data);
-                                        @endphp
+                                        @endphp --}}
                                             <tr>
                                                 <td>
                                                     @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))

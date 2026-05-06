@@ -346,7 +346,7 @@ class ProductController extends Controller
             'productEventLogs'
             ])
             ->find($id);
-            Log::info($data);
+            // Log::info($data);
 
         $users = User::all();
         
