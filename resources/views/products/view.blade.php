@@ -26,6 +26,7 @@
                 </div>
             </div>
             @php
+                dd($data->id);
                 $rmc = rmc($data->productMaterialComposition, $data->id);
                 $identicalComposition = identicalComposition($data->productMaterialComposition, $data->id);
                 $customerRequirements = customerRequirements($data->code);
