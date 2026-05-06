@@ -29,6 +29,7 @@
                 $rmc = rmc($data->productMaterialComposition, $data->id);
                 $identicalComposition = identicalComposition($data->productMaterialComposition, $data->id);
                 $customerRequirements = customerRequirements($data->code);
+                dd($customerRequirements);
                 $productRps = productRps($data->code);
                 $history_rmc = historyRmc($data->productMaterialComposition, $data->id);
             @endphp
