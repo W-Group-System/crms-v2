@@ -346,15 +346,22 @@ class ProductController extends Controller
             'productEventLogs'
             ])
             ->find($id);
+            Log::info($data);
 
         $users = User::all();
         
         $product_applications = ProductApplication::find($data->application_id);
+        Log::info($product_applications);
         $product_subcategories = ProductSubcategories::find($data->application_subcategory_id);
+        Log::info($product_subcategories);
         $userAccounts = $users->firstWhere('user_id', $data->created_by) ?? $users->firstWhere('id', $data->created_by);
+        Log::info($userAccounts);
         
         $rawMaterials = RawMaterial::where('status', 'Active')->get();
+        Log::info($rawMaterials);
         $client = Client::get();
+
+        Log::info($client);
 
         return view('products.view', compact('data', 'product_applications', 'product_subcategories', 'userAccounts', 'rawMaterials', 'client'));
     }
