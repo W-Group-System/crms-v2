@@ -392,7 +392,7 @@
                                                     {{-- <button class="btn btn-sm btn-outline-warning" type="button" data-toggle="modal" data-target="#file-{{$pf->Id}}">
                                                         <i class="ti-pencil"></i>
                                                     </button> --}}
-                                                    <button class="btn btn-sm btn-outline-warning" type="button" id="editFile{{ $pf->id }}" onclick="editFile({{ $pf->Id }})">
+                                                    <button class="btn btn-sm btn-outline-warning" type="button" id="editFile{{ $pf->Id }}" onclick="editFile({{ $pf->Id }})">
                                                         <i class="ti-pencil"></i>
                                                     </button>
                                                     <form action="{{url('delete_product_files/'.$pf->Id)}}" method="post" class="d-inline-block" title="Delete" id="deleteProductFileForm{{$pf->Id}}">
