@@ -627,6 +627,9 @@
                             </thead>
                             <tbody>
                                 @foreach ($identicalComposition as $ic)
+                                @php
+                                    Log::info("HAS IDENTICALCOMPOSITION");
+                                @endphp
                                     <tr>
                                         <td>
                                             @if($ic->products)
