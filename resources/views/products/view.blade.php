@@ -803,35 +803,6 @@
         $("#eur").html("<b>EUR </b>"+eur)
         $("#php").html("<b>PHP </b>"+php)
 
-        // $("#addBtn").on('click', function() {
-            
-        //     var newRow = `
-        //         <tr>
-        //             <td>
-        //                 <select name="raw_materials[]" class="form-control js-example-basic-single required" style="width: 100%" required>
-        //                     <option value="">- Raw Materials -</option>
-        //                     @foreach ($rawMaterials as $rm)
-        //                         <option value="{{$rm->id}}">{{$rm->Name}}</option>
-        //                     @endforeach
-        //                 </select>
-        //             </td>
-        //             <td>
-        //                 <input type="number" name="percent[]" id="percent" class="form-control" placeholder="%" max="100" required>
-        //             </td>
-        //             <td>
-        //                 <button class="btn btn-danger btn-sm removeRawMat" type="button">
-        //                     <i class="ti-minus"></i>
-        //                 </button>
-        //             </td>
-        //         </tr>
-        //     `;
-            
-        //     var row = $(newRow);
-        //     $(".tbodyRawMaterials").append(row);
-        //     row.find('.js-example-basic-single').select2();
-
-        // });
-
         $(document).on('click', '.removeRawMat', function()
         {
             // $('.tbodyRawMaterials').children().last().remove();
@@ -1058,6 +1029,44 @@
         $(".addBtnFiles").on('click', function()
         {
             var newRow = `
+                <div class="row">
+                    <div class="col-lg-10">
+                        <fieldset class="border border-primary p-3 mb-3">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label>Name :</label>
+                                    <input type="text" name="name[]" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Client :</label>
+                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm">
+                                        <option value="">-Client-</option>
+                                        @foreach ($client as $c)
+                                            <option value="{{$c->id}}">{{$c->Name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Description :</label>
+                                    <textarea name="description[]" class="form-control" cols="30" rows="10"></textarea>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Is Confidential :</label>
+                                    <input type="checkbox" name="is_confidential[]"> 
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>File :</label>
+                                    <input type="file" name="productFiles[]" id="file" class="form-control form-control-sm" >
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="col-lg-2">
+                        <button class="btn btn-sm btn-danger mb-3 removeBtnFiles" type="button" >
+                            <i class="ti-minus"></i>
+                        </button>
+                    </div>
+                </div>
             `
 
             var row = $(newRow);
