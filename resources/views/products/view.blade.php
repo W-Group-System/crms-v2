@@ -544,7 +544,7 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="{{url('view_client/'.$rps->client->id)}}">{{$rps->client->Name}}</a>
+                                                <a href="{{url('view_client/'.optional($rps->client)->id)}}">{{optional($rps->client)->Name}}</a>
                                             </td>
                                             <td>N/A</td>
                                         </tr>
