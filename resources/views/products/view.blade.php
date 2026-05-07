@@ -573,6 +573,9 @@
                                     @endforeach
                                 @endif
                                 @if($data->sampleRequestProduct)
+                                @php
+                                    Log::info("HAS SAMPLEREQUESTPRODUCT");
+                                @endphp
                                     @foreach ($data->sampleRequestProduct as $item)
                                     @php
                                         Log::info("SAMPLEREQUESTPRODUCT->ID : ".$item->sampleRequest->Id);
