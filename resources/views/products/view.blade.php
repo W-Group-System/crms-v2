@@ -26,6 +26,7 @@
                 </div>
             </div>
             @php
+                Log::info("DATA->ID : ".$data->id);
                 $rmc = rmc($data->productMaterialComposition, $data->id);
                 $identicalComposition = identicalComposition($data->productMaterialComposition, $data->id);
                 $customerRequirements = customerRequirements($data->code);
@@ -289,8 +290,9 @@
                                     <tr>
                                         <td>
                                             @php
-                                                dd($data->productDataSheet->Id);
+                                                Log::info("DATA->PRODUCTDATASHEET->ID : ".$data->productDataSheet->Id);
                                             @endphp
+                                            
                                             <a href="{{url('view_details/'.$data->productDataSheet->Id)}}" class="btn btn-outline-info btn-sm" title="View Details" target="_blank">
                                                 <i class="ti-eye"></i>
                                             </a>
@@ -352,9 +354,10 @@
                                 @if($data->productFiles)
                                     @if(auth()->user()->role->type == 'LS' || auth()->user()->role->type == 'IS' || auth()->user()->role->type == 'CS')
                                         @foreach ($data->productFiles->where('IsConfidential', 0) as $pf)
-                                        {{-- @php
-                                            dd($data);
-                                        @endphp --}}
+                                        
+                                        @php
+                                            Log::info("PRODUCT FILES IS CONFIDENTIAL PF->ID : ".$pf->Id);
+                                        @endphp
                                             <tr>
                                                 <td>
                                                     @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
@@ -393,6 +396,10 @@
                                         @endforeach
                                     @else
                                         @foreach ($data->productFiles as $pf)
+                                        @php
+                                            Log::info("PRODUCT FILES PF->ID : ".$pf->Id);
+                                            Log::info("PRODUCT FILES CLIENT PF->ID : ".$pf->client->id);
+                                        @endphp
                                             <tr>
                                                 <td>
                                                     @if(auth()->user()->role->type == 'RND' || str_contains(auth()->user()->role->type, 'QCD'))
@@ -529,6 +536,10 @@
                             <tbody>
                                 @if($customerRequirements)
                                     @foreach ($customerRequirements as $cr)
+                                        @php
+                                            Log::info("CUSTOMER REQUIREMENTS CR->ID : ".$cr->id);
+                                            Log::info("CUSTOMER REQUIREMENTS CLIENT CR->ID : ".$cr->client->id);
+                                        @endphp
                                         <tr>
                                             <td>Customer Requirement</td>
                                             <td>
@@ -543,6 +554,10 @@
                                 @endif
                                 @if($productRps)
                                     @foreach ($productRps as $rps)
+                                    @php
+                                        Log::info("PRODUCT RPS->ID : ".$rps->id);
+                                        Log::info("PRODUCT RPS->CLIENT->ID : ".$rps->id);
+                                    @endphp
                                         <tr>
                                             <td>Request Product Evaluation</td>
                                             <td>
@@ -559,6 +574,10 @@
                                 @endif
                                 @if($data->sampleRequestProduct)
                                     @foreach ($data->sampleRequestProduct as $item)
+                                    @php
+                                        Log::info("SAMPLEREQUESTPRODUCT->ID : ".$item->sampleRequest->Id);
+                                        Log::info("SAMPLEREQUESTPRODUCT CLIWNT->ID : ".$item->sampleRequest->client->id);
+                                    @endphp
                                         <tr>
                                             <td>Sample Request</td>
                                             <td>
@@ -613,6 +632,9 @@
                                         </td>
                                         <td>
                                             @if($ic->products)
+                                            @php
+                                                Log::info("IDENTICALCOMPOSITION->ID : ".$ic->products->id);
+                                            @endphp
                                                 @if($ic->products->status == 1)
                                                     <a href="{{url('view_draft_product/'.$ic->products->id)}}">{{$ic->products->code}}</a>
                                                 @elseif($ic->products->status == 2)
