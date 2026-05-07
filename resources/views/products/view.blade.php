@@ -1058,44 +1058,6 @@
         $(".addBtnFiles").on('click', function()
         {
             var newRow = `
-                <div class="row">
-                    <div class="col-lg-10">
-                        <fieldset class="border border-primary p-3 mb-3">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <label>Name :</label>
-                                    <input type="text" name="name[]" class="form-control form-control-sm" required>
-                                </div>
-                                <div class="col-lg-6">
-                                    <label>Client :</label>
-                                    <select name="client[]" class="js-example-basic-single form-control form-control-sm">
-                                        <option value="">-Client-</option>
-                                        @foreach ($client as $c)
-                                            <option value="{{$c->id}}">{{$c->Name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-lg-6">
-                                    <label>Description :</label>
-                                    <textarea name="description[]" class="form-control" cols="30" rows="10"></textarea>
-                                </div>
-                                <div class="col-lg-6">
-                                    <label>Is Confidential :</label>
-                                    <input type="checkbox" name="is_confidential[]"> 
-                                </div>
-                                <div class="col-lg-6">
-                                    <label>File :</label>
-                                    <input type="file" name="productFiles[]" id="file" class="form-control form-control-sm" >
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div class="col-lg-2">
-                        <button class="btn btn-sm btn-danger mb-3 removeBtnFiles" type="button" >
-                            <i class="ti-minus"></i>
-                        </button>
-                    </div>
-                </div>
             `
 
             var row = $(newRow);
