@@ -285,19 +285,15 @@ class CustomerComplaint2Controller extends Controller
 
             if ($request->is('new_customer_complaint2_is')) {
                 $recipients = [
-                    // 'international.sales@rico.com.ph',
-                    // 'audit@rico.com.ph',
-                    // 'bpd@wgroup.com.ph',
-                    'junjihadbarroga@gmail.com',
-                    'therealharrypotter00@gmail.com'
+                    'international.sales@rico.com.ph',
+                    'audit@rico.com.ph',
+                    'bpd@wgroup.com.ph',
                 ];
             } elseif ($request->is('new_customer_complaint2_ls')) {
                 $recipients = [
-                    // 'mrdc.sales@rico.com.ph',
-                    // 'audit@rico.com.ph',
-                    // 'bpd@wgroup.com.ph',
-                    'junjihadbarroga@gmail.com',
-                    'therealharrypotter00@gmail.com'
+                    'mrdc.sales@rico.com.ph',
+                    'audit@rico.com.ph',
+                    'bpd@wgroup.com.ph',
                 ];
             }
             // Send to CC recipients WITH button
@@ -502,17 +498,13 @@ class CustomerComplaint2Controller extends Controller
 
         if (Str::contains($data->CcNumber, 'CCF-IS')) {
                 $recipients = [
-                    // 'international.sales@rico.com.ph',
-                    // 'audit@rico.com.ph',
-                    'junjihadbarroga@gmail.com',
-                    'therealharrypotter00@gmail.com'
+                    'international.sales@rico.com.ph',
+                    'audit@rico.com.ph',
                 ];
             } elseif (Str::contains($data->CcNumber, 'CCF-LS')) {
                 $recipients = [
-                    // 'mrdc.sales@rico.com.ph',
-                    // 'audit@rico.com.ph',
-                    'junjihadbarroga@gmail.com',
-                    'therealharrypotter00@gmail.com'
+                    'mrdc.sales@rico.com.ph',
+                    'audit@rico.com.ph',
                 ];
             }
 
@@ -579,7 +571,6 @@ class CustomerComplaint2Controller extends Controller
 
         if ($result) {
             if ($data->Claims == 1) {
-                // Mail::to(['ar.accounting@rico.com.ph'])
                 Mail::to(['crista.bautista@rico.com.ph'])
                 ->send(new VerifiedMail($data, $attachments, false)); 
             }
@@ -647,8 +638,7 @@ class CustomerComplaint2Controller extends Controller
         $attachments = CCFile::where('CCId', $data->id)->get();
 
         if ($data->NcarIssuance == 1) {
-            // Mail::to(['bpd@wgroup.com.ph'])
-            Mail::to(['junjihadbarroga@gmail.com.com.ph'])
+            Mail::to(['bpd@wgroup.com.ph'])
             // Mail::to(['ict.engineer@wgroup.com.ph'])
             ->send(new AssignCcDepartmentMail($data, $attachments, false)); 
         }
@@ -670,8 +660,7 @@ class CustomerComplaint2Controller extends Controller
         $data->Status = 30;
         $data->Progress = 70;
         $data->save();
-        // Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
-        Mail::to(['junjihadbarroga@gmail.com']) 
+        Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
             ->send(new ClosedMail($data));
 
         return response()->json([
