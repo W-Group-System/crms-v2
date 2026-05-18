@@ -2,10 +2,12 @@
 
 namespace App;
 
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
-class CustomerComplaint2 extends Model
+class CustomerComplaint2 extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     protected $table = "customercomplaint";
     protected $fillable = [
         'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status', 'Progress','IsVerified'
