@@ -1507,6 +1507,21 @@ class CustomerRequirementController extends Controller
         $crrFile = FileCrr::findOrFail($request->id);
         $crrFile->delete();
     }
+
+    public function CancelCrr(Request $request, $id)
+    {
+        try {
+            $crr = CustomerRequirement::findOrFail($id);
+            $crr->deleted_at = Carbon::now();
+            $crr->save();
+        } catch (\Throwable $th) {
+            Alert::error('Error! Failed to cancel the Customer Requirement');
+            return back();
+        }
+        
+        Alert::success('Successfully Cancelled Customer Requirement')->persistent('Dismiss');
+        return redirect()->route('customer_requirement.index');
+    }
     
 }
 

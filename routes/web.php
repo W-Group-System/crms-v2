@@ -239,6 +239,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('multipleUploadFiles', 'CustomerRequirementController@multipleUploadFiles');
         Route::post('update_sales_files/{id}', 'CustomerRequirementController@updateSalesFiles');
         Route::post('delete_sales_files', 'CustomerRequirementController@deleteSalesFiles');
+        Route::get('cancel_crr/{id}', 'CustomerRequirementController@CancelCrr');
     
         # Crr Supplementary Details
         Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');
