@@ -90,6 +90,12 @@
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @endif
+
+                    @if (auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->id == $sampleRequest->SecondarySalesPersonId)
+                        <a href="#" id="cancelCrrBtn" class="btn btn-md btn-outline-danger" data-url="{{url('samplerequest/cancel/'.$sampleRequest->Id)}}">
+                            <i class="icon-trash"></i>&nbsp;Cancel
+                        </a> 
+                    @endif
                     {{-- @if ($sampleRequest->Progress == 10)
                         <button type="button" class="btn btn-sm btn-success"
                                 data-target="#approveSrf{{ $sampleRequest->Id }}" 
@@ -1852,7 +1858,41 @@
                     })
                 }
             });
-        })
+        });
+
+        $('#cancelCrrBtn').on('click', function () {
+            let url = $(this).data('url');
+            
+            Swal.fire({
+                title: "Oops!",
+                text: "Are you sure you want to cancel this request?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                cancelButtonText: "No"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        data: {
+                            "_token": "{{ csrf_token() }}"
+                        },
+                        dataType: "JSON",
+                        success: function (response) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: response.message,
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then((result) => {
+                                window.location.href = "{{ url('/sample_request') }}";
+                            });
+                        }
+                    });
+                }
+            });
+        });
 
     $(document).ready(function() {
         new DataTable('.table-detailed', {

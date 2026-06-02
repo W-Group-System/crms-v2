@@ -1774,5 +1774,28 @@ class SampleRequestController extends Controller
         // dd($request->all());
         return Excel::download(new SampleDispatchExport($request->sample_request_no), 'sample_dispatch.xlsx');
     }
+
+    public function CancelSampleRequest(Request $request, $id)
+    {
+        $response = [
+            'success' => false,
+            'message' => 'Failed to cancel request.'
+        ];
+        try {
+            $crr = sampleRequest::findOrFail($id);
+            $crr->deleted_at = Carbon::now();
+            $crr->save();
+            $response['success'] = true;
+            $response['message'] = 'Successfully cancelled request.';
+        } catch (\Throwable $th) {
+            $response['message'] = 'Error! Failed to cancel request.';
+        }
+
+        if ($response['success']) {
+            return response()->json($response,200);
+        } else {
+            return response()->json($response,400);
+        }
+    }
 }    
 

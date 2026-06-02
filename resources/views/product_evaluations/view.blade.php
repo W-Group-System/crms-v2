@@ -86,6 +86,12 @@
                     </a> 
                     @endif
 
+                    @if (auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->id == $requestEvaluation->SecondarySalesPersonId)
+                        <a href="#" id="cancelCrrBtn" class="btn btn-md btn-outline-danger" data-url="{{url('cancel_evaluation/'.$requestEvaluation->id)}}">
+                            <i class="icon-trash"></i>&nbsp;Cancel
+                        </a> 
+                    @endif
+
                     {{-- <a class="btn btn-outline-danger btn-icon-text" href="javascript:void(0);">
                         <i class="ti ti-printer btn-icon-prepend"></i>
                         Print
@@ -1478,7 +1484,41 @@
                     form.submit()
                 }
             });
-        })
+        });
+
+        $('#cancelCrrBtn').on('click', function () {
+            let url = $(this).data('url');
+            Swal.fire({
+                title: "Oops!",
+                text: "Are you sure you want to cancel this request?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                cancelButtonText: "No"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: url,
+                        data: {
+                            "_token": "{{ csrf_token() }}"
+                        },
+                        dataType: "JSON",
+                        success: function (response) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: response.message,
+                                icon: "success",
+                                confirmButtonText: "OK",
+                                cancelButtonText: "No"
+                            }).then((result) => {
+                                window.location.href = "{{ url('/request_product_evaluation') }}";
+                            });
+                        }
+                    });
+                }
+            });
+        });
 
         // $(".returnToSales").on('click', function() {
         //     var rpeId = $(this).data('id');

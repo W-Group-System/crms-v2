@@ -239,6 +239,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('multipleUploadFiles', 'CustomerRequirementController@multipleUploadFiles');
         Route::post('update_sales_files/{id}', 'CustomerRequirementController@updateSalesFiles');
         Route::post('delete_sales_files', 'CustomerRequirementController@deleteSalesFiles');
+        Route::delete('cancel_crr/{id}', 'CustomerRequirementController@CancelCrr');
     
         # Crr Supplementary Details
         Route::post('add_supplementary', 'CustomerRequirementController@addSupplementary');
@@ -267,6 +268,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('product_evaluation/edit/{id}', 'RequestProductEvaluationController@update');
         Route::get('product_evaluation/view/{id}/{RpeNumber}', 'RequestProductEvaluationController@view');
         Route::delete('request_evaluation/{id}', 'RequestProductEvaluationController@destroy');
+        Route::delete('cancel_evaluation/{id}', 'RequestProductEvaluationController@CancelRpeV2');
     
         Route::post('addRpeSupplementary', 'RequestProductEvaluationController@addSupplementary');
         Route::post('UpdateRpeSupplementary/{id}', 'RequestProductEvaluationController@editSupplementary');
@@ -312,6 +314,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('samplerequest/view/{id}/{SrfNumber}', 'SampleRequestController@view');
         Route::post('sample_request/edit/{id}', 'SampleRequestController@update');
         Route::delete('samplerequest/view/supp-delete/{id}', 'SampleRequestController@deleteSrfDetails');
+        Route::delete('samplerequest/cancel/{id}', 'SampleRequestController@CancelSampleRequest');
     
         // Route::get('samplerequest/edit/{id}', 'SampleRequestController@edit');
         Route::post('addSrfSupplementary', 'SampleRequestController@addSupplementary');
@@ -399,6 +402,7 @@ Route::group(['middleware' => ['auth']], function() {
         Route::post('prf_new_activity', 'PriceMonitoringController@PrfActivityStore'); 
         Route::post('prf_edit_activity/{id}', 'PriceMonitoringController@PrfActivityUpdate');
         Route::delete('price_monitorings/view/activity-delete/{id}', 'PriceMonitoringController@deleteActivity');
+        Route::delete('price_monitorings/cancel/{id}', 'PriceMonitoringController@CancelActivity');
     
         Route::post('ApprovePrf/{id}', 'PriceMonitoringController@ApprovePrf');
         Route::post('ApproveManagerPrf/{id}', 'PriceMonitoringController@ApproveManagerPrf');

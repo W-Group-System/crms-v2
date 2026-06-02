@@ -1175,4 +1175,27 @@ class RequestProductEvaluationController extends Controller
     
         return $pdf->stream('print.pdf');
     }
+
+    public function CancelRpeV2(Request $request, $id)
+    {
+        $response = [
+            'success' => false,
+            'message' => 'Failed to cancel request.'
+        ];
+        try {
+            $crr = RequestProductEvaluation::findOrFail($id);
+            $crr->deleted_at = Carbon::now();
+            $crr->save();
+            $response['success'] = true;
+            $response['message'] = 'Successfully cancelled request.';
+        } catch (\Throwable $th) {
+            $response['message'] = 'Error! Failed to cancel request.';
+        }
+
+        if ($response['success']) {
+            return response()->json($response,200);
+        } else {
+            return response()->json($response,400);
+        }
+    }
 }

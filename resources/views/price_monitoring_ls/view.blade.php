@@ -58,6 +58,11 @@
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @endif
+                    @if (auth()->user()->id == $price_monitorings->PrimarySalesPersonId || auth()->user()->id == $price_monitorings->SecondarySalesPersonId)
+                        <a href="#" id="cancelCrrBtn" class="btn btn-md btn-outline-danger" data-url="{{url('price_monitorings/cancel/'.$price_monitorings->id)}}">
+                            <i class="icon-trash"></i>&nbsp;Cancel
+                        </a> 
+                    @endif
                     <a target='_blank' href="{{ url('quotation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Quotation</a>
                     <a target='_blank' href="{{ url('computation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Computation</a>
                     @if ($price_monitorings->Progress != 30)
@@ -628,6 +633,40 @@
         }
         });
     }
+
+    $('#cancelCrrBtn').on('click', function () {
+        let url = $(this).data('url');
+        Swal.fire({
+            title: "Oops!",
+            text: "Are you sure you want to cancel this request?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "DELETE",
+                    url: url,
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    dataType: "JSON",
+                    success: function (response) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: response.message,
+                            icon: "success",
+                            confirmButtonText: "OK",
+                            cancelButtonText: "No"
+                        }).then((result) => {
+                            window.location.href = "{{ url('/price_monitoring_ls') }}";
+                        });
+                    }
+                });
+            }
+        });
+    });
 
     $(document).ready(function() {
         new DataTable('.prf-detailed-table', {

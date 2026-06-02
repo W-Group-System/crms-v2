@@ -1013,4 +1013,27 @@ class PriceMonitoringController extends Controller
         return Form::select('SecondarySalesPersonId', $users, null, array('class' => 'form-control'));
     }
 
+    public function CancelActivity(Request $request, $id)
+    {
+        $response = [
+            'success' => false,
+            'message' => 'Failed to cancel request.'
+        ];
+        try {
+            $crr = PriceMonitoring::findOrFail($id);
+            $crr->deleted_at = Carbon::now();
+            $crr->save();
+            $response['success'] = true;
+            $response['message'] = 'Successfully cancelled request.';
+        } catch (\Throwable $th) {
+            $response['message'] = 'Error! Failed to cancel request.';
+        }
+
+        if ($response['success']) {
+            return response()->json($response,200);
+        } else {
+            return response()->json($response,400);
+        }
+    }
+
 }
