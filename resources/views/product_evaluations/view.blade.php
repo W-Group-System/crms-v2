@@ -88,7 +88,7 @@
 
                     @if (auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->id == $requestEvaluation->SecondarySalesPersonId)
                         <a href="#" id="cancelCrrBtn" class="btn btn-md btn-outline-danger" data-url="{{url('cancel_evaluation/'.$requestEvaluation->id)}}">
-                            <i class="icon-trash"></i>&nbsp;Cancel
+                            <i class="icon-trash"></i>&nbsp;Delete
                         </a> 
                     @endif
 

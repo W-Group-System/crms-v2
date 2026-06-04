@@ -93,7 +93,7 @@
 
                     @if (auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->id == $sampleRequest->SecondarySalesPersonId)
                         <a href="#" id="cancelCrrBtn" class="btn btn-md btn-outline-danger" data-url="{{url('samplerequest/cancel/'.$sampleRequest->Id)}}">
-                            <i class="icon-trash"></i>&nbsp;Cancel
+                            <i class="icon-trash"></i>&nbsp;Delete
                         </a> 
                     @endif
                     {{-- @if ($sampleRequest->Progress == 10)
