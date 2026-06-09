@@ -91,7 +91,7 @@
                     </a> 
                     @endif
 
-                    @if (auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->id == $sampleRequest->SecondarySalesPersonId)
+                    @if ((auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->id == $sampleRequest->SecondarySalesPersonId) && $sampleRequest->Status != 50)
                         <button type="button" class="btn btn-outline-warning"
                             data-target="#cancelSrf{{ $sampleRequest->Id }}" 
                             data-toggle="modal" 
