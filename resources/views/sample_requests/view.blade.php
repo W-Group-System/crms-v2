@@ -92,9 +92,12 @@
                     @endif
 
                     @if (auth()->user()->id == $sampleRequest->PrimarySalesPersonId || auth()->user()->id == $sampleRequest->SecondarySalesPersonId)
-                        <a href="#" id="cancelCrrBtn" class="btn btn-md btn-outline-danger" data-url="{{url('samplerequest/cancel/'.$sampleRequest->Id)}}">
-                            <i class="icon-trash"></i>&nbsp;Delete
-                        </a> 
+                        <button type="button" class="btn btn-outline-warning"
+                            data-target="#cancelSrf{{ $sampleRequest->Id }}" 
+                            data-toggle="modal" 
+                            title='Cancel SRF'>
+                            <i class="mdi mdi-cancel">&nbsp;</i>Cancel
+                        </button>
                     @endif
                     {{-- @if ($sampleRequest->Progress == 10)
                         <button type="button" class="btn btn-sm btn-success"
@@ -245,14 +248,14 @@
                                         <i class="ti ti-close">&nbsp;</i>Close
                                     </button>
                                 @endif
-                                @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                                {{-- @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
                                     <button type="button" class="btn btn-outline-warning"
                                         data-target="#cancelSrf{{ $sampleRequest->Id }}" 
                                         data-toggle="modal" 
                                         title='Cancel SRF'>
                                         <i class="mdi mdi-cancel">&nbsp;</i>Cancel
                                     </button>
-                                @endif
+                                @endif --}}
                             @endif
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                         @if(authCheckIfItsRnd(auth()->user()->department_id))
@@ -394,14 +397,14 @@
                                         <i class="ti ti-close">&nbsp;</i>Close
                                     </button>
                                 @endif
-                                @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
+                                {{-- @if($sampleRequest->Status == 10 && ($sampleRequest->Progress == 60 || $sampleRequest->Progress == 10 || $sampleRequest->Progress == 20 || $sampleRequest->Progress == 30))
                                     <button type="button" class="btn btn-outline-warning"
                                         data-target="#cancelSrf{{ $sampleRequest->Id }}" 
                                         data-toggle="modal" 
                                         title='Cancel SRF'>
                                         <i class="mdi mdi-cancel">&nbsp;</i>Cancel
                                     </button>
-                                @endif
+                                @endif --}}
 
                             @endif
                         @else
