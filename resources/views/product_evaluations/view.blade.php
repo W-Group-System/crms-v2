@@ -87,9 +87,9 @@
                     @endif
 
                     @if (auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->id == $requestEvaluation->SecondarySalesPersonId)
-                        <a href="#" id="cancelCrrBtn" class="btn btn-md btn-outline-danger" data-url="{{url('cancel_evaluation/'.$requestEvaluation->id)}}">
-                            <i class="icon-trash"></i>&nbsp;Delete
-                        </a> 
+                        <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
+                            <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                        </button>
                     @endif
 
                     {{-- <a class="btn btn-outline-danger btn-icon-text" href="javascript:void(0);">
@@ -161,11 +161,11 @@
                                     </button>
                                 </form>
                             @endif
-                            @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
+                            {{-- @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
                                 <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
                                     <i class="mdi mdi-cancel"></i>&nbsp;Cancel
                                 </button>
-                            @endif
+                            @endif --}}
 
                             @if($requestEvaluation->Status == 30)
                                 <form method="POST" class="d-inline-block" action="{{url('open_rpe/'.$requestEvaluation->id)}}">
@@ -311,11 +311,11 @@
                                     </button>
                                 @endif
 
-                                @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
+                                {{-- @if($requestEvaluation->Status == 10 && ($requestEvaluation->Progress == 60 || $requestEvaluation->Progress == 10 || $requestEvaluation->Progress == 20 || $requestEvaluation->Progress == 30))
                                     <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
                                         <i class="mdi mdi-cancel"></i>&nbsp;Cancel
                                     </button>
-                                @endif
+                                @endif --}}
 
                                 @if($requestEvaluation->Status == 30)
                                     <form method="POST" class="d-inline-block" action="{{url('open_rpe/'.$requestEvaluation->id)}}">

@@ -60,8 +60,8 @@
                     @endif
                     @if (auth()->user()->id == $price_monitorings->PrimarySalesPersonId || auth()->user()->id == $price_monitorings->SecondarySalesPersonId)
                         <a href="#" id="cancelCrrBtn" class="btn btn-md btn-outline-danger" data-url="{{url('price_monitorings/cancel/'.$price_monitorings->id)}}">
-                            <i class="icon-trash"></i>&nbsp;Delete
-                        </a> 
+                            <i class="icon-trash"></i>&nbsp;Cancel
+                        </a>
                     @endif
                     <a target='_blank' href="{{ url('quotation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Quotation</a>
                     <a target='_blank' href="{{ url('computation', $price_monitorings->id) }}" class="btn btn-outline-danger btn-icon-text" > <i class="ti ti-printer btn-icon-prepend"></i>Computation</a>

@@ -62,9 +62,9 @@
                     @endif
                     
                     @if (auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->id == $crr->SecondarySalesPersonId)
-                        <a href="#" id="cancelCrrBtn" class="btn btn-md btn-outline-danger" data-url="{{url('cancel_crr/'.$crr->id)}}">
-                            <i class="icon-trash"></i>&nbsp;Delete
-                        </a> 
+                        <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                            <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                        </button>
                     @endif
 
                     @if(auth()->user()->role->type != "LS")
@@ -140,10 +140,7 @@
                             @if($crr->Progress == 70)
                             <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
                                 <i class="ti ti-close"></i>&nbsp;Close
-                            </button>
-                            <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
-                                <i class="mdi mdi-cancel"></i>&nbsp;Cancel
-                            </button>                              
+                            </button>                          
                             @endif
                         @endif
 
@@ -190,11 +187,11 @@
                                 <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
                                     <i class="ti ti-close"></i>&nbsp;Close
                                 </button>
-                                <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
-                                    <i class="mdi mdi-cancel"></i>&nbsp;Cancel
-                                </button>
                             @endif
                         @endif
+                        {{-- <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                            <i class="mdi mdi-cancel"></i>&nbsp;Cancel
+                        </button>          --}}
                     @elseif(checkIfItsManagerOrSupervisor(auth()->user()->role) == "yes")
                         
                         @if($crr->Progress != 30 && $crr->Progress != 10 && $crr->Progress != 20)
@@ -264,9 +261,9 @@
                                     <button type="button" class="btn btn-outline-primary" id="closeBtn" data-toggle="modal" data-target="#closeModal{{$crr->id}}">
                                         <i class="ti ti-close"></i>&nbsp;Close
                                     </button>
-                                    <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
+                                    {{-- <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
                                         <i class="mdi mdi-cancel"></i>&nbsp;Cancel
-                                    </button>
+                                    </button> --}}
                                 @endif
                             
                             @endif
