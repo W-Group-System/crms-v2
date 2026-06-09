@@ -85,8 +85,8 @@
                         <i class="icon-arrow-left"></i>&nbsp;Back
                     </a> 
                     @endif
-
-                    @if (auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->id == $requestEvaluation->SecondarySalesPersonId)
+                    
+                    @if ((auth()->user()->id == $requestEvaluation->PrimarySalesPersonId || auth()->user()->id == $requestEvaluation->SecondarySalesPersonId) && $requestEvaluation->Status != 50)
                         <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$requestEvaluation->id}}">
                             <i class="mdi mdi-cancel"></i>&nbsp;Cancel
                         </button>

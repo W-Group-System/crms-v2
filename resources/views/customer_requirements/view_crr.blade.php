@@ -61,7 +61,7 @@
                     </a>
                     @endif
                     
-                    @if (auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->id == $crr->SecondarySalesPersonId)
+                    @if ((auth()->user()->id == $crr->PrimarySalesPersonId || auth()->user()->id == $crr->SecondarySalesPersonId) && $crr->Status != 50)
                         <button type="button" class="btn btn-outline-danger" id="cancelBtn" data-toggle="modal" data-target="#cancelModal{{$crr->id}}">
                             <i class="mdi mdi-cancel"></i>&nbsp;Cancel
                         </button>
