@@ -349,21 +349,21 @@ class CustomerSatisfactionController extends Controller
 
             if ($request->is('new_customer_satisfaction')) {
                 $recipients = [
-                    // 'international.sales@rico.com.ph',
-                    'therealharrypotter00@gmail.com',
-                    // 'audit@rico.com.ph',
-                    'ict.engineer@wgroup.com.ph',
-                    // 'bpd@wgroup.com.ph',
-                    'emmanuel.official0304@gmail.com',
+                    'international.sales@rico.com.ph',
+                    // 'therealharrypotter00@gmail.com',
+                    'audit@rico.com.ph',
+                    // 'ict.engineer@wgroup.com.ph',
+                    'bpd@wgroup.com.ph',
+                    // 'emmanuel.official0304@gmail.com',
                 ];
             } elseif ($request->is('new_customer_satisfaction_ls')) {
                 $recipients = [
-                    // 'mrdc.sales@rico.com.ph',
-                    'therealharrypotter00@gamil.com',
-                    // 'audit@rico.com.ph',
-                    'ict.engineer@wgroup.com.ph',
-                    // 'bpd@wgroup.com.ph',
-                    'emmanuel.official0304@gmail.com',
+                    'mrdc.sales@rico.com.ph',
+                    // 'therealharrypotter00@gamil.com',
+                    'audit@rico.com.ph',
+                    // 'ict.engineer@wgroup.com.ph',
+                    'bpd@wgroup.com.ph',
+                    // 'emmanuel.official0304@gmail.com',
                 ];
             }
 
@@ -501,8 +501,8 @@ class CustomerSatisfactionController extends Controller
 
         $attachments = [];
         
-        // Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
-        Mail::to(['emmanuel.official0304@gmail.com'])
+        Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
+        // Mail::to(['emmanuel.official0304@gmail.com'])
             ->send(new AcknowledgedMail($data, $attachments));
 
         return response()->json([
