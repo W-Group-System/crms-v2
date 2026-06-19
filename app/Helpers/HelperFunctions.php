@@ -147,7 +147,7 @@ function identicalComposition($materials, $product_id)
 
 function customerRequirements($product)
 {
-    $customerRequirement = CustomerRequirement::where('Recommendation', "LIKE", "%".$product."%")->get();
+    $customerRequirement = CustomerRequirement::where('Recommendation', "LIKE", "%".$product."]%")->get();
 
     return $customerRequirement;
 }
@@ -194,8 +194,8 @@ function getCrrIdByNumber($number)
 
 function productRps($code)
 {
-    $rpe = RequestProductEvaluation::where('RpeResult', 'LIKE', '%'.$code.'%')->get();
-
+    $rpe = RequestProductEvaluation::where('RpeResult', 'LIKE', '%'.$code.']%')->get();
+    
     return $rpe;
 }
 function linkToRpe($rpeNumber)
