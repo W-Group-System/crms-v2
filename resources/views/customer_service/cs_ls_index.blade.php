@@ -158,12 +158,12 @@
                                                 <input type="text" class="form-control" name="CompanyName" id="CompanyName" placeholder="Enter Company Name" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-12"> 
+                                        {{-- <div class="col-md-12"> 
                                             <div class="form-group">
                                                 <label class="label">Address</label>
                                                 <input type="text" class="form-control" name="Address" id="Address" placeholder="Enter Address">
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="label">Email Address</label>
