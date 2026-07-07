@@ -314,7 +314,11 @@
             function updateInputs() {
                 inputs.forEach(input => {
                     input.disabled = !checkbox.checked;
-                    input.required = checkbox.checked;
+                    if (input.name.includes('LotNo')) {
+                        input.required = false;
+                    } else {
+                        input.required = checkbox.checked;
+                    }
                 });
             }
 
