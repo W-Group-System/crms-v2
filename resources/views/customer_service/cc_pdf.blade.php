@@ -351,10 +351,11 @@ input[type="checkbox"] {
                 @if($cc->ccsales->count())
                     <ul>
                         @foreach($cc->ccsales as $remark)
-                            @if($remark->Path)
+                            @php
+                                $filePath = public_path($remark->Path);
+                            @endphp
+                            @if($remark->Path && file_exists($filePath))
                                 <li>
-                                    {{-- {{ $remark->Path }} --}}
-                                    {{-- if it's an image --}}
                                     <img src="{{ public_path('storage/' . $remark->Path) }}" width="150"><br>
                                 </li>
                             @endif

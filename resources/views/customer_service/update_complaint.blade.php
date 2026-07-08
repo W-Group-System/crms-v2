@@ -1,4 +1,4 @@
-<div class="modal fade" id="update{{$data->id}}" tabindex="-1" role="dialog">
+<div class="modal fade" id="update{{$data->id}}" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
 
