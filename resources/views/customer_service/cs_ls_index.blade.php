@@ -110,12 +110,17 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!-- <div class="col-md-6">
+                                        <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="label">Attachments</label>
-                                                <input type="file" class="form-control attachments" name="Path[]" id="Path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                                                <label class="label">Country</label>
+                                                <select class="form-control js-example-basic-single" name="ClientCountryId" id="ClientCountryId" style="position: relative !important" title="Select Country" required>
+                                                    <option value="" disabled selected>Select Country</option>
+                                                    @foreach($countries as $country)
+                                                        <option value="{{ $country->id }}">{{ $country->Name }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                        </div> -->
+                                        </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="label">Attachments</label>

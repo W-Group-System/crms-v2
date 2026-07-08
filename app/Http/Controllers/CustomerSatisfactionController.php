@@ -287,7 +287,8 @@ class CustomerSatisfactionController extends Controller
     public function store(Request $request) 
     {
         $year = date('y');
-
+        $ClientCountryId = $request->ClientCountryId??"";
+        $type = "";
         if ($request->is('new_customer_satisfaction')) {
             $type = 'IS';
         } elseif ($request->is('new_customer_satisfaction_ls')) {
@@ -348,23 +349,25 @@ class CustomerSatisfactionController extends Controller
             $recipients = [];
 
             if ($request->is('new_customer_satisfaction')) {
-                $recipients = [
-                    'international.sales@rico.com.ph',
-                    // 'therealharrypotter00@gmail.com',
-                    'audit@rico.com.ph',
-                    // 'ict.engineer@wgroup.com.ph',
-                    'bpd@wgroup.com.ph',
-                    // 'emmanuel.official0304@gmail.com',
-                ];
+                // $recipients = [
+                //     'international.sales@rico.com.ph',
+                //     // 'therealharrypotter00@gmail.com',
+                //     'audit@rico.com.ph',
+                //     // 'ict.engineer@wgroup.com.ph',
+                //     'bpd@wgroup.com.ph',
+                //     // 'emmanuel.official0304@gmail.com',
+                // ];
+                $recipients = GetPrimaryAndSecondarySalesEmailPerCountry($ClientCountryId,$type);
             } elseif ($request->is('new_customer_satisfaction_ls')) {
-                $recipients = [
-                    'mrdc.sales@rico.com.ph',
-                    // 'therealharrypotter00@gmail.com',
-                    'audit@rico.com.ph',
-                    // 'ict.engineer@wgroup.com.ph',
-                    'bpd@wgroup.com.ph',
-                    // 'emmanuel.official0304@gmail.com',
-                ];
+                // $recipients = [
+                //     'mrdc.sales@rico.com.ph',
+                //     // 'therealharrypotter00@gmail.com',
+                //     'audit@rico.com.ph',
+                //     // 'ict.engineer@wgroup.com.ph',
+                //     'bpd@wgroup.com.ph',
+                //     // 'emmanuel.official0304@gmail.com',
+                // ];
+                $recipients = GetPrimaryAndSecondarySalesEmailPerCountry($ClientCountryId,$type);
             }
 
             if (!empty($recipients)) {
