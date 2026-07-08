@@ -1561,3 +1561,47 @@ function GetPrimaryAndSecondarySalesEmailPerCountry($countryId,$type)
 
     return $emails;
 }
+
+function GetCountryListPerSalesAccountEmail($email,$type)
+{
+    $emails = [];
+    $type = $type=="LS"?"1":"2";
+    try{
+        $primary = DB::table('clientcompanies as cp')
+        ->select(
+            'cc.id AS CountryId',
+            'cp.Type',
+            DB::raw('u.email AS Email')
+        )
+        ->leftJoin('clientcountries as cc', 'cp.ClientCountryId', '=', 'cc.id')
+        ->leftJoin('users as u', function ($join) {
+            $join->on('u.user_id', '=', 'cp.PrimaryAccountManagerId')
+                ->orOn('u.id', '=', 'cp.PrimaryAccountManagerId');
+        });
+
+        $secondary = DB::table('clientcompanies as cp')
+            ->select(
+                'cc.id AS CountryId',
+                'cp.Type',
+                DB::raw('u.email AS Email')
+            )
+            ->leftJoin('clientcountries as cc', 'cp.ClientCountryId', '=', 'cc.id')
+            ->leftJoin('users as u', function ($join) {
+                $join->on('u.user_id', '=', 'cp.SecondaryAccountManagerId')
+                    ->orOn('u.id', '=', 'cp.SecondaryAccountManagerId');
+            });
+
+        $emails = DB::query()
+            ->fromSub($primary->union($secondary), 'R')
+            ->select('R.CountryId')
+            ->whereNotNull('R.Email')
+            ->where('R.Email', $email)
+            ->where('R.Type', $type)
+            ->distinct()
+            ->pluck('CountryId');
+    }catch(\Exception $e){
+        Log::error('Error fetching primary and secondary sales emails: ' . $e->getMessage());
+    }
+
+    return $emails;
+}

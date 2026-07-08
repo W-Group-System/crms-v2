@@ -141,7 +141,8 @@ class CustomerSatisfactionController extends Controller
 
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id;
-
+        $allowedCountry = GetCountryListPerSalesAccountEmail(auth()->user()->email,optional($role)->type);
+        
         $year = date('y') . '4';
 
         $latestCs = CustomerSatisfaction::whereYear('created_at', date('Y'))
@@ -182,11 +183,13 @@ class CustomerSatisfactionController extends Controller
             ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
                 $query->where('Status', $request->input('close'));
             })
-            ->when(optional($role)->type, function($q) use ($role, $request, $search) {
+            ->when(optional($role)->type, function($q) use ($role, $request, $search, $allowedCountry) {
                 if ($role->type == "IS") {
-                    $q->where('CsNumber', 'LIKE', "%CSR-IS%");
+                    $q->where('CsNumber', 'LIKE', "%CSR-IS%")
+                    ->whereIn('CountryId', $allowedCountry);
                 } elseif ($role->type == "LS") {
-                    $q->where('CsNumber', 'LIKE', "%CSR-LS%");
+                    $q->where('CsNumber', 'LIKE', "%CSR-LS%")
+                    ->whereIn('CountryId', $allowedCountry);
                 } elseif ($role->type == "ITD") {
 
                 } else {
@@ -319,7 +322,8 @@ class CustomerSatisfactionController extends Controller
                 'ContactNumber'=> $request->ContactNumber,
                 'Email'       => $request->Email,
                 'Status'      => '10',
-                'Progress'    => '10'
+                'Progress'    => '10',
+                'CountryId'   => $ClientCountryId
             ]);
 
             $attachments = [];
