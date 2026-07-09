@@ -68,7 +68,8 @@ class CustomerComplaint2Controller extends Controller
 
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id; 
-
+        $allowedCountry = GetCountryListPerSalesAccountEmail(auth()->user()->email,optional($role)->type);
+        
         $year = date('y') . '4'; 
 
         $latestCc = CustomerComplaint2::whereYear('created_at', date('Y'))
@@ -118,11 +119,13 @@ class CustomerComplaint2Controller extends Controller
         //         $q->where('Department',  auth()->user()->role->type);
         //     });
         // })
-        ->when(optional($role)->type, function($q) use ($role, $request, $search) {
+        ->when(optional($role)->type, function($q) use ($role, $request, $search,$allowedCountry) {
             if ($role->type == "IS") {
-                $q->where('CcNumber', 'LIKE', "%CCF-IS%");
+                $q->where('CcNumber', 'LIKE', "%CCF-IS%")
+                ->whereIn("Country",$allowedCountry);
             } elseif ($role->type == "LS") {
-                $q->where('CcNumber', 'LIKE', "%CCF-LS%");
+                $q->where('CcNumber', 'LIKE', "%CCF-LS%")
+                ->whereIn("Country",$allowedCountry);
             } elseif ($role->type == "ITD") {
 
             } else {
@@ -216,7 +219,8 @@ class CustomerComplaint2Controller extends Controller
     public function store(Request $request)
     {
         $year = date('y');
-
+        $ClientCountryId = $request->Country??"";
+        $type = "";
         if ($request->is('new_customer_complaint2_is')) {
             $type = 'IS';
         } elseif ($request->is('new_customer_complaint2_ls')) {
@@ -284,23 +288,25 @@ class CustomerComplaint2Controller extends Controller
             $recipients = [];
 
             if ($request->is('new_customer_complaint2_is')) {
-                $recipients = [
-                    'international.sales@rico.com.ph',
-                    // 'therealharrypotter00@gmail.com',
-                    'audit@rico.com.ph',
-                    // 'ict.engineer@wgroup.com.ph',
-                    'bpd@wgroup.com.ph',
-                    // 'emmanuel.official0304@gmail.com',
-                ];
+                // $recipients = [
+                //     'international.sales@rico.com.ph',
+                //     // 'therealharrypotter00@gmail.com',
+                //     'audit@rico.com.ph',
+                //     // 'ict.engineer@wgroup.com.ph',
+                //     'bpd@wgroup.com.ph',
+                //     // 'emmanuel.official0304@gmail.com',
+                // ];
+                $recipients = GetPrimaryAndSecondarySalesEmailPerCountry($ClientCountryId,$type);
             } elseif ($request->is('new_customer_complaint2_ls')) {
-                $recipients = [
-                    'mrdc.sales@rico.com.ph',
-                    // 'therealharrypotter00@gmail.com',
-                    'audit@rico.com.ph',
-                    // 'ict.engineer@wgroup.com.ph',
-                    'bpd@wgroup.com.ph',
-                    // 'emmanuel.official0304@gmail.com',
-                ];
+                // $recipients = [
+                //     'mrdc.sales@rico.com.ph',
+                //     // 'therealharrypotter00@gmail.com',
+                //     'audit@rico.com.ph',
+                //     // 'ict.engineer@wgroup.com.ph',
+                //     'bpd@wgroup.com.ph',
+                //     // 'emmanuel.official0304@gmail.com',
+                // ];
+                $recipients = GetPrimaryAndSecondarySalesEmailPerCountry($ClientCountryId,$type);
             }
             // Send to CC recipients WITH button
             if (!empty($recipients)) {
