@@ -1558,7 +1558,7 @@ function GetPrimaryAndSecondarySalesEmailPerCountry($countryId,$type)
     }catch(\Exception $e){
         Log::error('Error fetching primary and secondary sales emails: ' . $e->getMessage());
     }
-
+    log::info($emails);
     return $emails;
 }
 
