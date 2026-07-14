@@ -78,7 +78,7 @@
                                     <td>S/C No.</td>
                                     <td>SO No.</td>
                                     <td>Quantity</td>
-                                    <td>Lot No.</td>
+                                    <td>Lot No. (optional)</td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces">1.1 Physical Hazard (contamination of product by unspecified compound e.g. hard plastics, metal flakes, rust, etc.)</td>
