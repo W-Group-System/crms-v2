@@ -465,7 +465,7 @@ Route::group(['middleware' => ['auth']], function() {
 
         Route::post('/upload-temp-remarks', [CustomerComplaint2Controller::class, 'uploadTempRemarks'])->name('upload.temp.remarks');
         Route::delete('/upload-revert-remarks', [CustomerComplaint2Controller::class, 'uploadRevertRemarks'])->name('upload.revert.remarks');
-
+        Route::post('validity/{id}/{status}', 'CustomerComplaint2Controller@Validity');
         
         // Categorization
         Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    

@@ -65,6 +65,7 @@ class CustomerComplaint2Controller extends Controller
         $entries = $request->input('number_of_entries', 10);
         $progress = $request->query('progress'); // Get the status from the query parameters
         $status = $request->query('status'); // Get the status from the query parameters
+        $validity = $request->validity??"";
 
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id; 
@@ -108,6 +109,9 @@ class CustomerComplaint2Controller extends Controller
         })
         ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
             $query->where('Status', $request->input('close'));
+        })
+        ->when($validity,function($q) use($validity){
+            $q->where("Validity",$validity);
         })
         // ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
         //     $q->whereHas('concerned', function($q) {
@@ -174,7 +178,8 @@ class CustomerComplaint2Controller extends Controller
                 'fetchAll' => $fetchAll,
                 'entries' => $entries,
                 'newCcNo' => $newCcNo,
-                'progress' => $progress
+                'progress' => $progress,
+                'validity' => $validity
             ]);
         }
     }
@@ -1126,5 +1131,18 @@ class CustomerComplaint2Controller extends Controller
        
         
         return "success";
+    }
+
+    public function Validity($id,$status)
+    {
+        $data = CustomerComplaint2::findOrFail($id);
+        $data->Validity = $status??null;
+        // dd($status);
+        $data->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer complaint has been successfully updated.'
+        ]);
     }
 }

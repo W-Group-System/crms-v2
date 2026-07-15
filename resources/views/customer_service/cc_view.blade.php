@@ -13,6 +13,21 @@
             {{-- <h4 class="card-title d-flex justify-content-between align-items-center">View Customer Complaint
             </h4> --}}
             <div align="right">
+                @if($data->Validity == "valid")
+                    <form action="{{ url('validity/' . $data->id.'/invalid') }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger validityBtn">
+                            </i>&nbsp;Tag As Invalid
+                        </button>
+                    </form>
+                @else
+                    <form action="{{ url('validity/' . $data->id.'/valid') }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary validityBtn">
+                            </i>&nbsp;Tag As Valid
+                        </button>
+                    </form>
+                @endif
                 <a href="{{ url()->previous() ?: url('customer_complaint2') }}" class="btn btn-md btn-outline-secondary">
                     <i class="icon-arrow-left"></i>&nbsp;Back
                 </a>
@@ -1153,6 +1168,40 @@
                     if (response.success) {
                         Swal.fire({
                             title: "Noted",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            customClass: 'swal-wide',
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.validityBtn').on('click', function (e) {
+            e.preventDefault(); 
+
+            var btn = $(this);
+            if (btn.data('clicked')) {
+                return;
+            }
+            btn.data('clicked', true);
+            btn.prop('disabled', true).text('Processing...');
+
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action'); 
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(), 
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Validity Updated",
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,

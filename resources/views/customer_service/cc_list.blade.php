@@ -37,6 +37,15 @@
                 <div class="col-lg-6">
                     <form method="GET" class="custom_form mb-3" enctype="multipart/form-data">
                         <div class="row height d-flex justify-content-end align-items-end">
+                            <input name="open" class="activity_status" type="checkbox" value="10" @if(request('open', $open) == '10') checked @endif hidden>
+                            <input name="close" class="activity_status" type="checkbox" value="30" @if(request('close') == '30') checked @endif hidden>
+                            <div class="col-md-3">
+                                <select class="form-control" name="validity" id="validity">
+                                    <option value="">- Validity -</option>
+                                    <option value="valid" @if ($validity == 'valid') selected @endif>Valid</option>
+                                    <option value="invalid" @if ($validity == 'invalid') selected @endif>Invalid</option>
+                                </select>
+                            </div>
                             <div class="col-md-9">
                                 <div class="search">
                                     <i class="ti ti-search"></i>
