@@ -94,7 +94,6 @@ input[type="checkbox"] {
             <td width="72%" colspan="3">
                 <div class="d-inline">
                     <input type="checkbox">&nbsp;&nbsp;By Phone&nbsp;&nbsp;
-                    <input type="checkbox">&nbsp;&nbsp;By Letter/ Fax&nbsp;&nbsp;
                     <input type="checkbox">&nbsp;&nbsp;Personal&nbsp;&nbsp;
                     <input type="checkbox">&nbsp;&nbsp;By Email&nbsp;&nbsp;
                 </div>
