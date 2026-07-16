@@ -178,8 +178,7 @@ class CustomerComplaint2Controller extends Controller
                 'fetchAll' => $fetchAll,
                 'entries' => $entries,
                 'newCcNo' => $newCcNo,
-                'progress' => $progress,
-                'validity' => $validity
+                'progress' => $progress
             ]);
         }
     }
@@ -1050,7 +1049,7 @@ class CustomerComplaint2Controller extends Controller
     }
     public function printCc($id)
     {
-        $cc = CustomerComplaint2::with('country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'users', 'noted_by', 'ccsales')->findOrFail($id);
+        $cc = CustomerComplaint2::with('country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'users', 'noted_by', 'ccsales','concernedDept')->findOrFail($id);
         $data = [
             'cc' => $cc,
             'CountryName' => optional($cc->country)->Name,
@@ -1137,7 +1136,7 @@ class CustomerComplaint2Controller extends Controller
     {
         $data = CustomerComplaint2::findOrFail($id);
         $data->Validity = $status??null;
-        $data->Status = $status="invalid"?"30":"10";
+        $data->Status = $status=="invalid"?"30":"10";
         $data->save();
 
         return response()->json([
