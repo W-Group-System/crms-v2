@@ -1136,7 +1136,7 @@ class CustomerComplaint2Controller extends Controller
     public function Validity($id,$status)
     {
         $data = CustomerComplaint2::findOrFail($id);
-        // $data->Validity = $status??null;
+        $data->Validity = $status??null;
         $data->Status = $status="invalid"?"30":"10";
         $data->save();
 
