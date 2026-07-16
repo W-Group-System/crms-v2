@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <div class="container">
     <div class="row justify-content-center">
-        <img src="{{asset('images/whi.png')}}" style="width: 180px;" class="mt-3 mb-3">
+        <img src="{{asset('images/mrdc-logo (2).png')}}" style="width: 180px;" class="mt-3 mb-3">
         <div class="col-md-12">
             <div class="wrapper">
                 <div class="row">
