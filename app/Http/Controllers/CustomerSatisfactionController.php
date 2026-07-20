@@ -185,11 +185,15 @@ class CustomerSatisfactionController extends Controller
             })
             ->when(optional($role)->type, function($q) use ($role, $request, $search, $allowedCountry) {
                 if ($role->type == "IS") {
-                    $q->where('CsNumber', 'LIKE', "%CSR-IS%")
-                    ->whereIn('CountryId', $allowedCountry);
+                    $q->where('CsNumber', 'LIKE', "%CSR-IS%");
+                    if ($role->description == "BDE") {
+                        $q->whereIn('CountryId', $allowedCountry);
+                    }
                 } elseif ($role->type == "LS") {
-                    $q->where('CsNumber', 'LIKE', "%CSR-LS%")
-                    ->whereIn('CountryId', $allowedCountry);
+                    $q->where('CsNumber', 'LIKE', "%CSR-LS%");
+                    if ($role->description == "BDE") {
+                        $q->whereIn('CountryId', $allowedCountry);
+                    }
                 } elseif ($role->type == "ITD") {
 
                 } else {
