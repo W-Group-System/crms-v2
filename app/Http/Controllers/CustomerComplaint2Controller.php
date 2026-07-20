@@ -125,11 +125,15 @@ class CustomerComplaint2Controller extends Controller
         // })
         ->when(optional($role)->type, function($q) use ($role, $request, $search,$allowedCountry) {
             if ($role->type == "IS") {
-                $q->where('CcNumber', 'LIKE', "%CCF-IS%")
-                ->whereIn("Country",$allowedCountry);
+                $q->where('CcNumber', 'LIKE', "%CCF-IS%");
+                if ($role->description == "BDE") {
+                    $q->whereIn('Country', $allowedCountry);
+                }
             } elseif ($role->type == "LS") {
-                $q->where('CcNumber', 'LIKE', "%CCF-LS%")
-                ->whereIn("Country",$allowedCountry);
+                $q->where('CcNumber', 'LIKE', "%CCF-LS%");
+                if ($role->description == "BDE") {
+                    $q->whereIn('Country', $allowedCountry);
+                }
             } elseif ($role->type == "ITD") {
 
             } else {
