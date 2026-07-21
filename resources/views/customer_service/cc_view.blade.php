@@ -44,12 +44,9 @@
                     @endif
                     @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
                         @if($data->Progress == 50 && $data->SiteConcerned != NULL)
-                            <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-success notedBtn">
-                                    <i class="ti-check"></i>&nbsp;Noted By
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
+                                <i class="ti ti-check"></i>&nbsp;Noted By
+                            </button>
                         @endif
                     @endif
                     {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
@@ -92,12 +89,9 @@
                     @endif
                     @if($data->Progress == 30 && $data->NotedBy != NULL)
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id))
-                            <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-warning approvedBtn">
-                                    <i class="ti-check"></i>&nbsp;Noted By
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
+                                <i class="ti ti-check"></i>&nbsp;Noted By
+                            </button>
                         @endif
                     @endif
                     <!-- @if($data->NcarIssuance == 1)
@@ -1048,6 +1042,7 @@
 
 @include('customer_service.complaint_modal')
 @include('customer_service.update_complaint')
+@include('customer_service.cc_remarks')
 @if(session('openModalId'))
     <script>
         $(document).ready(function() {
@@ -1155,39 +1150,39 @@
             });
         });
 
-        $('.notedBtn').on('click', function (e) {
-            e.preventDefault(); 
+        // $('.notedBtn').on('click', function (e) {
+        //     e.preventDefault(); 
 
-            var btn = $(this);
-            if (btn.data('clicked')) {
-                return;
-            }
-            btn.data('clicked', true);
-            btn.prop('disabled', true).text('Processing...');
+        //     var btn = $(this);
+        //     if (btn.data('clicked')) {
+        //         return;
+        //     }
+        //     btn.data('clicked', true);
+        //     btn.prop('disabled', true).text('Processing...');
 
-            var form = $(this).closest('form');
-            var actionUrl = form.attr('action'); 
+        //     var form = $(this).closest('form');
+        //     var actionUrl = form.attr('action'); 
 
-            $.ajax({
-                url: actionUrl,
-                type: 'POST',
-                data: form.serialize(), 
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: "Noted",
-                            text: response.message,
-                            icon: "success",
-                            showConfirmButton: false,
-                            customClass: 'swal-wide',
-                            timer: 1500
-                        }).then(function () {
-                            window.location.reload(); 
-                        });
-                    }
-                }
-            });
-        });
+        //     $.ajax({
+        //         url: actionUrl,
+        //         type: 'POST',
+        //         data: form.serialize(), 
+        //         success: function (response) {
+        //             if (response.success) {
+        //                 Swal.fire({
+        //                     title: "Noted",
+        //                     text: response.message,
+        //                     icon: "success",
+        //                     showConfirmButton: false,
+        //                     customClass: 'swal-wide',
+        //                     timer: 1500
+        //                 }).then(function () {
+        //                     window.location.reload(); 
+        //                 });
+        //             }
+        //         }
+        //     });
+        // });
 
         $('.validityBtn').on('click', function (e) {
             e.preventDefault(); 
