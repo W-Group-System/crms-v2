@@ -638,7 +638,7 @@ class CustomerComplaint2Controller extends Controller
     }
 
     public function noted($id)
-    {
+    {   
         $data = CustomerComplaint2::findOrFail($id);
         $data->NotedBy = auth()->user()->id;
         $data->DateNoted = now();
