@@ -358,20 +358,7 @@
                 </div>
             </div> 
             <div class="form-group row mb-3">
-                <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Attachments :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-6">
-                    <p class="m-0">
-                        @foreach ($data->files as $key => $file)
-                            @php
-                                $filePath = asset('storage/' . $file->Path); 
-                            @endphp
-                                {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a>
-                                <br>
-                        @endforeach
-                    </p>
-                </div>
+                
             </div> 
             <div class="row">
                 <div class="col-md-12">
@@ -588,7 +575,27 @@
                             <p class="m-0">{{ optional($data->ccsales->first())->SalesRemarks }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Attachments :</b></p>
+                            <p class="m-0"><b>Customer Attachments :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">
+                                @foreach ($data->files as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path); 
+                                    @endphp
+                                        {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a>
+                                        <br>
+                                @endforeach
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 col-md-2 text-right">
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                        </div>
+                       <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Sales Attachments :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">
@@ -602,6 +609,7 @@
                             </p>
                         </div>
                     </div>
+                    
                     <!-- <div class="row mb-3">
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Customer Remarks :</b></p>
@@ -645,9 +653,9 @@
                             <p class="m-0">{{ $data->ActionDate }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Investigation:</b></p>
+                            <p class="m-0"><b>Investigation :</b></p>
                         </div>
-                        <div class="col-sm-3 col-md-9">
+                        <div class="col-sm-3 col-md-4">
                             <p class="m-0">{{ $data->Investigation }}</p>
                         </div>
                     </div>
@@ -1017,7 +1025,7 @@
                                 accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
-                        @if($data->Claims != null || $data->Shipment != null)
+                        {{-- @if($data->Claims != null || $data->Shipment != null) --}}
                             <div class="col-lg-6">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="IsVerified" value="1" id="flexCheckDefault" {{ $data->IsVerified == 1 ? 'checked' : '' }}>
@@ -1026,7 +1034,7 @@
                                     </label>
                                 </div>
                             </div>
-                        @endif
+                        {{-- @endif --}}
                     </div>
                     <div class="modal-footer mt-3">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>

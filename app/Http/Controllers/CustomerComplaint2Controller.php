@@ -29,6 +29,9 @@ use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CustomerComplaintExport;
+
 
 class CustomerComplaint2Controller extends Controller
 {
@@ -1143,5 +1146,10 @@ class CustomerComplaint2Controller extends Controller
             'success' => true,
             'message' => 'Customer complaint has been successfully updated.'
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new CustomerComplaintExport($request->open, $request->close,), 'Customer_Complaint.xlsx');
     }
 }
