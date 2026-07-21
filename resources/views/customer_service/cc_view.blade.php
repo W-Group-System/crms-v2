@@ -44,12 +44,6 @@
                     @endif
                     @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
                         @if($data->Progress == 50 && $data->SiteConcerned != NULL)
-                            {{-- <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-success notedBtn">
-                                    <i class="ti-check"></i>&nbsp;Noted By
-                                </button>
-                            </form> --}}
                             <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
                                 <i class="ti ti-check"></i>&nbsp;Noted By
                             </button>
@@ -95,12 +89,9 @@
                     @endif
                     @if($data->Progress == 30 && $data->NotedBy != NULL)
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id))
-                            <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-warning approvedBtn">
-                                    <i class="ti-check"></i>&nbsp;Noted By
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
+                                <i class="ti ti-check"></i>&nbsp;Noted By
+                            </button>
                         @endif
                     @endif
                     <!-- @if($data->NcarIssuance == 1)

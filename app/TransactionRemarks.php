@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransactionRemarks extends Model
 {
-    protected $table = 'trasaction_remarks';
+    protected $table = 'transaction_remarks';
     protected $primaryKey = 'id';
     protected $fillable = [
         'transaction_no',

@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CustomerComplaintExport;
-
+use App\TransactionRemarks;
 
 class CustomerComplaint2Controller extends Controller
 {
@@ -640,13 +640,20 @@ class CustomerComplaint2Controller extends Controller
         ]);
     }
 
-    public function noted($id)
+    public function noted(Request $request, $id)
     {   
         $data = CustomerComplaint2::findOrFail($id);
         $data->NotedBy = auth()->user()->id;
         $data->DateNoted = now();
         $data->Progress = 30;
         $data->save();
+
+        $transactionRemarks = TransactionRemarks::create([
+            'transaction_no' => $data->CcNumber,
+            'action' => 'NOTED BY',
+            'action_by' => Auth::user()->id,
+            'remarks' => $request->remarks
+        ]);
 
         return response()->json([
             'success' => true,
