@@ -21,6 +21,13 @@
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
             </div>
+            <div class="mb-3">
+                <form method="GET" action="{{url('customer_complaint_export')}}" class="d-inline-block">
+                    <input type="hidden" name="open" value="{{$open}}">
+                    <input type="hidden" name="close" value="{{$close}}">
+                    <button type="submit" class="btn btn-outline-success">Export</button>
+                </form>
+            </div>
             <div class="row">
                 <div class="col-lg-6">
                     <span>Showing</span>
@@ -83,7 +90,7 @@
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->CompanyName }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->ContactName }}</td>
                                 <!-- <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->country->Name ?? 'N/A' }}</td> -->
-                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->Department ?? 'N/A' }}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->concernedDept->Name ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->CustomerRemarks ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->users->full_name ?? 'N/A' }}</td>
                                 <td>
