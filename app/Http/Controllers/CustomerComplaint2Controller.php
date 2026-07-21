@@ -326,7 +326,7 @@ class CustomerComplaint2Controller extends Controller
                 Mail::to($customerComplaint['Email'])
                     ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
                 Mail::to($recipients)
-                    ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));
+                    ->send(new CustomerComplaintMail($customerComplaint, $attachments, true, true));
             }
             
             

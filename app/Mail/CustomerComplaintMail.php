@@ -14,15 +14,17 @@ class CustomerComplaintMail extends Mailable
     public $customerComplaint;
     public $cc_attachments;
     public $showButton;
+    public $showCcNumber;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($customerComplaint, $cc_attachments, $showButton = false)
+    public function __construct($customerComplaint, $cc_attachments, $showButton = false, $showCcNumber = false)
     {
         $this->customerComplaint = $customerComplaint;
         $this->cc_attachments = $cc_attachments;
         $this->showButton = $showButton;
+        $this->showCcNumber = $showCcNumber;
     }
 
     /**
@@ -48,7 +50,8 @@ class CustomerComplaintMail extends Mailable
                         'ComplaintCountry' => optional($this->customerComplaint->country)->Name ?? 'N/A',
                         'button_text' => 'Visit Customer Complaint',
                         'button_url' => url('/cc_list?open=10'),
-                        'showButton' => $this->showButton, // pass to view
+                        'showButton' => $this->showButton,
+                        'showCcNumber' => $this->showCcNumber
                     ]);
 
         // Check if attachments exist and attach them

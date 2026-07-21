@@ -138,10 +138,12 @@
             <p>Thank you for bringing your concern to our attention. We truly value your feedback and sincerely apologize for any inconvenience caused.<br><br>Please rest assured that we are carefully reviewing the matter and will take the necessary steps to resolve it promptly. Your satisfaction is very important to us, and your input helps us improve our service.</p>
 
             <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
-                <tr>
-                    <td><strong>CC Number:</strong></td>
-                    <td>{{ $customerComplaint->CcNumber }}</td>
-                </tr>
+                @if ($showCcNumber)
+                    <tr>
+                        <td><strong>CC Number:</strong></td>
+                        <td>{{ $customerComplaint->CcNumber }}</td>
+                    </tr>
+                @endif
                 <tr>
                     <td><strong>Company Name:</strong></td>
                     <td>{{ $customerComplaint->CompanyName }}</td>
