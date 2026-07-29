@@ -14,6 +14,7 @@ use App\User;
 use App\UserEventLogs;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 function rmc($productRawMaterials, $id)
 {
@@ -1514,4 +1515,93 @@ function customRound($value)
  {
     $value = floor($value * 1000) / 1000; 
     return round($value, 2);
+}
+
+function GetPrimaryAndSecondarySalesEmailPerCountry($countryId,$type)
+{
+    $emails = [];
+    $type = $type=="LS"?"1":"2";
+    try{
+        $primary = DB::table('clientcompanies as cp')
+        ->select(
+            'cc.id AS CountryId',
+            'cp.Type',
+            DB::raw('u.email AS Email')
+        )
+        ->leftJoin('clientcountries as cc', 'cp.ClientCountryId', '=', 'cc.id')
+        ->leftJoin('users as u', function ($join) {
+            $join->on('u.user_id', '=', 'cp.PrimaryAccountManagerId')
+                ->orOn('u.id', '=', 'cp.PrimaryAccountManagerId');
+        });
+
+        $secondary = DB::table('clientcompanies as cp')
+            ->select(
+                'cc.id AS CountryId',
+                'cp.Type',
+                DB::raw('u.email AS Email')
+            )
+            ->leftJoin('clientcountries as cc', 'cp.ClientCountryId', '=', 'cc.id')
+            ->leftJoin('users as u', function ($join) {
+                $join->on('u.user_id', '=', 'cp.SecondaryAccountManagerId')
+                    ->orOn('u.id', '=', 'cp.SecondaryAccountManagerId');
+            });
+
+        $emails = DB::query()
+            ->fromSub($primary->union($secondary), 'R')
+            ->select('R.Email')
+            ->whereNotNull('R.Email')
+            ->where('R.Email', '<>', '')
+            ->where('R.CountryId', $countryId)
+            ->where('R.Type', $type)
+            ->distinct()
+            ->pluck('Email');
+    }catch(\Exception $e){
+        Log::error('Error fetching primary and secondary sales emails: ' . $e->getMessage());
+    }
+    log::info($emails);
+    return $emails;
+}
+
+function GetCountryListPerSalesAccountEmail($email,$type)
+{
+    $emails = [];
+    $type = $type=="LS"?"1":"2";
+    try{
+        $primary = DB::table('clientcompanies as cp')
+        ->select(
+            'cc.id AS CountryId',
+            'cp.Type',
+            DB::raw('u.email AS Email')
+        )
+        ->leftJoin('clientcountries as cc', 'cp.ClientCountryId', '=', 'cc.id')
+        ->leftJoin('users as u', function ($join) {
+            $join->on('u.user_id', '=', 'cp.PrimaryAccountManagerId')
+                ->orOn('u.id', '=', 'cp.PrimaryAccountManagerId');
+        });
+
+        $secondary = DB::table('clientcompanies as cp')
+            ->select(
+                'cc.id AS CountryId',
+                'cp.Type',
+                DB::raw('u.email AS Email')
+            )
+            ->leftJoin('clientcountries as cc', 'cp.ClientCountryId', '=', 'cc.id')
+            ->leftJoin('users as u', function ($join) {
+                $join->on('u.user_id', '=', 'cp.SecondaryAccountManagerId')
+                    ->orOn('u.id', '=', 'cp.SecondaryAccountManagerId');
+            });
+
+        $emails = DB::query()
+            ->fromSub($primary->union($secondary), 'R')
+            ->select('R.CountryId')
+            ->whereNotNull('R.Email')
+            ->where('R.Email', $email)
+            ->where('R.Type', $type)
+            ->distinct()
+            ->pluck('CountryId');
+    }catch(\Exception $e){
+        Log::error('Error fetching primary and secondary sales emails: ' . $e->getMessage());
+    }
+
+    return $emails;
 }

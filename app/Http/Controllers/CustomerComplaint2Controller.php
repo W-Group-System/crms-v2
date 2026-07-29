@@ -29,6 +29,9 @@ use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CustomerComplaintExport;
+
 
 class CustomerComplaint2Controller extends Controller
 {
@@ -65,10 +68,12 @@ class CustomerComplaint2Controller extends Controller
         $entries = $request->input('number_of_entries', 10);
         $progress = $request->query('progress'); // Get the status from the query parameters
         $status = $request->query('status'); // Get the status from the query parameters
+        // $validity = $request->validity??"";
 
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id; 
-
+        $allowedCountry = GetCountryListPerSalesAccountEmail(auth()->user()->email,optional($role)->type);
+        
         $year = date('y') . '4'; 
 
         $latestCc = CustomerComplaint2::whereYear('created_at', date('Y'))
@@ -108,6 +113,9 @@ class CustomerComplaint2Controller extends Controller
         ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
             $query->where('Status', $request->input('close'));
         })
+        // ->when($validity,function($q) use($validity){
+        //     $q->where("Validity",$validity);
+        // })
         // ->when(isset($role) && in_array($role->type, ['RND', 'QCD-WHI', 'QCD-PBI', 'QCD-MRDC', 'QCD-CCC']) && in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) {
         //     $q->whereHas('concerned', function($q) {
         //         $q->where('Department',  auth()->user()->role->type);
@@ -118,11 +126,17 @@ class CustomerComplaint2Controller extends Controller
         //         $q->where('Department',  auth()->user()->role->type);
         //     });
         // })
-        ->when(optional($role)->type, function($q) use ($role, $request, $search) {
+        ->when(optional($role)->type, function($q) use ($role, $request, $search,$allowedCountry) {
             if ($role->type == "IS") {
                 $q->where('CcNumber', 'LIKE', "%CCF-IS%");
+                if ($role->description == "BDE") {
+                    $q->whereIn('Country', $allowedCountry);
+                }
             } elseif ($role->type == "LS") {
                 $q->where('CcNumber', 'LIKE', "%CCF-LS%");
+                if ($role->description == "BDE") {
+                    $q->whereIn('Country', $allowedCountry);
+                }
             } elseif ($role->type == "ITD") {
 
             } else {
@@ -216,7 +230,8 @@ class CustomerComplaint2Controller extends Controller
     public function store(Request $request)
     {
         $year = date('y');
-
+        $ClientCountryId = $request->Country??"";
+        $type = "";
         if ($request->is('new_customer_complaint2_is')) {
             $type = 'IS';
         } elseif ($request->is('new_customer_complaint2_ls')) {
@@ -284,23 +299,25 @@ class CustomerComplaint2Controller extends Controller
             $recipients = [];
 
             if ($request->is('new_customer_complaint2_is')) {
-                $recipients = [
-                    'international.sales@rico.com.ph',
-                    // 'therealharrypotter00@gmail.com',
-                    'audit@rico.com.ph',
-                    // 'ict.engineer@wgroup.com.ph',
-                    'bpd@wgroup.com.ph',
-                    // 'emmanuel.official0304@gmail.com',
-                ];
+                // $recipients = [
+                //     'international.sales@rico.com.ph',
+                //     // 'therealharrypotter00@gmail.com',
+                //     'audit@rico.com.ph',
+                //     // 'ict.engineer@wgroup.com.ph',
+                //     'bpd@wgroup.com.ph',
+                //     // 'emmanuel.official0304@gmail.com',
+                // ];
+                $recipients = GetPrimaryAndSecondarySalesEmailPerCountry($ClientCountryId,$type);
             } elseif ($request->is('new_customer_complaint2_ls')) {
-                $recipients = [
-                    'mrdc.sales@rico.com.ph',
-                    // 'therealharrypotter00@gmail.com',
-                    'audit@rico.com.ph',
-                    // 'ict.engineer@wgroup.com.ph',
-                    'bpd@wgroup.com.ph',
-                    // 'emmanuel.official0304@gmail.com',
-                ];
+                // $recipients = [
+                //     'mrdc.sales@rico.com.ph',
+                //     // 'therealharrypotter00@gmail.com',
+                //     'audit@rico.com.ph',
+                //     // 'ict.engineer@wgroup.com.ph',
+                //     'bpd@wgroup.com.ph',
+                //     // 'emmanuel.official0304@gmail.com',
+                // ];
+                $recipients = GetPrimaryAndSecondarySalesEmailPerCountry($ClientCountryId,$type);
             }
             // Send to CC recipients WITH button
             if (!empty($recipients)) {
@@ -1039,7 +1056,7 @@ class CustomerComplaint2Controller extends Controller
     }
     public function printCc($id)
     {
-        $cc = CustomerComplaint2::with('country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'users', 'noted_by', 'ccsales')->findOrFail($id);
+        $cc = CustomerComplaint2::with('country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'users', 'noted_by', 'ccsales','concernedDept')->findOrFail($id);
         $data = [
             'cc' => $cc,
             'CountryName' => optional($cc->country)->Name,
@@ -1120,5 +1137,23 @@ class CustomerComplaint2Controller extends Controller
        
         
         return "success";
+    }
+
+    public function Validity($id,$status)
+    {
+        $data = CustomerComplaint2::findOrFail($id);
+        $data->Validity = $status??null;
+        $data->Status = $status=="invalid"?"30":"10";
+        $data->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer complaint has been successfully updated.'
+        ]);
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new CustomerComplaintExport($request->open, $request->close,), 'Customer_Complaint.xlsx');
     }
 }

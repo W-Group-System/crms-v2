@@ -462,10 +462,11 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('/departments-by-site/{siteId}', [CustomerComplaint2Controller::class, 'getDepartmentsBySite']);
         Route::delete('delete_cc_files/{id}', 'CustomerComplaint2Controller@delete')->name('delete_cc_files');
         Route::delete('delete_cc_files2/{id}', 'CustomerComplaint2Controller@delete2')->name('delete_cc_files2');
+        Route::get('customer_complaint_export', 'CustomerComplaint2Controller@export');
 
         Route::post('/upload-temp-remarks', [CustomerComplaint2Controller::class, 'uploadTempRemarks'])->name('upload.temp.remarks');
         Route::delete('/upload-revert-remarks', [CustomerComplaint2Controller::class, 'uploadRevertRemarks'])->name('upload.revert.remarks');
-
+        Route::post('validity/{id}/{status}', 'CustomerComplaint2Controller@Validity');
         
         // Categorization
         Route::get('/categorization', 'CategorizationController@index')->name('categorizations.index');    

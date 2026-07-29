@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <div class="container">
     <div class="row justify-content-center">
-        <img src="{{asset('images/whi.png')}}" style="width: 180px;" class="mt-3 mb-3">
+        <img src="{{asset('images/mrdc-logo (2).png')}}" style="width: 180px;" class="mt-3 mb-3">
         <div class="col-md-12">
             <div class="wrapper">
                 <div class="row">
@@ -110,12 +110,17 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!-- <div class="col-md-6">
+                                        <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="label">Attachments</label>
-                                                <input type="file" class="form-control attachments" name="Path[]" id="Path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                                                <label class="label">Country</label>
+                                                <select class="form-control js-example-basic-single" name="ClientCountryId" id="ClientCountryId" style="position: relative !important" title="Select Country" required>
+                                                    <option value="" disabled selected>Select Country</option>
+                                                    @foreach($countries as $country)
+                                                        <option value="{{ $country->id }}">{{ $country->Name }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                        </div> -->
+                                        </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="label">Attachments</label>
@@ -158,12 +163,12 @@
                                                 <input type="text" class="form-control" name="CompanyName" id="CompanyName" placeholder="Enter Company Name" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-12"> 
+                                        {{-- <div class="col-md-12"> 
                                             <div class="form-group">
                                                 <label class="label">Address</label>
                                                 <input type="text" class="form-control" name="Address" id="Address" placeholder="Enter Address">
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="label">Email Address</label>

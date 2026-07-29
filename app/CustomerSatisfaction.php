@@ -9,7 +9,7 @@ class CustomerSatisfaction extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     protected $table = "customersatisfaction";
     protected $fillable = [
-        'CompanyName', 'CsNumber', 'ContactName', 'Department', 'SiteConcerned', 'Description', 'Category', 'Email', 'ContactNumber', 'Status', 'ReceivedBy', 'DateReceived', 'DateClosed', 'Progress', 'ClosedBy', 'ApprovedBy'
+        'CompanyName', 'CsNumber', 'ContactName', 'Department', 'SiteConcerned', 'Description', 'Category', 'Email', 'ContactNumber', 'Status', 'ReceivedBy', 'DateReceived', 'DateClosed', 'Progress', 'ClosedBy', 'ApprovedBy','CountryId'
     ];
 
     public function concerned() 

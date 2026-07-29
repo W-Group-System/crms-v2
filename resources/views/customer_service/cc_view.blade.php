@@ -13,6 +13,21 @@
             {{-- <h4 class="card-title d-flex justify-content-between align-items-center">View Customer Complaint
             </h4> --}}
             <div align="right">
+                @if($data->Validity == "valid")
+                    <form action="{{ url('validity/' . $data->id.'/invalid') }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger validityBtn">
+                            </i>&nbsp;Tag As Invalid
+                        </button>
+                    </form>
+                @else
+                    <form action="{{ url('validity/' . $data->id.'/valid') }}" class="d-inline-block" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-primary validityBtn">
+                            </i>&nbsp;Tag As Valid
+                        </button>
+                    </form>
+                @endif
                 <a href="{{ url()->previous() ?: url('customer_complaint2') }}" class="btn btn-md btn-outline-secondary">
                     <i class="icon-arrow-left"></i>&nbsp;Back
                 </a>
@@ -217,10 +232,26 @@
                     <p class="m-0">{{ date('M. d, Y', strtotime($data->created_at)) }}</p>
                 </div>
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Department Concerned :</b></p>
+                    <p class="m-0"><b>Site Concerned :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ optional($data->concernedDept)->Name }}</p>
+                    <p class="m-0">
+                        @if($data->SiteConcerned == 1) 
+                            WHI Head Office
+                        @elseif ($data->SiteConcerned == 2)
+                            WHI Carmona
+                        @elseif ($data->SiteConcerned == 3)
+                            MRDC
+                        @elseif ($data->SiteConcerned == 4)
+                            CCC Carmen
+                        @elseif ($data->SiteConcerned == 5)
+                            PBI Canlubang
+                        @elseif ($data->SiteConcerned == 6)
+                            International Warehouse
+                        @else 
+                            
+                        @endif
+                    </p>
                 </div>
             </div>
             {{-- <div class="row mb-3">
@@ -238,6 +269,12 @@
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ $data->country->Name }}</p>
                 </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Department Concerned :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ optional($data->concernedDept)->Name }}</p>
+                </div>
                 {{-- <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Status :</b></p>
                 </div> 
@@ -252,12 +289,6 @@
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ $data->CompanyName }}</p>
                 </div>
-                <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Date Closed :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->ClosedDate }}</p>
-                </div>
             </div>
             <div class="row mb-0">
                 <div class="col-sm-3 col-md-2 text-right">
@@ -265,6 +296,12 @@
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ $data->ContactName }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Noted By :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ optional($data->noted_by)->full_name }}</p>
                 </div>
                 {{-- <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Mode of Communication :</b></p>
@@ -292,7 +329,7 @@
                     <p class="m-0"><b>Noted By :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ optional($data->noted_by)->full_name }}</p>
+                    <p class="m-0">{{ optional($data->approved_by)->full_name }}</p>
                 </div>
             </div>
             <div class="row mb-0 mb-3">
@@ -302,34 +339,15 @@
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ $data->Telephone }}</p>
                 </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Date Closed :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->ClosedDate }}</p>
+                </div>
             </div>
             <div class="form-group row mb-0">
-                <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Site Concerned :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">
-                        @if($data->SiteConcerned == 1) 
-                            WHI Head Office
-                        @elseif ($data->SiteConcerned == 2)
-                            WHI Carmona
-                        @elseif ($data->SiteConcerned == 3)
-                            MRDC
-                        @elseif ($data->SiteConcerned == 4)
-                            CCC Carmen
-                        @elseif ($data->SiteConcerned == 5)
-                            PBI Canlubang
-                        @else 
-                            International Warehouse
-                        @endif
-                    </p>
-                </div>
-                <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Noted By:</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ optional($data->approved_by)->full_name }}</p>
-                </div>
+                
             </div>
             <div class="form-group row mb-3">
                 <div class="col-sm-3 col-md-2 text-right">
@@ -340,20 +358,7 @@
                 </div>
             </div> 
             <div class="form-group row mb-3">
-                <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Attachments :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-6">
-                    <p class="m-0">
-                        @foreach ($data->files as $key => $file)
-                            @php
-                                $filePath = asset('storage/' . $file->Path); 
-                            @endphp
-                                {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a>
-                                <br>
-                        @endforeach
-                    </p>
-                </div>
+                
             </div> 
             <div class="row">
                 <div class="col-md-12">
@@ -570,7 +575,27 @@
                             <p class="m-0">{{ optional($data->ccsales->first())->SalesRemarks }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Attachments :</b></p>
+                            <p class="m-0"><b>Customer Attachments :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">
+                                @foreach ($data->files as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path); 
+                                    @endphp
+                                        {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a>
+                                        <br>
+                                @endforeach
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 col-md-2 text-right">
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                        </div>
+                       <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Sales Attachments :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">
@@ -584,6 +609,7 @@
                             </p>
                         </div>
                     </div>
+                    
                     <!-- <div class="row mb-3">
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Customer Remarks :</b></p>
@@ -598,10 +624,10 @@
                     </div>
                     <div class=" row mb-0">
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Immediate Action :</b></p>
+                            <p class="m-0"><b>Action Responsible :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ImmediateAction }}</p>
+                            <p class="m-0">{{ optional($data->action_responsible)->full_name }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Objective Evidence :</b></p>
@@ -612,6 +638,14 @@
                     </div>
                     <div class=" row mb-0">
                         <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Immediate Action :</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ImmediateAction }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"> <b>Action Date :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
@@ -619,17 +653,9 @@
                             <p class="m-0">{{ $data->ActionDate }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Action Responsible :</b></p>
+                            <p class="m-0"><b>Investigation :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ optional($data->action_responsible)->full_name }}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Investigation:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-9">
                             <p class="m-0">{{ $data->Investigation }}</p>
                         </div>
                     </div>
@@ -640,7 +666,7 @@
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">{{ $data->CorrectiveAction }}</p>
                         </div>
-                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Objective Evidence :</b></p></div>
+                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Action Objective Evidence :</b></p></div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">{{ $data->ActionObjectiveEvidence }}</p>
                         </div>
@@ -999,7 +1025,7 @@
                                 accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
-                        @if($data->Claims != null || $data->Shipment != null)
+                        {{-- @if($data->Claims != null || $data->Shipment != null) --}}
                             <div class="col-lg-6">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="IsVerified" value="1" id="flexCheckDefault" {{ $data->IsVerified == 1 ? 'checked' : '' }}>
@@ -1008,7 +1034,7 @@
                                     </label>
                                 </div>
                             </div>
-                        @endif
+                        {{-- @endif --}}
                     </div>
                     <div class="modal-footer mt-3">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
@@ -1150,6 +1176,40 @@
                     if (response.success) {
                         Swal.fire({
                             title: "Noted",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            customClass: 'swal-wide',
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                }
+            });
+        });
+
+        $('.validityBtn').on('click', function (e) {
+            e.preventDefault(); 
+
+            var btn = $(this);
+            if (btn.data('clicked')) {
+                return;
+            }
+            btn.data('clicked', true);
+            btn.prop('disabled', true).text('Processing...');
+
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action'); 
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: form.serialize(), 
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Validity Updated",
                             text: response.message,
                             icon: "success",
                             showConfirmButton: false,

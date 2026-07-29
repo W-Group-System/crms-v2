@@ -10,7 +10,7 @@ class CustomerComplaint2 extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     protected $table = "customercomplaint";
     protected $fillable = [
-        'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status', 'Progress','IsVerified'
+        'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status', 'Progress','IsVerified','validity'
     ];
 
     public function concerned() 

@@ -110,12 +110,17 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!-- <div class="col-md-6">
+                                        <div class="col-md-6"> 
                                             <div class="form-group">
-                                                <label class="label">Attachments</label>
-                                                <input type="file" class="form-control attachments" name="Path[]" id="Path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                                                <label class="label">Country</label>
+                                                <select class="form-control js-example-basic-single" name="ClientCountryId" id="ClientCountryId" title="Select Country">
+                                                    <option value="" disabled selected>Select Country</option>
+                                                    @foreach($countries as $data)
+                                                        <option value="{{ $data->id }}" >{{ $data->Name }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                        </div> -->
+                                        </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="label">Attachments</label>
@@ -158,12 +163,12 @@
                                                 <input type="text" class="form-control" name="CompanyName" id="CompanyName" placeholder="Enter Company Name" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-12"> 
+                                        {{-- <div class="col-md-12"> 
                                             <div class="form-group">
                                                 <label class="label">Address</label>
                                                 <input type="text" class="form-control" name="Address" id="Address" placeholder="Enter Address">
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="label">Email Address</label>

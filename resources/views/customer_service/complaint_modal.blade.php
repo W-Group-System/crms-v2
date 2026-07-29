@@ -1,4 +1,4 @@
-<div class="modal fade" id="complaint{{$data->id}}">
+<div class="modal fade" id="complaint{{$data->id}}" data-backdrop="static" data-keyboard="false">
     <link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
     <div class="modal-dialog modal-lg">
@@ -78,7 +78,7 @@
                                     <td>S/C No.</td>
                                     <td>SO No.</td>
                                     <td>Quantity</td>
-                                    <td>Lot No.</td>
+                                    <td>Lot No. (optional)</td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces">1.1 Physical Hazard (contamination of product by unspecified compound e.g. hard plastics, metal flakes, rust, etc.)</td>
@@ -314,7 +314,11 @@
             function updateInputs() {
                 inputs.forEach(input => {
                     input.disabled = !checkbox.checked;
-                    input.required = checkbox.checked;
+                    if (input.name.includes('LotNo')) {
+                        input.required = false;
+                    } else {
+                        input.required = checkbox.checked;
+                    }
                 });
             }
 
