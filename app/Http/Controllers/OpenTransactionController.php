@@ -267,10 +267,21 @@ class OpenTransactionController extends Controller
 
         $crr = CustomerRequirement::where('Status', 10)
             ->where(function($q)use($user) {
-                $q->where('PrimarySalesPersonId', $user->id)
-                    ->orWhere('SecondarySalesPersonId', $user->id)
-                    ->orWhere('PrimarySalesPersonId', $user->user_id)
-                    ->orWhere('SecondarySalesPersonId', $user->user_id);
+                // $q->where('PrimarySalesPersonId', $user->id)
+                //     ->orWhere('SecondarySalesPersonId', $user->id)
+                //     ->orWhere('PrimarySalesPersonId', $user->user_id)
+                //     ->orWhere('SecondarySalesPersonId', $user->user_id);
+                $q->where(function ($query) use ($user) {
+                    if (!is_null($user->id)) {
+                        $query->where('PrimarySalesPersonId', $user->id)
+                            ->orWhere('SecondarySalesPersonId', $user->id);
+                    }
+
+                    if (!is_null($user->user_id)) {
+                        $query->orWhere('PrimarySalesPersonId', $user->user_id)
+                            ->orWhere('SecondarySalesPersonId', $user->user_id);
+                    }
+                });
             })
             ->where(function($q)use($search) {
                 $q->where('CrrNumber', 'LIKE', '%'.$search.'%')
@@ -295,10 +306,21 @@ class OpenTransactionController extends Controller
         
         $rpe = RequestProductEvaluation::where('Status', 10)
             ->where(function($q)use($user) {
-                $q->where('PrimarySalesPersonId', $user->id)
-                    ->orWhere('SecondarySalesPersonId', $user->id)
-                    ->orWhere('PrimarySalesPersonId', $user->user_id)
-                    ->orWhere('SecondarySalesPersonId', $user->user_id);
+                // $q->where('PrimarySalesPersonId', $user->id)
+                //     ->orWhere('SecondarySalesPersonId', $user->id)
+                //     ->orWhere('PrimarySalesPersonId', $user->user_id)
+                //     ->orWhere('SecondarySalesPersonId', $user->user_id);
+                $q->where(function ($query) use ($user) {
+    if (!is_null($user->id)) {
+        $query->where('PrimarySalesPersonId', $user->id)
+              ->orWhere('SecondarySalesPersonId', $user->id);
+    }
+
+    if (!is_null($user->user_id)) {
+        $query->orWhere('PrimarySalesPersonId', $user->user_id)
+              ->orWhere('SecondarySalesPersonId', $user->user_id);
+    }
+});
             })
             ->where(function($q)use($search) {
                 $q->where('RpeNumber', 'LIKE', '%'.$search.'%')
@@ -323,10 +345,21 @@ class OpenTransactionController extends Controller
 
         $srf = SampleRequest::where('Status', 10)
             ->where(function($q)use($user) {
-                $q->where('PrimarySalesPersonId', $user->id)
-                    ->orWhere('SecondarySalesPersonId', $user->id)
-                    ->orWhere('PrimarySalesPersonId', $user->user_id)
-                    ->orWhere('SecondarySalesPersonId', $user->user_id);
+                // $q->where('PrimarySalesPersonId', $user->id)
+                //     ->orWhere('SecondarySalesPersonId', $user->id)
+                //     ->orWhere('PrimarySalesPersonId', $user->user_id)
+                //     ->orWhere('SecondarySalesPersonId', $user->user_id);
+                $q->where(function ($query) use ($user) {
+    if (!is_null($user->id)) {
+        $query->where('PrimarySalesPersonId', $user->id)
+              ->orWhere('SecondarySalesPersonId', $user->id);
+    }
+
+    if (!is_null($user->user_id)) {
+        $query->orWhere('PrimarySalesPersonId', $user->user_id)
+              ->orWhere('SecondarySalesPersonId', $user->user_id);
+    }
+});
             })
             ->where(function($q)use($search) {
                 $q->where('SrfNumber', 'LIKE', '%'.$search.'%')
@@ -352,10 +385,21 @@ class OpenTransactionController extends Controller
         
         $prf = PriceMonitoring::where('Status', 10)
             ->where(function($q)use($user) {
-                $q->where('PrimarySalesPersonId', $user->id)
-                    ->orWhere('SecondarySalesPersonId', $user->id)
-                    ->orWhere('PrimarySalesPersonId', $user->user_id)
-                    ->orWhere('SecondarySalesPersonId', $user->user_id);
+                // $q->where('PrimarySalesPersonId', $user->id)
+                //     ->orWhere('SecondarySalesPersonId', $user->id)
+                //     ->orWhere('PrimarySalesPersonId', $user->user_id)
+                //     ->orWhere('SecondarySalesPersonId', $user->user_id);
+                $q->where(function ($query) use ($user) {
+    if (!is_null($user->id)) {
+        $query->where('PrimarySalesPersonId', $user->id)
+              ->orWhere('SecondarySalesPersonId', $user->id);
+    }
+
+    if (!is_null($user->user_id)) {
+        $query->orWhere('PrimarySalesPersonId', $user->user_id)
+              ->orWhere('SecondarySalesPersonId', $user->user_id);
+    }
+});
             })
             ->where(function($q)use($search) {
                 $q->where('PrfNumber', 'LIKE', '%'.$search.'%')
