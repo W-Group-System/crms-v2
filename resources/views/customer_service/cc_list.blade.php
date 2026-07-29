@@ -1,6 +1,8 @@
 @extends('layouts.header')
 @section('title', 'Customer Complaint - CRMS')
 @section('content')
+<link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card border border-1 border-primary rounded-0">
         <div class="card-header bg-primary">
@@ -21,12 +23,19 @@
                     <button type="submit" class="btn btn-sm btn-primary">Filter Status</button>
                 </form>
             </div>
-            <div class="mb-3">
-                <form method="GET" action="{{url('customer_complaint_export')}}" class="d-inline-block">
-                    <input type="hidden" name="open" value="{{$open}}">
-                    <input type="hidden" name="close" value="{{$close}}">
-                    <button type="submit" class="btn btn-outline-success">Export</button>
+            <div class="mb-3 d-flex gap-2">
+                <form method="GET" action="{{ url('customer_complaint_export') }}">
+                    <input type="hidden" name="open" value="{{ $open }}">
+                    <input type="hidden" name="close" value="{{ $close }}">
+                    <button type="submit" class="btn btn-outline-success">
+                        Export
+                    </button>
                 </form>
+                @if ($roleType == "LS" || $roleType == "IS")
+                    <button type="submit" class="btn btn-outline-primary" data-toggle="modal" data-target="#complaintModal">
+                        Add New
+                    </button>
+                @endif
             </div>
             <div class="row">
                 <div class="col-lg-6">
@@ -125,10 +134,202 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="complaintModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Complaint </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form_complaint" method="POST" enctype="multipart/form-data" onsubmit="show()">
+                    @csrf
+                    <input type="hidden" name="Status" value="10">
+                    <input type="hidden" name="isInternal" value="1">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="label">Customer Name</label>
+                                <input type="text" class="form-control" name="ContactName" id="ContactName" placeholder="Enter Customer Name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6"> 
+                            <div class="form-group">
+                                <label class="label">Company Name</label>
+                                <input type="text" class="form-control" name="CompanyName" id="CompanyName" placeholder="Enter Company Name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="label">Email Address</label>
+                                <input type="email" class="form-control" name="Email" id="Email" placeholder="Enter Email Address" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="label">Telephone</label>
+                                <input type="text" class="form-control" name="Telephone" id="Telephone" placeholder="Enter Telephone">
+                            </div>
+                        </div>
+                        <div class="col-md-6"> 
+                            <div class="form-group">
+                                <label class="label">Country</label>
+                                <select class="form-control js-example-basic-single" name="Country" id="Country" title="Select Country">
+                                    <option value="" disabled selected>Select Country</option>
+                                    @foreach($countries as $data)
+                                        <option value="{{ $data->id }}" >{{ $data->Name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="label">Attachments</label>
+                                <input
+                                    type="file"
+                                    class="filepond"
+                                    name="Path[]"
+                                    id="Path2"
+                                    multiple
+                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="label" for="#">Customer Remarks</label>
+                                <textarea type="text" class="form-control" name="CustomerRemarks" id="CustomerRemarks" placeholder="Enter Customer Remarks" rows="5" required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12" align="right">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     .text-danger-bold {
         font-weight: bold;
     }
 </style>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+<script>
+    var roleType = "{{ $roleType }}";
+    var url = "";
+    if (roleType == 'LS' ) {
+        url = "{{ route('customer_complaint2_ls.store') }}";
+    } 
+    if (roleType == 'IS' ) {
+        url = "{{ route('customer_complaint2_is.store') }}";
+    }
+    
+    $('#form_complaint').on('submit', function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+        var submitBtn = $("button[type='submit']");
+        
+        // **Disable the button and show loading**
+        submitBtn.prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> Submitting...');
+
+        $.ajax({
+            url: url,
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Display a Swal success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Saved',
+                        text: response.success,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then((result) => {
+                        $('#form_complaint')[0].reset();
+                        location.reload();
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again!',
+                });
+            },
+            complete: function() {
+                // **Re-enable the button after request is complete**
+                submitBtn.prop("disabled", false).html('Submit');
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Register plugins
+        FilePond.registerPlugin(
+            // FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize,
+            FilePondPluginImagePreview
+        );
+
+        // Create FilePond instance
+        const pond = FilePond.create(document.querySelector('#Path'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+
+            server: {
+                process: {
+                    url: '{{ url("/upload-temp") }}',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    onload: (response) => {
+                        // return the file name only (so it becomes the Path[] value)
+                        return JSON.parse(response).id;
+                    }
+                },
+                revert: {
+                    url: '{{ url("/upload-revert") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
+
+        const pond2 = FilePond.create(document.querySelector('#Path2'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+
+            server: {
+                process: {
+                    url: '{{ url("/upload-temp-cc") }}',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    onload: (response) => {
+                        // return the file name only (so it becomes the Path[] value)
+                        return JSON.parse(response).id;
+                    }
+                },
+                revert: {
+                    url: '{{ url("/upload-revert-cc") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
+    });
+</script>
 @endsection

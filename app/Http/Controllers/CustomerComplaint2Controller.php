@@ -177,6 +177,7 @@ class CustomerComplaint2Controller extends Controller
             return response()->json($data);
         } else {
             $data = $customerComplaint->paginate($entries);
+            $countries = Country::get();
             return view('customer_service.cc_list', [
                 'search' => $search,
                 'data' => $data,
@@ -185,7 +186,9 @@ class CustomerComplaint2Controller extends Controller
                 'fetchAll' => $fetchAll,
                 'entries' => $entries,
                 'newCcNo' => $newCcNo,
-                'progress' => $progress
+                'progress' => $progress,
+                'countries' => $countries,
+                'roleType' => $role->type,
             ]);
         }
     }
@@ -231,12 +234,13 @@ class CustomerComplaint2Controller extends Controller
     {
         $year = date('y');
         $ClientCountryId = $request->Country??"";
+        $isCreatedInternal = isset($request->isInternal) && $request->isInternal == "1"?true:false;
         $type = "";
         if ($request->is('new_customer_complaint2_is')) {
             $type = 'IS';
         } elseif ($request->is('new_customer_complaint2_ls')) {
             $type = 'LS';
-        } 
+        }
         $last = CustomerComplaint2::where('CcNumber', 'LIKE', "%CCF-$type-%")
             ->orderBy('id', 'desc')
             ->first();
@@ -322,11 +326,12 @@ class CustomerComplaint2Controller extends Controller
             // Send to CC recipients WITH button
             if (!empty($recipients)) {
                 // Send to CC recipients WITHOUT button
-
-                Mail::to($customerComplaint['Email'])
-                    ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
+                if (!$isCreatedInternal) {
+                    Mail::to($customerComplaint['Email'])
+                        ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
+                }
                 Mail::to($recipients)
-                    ->send(new CustomerComplaintMail($customerComplaint, $attachments, true, true));
+                ->send(new CustomerComplaintMail($customerComplaint, $attachments, true, true));   
             }
             
             
