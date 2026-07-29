@@ -111,18 +111,36 @@ class DashboardController extends Controller
         // Activities
         // Get the count of open activities
         $openActivitiesCount = Activity::where(function($query) use ($userId, $userByUser) {
-            $query->where('PrimaryResponsibleUserId', $userId)
-                ->orWhere('SecondaryResponsibleUserId', $userId)
-                ->orWhere('PrimaryResponsibleUserId', $userByUser)
-                ->orWhere('SecondaryResponsibleUserId', $userByUser);
+            // $query->where('PrimaryResponsibleUserId', $userId)
+            //     ->orWhere('SecondaryResponsibleUserId', $userId)
+            //     ->orWhere('PrimaryResponsibleUserId', $userByUser)
+            //     ->orWhere('SecondaryResponsibleUserId', $userByUser);
+            if ($userId) {
+                $query->where('PrimaryResponsibleUserId', $userId)
+                    ->orWhere('SecondaryResponsibleUserId', $userId);
+            }
+
+            if ($userByUser) {
+                $query->orWhere('PrimaryResponsibleUserId', $userByUser)
+                    ->orWhere('SecondaryResponsibleUserId', $userByUser);
+            }
         })->where('status', '10')->count();
 
         // Get the count of closed activities
         $closedActivitiesCount = Activity::where(function($query) use ($userId, $userByUser) {
-            $query->where('PrimaryResponsibleUserId', $userId)
-                ->orWhere('SecondaryResponsibleUserId', $userId)
-                ->orWhere('PrimaryResponsibleUserId', $userByUser)
-                ->orWhere('SecondaryResponsibleUserId', $userByUser);
+            // $query->where('PrimaryResponsibleUserId', $userId)
+            //     ->orWhere('SecondaryResponsibleUserId', $userId)
+            //     ->orWhere('PrimaryResponsibleUserId', $userByUser)
+            //     ->orWhere('SecondaryResponsibleUserId', $userByUser);
+            if ($userId) {
+                $query->where('PrimaryResponsibleUserId', $userId)
+                    ->orWhere('SecondaryResponsibleUserId', $userId);
+            }
+
+            if ($userByUser) {
+                $query->orWhere('PrimaryResponsibleUserId', $userByUser)
+                    ->orWhere('SecondaryResponsibleUserId', $userByUser);
+            }
         })->where('status', '20')->count();
 
         // Total activities
@@ -557,10 +575,19 @@ class DashboardController extends Controller
         $salesCrrOpen = CustomerRequirement::where('Status', '10')
             ->where(function($query) use ($userId, $userByUser) {
                 $query->where(function($query) use ($userId, $userByUser) {
-                    $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('SecondarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser)
-                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                    // $query->where('PrimarySalesPersonId', $userId)
+                    //     ->orWhere('SecondarySalesPersonId', $userId)
+                    //     ->orWhere('PrimarySalesPersonId', $userByUser)
+                    //     ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userId) {
+                        $query->where('PrimarySalesPersonId', $userId)
+                            ->orWhere('SecondarySalesPersonId', $userId);
+                    }
+
+                    if ($userByUser) {
+                        $query->orWhere('PrimarySalesPersonId', $userByUser)
+                            ->orWhere('SecondarySalesPersonId', $userByUser);
+                    }
                 });
             })
             ->count(); 
@@ -568,10 +595,19 @@ class DashboardController extends Controller
         $salesRpeOpen = RequestProductEvaluation::where('Status', '10')
             ->where(function($query) use ($userId, $userByUser) {
                 $query->where(function($query) use ($userId, $userByUser) {
-                    $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('SecondarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser)
-                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                    // $query->where('PrimarySalesPersonId', $userId)
+                    //     ->orWhere('SecondarySalesPersonId', $userId)
+                    //     ->orWhere('PrimarySalesPersonId', $userByUser)
+                    //     ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userId) {
+                        $query->where('PrimarySalesPersonId', $userId)
+                            ->orWhere('SecondarySalesPersonId', $userId);
+                    }
+
+                    if ($userByUser) {
+                        $query->orWhere('PrimarySalesPersonId', $userByUser)
+                            ->orWhere('SecondarySalesPersonId', $userByUser);
+                    }
                 });
             })
             ->count();
@@ -579,10 +615,19 @@ class DashboardController extends Controller
         $salesSrfOpen = SampleRequest::where('Status', '10')
             ->where(function($query) use ($userId, $userByUser) {
                 $query->where(function($query) use ($userId, $userByUser) {
-                    $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('SecondarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser)
-                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                    // $query->where('PrimarySalesPersonId', $userId)
+                    //     ->orWhere('SecondarySalesPersonId', $userId)
+                    //     ->orWhere('PrimarySalesPersonId', $userByUser)
+                    //     ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userId) {
+                        $query->where('PrimarySalesPersonId', $userId)
+                            ->orWhere('SecondarySalesPersonId', $userId);
+                    }
+
+                    if ($userByUser) {
+                        $query->orWhere('PrimarySalesPersonId', $userByUser)
+                            ->orWhere('SecondarySalesPersonId', $userByUser);
+                    }
                 });
             })
             ->count();
@@ -590,10 +635,19 @@ class DashboardController extends Controller
         $salesPrfOpen = PriceMonitoring::where('Status', '10')
             ->where(function($query) use ($userId, $userByUser) {
                 $query->where(function($query) use ($userId, $userByUser) {
-                    $query->where('PrimarySalesPersonId', $userId)
-                        ->orWhere('SecondarySalesPersonId', $userId)
-                        ->orWhere('PrimarySalesPersonId', $userByUser)
-                        ->orWhere('SecondarySalesPersonId', $userByUser);
+                    // $query->where('PrimarySalesPersonId', $userId)
+                    //     ->orWhere('SecondarySalesPersonId', $userId)
+                    //     ->orWhere('PrimarySalesPersonId', $userByUser)
+                    //     ->orWhere('SecondarySalesPersonId', $userByUser);
+                    if ($userId) {
+            $query->where('PrimarySalesPersonId', $userId)
+                  ->orWhere('SecondarySalesPersonId', $userId);
+        }
+
+        if ($userByUser) {
+            $query->orWhere('PrimarySalesPersonId', $userByUser)
+                  ->orWhere('SecondarySalesPersonId', $userByUser);
+        }
                 });
             })
             ->count();

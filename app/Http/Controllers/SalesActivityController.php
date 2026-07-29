@@ -19,10 +19,23 @@ class SalesActivityController extends Controller
         $entries = $request->entries;
 
         $activities = Activity::where(function($q)use($user) {
-                $q->where('PrimaryResponsibleUserId', $user->user_id)
-                    ->orWhere('SecondaryResponsibleUserId', $user->user_id)
-                    ->orWhere('PrimaryResponsibleUserId', $user->id)
-                    ->orWhere('SecondaryResponsibleUserId', $user->id);
+                // $q->where('PrimaryResponsibleUserId', $user->user_id)
+                //     ->orWhere('SecondaryResponsibleUserId', $user->user_id)
+                //     ->orWhere('PrimaryResponsibleUserId', $user->id)
+                //     ->orWhere('SecondaryResponsibleUserId', $user->id);
+                $q->where(function ($query) use ($user) {
+
+                        if (!is_null($user->user_id)) {
+                            $query->where('PrimaryResponsibleUserId', $user->user_id)
+                                ->orWhere('SecondaryResponsibleUserId', $user->user_id);
+                        }
+
+                        if (!is_null($user->id)) {
+                            $query->orWhere('PrimaryResponsibleUserId', $user->id)
+                                ->orWhere('SecondaryResponsibleUserId', $user->id);
+                        }
+
+                    });
                 })
                 ->when($search, function($searchQuery)use($search) {
                     $searchQuery->where('ActivityNumber', 'LIKE','%'.$search.'%')
