@@ -368,21 +368,11 @@ input[type="checkbox"] {
     </table>
     <div style="margin-bottom:10px;">
         <b>Site Concerned:</b>
-        <label style="margin-left:10px;">
-            <input type="checkbox" {{ $cc->SiteConcerned == 2 ? 'checked' : '' }}> WHI Carmona
-        </label>
-        <label style="margin-left:15px;">
-            <input type="checkbox" {{ $cc->SiteConcerned == 1 ? 'checked' : '' }}> WHI Head Office
-        </label>
-        <label style="margin-left:15px;">
-            <input type="checkbox" {{ $cc->SiteConcerned == 4 ? 'checked' : '' }}> CCC Carmen
-        </label>
-        <label style="margin-left:15px;">
-            <input type="checkbox" {{ $cc->SiteConcerned == 5 ? 'checked' : '' }}> PBI Canlubang
-        </label>
-        <label style="margin-left:15px;">
-            <input type="checkbox" {{ $cc->SiteConcerned == 6 ? 'checked' : '' }}> International Warehouse
-        </label>
+            &nbsp;&nbsp;<input type="checkbox" {{ $cc->SiteConcerned == 2 ? 'checked' : '' }}"> WHI Carmona
+            &nbsp;&nbsp;<input type="checkbox" {{ $cc->SiteConcerned == 1 ? 'checked' : '' }}> WHI Head Office
+            &nbsp;&nbsp;<input type="checkbox" {{ $cc->SiteConcerned == 4 ? 'checked' : '' }}> CCC Carmen
+            &nbsp;&nbsp;<input type="checkbox" {{ $cc->SiteConcerned == 5 ? 'checked' : '' }}> PBI Canlubang
+            &nbsp;&nbsp;<input type="checkbox" {{ $cc->SiteConcerned == 6 ? 'checked' : '' }}> International Warehouse
     </div>
     
     <table border="1" width="100%" cellspacing="0" cellpadding="4">
@@ -391,28 +381,24 @@ input[type="checkbox"] {
         </tr>
         <tr>
             <td width="50%" valign="top">
-                <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'Production' ? 'checked' : '' }}> Production</label><br><br>
-                <label><input type="checkbox" {{ in_array(optional($cc->concernedDept)->Name, ['QCD-WHI','QCD-PBI','QCD-MRDC','QCD-CCC']) ? 'checked' : '' }}> Quality Control</label><br><br>
+                <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'Production' ? 'checked' : '' }}> Production</label><br>
+                <label><input type="checkbox" {{ in_array(optional($cc->concernedDept)->Name, ['QCD-WHI','QCD-PBI','QCD-MRDC','QCD-CCC']) ? 'checked' : '' }}> Quality Control</label><br>
                 <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'Operations/Inventory Management' ? 'checked' : '' }}> Operations/ Inventory Management</label>
             </td>
             <td width="50%" valign="top">
-                <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'International Sales' ? 'checked' : '' }}> International Sales</label><br><br>
-                <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'Customer Service' ? 'checked' : '' }}> Customer Service</label><br><br>
-                <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'R&D' ? 'checked' : '' }}> Research and Development</label><br><br>
+                <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'International Sales' ? 'checked' : '' }}> International Sales</label><br>
+                <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'Customer Service' ? 'checked' : '' }}> Customer Service</label><br>
+                <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'R&D' ? 'checked' : '' }}> Research and Development</label><br>
                 <label><input type="checkbox" {{ optional($cc->concernedDept)->Name == 'Logistics' ? 'checked' : '' }}> Logistics</label>
             </td>
         </tr>
         <tr>
             <td colspan="2">
                 <b>For NCAR Issuance:</b>
-                <label style="margin-left:20px;">
-                    <input type="checkbox" {{ $cc->NcarIssuance == 1 ? 'checked' : '' }}>
+                    &nbsp;&nbsp;<input type="checkbox" {{ $cc->NcarIssuance == 1 ? 'checked' : '' }}>
                     Yes (NCAR No.: {{ $cc->IssuanceNo }})
-                </label>
-                <label style="margin-left:40px;">
-                    <input type="checkbox" {{ $cc->NcarIssuance != 1 ? 'checked' : '' }}>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" {{ $cc->NcarIssuance != 1 ? 'checked' : '' }}>
                     No
-                </label>
             </td>
         </tr>
     </table>
