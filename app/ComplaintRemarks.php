@@ -12,4 +12,9 @@ class ComplaintRemarks extends Model implements Auditable
     protected $table = "ccremarks";
     protected $fillable = ['CcId', 'Path', 'SalesRemarks', 'SalesRemarksBy'];
 
+    public function userRemarks()
+    {
+        return $this->hasOne(User::class,'id','SalesRemarksBy');
+    }
+
 }

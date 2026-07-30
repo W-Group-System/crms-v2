@@ -14,4 +14,9 @@ class TransactionRemarks extends Model
         'action_by',
         'remarks'
     ];
+
+    public function userRemarks()
+    {
+        return $this->hasOne(User::class,'id','action_by');
+    }
 }

@@ -111,4 +111,12 @@ class CustomerComplaint2 extends Model implements Auditable
     {
         return $this->hasMany(CcVerificationFile::class,'CcId');
     }
+    public function ccRemarks()
+    {
+        return $this->hasMany(ComplaintRemarks::class,'CcId','id');
+    }
+    public function ccHistoryRemarks()
+    {
+        return $this->hasMany(TransactionRemarks::class,'transaction_no','CcNumber');
+    }
 }
