@@ -661,23 +661,61 @@ class CustomerComplaint2Controller extends Controller
 
     public function noted(Request $request, $id)
     {   
-        $data = CustomerComplaint2::findOrFail($id);
-        $data->NotedBy = auth()->user()->id;
-        $data->DateNoted = now();
-        $data->Progress = 30;
-        $data->save();
+        $type = $request->type??"";
+        $message = "";
+        $action = "";
+        $isSuccess = false;
+        switch ($type) {
+            case 'noted':
+                $data = CustomerComplaint2::findOrFail($id);
+                $data->NotedBy = auth()->user()->id;
+                $data->DateNoted = now();
+                $data->Progress = 30;
+                $data->save();
+                $action = "NOTED BY";
+                $message = "Customer complaint has been successfully noted.";
+                $isSuccess = true;
+                break;
 
-        $transactionRemarks = TransactionRemarks::create([
-            'transaction_no' => $data->CcNumber,
-            'action' => 'NOTED BY',
-            'action_by' => Auth::user()->id,
-            'remarks' => $request->remarks
-        ]);
+            case 'approved':
+                $data = CustomerComplaint2::findOrFail($id);
+                $data->ApprovedBy = auth()->user()->id;
+                $data->Progress = 40;
+                $data->save();
 
+                $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
+                $attachments = CCFile::where('CCId', $data->id)->get();
+
+                if ($data->NcarIssuance == 1) {
+                    // Mail::to(['bpd@wgroup.com.ph'])
+                    Mail::to(['ict.engineer@wgroup.com.ph'])
+                    ->send(new AssignCcDepartmentMail($data, $attachments, false)); 
+                }
+
+                Mail::to($department->email)->send(new AssignCcDepartmentMail($data, $attachments, true));
+                $action = "NOTED BY";
+                $message = "Customer complaint has been successfully noted.";
+                $isSuccess = true;
+                break;
+            
+            default:
+                $message = "Failed to update customer complaint.";
+                break;
+        }
+        
+        if ($isSuccess) {
+            TransactionRemarks::create([
+                'transaction_no' => $data->CcNumber,
+                'action' => $action,
+                'action_by' => auth()->id(),
+                'remarks' => $request->remarks??""
+            ]);   
+        }
         return response()->json([
-            'success' => true,
-            'message' => 'Customer complaint has been successfully updated.'
+            'success' => $isSuccess,
+            'message' => $message
         ]);
+        
     }
 
     public function approved($id)
