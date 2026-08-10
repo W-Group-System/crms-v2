@@ -1,0 +1,165 @@
+<div class="modal fade" id="update{{$data->id}}" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
+
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Satisfaction</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="assignCustomerComplaint" method="POST" action="{{url('/assign_customer_satisfaction/'.$data->id)}}" enctype="multipart/form-data" onsubmit="show()">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Select Site Concerned</label>
+                                <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" required>
+                                    <option value="" disabled selected>Select Site Concerned</option>
+                                    <option value="1">WHI Head Office</option>
+                                    <option value="2">WHI Carmona</option>
+                                    <option value="3">MRDC</option>
+                                    <option value="4">CCC Carmen</option>
+                                    <option value="5">PBI Canlubang</option>
+                                    <option value="6">International Warehouse</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Select Department Concerned</label>
+                                <select class="form-control js-example-basic-single" name="Department" id="Department" required>
+                                    <option value="" disabled selected>Select Department Concerned</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Attachments</label>
+                                <input
+                                type="file"
+                                class="filepond"
+                                name="Path[]"
+                                id="Path4"
+                                multiple
+                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+
+        $('#QualityClass').on('change', function() {
+            var selectedValue = $(this).val(); 
+            if (selectedValue == "Product name") {
+                $('#pName').show(); 
+            } else {
+                $('#pName').hide(); 
+            }
+        });
+
+        $('#assignCustomerComplaint').on('submit', function (e) {
+            e.preventDefault(); 
+
+            var formData = new FormData(this); // Use FormData to handle file uploads
+            var actionUrl = $(this).attr('action');
+
+            $.ajax({
+                url: actionUrl,
+                method: 'POST',
+                data: formData,
+                processData: false, 
+                contentType: false, 
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Assigned",
+                            text: response.message,
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload(); 
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire("Error", "Something went wrong! Please try again.", "error");
+                }
+            });
+        });
+
+        $('#SiteConcerned').on('change', function () {
+            let siteId = $(this).val();
+
+            if (siteId) {
+                $.ajax({
+                    url: "{{ url('departments-by-site') }}/" + siteId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#Department').empty(); 
+                        $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
+
+                        $.each(data, function (key, department) {
+                            $('#Department').append('<option value="' + department.id + '">' + department.Name + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#Department').empty();
+                $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
+            }
+        });
+        
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Register plugins
+        FilePond.registerPlugin(
+            // FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize,
+            FilePondPluginImagePreview
+        );
+
+        // Create FilePond instance
+        FilePond.create(document.querySelector('#Path4'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+            server: {
+            process: {
+                url: '{{ url("/upload-temp-cc") }}',
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                // Return the serverId (filename) so FilePond stores it in Path[]
+                onload: (response) => {
+                try { return JSON.parse(response).id; } catch { return response; }
+                }
+            },
+                revert: {
+                    url: '{{ url("/upload-revert-cc") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
+    });
+</script>

@@ -62,6 +62,11 @@
                                 </button>
                             </form>
                         @endif
+                        @if($data->Department == NULL && $data->Progress == 20)
+                            <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Assign 
+                            </button>
+                        @endif
                     @endif
                     <!-- @if($data->NotedBy != NULL && auth()->user()->id == 15)
                         @if($data->Progress != 40)
@@ -100,8 +105,8 @@
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Concerned Department:</b></label>
                         <div class="col-sm-3">
-                            <!-- <label>{{ $data->concerned->Name ?? '' }}</label> -->
-                            <label>{{ $data->Department ?? '' }}</label>
+                            <label>{{ $data->concerned->Name ?? '' }}</label>
+                            {{-- <label>{{ $data->Department ?? '' }}</label> --}}
                         </div>
                         <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
                         <div class="col-sm-3">
@@ -227,6 +232,8 @@
         </div>
     </div>
 </div>
+
+@include('customer_service.update_satisfaction')
 
 <div class="modal fade" id="editNoted" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
