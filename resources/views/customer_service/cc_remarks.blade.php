@@ -12,6 +12,7 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
+                            <input type="hidden" name="type" id="type" value="{{ $data->Progress == 50 && $data->SiteConcerned != NULL?'noted':'approved' }}">
                             <div class="form-group">
                                 <label>Remarks</label>
                                 <textarea class="form-control" name="remarks" id="remarks" cols="30" rows="10"></textarea>
