@@ -37,6 +37,7 @@ Route::get('customer_complaint2', 'CustomerComplaint2Controller@index');
 Route::post('/new_customer_complaint2_is', 'CustomerComplaint2Controller@store')->name('customer_complaint2_is.store');
 Route::post('/new_customer_complaint2_ls', 'CustomerComplaint2Controller@store')->name('customer_complaint2_ls.store');
 
+
 Route::group(['middleware' => ['auth']], function() {
     Route::group(['middleware' => 'inactive_users'], function() {
         Route::get('/logout', 'Auth\LoginController@logout');

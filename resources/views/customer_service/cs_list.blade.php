@@ -3,6 +3,7 @@
 @section('content')
 <link href="{{ asset('css/filepond.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css">
+
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card border border-1 border-primary rounded-0">
         <div class="card-header bg-primary">

@@ -337,6 +337,7 @@ class CustomerSatisfactionController extends Controller
             ];
             $customerSatisfaction = CustomerSatisfaction::create($data);
 
+            
             $attachments = [];
 
             if ($request->has('Path') && is_array($request->Path)) {
