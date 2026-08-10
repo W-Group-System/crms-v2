@@ -298,7 +298,7 @@ class CustomerSatisfactionController extends Controller
     public function store(Request $request) 
     {
         $year = date('y');
-        $ClientCountryId = $request->Country??"";
+        $ClientCountryId = $request->ClientCountryId??"";
         $isCreatedInternal = isset($request->isInternal) && $request->isInternal == "1"?true:false;
         $type = "";
         if ($request->is('new_customer_satisfaction')) {
@@ -337,7 +337,7 @@ class CustomerSatisfactionController extends Controller
             ];
             $customerSatisfaction = CustomerSatisfaction::create($data);
 
-            
+
             $attachments = [];
 
             if ($request->has('Path') && is_array($request->Path)) {
