@@ -13,15 +13,18 @@ class CustomerSatisfactionMail extends Mailable
     public $customerSatisfaction;
     public $customer_attachments;
     public $showButton;
+    public $showCsNumber;
+
 
     /**
      * Create a new message instance.
      */
-    public function __construct($customerSatisfaction, $customer_attachments, $showButton = false)
+    public function __construct($customerSatisfaction, $customer_attachments, $showButton = false, $showCsNumber = false)
     {
         $this->customerSatisfaction = $customerSatisfaction;
         $this->customer_attachments = $customer_attachments;
         $this->showButton = $showButton;
+        $this->showCsNumber = $showCsNumber;
     }
 
     /**
@@ -46,7 +49,8 @@ class CustomerSatisfactionMail extends Mailable
                         'Email' => $this->customerSatisfaction['Email'],
                         'button_text' => 'Visit Customer Satisfaction',
                         'button_url' => url('/cs_list'),
-                        'showButton' => $this->showButton, // pass to view
+                        'showButton' => $this->showButton,
+                        'showCcNumber' => $this->showCsNumber
                     ]);
 
         // Check if attachments exist and attach them

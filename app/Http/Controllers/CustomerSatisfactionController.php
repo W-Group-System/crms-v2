@@ -138,7 +138,7 @@ class CustomerSatisfactionController extends Controller
         $entries = $request->input('number_of_entries', 10);
         $progress = $request->query('progress'); // Get the status from the query parameters
         $status = $request->query('status'); // Get the status from the query parameters
-
+        $category = IssueCategory::all();
         $userId = Auth::id(); 
         $userByUser = optional(Auth::user())->user_id;
         $allowedCountry = GetCountryListPerSalesAccountEmail(auth()->user()->email,optional($role)->type);
@@ -240,15 +240,19 @@ class CustomerSatisfactionController extends Controller
             return response()->json($data);
         } else {    
             $data = $customerSatisfaction->paginate($entries);
+            $countries = Country::get();
             return view('customer_service.cs_list', [
                 'search' => $search,
                 'data' => $data,
+                'category' => $category,
                 'open' => $open,
                 'close' => $close,
                 'fetchAll' => $fetchAll,
                 'entries' => $entries,
                 'newCsNo' => $newCsNo,
-                'progress' => $progress
+                'progress' => $progress,
+                'countries' => $countries,
+                'roleType' => $role->type,
             ]);
         }
     }
@@ -294,7 +298,8 @@ class CustomerSatisfactionController extends Controller
     public function store(Request $request) 
     {
         $year = date('y');
-        $ClientCountryId = $request->ClientCountryId??"";
+        $ClientCountryId = $request->Country??"";
+        $isCreatedInternal = isset($request->isInternal) && $request->isInternal == "1"?true:false;
         $type = "";
         if ($request->is('new_customer_satisfaction')) {
             $type = 'IS';
@@ -316,23 +321,24 @@ class CustomerSatisfactionController extends Controller
         
         try {
 
-             $customerSatisfaction = CustomerSatisfaction::create([
-                'CompanyName' => $request->CompanyName,
-                'CsNumber'    => $csNo,
-                'ContactName' => $request->ContactName,
-                'Concerned'   => $request->Concerned,
-                'Description' => $request->Description,
-                'Category'    => $request->Category,
-                'ContactNumber'=> $request->ContactNumber,
-                'Email'       => $request->Email,
-                'Status'      => '10',
-                'Progress'    => '10',
-                'CountryId'   => $ClientCountryId
-            ]);
+            $data = [
+                'CompanyName'    => $request->CompanyName,
+                'CsNumber'       => $csNo,
+                'ContactName'    => $request->ContactName,
+                'Concerned'      => $request->Concerned,
+                'Description'    => $request->Description,
+                'Category'       => $request->Category,
+                'ContactNumber'  => $request->ContactNumber,
+                'Email'          => $request->Email,
+                'Status'         => '10',
+                'Progress'       => '10',
+                'CountryId'      => $ClientCountryId,
+                'created_by'      => auth()->user()->id,
+            ];
+            $customerSatisfaction = CustomerSatisfaction::create($data);
 
             $attachments = [];
 
-            // 2. Attachments (moved from temp → cs_files)
             if ($request->has('Path') && is_array($request->Path)) {
                 foreach ($request->Path as $fileName) {
                     $tempPath = 'temp/' . $fileName;
@@ -379,10 +385,14 @@ class CustomerSatisfactionController extends Controller
             }
 
             if (!empty($recipients)) {
+                if (!$isCreatedInternal) {
+                    Mail::to($customerSatisfaction['Email'])
+                        ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
+                }
                 Mail::to($recipients)
-                    ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, true));
-                Mail::to([$customerSatisfaction['Email']]) 
-                    ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
+                    ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, true, true));
+                // Mail::to([$customerSatisfaction['Email']]) 
+                //     ->send(new CustomerSatisfactionMail($customerSatisfaction, $attachments, false));
             }
            
             DB::commit();
