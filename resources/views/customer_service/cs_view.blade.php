@@ -22,7 +22,7 @@
                             </form>
                         @endif
                         @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                            @if($data->ReceivedBy != NULL && $data->NotedBy == NULL)
+                            @if($data->ReceivedBy != NULL && $data->NotedBy == NULL && $data->Department != NULL)
                                 <!-- <form action="{{ url('cs_noted/' . $data->id) }}" class="d-inline-block" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-outline-success notedBtn">

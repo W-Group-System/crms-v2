@@ -467,7 +467,7 @@ class CustomerSatisfactionController extends Controller
         //     }
         // }
 
-        Mail::to($department->email)->send(new AssignDepartmentMail($data, $attachments));
+        // Mail::to($department->email)->send(new AssignDepartmentMail($data, $attachments));
 
         return response()->json([
             'success' => true,
@@ -515,15 +515,22 @@ class CustomerSatisfactionController extends Controller
 
     public function approved(Request $request, $id)
     {
-        $data = CustomerSatisfaction::findOrFail($id);
+        $data = CustomerSatisfaction::with(['concerned'])->findOrFail($id);
         $data->ApprovedBy = auth()->user()->id;
         $data->ApprovedDate = now();
         $data->Progress = 40;
         $data->save();
 
         $attachments = [];
-        
-        Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
+        $receivers = [
+            'audit@rico.com.ph',
+            'bpd@wgroup.com.ph'
+        ];
+
+        if (isset($data->concerned->email)) {
+            $receivers[] = $data->concerned->email;
+        }
+        Mail::to($receivers)
         // Mail::to(['ict.engineer@wgroup.com.ph', 'emmanuel.official0304@gmail.com'])
             ->send(new AcknowledgedMail($data, $attachments));
 
