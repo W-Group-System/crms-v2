@@ -252,7 +252,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name">Remarks</label>
-                                <textarea class="form-control" name="SalesRemarks" id="SalesRemarks" rows="5" required placeholder="Enter Sales Remarks"></textarea>
+                                <textarea class="form-control" name="SalesRemarks" id="SalesRemarks" rows="5" placeholder="Enter Sales Remarks"></textarea>
                             </div>
                         </div>
                         <div class="col-md-6">

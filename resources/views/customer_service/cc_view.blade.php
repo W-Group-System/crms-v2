@@ -73,13 +73,13 @@
                                 <i class="ti ti-pencil"></i>&nbsp;Assign 
                             </button>
                         @endif
-                        @if($data->getOriginal()["Progress"] == 80 || $data->getOriginal()["Progress"] = 60)
+                        {{-- @if($data->getOriginal()["Progress"] == 80 || $data->getOriginal()["Progress"] = 60)
                             @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null && $data->IsVerified != 1)
                                 <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                                     <i class="ti ti-pencil"></i>&nbsp;Verification
                                 </button>
                             @endif
-                        @endif
+                        @endif --}}
                          @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type)
                         @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
                             @if ($data->ApprovedBy != null)
@@ -1113,8 +1113,17 @@
 @include('customer_service.cc_remarks')
 @if(session('openModalId'))
     <script>
+        let siteConcerned = "{{ $data->SiteConcerned??'' }}";
+        let department = "{{$data->Department??'' }}";
+        let classOfComplaint = "{{ $data->QualityClass??'' }}";
+        
         $(document).ready(function() {
             $('#update{{ session('openModalId') }}').modal('show');
+            $("#SiteConcerned").val(siteConcerned).trigger('change');
+            setTimeout(() => {
+                $("#Department").val(department).trigger('change');
+            }, 500);
+            $("#QualityClass").val(classOfComplaint).trigger('change');
         });
     </script>
 @endif
