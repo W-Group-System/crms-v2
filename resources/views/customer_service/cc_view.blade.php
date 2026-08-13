@@ -41,7 +41,7 @@
                                 </button>
                             </form>
                         @endif
-                         @if($data->Progress == 80 || $data->Progress = 60)
+                         @if($data->getOriginal()["Progress"] == 80 || $data->getOriginal()["Progress"] = 60)
                             @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null && $data->IsVerified != 1)
                                 <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                                     <i class="ti ti-pencil"></i>&nbsp;Verification
@@ -50,7 +50,7 @@
                         @endif
                     @endif
                     @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                        @if($data->Progress == 50 && $data->SiteConcerned != NULL)
+                        @if($data->getOriginal()["Progress"] == 50 && $data->SiteConcerned != NULL)
                             <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
                                 <i class="ti ti-check"></i>&nbsp;Noted By
                             </button>
@@ -58,22 +58,22 @@
                     @endif
                     {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
                     @if($data->ReceivedBy == auth()->user()->id)
-                        @if($data->Progress == 20)
+                        @if($data->getOriginal()["Progress"] == 20)
                             <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
                             <i class="ti ti-pencil"></i>&nbsp;Complaint 
                             </button>
                         @endif
-                        @if($data->Progress !== 20 && $data->Progress !==70)
+                        @if($data->getOriginal()["Progress"] !== 20 && $data->getOriginal()["Progress"] !==70)
                             <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
                             <i class="ti ti-pencil"></i>&nbsp;Update 
                             </button>
                         @endif
-                        @if($data->Department == NULL && $data->Progress == 50)
+                        @if($data->Department == NULL && $data->getOriginal()["Progress"] == 50)
                             <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
                                 <i class="ti ti-pencil"></i>&nbsp;Assign 
                             </button>
                         @endif
-                        @if($data->Progress == 80 || $data->Progress = 60)
+                        @if($data->getOriginal()["Progress"] == 80 || $data->getOriginal()["Progress"] = 60)
                             @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null && $data->IsVerified != 1)
                                 <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                                     <i class="ti ti-pencil"></i>&nbsp;Verification
@@ -91,7 +91,7 @@
                         @endif
                     @endif
                     @endif
-                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60 && $data->IsVerified == 1)
+                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->getOriginal()["Progress"] == 60 && $data->IsVerified == 1)
                         <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-danger closeBtn">
@@ -99,7 +99,7 @@
                             </button>
                         </form>
                     @endif
-                    @if($data->Progress == 30 && $data->NotedBy != NULL)
+                    @if($data->getOriginal()["Progress"] == 30 && $data->NotedBy != NULL)
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id))
                             <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
                                 <i class="ti ti-check"></i>&nbsp;Noted By
@@ -111,7 +111,7 @@
                             <i class="ti ti-pencil"></i>&nbsp;Investigation
                         </button>
                     @endif -->
-                    @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type && ($data->Progress == 40 || $data->Progress == 80))
+                    @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type && ($data->getOriginal()["Progress"] == 40 || $data->getOriginal()["Progress"] == 80))
                         @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
                             <button type="button" class="btn btn-outline-warning" id="updateCc" 
                                     data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
@@ -120,7 +120,7 @@
                         @endif
                     @endif
 
-                    <!-- @if($data->Department == auth()->user()->role->type && $data->Progress == 40 || $data->Progress == 80)
+                    <!-- @if($data->Department == auth()->user()->role->type && $data->getOriginal()["Progress"] == 40 || $data->getOriginal()["Progress"] == 80)
                         @if($data->Investigation != null || $data->CorrectiveAction != null || $data->ActionObjectiveEvidence != null)
                             <button type="button" class="btn btn-outline-warning" id="updateCc" 
                                     data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
@@ -128,7 +128,7 @@
                             </button>
                         @endif
                     @endif -->
-                    @if($data->Progress == 60 || $data->Progress == 70)
+                    @if($data->getOriginal()["Progress"] == 60 || $data->getOriginal()["Progress"] == 70)
                         <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
                             <i class="ti ti-printer btn-icon-prepend"></i>
                             Print
@@ -162,7 +162,7 @@
                     </form>
                 @endif -->
                 <!-- @if($data->NotedBy != NULL && auth()->user()->id == 15)
-                    @if($data->Progress != 40)
+                    @if($data->getOriginal()["Progress"] != 40)
                     <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-outline-success approvedBtn">
