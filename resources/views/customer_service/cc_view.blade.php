@@ -91,7 +91,7 @@
                         @endif
                     @endif
                     @endif
-                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->getOriginal()["Progress"] == 60 && $data->IsVerified == 1)
+                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->getOriginal()["Progress"] == 50 && $data->IsVerified == 1)
                         <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-danger closeBtn">
