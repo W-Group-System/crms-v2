@@ -1090,7 +1090,7 @@
                         {{-- @if($data->Claims != null || $data->Shipment != null) --}}
                             <div class="col-lg-6">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="IsVerified" value="1" id="flexCheckDefault" {{ $data->IsVerified == 1 ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="checkbox" name="IsVerified" value="1" id="flexCheckDefault" {{ $data->IsVerified == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexCheckDefault">
                                         Is Verified?
                                     </label>
