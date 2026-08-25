@@ -114,7 +114,7 @@ class CustomerSatisfactionExport implements FromCollection, WithHeadings, WithMa
                     $row->CompanyName,
                     $row->ContactName,
                     $row->concernedDept->Name ?? '',
-                    $row->CustomerRemarks,
+                    $row->Description,
                     optional($row->users)->full_name,
                     $status,
                 ];
