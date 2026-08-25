@@ -113,7 +113,7 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                     $row->created_at,
                     $row->CompanyName,
                     $row->ContactName,
-                    $row->concernedDept->Name,
+                    $row->concernedDept->Name ?? 'N/A',
                     $row->CustomerRemarks,
                     optional($row->users)->full_name,
                     $status,
