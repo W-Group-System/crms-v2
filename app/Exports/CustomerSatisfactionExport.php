@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\CustomerComplaint2;
+use App\CustomerSatisfaction;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class CustomerComplaintExport implements FromCollection, WithHeadings, WithMapping
+class CustomerSatisfactionExport implements FromCollection, WithHeadings, WithMapping
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -28,7 +28,7 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
 
         if((auth()->user()->role->type == "IS"))
         {
-            return CustomerComplaint2::when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
+            return CustomerSatisfaction::when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
                     $query->whereIn('Status', [$openStatus, $closeStatus]);
                 })
                 ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
@@ -37,13 +37,13 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                 ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
                     $query->where('Status', $closeStatus);
                 })
-                ->where('CcNumber', 'LIKE', '%CCF-IS%')
+                ->where('CsNumber', 'LIKE', '%CSR-IS%')
                 ->latest()
                 ->get();
         }
         elseif((auth()->user()->role->type == "LS"))
         {
-            return CustomerComplaint2::when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
+            return CustomerSatisfaction::when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
                     $query->whereIn('Status', [$openStatus, $closeStatus]);
                 })
                 ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
@@ -52,13 +52,13 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                 ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
                     $query->where('Status', $closeStatus);
                 })
-                ->where('CcNumber', 'LIKE', '%CCF-LS%')
+                ->where('CsNumber', 'LIKE', '%CSR-LS%')
                 ->latest()
                 ->get();
         }
         else
         {
-            return CustomerComplaint2::when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
+            return CustomerSatisfaction::when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
                     $query->whereIn('Status', [$openStatus, $closeStatus]);
                 })
                 ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
@@ -75,7 +75,7 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
     public function headings(): array
     {
         return [
-            'CCF #',
+            'CSR #',
             'Date Complaint',
             'Company Name',
             'Contact Name',
@@ -109,7 +109,7 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
         //  $ccRows[];
 
          $ccRows = [
-                    $row->CcNumber,
+                    $row->CsNumber,
                     $row->created_at,
                     $row->CompanyName,
                     $row->ContactName,
