@@ -600,6 +600,6 @@ class CustomerSatisfactionController extends Controller
 
     public function export(Request $request)
     {
-        return Excel::download(new CustomerSatisfactionExport($request->open, $request->close,), 'Customer_Satisfaction.xlsx');
+        return Excel::download(new CustomerSatisfactionExport($request->open, $request->close,), 'Customer_Satisfactions.xlsx');
     }
 }
