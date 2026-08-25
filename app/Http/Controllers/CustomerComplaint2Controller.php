@@ -265,7 +265,7 @@ class CustomerComplaint2Controller extends Controller
                 'CustomerRemarks' => $request->CustomerRemarks,
                 'Status' => '10',
                 'Progress' => '10',
-                'created_by'      => auth()->user()->id,
+                'created_by' => auth()->id(),
             ]);
 
             $attachments = [];

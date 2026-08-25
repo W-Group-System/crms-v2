@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CustomerSatisfactionExport;
+
+
 
 
 class CustomerSatisfactionController extends Controller
@@ -333,7 +337,7 @@ class CustomerSatisfactionController extends Controller
                 'Status'         => '10',
                 'Progress'       => '10',
                 'CountryId'      => $ClientCountryId,
-                'created_by'      => auth()->user()->id,
+                'created_by' => auth()->id(),
             ];
             $customerSatisfaction = CustomerSatisfaction::create($data);
 
@@ -592,5 +596,10 @@ class CustomerSatisfactionController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete file.'], 500);
         }
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new CustomerSatisfactionExport($request->open, $request->close,), 'Customer_Satisfaction.xlsx');
     }
 }

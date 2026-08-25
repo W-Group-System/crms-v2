@@ -447,6 +447,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('print_cs/{id}', 'CustomerSatisfactionController@printCs');
         Route::delete('delete_cs_files/{id}', 'CustomerSatisfactionController@delete')->name('delete_cs_files');
         Route::post('new_remarks/{id}','CustomerSatisfactionController@submitRemarks');
+        Route::get('customer_satisfaction_export', 'CustomerSatisfactionController@export');
+
     
         // Customer Complaint
         Route::get('/cc_list', 'CustomerComplaint2Controller@list')->name('customer_complaint.list');

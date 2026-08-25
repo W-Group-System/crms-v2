@@ -23,13 +23,13 @@
                 </form>
             </div>
             <div class="mb-3 d-flex gap-2">
-                {{-- <form method="GET" action="{{ url('customer_complaint_export') }}">
+                <form method="GET" action="{{ url('customer_satisfaction_export') }}">
                     <input type="hidden" name="open" value="{{ $open }}">
                     <input type="hidden" name="close" value="{{ $close }}">
                     <button type="submit" class="btn btn-outline-success">
                         Export
                     </button>
-                </form> --}}
+                </form>
                 @if ($roleType == "LS" || $roleType == "IS")
                     <button type="submit" class="btn btn-outline-primary" data-toggle="modal" data-target="#satisfactionModal">
                         Add New
