@@ -86,6 +86,7 @@
                             <th>Customer Remarks</th>
                             <th>Received By</th>
                             <th>Status</th>
+                            <th>Created By</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -102,6 +103,7 @@
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->concernedDept->Name ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->CustomerRemarks ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->users->full_name ?? 'N/A' }}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->createdBy->full_name ?? 'N/A' }}</td>
                                 <td>
                                     @if($cc_data->Status == 10)
                                         <div class="badge badge-success">Open</div>

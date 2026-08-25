@@ -74,4 +74,8 @@ class CustomerSatisfaction extends Model implements Auditable
     {
         return $this->belongsTo(ConcernDepartment::class, 'Department', 'id');
     }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
 }

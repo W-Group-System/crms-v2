@@ -10,7 +10,7 @@ class CustomerComplaint2 extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     protected $table = "customercomplaint";
     protected $fillable = [
-        'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status', 'Progress','IsVerified','Validity'
+        'CompanyName', 'CcNumber', 'ContactName', 'Email', 'Address', 'Country', 'Telephone', 'Moc', 'QualityClass', 'ProductName', 'Description', 'Currency', 'CustomerRemarks', 'SiteConcerned', 'Department', 'Status', 'Progress','IsVerified','Validity','created_by'
     ];
 
     public function concerned() 
@@ -118,5 +118,9 @@ class CustomerComplaint2 extends Model implements Auditable
     public function ccHistoryRemarks()
     {
         return $this->hasMany(TransactionRemarks::class,'transaction_no','CcNumber');
+    }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 }
