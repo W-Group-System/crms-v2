@@ -14,6 +14,13 @@ class RoleController extends Controller
     // List
     public function index(Request $request)
     {
+        // Fetch all roles
+        $rolesType = Role::whereNotNull('type')
+            ->where('type', '!=', '')
+            ->distinct()
+            ->pluck('type');
+        // End fetch roles
+
         $search = $request->input('search');
     
         $roles = Role::where(function ($query) use ($search) {
@@ -31,9 +38,12 @@ class RoleController extends Controller
         return view('roles.index', [
             'search' => $search,
             'roles' => $roles,
+            'rolesType' => $rolesType,
             'department' => $department,
             'entries' => $request->entries
         ]);
+        
+        // dd($rolesType);
     }
 
     // Create
@@ -69,6 +79,7 @@ class RoleController extends Controller
         $role->type = $request->type;
         $role->description = $request->description;
         $role->department_id = $request->department;
+        $role->type = $request->type;
         $role->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');

@@ -168,6 +168,18 @@
                         <label for="name">Description</label>
                         <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description" required>
                     </div>
+                    <!-- Role Type -->
+                    <div class="form-group">
+                        <label for="name">Type</label>
+                        <select class="form-control js-example-basic" name="type" required>
+                            <option disabled selected value="">-Select Type-</option>
+
+                            @foreach($rolesType as $type)
+                                <option value="{{ $type }}">{{ $type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- End role type -->
                     <div class="type-container">
                         {{-- @foreach ($collection as $item)
                             

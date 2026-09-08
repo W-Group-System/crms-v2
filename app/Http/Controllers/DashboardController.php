@@ -37,7 +37,7 @@ class DashboardController extends Controller
         } elseif ($role && $role->type == 'QCD-WHI' || $role->type == 'QCD-PBI' || $role->type == 'QCD-MRDC' || $role->type == 'QCD-CCC' || $role->type == 'Production') {
             return redirect('/dashboard-qcd');
         } elseif ($role && $role->type == 'PRD') {
-            return redirect('/dashboard-prd');
+            return redirect('/dashboard-prd');//
         } else {
             return redirect('/dashboard-qcd');
         }
