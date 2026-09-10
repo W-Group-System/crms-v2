@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Department;
 use App\Role;
+use App\TypeRole;
 use App\UserAccessModule;
 use Validator;
 use Illuminate\Http\Request;
@@ -15,10 +16,10 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         // Fetch all roles
-        $rolesType = Role::whereNotNull('type')
-            ->where('type', '!=', '')
+        $rolesType = TypeRole::whereNotNull('RoleType')
+            ->where('RoleType', '!=', '')
             ->distinct()
-            ->pluck('type');
+            ->pluck('RoleType');
         // End fetch roles
 
         $search = $request->input('search');
@@ -42,7 +43,6 @@ class RoleController extends Controller
             'department' => $department,
             'entries' => $request->entries
         ]);
-        
         // dd($rolesType);
     }
 

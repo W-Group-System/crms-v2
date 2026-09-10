@@ -112,6 +112,12 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('edit_role/{id}', 'RoleController@editRole');
         Route::post('activate/{id}', 'RoleController@activate');
         Route::post('deactivate/{id}', 'RoleController@deactivate');
+
+        // Type roles
+        Route::get('/types_role', 'TypeRoleController@index')->name('types_role.index');
+        Route::post('/add_type', 'TypeRoleController@store')->name('add_type');
+        Route::put('/update-type/{id}', 'TypeRoleController@update')->name('update_type');
+        Route::delete('/delete/{id}', 'TypeRoleController@destroy')->name('delete_type');
     
         // Department
         Route::get('/department', 'DepartmentController@index')->name('department.index');
