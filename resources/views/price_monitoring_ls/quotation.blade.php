@@ -180,7 +180,7 @@
                              <td> @if (strpos($prcieProduct->QuantityRequired, ',') !== false)
                             {{ $prcieProduct->QuantityRequired }}
                         @else
-                            {{ number_format($prcieProduct->QuantityRequired) }}
+                            {{ number_format((float) $prcieProduct->QuantityRequired) }}
                         @endif</td>
                          </tr>
                         @endforeach
@@ -228,7 +228,7 @@
                             <td> @if (strpos($prcieProduct->QuantityRequired, ',') !== false)
                             {{ $prcieProduct->QuantityRequired }}
                         @else
-                            {{ number_format($prcieProduct->QuantityRequired) }}
+                            {{ number_format((float) $prcieProduct->QuantityRequired) }}
                         @endif</td>
                         </tr>
                        @endforeach
