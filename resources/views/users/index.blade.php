@@ -136,11 +136,13 @@
                         <input type="text" class="form-control" name="email" placeholder="Enter Email Address" required>
                     </div>
                     <div class="form-group">
-                        <label>Role</label>
+                        <label>Role11</label>
                         <select class="form-control js-example-basic-single" name="role_id" style="position: relative !important" title="Select Role" required>
                             <option value="" disabled selected>Select Role</option>
                             @foreach($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->department->department_code .' - '. $role->name }}</option>
+                                <option value="{{ $role->id }}">
+                                    {{ $role->department->department_code . ' - ' . $role->name . ' (' . $role->description . ')' }}
+                                </option>
                             @endforeach
                         </select>
                     </div>

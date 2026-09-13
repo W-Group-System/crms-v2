@@ -13,38 +13,38 @@ use RealRashid\SweetAlert\Facades\Alert;
 class RoleController extends Controller
 {
     // List
-    public function index(Request $request)
-    {
-        // Fetch all roles
-        $rolesType = TypeRole::whereNotNull('RoleType')
-            ->where('RoleType', '!=', '')
-            ->distinct()
-            ->pluck('RoleType');
-        // End fetch roles
+        public function index(Request $request)
+        {
+            // Fetch all roles
+            $rolesType = TypeRole::whereNotNull('RoleType')
+                ->where('RoleType', '!=', '')
+                ->distinct()
+                ->pluck('RoleType');
+            // End fetch roles
 
-        $search = $request->input('search');
-    
-        $roles = Role::where(function ($query) use ($search) {
-                $query->where('name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('description', 'LIKE', '%' . $search . '%');
-            })
-            ->when($request->filter_department, function($query)use($request) {
-                $query->where('department_id', $request->filter_department);
-            })
-            ->orderBy('id', 'desc')
-            ->paginate($request->entries ?? 10);
+            $search = $request->input('search');
         
-        $department = Department::get();
+            $roles = Role::where(function ($query) use ($search) {
+                    $query->where('name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('description', 'LIKE', '%' . $search . '%');
+                })
+                ->when($request->filter_department, function($query)use($request) {
+                    $query->where('department_id', $request->filter_department);
+                })
+                ->orderBy('id', 'desc')
+                ->paginate($request->entries ?? 10);
+            
+            $department = Department::get();
 
-        return view('roles.index', [
-            'search' => $search,
-            'roles' => $roles,
-            'rolesType' => $rolesType,
-            'department' => $department,
-            'entries' => $request->entries
-        ]);
-        // dd($rolesType);
-    }
+            return view('roles.index', [
+                'search' => $search,
+                'roles' => $roles,
+                'rolesType' => $rolesType,
+                'department' => $department,
+                'entries' => $request->entries
+            ]);
+            // dd($rolesType);
+        }
 
     // Create
     public function store(Request $request) 

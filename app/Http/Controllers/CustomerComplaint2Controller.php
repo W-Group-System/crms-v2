@@ -556,7 +556,7 @@ class CustomerComplaint2Controller extends Controller
         $data = CustomerComplaint2::with('concerned', 'country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'files', 'objective', 'ccsales','ccRemarks','ccHistoryRemarks')->findOrFail($id);
         $concern_department = ConcernDepartment::all();
 
-        return view('customer_service.cc_view', compact('data','concern_department'));
+       dd($data);
     }
 
     public function acceptance(Request $request, $id)
@@ -572,7 +572,7 @@ class CustomerComplaint2Controller extends Controller
         $data->IsVerified = $request->IsVerified;
         $data->Progress = 60;
 
-        // ✅ Only update Claims if it's present in the request
+        // Only update Claims if it's present in the request
         if ($request->has('Claims')) {
             $data->Claims = $request->Claims;
         }

@@ -179,6 +179,7 @@ function viewModule($module, $department, $role)
         }
     }
 }
+
 function getRpeIdByNumber($number)
 {
     $rpe = RequestProductEvaluation::where('RpeNumber', $number)->first();
