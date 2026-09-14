@@ -229,6 +229,43 @@
                 <div class="tab-pane fade @if(session('tab') == 'files' || session('tab') == null) active show @endif" id="files" role="tabpanel" aria-labelledby="files">
                 </div>
             </div> -->
+            
+            <hr class="alert-dark mt-3 mb-2">
+           
+            <ul class="nav nav-tabs viewTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link p-2 active" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
+                </li>
+            </ul>
+            <!-- History logs -->
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="transaction_remarks" role="tabpanel" aria-labelledby="transaction_remarks-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover tables" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Action</th>
+                                    <th>Remarks</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($data->csHistoryRemarks as $historyRemarks )
+                                    <tr>
+                                        <td>{{$historyRemarks->userRemarks->full_name}}</td>
+                                        <td>{{ $historyRemarks->action}}</td>
+                                        <td>{{ $historyRemarks->remarks }}</td>
+                                         <td>{{date('M d, Y', strtotime($historyRemarks->created_at))}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--End  -->
+            
         </div>
     </div>
 </div>
@@ -371,6 +408,12 @@
         width: 450px;
     }
 </style>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
 <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
@@ -378,6 +421,12 @@
 
 <script>
     $(document).ready(function () {
+         $('.tables').DataTable({
+            destroy: false,
+            processing: true,
+            pageLength: 10,
+            ordering: false
+        });
         $('#newRemarks').on('submit', function (e) {
             e.preventDefault(); 
 

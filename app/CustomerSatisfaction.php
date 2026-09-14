@@ -70,6 +70,12 @@ class CustomerSatisfaction extends Model implements Auditable
     {
         return $this->hasMany(SatisfactionRemarks::class, 'CsId', 'id'); 
     }
+
+    public function csHistoryRemarks()
+    {
+        return $this->hasMany(TransactionRemarks::class, 'transaction_no', 'CsNumber');
+    }
+
     public function concernedDept() 
     {
         return $this->belongsTo(ConcernDepartment::class, 'Department', 'id');

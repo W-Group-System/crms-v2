@@ -557,6 +557,7 @@ class CustomerComplaint2Controller extends Controller
         $concern_department = ConcernDepartment::all();
 
         return view('customer_service.cc_view', compact('data','concern_department'));
+
     }
 
     public function acceptance(Request $request, $id)
