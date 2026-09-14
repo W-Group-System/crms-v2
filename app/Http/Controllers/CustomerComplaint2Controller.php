@@ -556,7 +556,7 @@ class CustomerComplaint2Controller extends Controller
         $data = CustomerComplaint2::with('concerned', 'country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'files', 'objective', 'ccsales','ccRemarks','ccHistoryRemarks')->findOrFail($id);
         $concern_department = ConcernDepartment::all();
 
-       dd($data);
+        return view('customer_service.cc_view', compact('data','concern_department'));
     }
 
     public function acceptance(Request $request, $id)
