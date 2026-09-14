@@ -37,6 +37,7 @@ Route::get('customer_complaint2', 'CustomerComplaint2Controller@index');
 Route::post('/new_customer_complaint2_is', 'CustomerComplaint2Controller@store')->name('customer_complaint2_is.store');
 Route::post('/new_customer_complaint2_ls', 'CustomerComplaint2Controller@store')->name('customer_complaint2_ls.store');
 
+
 Route::group(['middleware' => ['auth']], function() {
     Route::group(['middleware' => 'inactive_users'], function() {
         Route::get('/logout', 'Auth\LoginController@logout');
@@ -111,6 +112,12 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('edit_role/{id}', 'RoleController@editRole');
         Route::post('activate/{id}', 'RoleController@activate');
         Route::post('deactivate/{id}', 'RoleController@deactivate');
+
+        // Type roles
+        Route::get('/types_role', 'TypeRoleController@index')->name('types_role.index');
+        Route::post('/add_type', 'TypeRoleController@store')->name('add_type');
+        Route::put('/update-type/{id}', 'TypeRoleController@update')->name('update_type');
+        Route::delete('/delete/{id}', 'TypeRoleController@destroy')->name('delete_type');
     
         // Department
         Route::get('/department', 'DepartmentController@index')->name('department.index');
@@ -446,6 +453,8 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('print_cs/{id}', 'CustomerSatisfactionController@printCs');
         Route::delete('delete_cs_files/{id}', 'CustomerSatisfactionController@delete')->name('delete_cs_files');
         Route::post('new_remarks/{id}','CustomerSatisfactionController@submitRemarks');
+        Route::get('customer_satisfaction_export', 'CustomerSatisfactionController@export');
+
     
         // Customer Complaint
         Route::get('/cc_list', 'CustomerComplaint2Controller@list')->name('customer_complaint.list');

@@ -46,6 +46,21 @@
                         </div>
                         @endif
                     </div>
+                    <!-- Role Type -->
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <select class="form-control js-example-basic-single" name="type" required>
+                            <option disabled value="">-Select Type-</option>
+
+                            @foreach($rolesType as $type)
+                                <option value="{{ $type }}"
+                                    @if($role->type == $type) selected @endif>
+                                    {{ $type }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- End role type -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <input type="submit" class="btn btn-success" value="Save">

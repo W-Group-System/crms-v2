@@ -85,17 +85,17 @@
                                     </button>
 
                                     @if($role->status == "Active")
-                                    <form method="POST" action="{{url('deactivate/'.$role->id)}}" class="d-inline-block">
-                                        @csrf 
+                                        <form method="POST" action="{{url('deactivate/'.$role->id)}}" class="d-inline-block">
+                                            @csrf 
 
-                                        <button type="button" class="deactivate btn btn-sm btn-danger" title="Deactivate"><i class="mdi mdi-cancel"></i></button>
-                                    </form>
+                                            <button type="button" class="deactivate btn btn-sm btn-danger" title="Deactivate"><i class="mdi mdi-cancel"></i></button>
+                                        </form>
                                     @elseif($role->status == "Inactive")
-                                    <form method="POST" action="{{url('activate/'.$role->id)}}" class="d-inline-block">
-                                        @csrf
+                                        <form method="POST" action="{{url('activate/'.$role->id)}}" class="d-inline-block">
+                                            @csrf
 
-                                        <button type="button" class="activate btn btn-sm btn-info" title="Activate"><i class="ti ti-check"></i></button>
-                                    </form>
+                                            <button type="button" class="activate btn btn-sm btn-info" title="Activate"><i class="ti ti-check"></i></button>
+                                        </form>
                                     @endif
                                 </td>
                                 <td>{{optional($role->department)->department_code.' - '.optional($role->department)->name}}</td>
@@ -168,6 +168,18 @@
                         <label for="name">Description</label>
                         <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description" required>
                     </div>
+                    <!-- Role Type -->
+                    <div class="form-group">
+                        <label for="name">Type</label>
+                        <select class="form-control js-example-basic" name="type" required>
+                            <option disabled selected value="">-Select Type-</option>
+
+                            @foreach($rolesType as $type)
+                                <option value="{{ $type }}">{{ $type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- End role type -->
                     <div class="type-container">
                         {{-- @foreach ($collection as $item)
                             

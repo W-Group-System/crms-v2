@@ -41,36 +41,45 @@
                                 </button>
                             </form>
                         @endif
-                    @endif
-                    @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
-                        @if($data->Progress == 50 && $data->SiteConcerned != NULL)
-                            <form action="{{ url('cc_noted/' . $data->id) }}" class="d-inline-block" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-success notedBtn">
-                                    <i class="ti-check"></i>&nbsp;Noted By
-                                </button>
-                            </form>
-                        @endif
-                    @endif
-                    {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
-                    @if($data->ReceivedBy == auth()->user()->id)
-                        @if($data->Progress == 20)
-                            <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
-                            <i class="ti ti-pencil"></i>&nbsp;Complaint 
-                            </button>
-                        @endif
-                        @if($data->Department == NULL && $data->Progress == 50)
-                            <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
-                                <i class="ti ti-pencil"></i>&nbsp;Assign 
-                            </button>
-                        @endif
-                        @if($data->Progress == 80 || $data->Progress = 60)
+                         @if($data->getOriginal()["Progress"] == 80 || $data->getOriginal()["Progress"] = 60)
                             @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null && $data->IsVerified != 1)
                                 <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
                                     <i class="ti ti-pencil"></i>&nbsp;Verification
                                 </button>
                             @endif
                         @endif
+                    @endif
+                    @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
+                        @if($data->getOriginal()["Progress"] == 50 && $data->SiteConcerned != NULL)
+                            <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
+                                <i class="ti ti-check"></i>&nbsp;Noted By
+                            </button>
+                        @endif
+                    @endif
+                    {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
+                    @if($data->ReceivedBy == auth()->user()->id)
+                        @if($data->getOriginal()["Progress"] == 20)
+                            <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                            <i class="ti ti-pencil"></i>&nbsp;Complaint 
+                            </button>
+                        @endif
+                        @if($data->getOriginal()["Progress"] !== 20 && $data->getOriginal()["Progress"] !==70)
+                            <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                            <i class="ti ti-pencil"></i>&nbsp;Update 
+                            </button>
+                        @endif
+                        @if($data->Department == NULL && $data->getOriginal()["Progress"] == 50)
+                            <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
+                                <i class="ti ti-pencil"></i>&nbsp;Assign 
+                            </button>
+                        @endif
+                        {{-- @if($data->getOriginal()["Progress"] == 80 || $data->getOriginal()["Progress"] = 60)
+                            @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null && $data->IsVerified != 1)
+                                <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
+                                    <i class="ti ti-pencil"></i>&nbsp;Verification
+                                </button>
+                            @endif
+                        @endif --}}
                          @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type)
                         @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
                             @if ($data->ApprovedBy != null)
@@ -82,7 +91,7 @@
                         @endif
                     @endif
                     @endif
-                    @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->Progress == 60 && $data->IsVerified == 1)
+                    @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id) && $data->getOriginal()["Progress"] == 60 && $data->IsVerified == 1)
                         <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-danger closeBtn">
@@ -90,14 +99,11 @@
                             </button>
                         </form>
                     @endif
-                    @if($data->Progress == 30 && $data->NotedBy != NULL)
+                    @if($data->getOriginal()["Progress"] == 30 && $data->NotedBy != NULL)
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id))
-                            <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-warning approvedBtn">
-                                    <i class="ti-check"></i>&nbsp;Noted By
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
+                                <i class="ti ti-check"></i>&nbsp;Noted By
+                            </button>
                         @endif
                     @endif
                     <!-- @if($data->NcarIssuance == 1)
@@ -105,7 +111,7 @@
                             <i class="ti ti-pencil"></i>&nbsp;Investigation
                         </button>
                     @endif -->
-                    @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type && ($data->Progress == 40 || $data->Progress == 80))
+                    @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type && ($data->getOriginal()["Progress"] == 40 || $data->getOriginal()["Progress"] == 80))
                         @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
                             <button type="button" class="btn btn-outline-warning" id="updateCc" 
                                     data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
@@ -114,7 +120,7 @@
                         @endif
                     @endif
 
-                    <!-- @if($data->Department == auth()->user()->role->type && $data->Progress == 40 || $data->Progress == 80)
+                    <!-- @if($data->Department == auth()->user()->role->type && $data->getOriginal()["Progress"] == 40 || $data->getOriginal()["Progress"] == 80)
                         @if($data->Investigation != null || $data->CorrectiveAction != null || $data->ActionObjectiveEvidence != null)
                             <button type="button" class="btn btn-outline-warning" id="updateCc" 
                                     data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
@@ -122,7 +128,7 @@
                             </button>
                         @endif
                     @endif -->
-                    @if($data->Progress == 60 || $data->Progress == 70)
+                    @if($data->getOriginal()["Progress"] == 60 || $data->getOriginal()["Progress"] == 70)
                         <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
                             <i class="ti ti-printer btn-icon-prepend"></i>
                             Print
@@ -156,7 +162,7 @@
                     </form>
                 @endif -->
                 <!-- @if($data->NotedBy != NULL && auth()->user()->id == 15)
-                    @if($data->Progress != 40)
+                    @if($data->getOriginal()["Progress"] != 40)
                     <form action="{{ url('cc_approved/' . $data->id) }}" class="d-inline-block" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-outline-success approvedBtn">
@@ -383,56 +389,56 @@
                                 <tr>
                                     <td class="break-spaces" width="20%">1.1 Physical Hazard (contamination of product by unspecified compound e.g. hard plastics, metal flakes, rust, etc.)</td>
                                     <!-- <td align="center"><input id="check-p1" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p1-input" name="Pn1" value="{{ optional($data->product_quality)->Pn1 }}" title="{{ optional($data->product_quality)->Pn1 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p1-input" name="ScNo1" value="{{ optional($data->product_quality)->ScNo1 }}" title="{{ optional($data->product_quality)->ScNo1 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p1-input" name="SoNo1" value="{{ optional($data->product_quality)->SoNo1 }}" title="{{ optional($data->product_quality)->SoNo1 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p1-input" style="width: 80px" name="Quantity1" value="{{ optional($data->product_quality)->Quantity1 }}" title="{{ optional($data->product_quality)->Quantity1 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p1-input" style="width: 80px" name="LotNo1" value="{{ optional($data->product_quality)->LotNo1 }}" title="{{ optional($data->product_quality)->LotNo1 }}" readonly></td>
+                                    <td width="20%"><input type="text" class="form-control p1-input-b" name="Pn1" value="{{ optional($data->product_quality)->Pn1 }}" title="{{ optional($data->product_quality)->Pn1 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p1-input-b" name="ScNo1" value="{{ optional($data->product_quality)->ScNo1 }}" title="{{ optional($data->product_quality)->ScNo1 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p1-input-b" name="SoNo1" value="{{ optional($data->product_quality)->SoNo1 }}" title="{{ optional($data->product_quality)->SoNo1 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p1-input-b" style="width: 80px" name="Quantity1" value="{{ optional($data->product_quality)->Quantity1 }}" title="{{ optional($data->product_quality)->Quantity1 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p1-input-b" style="width: 80px" name="LotNo1" value="{{ optional($data->product_quality)->LotNo1 }}" title="{{ optional($data->product_quality)->LotNo1 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">1.2 Biological Hazard (e.g. high bacteria count, etc.)</td>
                                     <!-- <td align="center"><input id="check-p2" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p2-input" name="Pn2" value="{{ optional($data->product_quality)->Pn2 }}" title="{{ optional($data->product_quality)->Pn2 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p2-input" name="ScNo2" value="{{ optional($data->product_quality)->ScNo2 }}" title="{{ optional($data->product_quality)->ScNo2 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p2-input" name="SoNo2" value="{{ optional($data->product_quality)->SoNo2 }}" title="{{ optional($data->product_quality)->SoNo2 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p2-input" style="width: 80px" name="Quantity2" value="{{ optional($data->product_quality)->Quantity2 }}" title="{{ optional($data->product_quality)->Quantity2 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p2-input" style="width: 80px" name="LotNo2" value="{{ optional($data->product_quality)->LotNo2 }}" title="{{ optional($data->product_quality)->LotNo2 }}" readonly></td>
+                                    <td width="20%"><input type="text" class="form-control p2-input-b" name="Pn2" value="{{ optional($data->product_quality)->Pn2 }}" title="{{ optional($data->product_quality)->Pn2 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p2-input-b" name="ScNo2" value="{{ optional($data->product_quality)->ScNo2 }}" title="{{ optional($data->product_quality)->ScNo2 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p2-input-b" name="SoNo2" value="{{ optional($data->product_quality)->SoNo2 }}" title="{{ optional($data->product_quality)->SoNo2 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p2-input-b" style="width: 80px" name="Quantity2" value="{{ optional($data->product_quality)->Quantity2 }}" title="{{ optional($data->product_quality)->Quantity2 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p2-input-b" style="width: 80px" name="LotNo2" value="{{ optional($data->product_quality)->LotNo2 }}" title="{{ optional($data->product_quality)->LotNo2 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">1.3 Chemical Hazard (e.g. high heavy metals content, etc.)</td>
                                     <!-- <td align="center"><input id="check-p3" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p3-input" name="Pn3" value="{{ optional($data->product_quality)->Pn3 }}" title="{{ optional($data->product_quality)->Pn3 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p3-input" name="ScNo3" value="{{ optional($data->product_quality)->ScNo3 }}" title="{{ optional($data->product_quality)->ScNo3 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p3-input" name="SoNo3" value="{{ optional($data->product_quality)->SoNo3 }}" title="{{ optional($data->product_quality)->SoNo3 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p3-input" style="width: 80px" name="Quantity3" value="{{ optional($data->product_quality)->Quantity3 }}" title="{{ optional($data->product_quality)->Quantity3 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p3-input" style="width: 80px" name="LotNo3" value="{{ optional($data->product_quality)->LotNo3 }}" title="{{ optional($data->product_quality)->LotNo3 }}" readonly></td>
+                                    <td width="20%"><input type="text" class="form-control p3-input-b" name="Pn3" value="{{ optional($data->product_quality)->Pn3 }}" title="{{ optional($data->product_quality)->Pn3 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p3-input-b" name="ScNo3" value="{{ optional($data->product_quality)->ScNo3 }}" title="{{ optional($data->product_quality)->ScNo3 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p3-input-b" name="SoNo3" value="{{ optional($data->product_quality)->SoNo3 }}" title="{{ optional($data->product_quality)->SoNo3 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p3-input-b" style="width: 80px" name="Quantity3" value="{{ optional($data->product_quality)->Quantity3 }}" title="{{ optional($data->product_quality)->Quantity3 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p3-input-b" style="width: 80px" name="LotNo3" value="{{ optional($data->product_quality)->LotNo3 }}" title="{{ optional($data->product_quality)->LotNo3 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">1.4 Visual Defects (e.g. color change, particle size)</td>
                                     <!-- <td align="center"><input id="check-p4" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p4-input" name="Pn4" value="{{ optional($data->product_quality)->Pn4 }}" title="{{ optional($data->product_quality)->Pn4 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p4-input" name="ScNo4" value="{{ optional($data->product_quality)->ScNo4 }}" title="{{ optional($data->product_quality)->ScNo4 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p4-input" name="SoNo4" value="{{ optional($data->product_quality)->SoNo4 }}" title="{{ optional($data->product_quality)->SoNo4 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p4-input" style="width: 80px" name="Quantity4" value="{{ optional($data->product_quality)->Quantity4 }}" title="{{ optional($data->product_quality)->Quantity4 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p4-input" style="width: 80px" name="LotNo4" value="{{ optional($data->product_quality)->LotNo4 }}" title="{{ optional($data->product_quality)->LotNo4 }}" readonly></td>
+                                    <td width="20%"><input type="text" class="form-control p4-input-b" name="Pn4" value="{{ optional($data->product_quality)->Pn4 }}" title="{{ optional($data->product_quality)->Pn4 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p4-input-b" name="ScNo4" value="{{ optional($data->product_quality)->ScNo4 }}" title="{{ optional($data->product_quality)->ScNo4 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p4-input-b" name="SoNo4" value="{{ optional($data->product_quality)->SoNo4 }}" title="{{ optional($data->product_quality)->SoNo4 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p4-input-b" style="width: 80px" name="Quantity4" value="{{ optional($data->product_quality)->Quantity4 }}" title="{{ optional($data->product_quality)->Quantity4 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p4-input-b" style="width: 80px" name="LotNo4" value="{{ optional($data->product_quality)->LotNo4 }}" title="{{ optional($data->product_quality)->LotNo4 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">1.5 Application Problems (e.g. poor dispersion, poor distribution, poor binding property, high syneresis, etc.)</td>
                                     <!-- <td align="center"><input id="check-p5" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p5-input" name="Pn5" value="{{ optional($data->product_quality)->Pn5 }}" title="{{ optional($data->product_quality)->Pn5 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p5-input" name="ScNo5" value="{{ optional($data->product_quality)->ScNo5 }}" title="{{ optional($data->product_quality)->ScNo5 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p5-input" name="SoNo5" value="{{ optional($data->product_quality)->SoNo5 }}" title="{{ optional($data->product_quality)->SoNo5 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p5-input" style="width: 80px" name="Quantity5" value="{{ optional($data->product_quality)->Quantity5 }}" title="{{ optional($data->product_quality)->Quantity5 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p5-input" style="width: 80px" name="LotNo5" value="{{ optional($data->product_quality)->LotNo5 }}" title="{{ optional($data->product_quality)->LotNo5 }}" readonly></td>
+                                    <td width="20%"><input type="text" class="form-control p5-input-b" name="Pn5" value="{{ optional($data->product_quality)->Pn5 }}" title="{{ optional($data->product_quality)->Pn5 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p5-input-b" name="ScNo5" value="{{ optional($data->product_quality)->ScNo5 }}" title="{{ optional($data->product_quality)->ScNo5 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p5-input-b" name="SoNo5" value="{{ optional($data->product_quality)->SoNo5 }}" title="{{ optional($data->product_quality)->SoNo5 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p5-input-b" style="width: 80px" name="Quantity5" value="{{ optional($data->product_quality)->Quantity5 }}" title="{{ optional($data->product_quality)->Quantity5 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p5-input-b" style="width: 80px" name="LotNo5" value="{{ optional($data->product_quality)->LotNo5 }}" title="{{ optional($data->product_quality)->LotNo5 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">1.6 Physical/ Chemical Properties Out-of Specification (e.g. pH, gel strength, viscosity, syneresis and contamination with other ingredients)</td>
                                     <!-- <td align="center"><input id="check-p6" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control p6-input" name="Pn6" value="{{ optional($data->product_quality)->Pn6 }}" title="{{ optional($data->product_quality)->Pn6 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p6-input" name="ScNo6" value="{{ optional($data->product_quality)->ScNo6 }}" title="{{ optional($data->product_quality)->ScNo6 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p6-input" name="SoNo6" value="{{ optional($data->product_quality)->SoNo6 }}" title="{{ optional($data->product_quality)->SoNo6 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p6-input" style="width: 80px" name="Quantity6" value="{{ optional($data->product_quality)->Quantity6 }}" title="{{ optional($data->product_quality)->Quantity6 }}" readonly></td>
-                                    <td width="15%"><input type="text" class="form-control p6-input" style="width: 80px" name="LotNo6" value="{{ optional($data->product_quality)->LotNo6 }}" title="{{ optional($data->product_quality)->LotNo6 }}" readonly></td>
+                                    <td width="20%"><input type="text" class="form-control p6-input-b" name="Pn6" value="{{ optional($data->product_quality)->Pn6 }}" title="{{ optional($data->product_quality)->Pn6 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p6-input-b" name="ScNo6" value="{{ optional($data->product_quality)->ScNo6 }}" title="{{ optional($data->product_quality)->ScNo6 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p6-input-b" name="SoNo6" value="{{ optional($data->product_quality)->SoNo6 }}" title="{{ optional($data->product_quality)->SoNo6 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p6-input-b" style="width: 80px" name="Quantity6" value="{{ optional($data->product_quality)->Quantity6 }}" title="{{ optional($data->product_quality)->Quantity6 }}" readonly></td>
+                                    <td width="15%"><input type="text" class="form-control p6-input-b" style="width: 80px" name="LotNo6" value="{{ optional($data->product_quality)->LotNo6 }}" title="{{ optional($data->product_quality)->LotNo6 }}" readonly></td>
                                 </tr>
                                 <tr>
                                     <td colspan="7"><b>2. Packaging</b></td>
@@ -440,38 +446,38 @@
                                 <tr>
                                     <td class="break-spaces" width="20%">2.1 Quantity (e.g. Short-packing, under-filled bags or box, over-filled container or box, etc.)</td>
                                     <!-- <td align="center"><input id="check-pack1" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control input-pack1" name="PackPn1" value="{{ optional($data->packaging)->PackPn1 }}" title="{{ optional($data->packaging)->PackPn1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack1" name="PackScNo1" value="{{ optional($data->packaging)->PackScNo1 }}" title="{{ optional($data->packaging)->PackScNo1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack1" name="PackSoNo1" value="{{ optional($data->packaging)->PackSoNo1 }}" title="{{ optional($data->packaging)->PackSoNo1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack1" style="width: 80px" name="PackQuantity1" value="{{ optional($data->packaging)->PackQuantity1 }}" title="{{ optional($data->packaging)->PackQuantity1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack1" style="width: 80px" name="PackLotNo1" value="{{ optional($data->packaging)->PackLotNo1 }}" title="{{ optional($data->packaging)->PackLotNo1 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control input-pack1-b" name="PackPn1" value="{{ optional($data->packaging)->PackPn1 }}" title="{{ optional($data->packaging)->PackPn1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack1-b" name="PackScNo1" value="{{ optional($data->packaging)->PackScNo1 }}" title="{{ optional($data->packaging)->PackScNo1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack1-b" name="PackSoNo1" value="{{ optional($data->packaging)->PackSoNo1 }}" title="{{ optional($data->packaging)->PackSoNo1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack1-b" style="width: 80px" name="PackQuantity1" value="{{ optional($data->packaging)->PackQuantity1 }}" title="{{ optional($data->packaging)->PackQuantity1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack1-b" style="width: 80px" name="PackLotNo1" value="{{ optional($data->packaging)->PackLotNo1 }}" title="{{ optional($data->packaging)->PackLotNo1 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">2.2 Packing (e.g. leakages, corrosion, etc.)</td>
                                     <!-- <td align="center"><input id="check-pack2" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control input-pack2" name="PackPn2" value="{{ optional($data->packaging)->PackPn2 }}" title="{{ optional($data->packaging)->PackPn2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack2" name="PackScNo2" value="{{ optional($data->packaging)->PackScNo2 }}" title="{{ optional($data->packaging)->PackScNo2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack2" name="PackSoNo2" value="{{ optional($data->packaging)->PackSoNo2 }}" title="{{ optional($data->packaging)->PackSoNo2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack2" style="width: 80px" name="PackQuantity2" value="{{ optional($data->packaging)->PackQuantity2 }}" title="{{ optional($data->packaging)->PackQuantity2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack2" style="width: 80px" name="PackLotNo2" value="{{ optional($data->packaging)->PackLotNo2 }}" title="{{ optional($data->packaging)->PackLotNo2 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control input-pack2-b" name="PackPn2" value="{{ optional($data->packaging)->PackPn2 }}" title="{{ optional($data->packaging)->PackPn2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack2-b" name="PackScNo2" value="{{ optional($data->packaging)->PackScNo2 }}" title="{{ optional($data->packaging)->PackScNo2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack2-b" name="PackSoNo2" value="{{ optional($data->packaging)->PackSoNo2 }}" title="{{ optional($data->packaging)->PackSoNo2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack2-b" style="width: 80px" name="PackQuantity2" value="{{ optional($data->packaging)->PackQuantity2 }}" title="{{ optional($data->packaging)->PackQuantity2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack2-b" style="width: 80px" name="PackLotNo2" value="{{ optional($data->packaging)->PackLotNo2 }}" title="{{ optional($data->packaging)->PackLotNo2 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">2.3 Labeling (e.g. wrong or defective label, unreadable, incorrect or incomplete text, etc.)</td>
                                     <!-- <td align="center"><input id="check-pack3" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control input-pack3" name="PackPn3" value="{{ optional($data->packaging)->PackPn3 }}" title="{{ optional($data->packaging)->PackPn3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack3" name="PackScNo3" value="{{ optional($data->packaging)->PackScNo3 }}" title="{{ optional($data->packaging)->PackScNo3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack3" name="PackSoNo3" value="{{ optional($data->packaging)->PackSoNo3 }}" title="{{ optional($data->packaging)->PackSoNo3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack3" style="width: 80px" name="PackQuantity3" value="{{ optional($data->packaging)->PackQuantity3 }}" title="{{ optional($data->packaging)->PackQuantity3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack3" style="width: 80px" name="PackLotNo3" value="{{ optional($data->packaging)->PackLotNo3 }}" title="{{ optional($data->packaging)->PackLotNo3 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control input-pack3-b" name="PackPn3" value="{{ optional($data->packaging)->PackPn3 }}" title="{{ optional($data->packaging)->PackPn3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack3-b" name="PackScNo3" value="{{ optional($data->packaging)->PackScNo3 }}" title="{{ optional($data->packaging)->PackScNo3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack3-b" name="PackSoNo3" value="{{ optional($data->packaging)->PackSoNo3 }}" title="{{ optional($data->packaging)->PackSoNo3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack3-b" style="width: 80px" name="PackQuantity3" value="{{ optional($data->packaging)->PackQuantity3 }}" title="{{ optional($data->packaging)->PackQuantity3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack3-b" style="width: 80px" name="PackLotNo3" value="{{ optional($data->packaging)->PackLotNo3 }}" title="{{ optional($data->packaging)->PackLotNo3 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">2.4 Packaging material (e.g. wrong packaging (bag, pallet, etc.) material, incorrect application of packaging instructions, inadequate quality of packaging material, etc.)</td>
                                     <!-- <td align="center"><input id="check-pack4" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control input-pack4" name="PackPn4" value="{{ optional($data->packaging)->PackPn4 }}" title="{{ optional($data->packaging)->PackPn4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack4" name="PackScNo4" value="{{ optional($data->packaging)->PackScNo4 }}" title="{{ optional($data->packaging)->PackScNo4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack4" name="PackSoNo4" value="{{ optional($data->packaging)->PackSoNo4 }}" title="{{ optional($data->packaging)->PackSoNo4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack4" style="width: 80px" name="PackQuantity4" value="{{ optional($data->packaging)->PackQuantity4 }}" title="{{ optional($data->packaging)->PackQuantity4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control input-pack4" style="width: 80px" name="PackLotNo4" value="{{ optional($data->packaging)->PackLotNo4 }}" title="{{ optional($data->packaging)->PackLotNo4 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control input-pack4-b" name="PackPn4" value="{{ optional($data->packaging)->PackPn4 }}" title="{{ optional($data->packaging)->PackPn4 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack4-b" name="PackScNo4" value="{{ optional($data->packaging)->PackScNo4 }}" title="{{ optional($data->packaging)->PackScNo4 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack4-b" name="PackSoNo4" value="{{ optional($data->packaging)->PackSoNo4 }}" title="{{ optional($data->packaging)->PackSoNo4 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack4-b" style="width: 80px" name="PackQuantity4" value="{{ optional($data->packaging)->PackQuantity4 }}" title="{{ optional($data->packaging)->PackQuantity4 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control input-pack4-b" style="width: 80px" name="PackLotNo4" value="{{ optional($data->packaging)->PackLotNo4 }}" title="{{ optional($data->packaging)->PackLotNo4 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td colspan="7"><b>3. Delivery and Handling</b></td>
@@ -479,29 +485,29 @@
                                 <tr>
                                     <td class="break-spaces" width="20%">3.1 Product Handling (e.g. wrong product, pack size or quantity)</td>
                                     <!-- <td align="center"><input id="check-d1" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control d1-input" name="DhPn1" value="{{ optional($data->delivery_handling)->DhPn1 }}" title="{{ optional($data->delivery_handling)->DhPn1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d1-input" name="DhScNo1" value="{{ optional($data->delivery_handling)->DhScNo1 }}" title="{{ optional($data->delivery_handling)->DhScNo1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d1-input" name="DhSoNo1" value="{{ optional($data->delivery_handling)->DhSoNo1 }}" title="{{ optional($data->delivery_handling)->DhSoNo1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d1-input" style="width: 80px" name="DhQuantity1" value="{{ optional($data->delivery_handling)->DhQuantity1 }}" title="{{ optional($data->delivery_handling)->DhQuantity1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d1-input" style="width: 80px" name="DhLotNo1" value="{{ optional($data->delivery_handling)->DhLotNo1 }}" title="{{ optional($data->delivery_handling)->DhLotNo1 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control d1-input-b" name="DhPn1" value="{{ optional($data->delivery_handling)->DhPn1 }}" title="{{ optional($data->delivery_handling)->DhPn1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d1-input-b" name="DhScNo1" value="{{ optional($data->delivery_handling)->DhScNo1 }}" title="{{ optional($data->delivery_handling)->DhScNo1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d1-input-b" name="DhSoNo1" value="{{ optional($data->delivery_handling)->DhSoNo1 }}" title="{{ optional($data->delivery_handling)->DhSoNo1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d1-input-b" style="width: 80px" name="DhQuantity1" value="{{ optional($data->delivery_handling)->DhQuantity1 }}" title="{{ optional($data->delivery_handling)->DhQuantity1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d1-input-b" style="width: 80px" name="DhLotNo1" value="{{ optional($data->delivery_handling)->DhLotNo1 }}" title="{{ optional($data->delivery_handling)->DhLotNo1 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">3.2 Delayed Delivery (e.g. inadequate forwarder service, wrong delivery address, etc.)</td>
                                     <!-- <td align="center"><input id="check-d2" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control d2-input" name="DhPn2" value="{{ optional($data->delivery_handling)->DhPn2 }}" title="{{ optional($data->delivery_handling)->DhPn2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d2-input" name="DhScNo2" value="{{ optional($data->delivery_handling)->DhScNo2 }}" title="{{ optional($data->delivery_handling)->DhScNo2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d2-input" name="DhSoNo2" value="{{ optional($data->delivery_handling)->DhSoNo2 }}" title="{{ optional($data->delivery_handling)->DhSoNo2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d2-input" style="width: 80px" name="DhQuantity2" value="{{ optional($data->delivery_handling)->DhQuantity2 }}" title="{{ optional($data->delivery_handling)->DhQuantity2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d2-input" style="width: 80px" name="DhLotNo2" value="{{ optional($data->delivery_handling)->DhLotNo2 }}" title="{{ optional($data->delivery_handling)->DhLotNo2 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control d2-input-b" name="DhPn2" value="{{ optional($data->delivery_handling)->DhPn2 }}" title="{{ optional($data->delivery_handling)->DhPn2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d2-input-b" name="DhScNo2" value="{{ optional($data->delivery_handling)->DhScNo2 }}" title="{{ optional($data->delivery_handling)->DhScNo2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d2-input-b" name="DhSoNo2" value="{{ optional($data->delivery_handling)->DhSoNo2 }}" title="{{ optional($data->delivery_handling)->DhSoNo2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d2-input-b" style="width: 80px" name="DhQuantity2" value="{{ optional($data->delivery_handling)->DhQuantity2 }}" title="{{ optional($data->delivery_handling)->DhQuantity2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d2-input-b" style="width: 80px" name="DhLotNo2" value="{{ optional($data->delivery_handling)->DhLotNo2 }}" title="{{ optional($data->delivery_handling)->DhLotNo2 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">3.3 Product Damage during transit (e.g. leakages, corrosion, damaged label/box/carton/seal, etc.)</td>
                                     <!-- <td align="center"><input id="check-d3" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control d3-input" name="DhPn3" value="{{ optional($data->delivery_handling)->DhPn3 }}" title="{{ optional($data->delivery_handling)->DhPn3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d3-input" name="DhScNo3" value="{{ optional($data->delivery_handling)->DhScNo3 }}" title="{{ optional($data->delivery_handling)->DhScNo3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d3-input" name="DhSoNo3" value="{{ optional($data->delivery_handling)->DhSoNo3 }}" title="{{ optional($data->delivery_handling)->DhSoNo3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d3-input" style="width: 80px" name="DhQuantity3" value="{{ optional($data->delivery_handling)->DhQuantity3 }}" title="{{ optional($data->delivery_handling)->DhQuantity3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control d3-input" style="width: 80px" name="DhLotNo3" value="{{ optional($data->delivery_handling)->DhLotNo3 }}" title="{{ optional($data->delivery_handling)->DhLotNo3 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control d3-input-b" name="DhPn3" value="{{ optional($data->delivery_handling)->DhPn3 }}" title="{{ optional($data->delivery_handling)->DhPn3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d3-input-b" name="DhScNo3" value="{{ optional($data->delivery_handling)->DhScNo3 }}" title="{{ optional($data->delivery_handling)->DhScNo3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d3-input-b" name="DhSoNo3" value="{{ optional($data->delivery_handling)->DhSoNo3 }}" title="{{ optional($data->delivery_handling)->DhSoNo3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d3-input-b" style="width: 80px" name="DhQuantity3" value="{{ optional($data->delivery_handling)->DhQuantity3 }}" title="{{ optional($data->delivery_handling)->DhQuantity3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control d3-input-b" style="width: 80px" name="DhLotNo3" value="{{ optional($data->delivery_handling)->DhLotNo3 }}" title="{{ optional($data->delivery_handling)->DhLotNo3 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td colspan="7"><b>4. Others</b></td>
@@ -509,38 +515,38 @@
                                 <tr>
                                     <td class="break-spaces" width="20%">4.1 Quality of records or documents (e.g. insufficient, inadequate, missing, etc.)</td>
                                     <!-- <td align="center"><input id="check-o1" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control o1-input" name="OthersPn1" value="{{ optional($data->others)->OthersPn1 }}" title="{{ optional($data->others)->OthersPn1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o1-input" name="OthersScNo1" value="{{ optional($data->others)->OthersScNo1 }}" title="{{ optional($data->others)->OthersScNo1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o1-input" name="OthersSoNo1" value="{{ optional($data->others)->OthersSoNo1 }}" title="{{ optional($data->others)->OthersSoNo1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o1-input" style="width: 80px" name="OthersQuantity1" value="{{ optional($data->others)->OthersQuantity1 }}" title="{{ optional($data->others)->OthersQuantity1 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o1-input" style="width: 80px" name="OthersLotNo1" value="{{ optional($data->others)->OthersLotNo1 }}" title="{{ optional($data->others)->OthersLotNo1 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control o1-input-b" name="OthersPn1" value="{{ optional($data->others)->OthersPn1 }}" title="{{ optional($data->others)->OthersPn1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o1-input-b" name="OthersScNo1" value="{{ optional($data->others)->OthersScNo1 }}" title="{{ optional($data->others)->OthersScNo1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o1-input-b" name="OthersSoNo1" value="{{ optional($data->others)->OthersSoNo1 }}" title="{{ optional($data->others)->OthersSoNo1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o1-input-b" style="width: 80px" name="OthersQuantity1" value="{{ optional($data->others)->OthersQuantity1 }}" title="{{ optional($data->others)->OthersQuantity1 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o1-input-b" style="width: 80px" name="OthersLotNo1" value="{{ optional($data->others)->OthersLotNo1 }}" title="{{ optional($data->others)->OthersLotNo1 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">4.2 Poor customer Service (e.g., courtesy, professionalism, handling, responsiveness)</td>
                                     <!-- <td align="center"><input id="check-o2" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control o2-input" name="OthersPn2" value="{{ optional($data->others)->OthersPn2 }}" title="{{ optional($data->others)->OthersPn2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o2-input" name="OthersScNo2" value="{{ optional($data->others)->OthersScNo2 }}" title="{{ optional($data->others)->OthersScNo2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o2-input" name="OthersSoNo2" value="{{ optional($data->others)->OthersSoNo2 }}" title="{{ optional($data->others)->OthersSoNo2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o2-input" style="width: 80px" name="OthersQuantity2" value="{{ optional($data->others)->OthersQuantity2 }}" title="{{ optional($data->others)->OthersQuantity2 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o2-input" style="width: 80px" name="OthersLotNo2" value="{{ optional($data->others)->OthersLotNo2 }}" title="{{ optional($data->others)->OthersLotNo2 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control o2-input-b" name="OthersPn2" value="{{ optional($data->others)->OthersPn2 }}" title="{{ optional($data->others)->OthersPn2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o2-input-b" name="OthersScNo2" value="{{ optional($data->others)->OthersScNo2 }}" title="{{ optional($data->others)->OthersScNo2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o2-input-b" name="OthersSoNo2" value="{{ optional($data->others)->OthersSoNo2 }}" title="{{ optional($data->others)->OthersSoNo2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o2-input-b" style="width: 80px" name="OthersQuantity2" value="{{ optional($data->others)->OthersQuantity2 }}" title="{{ optional($data->others)->OthersQuantity2 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o2-input-b" style="width: 80px" name="OthersLotNo2" value="{{ optional($data->others)->OthersLotNo2 }}" title="{{ optional($data->others)->OthersLotNo2 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">4.3 Payment/ Invoice (e.g. wrong price/ product details)</td>
                                     <!-- <td align="center"><input id="check-o3" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control o3-input" name="OthersPn3" value="{{ optional($data->others)->OthersPn3 }}" title="{{ optional($data->others)->OthersPn3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o3-input" name="OthersScNo3" value="{{ optional($data->others)->OthersScNo3 }}" title="{{ optional($data->others)->OthersScNo3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o3-input" name="OthersSoNo3" value="{{ optional($data->others)->OthersSoNo3 }}" title="{{ optional($data->others)->OthersSoNo3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o3-input" style="width: 80px" name="OthersQuantity3" value="{{ optional($data->others)->OthersQuantity3 }}" title="{{ optional($data->others)->OthersQuantity3 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o3-input" style="width: 80px" name="OthersLotNo3" value="{{ optional($data->others)->OthersLotNo3 }}" title="{{ optional($data->others)->OthersLotNo3 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control o3-input-b" name="OthersPn3" value="{{ optional($data->others)->OthersPn3 }}" title="{{ optional($data->others)->OthersPn3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o3-input-b" name="OthersScNo3" value="{{ optional($data->others)->OthersScNo3 }}" title="{{ optional($data->others)->OthersScNo3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o3-input-b" name="OthersSoNo3" value="{{ optional($data->others)->OthersSoNo3 }}" title="{{ optional($data->others)->OthersSoNo3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o3-input-b" style="width: 80px" name="OthersQuantity3" value="{{ optional($data->others)->OthersQuantity3 }}" title="{{ optional($data->others)->OthersQuantity3 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o3-input-b" style="width: 80px" name="OthersLotNo3" value="{{ optional($data->others)->OthersLotNo3 }}" title="{{ optional($data->others)->OthersLotNo3 }}" disabled></td>
                                 </tr>
                                 <tr>
                                     <td class="break-spaces" width="20%">4.4 Other Issues (please specify)</td>
                                     <!-- <td align="center"><input id="check-o4" type="checkbox"></td> -->
-                                    <td width="20%"><input type="text" class="form-control o4-input" name="OthersPn4" value="{{ optional($data->others)->OthersPn4 }}" title="{{ optional($data->others)->OthersPn4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o4-input" name="OthersScNo4" value="{{ optional($data->others)->OthersScNo4 }}" title="{{ optional($data->others)->OthersScNo4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o4-input" name="OthersSoNo4" value="{{ optional($data->others)->OthersSoNo4 }}" title="{{ optional($data->others)->OthersSoNo4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o4-input" style="width: 80px" name="OthersQuantity4" value="{{ optional($data->others)->OthersQuantity4 }}" title="{{ optional($data->others)->OthersQuantity4 }}" disabled></td>
-                                    <td width="15%"><input type="text" class="form-control o4-input" style="width: 80px" name="OthersLotNo4" value="{{ optional($data->others)->OthersLotNo4 }}" title="{{ optional($data->others)->OthersLotNo4 }}" disabled></td>
+                                    <td width="20%"><input type="text" class="form-control o4-input-b" name="OthersPn4" value="{{ optional($data->others)->OthersPn4 }}" title="{{ optional($data->others)->OthersPn4 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o4-input-b" name="OthersScNo4" value="{{ optional($data->others)->OthersScNo4 }}" title="{{ optional($data->others)->OthersScNo4 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o4-input-b" name="OthersSoNo4" value="{{ optional($data->others)->OthersSoNo4 }}" title="{{ optional($data->others)->OthersSoNo4 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o4-input-b" style="width: 80px" name="OthersQuantity4" value="{{ optional($data->others)->OthersQuantity4 }}" title="{{ optional($data->others)->OthersQuantity4 }}" disabled></td>
+                                    <td width="15%"><input type="text" class="form-control o4-input-b" style="width: 80px" name="OthersLotNo4" value="{{ optional($data->others)->OthersLotNo4 }}" title="{{ optional($data->others)->OthersLotNo4 }}" disabled></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -805,6 +811,62 @@
                             {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
                         @endforeach
                     </div> --}}
+                    <ul class="nav nav-tabs viewTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link p-2 active" id="transaction_remarks-tab" data-toggle="tab" href="#transaction_remarks" role="tab" aria-controls="transaction_remarks" aria-selected="true">Transaction Remarks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="transaction_remarks" role="tabpanel" aria-labelledby="transaction_remarks-tab">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover tables" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Remarks</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($data->ccRemarks as $remarks)
+                                            <tr>
+                                                <td>{{$remarks->userRemarks->full_name}}</td>
+                                                <td>{{$remarks->SalesRemarks}}</td>
+                                                <td>{{date('M d, Y', strtotime($remarks->created_at))}}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover tables" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Action</th>
+                                            <th>Remarks</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($data->ccHistoryRemarks as $historyRemarks)
+                                            <tr>
+                                                <td>{{$historyRemarks->userRemarks->full_name}}</td>
+                                                <td>{{$historyRemarks->action}}</td>
+                                                <td>{{$historyRemarks->remarks}}</td>
+                                                <td>{{date('M d, Y', strtotime($historyRemarks->created_at))}}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1028,7 +1090,7 @@
                         {{-- @if($data->Claims != null || $data->Shipment != null) --}}
                             <div class="col-lg-6">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="IsVerified" value="1" id="flexCheckDefault" {{ $data->IsVerified == 1 ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="checkbox" name="IsVerified" value="1" id="flexCheckDefault" {{ $data->IsVerified == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexCheckDefault">
                                         Is Verified?
                                     </label>
@@ -1048,10 +1110,20 @@
 
 @include('customer_service.complaint_modal')
 @include('customer_service.update_complaint')
+@include('customer_service.cc_remarks')
 @if(session('openModalId'))
     <script>
+        let siteConcerned = "{{ $data->SiteConcerned??'' }}";
+        let department = "{{$data->Department??'' }}";
+        let classOfComplaint = "{{ $data->QualityClass??'' }}";
+        
         $(document).ready(function() {
             $('#update{{ session('openModalId') }}').modal('show');
+            $("#SiteConcerned").val(siteConcerned).trigger('change');
+            setTimeout(() => {
+                $("#Department").val(department).trigger('change');
+            }, 500);
+            $("#QualityClass").val(classOfComplaint).trigger('change');
         });
     </script>
 @endif
@@ -1062,6 +1134,12 @@
         text-wrap: wrap !important;
     }
 </style>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
 <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
@@ -1099,6 +1177,12 @@
     toggleInputs('check-o4', 'o4-input');
     
     $(document).ready(function () {
+        $('.tables').DataTable({
+            destroy: false,
+            processing: true,
+            pageLength: 10,
+            ordering: false
+        });
         $('#updateCustomerComplaint').on('submit', function (e) {
             e.preventDefault(); 
 
@@ -1155,39 +1239,39 @@
             });
         });
 
-        $('.notedBtn').on('click', function (e) {
-            e.preventDefault(); 
+        // $('.notedBtn').on('click', function (e) {
+        //     e.preventDefault(); 
 
-            var btn = $(this);
-            if (btn.data('clicked')) {
-                return;
-            }
-            btn.data('clicked', true);
-            btn.prop('disabled', true).text('Processing...');
+        //     var btn = $(this);
+        //     if (btn.data('clicked')) {
+        //         return;
+        //     }
+        //     btn.data('clicked', true);
+        //     btn.prop('disabled', true).text('Processing...');
 
-            var form = $(this).closest('form');
-            var actionUrl = form.attr('action'); 
+        //     var form = $(this).closest('form');
+        //     var actionUrl = form.attr('action'); 
 
-            $.ajax({
-                url: actionUrl,
-                type: 'POST',
-                data: form.serialize(), 
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: "Noted",
-                            text: response.message,
-                            icon: "success",
-                            showConfirmButton: false,
-                            customClass: 'swal-wide',
-                            timer: 1500
-                        }).then(function () {
-                            window.location.reload(); 
-                        });
-                    }
-                }
-            });
-        });
+        //     $.ajax({
+        //         url: actionUrl,
+        //         type: 'POST',
+        //         data: form.serialize(), 
+        //         success: function (response) {
+        //             if (response.success) {
+        //                 Swal.fire({
+        //                     title: "Noted",
+        //                     text: response.message,
+        //                     icon: "success",
+        //                     showConfirmButton: false,
+        //                     customClass: 'swal-wide',
+        //                     timer: 1500
+        //                 }).then(function () {
+        //                     window.location.reload(); 
+        //                 });
+        //             }
+        //         }
+        //     });
+        // });
 
         $('.validityBtn').on('click', function (e) {
             e.preventDefault(); 

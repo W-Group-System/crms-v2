@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CustomerComplaintExport;
-
+use App\TransactionRemarks;
 
 class CustomerComplaint2Controller extends Controller
 {
@@ -177,6 +177,7 @@ class CustomerComplaint2Controller extends Controller
             return response()->json($data);
         } else {
             $data = $customerComplaint->paginate($entries);
+            $countries = Country::get();
             return view('customer_service.cc_list', [
                 'search' => $search,
                 'data' => $data,
@@ -185,7 +186,9 @@ class CustomerComplaint2Controller extends Controller
                 'fetchAll' => $fetchAll,
                 'entries' => $entries,
                 'newCcNo' => $newCcNo,
-                'progress' => $progress
+                'progress' => $progress,
+                'countries' => $countries,
+                'roleType' => $role->type,
             ]);
         }
     }
@@ -231,12 +234,13 @@ class CustomerComplaint2Controller extends Controller
     {
         $year = date('y');
         $ClientCountryId = $request->Country??"";
+        $isCreatedInternal = isset($request->isInternal) && $request->isInternal == "1"?true:false;
         $type = "";
         if ($request->is('new_customer_complaint2_is')) {
             $type = 'IS';
         } elseif ($request->is('new_customer_complaint2_ls')) {
             $type = 'LS';
-        } 
+        }
         $last = CustomerComplaint2::where('CcNumber', 'LIKE', "%CCF-$type-%")
             ->orderBy('id', 'desc')
             ->first();
@@ -260,7 +264,8 @@ class CustomerComplaint2Controller extends Controller
                 'Telephone' => $request->Telephone,
                 'CustomerRemarks' => $request->CustomerRemarks,
                 'Status' => '10',
-                'Progress' => '10'
+                'Progress' => '10',
+                'created_by' => auth()->id(),
             ]);
 
             $attachments = [];
@@ -322,11 +327,12 @@ class CustomerComplaint2Controller extends Controller
             // Send to CC recipients WITH button
             if (!empty($recipients)) {
                 // Send to CC recipients WITHOUT button
-
-                Mail::to($customerComplaint['Email'])
-                    ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
+                if (!$isCreatedInternal) {
+                    Mail::to($customerComplaint['Email'])
+                        ->send(new CustomerComplaintMail($customerComplaint, $attachments, false));
+                }
                 Mail::to($recipients)
-                    ->send(new CustomerComplaintMail($customerComplaint, $attachments, true));
+                ->send(new CustomerComplaintMail($customerComplaint, $attachments, true, true));   
             }
             
             
@@ -547,7 +553,7 @@ class CustomerComplaint2Controller extends Controller
 
     public function view($id)
     {
-        $data = CustomerComplaint2::with('concerned', 'country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'files', 'objective', 'ccsales')->findOrFail($id);
+        $data = CustomerComplaint2::with('concerned', 'country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'files', 'objective', 'ccsales','ccRemarks','ccHistoryRemarks')->findOrFail($id);
         $concern_department = ConcernDepartment::all();
 
         return view('customer_service.cc_view', compact('data','concern_department'));
@@ -566,7 +572,7 @@ class CustomerComplaint2Controller extends Controller
         $data->IsVerified = $request->IsVerified;
         $data->Progress = 60;
 
-        // ✅ Only update Claims if it's present in the request
+        // Only update Claims if it's present in the request
         if ($request->has('Claims')) {
             $data->Claims = $request->Claims;
         }
@@ -620,6 +626,13 @@ class CustomerComplaint2Controller extends Controller
         //     }
         // }
 
+        TransactionRemarks::create([
+            'transaction_no' => $data->CcNumber,
+            'action' => "Complaint verified.",
+            'action_by' => auth()->id(),
+            'remarks' => null
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Customer complaint has been successfully verified.'
@@ -634,24 +647,76 @@ class CustomerComplaint2Controller extends Controller
         $data->Progress = 20;
         $data->save();
 
+        TransactionRemarks::create([
+            'transaction_no' => $data->CcNumber,
+            'action' => "Complaint received.",
+            'action_by' => auth()->id(),
+            'remarks' => null
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Customer complaint has been successfully received.'
         ]);
     }
 
-    public function noted($id)
-    {
-        $data = CustomerComplaint2::findOrFail($id);
-        $data->NotedBy = auth()->user()->id;
-        $data->DateNoted = now();
-        $data->Progress = 30;
-        $data->save();
+    public function noted(Request $request, $id)
+    {   
+        $type = $request->type??"";
+        $message = "";
+        $action = "";
+        $isSuccess = false;
+        switch ($type) {
+            case 'noted':
+                $data = CustomerComplaint2::findOrFail($id);
+                $data->NotedBy = auth()->user()->id;
+                $data->DateNoted = now();
+                $data->Progress = 30;
+                $data->save();
+                $action = "NOTED BY";
+                $message = "Customer complaint has been successfully noted.";
+                $isSuccess = true;
+                break;
 
+            case 'approved':
+                $data = CustomerComplaint2::findOrFail($id);
+                $data->ApprovedBy = auth()->user()->id;
+                $data->Progress = 40;
+                $data->save();
+
+                $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
+                $attachments = CCFile::where('CCId', $data->id)->get();
+
+                if ($data->NcarIssuance == 1) {
+                    // Mail::to(['bpd@wgroup.com.ph'])
+                    Mail::to(['ict.engineer@wgroup.com.ph'])
+                    ->send(new AssignCcDepartmentMail($data, $attachments, false)); 
+                }
+
+                Mail::to($department->email)->send(new AssignCcDepartmentMail($data, $attachments, true));
+                $action = "NOTED BY";
+                $message = "Customer complaint has been successfully noted.";
+                $isSuccess = true;
+                break;
+            
+            default:
+                $message = "Failed to update customer complaint.";
+                break;
+        }
+        
+        if ($isSuccess) {
+            TransactionRemarks::create([
+                'transaction_no' => $data->CcNumber,
+                'action' => $action,
+                'action_by' => auth()->id(),
+                'remarks' => $request->remarks??""
+            ]);   
+        }
         return response()->json([
-            'success' => true,
-            'message' => 'Customer complaint has been successfully updated.'
+            'success' => $isSuccess,
+            'message' => $message
         ]);
+        
     }
 
     public function approved($id)
@@ -672,6 +737,12 @@ class CustomerComplaint2Controller extends Controller
 
         Mail::to($department->email)->send(new AssignCcDepartmentMail($data, $attachments, true));
         
+        TransactionRemarks::create([
+            'transaction_no' => $data->CcNumber,
+            'action' => "Complaint approved.",
+            'action_by' => auth()->id(),
+            'remarks' => null
+        ]);
 
         return response()->json([
             'success' => true,
@@ -881,6 +952,13 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
+        TransactionRemarks::create([
+            'transaction_no' => $data->CcNumber,
+            'action' => "Complaint updated",
+            'action_by' => auth()->id(),
+            'remarks' => null
+        ]);
+
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return redirect()->back()->with('openModalId', $id);
     }
@@ -1043,6 +1121,13 @@ class CustomerComplaint2Controller extends Controller
             // $concern_department->notify(new EmailDepartment($concern_department));
         // }
 
+        TransactionRemarks::create([
+            'transaction_no' => $customer_complaint->CcNumber,
+            'action' => "Assigned to {$department->Name} department.",
+            'action_by' => auth()->id(),
+            'remarks' => null
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Customer complaint feedback and files have been successfully assigned.'
@@ -1145,6 +1230,13 @@ class CustomerComplaint2Controller extends Controller
         $data->Validity = $status??null;
         $data->Status = $status=="invalid"?"30":"10";
         $data->save();
+
+        TransactionRemarks::create([
+            'transaction_no' => $data->CcNumber,
+            'action' => "Tagged as {$status}",
+            'action_by' => auth()->id(),
+            'remarks' => null
+        ]);
 
         return response()->json([
             'success' => true,

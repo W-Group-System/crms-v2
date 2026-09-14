@@ -408,7 +408,7 @@
                                     @if(viewModule('Customer Feedback', $department, $role) == "yes")
                                     <li class="nav-item"> <a class="nav-link" href="{{ url('/customer_feedback') }}">Customer Feedbacks</a></li>
                                     @endif --}}
-                                    @if(viewModule('Customer Feedback', $department, $role) == "yes")
+                                    <!-- @if(viewModule('Customer Feedback', $department, $role) == "yes") -->
                                         <li class="nav-item"> <a class="nav-link" href="{{ url('/cs_list') }}">Customer Satisfaction</a></li>
                                     @endif
                                     @if(viewModule('Customer Complaints', $department, $role) == "yes")
@@ -603,8 +603,10 @@
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/user') }}">User Accounts</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/role') }}">Roles</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{url('types_role')}}">Type of Role</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/company') }}">Company</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/department') }}">Department</a></li>
+                                    
                                 </ul>
                             </div>
                         </li>

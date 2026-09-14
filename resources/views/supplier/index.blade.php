@@ -408,6 +408,5 @@
                 });
             });
         });
-        
     </script>
 @endsection

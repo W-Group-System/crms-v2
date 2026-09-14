@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Department;
 use App\Role;
+use App\TypeRole;
 use App\UserAccessModule;
 use Validator;
 use Illuminate\Http\Request;
@@ -12,29 +13,38 @@ use RealRashid\SweetAlert\Facades\Alert;
 class RoleController extends Controller
 {
     // List
-    public function index(Request $request)
-    {
-        $search = $request->input('search');
-    
-        $roles = Role::where(function ($query) use ($search) {
-                $query->where('name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('description', 'LIKE', '%' . $search . '%');
-            })
-            ->when($request->filter_department, function($query)use($request) {
-                $query->where('department_id', $request->filter_department);
-            })
-            ->orderBy('id', 'desc')
-            ->paginate($request->entries ?? 10);
-        
-        $department = Department::get();
+        public function index(Request $request)
+        {
+            // Fetch all roles
+            $rolesType = TypeRole::whereNotNull('RoleType')
+                ->where('RoleType', '!=', '')
+                ->distinct()
+                ->pluck('RoleType');
+            // End fetch roles
 
-        return view('roles.index', [
-            'search' => $search,
-            'roles' => $roles,
-            'department' => $department,
-            'entries' => $request->entries
-        ]);
-    }
+            $search = $request->input('search');
+        
+            $roles = Role::where(function ($query) use ($search) {
+                    $query->where('name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('description', 'LIKE', '%' . $search . '%');
+                })
+                ->when($request->filter_department, function($query)use($request) {
+                    $query->where('department_id', $request->filter_department);
+                })
+                ->orderBy('id', 'desc')
+                ->paginate($request->entries ?? 10);
+            
+            $department = Department::get();
+
+            return view('roles.index', [
+                'search' => $search,
+                'roles' => $roles,
+                'rolesType' => $rolesType,
+                'department' => $department,
+                'entries' => $request->entries
+            ]);
+            // dd($rolesType);
+        }
 
     // Create
     public function store(Request $request) 
@@ -69,6 +79,7 @@ class RoleController extends Controller
         $role->type = $request->type;
         $role->description = $request->description;
         $role->department_id = $request->department;
+        $role->type = $request->type;
         $role->save();
 
         Alert::success('Successfully Saved')->persistent('Dismiss');

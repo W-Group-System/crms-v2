@@ -92,10 +92,12 @@
             <p>Thank you for your feedback.<br><br>We are delighted to hear your positive comments.<br><br>Should you have further concerns, please contact marketing@rico.com.ph or you may https://crms-v2.wgroup.space/customer_service</p>
 
             <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
-                <tr>
-                    <td><strong>CS Number:</strong></td>
-                    <td>{{ $CsNumber }}</td>
-                </tr>
+                @if ($showCcNumber)
+                    <tr>
+                        <td><strong>CS Number:</strong></td>
+                        <td>{{ $CsNumber }}</td>
+                    </tr>
+                @endif
                 <tr>
                     <td><strong>Customer Name:</strong></td>
                     <td>{{ $ContactName }}</td>

@@ -9,7 +9,8 @@ class CustomerSatisfaction extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     protected $table = "customersatisfaction";
     protected $fillable = [
-        'CompanyName', 'CsNumber', 'ContactName', 'Department', 'SiteConcerned', 'Description', 'Category', 'Email', 'ContactNumber', 'Status', 'ReceivedBy', 'DateReceived', 'DateClosed', 'Progress', 'ClosedBy', 'ApprovedBy','CountryId'
+        'CompanyName', 'CsNumber', 'ContactName', 'Department', 'SiteConcerned', 'Description', 'Category', 'Email', 'ContactNumber', 'Status', 'ReceivedBy', 'DateReceived', 'DateClosed', 'Progress', 'ClosedBy', 'ApprovedBy','CountryId','created_by'
+        
     ];
 
     public function concerned() 
@@ -72,5 +73,9 @@ class CustomerSatisfaction extends Model implements Auditable
     public function concernedDept() 
     {
         return $this->belongsTo(ConcernDepartment::class, 'Department', 'id');
+    }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 }
