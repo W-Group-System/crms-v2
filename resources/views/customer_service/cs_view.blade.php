@@ -55,12 +55,16 @@
                             </form> -->
                         @endif
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->ApprovedBy == NULL)
-                            <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST" onsubmit="show()">
+                            <!-- <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST" onsubmit="show()">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success approvedBtn">
                                     <i class="ti-check">&nbsp;</i> Noted
                                 </button>
-                            </form>
+                            </form> -->
+
+                            <button type="button" class="btn btn btn-outline-success" id="editNote" data-id="{{ $data->id }}" data-toggle="modal" data-target="#approvedNoted">
+                                    <i class="ti ti-check"></i>&nbsp;Noted
+                                </button>
                         @endif
                         @if($data->Department == NULL && $data->Progress == 20)
                             <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
@@ -295,6 +299,36 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="approvedNoted" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerRequirementLabel">Noted By</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block w-100" method="POST" onsubmit="show()">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea class="form-control" rows="5" name="NotedRemarks" placeholder="Enter Remarks" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-success approvedBtn">
+                        <i class="ti-check">&nbsp;</i> Noted
+                    </button>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
@@ -569,9 +603,15 @@
         });
 
         $('.approvedBtn').on('click', function (e) {
-            e.preventDefault(); // Stop normal form submission
+            e.preventDefault(); 
 
-            // Show loading before sending AJAX
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action');
+
+           
+            $('#approvedNoted').modal('hide');
+
+            
             Swal.fire({
                 title: 'Please wait...',
                 text: 'Processing request',
@@ -580,9 +620,6 @@
                     Swal.showLoading();
                 }
             });
-
-            var form = $(this).closest('form');
-            var actionUrl = form.attr('action');
 
             $.ajax({
                 url: actionUrl,
@@ -610,7 +647,6 @@
                 }
             });
         });
-
         // $('.closedBtn').on('click', function (e) {
         //     e.preventDefault(); // Prevent the default form submission
 

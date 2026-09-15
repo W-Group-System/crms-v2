@@ -135,13 +135,32 @@
                             </div>
                             <div class="form-group">
                                 <label>Contact:</label>
-                                <select class="form-control js-example-basic-single" name="ClientContactId" id="ClientContactId" style="position: relative !important" title="Select ClientContacId" required>
+                                <!-- <select class="form-control js-example-basic-single" name="ClientContactId" id="ClientContactId" style="position: relative !important" title="Select ClientContacId" required>
                                     <option value="" disabled selected>Select Contact</option>
                                     @if(old('ClientContactId'))
                                         @foreach ($contacts as $contact)
                                             <option value="{{ $contact->id }}" {{ old('ClientContactId') ==  $contact->id ? 'selected' : '' }}>{{ $contact->Name }}</option>
                                         @endforeach
                                     @endif
+                                </select> -->
+                                <select class="form-control js-example-basic-single"
+                                        name="ClientContactId"
+                                        id="ClientContactId"
+                                        style="position: relative !important"
+                                        title="Select ClientContactId"
+                                        required>
+
+                                    <option value="" disabled selected>Select Contact</option>
+
+                                    @if(isset($contacts))
+                                        @foreach($contacts as $contact)
+                                            <option value="{{ $contact->id }}"
+                                                {{ old('ClientContactId') == $contact->id ? 'selected' : '' }}>
+                                                {{ $contact->ContactName }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+
                                 </select>
                             </div>
                             <div class="form-group">
@@ -466,7 +485,7 @@ $(document).ready(function() {
     });
 
     $(document).ready(function() {
-        var oldClientId = '{{ old("ClientId") }}';
+    var oldClientId = '{{ old("ClientId") }}';
     if (oldClientId) {
         $('.ClientId').val(oldClientId).trigger('change');
     }

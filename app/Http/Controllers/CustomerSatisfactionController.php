@@ -617,6 +617,7 @@ class CustomerSatisfactionController extends Controller
         $data->ApprovedDate = now();
         $data->Progress = 40;
         $data->Status = 30;
+        $data->NotedRemarks = $request->NotedRemarks;
         $data->save();
 
         $attachments = [];
@@ -634,9 +635,9 @@ class CustomerSatisfactionController extends Controller
         
         TransactionRemarks::create([
             'transaction_no' => $data->CsNumber,
-            'action' => "Customer satisfaction approved.",
+            'action' => "NOTED BY",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => $request->NotedRemarks ?? "",
         ]);
         return response()->json([
             'success' => true,
@@ -657,7 +658,7 @@ class CustomerSatisfactionController extends Controller
             'transaction_no' => $data->CsNumber,
             'action' => "Customer satisfaction closed.",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => $request->NotedRemarks ?? "",
         ]);
 
         return response()->json([
