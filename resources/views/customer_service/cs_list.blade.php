@@ -93,7 +93,8 @@
                                 {{-- <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->category->Name }}</td> --}}
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->Description ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->users->full_name ?? 'N/A' }}</td>
-                                <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->createdBy->full_name ?? 'N/A' }}</td>
+                                <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : ''}}">{{ $cs_data->ContactName ?? 'N/A'}}</td>
+                                <!-- <td class="{{ is_null($cs_data->users) ? 'text-danger-bold' : '' }}">{{ $cs_data->createdBy->full_name ?? 'N/A' }}</td> -->
                                 <td>
                                     @if($cs_data->Status == 10)
                                         <div class="badge badge-success">Open</div>

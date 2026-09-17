@@ -126,17 +126,32 @@ class CustomerComplaint2Controller extends Controller
         //         $q->where('Department',  auth()->user()->role->type);
         //     });
         // })
-        ->when(optional($role)->type, function($q) use ($role, $request, $search,$allowedCountry) {
+        
+        //Bde restricted only on a specific contries 
+        // ->when(optional($role)->type, function($q) use ($role, $request, $search,$allowedCountry) {
+        //     if ($role->type == "IS") {
+        //         $q->where('CcNumber', 'LIKE', "%CCF-IS%");
+        //         if ($role->description == "BDE") {
+        //             $q->whereIn('Country', $allowedCountry);
+        //         }
+        //     } elseif ($role->type == "LS") {
+        //         $q->where('CcNumber', 'LIKE', "%CCF-LS%");
+        //         if ($role->description == "BDE") {
+        //             $q->whereIn('Country', $allowedCountry);
+        //         }
+        //     } elseif ($role->type == "ITD") {
+
+        //     } else {
+        //         $q->whereHas('concernedDept', function ($dept) use ($role) {
+        //             $dept->where('dept_role_group', $role->type);
+        //         })->whereNotNull('ApprovedBy');
+        //     }
+        // })
+        ->when(optional($role)->type, function($q) use ($role, $request, $search) {
             if ($role->type == "IS") {
                 $q->where('CcNumber', 'LIKE', "%CCF-IS%");
-                if ($role->description == "BDE") {
-                    $q->whereIn('Country', $allowedCountry);
-                }
             } elseif ($role->type == "LS") {
                 $q->where('CcNumber', 'LIKE', "%CCF-LS%");
-                if ($role->description == "BDE") {
-                    $q->whereIn('Country', $allowedCountry);
-                }
             } elseif ($role->type == "ITD") {
 
             } else {
@@ -570,7 +585,7 @@ class CustomerComplaint2Controller extends Controller
         $data->ShipmentDate = $request->ShipmentDate;
         $data->AmountIncurred = $request->AmountIncurred;
         $data->ShipmentCost = $request->ShipmentCost;
-        $data->IsVerified = $request->IsVerified;
+        // $data->IsVerified = $request->IsVerified;
         $data->Progress = 60;
 
         // Only update Claims if it's present in the request
