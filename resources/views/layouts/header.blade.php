@@ -106,6 +106,34 @@
         .table-responsive::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+            
+        .customer-requirement-parent {
+            list-style: none !important;
+        }
+
+        .customer-requirement-parent .nav-link {
+            display: flex !important;
+            align-items: center;
+        }
+
+        .customer-requirement-menu {
+            display: none;
+        }
+        .customer-requirement-list {
+            margin: 0;
+            padding-left: 25px;
+        }
+
+        .customer-requirement-list li {
+            display: list-item;
+            color: white;
+        }
+
+        .customer-requirement-list li a {
+            display: inline;
+            color: white;
+            text-decoration: none;
+        }
     </style>
     @yield('css')
     @php
@@ -341,7 +369,52 @@
                             <div class="collapse" id="tables">
                                 <ul class="nav flex-column sub-menu">
                                     @if(viewModule('Customer Requirement', $department, $role) == "yes")
-                                    <li class="nav-item"><a class="nav-link" href="{{ url('/customer_requirement?open=10') }}">Customer Requirement</a></li> 
+                                    {{-- <li class="nav-item"><a class="nav-link" href="{{ url('/customer_requirement?open=10') }}">Customer Requirement</a></li>  --}}
+                                    <li class="nav-item customer-requirement-parent">
+
+                                        <a class="nav-link"
+                                            href="javascript:void(0);"
+                                            onclick="toggleCustomerRequirement(event)">
+                                            <span>Customer Requirement</span>
+                                            <i class="menu-arrow"></i>
+                                        </a>
+
+                                        <div id="customerRequirement" class="customer-requirement-menu">
+                                            <ul class="customer-requirement-list">
+
+                                                <li>
+                                                    <a href="{{ url('/customer_requirement?nature=all') }}">
+                                                        All
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ url('/customer_requirement?nature=recommendation') }}">
+                                                        Product Recommendation
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ url('/customer_requirement?nature=documentation') }}">
+                                                        Documentation Requests
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ url('/customer_requirement?nature=questionnaires') }}">
+                                                        Client Questionnaires
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{{ url('/customer_requirement?nature=coding') }}">
+                                                        Product Coding
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+
+                                    </li>
                                     @endif
                                     @if(viewModule('Request for Product Evaluation', $department, $role) == "yes")
                                     <li class="nav-item"><a class="nav-link" href="{{ url('/request_product_evaluation?open=10') }}">Request for Product Evaluation</a></li>

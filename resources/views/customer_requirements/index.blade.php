@@ -23,6 +23,7 @@
         <div class="card-body" >
             <div class="card-title d-flex justify-content-between align-items-center">
                 <form method="GET" onsubmit="show()">
+                    <input type="hidden" name="nature" value="{{ $nature ?? 'all' }}">
                     <label>Show : </label>
                     @if($status)
                         <label class="checkbox-inline">
@@ -55,6 +56,7 @@
             <div class="mb-3">
                 <a href="#" id="copy_btn" class="btn btn-md btn-outline-info">Copy</a>
                 <form method="GET" action="{{url('customer_requirement_export')}}" class="d-inline-block">
+                    <input type="hidden" name="nature" value="{{ $nature }}">
                     <input type="hidden" name="open" value="{{$open}}">
                     <input type="hidden" name="close" value="{{$close}}">
                     <button type="submit" class="btn btn-outline-success">Export</button>
