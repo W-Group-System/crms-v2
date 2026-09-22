@@ -449,22 +449,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @foreach ($history_rmc as $rmc)
-                                    <tr>
-                                        <td>{{date('Y-m-d', strtotime($rmc['effective_dates']))}}</td>
-                                        <td>{{$rmc['total_price']}}</td>
-                                        <td>{{number_format(usdToEur($rmc['total_price']), 2)}}</td>
-                                        <td>{{number_format(usdToPhp($rmc['total_price']), 2)}}</td>
-                                    </tr>
-                                @endforeach --}}
                                 @php
                                     $previousValue = null;
                                     $array_values = $history_rmc['materials'];
                                     $last_total = 0;
                                 @endphp
+                                
                                 @foreach ($history_rmc['result'] as $key => $rmc)
                                     <tr>
-                                        <td>{{date('Y-m-d', strtotime($key))}}</td>
+                                        <td>{{ date('Y-m-d', strtotime($key)) }}</td>
                                         <td>
                                             @php
                                                 $total = 0;
@@ -478,31 +471,33 @@
                                                     @endif
                                                 @endforeach
                                             @endforeach
+                                            
                                             @foreach($array_values as $arr)
-                                            @php
-                                                $total = $total + $arr->usd;
-                                                $last_total = $total;
-                                            @endphp
+                                                @php
+                                                    $total = $total + $arr->usd;
+                                                    $last_total = $total;
+                                                @endphp
                                             @endforeach
-                                            {{number_format($total,2)}}
+                                            
+                                            {{ number_format($total, 2) }}
                                         </td>
-                                        <td>{{number_format(usdToRMC($total,$key,1), 2)}}</td>
-                                        <td>{{number_format(usdToRMC($total,$key,3), 2)}}</td>
-                                        {{-- <td>{{$rmc['total_po']}}</td> --}}
-                                        {{-- <td>{{number_format(usdToEur($rmc['total_price']), 2)}}</td>
-                                        <td>{{number_format(usdToPhp($rmc['total_price']), 2)}}</td> --}}
+                                        <td>{{ number_format(usdToRMC($total, $key, 1), 2) }}</td>
+                                        <td>{{ number_format(usdToRMC($total, $key, 3), 2) }}</td>
                                     </tr>
                                     @php
-                                    if(count($rmc) > 1)
-                                    {
-                                        $previousValue = $key;
-                                    }
+                                        if(count($rmc) > 1) {
+                                            $previousValue = $key;
+                                        }
                                     @endphp
                                 @endforeach
+
+                                <!-- added to fixed the based rate -->
                                 @php
-                                    $usd = number_format($total,2);
-                                    $eur = number_format(latestConversion($total,1), 2);
-                                    $php = number_format(latestConversion($total,3), 2);
+                                    $usd = number_format($last_total, 2);
+                                    $last_effective_date = $key ?? null;
+
+                                    $eur = number_format(usdToRMC($last_total, $last_effective_date, 1), 2);
+                                    $php = number_format(usdToRMC($last_total, $last_effective_date, 3), 2);
                                 @endphp
                             </tbody>
                         </table>

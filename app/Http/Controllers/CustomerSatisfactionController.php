@@ -24,6 +24,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CustomerSatisfactionExport;
+use App\TransactionRemarks;
 
 
 
@@ -162,24 +163,29 @@ class CustomerSatisfactionController extends Controller
 
         $newCsNo = 'CSR-' . $year . '-' . $newSeries;
 
-        // Set default for open status if not present in the request
         $open = $request->input('open');
         $close = $request->input('close');
 
         $customerSatisfaction = CustomerSatisfaction::with(['concerned', 'category'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
+
                     $query->where('CsNumber', 'LIKE', '%' . $search . '%')
                         ->orWhere('created_at', 'LIKE', '%' . $search . '%')
                         ->orWhere('CompanyName', 'LIKE', '%' . $search . '%')
                         ->orWhere('ContactName', 'LIKE', '%' . $search . '%')
-                        ->orWhere('Concerned', 'LIKE', '%' . $search . '%')
                         ->orWhere('Category', 'LIKE', '%' . $search . '%')
-                        ->orWhere('Status', 'LIKE', '%' . $search . '%');
+                        ->orWhere('Status', 'LIKE', '%' . $search . '%')
+                        ->orWhereHas('concerned', function ($query) use ($search) {
+                            $query->where('Name', 'LIKE', '%' . $search . '%');
+                        });
                 });
             })
             ->when($request->input('open') && $request->input('close'), function ($query) use ($request) {
-                $query->whereIn('Status', [$request->input('open'), $request->input('close')]);
+                $query->whereIn('Status', [
+                    $request->input('open'),
+                    $request->input('close')
+                ]);
             })
             ->when($request->input('open') && !$request->input('close'), function ($query) use ($request) {
                 $query->where('Status', $request->input('open'));
@@ -187,32 +193,47 @@ class CustomerSatisfactionController extends Controller
             ->when($request->input('close') && !$request->input('open'), function ($query) use ($request) {
                 $query->where('Status', $request->input('close'));
             })
-            ->when(optional($role)->type, function($q) use ($role, $request, $search, $allowedCountry) {
+            ->when(optional($role)->type, function ($q) use ($role, $request, $search, $allowedCountry) {
+
                 if ($role->type == "IS") {
+
                     $q->where('CsNumber', 'LIKE', "%CSR-IS%");
+
                     if ($role->description == "BDE") {
                         $q->whereIn('CountryId', $allowedCountry);
                     }
+
                 } elseif ($role->type == "LS") {
+
                     $q->where('CsNumber', 'LIKE', "%CSR-LS%");
+
                     if ($role->description == "BDE") {
                         $q->whereIn('CountryId', $allowedCountry);
                     }
+
                 } elseif ($role->type == "ITD") {
 
+                    // No additional filter
+
                 } else {
-                    $q->whereHas('concernedDept', function ($dept) use ($role) {
+
+                    $q->whereHas('concerned', function ($dept) use ($role) {
                         $dept->where('dept_role_group', $role->type);
-                    })->whereNotNull('ApprovedBy');
+                    })
+                    ->whereNotNull('ApprovedBy');
                 }
             })
-            ->when($progress, function($query) use ($progress, $userId) {
+            ->when($progress, function ($query) use ($progress, $userId) {
+
                 if ($progress == '20') {
+
                     $query->where('Progress', '20')
                         ->whereHas('salesapprovers', function ($query) use ($userId) {
                             $query->where('SalesApproverId', $userId);
                         });
+
                 } else {
+
                     $query->where('Progress', $progress);
                 }
             });
@@ -426,68 +447,125 @@ class CustomerSatisfactionController extends Controller
         ]);
     }
 
+    // public function assign(Request $request, $id)
+    // {
+    //     $data = CustomerSatisfaction::with('concerned')->findOrFail($id);
+    //     $data->Department = $request->Department;
+    //     $data->SiteConcerned = $request->SiteConcerned;
+    //     $data->save();
+
+    //     // $department = ConcernDepartment::findOrFail($request->Concerned);
+    //     $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
+    //     // dd($department);
+        
+    //     $attachments = [];
+    //     if ($request->has('Path') && is_array($request->Path)) {
+    //         foreach ($request->Path as $fileName) {
+    //             $tempPath = 'temp/' . $fileName;
+    //             if (Storage::disk('public')->exists($tempPath)) {
+    //                 $newPath = 'cs_files/' . $fileName;
+    //                 Storage::disk('public')->move($tempPath, $newPath);
+
+    //                 CsFiles::create([
+    //                     'CsId' => $data->id,
+    //                     'Path' => $newPath
+    //                 ]);
+
+    //                 $attachments[] = $newPath;
+    //             }
+    //         }
+    //     }
+
+    //     // if ($request->hasFile('Path') && is_array($request->file('Path'))) {
+    //     //     foreach ($request->file('Path') as $file) {
+    //     //         if ($file->isValid()) {
+    //     //             $csFiles = new CsFiles();
+    //     //             $csFiles->CsId = $data->id;
+
+    //     //             $fileName = time() . '_' . $file->getClientOriginalName();
+    //     //             $filePath = $file->storeAs('cs_files', $fileName, 'public'); 
+    //     //             $csFiles->Path = $filePath; 
+    //     //             $csFiles->save();
+
+    //     //             $attachments[] = $filePath;
+    //     //         }
+    //     //     }
+    //     // }
+
+    //     // Mail::to($department->email)->send(new AssignDepartmentMail($data, $attachments));
+    //     TransactionRemarks::create([
+    //         'transaction_no' => $data->CsNumber,
+    //         'action' => 'Assigned to ' . $department->name,
+    //         'action_by' => auth()->id(),
+    //         'remarks' => null
+    //     ]);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Customer satisfaction feedback and files have been successfully assigned.'
+    //     ]);
+    // }
     public function assign(Request $request, $id)
     {
         $data = CustomerSatisfaction::with('concerned')->findOrFail($id);
+
         $data->Department = $request->Department;
         $data->SiteConcerned = $request->SiteConcerned;
         $data->save();
-
-        // $department = ConcernDepartment::findOrFail($request->Concerned);
-        $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
-        // dd($department);
         
-        $attachments = [];
-        if ($request->has('Path') && is_array($request->Path)) {
-            foreach ($request->Path as $fileName) {
-                $tempPath = 'temp/' . $fileName;
-                if (Storage::disk('public')->exists($tempPath)) {
-                    $newPath = 'cs_files/' . $fileName;
-                    Storage::disk('public')->move($tempPath, $newPath);
+        $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
 
-                    CsFiles::create([
-                        'CsId' => $data->id,
-                        'Path' => $newPath
-                    ]);
+        // $attachments = [];
 
-                    $attachments[] = $newPath;
-                }
-            }
-        }
+        // // Move temporary files to cs_files
+        // if ($request->has('Path') && is_array($request->Path)) {
+        //     foreach ($request->Path as $fileName) {
+        //         $tempPath = 'temp/' . $fileName;
 
-        // if ($request->hasFile('Path') && is_array($request->file('Path'))) {
-        //     foreach ($request->file('Path') as $file) {
-        //         if ($file->isValid()) {
-        //             $csFiles = new CsFiles();
-        //             $csFiles->CsId = $data->id;
+        //         if (Storage::disk('public')->exists($tempPath)) {
+        //             $newPath = 'cs_files/' . $fileName;
 
-        //             $fileName = time() . '_' . $file->getClientOriginalName();
-        //             $filePath = $file->storeAs('cs_files', $fileName, 'public'); 
-        //             $csFiles->Path = $filePath; 
-        //             $csFiles->save();
+        //             Storage::disk('public')->move($tempPath, $newPath);
 
-        //             $attachments[] = $filePath;
+        //             CsFiles::create([
+        //                 'CsId' => $data->id,
+        //                 'Path' => $newPath
+        //             ]);
+
+        //             $attachments[] = $newPath;
         //         }
         //     }
         // }
 
-        // Mail::to($department->email)->send(new AssignDepartmentMail($data, $attachments));
+        // Send email to the assigned department
+        // Mail::to($department->email)->send(
+        //     new AssignDepartmentMail($data, $attachments)
+        // );
+
+        // Record the assignment
+        TransactionRemarks::create([
+            'transaction_no' => $data->CsNumber,
+            'action' => "Assigned to {$department->Name} department.",
+            'action_by' => auth()->id(),
+            'remarks' => null
+        ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Customer satisfaction feedback and files have been successfully assigned.'
         ]);
     }
-
+    
     public function view($id)
     {
-        $data = CustomerSatisfaction::with('concerned', 'category', 'cs_attachments')->findOrFail($id);
+        $data = CustomerSatisfaction::with('concerned', 'category', 'cs_attachments', 'csHistoryRemarks')->findOrFail($id);
         $concern_department = ConcernDepartment::all();
         $for_remarks = SatisfactionRemarks::with('user')->where('CsId', $data->id)->get();
         
         // dd(auth()->user())
         return view('customer_service.cs_view', compact('data', 'concern_department', 'for_remarks'));
-    }
+        //dd($data);
+        }
 
     public function received($id)
     {
@@ -496,6 +574,13 @@ class CustomerSatisfactionController extends Controller
         $data->DateReceived = now();
         $data->Progress = 20;
         $data->save();
+
+        TransactionRemarks::create([
+            'transaction_no' => $data->CsNumber,
+            'action' => "Customer satisfaction received.",
+            'action_by'=> auth()->id(),
+            'remarks' => null
+        ]);
 
         return response()->json([
             'success' => true,
@@ -511,6 +596,14 @@ class CustomerSatisfactionController extends Controller
         $data->NotedRemarks = $request->NotedRemarks;
         $data->save();
 
+        TransactionRemarks::create([
+            'transaction_no' => $data->CsNumber,
+            'action' => "NOTED BY",
+            'action_by' => auth()->id(),
+            'remarks' => $request->NotedRemarks ?? "",
+
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Customer satisfaction has been successfully updated.'
@@ -523,6 +616,8 @@ class CustomerSatisfactionController extends Controller
         $data->ApprovedBy = auth()->user()->id;
         $data->ApprovedDate = now();
         $data->Progress = 40;
+        $data->Status = 30;
+        $data->NotedRemarks = $request->NotedRemarks;
         $data->save();
 
         $attachments = [];
@@ -537,7 +632,13 @@ class CustomerSatisfactionController extends Controller
         Mail::to($receivers)
         // Mail::to(['ict.engineer@wgroup.com.ph', 'emmanuel.official0304@gmail.com'])
             ->send(new AcknowledgedMail($data, $attachments));
-
+        
+        TransactionRemarks::create([
+            'transaction_no' => $data->CsNumber,
+            'action' => "NOTED BY",
+            'action_by' => auth()->id(),
+            'remarks' => $request->NotedRemarks ?? "",
+        ]);
         return response()->json([
             'success' => true,
             'message' => 'Customer satisfaction has been successfully acknowledged.'
@@ -552,6 +653,13 @@ class CustomerSatisfactionController extends Controller
         $data->DateClosed = now();
         $data->ClosedBy = auth()->user()->id;
         $data->save();
+
+        TransactionRemarks::create([
+            'transaction_no' => $data->CsNumber,
+            'action' => "Customer satisfaction closed.",
+            'action_by' => auth()->id(),
+            'remarks' => $request->NotedRemarks ?? "",
+        ]);
 
         return response()->json([
             'success' => true,

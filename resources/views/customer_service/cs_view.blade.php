@@ -55,12 +55,16 @@
                             </form> -->
                         @endif
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id) && $data->ApprovedBy == NULL)
-                            <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST" onsubmit="show()">
+                            <!-- <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block" method="POST" onsubmit="show()">
                                 @csrf
                                 <button type="submit" class="btn btn-outline-success approvedBtn">
                                     <i class="ti-check">&nbsp;</i> Noted
                                 </button>
-                            </form>
+                            </form> -->
+
+                            <button type="button" class="btn btn btn-outline-success" id="editNote" data-id="{{ $data->id }}" data-toggle="modal" data-target="#approvedNoted">
+                                    <i class="ti ti-check"></i>&nbsp;Noted
+                                </button>
                         @endif
                         @if($data->Department == NULL && $data->Progress == 20)
                             <button type="button" class="btn btn-outline-primary" data-id="{{ $data->id }}" data-toggle="modal" data-target="#update{{$data->id}}">
@@ -229,6 +233,43 @@
                 <div class="tab-pane fade @if(session('tab') == 'files' || session('tab') == null) active show @endif" id="files" role="tabpanel" aria-labelledby="files">
                 </div>
             </div> -->
+            
+            <hr class="alert-dark mt-3 mb-2">
+           
+            <ul class="nav nav-tabs viewTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link p-2 active" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
+                </li>
+            </ul>
+            <!-- History logs -->
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="transaction_remarks" role="tabpanel" aria-labelledby="transaction_remarks-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover tables" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Action</th>
+                                    <th>Remarks</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($data->csHistoryRemarks as $historyRemarks )
+                                    <tr>
+                                        <td>{{$historyRemarks->userRemarks->full_name}}</td>
+                                        <td>{{ $historyRemarks->action}}</td>
+                                        <td>{{ $historyRemarks->remarks }}</td>
+                                         <td>{{date('M d, Y', strtotime($historyRemarks->created_at))}}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--End  -->
+            
         </div>
     </div>
 </div>
@@ -258,6 +299,36 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="approvedNoted" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerRequirementLabel">Noted By</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ url('cs_approved/' . $data->id) }}" class="d-inline-block w-100" method="POST" onsubmit="show()">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea class="form-control" rows="5" name="NotedRemarks" placeholder="Enter Remarks" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-success approvedBtn">
+                        <i class="ti-check">&nbsp;</i> Noted
+                    </button>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
@@ -371,6 +442,12 @@
         width: 450px;
     }
 </style>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
 <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
@@ -378,6 +455,12 @@
 
 <script>
     $(document).ready(function () {
+         $('.tables').DataTable({
+            destroy: false,
+            processing: true,
+            pageLength: 10,
+            ordering: false
+        });
         $('#newRemarks').on('submit', function (e) {
             e.preventDefault(); 
 
@@ -520,9 +603,15 @@
         });
 
         $('.approvedBtn').on('click', function (e) {
-            e.preventDefault(); // Stop normal form submission
+            e.preventDefault(); 
 
-            // Show loading before sending AJAX
+            var form = $(this).closest('form');
+            var actionUrl = form.attr('action');
+
+           
+            $('#approvedNoted').modal('hide');
+
+            
             Swal.fire({
                 title: 'Please wait...',
                 text: 'Processing request',
@@ -531,9 +620,6 @@
                     Swal.showLoading();
                 }
             });
-
-            var form = $(this).closest('form');
-            var actionUrl = form.attr('action');
 
             $.ajax({
                 url: actionUrl,
@@ -561,7 +647,6 @@
                 }
             });
         });
-
         // $('.closedBtn').on('click', function (e) {
         //     e.preventDefault(); // Prevent the default form submission
 

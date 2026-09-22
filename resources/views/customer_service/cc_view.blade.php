@@ -44,7 +44,7 @@
                          @if($data->getOriginal()["Progress"] == 80 || $data->getOriginal()["Progress"] = 60)
                             @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null && $data->IsVerified != 1)
                                 <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
-                                    <i class="ti ti-pencil"></i>&nbsp;Verification
+                                    <i class="ti ti-pencil"></i>&nbsp;Proposed Action
                                 </button>
                             @endif
                         @endif
@@ -172,6 +172,70 @@
                     @endif
                 @endif -->
             </div>
+            <!-- Customer Details -->
+            <div class="col-md-12 mb-3">
+                <label><strong>Customer Details</strong></label>
+                <hr class="alert-dark mt-0">
+            </div>
+            <div class="row mb-0 mt-3">
+                <!-- Left align-->
+                <!-- Date Complaint -->
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Date Complaint :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ date('M. d, Y', strtotime($data->created_at)) }}</p>
+                </div>
+
+                <!-- Contact Name -->
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Contact Name :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->ContactName }}</p>
+                </div>
+                <!-- Country -->
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Country :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->country->Name }}</p>
+                </div>
+                <!-- End -->
+                
+                <!-- Right Align-->
+                <!-- Email -->
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Email : </b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->Email }}</p>
+                </div>
+
+                <!-- Company name -->
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Company Name :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->CompanyName }}</p>
+                </div>
+
+                <!-- Telephone -->
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Telephone :</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ $data->Telephone }}</p>
+                </div>
+                <!-- End -->
+            </div>
+            <!-- End customer details -->
+            
+            <!--CCF  -->
+            <div class="col-md-12 mb-3 mt-3">
+                <label><strong>Customer Complaint Form (CCF) </strong></label>
+                <hr class="alert-dark mt-0">
+            </div>
             <div class="row mb-0 mt-3">
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>CCF # :</b></p>
@@ -184,6 +248,7 @@
                     <p class="m-0">{{ $data->QualityClass }}</p>
                 </div>
             </div>
+
             <div class="row mb-0">
                 <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Recurring Issue :</b></p></div>
                 <div class="col-sm-3 col-md-4">
@@ -200,6 +265,7 @@
                     <p class="m-0">{{ $data->PreviousCCF }}</p>
                 </div>
             </div>
+
             <div class="row mb-0">
                 <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>NCAR :</b></p></div>
                 <div class="col-sm-3 col-md-4">
@@ -216,13 +282,14 @@
                     <p class="m-0">{{ $data->IssuanceNo }}</p>
                 </div>
             </div>
+
             <div class="form-group row mb-0">
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Date Received :</b></p>
                 </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->DateReceived }}</p>
-                </div>
+                <p class="col-sm-3 col-md-4">
+                    {{ $data->DateReceived ? date('M. d, Y', strtotime($data->DateReceived)) : '' }}
+                </p>
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Received By :</b></p>
                 </div>
@@ -230,13 +297,15 @@
                     <p class="m-0">{{ optional($data->users)->full_name }}</p>
                 </div>
             </div>
+
+
             <div class="row mb-0">
-                <div class="col-sm-3 col-md-2 text-right">
+                <!-- <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Date Complaint :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
+                </div> -->
+                <!-- <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ date('M. d, Y', strtotime($data->created_at)) }}</p>
-                </div>
+                </div> -->
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Site Concerned :</b></p>
                 </div>
@@ -260,6 +329,7 @@
                     </p>
                 </div>
             </div>
+
             {{-- <div class="row mb-3">
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Address :</b></p>
@@ -268,13 +338,9 @@
                     <p class="m-0">{{ $data->Address }}</p>
                 </div>
             </div> --}}
+
             <div class="row mb-0">
-                <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Country :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->country->Name }}</p>
-                </div>
+               
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Department Concerned :</b></p>
                 </div>
@@ -288,21 +354,21 @@
                     <p class="m-0">{{ $data->Status == 10 ? 'Open' : 'Closed' }}</p>
                 </div>--}}
             </div>
-            <div class="row mb-0">
+            <!-- <div class="row mb-0">
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Company Name :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ $data->CompanyName }}</p>
                 </div>
-            </div>
+            </div> -->
             <div class="row mb-0">
-                <div class="col-sm-3 col-md-2 text-right">
+                <!-- <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Contact Name :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ $data->ContactName }}</p>
-                </div>
+                </div> -->
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Noted By :</b></p>
                 </div>
@@ -325,12 +391,12 @@
                 </div> --}}
             </div>
             <div class="row mb-0">
-                <div class="col-sm-3 col-md-2 text-right">
+                <!-- <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Email : </b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ $data->Email }}</p>
-                </div>
+                </div> -->
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Noted By :</b></p>
                 </div>
@@ -339,12 +405,12 @@
                 </div>
             </div>
             <div class="row mb-0 mb-3">
-                <div class="col-sm-3 col-md-2 text-right">
+                <!-- <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Telephone :</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">{{ $data->Telephone }}</p>
-                </div>
+                </div> -->
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Date Closed :</b></p>
                 </div>
@@ -352,8 +418,11 @@
                     <p class="m-0">{{ $data->ClosedDate }}</p>
                 </div>
             </div>
-            <div class="form-group row mb-0">
-                
+            <div class="form-group row mb-0"></div>
+            <!--Customer Remarks  -->
+            <div class="col-md-12 mb-3">
+                <label><strong>Customer Remarks </strong></label>
+                <hr class="alert-dark mt-0">
             </div>
             <div class="form-group row mb-3">
                 <div class="col-sm-3 col-md-2 text-right">
@@ -362,10 +431,9 @@
                 <div class="col-sm-3 col-md-6">
                     <p class="m-0">{{ $data->CustomerRemarks }}</p>
                 </div>
-            </div> 
-            <div class="form-group row mb-3">
-                
-            </div> 
+            </div>
+            <!-- End -->
+            <div class="form-group row mb-3"></div> 
             <div class="row">
                 <div class="col-md-12">
                     <div class="table-responsive">
@@ -1017,8 +1085,10 @@
                                     <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault2" value="2"
                                         {{ isset($data->Claims) && $data->Claims != 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label> -->
+                                    
+                                    <!-- $isDisabled = !is_null($data->Claims) ? 'disabled' : ''; -->
                                     @php
-                                        $isDisabled = !is_null($data->Claims) ? 'disabled' : '';
+                                        $isDisabled = ''; 
                                     @endphp
 
                                     <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault1" value="1"
@@ -1028,6 +1098,9 @@
                                     <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault2" value="2"
                                         {{ $data->Claims == 2 ? 'checked' : '' }} {{ $isDisabled }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
+
+
+
                                 </div>
                             </div>
                         </div>
@@ -1035,8 +1108,9 @@
                             <div class="form-group">
                                 <label for="name">For Shipment Return?</label>
                                 <div class="form-check form-check-inline" id="ship-radio">
+                                    <!-- $ShipmentDisabled = !is_null($data->Shipment) ? 'disabled' : ''; -->
                                     @php
-                                        $ShipmentDisabled = !is_null($data->Shipment) ? 'disabled' : '';
+                                        $ShipmentDisabled = '';
                                     @endphp
                                     <input class="form-check-input" type="radio" name="Shipment" id="flexRadioDefault1" value="1" {{ $data->Shipment == 1 ? 'checked' : '' }} {{ $ShipmentDisabled }} required>
                                     <label class="form-check-label" for="flexRadioDefault1">Yes</label>
@@ -1088,19 +1162,19 @@
                             </div>
                         </div>
                         {{-- @if($data->Claims != null || $data->Shipment != null) --}}
-                            <div class="col-lg-6">
+                            <!-- <div class="col-lg-6">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="IsVerified" value="1" id="flexCheckDefault" {{ $data->IsVerified == 1 ? 'checked' : '' }} required>
                                     <label class="form-check-label" for="flexCheckDefault">
-                                        Is Verified?
+                                        Is Verified
                                     </label>
                                 </div>
-                            </div>
+                            </div> -->
                         {{-- @endif --}}
                     </div>
                     <div class="modal-footer mt-3">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-outline-primary">Submit</button>
+                        <button type="submit" class="btn btn-outline-primary">Save</button>
                     </div>
                 </form>
             </div>

@@ -781,6 +781,7 @@ class PriceMonitoringController extends Controller
         $rmcValue = rmc($productRawMaterials, $id);
         $phpValue = usdToPhp($rmcValue);
         return response()->json(['rmc' => $phpValue]);
+        
     }
 
     public function getClientDetailsL($id)

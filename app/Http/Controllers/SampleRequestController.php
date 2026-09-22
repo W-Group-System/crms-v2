@@ -605,9 +605,16 @@ class SampleRequestController extends Controller
         return view('sample_requests.index', compact('products', 'sampleRequests', 'rndSrf', 'clients', 'contacts', 'categories', 'departments', 'productApplications', 'productCodes', 'search', 'entries', 'open','close', 'users', 'loggedInUser', 'userDispatch','filterBy'));
     }
 
+    // public function getSampleContactsByClientF($clientId)
+    // {
+    //     $contacts = Contact::where('CompanyId', $clientId)->pluck('ContactName', 'id');
+    //     return response()->json($contacts);
+    // }
     public function getSampleContactsByClientF($clientId)
     {
-        $contacts = Contact::where('CompanyId', $clientId)->pluck('ContactName', 'id');
+        $contacts = Contact::where('CompanyId', $clientId)
+            ->pluck('ContactName', 'id');
+
         return response()->json($contacts);
     }
 

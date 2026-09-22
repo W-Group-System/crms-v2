@@ -85,8 +85,10 @@
                             <th>Department Concerned</th>
                             <th>Customer Remarks</th>
                             <th>Received By</th>
-                            <th>Status</th>
                             <th>Created By</th>
+                            <th>Validity</th>
+                            <th>Status</th>
+                           
                         </tr>
                     </thead>
                     <tbody>
@@ -103,14 +105,22 @@
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->concernedDept->Name ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->CustomerRemarks ?? 'N/A' }}</td>
                                 <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->users->full_name ?? 'N/A' }}</td>
-                                <td>
+                                <!-- <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->createdBy->full_name ?? 'N/A' }}</td> -->
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{$cc_data->ContactName ?? 'N/A'}}</td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">
+                                    @if ($cc_data->Validity == 'valid')
+                                        <div class="badge badge-success">Valid</div>  
+                                    @else     
+                                        <div class="badge badge-warning">Invalid</div>
+                                    @endif
+                                </td>
+                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">
                                     @if($cc_data->Status == 10)
                                         <div class="badge badge-success">Open</div>
                                     @else
                                         <div class="badge badge-warning">Closed</div>
                                     @endif
                                 </td>
-                                <td class="{{ is_null($cc_data->users) ? 'text-danger-bold' : '' }}">{{ $cc_data->createdBy->full_name ?? 'N/A' }}</td>
                             </tr>
                             @endforeach
                         @else

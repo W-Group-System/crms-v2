@@ -482,7 +482,7 @@
                                     <li class="nav-item"> <a class="nav-link" href="{{ url('/customer_feedback') }}">Customer Feedbacks</a></li>
                                     @endif --}}
                                     <!-- @if(viewModule('Customer Feedback', $department, $role) == "yes") -->
-                                        <li class="nav-item"> <a class="nav-link" href="{{ url('/cs_list') }}">Customer Satisfaction</a></li>
+                                        <li class="nav-item"> <a class="nav-link" href="{{ url('/cs_list?open=10') }}">Customer Satisfaction</a></li>
                                     @endif
                                     @if(viewModule('Customer Complaints', $department, $role) == "yes")
                                         <li class="nav-item"> <a class="nav-link" href="{{ url('/cc_list?open=10') }}">Customer Complaint</a></li>
