@@ -61,11 +61,11 @@ class CustomerRequirementController extends Controller
                     });
                 } elseif ($nature == 'questionnaires') {
                     $query->whereHas('crrNature', function ($q) {
-                        $q->whereIn('NatureOfRequestId', 3);
+                        $q->where('NatureOfRequestId', 3);
                     });
                 } elseif ($nature == 'coding') {
                     $query->whereHas('crrNature', function ($q) {
-                        $q->whereIn('NatureOfRequestId', 4);
+                        $q->where('NatureOfRequestId', 4);
                     });
                 }
             })
