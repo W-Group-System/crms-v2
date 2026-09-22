@@ -43,13 +43,32 @@ class CustomerRequirementController extends Controller
         $status = $request->query('status'); // Get the status from the query parameters
         $progress = $request->query('progress'); // Get the status from the query parameters
         $return_to_sales = $request->query('return_to_sales');
-
+        $nature = $request->query('nature');
         $userId = Auth::id(); 
         $userByUser = Auth::user()->user_id; 
 
         $crrRndOpen = CustomerRequirement::where('Status', '10')->count();
         // Fetch customer requirements with applied filters
         $customer_requirements = CustomerRequirement::with(['client', 'product_application', 'crr_personnels'])
+            ->when($nature && $nature != 'all', function ($query) use ($nature) {
+                if ($nature == 'recommendation') {
+                    $query->whereHas('crrNature', function ($q) {
+                        $q->where('NatureOfRequestId', 2);
+                    });
+                } elseif ($nature == 'documentation') {
+                    $query->whereHas('crrNature', function ($q) {
+                        $q->where('NatureOfRequestId', 1);
+                    });
+                } elseif ($nature == 'questionnaires') {
+                    $query->whereHas('crrNature', function ($q) {
+                        $q->whereIn('NatureOfRequestId', 3);
+                    });
+                } elseif ($nature == 'coding') {
+                    $query->whereHas('crrNature', function ($q) {
+                        $q->whereIn('NatureOfRequestId', 4);
+                    });
+                }
+            })
             ->when($request->input('status'), function($query) use ($request, $userId, $userByUser) {
                 $status = $request->input('status');
                 $role = auth()->user()->role;
@@ -623,7 +642,7 @@ class CustomerRequirementController extends Controller
         $progress = $request->progress;
         $currentUser = auth()->user();
         // Return view with all necessary data
-        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress', 'return_to_sales', 'currentUser')); 
+        return view('customer_requirements.index', compact('customer_requirements', 'clients', 'product_applications', 'users', 'price_currencies', 'nature_requests', 'search', 'open', 'close', 'entries', 'refCode', 'unitOfMeasure', 'status', 'progress', 'return_to_sales', 'currentUser', 'nature')); 
     }
 
     // Store
@@ -1062,7 +1081,7 @@ class CustomerRequirementController extends Controller
 
     public function export(Request $request)
     {
-        return Excel::download(new CustomerRequirementExport($request->open, $request->close), 'Customer Requirement.xlsx');
+        return Excel::download(new CustomerRequirementExport($request->open, $request->close, $request->nature), 'Customer Requirement.xlsx');
     }
 
     public function delete($id)

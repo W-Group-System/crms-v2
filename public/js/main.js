@@ -6,6 +6,18 @@ function toggleTables(event) {
   event.preventDefault();
   $('#tables').collapse('toggle'); 
 }
+function toggleCustomerRequirement(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    var menu = document.getElementById('customerRequirement');
+
+    if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'block';
+    } else {
+        menu.style.display = 'none';
+    }
+}
 function toggleSetupService(event) {
   event.preventDefault(); 
   $('#table_service2').collapse('toggle'); 
