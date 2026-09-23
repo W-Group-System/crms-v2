@@ -778,7 +778,8 @@
         <script src="{{ asset('js/dataTables.select.min.js') }}"></script>
         <script src="{{ asset('js/select2.min.js') }}"></script>
         <script src="{{ asset('js/select2.js') }}"></script>
-        <script src="{{ asset('js/main.js') }}"></script>
+        {{-- <script src="{{ asset('js/main.js') }}"></script> --}}
+        <script src="{{ asset('js/main.js') }}?v={{ filemtime(public_path('js/main.js')) }}"></script>
         <script src="{{asset('js/sweetalert2.min.js')}}"></script>
 
         <script src="{{ asset('js/off-canvas.js') }}"></script>
