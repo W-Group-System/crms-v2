@@ -85,71 +85,120 @@
                 </div>
             </h4>
             <div class="row">
+                <!-- Customer Details -->
+                <div class="col-md-12 mb-3">
+                    <label><strong>Customer Details</strong></label>
+                    <hr class="alert-dark mt-0">
+                </div>
                 <div class="col-md-12">
-                    <div class="form-group row mb-0" style="margin-top: 2em">
-                        <label class="col-sm-3 col-form-label text-right"><b>CSR #:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->CsNumber }}</label>
-                        </div>
+                    <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Date Requested:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->created_at }}</label>
+                            <label>
+                                {{ $data->created_at ? date('M. d, Y', strtotime($data->created_at)) : 'N/A' }}
+                            </label>
                         </div>
+
+                        <label class="col-sm-3 col-form-label text-right"><b>Customer Name:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->ContactName ?? 'N/A'}}</label>
+                        </div>              
                     </div>
+
                     <div class="form-group row mb-0">
-                        <!-- <label class="col-sm-3 col-form-label text-right"><b>Date Received:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->DateReceived }}</label>
-                        </div> -->
-                        <label class="offset-sm-6 col-sm-3 col-form-label text-right"><b>Received By:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->users->full_name ?? '' }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Concerned Department:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->concerned->Name ?? '' }}</label>
-                            {{-- <label>{{ $data->Department ?? '' }}</label> --}}
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->notedBy->full_name ?? '' }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-3 col-form-label text-right"><b>Category:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->category->Name ?? '' }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Remarks:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->NotedRemarks ?? '' }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Company Name:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Company Name&nbsp;:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->CompanyName }}</label>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Noted By:</b></label>
+                        
+                         <label class="col-sm-3 col-form-label text-right"><b>Contact Number&nbsp;:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->approvedBy->full_name ?? '' }}</label>
+                            <label>{{ $data->ContactNumber ?? 'N/A'}}</label>
                         </div>
                     </div>
+
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Customer Name:</b></label>
+                       <label class="col-sm-3 col-form-label text-right"><b>Country&nbsp;:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->ContactName }}</label>
+                            <label>{{ $data->country->Name ?? 'N/A'}}</label>
                         </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Contact Number:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->ContactNumber }}</label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Email&nbsp;:</b></label>
+                        <div class="col-sm-3 text-break">
+                            <label>{{ $data->Email ?? 'N/A'}}</label>
                         </div>
-                        <!-- <label class="col-sm-3 col-form-label text-right"><b>Closed By:</b></label>
+                    </div>
+                </div>
+                <!-- End -->
+                <div class="col-md-12 mb-3">
+                    <label><strong>Customer Satisfaction Form (CSF)</strong></label>
+                    <hr class="alert-dark mt-0">
+                </div>
+                <div class="col-md-12">
+                    <!-- CSR# & Concerned dept -->
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>CSR #&nbsp;:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ $data->closedBy->full_name ?? '' }}</label>
-                        </div> -->
+                            <label>{{ $data->CsNumber ?? 'N/A'}}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Concerned Department&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->concerned->Name ?? 'N/A'}}</label>
+                            {{-- <label>{{ $data->Department ?? '' }}</label> --}}
+                        </div>
+                    </div>
+                    <!-- End -->
+
+                    <!-- Received date & received by-->
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Date Received&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ date('M. d, Y', strtotime($data->DateReceived)) }}</label>
+                        </div>
+                        <label class="col-sm-3 col-form-label text-right"><b>Received By:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->users->full_name ?? 'N/A'}}</label>
+                        </div>
+                    </div>
+                    <!-- End -->
+
+                    <!-- Noted by & category & Remarks-->
+                     <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Noted By&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            <!-- <label>{{ $data->notedBy->full_name ?? 'N/A'}}</label> -->
+                            @if(optional($data->notedBy)->full_name)
+                                <p class="m-0">{{ $data->notedBy->full_name }}</p>
+                            @else
+                                <p class="m-0"><span class="font-weight-bold text-danger">Pending</span></p>
+                            @endif
+                        </div>
+
+                        <label class="col-sm-3 col-form-label text-right"><b>Noted Remarks&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->NotedRemarks ?? 'N/A'}}</label>
+                        </div>
+
+                        <label class="col-sm-3 col-form-label text-right"><b>Category&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->category->Name ?? 'N/A'}}</label>
+                        </div>
+                     </div>
+                    <!-- End -->
+                </div>
+
+
+                <div class="col-md-12">
+   
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Noted By&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            @if(optional($data->action_responsible)->full_name)
+                                <p class="m-0">{{ $data->action_responsible->full_name }}</p>
+                            @else
+                                <p class="m-0"><span class="font-weight-bold text-danger">Pending</span></p>
+                            @endif
+                            <!-- <label>{{ $data->approvedBy->full_name ?? 'N/A'}}</label> -->
+                        </div>
                     </div>
                     <!-- <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Contact Number:</b></label>
@@ -162,11 +211,7 @@
                         </div>
                     </div> -->
                     <div class="form-group row mb-3">
-                        <label class="col-sm-3 col-form-label text-right"><b>Email:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->Email }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Attachments:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Attachments&nbsp;:</b></label>
                         <div class="col-sm-3">
                             @if($data->cs_attachments && $data->cs_attachments->isNotEmpty())
                                 @foreach($data->cs_attachments as $file)
@@ -182,14 +227,30 @@
                             @endif
                         </div>
                     </div>
+            
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Customer Feedback:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Internal Remarks&nbsp;:</b></label>
                         <div class="col-sm-8">
-                            <label>{{ $data->Description }}</label>
+                            @foreach($for_remarks->sortByDesc('created_at') as $remark)
+                            <div class="border border-light rounded p-2 mb-3">
+                                <label> {!! $remark->Remarks !!}</label>
+                                <div>
+                                    <p class="m-0">Remarks by: {{$remark->user->full_name}}</p>
+                                    <p class="text-muted"><small>{{date('h:i A - M d, Y',strtotime($remark->created_at))}}</small></p>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
                     </div>
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-3 col-form-label text-right"><b>Customer Attachments:</b></label>
+                </div>
+
+                <div class="col-md-12">
+                    <label><strong>Customer Attachment</strong></label>
+                    <hr class="alert-dark mt-0">
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Files&nbsp;:</b></label>
                         <div class="col-sm-3">
                             @if($data->customer_attachments && $data->customer_attachments->isNotEmpty())
                                 @foreach($data->customer_attachments as $file)
@@ -205,25 +266,26 @@
                             @endif
                         </div>
                     </div>
+                </div>
+
+
+                <div class="col-md-12">
+                    <label><strong>Customer Feedback</strong></label>
+                    <hr class="alert-dark mt-0">
+                </div>
+                <div class="col-md-12">
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Internal Remarks:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Customer Feedback&nbsp;:</b></label>
                         <div class="col-sm-8">
-                            @foreach($for_remarks->sortByDesc('created_at') as $remark)
-                            <div class="border border-light rounded p-2 mb-3">
-                                <label> {!! $remark->Remarks !!}</label>
-                                <div>
-                                    <p class="m-0">Remarks by: {{$remark->user->full_name}}</p>
-                                    <p class="text-muted"><small>{{date('h:i A - M d, Y',strtotime($remark->created_at))}}</small></p>
-                                </div>
-                            </div>
-                            @endforeach
+                            <label>{{ $data->Description ?? 'N/A'}}</label>
                         </div>
                     </div>
                 </div>
+                
             </div>
-            <div align="right" class="mt-3">
+            <!-- <div align="right" class="mt-3">
                 <a href="{{ url('cs_list') }}" class="btn btn-outline-secondary">Close</a>
-            </div>
+            </div> -->
             <!-- <ul class="nav nav-tabs viewTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link p-2 @if(session('tab') == 'files' || session('tab') == null) active @endif" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">Files</a>
@@ -234,7 +296,7 @@
                 </div>
             </div> -->
             
-            <hr class="alert-dark mt-3 mb-2">
+            <div class="alert-dark mt-3 mb-2"></div>
            
             <ul class="nav nav-tabs viewTab" role="tablist">
                 <li class="nav-item">

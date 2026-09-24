@@ -13,6 +13,9 @@
             {{-- <h4 class="card-title d-flex justify-content-between align-items-center">View Customer Complaint
             </h4> --}}
             <div align="right">
+                <a href="{{ url()->previous() ?: url('customer_complaint2') }}" class="btn btn-md btn-outline-secondary">
+                    <i class="icon-arrow-left"></i>&nbsp;Back
+                </a>
                 @if($data->Validity == "valid")
                     <form action="{{ url('validity/' . $data->id.'/invalid') }}" class="d-inline-block" method="POST">
                         @csrf
@@ -28,9 +31,7 @@
                         </button>
                     </form>
                 @endif
-                <a href="{{ url()->previous() ?: url('customer_complaint2') }}" class="btn btn-md btn-outline-secondary">
-                    <i class="icon-arrow-left"></i>&nbsp;Back
-                </a>
+               
                 @if(auth()->user()->role->type != 'IAD')
                     @if(checkIfItsSalesDept(auth()->user()->department_id))
                         @if($data->Status == 10 && $data->ReceivedBy == NULL)
@@ -43,8 +44,21 @@
                         @endif
                          @if($data->getOriginal()["Progress"] == 80 || $data->getOriginal()["Progress"] = 60)
                             @if($data->Investigation != null && $data->CorrectiveAction != null && $data->ActionObjectiveEvidence != null && $data->IsVerified != 1)
-                                <button type="button" class="btn btn-outline-warning" id="recommendationCc" data-id="{{ $data->id }}" data-toggle="modal" data-target="#verificationCc">
-                                    <i class="ti ti-pencil"></i>&nbsp;Proposed Action
+                                <button type="button"
+                                        class="btn btn-outline-warning"
+                                        id="recommendationCc"
+                                        data-id="{{ $data->id }}"
+                                        data-toggle="modal"
+                                        data-target="#verificationCc">
+
+                                    <i class="ti ti-pencil"></i>&nbsp;
+
+                                    @if(is_null($data->Acceptance))
+                                        Proposed Action
+                                    @else
+                                        Edit Proposed Action
+                                    @endif
+
                                 </button>
                             @endif
                         @endif
@@ -91,7 +105,17 @@
                         @endif
                     @endif
                     @endif
-                    @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id) && $data->getOriginal()["Progress"] == 60 && $data->IsVerified == 1)
+
+                    @php
+                        $canClose = $data->getOriginal()["Progress"] == 60
+                            && is_null($data->IsVerified)
+                            && (
+                                primarySalesApprover($data->ReceivedBy, auth()->user()->id) ||
+                                primarySalesApprover($data->NotedBy, auth()->user()->id)
+                            );
+                    @endphp
+
+                    @if($canClose)
                         <form action="{{ url('cc_closed/' . $data->id) }}" class="d-inline-block" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-outline-danger closeBtn">
@@ -99,6 +123,8 @@
                             </button>
                         </form>
                     @endif
+
+
                     @if($data->getOriginal()["Progress"] == 30 && $data->NotedBy != NULL)
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id))
                             <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
@@ -128,7 +154,7 @@
                             </button>
                         @endif
                     @endif -->
-                    @if($data->getOriginal()["Progress"] == 60 || $data->getOriginal()["Progress"] == 70)
+                    @if($data->getOriginal()["Progress"] == 60 || $data->getOriginal()["Progress"] == 80)
                         <a class="btn btn-outline-danger btn-icon-text" href="{{url('print_cc/'.$data->id)}}" target="_blank">
                             <i class="ti ti-printer btn-icon-prepend"></i>
                             Print
@@ -173,263 +199,224 @@
                 @endif -->
             </div>
             <!-- Customer Details -->
-            <div class="col-md-12 mb-3">
-                <label><strong>Customer Details</strong></label>
-                <hr class="alert-dark mt-0">
-            </div>
             <div class="row mb-0 mt-3">
+                <div class="col-md-12 mb-3 mt-3">
+                    <label><strong>Customer Details</strong></label>
+                    <hr class="alert-dark mt-0">
+                </div>
                 <!-- Left align-->
                 <!-- Date Complaint -->
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Date Complaint :</b></p>
+                    <p class="m-0"><b>Date Complaint&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ date('M. d, Y', strtotime($data->created_at)) }}</p>
+                    <p class="m-0">
+                        {{ $data->created_at ? date('M. d, Y', strtotime($data->created_at)) : 'N/A' }}
+                    </p>
                 </div>
-
                 <!-- Contact Name -->
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Contact Name :</b></p>
+                    <p class="m-0"><b>Contact Name&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->ContactName }}</p>
+                    <p class="m-0">{{ $data->ContactName ?? 'N/A'}}</p>
                 </div>
                 <!-- Country -->
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Country :</b></p>
+                    <p class="m-0"><b>Country&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->country->Name }}</p>
+                    <p class="m-0">{{ $data->country->Name ?? 'N/A'}}</p>
                 </div>
                 <!-- End -->
                 
                 <!-- Right Align-->
                 <!-- Email -->
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Email : </b></p>
+                    <p class="m-0"><b>Email&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->Email }}</p>
+                    <p class="m-0">{{ $data->Email ?? 'N/A'}}</p>
                 </div>
 
                 <!-- Company name -->
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Company Name :</b></p>
+                    <p class="m-0"><b>Company Name&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->CompanyName }}</p>
+                    <p class="m-0">{{ $data->CompanyName ?? 'N/A'}}</p>
                 </div>
 
                 <!-- Telephone -->
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Telephone :</b></p>
+                    <p class="m-0"><b>Telephone&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->Telephone }}</p>
+                    <p class="m-0">{{ $data->Telephone ?? 'N/A'}}</p>
                 </div>
                 <!-- End -->
             </div>
             <!-- End customer details -->
             
             <!--CCF  -->
-            <div class="col-md-12 mb-3 mt-3">
-                <label><strong>Customer Complaint Form (CCF) </strong></label>
-                <hr class="alert-dark mt-0">
-            </div>
             <div class="row mb-0 mt-3">
+                <div class="col-md-12 mb-3 mt-3">
+                    <label><strong>Customer Complaint Form (CCF)</strong></label>
+                    <hr class="alert-dark mt-0">
+                </div>
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>CCF # :</b></p>
+                    <p class="m-0"><b>CCF #&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->CcNumber }}</p>
+                    <p class="m-0">{{ $data->CcNumber ?? 'N/A' }}</p>
                 </div>
-                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Quality Class :</b></p></div>
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Quality Class:</b></p></div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->QualityClass }}</p>
+                    <p class="m-0">{{ $data->QualityClass ?? 'N/A' }}</p>
                 </div>
             </div>
 
             <div class="row mb-0">
-                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Recurring Issue :</b></p></div>
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Recurring Issue:</b></p></div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">
                         @if($data->RecurringIssue == 1)
                             Yes
                         @elseif($data->RecurringIssue == 2)
                             No 
+                        @else
+                            N/A
                         @endif
                     </p>
                 </div>
-                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Previous CCF # (If Yes) :</b></p></div>
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Previous CCF # (If Yes)&nbsp;:</b></p></div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->PreviousCCF }}</p>
+                    <p class="m-0">{{ $data->PreviousCCF ?? 'N/A' }}</p>
                 </div>
             </div>
 
             <div class="row mb-0">
-                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>NCAR :</b></p></div>
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>NCAR&nbsp;:</b></p></div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">
                         @if($data->NcarIssuance == 1)
                             Yes
                         @elseif($data->NcarIssuance == 2)
                             No 
+                        @else
+                            N/A
                         @endif
                     </p>
                 </div>
-                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>NCAR # (If Yes) :</b></p></div>
+                <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>NCAR # (If Yes)&nbsp;:</b></p></div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->IssuanceNo }}</p>
+                    <p class="m-0">{{ $data->IssuanceNo ?? 'N/A' }}</p>
                 </div>
             </div>
 
             <div class="form-group row mb-0">
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Date Received :</b></p>
-                </div>
-                <p class="col-sm-3 col-md-4">
-                    {{ $data->DateReceived ? date('M. d, Y', strtotime($data->DateReceived)) : '' }}
-                </p>
-                <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Received By :</b></p>
+                    <p class="m-0"><b>Date Received&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ optional($data->users)->full_name }}</p>
+                    <p class="m-0">{{ $data->DateReceived ? date('M. d, Y', strtotime($data->DateReceived)) : 'N/A' }}</p>
+                </div>
+                <div class="col-sm-3 col-md-2 text-right">
+                    <p class="m-0"><b>Received By&nbsp;:</b></p>
+                </div>
+                <div class="col-sm-3 col-md-4">
+                    <p class="m-0">{{ optional($data->users)->full_name ?? 'N/A' }}</p>
                 </div>
             </div>
 
-
             <div class="row mb-0">
-                <!-- <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Date Complaint :</b></p>
-                </div> -->
-                <!-- <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ date('M. d, Y', strtotime($data->created_at)) }}</p>
-                </div> -->
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Site Concerned :</b></p>
+                    <p class="m-0"><b>Site Concerned&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
                     <p class="m-0">
                         @if($data->SiteConcerned == 1) 
                             WHI Head Office
-                        @elseif ($data->SiteConcerned == 2)
+                        @elseif($data->SiteConcerned == 2)
                             WHI Carmona
-                        @elseif ($data->SiteConcerned == 3)
+                        @elseif($data->SiteConcerned == 3)
                             MRDC
-                        @elseif ($data->SiteConcerned == 4)
+                        @elseif($data->SiteConcerned == 4)
                             CCC Carmen
-                        @elseif ($data->SiteConcerned == 5)
+                        @elseif($data->SiteConcerned == 5)
                             PBI Canlubang
-                        @elseif ($data->SiteConcerned == 6)
+                        @elseif($data->SiteConcerned == 6)
                             International Warehouse
                         @else 
-                            
+                            N/A
                         @endif
                     </p>
                 </div>
             </div>
 
-            {{-- <div class="row mb-3">
+            <div class="row mb-0">
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Address :</b></p>
+                    <p class="m-0"><b>Department Concerned&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->Address }}</p>
+                    <p class="m-0">{{ optional($data->concernedDept)->Name ?? 'N/A' }}</p>
                 </div>
-            </div> --}}
+            </div>
 
             <div class="row mb-0">
-               
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Department Concerned :</b></p>
+                    <p class="m-0"><b>Noted By&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ optional($data->concernedDept)->Name }}</p>
+                    <p class="m-0">
+                        @if(optional($data->noted_by)->full_name)
+                            {{ optional($data->noted_by)->full_name }}
+                        @else
+                            <span class="font-weight-bold text-danger">Pending</span>
+                        @endif
+                    </p>
                 </div>
-                {{-- <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Status :</b></p>
-                </div> 
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->Status == 10 ? 'Open' : 'Closed' }}</p>
-                </div>--}}
             </div>
-            <!-- <div class="row mb-0">
-                <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Company Name :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->CompanyName }}</p>
-                </div>
-            </div> -->
+
             <div class="row mb-0">
-                <!-- <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Contact Name :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->ContactName }}</p>
-                </div> -->
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Noted By :</b></p>
+                    <p class="m-0"><b>Approved By&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ optional($data->noted_by)->full_name }}</p>
-                </div>
-                {{-- <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Mode of Communication :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    @if($data->Moc == '1')
-                        By Phone
-                    @elseif($data->Moc == '2')
-                        By Letter/ Fax
-                    @elseif($data->Moc == '3')
-                        Personal
-                    @elseif($data->Moc == '4')
-                        By Email
-                    @endif
-                </div> --}}
-            </div>
-            <div class="row mb-0">
-                <!-- <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Email : </b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->Email }}</p>
-                </div> -->
-                <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Noted By :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ optional($data->approved_by)->full_name }}</p>
+                    <p class="m-0">
+                        @if(optional($data->approved_by)->full_name)
+                            {{ optional($data->approved_by)->full_name }}
+                        @else
+                            <span class="font-weight-bold text-danger">Pending</span>
+                        @endif
+                    </p>
                 </div>
             </div>
+
             <div class="row mb-0 mb-3">
-                <!-- <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Telephone :</b></p>
-                </div>
-                <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->Telephone }}</p>
-                </div> -->
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Date Closed :</b></p>
+                    <p class="m-0"><b>Date Closed&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-4">
-                    <p class="m-0">{{ $data->ClosedDate }}</p>
+                    <p class="m-0">
+                        {{ $data->ClosedDate ? date('M. d, Y', strtotime($data->ClosedDate)) : 'N/A' }}
+                    </p>
                 </div>
             </div>
             <div class="form-group row mb-0"></div>
             <!--Customer Remarks  -->
-            <div class="col-md-12 mb-3">
-                <label><strong>Customer Remarks </strong></label>
-                <hr class="alert-dark mt-0">
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label><strong>Customer Remarks </strong></label>
+                    <hr class="alert-dark mt-0">
+                </div>
             </div>
             <div class="form-group row mb-3">
                 <div class="col-sm-3 col-md-2 text-right">
-                    <p class="m-0"><b>Customer Remarks:</b></p>
+                    <p class="m-0"><b>Customer Remarks&nbsp;:</b></p>
                 </div>
                 <div class="col-sm-3 col-md-6">
-                    <p class="m-0">{{ $data->CustomerRemarks }}</p>
+                    <p class="m-0">{{ $data->CustomerRemarks ?? 'N/A'}}</p>
                 </div>
             </div>
             <!-- End -->
@@ -619,31 +606,38 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-md-12 mb-3">
-                        <label><strong>Quantification of Cost/s</strong></label>
-                        <hr class="alert-dark mt-0">
-                    </div>
+                    
+                   <!-- Quantification Cost Header -->
                     <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="mb-3 mt-3">
+                                <label><strong>Quantification of Cost/s</strong></label>
+                                <hr class="alert-dark mt-0">
+                            </div>
+                        </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Description :</b></p>
+                            <p class="m-0"><b>Description&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->Description }}</p>
+                            <p class="m-0">{{ $data->Description ?? 'N/A' }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Currency :</b></p>
+                            <p class="m-0"><b>Currency&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->Currency }}</p>
+                            <p class="m-0">{{ $data->Currency ?? 'N/A' }}</p>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
-                        <label><strong>Sales Remarks</strong></label>
-                        <hr class="alert-dark mt-0">
-                    </div>
+                    <!-- End -->
+                
+                    <!-- Sales Remarks -->
                     <div class="row mb-3">
+                        <div class="col-md-12 mb-3 mt-3">
+                            <label><strong>Sales Remarks</strong></label>
+                            <hr class="alert-dark mt-0">
+                        </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Remarks :</b></p>
+                            <p class="m-0"><b>Remarks&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">{{ optional($data->ccsales->first())->SalesRemarks }}</p>
@@ -651,15 +645,19 @@
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Customer Attachments :</b></p>
                         </div>
-                        <div class="col-sm-3 col-md-4">
+                        <div class="col-12 col-md-4">
                             <p class="m-0">
-                                @foreach ($data->files as $key => $file)
-                                    @php
-                                        $filePath = asset('storage/' . $file->Path); 
-                                    @endphp
-                                        {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a>
+                                @if(isset($data->files) && count($data->files) > 0)
+                                    @foreach ($data->files as $key => $file)
+                                        @php
+                                            $filePath = asset('storage/' . $file->Path); 
+                                        @endphp
+                                        {{$key + 1}}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a>
                                         <br>
-                                @endforeach
+                                    @endforeach
+                                @else
+                                    No attachment found
+                                @endif
                             </p>
                         </div>
                     </div>
@@ -668,132 +666,175 @@
                         </div>
                         <div class="col-sm-3 col-md-4">
                         </div>
-                       <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Sales Attachments :</b></p>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Sales Attachments&nbsp;:</b></p>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <p class="m-0">
+                                @if(isset($data->ccsales) && count($data->ccsales) > 0)
+                                    @foreach ($data->ccsales as $key => $file)
+                                        @php
+                                            $filePath = asset('storage/' . $file->Path); 
+                                        @endphp
+                                        {{$key + 1}}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a> 
+                                        <br>
+                                    @endforeach
+                                @else
+                                    No attachment found
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    <!-- End -->
+                    
+                    <!-- Investigation -->
+                    <div class="row mb-0">
+                        <div class="col-md-12 mb-3">
+                            <label><strong>Investigation</strong></label>
+                            <hr class="alert-dark mt-0">
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Action Responsible&nbsp;:</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ optional($data->action_responsible)->full_name ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Objective Evidence&nbsp;:</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ObjectiveEvidence ?? 'N/A'}}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Immediate Action&nbsp;:</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ImmediateAction ?? 'N/A'}}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-0">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Action Date&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">
-                                @foreach ($data->ccsales as $key => $file)
-                                    @php
-                                        $filePath = asset('storage/' . $file->Path); 
-                                    @endphp
-                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
-                                    <br>
-                                @endforeach
+                                {{ $data->ActionDate ? date('M. d, Y', strtotime($data->ActionDate)) : 'N/A' }}
+                            </p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Investigation&nbsp;:</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->Investigation ?? 'N/A'}}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Corrective Action&nbsp;:</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->CorrectiveAction ?? 'N/A'}}</p>
+                        </div>
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Action Objective Evidence&nbsp;:</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">{{ $data->ActionObjectiveEvidence ?? 'N/A'}}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <!-- Verification/Regular Files -->
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Files&nbsp;:</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">
+                                @if(isset($data->objective) && count($data->objective) > 0)
+                                    @foreach ($data->objective as $key => $file)
+                                        @php
+                                            $filePath = asset('storage/' . $file->Path); 
+                                        @endphp
+                                        {{$key + 1}}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a> 
+                                        @if($data->Department == auth()->user()->role->type)
+                                            <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
+                                                <i class="ti ti-close" style="color:red"></i>
+                                            </button>  
+                                        @endif       
+                                        <br>
+                                    @endforeach
+                                @else
+                                    No attachment found
+                                @endif
+                            </p>
+                        </div>
+                        
+                        <!-- Objective Evidence Files -->
+                        <div class="col-sm-3 col-md-2 text-right">
+                            <p class="m-0"><b>Objective Evidence File&nbsp;:</b></p>
+                        </div>
+                        <div class="col-sm-3 col-md-4">
+                            <p class="m-0">
+                                @php 
+                                    $i = 1; 
+                                    $objectEvidenceFiles = isset($data->verification) ? collect($data->verification)->where('file_type', 'objectEvidenceFile') : collect();
+                                @endphp
+
+                                @if($objectEvidenceFiles->count() > 0)
+                                    @foreach ($objectEvidenceFiles as $file)
+                                        @php
+                                            $filePath = asset('storage/' . $file->Path); 
+                                        @endphp
+                                        {{ $i++ }}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a> 
+                                        @if($data->ReceivedBy == auth()->user()->id)
+                                            <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
+                                                <i class="ti ti-close" style="color:red"></i>
+                                            </button>   
+                                        @endif      
+                                        <br>
+                                    @endforeach
+                                @else
+                                    No attachment found
+                                @endif
                             </p>
                         </div>
                     </div>
-                    
-                    <!-- <div class="row mb-3">
+                    <!-- End -->
+
+                    <!-- Verification -->
+                    <div class="row mb-0">
+                        <div class="col-md-12 mb-3">
+                            <label><strong>Verification/ Recommendation</strong></label>
+                            <hr class="alert-dark mt-0">
+                        </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Customer Remarks :</b></p>
+                            <p class="m-0"><b>Acceptance&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-9">
-                            <p class="m-0">{{ $data->CustomerRemarks }}</p>
-                        </div>
-                    </div> -->
-                    <div class="col-md-12 mb-3">
-                        <label><strong>Investigation</strong></label>
-                        <hr class="alert-dark mt-0">
-                    </div>
-                    <div class=" row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Action Responsible :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ optional($data->action_responsible)->full_name }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Objective Evidence :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ObjectiveEvidence }}</p>
-                        </div>
-                    </div>
-                    <div class=" row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Immediate Action :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ImmediateAction }}</p>
+                            <p class="m-0">{{ $data->Acceptance ?? 'N/A'}}</p>
                         </div>
                     </div>
                     <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"> <b>Action Date :</b></p>
-                        </div>
+                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Closed By&nbsp;:</b></p></div>
                         <div class="col-sm-3 col-md-4">
-                            <!-- <p class="m-0">{{ $data->ActionDate ? \Carbon\Carbon::parse($data->ActionDate)->format('M. d, Y') : 'N/A' }}</p> -->
-                            <p class="m-0">{{ $data->ActionDate }}</p>
+                            <p class="m-0">{{ optional($data->closed)->full_name ?? 'N/A' }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Investigation :</b></p>
+                            <p class="m-0"><b>Closed Date&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->Investigation }}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Corrective Action :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->CorrectiveAction }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Action Objective Evidence :</b></p></div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ActionObjectiveEvidence }}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Files :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-6">
-                            <p>
-                                @foreach ($data->objective as $key => $file)
-                                    @php
-                                        $filePath = asset('storage/' . $file->Path); 
-                                    @endphp
-                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
-                                    @if($data->Department == auth()->user()->role->type)
-                                        <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
-                                            <i class="ti ti-close" style="color:red"></i>
-                                        </button>  
-                                    @endif         
-                                    <br>
-                                @endforeach
+                            <p class="m-0">
+                                {{ $data->ClosedDate ? date('M. d, Y', strtotime($data->ClosedDate)) : 'N/A' }}
                             </p>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
-                        <label><strong>Verification/ Recommendation</strong></label>
-                        <hr class="alert-dark mt-0">
-                    </div>
                     <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Acceptance :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-9">
-                            <p class="m-0">{{ $data->Acceptance}}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Closed By :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ optional($data->closed)->full_name }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Closed Date :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ClosedDate }}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Claims/Credit Note :</b></p></div>
+                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Claims/Credit Note&nbsp;:</b></p></div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">
                                 @if($data->Claims == 1)
@@ -801,11 +842,11 @@
                                 @elseif($data->Claims == 2)
                                     No 
                                 @else
-
+                                    N/A
                                 @endif
                             </p>
                         </div>
-                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Shipment Return :</b></p></div>
+                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Shipment Return&nbsp;:</b></p></div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">
                                 @if($data->Shipment == 1)
@@ -813,57 +854,68 @@
                                 @elseif($data->Shipment == 2)
                                     No 
                                 @else
-
+                                    N/A
                                 @endif
                             </p>
                         </div>
                     </div>
                     <div class="row mb-0">
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Credit Note Number :</b></p>
+                            <p class="m-0"><b>Credit Note Number&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->CnNumber }}</p>
+                            <p class="m-0">{{ $data->CnNumber ?? 'N/A'}}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Return Shipment Date :</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ShipmentDate }}</p>
+                            <p class="m-0">
+                                {{ $data->ShipmentDate ? date('M. d, Y', strtotime($data->ShipmentDate)) : 'N/A' }}
+                            </p>
                         </div>
                     </div>
                     <div class="form-group row mb-0">
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Total Amount Incurred :</b></p>
+                            <p class="m-0"><b>Total Amount Incurred&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->AmountIncurred }}</p>
+                            <p class="m-0">{{ $data->AmountIncurred ?? 'N/A' }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Return Shipment Cost :</b></p>
+                            <p class="m-0"><b>Return Shipment Cost&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ShipmentCost }}</p>
+                            <p class="m-0">{{ $data->ShipmentCost ?? 'N/A'}}</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Files :</b></p>
+                            <p class="m-0"><b>Files&nbsp;:</b></p>
                         </div>
-                        <div class="col-sm-3 col-md-6">
+                        <div class="col-12 col-md-6">
                             <p class="m-0">
-                                @foreach ($data->verification as $key => $file)
-                                    @php
-                                        $filePath = asset('storage/' . $file->Path); 
-                                    @endphp
-                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> 
+                                @php 
+                                    $j = 1; 
+                                    $verificationFiles = isset($data->verification) ? collect($data->verification)->where('file_type', 'verificationFile') : collect();
+                                @endphp
+
+                                @if($verificationFiles->count() > 0)
+                                    @foreach ($verificationFiles as $file)
+                                        @php
+                                            $filePath = asset('storage/' . $file->Path); 
+                                        @endphp
+                                        {{ $j++ }}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a> 
                                         @if($data->ReceivedBy == auth()->user()->id)
                                             <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
                                                 <i class="ti ti-close" style="color:red"></i>
                                             </button>   
-                                        @endif        
+                                        @endif      
                                         <br>
-                                @endforeach
+                                    @endforeach
+                                @else
+                                    No attachment found
+                                @endif
                             </p>
                         </div>
                     </div>
@@ -879,6 +931,9 @@
                             {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
                         @endforeach
                     </div> --}}
+                    <!-- End -->
+
+                    <!-- Tabs -->
                     <ul class="nav nav-tabs viewTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link p-2 active" id="transaction_remarks-tab" data-toggle="tab" href="#transaction_remarks" role="tab" aria-controls="transaction_remarks" aria-selected="true">Transaction Remarks</a>
@@ -935,6 +990,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- End -->
                 </div>
             </div>
         </div>
@@ -1078,15 +1134,6 @@
                             <div class="form-group">
                                 <label for="name">With Claims/Credit Note?</label>
                                 <div class="form-check form-check-inline" id="check-radio">
-                                    <!-- <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault1" value="1"
-                                        {{ isset($data->Claims) && $data->Claims == 1 ? 'checked' : '' }} required>
-                                    <label class="form-check-label" for="flexRadioDefault1">Yes</label>
-
-                                    <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault2" value="2"
-                                        {{ isset($data->Claims) && $data->Claims != 1 ? 'checked' : '' }} required>
-                                    <label class="form-check-label" for="flexRadioDefault2">No</label> -->
-                                    
-                                    <!-- $isDisabled = !is_null($data->Claims) ? 'disabled' : ''; -->
                                     @php
                                         $isDisabled = ''; 
                                     @endphp
@@ -1098,9 +1145,6 @@
                                     <input class="form-check-input" type="radio" name="Claims" id="flexRadioDefault2" value="2"
                                         {{ $data->Claims == 2 ? 'checked' : '' }} {{ $isDisabled }} required>
                                     <label class="form-check-label" for="flexRadioDefault2">No</label>
-
-
-
                                 </div>
                             </div>
                         </div>
@@ -1108,7 +1152,6 @@
                             <div class="form-group">
                                 <label for="name">For Shipment Return?</label>
                                 <div class="form-check form-check-inline" id="ship-radio">
-                                    <!-- $ShipmentDisabled = !is_null($data->Shipment) ? 'disabled' : ''; -->
                                     @php
                                         $ShipmentDisabled = '';
                                     @endphp
@@ -1145,32 +1188,45 @@
                         </div>
                         <!-- <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="name">Attachments</label>
-                                <input type="file" name="Path[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                                <label>Attachments</label>
+                                <input
+                                    type="file"
+                                    class="filepond"
+                                    name="Path[]"
+                                    id="Path6"
+                                    multiple
+                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="objectiveEvidence">Objective Evidence</label>
+                                <input 
+                                    type="file"
+                                    class="filepond"
+                                    name="Path[]"
+                                    id="Path8"
+                                    multiple
+                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                                />
                             </div>
                         </div> -->
+                        <!-- Attachments Input -->
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label>Attachments</label>
-                                <input
-                                type="file"
-                                class="filepond"
-                                name="Path[]"
-                                id="Path6"
-                                multiple
-                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                                <input type="file" class="filepond" name="Path[]" id="Path6" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
-                        {{-- @if($data->Claims != null || $data->Shipment != null) --}}
-                            <!-- <div class="col-lg-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="IsVerified" value="1" id="flexCheckDefault" {{ $data->IsVerified == 1 ? 'checked' : '' }} required>
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                        Is Verified
-                                    </label>
-                                </div>
-                            </div> -->
-                        {{-- @endif --}}
+
+                        <!-- Objective Evidence Input -->
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="objectiveEvidence">Objective Evidence</label>
+                                <input type="file" class="filepond" name="EvidencePath[]" id="Path8" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer mt-3">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
@@ -1632,28 +1688,109 @@
         });
     });
 
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     // Register plugins
+    //     FilePond.registerPlugin(
+    //         // FilePondPluginFileValidateType,
+    //         FilePondPluginFileValidateSize,
+    //         FilePondPluginImagePreview
+    //     );
+
+    //     // Create FilePond instance
+    //     FilePond.create(document.querySelector('#Path6'), {
+    //         allowMultiple: true,
+    //         maxFileSize: '10MB',
+    //         server: {
+    //         process: {
+    //             url: '{{ url("/upload-temp-cc") }}',
+    //             method: 'POST',
+    //             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+    //             // Return the serverId (filename) so FilePond stores it in Path[]
+    //             onload: (response) => {
+    //             try { return JSON.parse(response).id; } catch { return response; }
+    //             }
+    //         },
+    //             revert: {
+    //                 url: '{{ url("/upload-revert-cc") }}',
+    //                 method: 'DELETE',
+    //                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    //             }
+    //         }
+    //     });
+    // });
+
+    // // Object Evidence
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     // Register plugins
+    //     FilePond.registerPlugin(
+    //         // FilePondPluginFileValidateType,
+    //         FilePondPluginFileValidateSize,
+    //         FilePondPluginImagePreview
+    //     );
+
+    //     // Create FilePond instance
+    //     FilePond.create(document.querySelector('#Path8'), {
+    //         allowMultiple: true,
+    //         maxFileSize: '10MB',
+    //         server: {
+    //         process: {
+    //             url: '{{ url("/upload-temp-cc") }}',
+    //             method: 'POST',
+    //             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+    //             // Return the serverId (filename) so FilePond stores it in Path[]
+    //             onload: (response) => {
+    //             try { return JSON.parse(response).id; } catch { return response; }
+    //             }
+    //         },
+    //             revert: {
+    //                 url: '{{ url("/upload-revert-cc") }}',
+    //                 method: 'DELETE',
+    //                 headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    //             }
+    //         }
+    //     });
+    // });
+
     document.addEventListener('DOMContentLoaded', function () {
-        // Register plugins
         FilePond.registerPlugin(
-            // FilePondPluginFileValidateType,
             FilePondPluginFileValidateSize,
             FilePondPluginImagePreview
         );
 
-        // Create FilePond instance
+        // Attachments FilePond
         FilePond.create(document.querySelector('#Path6'), {
             allowMultiple: true,
             maxFileSize: '10MB',
             server: {
-            process: {
-                url: '{{ url("/upload-temp-cc") }}',
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                // Return the serverId (filename) so FilePond stores it in Path[]
-                onload: (response) => {
-                try { return JSON.parse(response).id; } catch { return response; }
+                process: {
+                    url: '{{ url("/upload-temp-cc") }}',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    onload: (response) => {
+                        try { return JSON.parse(response).id; } catch { return response; }
+                    }
+                },
+                revert: {
+                    url: '{{ url("/upload-revert-cc") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
                 }
-            },
+            }
+        });
+
+        // Objective Evidence FilePond
+        FilePond.create(document.querySelector('#Path8'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+            server: {
+                process: {
+                    url: '{{ url("/upload-temp-cc") }}',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    onload: (response) => {
+                        try { return JSON.parse(response).id; } catch { return response; }
+                    }
+                },
                 revert: {
                     url: '{{ url("/upload-revert-cc") }}',
                     method: 'DELETE',
@@ -1662,5 +1799,8 @@
             }
         });
     });
+
+
+    
 </script>
 @endsection

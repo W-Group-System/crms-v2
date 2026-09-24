@@ -208,30 +208,61 @@ class CustomerComplaint2Controller extends Controller
         }
     }
 
+    // public function uploadTemp(Request $request) 
+    // {
+    //     if ($request->hasFile('Path')) {
+    //         $files = $request->file('Path'); 
+
+    //         $uploaded = [];
+    //         foreach ($files as $file) {
+    //             $fileName = uniqid() . '_' . $file->getClientOriginalName();
+    //             $cleanName = str_replace('#', '_', $fileName);
+    //             $path = $file->storeAs('temp', $cleanName, 'public');
+
+    //             $uploaded[] = [
+    //                 'id'   => $cleanName, // return only fileName to FilePond
+    //                 'path' => $path
+    //             ];
+    //         }
+
+    //         // Return only first file if FilePond expects one at a time
+    //         return response()->json($uploaded[0]);
+    //     }
+
+    //     return response()->json(['error' => 'No file uploaded'], 400);
+    // }
     public function uploadTemp(Request $request) 
-    {
-        if ($request->hasFile('Path')) {
-            $files = $request->file('Path'); 
-
-            $uploaded = [];
-            foreach ($files as $file) {
-                $fileName = uniqid() . '_' . $file->getClientOriginalName();
-                $cleanName = str_replace('#', '_', $fileName);
-                $path = $file->storeAs('temp', $cleanName, 'public');
-
-                $uploaded[] = [
-                    'id'   => $cleanName, // return only fileName to FilePond
-                    'path' => $path
-                ];
-            }
-
-            // Return only first file if FilePond expects one at a time
-            return response()->json($uploaded[0]);
-        }
-
-        return response()->json(['error' => 'No file uploaded'], 400);
+{
+    // Check for either Path or EvidencePath in the request
+    $fileKey = null;
+    if ($request->hasFile('Path')) {
+        $fileKey = 'Path';
+    } elseif ($request->hasFile('EvidencePath')) {
+        $fileKey = 'EvidencePath';
     }
 
+    if ($fileKey) {
+        $files = $request->file($fileKey); 
+
+        $uploaded = [];
+        // Ensure $files is treated as an array
+        foreach ((array)$files as $file) {
+            $fileName = uniqid() . '_' . $file->getClientOriginalName();
+            $cleanName = str_replace('#', '_', $fileName);
+            $path = $file->storeAs('temp', $cleanName, 'public');
+
+            $uploaded[] = [
+                'id'   => $cleanName, // return only fileName to FilePond
+                'path' => $path
+            ];
+        }
+
+        // Return only first file if FilePond expects one at a time
+        return response()->json($uploaded[0]);
+    }
+
+    return response()->json(['error' => 'No file uploaded'], 400);
+}
 
     public function uploadRevert(Request $request) 
     {
@@ -575,20 +606,97 @@ class CustomerComplaint2Controller extends Controller
 
     }
 
+    // public function acceptance(Request $request, $id)
+    // {
+    //     $data = CustomerComplaint2::findOrFail($id);
+    //     $data->Acceptance = $request->Acceptance;
+    //     // $data->Claims = $request->Claims;
+    //     // $data->Shipment = $request->Shipment;
+    //     $data->CnNumber = $request->CnNumber;
+    //     $data->ShipmentDate = $request->ShipmentDate;
+    //     $data->AmountIncurred = $request->AmountIncurred;
+    //     $data->ShipmentCost = $request->ShipmentCost;
+    //     // $data->IsVerified = $request->IsVerified;
+    //     $data->Progress = 60;
+
+    //     // Only update Claims if it's present in the request
+    //     if ($request->has('Claims')) {
+    //         $data->Claims = $request->Claims;
+    //     }
+
+    //     if ($request->has('Shipment')) {
+    //         $data->Shipment = $request->Shipment;
+    //     }
+    //     $result = $data->save();
+
+    //     $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
+
+    //     $attachments = [];
+    //     if ($request->has('Path') && is_array($request->Path)) {
+    //         foreach ($request->Path as $fileName) {
+    //             $tempPath = 'temp/' . $fileName;
+    //             if (Storage::disk('public')->exists($tempPath)) {
+    //                 $newPath = 'cc_files/' . $fileName;
+    //                 Storage::disk('public')->move($tempPath, $newPath);
+
+    //                 CcVerificationFile::create([
+    //                     'CcId' => $data->id,
+    //                     'Path' => $newPath
+    //                 ]);
+
+    //                 $attachments[] = $newPath;
+    //             }
+    //         }
+    //     }
+
+    //     if ($result) {
+    //         if ($data->Claims == 1) {
+    //             Mail::to(['crista.bautista@rico.com.ph'])
+    //             ->send(new VerifiedMail($data, $attachments, false)); 
+    //         }
+
+    //         Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
+    //     }
+
+    //     // if ($request->hasFile('Path')) {
+    //     //     foreach ($request->file('Path') as $file) {
+    //     //         if ($file->isValid()) {
+    //     //             $verificationFile = new CcVerificationFile();
+    //     //             $verificationFile->CcId = $data->id;
+    
+    //     //             $fileName = time() . '_' . $file->getClientOriginalName();
+    //     //             $filePath = $file->storeAs('cc_files', $fileName, 'public');
+                    
+    //     //             $verificationFile->Path = $filePath;
+    //     //             $verificationFile->save();
+    //     //         }
+    //     //     }
+    //     // }
+
+    //     TransactionRemarks::create([
+    //         'transaction_no' => $data->CcNumber,
+    //         'action' => "Complaint verified.",
+    //         'action_by' => auth()->id(),
+    //         'remarks' => null
+    //     ]);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Customer complaint has been successfully verified.'
+    //     ]);
+    // }
+
     public function acceptance(Request $request, $id)
     {
         $data = CustomerComplaint2::findOrFail($id);
         $data->Acceptance = $request->Acceptance;
-        // $data->Claims = $request->Claims;
-        // $data->Shipment = $request->Shipment;
         $data->CnNumber = $request->CnNumber;
         $data->ShipmentDate = $request->ShipmentDate;
         $data->AmountIncurred = $request->AmountIncurred;
         $data->ShipmentCost = $request->ShipmentCost;
-        // $data->IsVerified = $request->IsVerified;
         $data->Progress = 60;
 
-        // Only update Claims if it's present in the request
+
         if ($request->has('Claims')) {
             $data->Claims = $request->Claims;
         }
@@ -596,11 +704,14 @@ class CustomerComplaint2Controller extends Controller
         if ($request->has('Shipment')) {
             $data->Shipment = $request->Shipment;
         }
+        
         $result = $data->save();
 
         $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
 
         $attachments = [];
+
+        //Process regular Attachments -> file_type = verificationFile
         if ($request->has('Path') && is_array($request->Path)) {
             foreach ($request->Path as $fileName) {
                 $tempPath = 'temp/' . $fileName;
@@ -610,7 +721,27 @@ class CustomerComplaint2Controller extends Controller
 
                     CcVerificationFile::create([
                         'CcId' => $data->id,
-                        'Path' => $newPath
+                        'Path' => $newPath,
+                        'file_type' => 'verificationFile' // Explicitly set type here
+                    ]);
+
+                    $attachments[] = $newPath;
+                }
+            }
+        }
+
+        //Process Objective Evidence -> file_type = objectEvidenceFile
+        if ($request->has('EvidencePath') && is_array($request->EvidencePath)) {
+            foreach ($request->EvidencePath as $fileName) {
+                $tempPath = 'temp/' . $fileName;
+                if (Storage::disk('public')->exists($tempPath)) {
+                    $newPath = 'cc_files/' . $fileName;
+                    Storage::disk('public')->move($tempPath, $newPath);
+
+                    CcVerificationFile::create([
+                        'CcId' => $data->id,
+                        'Path' => $newPath,
+                        'file_type' => 'objectEvidenceFile' 
                     ]);
 
                     $attachments[] = $newPath;
@@ -626,21 +757,6 @@ class CustomerComplaint2Controller extends Controller
 
             Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
         }
-
-        // if ($request->hasFile('Path')) {
-        //     foreach ($request->file('Path') as $file) {
-        //         if ($file->isValid()) {
-        //             $verificationFile = new CcVerificationFile();
-        //             $verificationFile->CcId = $data->id;
-    
-        //             $fileName = time() . '_' . $file->getClientOriginalName();
-        //             $filePath = $file->storeAs('cc_files', $fileName, 'public');
-                    
-        //             $verificationFile->Path = $filePath;
-        //             $verificationFile->save();
-        //         }
-        //     }
-        // }
 
         TransactionRemarks::create([
             'transaction_no' => $data->CcNumber,
@@ -678,7 +794,7 @@ class CustomerComplaint2Controller extends Controller
 
     public function noted(Request $request, $id)
     {   
-        $type = $request->type??"";
+        $type = $request->type ?? "";
         $message = "";
         $action = "";
         $isSuccess = false;
@@ -772,10 +888,11 @@ class CustomerComplaint2Controller extends Controller
         $data->ClosedBy = auth()->user()->id;
         $data->ClosedDate = now();
         $data->Status = 30;
-        $data->Progress = 70;
+        $data->Progress = 80;
+        $data->IsVerified = 1;
         $data->save();
-        Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
-        // Mail::to(['emmanuel.official0304@gmail.com'])
+        // Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
+        Mail::to(['lorueltps.largosa@gmail.com'])
             ->send(new ClosedMail($data));
 
         return response()->json([
@@ -784,30 +901,75 @@ class CustomerComplaint2Controller extends Controller
         ]);
     }
 
+    // public function uploadTempRemarks(Request $request) 
+    // {
+    //     if ($request->hasFile('Path')) {
+    //         $files = $request->file('Path'); 
+
+    //         $uploaded = [];
+    //         foreach ($files as $file) {
+    //             $fileName = uniqid() . '_' . $file->getClientOriginalName();
+    //             $cleanName = str_replace('#', '_', $fileName);
+    //             $path = $file->storeAs('temp', $cleanName, 'public');
+
+    //             $uploaded[] = [
+    //                 'id'   => $cleanName, // return only fileName to FilePond
+    //                 'path' => $path
+    //             ];
+    //         }
+
+    //         // Return only first file if FilePond expects one at a time
+    //         return response()->json($uploaded[0]);
+    //     }
+
+    //     return response()->json(['error' => 'No file uploaded'], 400);
+    // }
+
+
+    // public function uploadRevertRemarks(Request $request) 
+    // {
+    //     $fileName = $request->getContent();
+    //     $path = 'temp/' . $fileName;
+
+    //     if (Storage::disk('public')->exists($path)) {
+    //         Storage::disk('public')->delete($path);
+    //         return response('', 200);
+    //     }
+    //     return response('', 404);
+    // }
+
     public function uploadTempRemarks(Request $request) 
     {
+        // Check which file field is present in the request
+        $fileKey = null;
         if ($request->hasFile('Path')) {
-            $files = $request->file('Path'); 
+            $fileKey = 'Path';
+        } elseif ($request->hasFile('EvidencePath')) {
+            $fileKey = 'EvidencePath';
+        }
+
+        if ($fileKey) {
+            $files = $request->file($fileKey); 
 
             $uploaded = [];
-            foreach ($files as $file) {
+            // Ensure $files is treated as an array even if single file
+            foreach ((array)$files as $file) {
                 $fileName = uniqid() . '_' . $file->getClientOriginalName();
                 $cleanName = str_replace('#', '_', $fileName);
                 $path = $file->storeAs('temp', $cleanName, 'public');
 
                 $uploaded[] = [
-                    'id'   => $cleanName, // return only fileName to FilePond
+                    'id'   => $cleanName, // return only filename to FilePond
                     'path' => $path
                 ];
             }
 
-            // Return only first file if FilePond expects one at a time
+            // Return the first file info for FilePond
             return response()->json($uploaded[0]);
         }
 
         return response()->json(['error' => 'No file uploaded'], 400);
     }
-
 
     public function uploadRevertRemarks(Request $request) 
     {
