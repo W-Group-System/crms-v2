@@ -544,7 +544,27 @@ class CustomerComplaint2Controller extends Controller
 
                     CcObjectiveFile::create([
                         'CcId' => $data->id,
-                        'Path' => $newPath
+                        'Path' => $newPath,
+                        'file_type' => 'proposedActionFile',
+                    ]);
+
+                    $attachments[] = $newPath;
+                }
+            }
+        }
+
+         //Process Objective Evidence -> file_type = objectEvidenceFile
+        if ($request->has('EvidencePath') && is_array($request->EvidencePath)) {
+            foreach ($request->EvidencePath as $fileName) {
+                $tempPath = 'temp/' . $fileName;
+                if (Storage::disk('public')->exists($tempPath)) {
+                    $newPath = 'cc_files/' . $fileName;
+                    Storage::disk('public')->move($tempPath, $newPath);
+
+                    CcObjectiveFile::create([
+                        'CcId' => $data->id,
+                        'Path' => $newPath,
+                        'file_type' => 'objectEvidenceFile' 
                     ]);
 
                     $attachments[] = $newPath;
@@ -730,25 +750,6 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        //Process Objective Evidence -> file_type = objectEvidenceFile
-        if ($request->has('EvidencePath') && is_array($request->EvidencePath)) {
-            foreach ($request->EvidencePath as $fileName) {
-                $tempPath = 'temp/' . $fileName;
-                if (Storage::disk('public')->exists($tempPath)) {
-                    $newPath = 'cc_files/' . $fileName;
-                    Storage::disk('public')->move($tempPath, $newPath);
-
-                    CcVerificationFile::create([
-                        'CcId' => $data->id,
-                        'Path' => $newPath,
-                        'file_type' => 'objectEvidenceFile' 
-                    ]);
-
-                    $attachments[] = $newPath;
-                }
-            }
-        }
-
         // if ($result) {
         //     if ($data->Claims == 1) {
         //         Mail::to(['crista.bautista@rico.com.ph'])
@@ -891,8 +892,8 @@ class CustomerComplaint2Controller extends Controller
         $data->Progress = 80;
         $data->IsVerified = 1;
         $data->save();
-        // Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
-        Mail::to(['lorueltps.largosa@gmail.com'])
+        Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
+        // Mail::to(['lorueltps.largosa@gmail.com'])
             ->send(new ClosedMail($data));
 
         return response()->json([

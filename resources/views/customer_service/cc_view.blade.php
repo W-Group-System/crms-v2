@@ -107,7 +107,7 @@
                     @endif
 
                     @php
-                        $canClose = $data->getOriginal()["Progress"] == 60
+                        $canClose = in_array($data->getOriginal()["Progress"], [60, 70])
                             && is_null($data->IsVerified)
                             && (
                                 primarySalesApprover($data->ReceivedBy, auth()->user()->id) ||
@@ -755,17 +755,33 @@
                         </div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">
-                                @if(isset($data->objective) && count($data->objective) > 0)
-                                    @foreach ($data->objective as $key => $file)
+                                @php
+                                    $proposedActionFiles = $data->objective
+                                        ? $data->objective->where('file_type', 'proposedActionFile')
+                                        : collect();
+                                @endphp
+
+                                @if($proposedActionFiles->count() > 0)
+                                    @foreach ($proposedActionFiles->values() as $key => $file)
                                         @php
-                                            $filePath = asset('storage/' . $file->Path); 
+                                            $filePath = asset('storage/' . $file->Path);
                                         @endphp
-                                        {{$key + 1}}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a> 
+
+                                        {{ $key + 1 }}.
+                                        <a href="{{ $filePath }}"
+                                        target="_blank"
+                                        style="word-break: break-all; overflow-wrap: anywhere;">
+                                            {{ $file->Path }}
+                                        </a>
+
                                         @if($data->Department == auth()->user()->role->type)
-                                            <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
+                                            <button type="button"
+                                                    class="btn btn-sm deleteFile2"
+                                                    data-id="{{ $file->id }}">
                                                 <i class="ti ti-close" style="color:red"></i>
-                                            </button>  
-                                        @endif       
+                                            </button>
+                                        @endif
+
                                         <br>
                                     @endforeach
                                 @else
@@ -780,22 +796,33 @@
                         </div>
                         <div class="col-sm-3 col-md-4">
                             <p class="m-0">
-                                @php 
-                                    $i = 1; 
-                                    $objectEvidenceFiles = isset($data->verification) ? collect($data->verification)->where('file_type', 'objectEvidenceFile') : collect();
+                                 @php
+                                    $objectEvidenceFiles = $data->objective
+                                        ? $data->objective->where('file_type', 'objectEvidenceFile')
+                                        : collect();
                                 @endphp
 
                                 @if($objectEvidenceFiles->count() > 0)
-                                    @foreach ($objectEvidenceFiles as $file)
+                                    @foreach ($objectEvidenceFiles->values() as $key => $file)
                                         @php
-                                            $filePath = asset('storage/' . $file->Path); 
+                                            $filePath = asset('storage/' . $file->Path);
                                         @endphp
-                                        {{ $i++ }}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a> 
-                                        @if($data->ReceivedBy == auth()->user()->id)
-                                            <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
+
+                                        {{ $key + 1 }}.
+                                        <a href="{{ $filePath }}"
+                                        target="_blank"
+                                        style="word-break: break-all; overflow-wrap: anywhere;">
+                                            {{ $file->Path }}
+                                        </a>
+
+                                        @if($data->Department == auth()->user()->role->type)
+                                            <button type="button"
+                                                    class="btn btn-sm deleteFile2"
+                                                    data-id="{{ $file->id }}">
                                                 <i class="ti ti-close" style="color:red"></i>
-                                            </button>   
-                                        @endif      
+                                            </button>
+                                        @endif
+
                                         <br>
                                     @endforeach
                                 @else
@@ -809,7 +836,8 @@
                     <!-- Verification -->
                     <div class="row mb-0">
                         <div class="col-md-12 mb-3">
-                            <label><strong>Verification/ Recommendation</strong></label>
+                            <!-- <label><strong>Verification/ Recommendation</strong></label> -->
+                            <label><strong>Proposed Action</strong></label>
                             <hr class="alert-dark mt-0">
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
@@ -895,27 +923,38 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <p class="m-0">
-                                @php 
-                                    $j = 1; 
-                                    $verificationFiles = isset($data->verification) ? collect($data->verification)->where('file_type', 'verificationFile') : collect();
-                                @endphp
+                            @php
+                                $verificationFiles = isset($data->verification)
+                                    ? collect($data->verification)->values()
+                                    : collect();
+                            @endphp
 
-                                @if($verificationFiles->count() > 0)
-                                    @foreach ($verificationFiles as $file)
-                                        @php
-                                            $filePath = asset('storage/' . $file->Path); 
-                                        @endphp
-                                        {{ $j++ }}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a> 
-                                        @if($data->ReceivedBy == auth()->user()->id)
-                                            <button type="button" class="btn btn-sm deleteFile2" data-id="{{ $file->id }}">
-                                                <i class="ti ti-close" style="color:red"></i>
-                                            </button>   
-                                        @endif      
-                                        <br>
-                                    @endforeach
-                                @else
-                                    No attachment found
-                                @endif
+                            @if($verificationFiles->count() > 0)
+                                @foreach ($verificationFiles as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path);
+                                    @endphp
+
+                                    {{ $key + 1 }}.
+                                    <a href="{{ $filePath }}"
+                                    target="_blank"
+                                    style="word-break: break-all; overflow-wrap: anywhere;">
+                                        {{ $file->Path }}
+                                    </a>
+
+                                    @if($data->ReceivedBy == auth()->user()->id)
+                                        <button type="button"
+                                                class="btn btn-sm deleteFile2"
+                                                data-id="{{ $file->id }}">
+                                            <i class="ti ti-close" style="color:red"></i>
+                                        </button>
+                                    @endif
+
+                                    <br>
+                                @endforeach
+                            @else
+                                No attachment found
+                            @endif
                             </p>
                         </div>
                     </div>
@@ -997,11 +1036,12 @@
     </div>
 </div>
 
+<!-- Investigation Modal -->
 <div class="modal fade" id="editCc" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Investigation </h5>
+                <h5 class="modal-title">Investigation1 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -1098,6 +1138,14 @@
                                 accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
+
+                        <!-- Objective Evidence Input -->
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="objectiveEvidence">Objective Evidence</label>
+                                <input type="file" class="filepond" name="EvidencePath[]" id="Path8" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer mt-3">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
@@ -1108,6 +1156,7 @@
         </div>
     </div>
 </div>
+<!-- Investigation Modal -->
 
 <div class="modal fade" id="verificationCc" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-md" role="document">
@@ -1220,13 +1269,6 @@
                             </div>
                         </div>
 
-                        <!-- Objective Evidence Input -->
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label for="objectiveEvidence">Objective Evidence</label>
-                                <input type="file" class="filepond" name="EvidencePath[]" id="Path8" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
-                            </div>
-                        </div>
                     </div>
                     <div class="modal-footer mt-3">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
@@ -1686,6 +1728,27 @@
                 }
             }
         });
+
+         // Objective Evidence FilePond
+        FilePond.create(document.querySelector('#Path8'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+            server: {
+                process: {
+                    url: '{{ url("/upload-temp-cc") }}',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    onload: (response) => {
+                        try { return JSON.parse(response).id; } catch { return response; }
+                    }
+                },
+                revert: {
+                    url: '{{ url("/upload-revert-cc") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
     });
 
     // document.addEventListener('DOMContentLoaded', function () {
@@ -1759,27 +1822,6 @@
 
         // Attachments FilePond
         FilePond.create(document.querySelector('#Path6'), {
-            allowMultiple: true,
-            maxFileSize: '10MB',
-            server: {
-                process: {
-                    url: '{{ url("/upload-temp-cc") }}',
-                    method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                    onload: (response) => {
-                        try { return JSON.parse(response).id; } catch { return response; }
-                    }
-                },
-                revert: {
-                    url: '{{ url("/upload-revert-cc") }}',
-                    method: 'DELETE',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                }
-            }
-        });
-
-        // Objective Evidence FilePond
-        FilePond.create(document.querySelector('#Path8'), {
             allowMultiple: true,
             maxFileSize: '10MB',
             server: {

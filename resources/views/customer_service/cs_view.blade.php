@@ -188,7 +188,6 @@
 
 
                 <div class="col-md-12">
-   
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Noted By&nbsp;:</b></label>
                         <div class="col-sm-3">
