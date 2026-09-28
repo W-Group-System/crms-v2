@@ -750,14 +750,14 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        // if ($result) {
-        //     if ($data->Claims == 1) {
-        //         Mail::to(['crista.bautista@rico.com.ph'])
-        //         ->send(new VerifiedMail($data, $attachments, false)); 
-        //     }
+        if ($result) {
+            if ($data->Claims == 1) {
+                Mail::to(['crista.bautista@rico.com.ph'])
+                ->send(new VerifiedMail($data, $attachments, false)); 
+            }
 
-        //     Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
-        // }
+            Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
+        }
 
         TransactionRemarks::create([
             'transaction_no' => $data->CcNumber,
@@ -1371,6 +1371,7 @@ class CustomerComplaint2Controller extends Controller
             }
         }
     }
+
     public function email() 
     {
         $users = User::where('department_id', 1)->where('is_active', 1)->get();
