@@ -172,11 +172,9 @@
             var formData = new FormData(this);
             var actionUrl = $(this).attr('action');
 
-            // Make sure action is included
             var action = $(this).find('button[type="submit"]').val();
             formData.set('action', action);
 
-            // console.log('Action:', action);
 
             $.ajax({
                 url: actionUrl,
