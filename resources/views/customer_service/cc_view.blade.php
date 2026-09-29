@@ -70,7 +70,9 @@
                             </button>
                         @endif
                     @endif
+                     
                     {{-- @if ((auth()->user()->department_id == 5 || auth()->user()->department_id == 38) && $data->NotedBy != NULL) --}}
+                   
                     @if($data->ReceivedBy == auth()->user()->id)
                         @if($data->getOriginal()["Progress"] == 20)
                             <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
@@ -78,7 +80,7 @@
                             </button>
                         @endif
                         @if($data->getOriginal()["Progress"] !== 20 && $data->getOriginal()["Progress"] !==70)
-                            <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
+                           <button type="button" class="btn btn-outline-warning" data-id="{{ $data->id }}" data-toggle="modal" data-target="#complaint{{$data->id}}">
                             <i class="ti ti-pencil"></i>&nbsp;Update 
                             </button>
                         @endif
@@ -94,7 +96,7 @@
                                 </button>
                             @endif
                         @endif --}}
-                         @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type)
+                        @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type)
                         @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
                             @if ($data->ApprovedBy != null)
                                 <button type="button" class="btn btn-outline-warning" id="updateCc" 
@@ -107,7 +109,7 @@
                     @endif
 
                     @php
-                        $canClose = in_array($data->getOriginal()["Progress"], [60, 70])
+                        $canClose = in_array($data->getOriginal()["Progress"], [60, 70,])
                             && is_null($data->IsVerified)
                             && (
                                 primarySalesApprover($data->ReceivedBy, auth()->user()->id) ||
@@ -1041,7 +1043,7 @@
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Investigation1 </h5>
+                <h5 class="modal-title">Investigation </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -1162,7 +1164,8 @@
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Verification/ Recommendation</h5>
+                <!-- <h5 class="modal-title">Verification/ Recommendation</h5> -->
+                <h5 class="modal-title">Proposed Action</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

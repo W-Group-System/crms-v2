@@ -611,6 +611,8 @@ class CustomerComplaint2Controller extends Controller
                 Mail::to($recipients)
                     ->send(new InvestigationMail($data, $attachments, true));
             }
+        
+        
         return response()->json([
             'success' => true,
             'message' => 'Customer complaint investigation has been successfully updated.'
@@ -725,9 +727,10 @@ class CustomerComplaint2Controller extends Controller
             $data->Shipment = $request->Shipment;
         }
         
+        
         $result = $data->save();
 
-        $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
+        // $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
 
         $attachments = [];
 
@@ -750,14 +753,14 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        if ($result) {
-            if ($data->Claims == 1) {
-                Mail::to(['crista.bautista@rico.com.ph'])
-                ->send(new VerifiedMail($data, $attachments, false)); 
-            }
+        // if ($result) {
+        //     if ($data->Claims == 1) {
+        //         Mail::to(['crista.bautista@rico.com.ph'])
+        //         ->send(new VerifiedMail($data, $attachments, false)); 
+        //     }
 
-            Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
-        }
+        //     Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
+        // }
 
         TransactionRemarks::create([
             'transaction_no' => $data->CcNumber,
@@ -1222,25 +1225,125 @@ class CustomerComplaint2Controller extends Controller
     //     return redirect()->back()->with('openModalId', $id);
     // }
 
+    // public function assign(Request $request, $id)
+    // {
+    //     // dd($request->all());
+    //     $customer_complaint = CustomerComplaint2::findOrFail($id);
+    //     $customer_complaint->QualityClass = $request->QualityClass;
+    //     $customer_complaint->ProductName = $request->ProductName;
+    //     $customer_complaint->Department = $request->Department;
+    //     $customer_complaint->SiteConcerned = $request->SiteConcerned;
+    //     $customer_complaint->save();
+
+    //     $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
+
+    //     $attachments = [];
+
+    //     if ($request->has('Path') && is_array($request->Path)) {
+    //         foreach ($request->Path as $fileName) {
+    //             $tempPath = 'temp/' . $fileName;
+    //             if (Storage::disk('public')->exists($tempPath)) {
+    //                 $newPath = 'cc_files/' . $fileName;
+    //                 Storage::disk('public')->move($tempPath, $newPath);
+
+    //                 CcFile::create([
+    //                     'CcId' => $customer_complaint->id,
+    //                     'Path' => $newPath
+    //                 ]);
+
+    //                 $attachments[] = $newPath;
+    //             }
+    //         }
+    //     }
+
+    //     // if ($request->hasFile('Path') && is_array($request->file('Path'))) {
+    //     //     foreach ($request->file('Path') as $file) {
+    //     //         if ($file->isValid()) {
+    //     //             $ccFiles = new CcFile();
+    //     //             $ccFiles->CcId = $customer_complaint->id;
+
+    //     //             $fileName = time() . '_' . $file->getClientOriginalName();
+    //     //             $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
+    //     //             $ccFiles->Path = $filePath; 
+    //     //             $ccFiles->save();
+
+    //     //             $attachments[] = $filePath;
+    //     //         }
+    //     //     }
+    //     // }
+
+    //     // move email when manager approves
+    //     // if ($customer_complaint->NcarIssuance == 1) {
+    //     //     Mail::to(['bpd@wgroup.com.ph'])
+    //     //     // Mail::to(['ict.engineer@wgroup.com.ph'])
+    //     //     ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
+    //     // }
+
+    //     // Mail::to($department->email)->send(new AssignCcDepartmentMail($customer_complaint, $attachments, true));
+
+    //     // if ($request->has('file'))
+    //     // {
+    //         // $ccfile = CcFile::where('customer_complaint_id', $id)->delete();
+
+    //         // $files = $request->file('file');
+    //         // foreach($files as $file)
+    //         // {
+    //         //     $name = time().'_'.$file->getClientOriginalName();
+    //         //     $file->move(public_path('ccfiles'),$name);
+    //         //     $file_name = '/ccfiles/'.$name;
+
+    //         //     $ccfile = new CcFile;
+    //         //     $ccfile->customer_complaint_id = $id;
+    //         //     $ccfile->files = $file_name;
+    //         //     $ccfile->filename = $name;
+    //         //     $ccfile->save();
+    //         // }
+    //         // $email = ['richsel.villaruel@wgroup.com.ph', 'bea.bernardino@rico.com.ph'];
+    //         // $concern_department = ConcernDepartment::with('audit')->findOrFail($customer_complaint->Department);
+    //         // $concern_department->notify(new EmailDepartment($concern_department));
+    //     // }
+
+    //     TransactionRemarks::create([
+    //         'transaction_no' => $customer_complaint->CcNumber,
+    //         'action' => "Assigned to {$department->Name} department.",
+    //         'action_by' => auth()->id(),
+    //         'remarks' => null
+    //     ]);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Customer complaint feedback and files have been successfully assigned.'
+    //     ]);
+    // }
+
+
+
     public function assign(Request $request, $id)
     {
-        // dd($request->all());
         $customer_complaint = CustomerComplaint2::findOrFail($id);
+
+        // Get old values before updating
+        $oldDepartment = $customer_complaint->Department;
+        $oldSiteConcerned = $customer_complaint->SiteConcerned;
+
         $customer_complaint->QualityClass = $request->QualityClass;
         $customer_complaint->ProductName = $request->ProductName;
         $customer_complaint->Department = $request->Department;
         $customer_complaint->SiteConcerned = $request->SiteConcerned;
-        $customer_complaint->save();
 
-        $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
+        $department = ConcernDepartment::findOrFail($request->Department);
+
+        $customer_complaint->save();
 
         $attachments = [];
 
         if ($request->has('Path') && is_array($request->Path)) {
             foreach ($request->Path as $fileName) {
                 $tempPath = 'temp/' . $fileName;
+
                 if (Storage::disk('public')->exists($tempPath)) {
                     $newPath = 'cc_files/' . $fileName;
+
                     Storage::disk('public')->move($tempPath, $newPath);
 
                     CcFile::create([
@@ -1253,56 +1356,49 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        // if ($request->hasFile('Path') && is_array($request->file('Path'))) {
-        //     foreach ($request->file('Path') as $file) {
-        //         if ($file->isValid()) {
-        //             $ccFiles = new CcFile();
-        //             $ccFiles->CcId = $customer_complaint->id;
+        if ($request->action === 'reassign') {
 
-        //             $fileName = time() . '_' . $file->getClientOriginalName();
-        //             $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
-        //             $ccFiles->Path = $filePath; 
-        //             $ccFiles->save();
+            // Check if reassigning to the same department and site
+            $sameAssignment =
+                $oldDepartment == $request->Department &&
+                $oldSiteConcerned == $request->SiteConcerned;
 
-        //             $attachments[] = $filePath;
-        //         }
-        //     }
-        // }
+            if (!$sameAssignment) {
 
-        // move email when manager approves
-        // if ($customer_complaint->NcarIssuance == 1) {
-        //     Mail::to(['bpd@wgroup.com.ph'])
-        //     // Mail::to(['ict.engineer@wgroup.com.ph'])
-        //     ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
-        // }
+                $actionDate = $customer_complaint->ActionDate;
 
-        // Mail::to($department->email)->send(new AssignCcDepartmentMail($customer_complaint, $attachments, true));
+                $customer_complaint->ImmediateAction = null;
+                $customer_complaint->ObjectiveEvidence = null;
+                $customer_complaint->Investigation = null;
+                $customer_complaint->CorrectiveAction = null;
+                $customer_complaint->ActionObjectiveEvidence = null;
+                $customer_complaint->ActionDate = null;
+                $customer_complaint->ActionResponsible = null;
 
-        // if ($request->has('file'))
-        // {
-            // $ccfile = CcFile::where('customer_complaint_id', $id)->delete();
+                if ($actionDate !== null) {
+                    $customer_complaint->Progress = 40;
+                }
 
-            // $files = $request->file('file');
-            // foreach($files as $file)
-            // {
-            //     $name = time().'_'.$file->getClientOriginalName();
-            //     $file->move(public_path('ccfiles'),$name);
-            //     $file_name = '/ccfiles/'.$name;
+                CcObjectiveFile::where('CCid', $id)->delete();
 
-            //     $ccfile = new CcFile;
-            //     $ccfile->customer_complaint_id = $id;
-            //     $ccfile->files = $file_name;
-            //     $ccfile->filename = $name;
-            //     $ccfile->save();
-            // }
-            // $email = ['richsel.villaruel@wgroup.com.ph', 'bea.bernardino@rico.com.ph'];
-            // $concern_department = ConcernDepartment::with('audit')->findOrFail($customer_complaint->Department);
-            // $concern_department->notify(new EmailDepartment($concern_department));
-        // }
+                $customer_complaint->save();
 
+                Mail::to($department->email)->send(
+                    new AssignCcDepartmentMail(
+                        $customer_complaint,
+                        $attachments,
+                        true
+                    )
+                );
+            }
+        }
+
+        // Record transaction
         TransactionRemarks::create([
             'transaction_no' => $customer_complaint->CcNumber,
-            'action' => "Assigned to {$department->Name} department.",
+            'action' => $request->action === 'reassign'
+                ? "Reassigned to {$department->Name} department."
+                : "Assigned to {$department->Name} department.",
             'action_by' => auth()->id(),
             'remarks' => null
         ]);
@@ -1313,9 +1409,18 @@ class CustomerComplaint2Controller extends Controller
         ]);
     }
 
+
+
+    // public function getDepartmentsBySite($siteId)
+    // {
+    //     $departments = ConcernDepartment::where('site_id', $siteId)->get(['id', 'Name', 'dept_role_group']);
+    //     return response()->json($departments);
+    // }
     public function getDepartmentsBySite($siteId)
     {
-        $departments = ConcernDepartment::where('site_id', $siteId)->get(['id', 'Name', 'dept_role_group']);
+        $departments = ConcernDepartment::where('site_id', $siteId)
+            ->get(['id', 'Name', 'dept_role_group']);
+
         return response()->json($departments);
     }
     public function printCc($id)

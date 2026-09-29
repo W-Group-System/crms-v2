@@ -166,11 +166,14 @@
                         <label class="col-sm-3 col-form-label text-right"><b>Noted By&nbsp;:</b></label>
                         <div class="col-sm-3">
                             <!-- <label>{{ $data->notedBy->full_name ?? 'N/A'}}</label> -->
-                            @if(optional($data->notedBy)->full_name)
+                            <!-- @if(optional($data->notedBy)->full_name)
                                 <p class="m-0">{{ $data->notedBy->full_name }}</p>
                             @else
                                 <p class="m-0"><span class="font-weight-bold text-danger">Pending</span></p>
-                            @endif
+                            @endif -->
+                            <label class="{{ $data->notedBy ? '' : 'font-weight-bold text-danger' }}">
+                                {{ $data->notedBy->full_name ?? 'Pending' }}
+                            </label>
                         </div>
 
                         <label class="col-sm-3 col-form-label text-right"><b>Noted Remarks&nbsp;:</b></label>
@@ -191,12 +194,9 @@
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Noted By&nbsp;:</b></label>
                         <div class="col-sm-3">
-                            @if(optional($data->action_responsible)->full_name)
-                                <p class="m-0">{{ $data->action_responsible->full_name }}</p>
-                            @else
-                                <p class="m-0"><span class="font-weight-bold text-danger">Pending</span></p>
-                            @endif
-                            <!-- <label>{{ $data->approvedBy->full_name ?? 'N/A'}}</label> -->
+                            <label class="{{ $data->approvedBy ? '' : 'font-weight-bold text-danger' }}">
+                                {{ $data->approvedBy->full_name ?? 'Pending' }}
+                            </label>
                         </div>
                     </div>
                     <!-- <div class="form-group row mb-0">
