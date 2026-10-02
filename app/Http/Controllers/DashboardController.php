@@ -1234,7 +1234,7 @@ class DashboardController extends Controller
         
         $crr     = (clone $baseCrr)->where('Status', 10)->count();
         // $crr_new = (clone $baseCrr)->where('Progress', 40)->count();
-        $crr_new = (clone $baseCrr)->where('Progress', 35)->count();
+        $crr_new = (clone $baseCrr)->whereIn('Progress', [35, 40])->count();
         $crr_ongoing = (clone $baseCrr)->whereNotIn('Progress', [60, 70])->count();
         $total_transaction_crr = $crr_new + $crr_ongoing;
 
