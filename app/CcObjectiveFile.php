@@ -13,6 +13,7 @@ class CcObjectiveFile extends Model implements Auditable
     
     protected $table = 'ccobjectivefiles';
     protected $fillable = [
-        'CcId', 'Path'
+        'CcId', 'Path', 'file_type',
     ];
+
 }

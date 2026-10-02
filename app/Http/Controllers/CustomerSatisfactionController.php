@@ -558,7 +558,7 @@ class CustomerSatisfactionController extends Controller
     
     public function view($id)
     {
-        $data = CustomerSatisfaction::with('concerned', 'category', 'cs_attachments', 'csHistoryRemarks')->findOrFail($id);
+        $data = CustomerSatisfaction::with('concerned', 'category', 'country','cs_attachments', 'csHistoryRemarks')->findOrFail($id);
         $concern_department = ConcernDepartment::all();
         $for_remarks = SatisfactionRemarks::with('user')->where('CsId', $data->id)->get();
         

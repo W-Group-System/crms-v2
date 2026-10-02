@@ -208,30 +208,61 @@ class CustomerComplaint2Controller extends Controller
         }
     }
 
+    // public function uploadTemp(Request $request) 
+    // {
+    //     if ($request->hasFile('Path')) {
+    //         $files = $request->file('Path'); 
+
+    //         $uploaded = [];
+    //         foreach ($files as $file) {
+    //             $fileName = uniqid() . '_' . $file->getClientOriginalName();
+    //             $cleanName = str_replace('#', '_', $fileName);
+    //             $path = $file->storeAs('temp', $cleanName, 'public');
+
+    //             $uploaded[] = [
+    //                 'id'   => $cleanName, // return only fileName to FilePond
+    //                 'path' => $path
+    //             ];
+    //         }
+
+    //         // Return only first file if FilePond expects one at a time
+    //         return response()->json($uploaded[0]);
+    //     }
+
+    //     return response()->json(['error' => 'No file uploaded'], 400);
+    // }
     public function uploadTemp(Request $request) 
-    {
-        if ($request->hasFile('Path')) {
-            $files = $request->file('Path'); 
-
-            $uploaded = [];
-            foreach ($files as $file) {
-                $fileName = uniqid() . '_' . $file->getClientOriginalName();
-                $cleanName = str_replace('#', '_', $fileName);
-                $path = $file->storeAs('temp', $cleanName, 'public');
-
-                $uploaded[] = [
-                    'id'   => $cleanName, // return only fileName to FilePond
-                    'path' => $path
-                ];
-            }
-
-            // Return only first file if FilePond expects one at a time
-            return response()->json($uploaded[0]);
-        }
-
-        return response()->json(['error' => 'No file uploaded'], 400);
+{
+    // Check for either Path or EvidencePath in the request
+    $fileKey = null;
+    if ($request->hasFile('Path')) {
+        $fileKey = 'Path';
+    } elseif ($request->hasFile('EvidencePath')) {
+        $fileKey = 'EvidencePath';
     }
 
+    if ($fileKey) {
+        $files = $request->file($fileKey); 
+
+        $uploaded = [];
+        // Ensure $files is treated as an array
+        foreach ((array)$files as $file) {
+            $fileName = uniqid() . '_' . $file->getClientOriginalName();
+            $cleanName = str_replace('#', '_', $fileName);
+            $path = $file->storeAs('temp', $cleanName, 'public');
+
+            $uploaded[] = [
+                'id'   => $cleanName, // return only fileName to FilePond
+                'path' => $path
+            ];
+        }
+
+        // Return only first file if FilePond expects one at a time
+        return response()->json($uploaded[0]);
+    }
+
+    return response()->json(['error' => 'No file uploaded'], 400);
+}
 
     public function uploadRevert(Request $request) 
     {
@@ -513,7 +544,27 @@ class CustomerComplaint2Controller extends Controller
 
                     CcObjectiveFile::create([
                         'CcId' => $data->id,
-                        'Path' => $newPath
+                        'Path' => $newPath,
+                        'file_type' => 'proposedActionFile',
+                    ]);
+
+                    $attachments[] = $newPath;
+                }
+            }
+        }
+
+         //Process Objective Evidence -> file_type = objectEvidenceFile
+        if ($request->has('EvidencePath') && is_array($request->EvidencePath)) {
+            foreach ($request->EvidencePath as $fileName) {
+                $tempPath = 'temp/' . $fileName;
+                if (Storage::disk('public')->exists($tempPath)) {
+                    $newPath = 'cc_files/' . $fileName;
+                    Storage::disk('public')->move($tempPath, $newPath);
+
+                    CcObjectiveFile::create([
+                        'CcId' => $data->id,
+                        'Path' => $newPath,
+                        'file_type' => 'objectEvidenceFile' 
                     ]);
 
                     $attachments[] = $newPath;
@@ -560,6 +611,8 @@ class CustomerComplaint2Controller extends Controller
                 Mail::to($recipients)
                     ->send(new InvestigationMail($data, $attachments, true));
             }
+        
+        
         return response()->json([
             'success' => true,
             'message' => 'Customer complaint investigation has been successfully updated.'
@@ -575,20 +628,97 @@ class CustomerComplaint2Controller extends Controller
 
     }
 
+    // public function acceptance(Request $request, $id)
+    // {
+    //     $data = CustomerComplaint2::findOrFail($id);
+    //     $data->Acceptance = $request->Acceptance;
+    //     // $data->Claims = $request->Claims;
+    //     // $data->Shipment = $request->Shipment;
+    //     $data->CnNumber = $request->CnNumber;
+    //     $data->ShipmentDate = $request->ShipmentDate;
+    //     $data->AmountIncurred = $request->AmountIncurred;
+    //     $data->ShipmentCost = $request->ShipmentCost;
+    //     // $data->IsVerified = $request->IsVerified;
+    //     $data->Progress = 60;
+
+    //     // Only update Claims if it's present in the request
+    //     if ($request->has('Claims')) {
+    //         $data->Claims = $request->Claims;
+    //     }
+
+    //     if ($request->has('Shipment')) {
+    //         $data->Shipment = $request->Shipment;
+    //     }
+    //     $result = $data->save();
+
+    //     $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
+
+    //     $attachments = [];
+    //     if ($request->has('Path') && is_array($request->Path)) {
+    //         foreach ($request->Path as $fileName) {
+    //             $tempPath = 'temp/' . $fileName;
+    //             if (Storage::disk('public')->exists($tempPath)) {
+    //                 $newPath = 'cc_files/' . $fileName;
+    //                 Storage::disk('public')->move($tempPath, $newPath);
+
+    //                 CcVerificationFile::create([
+    //                     'CcId' => $data->id,
+    //                     'Path' => $newPath
+    //                 ]);
+
+    //                 $attachments[] = $newPath;
+    //             }
+    //         }
+    //     }
+
+    //     if ($result) {
+    //         if ($data->Claims == 1) {
+    //             Mail::to(['crista.bautista@rico.com.ph'])
+    //             ->send(new VerifiedMail($data, $attachments, false)); 
+    //         }
+
+    //         Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
+    //     }
+
+    //     // if ($request->hasFile('Path')) {
+    //     //     foreach ($request->file('Path') as $file) {
+    //     //         if ($file->isValid()) {
+    //     //             $verificationFile = new CcVerificationFile();
+    //     //             $verificationFile->CcId = $data->id;
+    
+    //     //             $fileName = time() . '_' . $file->getClientOriginalName();
+    //     //             $filePath = $file->storeAs('cc_files', $fileName, 'public');
+                    
+    //     //             $verificationFile->Path = $filePath;
+    //     //             $verificationFile->save();
+    //     //         }
+    //     //     }
+    //     // }
+
+    //     TransactionRemarks::create([
+    //         'transaction_no' => $data->CcNumber,
+    //         'action' => "Complaint verified.",
+    //         'action_by' => auth()->id(),
+    //         'remarks' => null
+    //     ]);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Customer complaint has been successfully verified.'
+    //     ]);
+    // }
+
     public function acceptance(Request $request, $id)
     {
         $data = CustomerComplaint2::findOrFail($id);
         $data->Acceptance = $request->Acceptance;
-        // $data->Claims = $request->Claims;
-        // $data->Shipment = $request->Shipment;
         $data->CnNumber = $request->CnNumber;
         $data->ShipmentDate = $request->ShipmentDate;
         $data->AmountIncurred = $request->AmountIncurred;
         $data->ShipmentCost = $request->ShipmentCost;
-        // $data->IsVerified = $request->IsVerified;
         $data->Progress = 60;
 
-        // Only update Claims if it's present in the request
+
         if ($request->has('Claims')) {
             $data->Claims = $request->Claims;
         }
@@ -596,11 +726,15 @@ class CustomerComplaint2Controller extends Controller
         if ($request->has('Shipment')) {
             $data->Shipment = $request->Shipment;
         }
+        
+        
         $result = $data->save();
 
-        $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
+        // $department = ConcernDepartment::where('id', $data->Department)->firstOrFail();
 
         $attachments = [];
+
+        //Process regular Attachments -> file_type = verificationFile
         if ($request->has('Path') && is_array($request->Path)) {
             foreach ($request->Path as $fileName) {
                 $tempPath = 'temp/' . $fileName;
@@ -610,7 +744,8 @@ class CustomerComplaint2Controller extends Controller
 
                     CcVerificationFile::create([
                         'CcId' => $data->id,
-                        'Path' => $newPath
+                        'Path' => $newPath,
+                        'file_type' => 'verificationFile' // Explicitly set type here
                     ]);
 
                     $attachments[] = $newPath;
@@ -618,28 +753,13 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        if ($result) {
-            if ($data->Claims == 1) {
-                Mail::to(['crista.bautista@rico.com.ph'])
-                ->send(new VerifiedMail($data, $attachments, false)); 
-            }
-
-            Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
-        }
-
-        // if ($request->hasFile('Path')) {
-        //     foreach ($request->file('Path') as $file) {
-        //         if ($file->isValid()) {
-        //             $verificationFile = new CcVerificationFile();
-        //             $verificationFile->CcId = $data->id;
-    
-        //             $fileName = time() . '_' . $file->getClientOriginalName();
-        //             $filePath = $file->storeAs('cc_files', $fileName, 'public');
-                    
-        //             $verificationFile->Path = $filePath;
-        //             $verificationFile->save();
-        //         }
+        // if ($result) {
+        //     if ($data->Claims == 1) {
+        //         Mail::to(['crista.bautista@rico.com.ph'])
+        //         ->send(new VerifiedMail($data, $attachments, false)); 
         //     }
+
+        //     Mail::to($department->email)->send(new VerifiedMail($data, $attachments, true));
         // }
 
         TransactionRemarks::create([
@@ -678,7 +798,7 @@ class CustomerComplaint2Controller extends Controller
 
     public function noted(Request $request, $id)
     {   
-        $type = $request->type??"";
+        $type = $request->type ?? "";
         $message = "";
         $action = "";
         $isSuccess = false;
@@ -772,10 +892,11 @@ class CustomerComplaint2Controller extends Controller
         $data->ClosedBy = auth()->user()->id;
         $data->ClosedDate = now();
         $data->Status = 30;
-        $data->Progress = 70;
+        $data->Progress = 80;
+        $data->IsVerified = 1;
         $data->save();
         Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
-        // Mail::to(['emmanuel.official0304@gmail.com'])
+        // Mail::to(['lorueltps.largosa@gmail.com'])
             ->send(new ClosedMail($data));
 
         return response()->json([
@@ -784,30 +905,75 @@ class CustomerComplaint2Controller extends Controller
         ]);
     }
 
+    // public function uploadTempRemarks(Request $request) 
+    // {
+    //     if ($request->hasFile('Path')) {
+    //         $files = $request->file('Path'); 
+
+    //         $uploaded = [];
+    //         foreach ($files as $file) {
+    //             $fileName = uniqid() . '_' . $file->getClientOriginalName();
+    //             $cleanName = str_replace('#', '_', $fileName);
+    //             $path = $file->storeAs('temp', $cleanName, 'public');
+
+    //             $uploaded[] = [
+    //                 'id'   => $cleanName, // return only fileName to FilePond
+    //                 'path' => $path
+    //             ];
+    //         }
+
+    //         // Return only first file if FilePond expects one at a time
+    //         return response()->json($uploaded[0]);
+    //     }
+
+    //     return response()->json(['error' => 'No file uploaded'], 400);
+    // }
+
+
+    // public function uploadRevertRemarks(Request $request) 
+    // {
+    //     $fileName = $request->getContent();
+    //     $path = 'temp/' . $fileName;
+
+    //     if (Storage::disk('public')->exists($path)) {
+    //         Storage::disk('public')->delete($path);
+    //         return response('', 200);
+    //     }
+    //     return response('', 404);
+    // }
+
     public function uploadTempRemarks(Request $request) 
     {
+        // Check which file field is present in the request
+        $fileKey = null;
         if ($request->hasFile('Path')) {
-            $files = $request->file('Path'); 
+            $fileKey = 'Path';
+        } elseif ($request->hasFile('EvidencePath')) {
+            $fileKey = 'EvidencePath';
+        }
+
+        if ($fileKey) {
+            $files = $request->file($fileKey); 
 
             $uploaded = [];
-            foreach ($files as $file) {
+            // Ensure $files is treated as an array even if single file
+            foreach ((array)$files as $file) {
                 $fileName = uniqid() . '_' . $file->getClientOriginalName();
                 $cleanName = str_replace('#', '_', $fileName);
                 $path = $file->storeAs('temp', $cleanName, 'public');
 
                 $uploaded[] = [
-                    'id'   => $cleanName, // return only fileName to FilePond
+                    'id'   => $cleanName, // return only filename to FilePond
                     'path' => $path
                 ];
             }
 
-            // Return only first file if FilePond expects one at a time
+            // Return the first file info for FilePond
             return response()->json($uploaded[0]);
         }
 
         return response()->json(['error' => 'No file uploaded'], 400);
     }
-
 
     public function uploadRevertRemarks(Request $request) 
     {
@@ -1059,25 +1225,125 @@ class CustomerComplaint2Controller extends Controller
     //     return redirect()->back()->with('openModalId', $id);
     // }
 
+    // public function assign(Request $request, $id)
+    // {
+    //     // dd($request->all());
+    //     $customer_complaint = CustomerComplaint2::findOrFail($id);
+    //     $customer_complaint->QualityClass = $request->QualityClass;
+    //     $customer_complaint->ProductName = $request->ProductName;
+    //     $customer_complaint->Department = $request->Department;
+    //     $customer_complaint->SiteConcerned = $request->SiteConcerned;
+    //     $customer_complaint->save();
+
+    //     $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
+
+    //     $attachments = [];
+
+    //     if ($request->has('Path') && is_array($request->Path)) {
+    //         foreach ($request->Path as $fileName) {
+    //             $tempPath = 'temp/' . $fileName;
+    //             if (Storage::disk('public')->exists($tempPath)) {
+    //                 $newPath = 'cc_files/' . $fileName;
+    //                 Storage::disk('public')->move($tempPath, $newPath);
+
+    //                 CcFile::create([
+    //                     'CcId' => $customer_complaint->id,
+    //                     'Path' => $newPath
+    //                 ]);
+
+    //                 $attachments[] = $newPath;
+    //             }
+    //         }
+    //     }
+
+    //     // if ($request->hasFile('Path') && is_array($request->file('Path'))) {
+    //     //     foreach ($request->file('Path') as $file) {
+    //     //         if ($file->isValid()) {
+    //     //             $ccFiles = new CcFile();
+    //     //             $ccFiles->CcId = $customer_complaint->id;
+
+    //     //             $fileName = time() . '_' . $file->getClientOriginalName();
+    //     //             $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
+    //     //             $ccFiles->Path = $filePath; 
+    //     //             $ccFiles->save();
+
+    //     //             $attachments[] = $filePath;
+    //     //         }
+    //     //     }
+    //     // }
+
+    //     // move email when manager approves
+    //     // if ($customer_complaint->NcarIssuance == 1) {
+    //     //     Mail::to(['bpd@wgroup.com.ph'])
+    //     //     // Mail::to(['ict.engineer@wgroup.com.ph'])
+    //     //     ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
+    //     // }
+
+    //     // Mail::to($department->email)->send(new AssignCcDepartmentMail($customer_complaint, $attachments, true));
+
+    //     // if ($request->has('file'))
+    //     // {
+    //         // $ccfile = CcFile::where('customer_complaint_id', $id)->delete();
+
+    //         // $files = $request->file('file');
+    //         // foreach($files as $file)
+    //         // {
+    //         //     $name = time().'_'.$file->getClientOriginalName();
+    //         //     $file->move(public_path('ccfiles'),$name);
+    //         //     $file_name = '/ccfiles/'.$name;
+
+    //         //     $ccfile = new CcFile;
+    //         //     $ccfile->customer_complaint_id = $id;
+    //         //     $ccfile->files = $file_name;
+    //         //     $ccfile->filename = $name;
+    //         //     $ccfile->save();
+    //         // }
+    //         // $email = ['richsel.villaruel@wgroup.com.ph', 'bea.bernardino@rico.com.ph'];
+    //         // $concern_department = ConcernDepartment::with('audit')->findOrFail($customer_complaint->Department);
+    //         // $concern_department->notify(new EmailDepartment($concern_department));
+    //     // }
+
+    //     TransactionRemarks::create([
+    //         'transaction_no' => $customer_complaint->CcNumber,
+    //         'action' => "Assigned to {$department->Name} department.",
+    //         'action_by' => auth()->id(),
+    //         'remarks' => null
+    //     ]);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Customer complaint feedback and files have been successfully assigned.'
+    //     ]);
+    // }
+
+
+
     public function assign(Request $request, $id)
     {
-        // dd($request->all());
         $customer_complaint = CustomerComplaint2::findOrFail($id);
+
+        // Get old values before updating
+        $oldDepartment = $customer_complaint->Department;
+        $oldSiteConcerned = $customer_complaint->SiteConcerned;
+
         $customer_complaint->QualityClass = $request->QualityClass;
         $customer_complaint->ProductName = $request->ProductName;
         $customer_complaint->Department = $request->Department;
         $customer_complaint->SiteConcerned = $request->SiteConcerned;
-        $customer_complaint->save();
 
-        $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
+        $department = ConcernDepartment::findOrFail($request->Department);
+
+        $customer_complaint->save();
 
         $attachments = [];
 
         if ($request->has('Path') && is_array($request->Path)) {
             foreach ($request->Path as $fileName) {
                 $tempPath = 'temp/' . $fileName;
+
                 if (Storage::disk('public')->exists($tempPath)) {
                     $newPath = 'cc_files/' . $fileName;
+
                     Storage::disk('public')->move($tempPath, $newPath);
 
                     CcFile::create([
@@ -1090,56 +1356,49 @@ class CustomerComplaint2Controller extends Controller
             }
         }
 
-        // if ($request->hasFile('Path') && is_array($request->file('Path'))) {
-        //     foreach ($request->file('Path') as $file) {
-        //         if ($file->isValid()) {
-        //             $ccFiles = new CcFile();
-        //             $ccFiles->CcId = $customer_complaint->id;
+        if ($request->action === 'reassign') {
 
-        //             $fileName = time() . '_' . $file->getClientOriginalName();
-        //             $filePath = $file->storeAs('cc_files', $fileName, 'public'); 
-        //             $ccFiles->Path = $filePath; 
-        //             $ccFiles->save();
+            // Check if reassigning to the same department and site
+            $sameAssignment =
+                $oldDepartment == $request->Department &&
+                $oldSiteConcerned == $request->SiteConcerned;
 
-        //             $attachments[] = $filePath;
-        //         }
-        //     }
-        // }
+            if (!$sameAssignment) {
 
-        // move email when manager approves
-        // if ($customer_complaint->NcarIssuance == 1) {
-        //     Mail::to(['bpd@wgroup.com.ph'])
-        //     // Mail::to(['ict.engineer@wgroup.com.ph'])
-        //     ->send(new AssignCcDepartmentMail($customer_complaint, $attachments, false)); 
-        // }
+                $actionDate = $customer_complaint->ActionDate;
 
-        // Mail::to($department->email)->send(new AssignCcDepartmentMail($customer_complaint, $attachments, true));
+                $customer_complaint->ImmediateAction = null;
+                $customer_complaint->ObjectiveEvidence = null;
+                $customer_complaint->Investigation = null;
+                $customer_complaint->CorrectiveAction = null;
+                $customer_complaint->ActionObjectiveEvidence = null;
+                $customer_complaint->ActionDate = null;
+                $customer_complaint->ActionResponsible = null;
 
-        // if ($request->has('file'))
-        // {
-            // $ccfile = CcFile::where('customer_complaint_id', $id)->delete();
+                if ($actionDate !== null) {
+                    $customer_complaint->Progress = 40;
+                }
 
-            // $files = $request->file('file');
-            // foreach($files as $file)
-            // {
-            //     $name = time().'_'.$file->getClientOriginalName();
-            //     $file->move(public_path('ccfiles'),$name);
-            //     $file_name = '/ccfiles/'.$name;
+                CcObjectiveFile::where('CCid', $id)->delete();
 
-            //     $ccfile = new CcFile;
-            //     $ccfile->customer_complaint_id = $id;
-            //     $ccfile->files = $file_name;
-            //     $ccfile->filename = $name;
-            //     $ccfile->save();
-            // }
-            // $email = ['richsel.villaruel@wgroup.com.ph', 'bea.bernardino@rico.com.ph'];
-            // $concern_department = ConcernDepartment::with('audit')->findOrFail($customer_complaint->Department);
-            // $concern_department->notify(new EmailDepartment($concern_department));
-        // }
+                $customer_complaint->save();
 
+                Mail::to($department->email)->send(
+                    new AssignCcDepartmentMail(
+                        $customer_complaint,
+                        $attachments,
+                        true
+                    )
+                );
+            }
+        }
+
+        // Record transaction
         TransactionRemarks::create([
             'transaction_no' => $customer_complaint->CcNumber,
-            'action' => "Assigned to {$department->Name} department.",
+            'action' => $request->action === 'reassign'
+                ? "Reassigned to {$department->Name} department."
+                : "Assigned to {$department->Name} department.",
             'action_by' => auth()->id(),
             'remarks' => null
         ]);
@@ -1150,9 +1409,18 @@ class CustomerComplaint2Controller extends Controller
         ]);
     }
 
+
+
+    // public function getDepartmentsBySite($siteId)
+    // {
+    //     $departments = ConcernDepartment::where('site_id', $siteId)->get(['id', 'Name', 'dept_role_group']);
+    //     return response()->json($departments);
+    // }
     public function getDepartmentsBySite($siteId)
     {
-        $departments = ConcernDepartment::where('site_id', $siteId)->get(['id', 'Name', 'dept_role_group']);
+        $departments = ConcernDepartment::where('site_id', $siteId)
+            ->get(['id', 'Name', 'dept_role_group']);
+
         return response()->json($departments);
     }
     public function printCc($id)
@@ -1208,6 +1476,7 @@ class CustomerComplaint2Controller extends Controller
             }
         }
     }
+
     public function email() 
     {
         $users = User::where('department_id', 1)->where('is_active', 1)->get();

@@ -13,6 +13,6 @@ class CcVerificationFile extends Model implements Auditable
     
     protected $table = 'ccverificationfiles';
     protected $fillable = [
-        'CcId','Path'
+        'CcId','Path', 'file_type',
     ];
 }

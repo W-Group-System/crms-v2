@@ -468,7 +468,8 @@ input[type="checkbox"] {
             </td>
         </tr> -->
     </table>
-    <label class="mt-2"><b>III.	Verification/ Recommendation</b></label>
+    <!-- <label class="mt-2"><b>III.	Verification/ Recommendation</b></label> -->
+     <label for="" class="mt-2"><b>III. Proposed Action</b></label>
     <table border="1" class="mt-2" cellspacing="0" cellpadding="4" width="100%">
         <tr>
             <td colspan="2"><b>Client Feedback/ Acceptance:</b></td>

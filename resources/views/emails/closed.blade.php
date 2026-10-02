@@ -75,7 +75,8 @@
             </tr>
         </table>
         <hr>
-        <b>Verification/ Recommendation</b>
+        <!-- <b>Verification/ Recommendation</b> -->
+        <b>Proposed Action</b>
         <table width="100%" cellpadding="10" cellspacing="0" style="border-collapse: collapse;margin-bottom:20px">
             <tr>
                 <td colspan="2"><strong>Client Feedback/ Acceptance:</strong></td>

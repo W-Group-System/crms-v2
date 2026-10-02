@@ -11,14 +11,29 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="assignCustomerComplaint" method="POST" action="{{url('cc_assign/'.$data->id)}}" enctype="multipart/form-data" onsubmit="show()">
+                <form id="assignCustomerComplaint"
+                    method="POST"
+                    action="{{ url('cc_assign/'.$data->id) }}"
+                    enctype="multipart/form-data"
+                    onsubmit="show()">
+
                     @csrf
+
                     <div class="row">
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Select Site Concerned</label>
-                                <select class="form-control js-example-basic-single" name="SiteConcerned" id="SiteConcerned" required>
-                                    <option value="" disabled selected>Select Site Concerned</option>
+
+                                <select class="form-control js-example-basic-single"
+                                        name="SiteConcerned"
+                                        id="SiteConcerned"
+                                        required>
+
+                                    <option value="" disabled selected>
+                                        Select Site Concerned
+                                    </option>
+
                                     <option value="1">WHI Head Office</option>
                                     <option value="2">WHI Carmona</option>
                                     <option value="3">MRDC</option>
@@ -32,49 +47,102 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Select Department Concerned</label>
-                                <select class="form-control js-example-basic-single" name="Department" id="Department" required>
-                                    <option value="" disabled selected>Select Department Concerned</option>
+
+                                <select class="form-control js-example-basic-single"
+                                        name="Department"
+                                        id="Department"
+                                        required>
+
+                                    <option value="" disabled selected>
+                                        Select Department Concerned
+                                    </option>
+
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Classification of Complaint</label>
-                                <select class="form-control js-example-basic-single" name="QualityClass" id="QualityClass" title="Select Classification of Complaint" required>
-                                    <option value="" disabled selected>Select Classification of Complaint</option>
-                                    <option value="Critical e.g., Food Safety Hazard">Critical e.g., Food Safety Hazard</option>
-                                    <option value="Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)">Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)</option>
-                                    <option value="Minor/Marginal e.g., Late response">Minor/Marginal e.g., Late response</option>
-                                    <!-- <option value="Product name">Product name</option> -->
+
+                                <select class="form-control js-example-basic-single"
+                                        name="QualityClass"
+                                        id="QualityClass"
+                                        required>
+
+                                    <option value="" disabled selected>
+                                        Select Classification of Complaint
+                                    </option>
+
+                                    <option value="Critical e.g., Food Safety Hazard">
+                                        Critical e.g., Food Safety Hazard
+                                    </option>
+
+                                    <option value="Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)">
+                                        Major e.g., Damage bags (2 Major recurring or 1 critical = NCAR)
+                                    </option>
+
+                                    <option value="Minor/Marginal e.g., Late response">
+                                        Minor/Marginal e.g., Late response
+                                    </option>
+
                                 </select>
                             </div>
-                            <div class="form-group" id="pName" style="display: none; margin-top: -10px">
-                                <input type="text" class="form-control" id="ProductName" name="ProductName" placeholder="Enter Product Name">
+
+                            <div class="form-group"
+                                id="pName"
+                                style="display: none; margin-top: -10px">
+
+                                <input type="text"
+                                    class="form-control"
+                                    id="ProductName"
+                                    name="ProductName"
+                                    placeholder="Enter Product Name">
                             </div>
                         </div>
-                        <!-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Attachments</label>
-                                <input type="file" name="Path[]" class="form-control" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
-                            </div>
-                        </div> -->
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Attachments</label>
-                                <input
-                                type="file"
-                                class="filepond"
-                                name="Path[]"
-                                id="Path4"
-                                multiple
-                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+
+                                <input type="file"
+                                    class="filepond"
+                                    name="Path[]"
+                                    id="Path4"
+                                    multiple
+                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
+
                     </div>
+
                     <div class="modal-footer mt-3">
-                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-outline-primary">Submit</button>
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                data-dismiss="modal">
+                            Close
+                        </button>
+                        <!-- <button type="submit" name="action" class="btn btn-outline-primary" value="assign">
+                            Submit
+                        </button> -->
+                       @if (is_null($data->SiteConcerned) && is_null($data->Department))
+                            <button type="submit"
+                                    name="action"
+                                    class="btn btn-outline-primary"
+                                    value="assign">
+                                Submit
+                            </button>
+                        @else
+                            <button type="submit"
+                                    name="action"
+                                    class="btn btn-outline-primary"
+                                    value="reassign">
+                                Reassign
+                            </button>
+                        @endif
+
                     </div>
+
                 </form>
             </div>
         </div>
@@ -99,17 +167,22 @@
         });
 
         $('#assignCustomerComplaint').on('submit', function (e) {
-            e.preventDefault(); 
+            e.preventDefault();
 
-            var formData = new FormData(this); // Use FormData to handle file uploads
+            var formData = new FormData(this);
             var actionUrl = $(this).attr('action');
+
+            var action = $(this).find('button[type="submit"]').val();
+            formData.set('action', action);
+
 
             $.ajax({
                 url: actionUrl,
                 method: 'POST',
                 data: formData,
-                processData: false, 
-                contentType: false, 
+                processData: false,
+                contentType: false,
+
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
@@ -119,37 +192,52 @@
                             showConfirmButton: false,
                             timer: 1500
                         }).then(function () {
-                            window.location.reload(); 
+                            window.location.reload();
                         });
                     }
                 },
+
                 error: function (xhr) {
-                    Swal.fire("Error", "Something went wrong! Please try again.", "error");
+                    console.log(xhr.responseText);
+
+                    Swal.fire(
+                        "Error",
+                        "Something went wrong! Please try again.",
+                        "error"
+                    );
                 }
             });
         });
 
         $('#SiteConcerned').on('change', function () {
-            let siteId = $(this).val();
+        let siteId = $(this).val();
 
-            if (siteId) {
-                $.ajax({
-                    url: "{{ url('departments-by-site') }}/" + siteId,
-                    type: 'GET',
-                    success: function (data) {
-                        $('#Department').empty(); 
-                        $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
+        $('#Department').empty();
+        $('#Department').append(
+            '<option value="" disabled selected>Select Department Concerned</option>'
+        );
 
-                        $.each(data, function (key, department) {
-                            $('#Department').append('<option value="' + department.id + '">' + department.Name + '</option>');
-                        });
-                    }
-                });
-            } else {
-                $('#Department').empty();
-                $('#Department').append('<option value="" disabled selected>Select Department Concerned</option>');
-            }
-        });
+        if (siteId) {
+            $.ajax({
+                url: "{{ url('departments-by-site') }}/" + siteId,
+                type: 'GET',
+                success: function (data) {
+                    console.log(data);
+
+                    $.each(data, function (key, department) {
+                        $('#Department').append(
+                            '<option value="' + department.id + '">' +
+                                department.Name +
+                            '</option>'
+                        );
+                    });
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+    });
         
     });
 

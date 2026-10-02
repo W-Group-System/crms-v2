@@ -17,19 +17,19 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
     public function collection()
     {
         if (auth()->user()->role->type == "LS") {
-            return Client::with(['industry', 'userById', 'userById2', 'userByUserId2'])
+            return Client::with(['industry', 'userById', 'userById2', 'userByUserId2',  'clientPaymentTerm' ])
             ->where('Status', 2)
             ->where('Type', 1)
             ->orderBy('id', 'desc')
             ->get();
         } elseif (auth()->user()->role->type == "IS") {
-            return Client::with(['industry', 'userById', 'userById2', 'userByUserId2'])
+            return Client::with(['industry', 'userById', 'userById2', 'userByUserId2',  'clientPaymentTerm'])
             ->where('Status', 2)
             ->where('Type', 2)
             ->orderBy('id', 'desc')
             ->get();
         } else {
-            return Client::with(['industry', 'userById', 'userById2', 'userByUserId2'])
+            return Client::with(['industry', 'userById', 'userById2', 'userByUserId2',  'clientPaymentTerm'])
             ->where('Status', 2)
             ->orderBy('id', 'desc')
             ->get();
@@ -52,7 +52,8 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
             'Area',
             'Country',
             'Website',
-            'Email'
+            'Email',
+            'Payment Terms'
         ];
     }
     
@@ -87,6 +88,7 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
 
         $email = $currentClient->contacts->pluck('EmailAddress')->toArray();
         $email_address = implode("\n", $email);
+        $payment_term = $currentClient->clientPaymentTerm->Name ?? 'N/A';
         return [
             $type,
             $currentClient->industry->Name ?? 'N/A',
@@ -101,7 +103,8 @@ class CurrentClientExport implements WithHeadings, FromCollection, WithMapping, 
             $area,
             $country,
             $currentClient->Website ?? '',
-            $email_address
+            $email_address,
+            $payment_term
         ];
     }
 
