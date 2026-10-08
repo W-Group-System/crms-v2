@@ -85,6 +85,7 @@ input[type="checkbox"] {
             <td width="25%">&nbsp;CSR No.:</td>
             <td style="border-right: 1px solid" width="20%">{{ $cs->CsNumber }}</td>
         </tr>
+        {{-- Client Information --}}
         <tr>
             <td style="border-left: 1px solid;border-right: 1px solid" width="20%" colspan="5"><b>&nbsp;Client Information</b></td>
         </tr>
@@ -93,7 +94,7 @@ input[type="checkbox"] {
             <td width="20%">{{ $cs->ContactName }}</td>
             <td width="20%"></td>
             <td width="25%">&nbsp;Department/s Concerned:</td>
-            <td style="border-right: 1px solid" width="20%">{{ $cs->Concerned }}</td>
+            <td style="border-right: 1px solid" width="20%">{{ data_get(json_decode($cs->Concerned), 'Name', $cs->Concerned) }}</td>
         </tr>
         <tr>
             <td style="border-left: 1px solid" width="15%">&nbsp;Company Name:</td>
@@ -110,6 +111,7 @@ input[type="checkbox"] {
             <td style="border-left: 1px solid" width="15%">&nbsp;Email:</td>
             <td colspan="4" width="20%" style="border-right: 1px solid">{{ $cs->Email }}</td>
         </tr>
+        {{-- End Client Information --}}
         <tr style="border:1px solid">
             <td colspan="5" align="center"><b>CUSTOMER REMARKS</b></td>
         </tr>

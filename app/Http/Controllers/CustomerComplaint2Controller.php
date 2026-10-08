@@ -611,6 +611,13 @@ class CustomerComplaint2Controller extends Controller
                 Mail::to($recipients)
                     ->send(new InvestigationMail($data, $attachments, true));
             }
+
+         TransactionRemarks::create([
+            'transaction_no' => $data->CcNumber,
+            'action' => "Complaint investigation updated.",
+            'action_by' => auth()->id(),
+            'remarks' => null
+        ]);
         
         
         return response()->json([
@@ -764,7 +771,7 @@ class CustomerComplaint2Controller extends Controller
 
         TransactionRemarks::create([
             'transaction_no' => $data->CcNumber,
-            'action' => "Complaint verified.",
+            'action' => "Proposed Action.",
             'action_by' => auth()->id(),
             'remarks' => null
         ]);
@@ -1425,6 +1432,7 @@ class CustomerComplaint2Controller extends Controller
     }
     public function printCc($id)
     {
+        ini_set('max_execution_time', 300);
         $cc = CustomerComplaint2::with('country', 'product_quality', 'packaging', 'delivery_handling', 'others', 'users', 'noted_by', 'ccsales','concernedDept')->findOrFail($id);
         $data = [
             'cc' => $cc,

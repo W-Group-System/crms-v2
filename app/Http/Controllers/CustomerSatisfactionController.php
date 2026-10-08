@@ -675,6 +675,7 @@ class CustomerSatisfactionController extends Controller
 
     public function printCs($id)
     {
+        ini_set('max_execution_time', 300);
         $cs = CustomerSatisfaction::with('category', 'remarks')->findOrFail($id);
         $data = [
             'cs' => $cs,

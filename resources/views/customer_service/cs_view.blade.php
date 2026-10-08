@@ -92,7 +92,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Date Requested:</b></label>
+                        <label class="col-sm-3 col-form-label text-right"><b>Date Filled:</b></label>
                         <div class="col-sm-3">
                             <label>
                                 {{ $data->created_at ? date('M. d, Y', strtotime($data->created_at)) : 'N/A' }}
@@ -140,6 +140,10 @@
                         <div class="col-sm-3">
                             <label>{{ $data->CsNumber ?? 'N/A'}}</label>
                         </div>
+                        
+                    </div>
+
+                    <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Concerned Department&nbsp;:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->concerned->Name ?? 'N/A'}}</label>
@@ -148,49 +152,98 @@
                     </div>
                     <!-- End -->
 
-                    <!-- Received date & received by-->
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Date Received&nbsp;:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ date('M. d, Y', strtotime($data->DateReceived)) }}</label>
-                        </div>
-                        <label class="col-sm-3 col-form-label text-right"><b>Received By:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->users->full_name ?? 'N/A'}}</label>
-                        </div>
-                    </div>
-                    <!-- End -->
-
                     <!-- Noted by & category & Remarks-->
-                     <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Noted By&nbsp;:</b></label>
-                        <div class="col-sm-3">
-                            <!-- <label>{{ $data->notedBy->full_name ?? 'N/A'}}</label> -->
-                            <!-- @if(optional($data->notedBy)->full_name)
-                                <p class="m-0">{{ $data->notedBy->full_name }}</p>
-                            @else
-                                <p class="m-0"><span class="font-weight-bold text-danger">Pending</span></p>
-                            @endif -->
-                            <label class="{{ $data->notedBy ? '' : 'font-weight-bold text-danger' }}">
-                                {{ $data->notedBy->full_name ?? 'Pending' }}
-                            </label>
-                        </div>
-
-                        <label class="col-sm-3 col-form-label text-right"><b>Noted Remarks&nbsp;:</b></label>
-                        <div class="col-sm-3">
-                            <label>{{ $data->NotedRemarks ?? 'N/A'}}</label>
-                        </div>
-
+                    <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Category&nbsp;:</b></label>
                         <div class="col-sm-3">
                             <label>{{ $data->category->Name ?? 'N/A'}}</label>
                         </div>
                      </div>
                     <!-- End -->
+
+                    {{-- Attachments --}}
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Attachments&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            @if($data->cs_attachments && $data->cs_attachments->isNotEmpty())
+                                @foreach($data->cs_attachments as $file)
+                                    <label style="display: block;">
+                                        <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ basename($file->Path) }}</a>
+                                        <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
+                                            <i class="ti ti-close" style="color:red"></i>
+                                        </button>
+                                    </label>
+                                @endforeach
+                            @else
+                                <label>No Attachments Available</label>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Customer Attachment --}}
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Customer Attachment&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            @if($data->customer_attachments && $data->customer_attachments->isNotEmpty())
+                                @foreach($data->customer_attachments as $file)
+                                    <label style="display: block;">
+                                        <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ basename($file->Path) }}</a>
+                                        <!-- <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
+                                            <i class="ti ti-close" style="color:red"></i>
+                                        </button> -->
+                                    </label>
+                                @endforeach
+                            @else
+                                <label>No Attachments Available</label>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    {{-- Customer Feedback --}}
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Customer Feedback&nbsp;:</b></label>
+                        <div class="border border-light rounded p-2 mb-3">
+                            
+                            <div>
+                                <label class="m-0">{{ $data->Description ?? 'N/A'}}</label>
+                                <p class="text-muted"><small>{{ date('h:i A - M d, Y', strtotime($data->created_at)) }}</small></p>
+                            </div>
+                        </div>
+                    </div>
+            
                 </div>
+                
+                <div class="col-md-12 mb-3">
+                    <label><strong>Reviewers/Approvers</strong></label>
+                    <hr class="alert-dark mt-0">
+                </div>
+                
+                <div class="col-md-12">.
+                    {{-- Received date & received by --}}
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Date Received&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ date('M. d, Y', strtotime($data->DateReceived)) }}</label>
+                        </div>
+                    </div>
 
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Received By:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->users->full_name ?? 'N/A'}}</label>
+                        </div>
+                    </div>
 
-                <div class="col-md-12">
+                    {{-- Noted by manager --}}
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Noted By&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            <label class="{{ $data->notedBy ? '' : 'font-weight-bold text-danger' }}">
+                                {{ $data->notedBy->full_name ?? 'Pending' }}
+                            </label>
+                        </div>
+                    </div>
+                    {{-- Notedd by  Supervisor--}}
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Noted By&nbsp;:</b></label>
                         <div class="col-sm-3">
@@ -209,79 +262,50 @@
                             <label>{{ $data->DateClosed ?? '' }}</label>
                         </div>
                     </div> -->
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-3 col-form-label text-right"><b>Attachments&nbsp;:</b></label>
-                        <div class="col-sm-3">
-                            @if($data->cs_attachments && $data->cs_attachments->isNotEmpty())
-                                @foreach($data->cs_attachments as $file)
-                                    <label style="display: block;">
-                                        <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ basename($file->Path) }}</a>
-                                        <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
-                                            <i class="ti ti-close" style="color:red"></i>
-                                        </button>
-                                    </label>
-                                @endforeach
-                            @else
-                                <label>No Attachments Available</label>
-                            @endif
-                        </div>
-                    </div>
-            
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Internal Remarks&nbsp;:</b></label>
                         <div class="col-sm-8">
-                            @foreach($for_remarks->sortByDesc('created_at') as $remark)
-                            <div class="border border-light rounded p-2 mb-3">
-                                <label> {!! $remark->Remarks !!}</label>
-                                <div>
-                                    <p class="m-0">Remarks by: {{$remark->user->full_name}}</p>
-                                    <p class="text-muted"><small>{{date('h:i A - M d, Y',strtotime($remark->created_at))}}</small></p>
+                            @if($for_remarks && $for_remarks->isNotEmpty())
+                                @foreach($for_remarks->sortByDesc('created_at') as $remark)
+                                <div class="border border-light rounded p-2 mb-3">
+                                    <label> {!! $remark->Remarks !!}</label>
+                                    <div>
+                                        <p class="m-0">Remarks by: {{$remark->user->full_name}}</p>
+                                        <p class="text-muted"><small>{{date('h:i A - M d, Y', strtotime($remark->created_at))}}</small></p>
+                                    </div>
                                 </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <label><strong>Customer Attachment</strong></label>
-                    <hr class="alert-dark mt-0">
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Files&nbsp;:</b></label>
-                        <div class="col-sm-3">
-                            @if($data->customer_attachments && $data->customer_attachments->isNotEmpty())
-                                @foreach($data->customer_attachments as $file)
-                                    <label style="display: block;">
-                                        <a href="{{ asset('storage/' . $file->Path) }}" target="_blank">{{ basename($file->Path) }}</a>
-                                        <!-- <button type="button" class="btn btn-sm deleteFile" data-id="{{ $file->id }}">
-                                            <i class="ti ti-close" style="color:red"></i>
-                                        </button> -->
-                                    </label>
                                 @endforeach
                             @else
-                                <label>No Attachments Available</label>
+                                <p class="m-0 pt-2">N/A</p>
                             @endif
                         </div>
                     </div>
-                </div>
 
-
-                <div class="col-md-12">
-                    <label><strong>Customer Feedback</strong></label>
-                    <hr class="alert-dark mt-0">
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group row mb-0">
-                        <label class="col-sm-3 col-form-label text-right"><b>Customer Feedback&nbsp;:</b></label>
-                        <div class="col-sm-8">
-                            <label>{{ $data->Description ?? 'N/A'}}</label>
+                    <div class="form-group row mb-3">
+                        <label class="col-sm-3 col-form-label text-right"><b>Noted Remarks&nbsp;:</b></label>
+                        {{-- <div class="col-sm-3">
+                            <label>{{ $data->NotedRemarks ?? 'N/A'}}</label>
+                        </div> --}}
+                        <div class="col-sm-3">
+                            @forelse ($data->csHistoryRemarks->where('action', 'NOTED BY') ?? [] as $historyRemarks)
+                                <div class="border border-light rounded p-2 mb-3">
+                                    <label>{{ $historyRemarks->remarks ?? 'N/A' }}</label>
+                                    <div>
+                                        <p class="m-0">Remarks by: {{$historyRemarks->userRemarks->full_name ?? 'N/A'}}</p>
+                                        <p class="text-muted"><small>{{date('h:i A - M d, Y', strtotime($historyRemarks->created_at))}}</small></p>
+                                    </div>
+                                </div>
+                            
+                    
+                            @empty
+                                <p class="m-0">N/A</p>
+                            @endforelse
                         </div>
-                    </div>
+                    </div> 
                 </div>
-                
+                <div class="col-md-12 mb-3"><hr class="alert-dark mt-0"></div>
             </div>
+             
             <!-- <div align="right" class="mt-3">
                 <a href="{{ url('cs_list') }}" class="btn btn-outline-secondary">Close</a>
             </div> -->
@@ -302,6 +326,7 @@
                     <a class="nav-link p-2 active" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
                 </li>
             </ul>
+            
             <!-- History logs -->
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="transaction_remarks" role="tabpanel" aria-labelledby="transaction_remarks-tab">
