@@ -60,7 +60,7 @@ input[type="checkbox"] {
     <header>
         <table cellspacing="0" cellpadding="0" width="100%">
             <tr>
-                {{-- <td align="center"><img src="{{asset('images/whi.png')}}" width="120px"><br><b style="font-size: 16px;">CUSTOMER COMPLAINT FORM</b></td> --}}
+                <td align="center"><img src="{{asset('images/whi.png')}}" width="120px"><br><b style="font-size: 16px;">CUSTOMER COMPLAINT FORM</b></td>
             </tr>
         </table>
     </header>

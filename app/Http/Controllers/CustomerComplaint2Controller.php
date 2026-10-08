@@ -771,14 +771,14 @@ class CustomerComplaint2Controller extends Controller
 
         TransactionRemarks::create([
             'transaction_no' => $data->CcNumber,
-            'action' => "Proposed Action.",
+            'action' => "Proposed Action Saved.",
             'action_by' => auth()->id(),
             'remarks' => null
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Customer complaint has been successfully verified.'
+            'message' => 'Proposed action successfully saved.'
         ]);
     }
 
