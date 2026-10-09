@@ -432,19 +432,34 @@ class CustomerSatisfactionController extends Controller
              
     }
 
+
     public function submitRemarks(Request $request, $id)
     {
-        // $data = CustomerSatisfaction::findOrFail($id);
+        $data = CustomerSatisfaction::findOrFail($id);
+
         $remarks = new SatisfactionRemarks();
         $remarks->CsId = $id;
         $remarks->Remarks = $request->Remarks;
-        $remarks->RemarksBy = auth()->user()->id;
-        $remarks->save();
-        
+        $remarks->RemarksBy = auth()->id();
+
+        if ($remarks->save()) {
+            TransactionRemarks::create([
+                'transaction_no' => $data->CsNumber,
+                'action' => 'Internal Remarks Submitted',
+                'action_by' => auth()->id(),
+                'remarks' => $request->Remarks ?? "N/A",
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Internal Remarks has been submitted successfully.',
+            ]);
+        }
+
         return response()->json([
-            'success' => true,
-            'message' => 'Internal Remarks has been submitted successfully.'
-        ]);
+            'success' => false,
+            'message' => 'Failed to submit internal remarks.',
+        ], 500);
     }
 
     // public function assign(Request $request, $id)
@@ -515,27 +530,27 @@ class CustomerSatisfactionController extends Controller
         
         $department = ConcernDepartment::where('id', $request->Department)->firstOrFail();
 
-        // $attachments = [];
+        $attachments = [];
 
-        // // Move temporary files to cs_files
-        // if ($request->has('Path') && is_array($request->Path)) {
-        //     foreach ($request->Path as $fileName) {
-        //         $tempPath = 'temp/' . $fileName;
+        // Move temporary files to cs_files
+        if ($request->has('Path') && is_array($request->Path)) {
+            foreach ($request->Path as $fileName) {
+                $tempPath = 'temp/' . $fileName;
 
-        //         if (Storage::disk('public')->exists($tempPath)) {
-        //             $newPath = 'cs_files/' . $fileName;
+                if (Storage::disk('public')->exists($tempPath)) {
+                    $newPath = 'cs_files/' . $fileName;
 
-        //             Storage::disk('public')->move($tempPath, $newPath);
+                    Storage::disk('public')->move($tempPath, $newPath);
 
-        //             CsFiles::create([
-        //                 'CsId' => $data->id,
-        //                 'Path' => $newPath
-        //             ]);
+                    CsFiles::create([
+                        'CsId' => $data->id,
+                        'Path' => $newPath
+                    ]);
 
-        //             $attachments[] = $newPath;
-        //         }
-        //     }
-        // }
+                    $attachments[] = $newPath;
+                }
+            }
+        }
 
         // Send email to the assigned department
         // Mail::to($department->email)->send(
@@ -547,7 +562,7 @@ class CustomerSatisfactionController extends Controller
             'transaction_no' => $data->CsNumber,
             'action' => "Assigned to {$department->Name} department.",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => "N/A"
         ]);
 
         return response()->json([
@@ -579,7 +594,7 @@ class CustomerSatisfactionController extends Controller
             'transaction_no' => $data->CsNumber,
             'action' => "Customer satisfaction received.",
             'action_by'=> auth()->id(),
-            'remarks' => null
+            'remarks' => "N/A"
         ]);
 
         return response()->json([
@@ -600,7 +615,7 @@ class CustomerSatisfactionController extends Controller
             'transaction_no' => $data->CsNumber,
             'action' => "NOTED BY",
             'action_by' => auth()->id(),
-            'remarks' => $request->NotedRemarks ?? "",
+            'remarks' => $request->NotedRemarks ?? "N/A",
 
         ]);
 
@@ -637,7 +652,7 @@ class CustomerSatisfactionController extends Controller
             'transaction_no' => $data->CsNumber,
             'action' => "NOTED BY",
             'action_by' => auth()->id(),
-            'remarks' => $request->NotedRemarks ?? "",
+            'remarks' => $request->NotedRemarks ?? "N/A",
         ]);
         return response()->json([
             'success' => true,
@@ -658,7 +673,7 @@ class CustomerSatisfactionController extends Controller
             'transaction_no' => $data->CsNumber,
             'action' => "Customer satisfaction closed.",
             'action_by' => auth()->id(),
-            'remarks' => $request->NotedRemarks ?? "",
+            'remarks' => $request->NotedRemarks ?? "N/A",
         ]);
 
         return response()->json([

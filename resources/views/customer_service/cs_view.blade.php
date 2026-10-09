@@ -202,15 +202,16 @@
                     {{-- Customer Feedback --}}
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Customer Feedback&nbsp;:</b></label>
-                        <div class="border border-light rounded p-2 mb-3">
-                            
-                            <div>
-                                <label class="m-0">{{ $data->Description ?? 'N/A'}}</label>
-                                <p class="text-muted"><small>{{ date('h:i A - M d, Y', strtotime($data->created_at)) }}</small></p>
+                        <div class="col-sm-8">
+                                <div class="border border-light rounded p-2 mb-3">
+                                
+                                <div>
+                                    <label class="m-0">{{ $data->Description ?? 'N/A'}}</label>
+                                    <p class="text-muted"><small>{{ date('h:i A - M d, Y', strtotime($data->created_at)) }}</small></p>
+                                </div>
                             </div>
-                        </div>
+                        </div>   
                     </div>
-            
                 </div>
                 
                 <div class="col-md-12 mb-3">
@@ -286,21 +287,24 @@
                         {{-- <div class="col-sm-3">
                             <label>{{ $data->NotedRemarks ?? 'N/A'}}</label>
                         </div> --}}
-                        <div class="col-sm-3">
-                            @forelse ($data->csHistoryRemarks->where('action', 'NOTED BY') ?? [] as $historyRemarks)
+                       
+                        {{-- Sort to newest to oldest and limit to 2 --}}
+                        <div class="col-sm-8">
+                            @forelse ($data->csHistoryRemarks->where('action', 'NOTED BY')->sortByDesc('id')->take(2) as $historyRemarks)
                                 <div class="border border-light rounded p-2 mb-3">
                                     <label>{{ $historyRemarks->remarks ?? 'N/A' }}</label>
-                                    <div>
-                                        <p class="m-0">Remarks by: {{$historyRemarks->userRemarks->full_name ?? 'N/A'}}</p>
-                                        <p class="text-muted"><small>{{date('h:i A - M d, Y', strtotime($historyRemarks->created_at))}}</small></p>
-                                    </div>
+                                
+                                        <div>
+                                            <p class="m-0">Remarks by: {{$historyRemarks->userRemarks->full_name ?? 'N/A'}}</p>
+                                            <p class="text-muted"><small>{{date('h:i A - M d, Y', strtotime($historyRemarks->created_at))}}</small></p>
+                                        </div>
+                                
                                 </div>
-                            
-                    
                             @empty
                                 <p class="m-0">N/A</p>
                             @endforelse
                         </div>
+                        
                     </div> 
                 </div>
                 <div class="col-md-12 mb-3"><hr class="alert-dark mt-0"></div>
@@ -341,7 +345,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($data->csHistoryRemarks as $historyRemarks )
+                                {{-- sort to newest to oldest --}}
+                                @foreach ($data->csHistoryRemarks->sortByDesc('id') as $historyRemarks )
                                     <tr>
                                         <td>{{$historyRemarks->userRemarks->full_name}}</td>
                                         <td>{{ $historyRemarks->action}}</td>
@@ -419,6 +424,7 @@
     </div>
 </div>
 
+{{-- Internal Remarks Modal --}}
 <div class="modal fade" id="editCs" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -445,6 +451,7 @@
         </div>
     </div>
 </div>
+{{-- End --}}
 
 <div class="modal fade" id="assignedCs" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">

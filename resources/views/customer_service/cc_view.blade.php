@@ -394,9 +394,9 @@
 
                     <div class="row mb-2">
                         <div class="col-sm-4 text-right"><p class="m-0"><b>Remarks:</b></p></div>
-                       <div class="col-sm-3">
-                         
-                            @forelse ($data->ccHistoryRemarks->where('action', 'NOTED BY') ?? [] as $historyRemarks)
+                        <div class="col-sm-8">
+                            {{-- sort to newest to oldest and limit only by 2 --}}
+                            @forelse ($data->ccHistoryRemarks->where('action', 'NOTED BY')->sortByDesc('id')->take(2) as $historyRemarks)
                                 <div class="border border-light rounded p-2 mb-3">
                                     <label>{{ $historyRemarks->remarks ?? 'N/A' }}</label>
                                     <div>
@@ -404,8 +404,6 @@
                                         <p class="text-muted"><small>{{date('h:i A - M d, Y', strtotime($historyRemarks->created_at))}}</small></p>
                                     </div>
                                 </div>
-                            
-                    
                             @empty
                                 <p class="m-0">N/A</p>
                             @endforelse
@@ -427,10 +425,12 @@
                 <div class="col-sm-3 col-md-2 text-right">
                     <p class="m-0"><b>Customer Remarks&nbsp;:</b></p>
                 </div>
-                <div class="border border-light rounded p-2 mb-3">
-                    <div>
-                         <p class="m-0">{{ $data->CustomerRemarks ?? 'N/A'}}</p>
-                         <p class="text-muted"><small>{{date('h:i A - M d, Y', strtotime($data->created_at))}}</small></p>
+                <div class="col-sm-8">
+                    <div class="border border-light rounded p-2 mb-3">
+                        <div>
+                            <p class="m-0">{{ $data->CustomerRemarks ?? 'N/A'}}</p>
+                            <p class="text-muted"><small>{{date('h:i A - M d, Y', strtotime($data->created_at))}}</small></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -622,7 +622,7 @@
                         </table>
                     </div>
                     
-                <!-- Quantification Cost Header -->
+                    <!-- Quantification Cost Header -->
                     <div class="row mb-3">
                         <div class="col-12">
                             <div class="mb-3 mt-3">
@@ -702,349 +702,408 @@
                     </div>
                     <!-- End -->
                     
-                    <!-- Investigation -->
-                    <div class="row mb-0">
-                        <div class="col-md-12 mb-3">
-                            <label><strong>Investigation</strong></label>
-                            <hr class="alert-dark mt-0">
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Action Responsible&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ optional($data->action_responsible)->full_name ?? 'N/A' }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Objective Evidence&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ObjectiveEvidence ?? 'N/A'}}</p>
-                        </div>
+                <!-- Investigation -->
+                <div class="row mb-0">
+                    {{-- Title --}}
+                    <div class="col-md-12 mb-3">
+                        <label><strong>Investigation</strong></label>
+                        <hr class="alert-dark mt-0">
                     </div>
 
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Immediate Action&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ImmediateAction ?? 'N/A'}}</p>
-                        </div>
+                    {{-- Action Responsible --}}
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Action Responsible&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ optional($data->action_responsible)->full_name ?? 'N/A' }}</p>
                     </div>
 
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Action Date&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">
-                                {{ $data->ActionDate ? date('M. d, Y', strtotime($data->ActionDate)) : 'N/A' }}
-                            </p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Investigation&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->Investigation ?? 'N/A'}}</p>
-                        </div>
+                    {{-- Action Date --}}
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Action Date&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">
+                            {{ $data->ActionDate ? date('M. d, Y', strtotime($data->ActionDate)) : 'N/A' }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row mb-0">
+                    {{-- Immediate Action --}}
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Immediate Action&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ $data->ImmediateAction ?? 'N/A'}}</p>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Corrective Action&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->CorrectiveAction ?? 'N/A'}}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Action Objective Evidence&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ActionObjectiveEvidence ?? 'N/A'}}</p>
-                        </div>
+                    {{-- Corrective Action --}}
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Corrective Action&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ $data->CorrectiveAction ?? 'N/A'}}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-0">
+                    {{-- Objective Evidence --}}
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Objective Evidence&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ $data->ObjectiveEvidence ?? 'N/A'}}</p>
                     </div>
 
-                    <div class="row mb-3">
-                        <!-- Verification/Regular Files -->
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Files&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">
-                                @php
-                                    $proposedActionFiles = $data->objective
-                                        ? $data->objective->where('file_type', 'proposedActionFile')
-                                        : collect();
-                                @endphp
-
-                                @if($proposedActionFiles->count() > 0)
-                                    @foreach ($proposedActionFiles->values() as $key => $file)
-                                        @php
-                                            $filePath = asset('storage/' . $file->Path);
-                                        @endphp
-
-                                        {{ $key + 1 }}.
-                                        <a href="{{ $filePath }}"
-                                        target="_blank"
-                                        style="word-break: break-all; overflow-wrap: anywhere;">
-                                            {{ $file->Path }}
-                                        </a>
-
-                                        @if($data->Department == auth()->user()->role->type)
-                                            <button type="button"
-                                                    class="btn btn-sm deleteFile2"
-                                                    data-id="{{ $file->id }}">
-                                                <i class="ti ti-close" style="color:red"></i>
-                                            </button>
-                                        @endif
-
-                                        <br>
-                                    @endforeach
-                                @else
-                                    No attachment found
-                                @endif
-                            </p>
-                        </div>
-                        
-                        <!-- Objective Evidence Files -->
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Objective Evidence File&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">
-                                @php
-                                    $objectEvidenceFiles = $data->objective
-                                        ? $data->objective->where('file_type', 'objectEvidenceFile')
-                                        : collect();
-                                @endphp
-
-                                @if($objectEvidenceFiles->count() > 0)
-                                    @foreach ($objectEvidenceFiles->values() as $key => $file)
-                                        @php
-                                            $filePath = asset('storage/' . $file->Path);
-                                        @endphp
-
-                                        {{ $key + 1 }}.
-                                        <a href="{{ $filePath }}"
-                                        target="_blank"
-                                        style="word-break: break-all; overflow-wrap: anywhere;">
-                                            {{ $file->Path }}
-                                        </a>
-
-                                        @if($data->Department == auth()->user()->role->type)
-                                            <button type="button"
-                                                    class="btn btn-sm deleteFile2"
-                                                    data-id="{{ $file->id }}">
-                                                <i class="ti ti-close" style="color:red"></i>
-                                            </button>
-                                        @endif
-
-                                        <br>
-                                    @endforeach
-                                @else
-                                    No attachment found
-                                @endif
-                            </p>
-                        </div>
+                    {{-- Action Objective Evidence--}}
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Objective Evidence&nbsp;:</b></p>
                     </div>
-                    <!-- End -->
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ $data->ActionObjectiveEvidence ?? 'N/A'}}</p>
+                    </div>
+                </div>
 
-                    <!-- Verification -->
-                    <div class="row mb-0">
-                        <div class="col-md-12 mb-3">
-                            <!-- <label><strong>Verification/ Recommendation</strong></label> -->
-                            <label><strong>Proposed Action</strong></label>
-                            <hr class="alert-dark mt-0">
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Acceptance&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-9">
-                            <p class="m-0">{{ $data->Acceptance ?? 'N/A'}}</p>
-                        </div>
+                <div class="row mb-3">
+                    {{-- Investigation --}}
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Investigation&nbsp;:</b></p>
                     </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Closed By&nbsp;:</b></p></div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ optional($data->closed)->full_name ?? 'N/A' }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Closed Date&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">
-                                {{ $data->ClosedDate ? date('M. d, Y', strtotime($data->ClosedDate)) : 'N/A' }}
-                            </p>
-                        </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ $data->Investigation ?? 'N/A'}}</p>
                     </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Claims/Credit Note&nbsp;:</b></p></div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">
-                                @if($data->Claims == 1)
-                                    Yes
-                                @elseif($data->Claims == 2)
-                                    No 
-                                @else
-                                    N/A
-                                @endif
-                            </p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Shipment Return&nbsp;:</b></p></div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">
-                                @if($data->Shipment == 1)
-                                    Yes
-                                @elseif($data->Shipment == 2)
-                                    No 
-                                @else
-                                    N/A
-                                @endif
-                            </p>
-                        </div>
+                
+                    <div class="col-sm-3 col-md-2"></div>
+                    <div class="col-sm-3 col-md-4"></div>
+                </div>
+
+                <div class="row mb-3">
+                    <!-- Immediate Evidence Files / Proposed Action Files -->
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Immediate Evidence Files&nbsp;:</b></p>
                     </div>
-                    <div class="row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Credit Note Number&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->CnNumber ?? 'N/A'}}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Return Shipment Date :</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">
-                                {{ $data->ShipmentDate ? date('M. d, Y', strtotime($data->ShipmentDate)) : 'N/A' }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="form-group row mb-0">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Total Amount Incurred&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->AmountIncurred ?? 'N/A' }}</p>
-                        </div>
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Return Shipment Cost&nbsp;:</b></p>
-                        </div>
-                        <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ $data->ShipmentCost ?? 'N/A'}}</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-3 col-md-2 text-right">
-                            <p class="m-0"><b>Files&nbsp;:</b></p>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <p class="m-0">
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">
                             @php
-                                $verificationFiles = isset($data->verification)
-                                    ? collect($data->verification)->values()
+                                $immediateEvidenceFiles = $data->objective
+                                    ? $data->objective->where('file_type', 'immediateEvidenceFile')
                                     : collect();
                             @endphp
 
-                            @if($verificationFiles->count() > 0)
-                                @foreach ($verificationFiles as $key => $file)
+                            @if($immediateEvidenceFiles->count() > 0)
+                                @foreach ($immediateEvidenceFiles->values() as $key => $file)
                                     @php
                                         $filePath = asset('storage/' . $file->Path);
                                     @endphp
 
                                     {{ $key + 1 }}.
                                     <a href="{{ $filePath }}"
-                                    target="_blank"
-                                    style="word-break: break-all; overflow-wrap: anywhere;">
+                                       target="_blank"
+                                       style="word-break: break-all; overflow-wrap: anywhere;">
                                         {{ $file->Path }}
                                     </a>
 
-                                    @if($data->ReceivedBy == auth()->user()->id)
+                                    @if($data->Department == auth()->user()->role->type)
                                         <button type="button"
                                                 class="btn btn-sm deleteFile2"
                                                 data-id="{{ $file->id }}">
                                             <i class="ti ti-close" style="color:red"></i>
                                         </button>
                                     @endif
-
                                     <br>
                                 @endforeach
                             @else
-                                No attachment found
+                                N/A
                             @endif
-                            </p>
-                        </div>
+                        </p>
                     </div>
-                    {{-- <div class="col-md-12 mb-3">
-                        <label><strong>Files</strong></label>
+                    
+                    <!-- Corrective Action Files -->
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Corrective Action Files&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                         <p class="m-0">
+                            @php
+                                $correctiveActionFiles = $data->objective
+                                    ? $data->objective->where('file_type', 'correctiveActionFiles')
+                                    : collect();
+                            @endphp
+
+                            @if($correctiveActionFiles->count() > 0)
+                                @foreach ($correctiveActionFiles->values() as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path);
+                                    @endphp
+
+                                    {{ $key + 1 }}.
+                                    <a href="{{ $filePath }}"
+                                       target="_blank"
+                                       style="word-break: break-all; overflow-wrap: anywhere;">
+                                        {{ $file->Path }}
+                                    </a>
+
+                                    @if($data->Department == auth()->user()->role->type)
+                                        <button type="button"
+                                                class="btn btn-sm deleteFile2"
+                                                data-id="{{ $file->id }}">
+                                            <i class="ti ti-close" style="color:red"></i>
+                                        </button>
+                                    @endif
+                                    <br>
+                                @endforeach
+                            @else
+                                N/A
+                            @endif
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-3 col-md-2"></div>
+                    <div class="col-sm-3 col-md-4"></div>
+
+                    <!-- Corrective Evidence Files -->
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Objective Evidence Files&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">
+                            @php
+                                $objectEvidenceFiles = $data->objective
+                                    ? $data->objective->where('file_type', 'objectEvidenceFile')
+                                    : collect();
+                            @endphp
+
+                            @if($objectEvidenceFiles->count() > 0)
+                                @foreach ($objectEvidenceFiles->values() as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path);
+                                    @endphp
+
+                                    {{ $key + 1 }}.
+                                    <a href="{{ $filePath }}"
+                                       target="_blank"
+                                       style="word-break: break-all; overflow-wrap: anywhere;">
+                                        {{ $file->Path }}
+                                    </a>
+
+                                    @if($data->Department == auth()->user()->role->type)
+                                        <button type="button"
+                                                class="btn btn-sm deleteFile2"
+                                                data-id="{{ $file->id }}">
+                                            <i class="ti ti-close" style="color:red"></i>
+                                        </button>
+                                    @endif
+                                    <br>
+                                @endforeach
+                            @else
+                                N/A
+                            @endif
+                        </p>
+                    </div>
+                </div>
+                <!-- End -->
+
+                <!-- Verification -->
+                <div class="row mb-0">
+                    <div class="col-md-12 mb-3">
+                        <!-- <label><strong>Verification/ Recommendation</strong></label> -->
+                        <label><strong>Proposed Action</strong></label>
                         <hr class="alert-dark mt-0">
                     </div>
-                    <div class="col-md-12">
-                        @foreach ($data->files as $key => $file)
-                            @php
-                                $filePath = asset('storage/' . $file->Path); 
-                            @endphp
-                            {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
-                        @endforeach
-                    </div> --}}
-                    <!-- End -->
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Acceptance&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-9">
+                        <p class="m-0">{{ $data->Acceptance ?? 'N/A'}}</p>
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Closed By&nbsp;:</b></p></div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ optional($data->closed)->full_name ?? 'N/A' }}</p>
+                    </div>
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Closed Date&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">
+                            {{ $data->ClosedDate ? date('M. d, Y', strtotime($data->ClosedDate)) : 'N/A' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Claims/Credit Note&nbsp;:</b></p></div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">
+                            @if($data->Claims == 1)
+                                Yes
+                            @elseif($data->Claims == 2)
+                                No 
+                            @else
+                                N/A
+                            @endif
+                        </p>
+                    </div>
+                    <div class="col-sm-3 col-md-2 text-right"><p class="m-0"><b>Shipment Return&nbsp;:</b></p></div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">
+                            @if($data->Shipment == 1)
+                                Yes
+                            @elseif($data->Shipment == 2)
+                                No 
+                            @else
+                                N/A
+                            @endif
+                        </p>
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Credit Note Number&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ $data->CnNumber ?? 'N/A'}}</p>
+                    </div>
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Return Shipment Date :</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">
+                            {{ $data->ShipmentDate ? date('M. d, Y', strtotime($data->ShipmentDate)) : 'N/A' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group row mb-0">
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Total Amount Incurred&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ $data->AmountIncurred ?? 'N/A' }}</p>
+                    </div>
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Return Shipment Cost&nbsp;:</b></p>
+                    </div>
+                    <div class="col-sm-3 col-md-4">
+                        <p class="m-0">{{ $data->ShipmentCost ?? 'N/A'}}</p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-3 col-md-2 text-right">
+                        <p class="m-0"><b>Files&nbsp;:</b></p>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p class="m-0">
+                        @php
+                            $verificationFiles = isset($data->verification)
+                                ? collect($data->verification)->values()
+                                : collect();
+                        @endphp
 
-                    <!-- Tabs -->
-                    <ul class="nav nav-tabs viewTab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link p-2 active" id="transaction_remarks-tab" data-toggle="tab" href="#transaction_remarks" role="tab" aria-controls="transaction_remarks" aria-selected="true">Transaction Remarks</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="transaction_remarks" role="tabpanel" aria-labelledby="transaction_remarks-tab">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-hover tables" width="100%">
-                                    <thead>
+                        @if($verificationFiles->count() > 0)
+                            @foreach ($verificationFiles as $key => $file)
+                                @php
+                                    $filePath = asset('storage/' . $file->Path);
+                                @endphp
+
+                                {{ $key + 1 }}.
+                                <a href="{{ $filePath }}"
+                                target="_blank"
+                                style="word-break: break-all; overflow-wrap: anywhere;">
+                                    {{ $file->Path }}
+                                </a>
+
+                                @if($data->ReceivedBy == auth()->user()->id)
+                                    <button type="button"
+                                            class="btn btn-sm deleteFile2"
+                                            data-id="{{ $file->id }}">
+                                        <i class="ti ti-close" style="color:red"></i>
+                                    </button>
+                                @endif
+
+                                <br>
+                            @endforeach
+                        @else
+                            No attachment found
+                        @endif
+                        </p>
+                    </div>
+                </div>
+                {{-- <div class="col-md-12 mb-3">
+                    <label><strong>Files</strong></label>
+                    <hr class="alert-dark mt-0">
+                </div>
+                <div class="col-md-12">
+                    @foreach ($data->files as $key => $file)
+                        @php
+                            $filePath = asset('storage/' . $file->Path); 
+                        @endphp
+                        {{$key + 1}}. <a href="{{ $filePath }}" target="_blank">{{ $file->Path }}</a> <br>
+                    @endforeach
+                </div> --}}
+                <!-- End -->
+
+                <!-- Tabs -->
+                <ul class="nav nav-tabs viewTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link p-2 active" id="transaction_remarks-tab" data-toggle="tab" href="#transaction_remarks" role="tab" aria-controls="transaction_remarks" aria-selected="true">Transaction Remarks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-2" id="history-tab" data-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">History Logs</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="transaction_remarks" role="tabpanel" aria-labelledby="transaction_remarks-tab">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover tables" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Remarks</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{-- sort to newest to oldest --}}
+                                    @foreach ($data->ccRemarks->sortByDesc('id') as $remarks)
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Remarks</th>
-                                            <th>Date</th>
+                                            <td>{{$remarks->userRemarks->full_name}}</td>
+                                            <td>{{$remarks->SalesRemarks}}</td>
+                                            <td>{{date('M d, Y', strtotime($remarks->created_at))}}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($data->ccRemarks as $remarks)
-                                            <tr>
-                                                <td>{{$remarks->userRemarks->full_name}}</td>
-                                                <td>{{$remarks->SalesRemarks}}</td>
-                                                <td>{{date('M d, Y', strtotime($remarks->created_at))}}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-hover tables" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Action</th>
-                                            <th>Remarks</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($data->ccHistoryRemarks as $historyRemarks)
-                                            <tr>
-                                                <td>{{$historyRemarks->userRemarks->full_name}}</td>
-                                                <td>{{$historyRemarks->action}}</td>
-                                                <td>{{$historyRemarks->remarks}}</td>
-                                                <td>{{date('M d, Y', strtotime($historyRemarks->created_at))}}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <!-- End -->
+                    <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover tables" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                        <th>Remarks</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($data->ccHistoryRemarks->sortByDesc('id') as $historyRemarks)
+                                        <tr>
+                                            <td>{{$historyRemarks->userRemarks->full_name}}</td>
+                                            <td>{{$historyRemarks->action}}</td>
+                                            <td>{{$historyRemarks->remarks}}</td>
+                                            <td>{{date('M d, Y', strtotime($historyRemarks->created_at))}}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- End -->
                 </div>
             </div>
         </div>
@@ -1113,6 +1172,15 @@
                                 <textarea type="text" class="form-control" id="ObjectiveEvidence" name="ObjectiveEvidence" rows="3" placeholder="Enter Objective Evidence" required>{{ $data->ObjectiveEvidence }}</textarea>
                             </div>
                         </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="ImmediateObjectEvidenceAttach">Object Evidence Attachments</label>
+                                <input type="file" class="filepond" name="ImmediateEvidencePath[]" id="Path9" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
+                        </div>
+                        
+
                         <div class="col-lg-12">
                             <label>Investigation of the Problem:</label>
                             <div class="form-group">
@@ -1157,7 +1225,7 @@
                         <!-- Objective Evidence Input -->
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label for="objectiveEvidence">Objective Evidence</label>
+                                <label for="objectiveEvidence">Objective Evidence Attachments</label>
                                 <input type="file" class="filepond" name="EvidencePath[]" id="Path8" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             </div>
                         </div>
@@ -1754,6 +1822,27 @@
                     url: '{{ url("/upload-temp-cc") }}',
                     method: 'POST',
                     headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    onload: (response) => {
+                        try { return JSON.parse(response).id; } catch { return response; }
+                    }
+                },
+                revert: {
+                    url: '{{ url("/upload-revert-cc") }}',
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                }
+            }
+        });
+
+        // Immediate Action/Correction FilePond
+        FilePond.create(document.querySelector('#Path9'), {
+            allowMultiple: true,
+            maxFileSize: '10MB',
+            server: {
+                process: {
+                    url: '{{ url("/upload-temp-cc") }}',
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}'},
                     onload: (response) => {
                         try { return JSON.parse(response).id; } catch { return response; }
                     }

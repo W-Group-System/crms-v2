@@ -232,37 +232,40 @@ class CustomerComplaint2Controller extends Controller
     //     return response()->json(['error' => 'No file uploaded'], 400);
     // }
     public function uploadTemp(Request $request) 
-{
-    // Check for either Path or EvidencePath in the request
-    $fileKey = null;
-    if ($request->hasFile('Path')) {
-        $fileKey = 'Path';
-    } elseif ($request->hasFile('EvidencePath')) {
-        $fileKey = 'EvidencePath';
-    }
+    {
+        // Check for either Path or EvidencePath in the request
+        $fileKey = null;
+        if ($request->hasFile('Path')) {
+            $fileKey = 'Path';
+        } elseif ($request->hasFile('EvidencePath')) {
+            $fileKey = 'EvidencePath';
 
-    if ($fileKey) {
-        $files = $request->file($fileKey); 
-
-        $uploaded = [];
-        // Ensure $files is treated as an array
-        foreach ((array)$files as $file) {
-            $fileName = uniqid() . '_' . $file->getClientOriginalName();
-            $cleanName = str_replace('#', '_', $fileName);
-            $path = $file->storeAs('temp', $cleanName, 'public');
-
-            $uploaded[] = [
-                'id'   => $cleanName, // return only fileName to FilePond
-                'path' => $path
-            ];
+        }elseif($request->hasFile('ImmediateEvidencePath')){
+            $fileKey = 'ImmediateEvidencePath';
         }
 
-        // Return only first file if FilePond expects one at a time
-        return response()->json($uploaded[0]);
-    }
+        if ($fileKey) {
+            $files = $request->file($fileKey); 
 
-    return response()->json(['error' => 'No file uploaded'], 400);
-}
+            $uploaded = [];
+            // Ensure $files is treated as an array
+            foreach ((array)$files as $file) {
+                $fileName = uniqid() . '_' . $file->getClientOriginalName();
+                $cleanName = str_replace('#', '_', $fileName);
+                $path = $file->storeAs('temp', $cleanName, 'public');
+
+                $uploaded[] = [
+                    'id'   => $cleanName, // return only fileName to FilePond
+                    'path' => $path
+                ];
+            }
+
+            // Return only first file if FilePond expects one at a time
+            return response()->json($uploaded[0]);
+        }
+
+        return response()->json(['error' => 'No file uploaded'], 400);
+    }
 
     public function uploadRevert(Request $request) 
     {
@@ -520,6 +523,13 @@ class CustomerComplaint2Controller extends Controller
 
     public function update(Request $request, $id)
     {
+        if ($request->hasFile('ImmediateEvidencePath')) {
+            $request->validate([
+                'ImmediateEvidencePath' => 'array',
+                'ImmediateEvidencePath.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240',
+            ]);
+        }
+
         $data = CustomerComplaint2::findOrFail($id);
         // $data->RecurringIssue = $request->RecurringIssue;
         $data->IssuanceNo = $request->IssuanceNo;
@@ -545,7 +555,7 @@ class CustomerComplaint2Controller extends Controller
                     CcObjectiveFile::create([
                         'CcId' => $data->id,
                         'Path' => $newPath,
-                        'file_type' => 'proposedActionFile',
+                        'file_type' => 'correctiveActionFile',
                     ]);
 
                     $attachments[] = $newPath;
@@ -571,6 +581,40 @@ class CustomerComplaint2Controller extends Controller
                 }
             }
         }
+
+        // Immediate Objective Evidence -> file_type = immediateEvidenceFile
+        if ($request->hasFile('ImmediateEvidencePath')) {
+            foreach ((array) $request->file('ImmediateEvidencePath') as $file) {
+                $fileName = uniqid() . '_' . $file->getClientOriginalName();
+                $cleanName = str_replace('#', '_', $fileName);
+                $newPath = $file->storeAs('cc_files', $cleanName, 'public');
+
+                CcObjectiveFile::create([
+                    'CcId' => $data->id,
+                    'Path' => $newPath,
+                    'file_type' => 'immediateEvidenceFile',
+                ]);
+                $attachments[] = $newPath;
+            }
+        } elseif ($request->has('ImmediateEvidencePath') && is_array($request->ImmediateEvidencePath)) {
+            foreach($request->ImmediateEvidencePath as $fileName) {
+                $tempPath = 'temp/' . $fileName;
+                if(Storage::disk('public')->exists($tempPath)) {
+                    $newPath = 'cc_files/' . $fileName;
+                    Storage::disk('public')->move($tempPath, $newPath);
+
+                    CcObjectiveFile::create([
+                        'CcId' => $data->id,
+                        'Path' => $newPath,
+                        'file_type' => 'immediateEvidenceFile'
+                    ]);
+                    $attachments[] = $newPath;
+                }
+            }
+        }
+
+
+
         // if ($request->hasFile('Path')) {
         //     foreach ($request->file('Path') as $file) {
         //         if ($file->isValid()) {
@@ -616,7 +660,7 @@ class CustomerComplaint2Controller extends Controller
             'transaction_no' => $data->CcNumber,
             'action' => "Complaint investigation updated.",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => "N/A"
         ]);
         
         
@@ -773,7 +817,7 @@ class CustomerComplaint2Controller extends Controller
             'transaction_no' => $data->CcNumber,
             'action' => "Proposed Action Saved.",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => "N/A"
         ]);
 
         return response()->json([
@@ -794,7 +838,7 @@ class CustomerComplaint2Controller extends Controller
             'transaction_no' => $data->CcNumber,
             'action' => "Complaint received.",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => "N/A"
         ]);
 
         return response()->json([
@@ -852,7 +896,7 @@ class CustomerComplaint2Controller extends Controller
                 'transaction_no' => $data->CcNumber,
                 'action' => $action,
                 'action_by' => auth()->id(),
-                'remarks' => $request->remarks??""
+                'remarks' => $request->remarks ?? "N/A"
             ]);   
         }
         return response()->json([
@@ -884,7 +928,7 @@ class CustomerComplaint2Controller extends Controller
             'transaction_no' => $data->CcNumber,
             'action' => "Complaint approved.",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => "N/A"
         ]);
 
         return response()->json([
@@ -905,6 +949,13 @@ class CustomerComplaint2Controller extends Controller
         Mail::to(['audit@rico.com.ph', 'bpd@wgroup.com.ph'])
         // Mail::to(['lorueltps.largosa@gmail.com'])
             ->send(new ClosedMail($data));
+        
+        TransactionRemarks::create([
+            'transaction_no' => $data->CcNumber,
+            'action' => "Complaint closed.",
+            'action_by' => auth()->id(),
+            'remarks' => "N/A"
+        ]);
 
         return response()->json([
             'success' => true,
@@ -957,6 +1008,8 @@ class CustomerComplaint2Controller extends Controller
             $fileKey = 'Path';
         } elseif ($request->hasFile('EvidencePath')) {
             $fileKey = 'EvidencePath';
+        } elseif($request->hasFile('ImplementationPath')) {
+            $fileKey = 'ImplementationPath';
         }
 
         if ($fileKey) {
@@ -1145,7 +1198,7 @@ class CustomerComplaint2Controller extends Controller
             'transaction_no' => $data->CcNumber,
             'action' => "Complaint updated",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => "N/A"
         ]);
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
@@ -1407,7 +1460,7 @@ class CustomerComplaint2Controller extends Controller
                 ? "Reassigned to {$department->Name} department."
                 : "Assigned to {$department->Name} department.",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => "N/A"
         ]);
 
         return response()->json([
@@ -1528,7 +1581,7 @@ class CustomerComplaint2Controller extends Controller
             'transaction_no' => $data->CcNumber,
             'action' => "Tagged as {$status}",
             'action_by' => auth()->id(),
-            'remarks' => null
+            'remarks' => "N/A"
         ]);
 
         return response()->json([
