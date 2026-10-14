@@ -1,5 +1,6 @@
-<div class="modal fade" id="remarks{{$data->id}}" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-md">
+<div class="modal fade " id="remarks{{$data->id}}" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    {{-- change modal-md size to default size --}}
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Noted By</h5>

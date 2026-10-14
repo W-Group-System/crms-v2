@@ -411,13 +411,11 @@
                     </div>
                 </div>
             </div>
-
-
             <div class="form-group row mb-0"></div>
             <!--Customer Remarks  -->
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    <label><strong>Customer Feedback </strong></label>
+                    <label><strong>Customer Complaint </strong></label>
                     <hr class="alert-dark mt-0">
                 </div>
             </div>
@@ -1180,7 +1178,6 @@
                             </div>
                         </div>
                         
-
                         <div class="col-lg-12">
                             <label>Investigation of the Problem:</label>
                             <div class="form-group">
@@ -1239,8 +1236,9 @@
         </div>
     </div>
 </div>
-<!-- Investigation Modal -->
+<!-- End -->
 
+{{-- Proposed Action Modal --}}
 <div class="modal fade" id="verificationCc" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
@@ -1363,6 +1361,7 @@
         </div>
     </div>
 </div>
+{{-- End --}}
 
 @include('customer_service.complaint_modal')
 @include('customer_service.update_complaint')

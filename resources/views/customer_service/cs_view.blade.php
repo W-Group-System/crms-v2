@@ -367,6 +367,7 @@
 
 @include('customer_service.update_satisfaction')
 
+{{-- Noted by: supervisor modal --}}
 <div class="modal fade" id="editNoted" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -393,7 +394,9 @@
         </div>
     </div>
 </div>
+{{-- End --}}
 
+{{-- Noted by manager --}}
 <div class="modal fade" id="approvedNoted" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -423,6 +426,7 @@
         </div>
     </div>
 </div>
+{{-- End --}}
 
 {{-- Internal Remarks Modal --}}
 <div class="modal fade" id="editCs" tabindex="-1" role="dialog">
