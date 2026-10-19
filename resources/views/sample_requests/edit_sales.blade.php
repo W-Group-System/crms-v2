@@ -239,8 +239,8 @@
                                                 <div class="form-group">
                                                     <label>Unit</label>
                                                     <select class="form-control js-example-basic-single" name="UnitOfMeasure[]" style="position: relative !important" title="Select Unit">
-                                                        <option value="1" {{ old('UnitOfMeasure.'.$index, $product->UnitOfMeasure) == "1" ? 'selected' : '' }}>Grams</option>
-                                                        <option value="2" {{ old('UnitOfMeasure.'.$index, $product->UnitOfMeasure) == "2" ? 'selected' : '' }}>Kilograms</option>
+                                                        <option value="1" {{ old('UnitOfMeasure.'.$index, $product->UnitOfMeasureId) == "1" ? 'selected' : '' }}>Grams</option>
+                                                        <option value="2" {{ old('UnitOfMeasure.'.$index, $product->UnitOfMeasureId) == "2" ? 'selected' : '' }}>Kilograms</option>
                                                     </select>
                                                 </div>
                                             </div>                                
