@@ -1049,11 +1049,19 @@ class CustomerComplaint2Controller extends Controller
 
     public function ccupdate(Request $request, $id)
     {
+        $validated = $request->validate([
+            'CurrencyCode' => 'required|in:PHP,USD,EUR',
+            'CurrencyAmount' => 'nullable|string|max:255',
+        ]);
+
         $data = CustomerComplaint2::findOrFail($id);
         $data->RecurringIssue = $request->RecurringIssue;
         $data->PreviousCCF = $request->PreviousCCF;
         $data->Description = $request->Description;
-        $data->Currency = $request->Currency;
+        $currencyAmount = trim($validated['CurrencyAmount'] ?? '');
+        $data->Currency = $currencyAmount === ''
+            ? null
+            : $validated['CurrencyCode'] . ' ' . $currencyAmount;
         $data->NcarIssuance = $request->NcarIssuance;
         $data->Progress = 50;
         $data->save();

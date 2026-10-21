@@ -56,10 +56,26 @@
                             </div>
                         </div>
                         <div class="col-lg-6">
+                            @php
+                                $currencyParts = [];
+                                preg_match('/^(PHP|USD|EUR)\s*(.*)$/i', trim((string) $data->Currency), $currencyParts);
+                                $currencyCode = isset($currencyParts[1]) ? strtoupper($currencyParts[1]) : 'PHP';
+                                $currencyAmount = isset($currencyParts[2]) ? $currencyParts[2] : $data->Currency;
+                            @endphp
                             <div class="form-group">
-                                <label>Currency (In PHP/ In US$/ In EUR):</label>
-                                <input type="text" class="form-control" name="Currency" id="Currency" value="{{ $data->Currency }}" placeholder="Enter Currency">
+                                <label for="CurrencyAmount">Currency:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <select class="custom-select" name="CurrencyCode" aria-label="Currency">
+                                            <option value="PHP" {{ $currencyCode === 'PHP' ? 'selected' : '' }}>PHP</option>
+                                            <option value="USD" {{ $currencyCode === 'USD' ? 'selected' : '' }}>USD</option>
+                                            <option value="EUR" {{ $currencyCode === 'EUR' ? 'selected' : '' }}>EUR</option>
+                                        </select>
+                                    </div>
+                                    <input type="text" class="form-control" name="CurrencyAmount" id="CurrencyAmount" value="{{ $currencyAmount }}" placeholder="Enter amount">
+                                </div>
                             </div>
+                            {{-- {{ $data->CcNumber }} --}}
                         </div> 
                     </div>
                     <div class="table-responsive">
