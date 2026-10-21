@@ -272,13 +272,13 @@
                     <!-- CCF # -->
                     <div class="row mb-2">
                         <div class="col-sm-5 text-right"><p class="m-0"><b>CCF #:</b></p></div>
-                        <div class="col-sm-7"><p class="m-0">{{ $data->CcNumber ?? 'N.A' }}</p></div>
+                        <div class="col-sm-7"><p class="m-0">{{ $data->CcNumber ?? 'N/A' }}</p></div>
                     </div>
 
                     <!-- Quality Class -->
                     <div class="row mb-2">
                         <div class="col-sm-5 text-right"><p class="m-0"><b>Quality Class:</b></p></div>
-                        <div class="col-sm-7"><p class="m-0">{{ $data->QualityClass ?? 'N.A' }}</p></div>
+                        <div class="col-sm-7"><p class="m-0">{{ $data->QualityClass ?? 'N/A' }}</p></div>
                     </div>
 
                     <!-- Recurring Issue -->
@@ -288,7 +288,7 @@
                             <p class="m-0">
                                 @if($data->RecurringIssue == 1) Yes
                                 @elseif($data->RecurringIssue == 2) No 
-                                @else N.A @endif
+                                @else N/A @endif
                             </p>
                         </div>
                     </div>
@@ -296,7 +296,7 @@
                     <!-- Previous CCF # -->
                     <div class="row mb-2">
                         <div class="col-sm-5 text-right"><p class="m-0"><b>Previous CCF # (If Yes):</b></p></div>
-                        <div class="col-sm-7"><p class="m-0">{{ $data->PreviousCCF ?? 'N.A' }}</p></div>
+                        <div class="col-sm-7"><p class="m-0">{{ $data->PreviousCCF ?? 'N/A' }}</p></div>
                     </div>
 
                     <!-- NCAR -->
@@ -306,7 +306,7 @@
                             <p class="m-0">
                                 @if($data->NcarIssuance == 1) Yes
                                 @elseif($data->NcarIssuance == 2) No 
-                                @else N.A @endif
+                                @else N/A @endif
                             </p>
                         </div>
                     </div>
@@ -314,7 +314,7 @@
                     <!-- NCAR # -->
                     <div class="row mb-2">
                         <div class="col-sm-5 text-right"><p class="m-0"><b>NCAR # (If Yes):</b></p></div>
-                        <div class="col-sm-7"><p class="m-0">{{ $data->IssuanceNo ?? 'N.A' }}</p></div>
+                        <div class="col-sm-7"><p class="m-0">{{ $data->IssuanceNo ?? 'N/A' }}</p></div>
                     </div>
 
                     <!-- Date Received -->
@@ -334,7 +334,7 @@
                                 @elseif($data->SiteConcerned == 4) CCC Carmen
                                 @elseif($data->SiteConcerned == 5) PBI Canlubang
                                 @elseif($data->SiteConcerned == 6) International Warehouse
-                                @else N.A @endif
+                                @else N/A @endif
                             </p>
                         </div>
                     </div>
@@ -342,13 +342,7 @@
                     <!-- Department Concerned -->
                     <div class="row mb-2">
                         <div class="col-sm-5 text-right"><p class="m-0"><b>Department Concerned:</b></p></div>
-                        <div class="col-sm-7"><p class="m-0">{{ optional($data->concernedDept)->Name ?? 'N.A' }}</p></div>
-                    </div>
-
-                    <!-- Date Closed -->
-                    <div class="row mb-2">
-                        <div class="col-sm-5 text-right"><p class="m-0"><b>Date Closed:</b></p></div>
-                        <div class="col-sm-7"><p class="m-0">{{ $data->ClosedDate ? date('M. d, Y', strtotime($data->ClosedDate)) : 'N.A' }}</p></div>
+                        <div class="col-sm-7"><p class="m-0">{{ optional($data->concernedDept)->Name ?? 'N/A' }}</p></div>
                     </div>
                 </div>
 
@@ -357,11 +351,25 @@
                     <!-- Received By -->
                     <div class="row mb-2">
                         <div class="col-sm-4 text-right"><p class="m-0"><b>Date Received:</b></p></div>
-                         <div class="col-sm-7"><p class="m-0">{{ $data->DateReceived ? date('M. d, Y', strtotime($data->DateReceived)) : 'N.A' }}</p></div>
+                         <div class="col-sm-7"><p class="m-0">{{ $data->DateReceived ? date('M. d, Y', strtotime($data->DateReceived)) : 'N/A' }}</p></div>
                     </div>
+                    
+                    <!-- Date Closed -->
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-right"><p class="m-0"><b>Date Closed:</b></p></div>
+                        <div class="col-sm-8"><p class="m-0">{{ $data->ClosedDate ? date('M. d, Y', strtotime($data->ClosedDate)) : 'N/A' }}</p></div>
+                    </div>  
+
+                    {{-- Progress --}}
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-right"><p class="m-0"><b>Progress:</b></p></div>
+                        <div class="col-sm-8"><p class="m-0">For review: </p></div>
+                    </div>
+                    
+                    {{-- Received by --}}
                     <div class="row mb-2">
                         <div class="col-sm-4 text-right"><p class="m-0"><b>Received by:</b></p></div>
-                        <div class="col-sm-8"><p class="m-0">{{ optional($data->users)->full_name ?? 'N.A' }}</p></div>
+                        <div class="col-sm-8"><p class="m-0">{{ optional($data->users)->full_name ?? 'N/A' }}</p></div>
                     </div>
 
                     <!-- Noted By -->
