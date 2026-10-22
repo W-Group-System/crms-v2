@@ -22,6 +22,20 @@ class CustomerComplaint2 extends Model implements Auditable
         return $this->belongsTo(ConcernDepartment::class, 'Department', 'id');
     }
 
+    public function getSiteConcernedNameAttribute()
+    {
+        $sites = [
+            1 => 'WHI Head Office',
+            2 => 'WHI Carmona',
+            3 => 'MRDC',
+            4 => 'CCC Carmen',
+            5 => 'PBI Canlubang',
+            6 => 'International Warehouse',
+        ];
+
+        return $sites[$this->SiteConcerned] ?? null;
+    }
+
     public function product_quality()
     {
         return $this->belongsTo(CcProductQuality::class, 'id', 'CcId');

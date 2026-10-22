@@ -3,11 +3,13 @@
 namespace App\Exports;
 
 use App\CustomerSatisfaction;
+use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class CustomerSatisfactionExport implements FromCollection, WithHeadings, WithMapping
+class CustomerSatisfactionExport implements FromCollection, WithHeadings, WithMapping, WithEvents
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -88,6 +90,34 @@ class CustomerSatisfactionExport implements FromCollection, WithHeadings, WithMa
        
 
     }
+    //Auto stretch widht of excel
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $worksheet = $event->sheet->getDelegate();
+                $lastColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString(
+                    $worksheet->getHighestDataColumn()
+                );
+                $lastRow = $worksheet->getHighestDataRow();
+
+                for ($columnIndex = 1; $columnIndex <= $lastColumnIndex; $columnIndex++) {
+                    $column = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
+                    $maxLength = 0;
+
+                    for ($rowIndex = 1; $rowIndex <= $lastRow; $rowIndex++) {
+                        $value = (string) $worksheet->getCellByColumnAndRow($columnIndex, $rowIndex)->getFormattedValue();
+                        foreach (preg_split('/\r\n|\r|\n/', $value) as $line) {
+                            $maxLength = max($maxLength, mb_strlen($line, 'UTF-8'));
+                        }
+                    }
+
+                    $worksheet->getColumnDimension($column)->setWidth(min(255, max(10, $maxLength + 2)));
+                }
+            },
+        ];
+    }
+
     public function map($row): array
     {
        
@@ -110,7 +140,7 @@ class CustomerSatisfactionExport implements FromCollection, WithHeadings, WithMa
 
          $ccRows = [
                     $row->CsNumber,
-                    $row->created_at,
+                    $row-> created_at? \Carbon\Carbon::parse($row->created_at)->format("d-M-y") : 'N/A',
                     $row->CompanyName,
                     $row->ContactName,
                     $row->concernedDept->Name ?? '',
@@ -123,4 +153,3 @@ class CustomerSatisfactionExport implements FromCollection, WithHeadings, WithMa
             return $ccRows;
     }
 }
-

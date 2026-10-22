@@ -215,19 +215,49 @@
                 </div>
                 
                 <div class="col-md-12 mb-3">
-                    <label><strong>Reviewers/Approvers</strong></label>
+                    <label><strong>Reviewers / Approvers</strong></label>
                     <hr class="alert-dark mt-0">
                 </div>
                 
                 <div class="col-md-12">.
-                    {{-- Received date & received by --}}
+                    {{-- Received date--}}
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Date Received&nbsp;:</b></label>
                         <div class="col-sm-3">
-                            <label>{{ date('M. d, Y', strtotime($data->DateReceived)) }}</label>
+                            <label>{{ $data->DateReceived ? date('M. d, Y', strtotime($data->DateReceived)) : 'N/A' }}</label>
+                        </div>
+                    </div>
+                    
+                    {{-- Date Closed --}}
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Date Closed&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            <label>{{ $data->DateClosed ? date('M. d, Y', strtotime($data->DateClosed)) : 'N/A' }}</label>
                         </div>
                     </div>
 
+                    <div class="form-group row mb-0">
+                        <label class="col-sm-3 col-form-label text-right"><b>Progress&nbsp;:</b></label>
+                        <div class="col-sm-3">
+                            <label>
+                                @if ($data->Status == 30)
+                                    Closed
+                                @elseif ($data->ReceivedBy == NULL)
+                                    For BDE to Receive
+                                @elseif($data->Department == NULL && $data->Progress == 20)
+                                    To Assign Concern Site and Department 
+
+                                @elseif($data->ReceivedBy != NULL && $data->NotedBy == NULL && $data->Department != NULL)
+                                    For Supervisor's Review
+                                
+                                @elseif($data->ReceivedBy != NULL && $data->NotedBy != NULL && $data->ApprovedBy == NULL )
+                                    For Manager's Review
+                                @endif
+                            </label>
+                        </div>
+                    </div>
+
+                    {{-- Received by --}}
                     <div class="form-group row mb-0">
                         <label class="col-sm-3 col-form-label text-right"><b>Received By:</b></label>
                         <div class="col-sm-3">

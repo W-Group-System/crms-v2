@@ -63,10 +63,11 @@
                             @endif
                         @endif
                     @endif
+                    {{-- Supervisor's noted by --}}
                     @if(primarySalesApprover($data->ReceivedBy, auth()->user()->id))
                         @if($data->getOriginal()["Progress"] == 50 && $data->SiteConcerned != NULL)
                             <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
-                                <i class="ti ti-check"></i>&nbsp;Noted By
+                                <i class="ti ti-check"></i>&nbsp;Noted By 
                             </button>
                         @endif
                     @endif
@@ -130,7 +131,7 @@
                     @if($data->getOriginal()["Progress"] == 30 && $data->NotedBy != NULL)
                         @if(primarySalesApprover($data->NotedBy, auth()->user()->id))
                             <button type="button" class="btn btn-outline-success" data-id="{{ $data->id }}" data-toggle="modal" data-target="#remarks{{$data->id}}">
-                                <i class="ti ti-check"></i>&nbsp;Noted By
+                                <i class="ti ti-check"></i>&nbsp;Noted By 
                             </button>
                         @endif
                     @endif
@@ -363,7 +364,35 @@
                     {{-- Progress --}}
                     <div class="row mb-2">
                         <div class="col-sm-4 text-right"><p class="m-0"><b>Progress:</b></p></div>
-                        <div class="col-sm-8"><p class="m-0">For review: </p></div>
+                        <div class="col-sm-8">
+                            <p class="m-0">
+                                @if($data->Status == 30)
+                                    Closed
+                                @elseif(in_array($data->getOriginal()["Progress"], [60, 80])
+                                    && $data->Investigation != null
+                                    && $data->CorrectiveAction != null
+                                    && $data->ActionObjectiveEvidence != null
+                                    && $data->IsVerified != 1)
+                                    For Proposed Action
+                                @elseif($data->getOriginal()["Progress"] == 40
+                                    && ($data->Investigation == null
+                                        || $data->CorrectiveAction == null
+                                        || $data->ActionObjectiveEvidence == null)
+                                    && $data->ApprovedBy != null)
+                                    Pending Department Investigation
+                                @elseif($data->NotedBy != NULL)
+                                    For Manager's Review
+                                @elseif($data->Department != NULL && $data->SiteConcerned != NULL)
+                                    For Supervisor's Review
+                                @elseif($data->Status == 10 && $data->ReceivedBy == NULL)
+                                    For BDE to Receive
+                                @elseif($data->ReceivedBy != NULL && $data->getOriginal()["Progress"] == 20)
+                                    For BDE's fill-up CCF
+                                @elseif($data->ReceivedBy != NULL && $data->Department == NULL && $data->getOriginal()["Progress"] == 50)
+                                    To assign concern site and department
+                                @endif
+                            </p>
+                        </div>
                     </div>
                     
                     {{-- Received by --}}
