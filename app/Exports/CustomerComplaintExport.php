@@ -188,7 +188,7 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                     $worksheet->getStyle("G2:J{$lastRow}")
                         ->getAlignment()
                         ->setWrapText(true)
-                        ->setVertical('top');
+                        ->setVertical('bottom');
                     $worksheet->getStyle("K2:K{$lastRow}")
                         ->getAlignment()
                         ->setWrapText(true)
