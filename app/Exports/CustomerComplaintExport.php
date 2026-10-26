@@ -48,6 +48,14 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                     'ccRemarks' => function ($query) {
                         $query->orderByDesc('created_at')->orderByDesc('id');
                     },
+                    'ccHistoryRemarks' => function ($query) {
+                        $query->where(function ($query) {
+                            $query->where('action', 'LIKE', '%NOTED BY%')
+                                ->orWhere('action', 'LIKE', '%Proposed Action%');
+                        })
+                            ->orderByDesc('id')
+                            ->with('userRemarks');
+                    },
                 ])
                 ->latest()
                 ->get();
@@ -72,6 +80,14 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                     'ccRemarks' => function ($query) {
                         $query->orderByDesc('created_at')->orderByDesc('id');
                     },
+                    'ccHistoryRemarks' => function ($query) {
+                        $query->where(function ($query) {
+                            $query->where('action', 'LIKE', '%NOTED BY%')
+                                ->orWhere('action', 'LIKE', '%Proposed Action%');
+                        })
+                            ->orderByDesc('id')
+                            ->with('userRemarks');
+                    },
                 ])
                 ->latest()
                 ->get();
@@ -95,6 +111,14 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                     'ccRemarks' => function ($query) {
                         $query->orderByDesc('created_at')->orderByDesc('id');
                     },
+                    'ccHistoryRemarks' => function ($query) {
+                        $query->where(function ($query) {
+                            $query->where('action', 'LIKE', '%NOTED BY%')
+                                ->orWhere('action', 'LIKE', '%Proposed Action%');
+                        })
+                            ->orderByDesc('id')
+                            ->with('userRemarks');
+                    },
                 ])
                 ->latest()
                 ->get();
@@ -105,8 +129,8 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
     {
         $headings = [
             'CCF #',
-            'Date Complaint',
-            'Date Prepared',
+            'Date File Complaint',
+            'Date Received',
             'Category',
 
             'Customer',
@@ -115,11 +139,14 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
             'SC#',
             'SO#',
             'Quantity (kg)',
+            'Other Remarks',
         ];
 
         $headings = array_merge($headings, [
             'Complaint Endorsed To',
             'Department Concerned',
+            'Credit Note',
+            'Shipment Return',
             'Internal Remarks',
             'Date Addressed',
             'NCAR #',
@@ -153,12 +180,16 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                         }
                     }
 
-                    $maxWidth = in_array($column, ['G', 'H', 'I', 'J'], true) ? 40 : 255;
+                    $maxWidth = in_array($column, ['G', 'H', 'I', 'J', 'K'], true) ? 40 : 255;
                     $worksheet->getColumnDimension($column)->setWidth(min($maxWidth, max(10, $maxLength + 2)));
                 }
 
                 if ($lastRow > 1) {
                     $worksheet->getStyle("G2:J{$lastRow}")
+                        ->getAlignment()
+                        ->setWrapText(true)
+                        ->setVertical('top');
+                    $worksheet->getStyle("K2:K{$lastRow}")
                         ->getAlignment()
                         ->setWrapText(true)
                         ->setVertical('top');
@@ -187,6 +218,28 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
         //  $ccRows[];
 
         $categoryData = $this->categoryData($row);
+        $otherRemarks = $row->ccHistoryRemarks
+            ->filter(function ($historyRemark) {
+                return stripos($historyRemark->action ?? '', 'NOTED BY') !== false;
+            })
+            ->take(2)
+            ->map(function ($historyRemark) {
+                $createdAt = $historyRemark->created_at
+                    ? \Carbon\Carbon::parse($historyRemark->created_at)->format('h:i A - M d, Y')
+                    : 'N/A';
+
+                return ($historyRemark->remarks ?? 'N/A')
+                    . "\nRemarks by: " . (optional($historyRemark->userRemarks)->full_name ?? 'N/A')
+                    . "\n" . $createdAt;
+            })
+            ->implode("\n\n");
+        $internalRemarks = $row->ccHistoryRemarks
+            ->filter(function ($historyRemark) {
+                return stripos($historyRemark->action ?? '', 'Proposed Action') !== false;
+            })
+            ->take(1)
+            ->first();
+
         $ccRows = [
             $row->CcNumber,
             $row->created_at ? $row->created_at->format('d-M-y') : 'N/A',
@@ -200,12 +253,15 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
             $categoryData['sc_no'],
             $categoryData['so_no'],
             $categoryData['quantity'],
+            $otherRemarks !== '' ? $otherRemarks : 'N/A',
         ];
 
         $ccRows = array_merge($ccRows, [
             $row->site_concerned_name ?? 'N/A',
             $row->concernedDept->Name ?? 'N/A',
-            optional($row->ccRemarks->first())->SalesRemarks ?? 'N/A',
+            $row->Claims == 1 ? 'Yes' : ($row->Claims == 2 ? 'No' : 'N/A'),
+            $row->Shipment == 1 ? 'Yes' : ($row->Shipment == 2? 'No': 'N/A'),
+            optional($internalRemarks)->remarks ?? 'N/A',
             $row->ActionDate ? \Carbon\Carbon::parse($row->ActionDate)->format('d-M-y') : 'N/A',
             $row->IssuanceNo ?? 'N/A',
             $row->ImmediateAction ?? 'N/A',

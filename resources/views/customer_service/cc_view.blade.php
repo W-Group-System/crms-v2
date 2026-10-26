@@ -140,7 +140,7 @@
                             <i class="ti ti-pencil"></i>&nbsp;Investigation
                         </button>
                     @endif -->
-                    @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type && ($data->getOriginal()["Progress"] == 40 || $data->getOriginal()["Progress"] == 80))
+                    @if (optional($data->concernedDept)->dept_role_group == auth()->user()->role->type && ($data->getOriginal()["Progress"] == 40 || $data->getOriginal()["Progress"] == 80 || $data->getOriginal()["Progress"] == 50))
                         @if($data->Investigation == null || $data->CorrectiveAction == null || $data->ActionObjectiveEvidence == null)
                             <button type="button" class="btn btn-outline-warning" id="updateCc" 
                                     data-id="{{ $data->id }}" data-toggle="modal" data-target="#editCc">
@@ -363,35 +363,35 @@
 
                     {{-- Progress --}}
                     <div class="row mb-2">
-                        <div class="col-sm-4 text-right"><p class="m-0"><b>Progress:</b></p></div>
+                        <div class="col-sm-4 text-right"><p class="m-0 text-primary" ><b>Progress:</b></p></div>
                         <div class="col-sm-8">
-                            <p class="m-0">
-                                @if($data->Status == 30)
-                                    Closed
-                                @elseif(in_array($data->getOriginal()["Progress"], [60, 80])
-                                    && $data->Investigation != null
-                                    && $data->CorrectiveAction != null
-                                    && $data->ActionObjectiveEvidence != null
-                                    && $data->IsVerified != 1)
-                                    For Proposed Action
-                                @elseif($data->getOriginal()["Progress"] == 40
-                                    && ($data->Investigation == null
-                                        || $data->CorrectiveAction == null
-                                        || $data->ActionObjectiveEvidence == null)
-                                    && $data->ApprovedBy != null)
-                                    Pending Department Investigation
-                                @elseif($data->NotedBy != NULL)
-                                    For Manager's Review
-                                @elseif($data->Department != NULL && $data->SiteConcerned != NULL)
-                                    For Supervisor's Review
-                                @elseif($data->Status == 10 && $data->ReceivedBy == NULL)
-                                    For BDE to Receive
-                                @elseif($data->ReceivedBy != NULL && $data->getOriginal()["Progress"] == 20)
-                                    For BDE's fill-up CCF
-                                @elseif($data->ReceivedBy != NULL && $data->Department == NULL && $data->getOriginal()["Progress"] == 50)
-                                    To assign concern site and department
-                                @endif
-                            </p>
+                            <p class="m-0"><span class="{{ $data->Status == 30 ? 'text-danger' : 'text-success' }}">
+                                <b>
+                                    @if($data->Status == 30)
+                                        Closed
+                                    @elseif($data->Investigation != null
+                                        && $data->CorrectiveAction != null
+                                        && $data->ActionObjectiveEvidence != null
+                                        && $data->IsVerified != 1)
+                                        For Proposed Action
+                                    @elseif(($data->Investigation == null
+                                            || $data->CorrectiveAction == null
+                                            || $data->ActionObjectiveEvidence == null)
+                                        && $data->ApprovedBy != null)
+                                        Pending Department Investigation
+                                    @elseif($data->NotedBy != NULL)
+                                        For Manager's Review
+                                    @elseif($data->Department != NULL && $data->SiteConcerned != NULL)
+                                        For Supervisor's Review
+                                    @elseif($data->Status == 10 && $data->ReceivedBy == NULL)
+                                        For BDE to Receive
+                                    @elseif($data->ReceivedBy != NULL && $data->Department == NULL)
+                                        To assign concern site and department
+                                    @elseif($data->ReceivedBy != NULL)
+                                        For BDE's fill-up CCF
+                                    @endif
+                                </b>
+                            </span></p>
                         </div>
                     </div>
                     
@@ -433,7 +433,7 @@
                         <div class="col-sm-4 text-right"><p class="m-0"><b>Remarks:</b></p></div>
                         <div class="col-sm-8">
                             {{-- sort to newest to oldest and limit only by 2 --}}
-                            @forelse ($data->ccHistoryRemarks->where('action', 'NOTED BY')->sortByDesc('id')->take(2) as $historyRemarks)
+                            @forelse ($data->ccHistoryRemarks->filter(function ($remark) { return stripos($remark->action ?? '', 'NOTED BY') !== false; })->sortByDesc('id')->take(2) as $historyRemarks)
                                 <div class="border border-light rounded p-2 mb-3">
                                     <label>{{ $historyRemarks->remarks ?? 'N/A' }}</label>
                                     <div>
@@ -449,7 +449,7 @@
                 </div>
             </div>
             <div class="form-group row mb-0"></div>
-            <!--Customer Remarks  -->
+            <!--Customer Remarks  --> 
             <div class="row">
                 <div class="col-md-12 mb-3">
                     <label><strong>Customer Complaint </strong></label>
@@ -681,6 +681,9 @@
                     <!-- End -->
                 
                     <!-- Sales Remarks -->
+                    @php
+                        $latestSalesRemark = $data->ccsales->sortByDesc('id')->first();
+                    @endphp
                     <div class="row mb-3">
                         <div class="col-md-12 mb-3 mt-3">
                             <label><strong>Sales Remarks</strong></label>
@@ -690,7 +693,7 @@
                             <p class="m-0"><b>Remarks&nbsp;:</b></p>
                         </div>
                         <div class="col-sm-3 col-md-4">
-                            <p class="m-0">{{ optional($data->ccsales->first())->SalesRemarks }}</p>
+                            <p class="m-0">{{ optional($latestSalesRemark)->SalesRemarks }}</p>
                         </div>
                         <div class="col-sm-3 col-md-2 text-right">
                             <p class="m-0"><b>Customer Attachments :</b></p>
@@ -698,7 +701,7 @@
                         <div class="col-12 col-md-4">
                             <p class="m-0">
                                 @if(isset($data->files) && count($data->files) > 0)
-                                    @foreach ($data->files as $key => $file)
+                                    @foreach ($data->files->sortByDesc('id')->take(1) as $key => $file)
                                         @php
                                             $filePath = asset('storage/' . $file->Path); 
                                         @endphp
@@ -721,17 +724,14 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <p class="m-0">
-                                @if(isset($data->ccsales) && count($data->ccsales) > 0)
-                                    @foreach ($data->ccsales as $key => $file)
-                                        @php
-                                            $filePath = asset('storage/' . $file->Path); 
-                                        @endphp
-                                        {{$key + 1}}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a> 
-                                        <br>
-                                    @endforeach
-                                @else
+                                @forelse ($data->ccsales->sortByDesc('id')->take(1)->filter(function ($remark) { return !empty($remark->Path); })->values() as $key => $file)
+                                    @php
+                                        $filePath = asset('storage/' . $file->Path);
+                                    @endphp
+                                    {{$key + 1}}. <a href="{{ $filePath }}" target="_blank" style="word-break: break-all; overflow-wrap: anywhere;">{{ $file->Path }}</a>
+                                @empty
                                     No attachment found
-                                @endif
+                                @endforelse
                             </p>
                         </div>
                     </div>
@@ -862,7 +862,7 @@
                          <p class="m-0">
                             @php
                                 $correctiveActionFiles = $data->objective
-                                    ? $data->objective->where('file_type', 'correctiveActionFiles')
+                                    ? $data->objective->where('file_type', 'correctiveActionFile')
                                     : collect();
                             @endphp
 

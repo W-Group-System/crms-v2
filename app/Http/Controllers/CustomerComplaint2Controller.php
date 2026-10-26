@@ -817,7 +817,7 @@ class CustomerComplaint2Controller extends Controller
             'transaction_no' => $data->CcNumber,
             'action' => "Proposed Action Saved.",
             'action_by' => auth()->id(),
-            'remarks' => "N/A"
+            'remarks' => $request->Acceptance,
         ]);
 
         return response()->json([
@@ -860,7 +860,7 @@ class CustomerComplaint2Controller extends Controller
                 $data->DateNoted = now();
                 $data->Progress = 30;
                 $data->save();
-                $action = "NOTED BY";
+                $action = "SUPERVISOR NOTED BY";
                 $message = "Customer complaint has been successfully noted.";
                 $isSuccess = true;
                 break;
@@ -881,7 +881,7 @@ class CustomerComplaint2Controller extends Controller
                 }
 
                 Mail::to($department->email)->send(new AssignCcDepartmentMail($data, $attachments, true));
-                $action = "NOTED BY";
+                $action = "MANAGER NOTED BY";
                 $message = "Customer complaint has been successfully noted.";
                 $isSuccess = true;
                 break;
@@ -1195,7 +1195,7 @@ class CustomerComplaint2Controller extends Controller
             if ($request->filled('SalesRemarks')) {
                 ComplaintRemarks::create([
                     'CcId'           => $id,
-                    'SalesRemarks'   => $request->input('SalesRemarks'),
+                    'SalesRemarks'   => $request->input('SalesRemarks') ?? 'N/A',
                     'SalesRemarksBy' => auth()->id(),
                     'Path'           => null,
                 ]);
@@ -1206,7 +1206,7 @@ class CustomerComplaint2Controller extends Controller
             'transaction_no' => $data->CcNumber,
             'action' => "Complaint updated",
             'action_by' => auth()->id(),
-            'remarks' => "N/A"
+            'remarks' => $request->input('SalesRemarks') ?? 'N/A',
         ]);
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
