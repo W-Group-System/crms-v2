@@ -112,36 +112,69 @@
                                         </button>
                                     </form>
                                 </td> --}}
-                                @php
+                                {{-- @php
                                     $usd = 0;
                                     $eur = 0;
                                     $php = 0;
-                                @endphp
-                                @foreach ($history_rmc['result'] as $key => $rmc)
+                                @endphp --}}
 
-                                @php
-                                    $total = 0;
-                                    foreach($rmc as $rm) {
-                                        foreach($array_values as $key_a => $array) {
-                                            if($rm->MaterialId == $key_a) {
-                                                $array_values[$key_a]->usd = $rm->usd;
+                                {{-- @foreach ($history_rmc['result'] as $key => $rmc)
+
+                                    @php
+                                        $total = 0;
+                                        foreach($rmc as $rm) {
+                                            foreach($array_values as $key_a => $array) {
+                                                if($rm->MaterialId == $key_a) {
+                                                    $array_values[$key_a]->usd = $rm->usd;
+                                                }
                                             }
                                         }
-                                    }
-                                    foreach($array_values as $arr) {
-                                        $total = $total + $arr->usd;
-                                        $last_total = $total;
-                                    }
-                                    // foreach($array_values as $arr) {
-                                    //     if (is_object($arr)) {
-                                    //         $total += $arr->usd ?? 0;
-                                    //     }
-                                    // }
-                                    // $last_total = $total;
-                                    $usd = number_format($total, 2);
-                                    $eur = number_format(latestConversion($total,1), 2);
-                                    $php = number_format(latestConversion($total,3), 2);
-                                @endphp
+                                        foreach($array_values as $arr) {
+                                            $total = $total + $arr->usd;
+                                            $last_total = $total;
+                                        }
+                                        // Excluded
+                                        // foreach($array_values as $arr) {
+                                        //     if (is_object($arr)) {
+                                        //         $total += $arr->usd ?? 0;
+                                        //     }
+                                        // }
+                                        // $last_total = $total;
+                                        // End
+                                        $usd = number_format($total, 2);
+                                        $eur = number_format(latestConversion($total,1), 2);
+                                        $php = number_format(latestConversion($total,3), 2);
+                                    @endphp
+                                @endforeach --}}
+
+                                @php 
+                                    $previousValue = null;
+                                    $array_values = $history_rmc['materials'];
+                                    $last_total = 0;
+                                @endphp 
+
+                                @foreach($history_rmc['result'] as $key => $rmc)
+                                    @php 
+                                        $total = 0;
+                                    @endphp
+
+                                    @foreach($rmc as $rm)
+                                        @foreach($array_values as $key_a => $array)
+                                            @if($rm->MaterialId == $key_a)
+                                                @php 
+                                                    $array_values[$key_a]->usd = $rm->usd;
+                                                @endphp
+                                            @endif
+                                        @endforeach
+                                    @endforeach
+
+                                    @foreach($array_values as $arr)
+                                        @php
+                                            $total = $total + $arr->usd;
+                                            $last_total = $total;
+                                        @endphp
+                                    @endforeach
+
                                 @endforeach
                                 <td>
                                     <a href="{{url('view_product/'.$product->id)}}" target="_blank">
@@ -151,9 +184,12 @@
                                     {{date('M d, Y', strtotime($product->created_at))}}
                                 </td>
                                 <td>{{$product->application->Name}}</td>
-                                <td>{{ $usd }}</td>
+                                {{-- <td>{{ $usd }}</td>
                                 <td>{{ $eur }}</td>
-                                <td>{{ $php }}</td>
+                                <td>{{ $php }}</td> --}}
+                                <td> {{ number_format($total, 2) }} </td>
+                                <td> {{ number_format(usdToRMC($total, $key, 1), 2) }} </td>
+                                <td> {{ number_format(usdToRMC($total, $key, 3), 2) }} </td>
                             {{-- <td>{{number_format($eur, 2)}}</td>
                             <td>{{number_format($php, 2)}}</td> --}}
                         </tr>
