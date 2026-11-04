@@ -363,9 +363,9 @@
 
                     {{-- Progress --}}
                     <div class="row mb-2">
-                        <div class="col-sm-4 text-right"><p class="m-0 text-primary" ><b>Progress:</b></p></div>
+                        <div class="col-sm-4 text-right"><p class="m-0" ><b>Progress:</b></p></div>
                         <div class="col-sm-8">
-                            <p class="m-0"><span class="{{ $data->Status == 30 ? 'text-danger' : 'text-success' }}">
+                            <p class="m-0 text-primary">
                                 <b>
                                     @if($data->Status == 30)
                                         Closed
@@ -391,7 +391,7 @@
                                         For BDE's fill-up CCF
                                     @endif
                                 </b>
-                            </span></p>
+                            </p>
                         </div>
                     </div>
                     
