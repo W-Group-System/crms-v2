@@ -384,9 +384,9 @@
                                     @elseif($data->Department != NULL && $data->SiteConcerned != NULL)
                                         For Supervisor's Review
                                     @elseif($data->Status == 10 && $data->ReceivedBy == NULL)
-                                        For BDE to Receive
+                                        For BDE Review
                                     @elseif($data->ReceivedBy != NULL && $data->Department == NULL)
-                                        To assign concern site and department
+                                        Assigning concern site
                                     @elseif($data->ReceivedBy != NULL)
                                         For BDE's fill-up CCF
                                     @endif

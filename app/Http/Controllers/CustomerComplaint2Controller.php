@@ -860,7 +860,7 @@ class CustomerComplaint2Controller extends Controller
                 $data->DateNoted = now();
                 $data->Progress = 30;
                 $data->save();
-                $action = "SUPERVISOR NOTED BY";
+                $action = "Supervisor noted by";
                 $message = "Customer complaint has been successfully noted.";
                 $isSuccess = true;
                 break;
@@ -881,7 +881,7 @@ class CustomerComplaint2Controller extends Controller
                 }
 
                 Mail::to($department->email)->send(new AssignCcDepartmentMail($data, $attachments, true));
-                $action = "MANAGER NOTED BY";
+                $action = "Manager noted by";
                 $message = "Customer complaint has been successfully noted.";
                 $isSuccess = true;
                 break;
