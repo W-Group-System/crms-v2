@@ -113,8 +113,9 @@
                         $canClose = in_array($data->getOriginal()["Progress"], [60, 70,])
                             && is_null($data->IsVerified)
                             && (
-                                primarySalesApprover($data->ReceivedBy, auth()->user()->id) ||
-                                primarySalesApprover($data->NotedBy, auth()->user()->id)
+                                // Supervisor
+                                primarySalesApprover($data->ReceivedBy, auth()->user()->id) 
+                                // primarySalesApprover($data->NotedBy, auth()->user()->id)
                             );
                     @endphp
 
@@ -384,9 +385,9 @@
                                     @elseif($data->Department != NULL && $data->SiteConcerned != NULL)
                                         For Supervisor's Review
                                     @elseif($data->Status == 10 && $data->ReceivedBy == NULL)
-                                        For BDE to Receive
+                                        For BDE Review
                                     @elseif($data->ReceivedBy != NULL && $data->Department == NULL)
-                                        To assign concern site and department
+                                        Assigning concern site
                                     @elseif($data->ReceivedBy != NULL)
                                         For BDE's fill-up CCF
                                     @endif
@@ -432,18 +433,22 @@
                     <div class="row mb-2">
                         <div class="col-sm-4 text-right"><p class="m-0"><b>Remarks:</b></p></div>
                         <div class="col-sm-8">
-                            {{-- sort to newest to oldest and limit only by 2 --}}
-                            @forelse ($data->ccHistoryRemarks->filter(function ($remark) { return stripos($remark->action ?? '', 'NOTED BY') !== false; })->sortByDesc('id')->take(2) as $historyRemarks)
-                                <div class="border border-light rounded p-2 mb-3">
-                                    <label>{{ $historyRemarks->remarks ?? 'N/A' }}</label>
-                                    <div>
-                                        <p class="m-0">Remarks by: {{$historyRemarks->userRemarks->full_name ?? 'N/A'}}</p>
-                                        <p class="text-muted"><small>{{date('h:i A - M d, Y', strtotime($historyRemarks->created_at))}}</small></p>
+                            @if(!empty($data->NotedBy) || !empty($data->ApprovedBy))
+                                {{-- Show one remark for NotedBy and a second after ApprovedBy. --}}
+                                @forelse ($data->ccHistoryRemarks->filter(function ($remark) { return stripos($remark->action ?? '', 'NOTED BY') !== false; })->sortByDesc('id')->take(!empty($data->ApprovedBy) ? 2 : 1) as $historyRemarks)
+                                    <div class="border border-light rounded p-2 mb-3">
+                                        <label>{{ $historyRemarks->remarks ?? 'N/A' }}</label>
+                                        <div>
+                                            <p class="m-0">Remarks by: {{$historyRemarks->userRemarks->full_name ?? 'N/A'}}</p>
+                                            <p class="text-muted"><small>{{date('h:i A - M d, Y', strtotime($historyRemarks->created_at))}}</small></p>
+                                        </div>
                                     </div>
-                                </div>
-                            @empty
+                                @empty
+                                    <p class="m-0">N/A</p>
+                                @endforelse
+                            @else
                                 <p class="m-0">N/A</p>
-                            @endforelse
+                            @endif
                         </div>
                     </div>
                 </div>

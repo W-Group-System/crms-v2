@@ -860,7 +860,7 @@ class CustomerComplaint2Controller extends Controller
                 $data->DateNoted = now();
                 $data->Progress = 30;
                 $data->save();
-                $action = "SUPERVISOR NOTED BY";
+                $action = "Supervisor noted by";
                 $message = "Customer complaint has been successfully noted.";
                 $isSuccess = true;
                 break;
@@ -881,7 +881,7 @@ class CustomerComplaint2Controller extends Controller
                 }
 
                 Mail::to($department->email)->send(new AssignCcDepartmentMail($data, $attachments, true));
-                $action = "MANAGER NOTED BY";
+                $action = "Manager noted by";
                 $message = "Customer complaint has been successfully noted.";
                 $isSuccess = true;
                 break;
@@ -1063,7 +1063,7 @@ class CustomerComplaint2Controller extends Controller
             ? null
             : $validated['CurrencyCode'] . ' ' . $currencyAmount;
         $data->NcarIssuance = $request->NcarIssuance;
-        $data->Progress = 50;
+        // $data->Progress = 50;
         $data->save();
 
         // ------------------- PRODUCT QUALITY -------------------
@@ -1398,6 +1398,7 @@ class CustomerComplaint2Controller extends Controller
         $customer_complaint->ProductName = $request->ProductName;
         $customer_complaint->Department = $request->Department;
         $customer_complaint->SiteConcerned = $request->SiteConcerned;
+        $customer_complaint->Progress = 50;
 
         $department = ConcernDepartment::findOrFail($request->Department);
 
@@ -1442,12 +1443,28 @@ class CustomerComplaint2Controller extends Controller
                 $customer_complaint->ActionObjectiveEvidence = null;
                 $customer_complaint->ActionDate = null;
                 $customer_complaint->ActionResponsible = null;
+                $customer_complaint->NotedBy = null;
+                $customer_complaint->ApprovedBy = null;
+                $customer_complaint->Progress = 50;
+
+                //Proposed action
+                $customer_complaint->Acceptance = null;
+                $customer_complaint->Claims = null;
+                $customer_complaint->CnNumber = null;
+                $customer_complaint->AmountIncurred = null;
+                $customer_complaint->Shipment = null;
+                $customer_complaint->ShipmentCost = null;
+                $customer_complaint->ShipmentDate = null;
 
                 if ($actionDate !== null) {
-                    $customer_complaint->Progress = 40;
+                    // $customer_complaint->Progress = 40;
+                    $customer_complaint->Progress = 50;
                 }
 
                 CcObjectiveFile::where('CCid', $id)->delete();
+                CcVerificationFile::where('CcId', $id)->update([
+                    'deleted_at' => now(),
+                ]);
 
                 $customer_complaint->save();
 
