@@ -278,6 +278,7 @@
                     </a>
                 </div>
             </div>
+
             <div class="col-lg-6 mb-2">
                 <div class="card rounded-0 border border-1 border-danger">
                     <div class="card-body bg-danger">
@@ -307,6 +308,39 @@
                     </a>
                 </div>
             </div>
+            
+            {{--Customer Service  --}}
+            <div class="col-lg-6 mb-2">
+                <div class="card rounded-0 border border-1 border-warning">
+                    <div class="card-body bg-warning">
+                        <div class="row">
+                            <div class="col-6">
+                                <h1 class="m-0">
+                                    <i class="ti-layers text-white"></i>
+                                </h1>
+                            </div>
+                            <div class="col-6">
+                                <h1 class="m-0 text-right text-white">{{ $cc_data }}</h1>
+                                <p class="m-0 text-right text-white">Customer Service</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{url('customer_services')}}" class="text-decoration-none">
+                        <div class="card-footer p-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <p class="m-0 text-warning">View Details</p>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                    <i class="ti-arrow-circle-right text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {{-- Customer Service --}}
+
             <div class="col-lg-6 mb-2">
                 <div class="card rounded-0 border border-1 border-primary">
                     <div class="card-body bg-primary">
@@ -577,7 +611,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-12">
+                <div class="col-lg-12 mb-2">
                     <div class="card rounded-0 border border-1 border-danger">
                         <div class="card-body bg-danger">
                             <div class="row">
@@ -606,6 +640,38 @@
                         </a>
                     </div>
                 </div>
+                {{-- Customer Service --}}
+
+                <div class="col-lg-12">
+                    <div class="card rounded-0 border border-1 border-warning">
+                        <div class="card-body bg-warning">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h1 class="m-0">
+                                        <i class="ti-layers text-white"></i>
+                                    </h1>
+                                </div>
+                                <div class="col-6">
+                                    <h1 class="m-0 text-right text-white">{{ $cc_data }}</h1>
+                                    <p class="m-0 text-right text-white">Customer Service</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{url('customer_services')}}" class="text-decoration-none">
+                            <div class="card-footer p-2">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <p class="m-0 text-warning">View Details</p>
+                                    </div>
+                                    <div class="col-lg-6 text-right">
+                                        <i class="ti-arrow-circle-right text-warning"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {{-- End --}}
             </div>
             {{-- <div class="col-md-3 grid-margin transparent">
                 <div class="card mb-2 card-tale">

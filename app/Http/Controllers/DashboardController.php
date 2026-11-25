@@ -1403,6 +1403,21 @@ class DashboardController extends Controller
         $total_new_request_count = $new_crr + $new_rpe + $new_srf;
         $total_final_count = $final_crr + $final_rpe + $final_srf;
         $total_close_transaction = $crrCloseTransaction + $rpeCloseTransaction + $srfCloseTransaction;
+        $customer_complaint = CustomerComplaint2::where('Status', 10)
+            ->when(in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) use ($role) {
+                $q->whereHas('concernedDept', function ($q) use ($role) {
+                    $q->where('dept_role_group', $role->type);
+                })->whereNotNull('ApprovedBy');
+            })
+            ->count();
+        $customer_satisfaction = CustomerSatisfaction::where('Status', 10)
+            ->when(in_array($role->name, ['Staff L1', 'Staff L2']), function ($q) use ($role) {
+                $q->whereHas('concernedDept', function ($q) use ($role) {
+                    $q->where('dept_role_group', $role->type);
+                })->whereNotNull('ApprovedBy');
+            })
+            ->count();
+        $cc_data = $customer_complaint + $customer_satisfaction;
         // if (auth()->user()->role->type == 'RND' && (auth()->user()->role->name == 'Staff L2' || auth()->user()->role->name == 'Department Admin'))
         // {
         // }
@@ -1437,7 +1452,7 @@ class DashboardController extends Controller
         //     $user_transaction[] = $object;
         // }
 
-        return view('dashboard.rnd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction','total_close_transaction', 'crr_new', 'crr_ongoing', 'total_transaction_crr', 'rpe_new', 'rpe_ongoing', 'total_transaction_rpe', 'srf_new', 'srf_ongoing', 'total_transaction_srf'));
+        return view('dashboard.rnd', compact('role','total_open_transaction','total_product_count','total_initial_count','total_new_request_count','total_final_count','user_transaction','total_close_transaction', 'crr_new', 'crr_ongoing', 'total_transaction_crr', 'rpe_new', 'rpe_ongoing', 'total_transaction_rpe', 'srf_new', 'srf_ongoing', 'total_transaction_srf', 'cc_data'));
     }
 
     public function qcdIndex()
