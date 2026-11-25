@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="row">
-        @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'IS' || optional($role)->type == 'LS'))
+        @if ((optional($role)->name == 'Staff L2' || optional($role)->name == 'Department Admin') && (optional($role)->type == 'IS' || optional($role)->type == 'LS' || optional($role)->type == 'CS'))
             <div class="col-md-6 grid-margin">
                 <div class="card border border-1 border-primary rounded-0">
                     <div class="card-header bg-primary rounded-0">
@@ -283,6 +283,50 @@
                     </div>
                 </div>
             </div>
+
+             <div class="card-body">
+                        <p class="card-title text-white">Customer Service</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-3 mt-2">
+                                <h3 class="fs-30 font-weight-medium">
+                                    {{ $totalCs ?? '0' }}
+                                    <i class="ti ti-comments"></i>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Customer Complaints</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_complaint.list', ['open' => 10]) }}" class="text-white" onclick="show()">
+                                    {{ $customerComplaintCount ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>CC Approval</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_complaint.list', ['progress' => 20]) }}" class="text-white" onclick="show()">
+                                    {{ $ccNotedBy ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Customer Satisfaction</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_satisfaction.list', ['open' => '10']) }}" class="text-white" onclick="show()">
+                                    {{ $customerSatisfactionCount ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>CS Approval</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_satisfaction.list', ['progress' => 20]) }}" class="text-white" onclick="show()">
+                                    {{ $csNotedBy ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
             {{-- <div class="card card-light-blue">
                 <div class="card-body">
                     <p class="card-title text-white">Activities</p>
@@ -408,7 +452,7 @@
                     </div>
                 </div>
             </div> --}}
-        @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'IS' || optional($role)->type == 'LS'))
+        @elseif ((optional($role)->name == 'Staff L1') && (optional($role)->type == 'IS' || optional($role)->type == 'LS' || optional($role)->type == 'CS'))
             <div class="col-md-6 grid-margin stretch-card">
                 <div class="card border border-1 border-primary rounded-0">
                     <div class="card-header bg-primary rounded-0">
@@ -721,6 +765,40 @@
                     </div>
                 </div>
             </div> --}}
+
+            <div class="card card-light-danger">
+                    <div class="card-body">
+                        <p class="card-title text-white">Customer Service</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="mb-3 mt-2">
+                                <h3 class="fs-30 font-weight-medium">
+                                    {{ $totalCs ?? 0}}
+                                    <i class="ti ti-comments"></i>
+                                </h3>
+                            </div>
+                            <!-- <div class="mt-3">
+                                <a href="{{ url('/activities?open=10') }}" class="text-info">View all</a>
+                            </div> -->
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Customer Complaints</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_complaint.list', ['open' => 10]) }}" class="text-white" onclick="show()">
+                                    {{ $customerComplaintCount ?? '0' }}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="mb-1 d-flex justify-content-between">
+                            <p>Customer Satisfaction</p>
+                            <h5 class="text-primary font-weight-medium">
+                                <a href="{{ route('customer_satisfaction.list', ['open' => 10]) }}" class="text-white" onclick="show()">
+                                    {{ $customerSatisfactionCount ?? 0 }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
         @endif
     </div>
 
