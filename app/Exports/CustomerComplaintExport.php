@@ -12,8 +12,8 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class CustomerComplaintExport implements FromCollection, WithHeadings, WithMapping, WithEvents
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     protected $open;
     protected $close;
 
@@ -28,111 +28,50 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
         $openStatus = $this->open;
         $closeStatus = $this->close;
 
-        if((auth()->user()->role->type == "IS"))
-        {
-            return CustomerComplaint2::when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
-                    $query->whereIn('Status', [$openStatus, $closeStatus]);
-                })
-                ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
-                    $query->where('Status', $openStatus);
-                })
-                ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
-                    $query->where('Status', $closeStatus);
-                })
-                ->where('CcNumber', 'LIKE', '%CCF-IS%')
-                ->with([
-                    'product_quality',
-                    'packaging',
-                    'delivery_handling',
-                    'others',
-                    'ccRemarks' => function ($query) {
-                        $query->orderByDesc('created_at')->orderByDesc('id');
-                    },
-                    'ccHistoryRemarks' => function ($query) {
-                        $query->where(function ($query) {
-                            $query->where('action', 'LIKE', '%NOTED BY%')
-                                ->orWhere('action', 'LIKE', '%Proposed Action%');
-                        })
-                            ->orderByDesc('id')
-                            ->with('userRemarks');
-                    },
-                ])
-                ->latest()
-                ->get();
+        $query = CustomerComplaint2::when($openStatus != null && $closeStatus != null, function ($query) use ($openStatus, $closeStatus) {
+                $query->whereIn('Status', [$openStatus, $closeStatus]);
+            })
+            ->when($openStatus != null && $closeStatus == null, function ($query) use ($openStatus) {
+                $query->where('Status', $openStatus);
+            })
+            ->when($closeStatus != null && $openStatus == null, function ($query) use ($closeStatus) {
+                $query->where('Status', $closeStatus);
+            })
+            ->with([
+                'product_quality',
+                'packaging',
+                'delivery_handling',
+                'others',
+                'ccRemarks' => function ($query) {
+                    $query->orderByDesc('created_at')->orderByDesc('id');
+                },
+                'ccHistoryRemarks' => function ($query) {
+                    $query->where(function ($query) {
+                        $query->where('action', 'LIKE', '%NOTED BY%')
+                            ->orWhere('action', 'LIKE', '%Proposed Action%');
+                    })
+                        ->orderByDesc('id')
+                        ->with('userRemarks');
+                },
+            ]);
+
+        if (auth()->user()->role->type == "IS") {
+            $query->where('CcNumber', 'LIKE', '%CCF-IS%');
+        } elseif (auth()->user()->role->type == "LS") {
+            $query->where('CcNumber', 'LIKE', '%CCF-LS%');
         }
-        elseif((auth()->user()->role->type == "LS"))
-        {
-            return CustomerComplaint2::when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
-                    $query->whereIn('Status', [$openStatus, $closeStatus]);
-                })
-                ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
-                    $query->where('Status', $openStatus);
-                })
-                ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
-                    $query->where('Status', $closeStatus);
-                })
-                ->where('CcNumber', 'LIKE', '%CCF-LS%')
-                ->with([
-                    'product_quality',
-                    'packaging',
-                    'delivery_handling',
-                    'others',
-                    'ccRemarks' => function ($query) {
-                        $query->orderByDesc('created_at')->orderByDesc('id');
-                    },
-                    'ccHistoryRemarks' => function ($query) {
-                        $query->where(function ($query) {
-                            $query->where('action', 'LIKE', '%NOTED BY%')
-                                ->orWhere('action', 'LIKE', '%Proposed Action%');
-                        })
-                            ->orderByDesc('id')
-                            ->with('userRemarks');
-                    },
-                ])
-                ->latest()
-                ->get();
-        }
-        else
-        {
-            return CustomerComplaint2::when($openStatus != null && $closeStatus != null, function($query)use($openStatus,$closeStatus) {
-                    $query->whereIn('Status', [$openStatus, $closeStatus]);
-                })
-                ->when($openStatus != null && $closeStatus == null, function($query)use($openStatus) {
-                    $query->where('Status', $openStatus);
-                })
-                ->when($closeStatus != null && $openStatus == null, function($query)use($closeStatus) {
-                    $query->where('Status', $closeStatus);
-                })
-                ->with([
-                    'product_quality',
-                    'packaging',
-                    'delivery_handling',
-                    'others',
-                    'ccRemarks' => function ($query) {
-                        $query->orderByDesc('created_at')->orderByDesc('id');
-                    },
-                    'ccHistoryRemarks' => function ($query) {
-                        $query->where(function ($query) {
-                            $query->where('action', 'LIKE', '%NOTED BY%')
-                                ->orWhere('action', 'LIKE', '%Proposed Action%');
-                        })
-                            ->orderByDesc('id')
-                            ->with('userRemarks');
-                    },
-                ])
-                ->latest()
-                ->get();
-        }
+
+        return $query->latest()->get();
     }
 
     public function headings(): array
     {
-        $headings = [
+        return [
             'CCF #',
             'Date File Complaint',
             'Date Received',
+            'Classification',
             'Category',
-
             'Customer',
             'Company Name',
             'Product Name',
@@ -140,9 +79,6 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
             'SO#',
             'Quantity (kg)',
             'Other Remarks',
-        ];
-
-        $headings = array_merge($headings, [
             'Complaint Endorsed To',
             'Department Concerned',
             'Credit Note',
@@ -154,11 +90,10 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
             'Corrective Action',
             'Received By',
             'Status',
-        ]);
-
-        return $headings;
+        ];
     }
-    //Auto stretch widht of excel
+
+    // Auto stretch width of excel
     public function registerEvents(): array
     {
         return [
@@ -180,16 +115,17 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                         }
                     }
 
-                    $maxWidth = in_array($column, ['G', 'H', 'I', 'J', 'K'], true) ? 40 : 255;
+                    // Shifted by 1 column (H:L) after adding Classification in D
+                    $maxWidth = in_array($column, ['H', 'I', 'J', 'K', 'L'], true) ? 40 : 255;
                     $worksheet->getColumnDimension($column)->setWidth(min($maxWidth, max(10, $maxLength + 2)));
                 }
 
                 if ($lastRow > 1) {
-                    $worksheet->getStyle("G2:J{$lastRow}")
+                    $worksheet->getStyle("H2:K{$lastRow}")
                         ->getAlignment()
                         ->setWrapText(true)
                         ->setVertical('bottom');
-                    $worksheet->getStyle("K2:K{$lastRow}")
+                    $worksheet->getStyle("L2:L{$lastRow}")
                         ->getAlignment()
                         ->setWrapText(true)
                         ->setVertical('top');
@@ -201,23 +137,14 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
     public function map($row): array
     {
         $status = "";
-        if ($row->Status == 10)
-        {
+        if ($row->Status == 10) {
             $status = "Open";
-        }
-        elseif($row->Status == 30)
-        {
+        } elseif ($row->Status == 30) {
             $status = "Closed";
         }
-        // elseif($row->Status == 50)
-        // {
-        //     $status = "Cancelled";
-        // }
-
-
-        //  $ccRows[];
 
         $categoryData = $this->categoryData($row);
+
         $otherRemarks = $row->ccHistoryRemarks
             ->filter(function ($historyRemark) {
                 return stripos($historyRemark->action ?? '', 'NOTED BY') !== false;
@@ -233,6 +160,7 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
                     . "\n" . $createdAt;
             })
             ->implode("\n\n");
+
         $internalRemarks = $row->ccHistoryRemarks
             ->filter(function ($historyRemark) {
                 return stripos($historyRemark->action ?? '', 'Proposed Action') !== false;
@@ -240,13 +168,12 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
             ->take(1)
             ->first();
 
-        $ccRows = [
+        return [
             $row->CcNumber,
             $row->created_at ? $row->created_at->format('d-M-y') : 'N/A',
             $row->DateReceived ? \Carbon\Carbon::parse($row->DateReceived)->format('d-M-y') : 'N/A',
-            $categoryData['title'],
-
-
+            $this->formatQualityClass($row->QualityClass), // Classification
+            $categoryData['title'],                       // Category
             $row->ContactName ?? 'N/A',
             $row->CompanyName ?? 'N/A',
             $categoryData['product_name'],
@@ -254,13 +181,10 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
             $categoryData['so_no'],
             $categoryData['quantity'],
             $otherRemarks !== '' ? $otherRemarks : 'N/A',
-        ];
-
-        $ccRows = array_merge($ccRows, [
             $row->site_concerned_name ?? 'N/A',
             $row->concernedDept->Name ?? 'N/A',
             $row->Claims == 1 ? 'Yes' : ($row->Claims == 2 ? 'No' : 'N/A'),
-            $row->Shipment == 1 ? 'Yes' : ($row->Shipment == 2? 'No': 'N/A'),
+            $row->Shipment == 1 ? 'Yes' : ($row->Shipment == 2 ? 'No' : 'N/A'),
             optional($internalRemarks)->remarks ?? 'N/A',
             $row->ActionDate ? \Carbon\Carbon::parse($row->ActionDate)->format('d-M-y') : 'N/A',
             $row->IssuanceNo ?? 'N/A',
@@ -268,9 +192,30 @@ class CustomerComplaintExport implements FromCollection, WithHeadings, WithMappi
             $row->CorrectiveAction ?? 'N/A',
             optional($row->users)->full_name,
             $status,
-        ]);
+        ];
+    }
 
-        return $ccRows;
+    private function formatQualityClass($value): string
+    {
+        $normalized = strtolower(trim((string) ($value ?? '')));
+
+        if ($normalized === '') {
+            return 'N/A';
+        }
+
+        if (str_contains($normalized, 'minor') || str_contains($normalized, 'marginal')) {
+            return 'Minor';
+        }
+
+        if (str_contains($normalized, 'major')) {
+            return 'Major';
+        }
+
+        if (str_contains($normalized, 'critical')) {
+            return 'Critical';
+        }
+
+        return (string) $value;
     }
 
     private function categoryData($row): array
