@@ -284,49 +284,49 @@
                 </div>
             </div>
 
-             <div class="card-body">
-                        <p class="card-title text-white">Customer Service</p>
-                        <div class="d-flex justify-content-between">
-                            <div class="mb-3 mt-2">
-                                <h3 class="fs-30 font-weight-medium">
-                                    {{ $totalCs ?? '0' }}
-                                    <i class="ti ti-comments"></i>
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>Customer Complaints</p>
-                            <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_complaint.list', ['open' => 10]) }}" class="text-white" onclick="show()">
-                                    {{ $customerComplaintCount ?? '0' }}
-                                </a>
-                            </h5>
-                        </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>CC Approval</p>
-                            <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_complaint.list', ['progress' => 20]) }}" class="text-white" onclick="show()">
-                                    {{ $ccNotedBy ?? '0' }}
-                                </a>
-                            </h5>
-                        </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>Customer Satisfaction</p>
-                            <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_satisfaction.list', ['open' => '10']) }}" class="text-white" onclick="show()">
-                                    {{ $customerSatisfactionCount ?? '0' }}
-                                </a>
-                            </h5>
-                        </div>
-                        <div class="mb-1 d-flex justify-content-between">
-                            <p>CS Approval</p>
-                            <h5 class="text-primary font-weight-medium">
-                                <a href="{{ route('customer_satisfaction.list', ['progress' => 20]) }}" class="text-white" onclick="show()">
-                                    {{ $csNotedBy ?? '0' }}
-                                </a>
-                            </h5>
-                        </div>
+            {{-- <div class="card-body">
+                <p class="card-title text-white">Customer Service</p>
+                <div class="d-flex justify-content-between">
+                    <div class="mb-3 mt-2">
+                        <h3 class="fs-30 font-weight-medium">
+                            {{ $totalCs ?? '0' }}
+                            <i class="ti ti-comments"></i>
+                        </h3>
                     </div>
+                </div>
+                <div class="mb-1 d-flex justify-content-between">
+                    <p>Customer Complaints</p>
+                    <h5 class="text-primary font-weight-medium">
+                        <a href="{{ route('customer_complaint.list', ['open' => 10]) }}" class="text-white" onclick="show()">
+                            {{ $customerComplaintCount ?? '0' }}
+                        </a>
+                    </h5>
+                </div>
+                <div class="mb-1 d-flex justify-content-between">
+                    <p>CC Approval</p>
+                    <h5 class="text-primary font-weight-medium">
+                        <a href="{{ route('customer_complaint.list', ['progress' => 20]) }}" class="text-white" onclick="show()">
+                            {{ $ccNotedBy ?? '0' }}
+                        </a>
+                    </h5>
+                </div>
+                <div class="mb-1 d-flex justify-content-between">
+                    <p>Customer Satisfaction</p>
+                    <h5 class="text-primary font-weight-medium">
+                        <a href="{{ route('customer_satisfaction.list', ['open' => '10']) }}" class="text-white" onclick="show()">
+                            {{ $customerSatisfactionCount ?? '0' }}
+                        </a>
+                    </h5>
+                </div>
+                <div class="mb-1 d-flex justify-content-between">
+                    <p>CS Approval</p>
+                    <h5 class="text-primary font-weight-medium">
+                        <a href="{{ route('customer_satisfaction.list', ['progress' => 20]) }}" class="text-white" onclick="show()">
+                            {{ $csNotedBy ?? '0' }}
+                        </a>
+                    </h5>
+                </div>
+            </div> --}}
             {{-- <div class="card card-light-blue">
                 <div class="card-body">
                     <p class="card-title text-white">Activities</p>
@@ -766,7 +766,7 @@
                 </div>
             </div> --}}
 
-            <div class="card card-light-danger">
+            {{-- <div class="card card-light-danger">
                     <div class="card-body">
                         <p class="card-title text-white">Customer Service</p>
                         <div class="d-flex justify-content-between">
@@ -798,7 +798,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         @endif
     </div>
 
